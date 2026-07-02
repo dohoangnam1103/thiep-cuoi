@@ -47,3 +47,15 @@ next-env.d.ts
 
 # Local temp files
 temp/
+.capture/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Kiro local
+.kiro/
+
+# Scratch screenshots / DOM snapshots at repo root
+/*.png
+/original-body-snapshot.md
+docs/research/original-dom/
