@@ -201,7 +201,7 @@ html.lenis body {
     @apply font-sans;
     scroll-behavior: smooth;
   }
-  h1, h2, h3, .font-heading {
+  .font-heading {
     font-family: var(--font-heading);
     letter-spacing: -0.01em;
   }

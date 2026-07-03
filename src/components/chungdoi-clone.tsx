@@ -158,7 +158,7 @@ function TemplateCarousel() {
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
                 {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
-                <h3 className="mt-2 text-lg font-black text-background">{template.name}</h3>
+                <h3 className="mt-2 font-heading text-lg font-black text-background">{template.name}</h3>
                 <p className="text-sm text-background/80">
                   {template.category} - {template.color}
                 </p>
@@ -291,7 +291,7 @@ function GuestsSection() {
         <div className="reveal grid gap-5 lg:grid-cols-2">
           <div className="rounded-[2rem] border border-border bg-card p-5 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
             <p className="text-sm text-muted-foreground">{t("guests.personalLink")}</p>
-            <h3 className="mt-3 text-2xl font-black text-foreground">{t("guests.invitePrompt")}</h3>
+            <h3 className="mt-3 font-heading text-2xl font-black text-foreground">{t("guests.invitePrompt")}</h3>
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button className="rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-black text-emerald-950">{t("guests.attend")}</button>
               <button className="rounded-2xl bg-muted px-4 py-3 text-sm font-black text-foreground">{t("guests.declined")}</button>
@@ -304,7 +304,7 @@ function GuestsSection() {
           </div>
           <div className="rounded-[2rem] border border-border bg-primary p-5 text-primary-foreground shadow-[0_8px_30px_rgb(0_0_0/0.08)]">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary-foreground/75">{t("guests.guestManager")}</p>
-            <h3 className="mt-4 text-2xl font-black">{t("guests.rsvpGathered")}</h3>
+            <h3 className="mt-4 font-heading text-2xl font-black">{t("guests.rsvpGathered")}</h3>
             <div className="mt-7 grid grid-cols-2 gap-3">
               {[
                 ["58", t("guests.guestsTracked")],
@@ -387,7 +387,7 @@ function LanguageAndFeatures() {
             {features.map(([title, copy, Icon]) => (
               <div key={title as string} className="reveal rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50">
                 <Icon className="size-8 text-primary" />
-                <h3 className="mt-5 text-xl font-black text-foreground">{title}</h3>
+                <h3 className="mt-5 font-heading text-xl font-black text-foreground">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy}</p>
               </div>
             ))}
@@ -505,7 +505,7 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
         </div>
       </button>
       <div className="p-5">
-        <h3 className="text-xl font-black text-foreground">{template.name}</h3>
+        <h3 className="font-heading text-xl font-black text-foreground">{template.name}</h3>
         <p className="mt-2 text-sm text-muted-foreground">{template.category}</p>
         <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted-foreground">{template.description}</p>
         <div className="mt-5 grid grid-cols-2 gap-2">
@@ -539,7 +539,7 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
         <div className="flex items-center justify-between border-b border-border p-4 sm:p-6">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-accent">{template.category}</p>
-            <h3 className="mt-1 text-2xl font-black text-foreground">{template.name}</h3>
+            <h3 className="mt-1 font-heading text-2xl font-black text-foreground">{template.name}</h3>
           </div>
           <button onClick={onClose} className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary">
             <X className="size-5" />

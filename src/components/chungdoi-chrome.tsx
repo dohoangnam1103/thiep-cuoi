@@ -92,7 +92,7 @@ export function SiteFooter() {
         </div>
         {columns.map(([heading, items]) => (
           <div key={heading}>
-            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-muted-foreground">{heading}</h3>
+            <h3 className="font-heading text-sm font-black uppercase tracking-[0.18em] text-muted-foreground">{heading}</h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               {items.map(([label, href]) => (
                 <li key={label}>
