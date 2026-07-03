@@ -18,14 +18,14 @@ export function ChungDoiTools() {
   const t = useTranslations("tools");
 
   return (
-    <main className="min-h-screen bg-[#18120f] text-white">
+    <main className="min-h-screen bg-background text-foreground">
       <SiteHeader />
 
-      <section className="border-b border-white/10 bg-[radial-gradient(circle_at_15%_-10%,rgba(251,53,112,0.22),transparent_40%)] py-14 text-center sm:py-20">
+      <section className="border-b border-border bg-secondary py-14 text-center sm:py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#ff8cad]">{t("eyebrow")}</p>
-          <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">{t("title")}</h1>
-          <p className="mt-5 text-lg leading-8 text-zinc-300">{t("subtitle")}</p>
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("eyebrow")}</p>
+          <h1 className="mt-4 font-heading text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">{t("title")}</h1>
+          <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("subtitle")}</p>
         </div>
       </section>
 
@@ -37,19 +37,19 @@ export function ChungDoiTools() {
               return (
                 <article
                   key={tool.nameKey}
-                  className="group flex flex-col rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-[#fb3570]/50 hover:bg-white/[0.07]"
+                  className="group flex flex-col rounded-2xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex size-12 items-center justify-center rounded-2xl bg-[#fb3570] text-white">
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
                       <Icon className="size-5" />
                     </div>
                     {tool.popular ? (
-                      <span className="rounded-full bg-[#fb3570]/15 px-3 py-1 text-xs font-black text-[#ffb5ca]">{t("popular")}</span>
+                      <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-black text-primary">{t("popular")}</span>
                     ) : null}
                   </div>
-                  <h3 className="mt-6 text-xl font-black text-white">{t(tool.nameKey)}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-6 text-zinc-300">{t(tool.descKey)}</p>
-                  <button className="mt-6 inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-black text-white transition hover:bg-white/10">
+                  <h3 className="mt-6 font-heading text-xl font-black text-foreground">{t(tool.nameKey)}</h3>
+                  <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{t(tool.descKey)}</p>
+                  <button className="mt-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-secondary px-4 py-2 text-sm font-black text-foreground transition hover:bg-muted">
                     {t("open")} <ArrowRight className="size-4" />
                   </button>
                 </article>
