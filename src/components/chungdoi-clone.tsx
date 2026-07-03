@@ -75,37 +75,37 @@ function useRevealOnScroll() {
 function HeroSection() {
   const t = useTranslations("home");
   return (
-    <section id="top" className="relative overflow-hidden bg-[#18120f]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(251,53,112,0.24),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(255,197,120,0.18),transparent_30%)]" />
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/45 to-transparent" />
+    <section id="top" className="relative overflow-hidden bg-background">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(140,166,140,0.18),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(214,178,110,0.16),transparent_30%)]" />
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="reveal flex flex-col justify-center">
-          <div className="mb-8 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/35">
+          <div className="mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
             <img
               src="/chungdoi/images/en/banner_hero.webp"
               alt="Beautiful online wedding invitations"
               className="h-full w-full object-cover"
             />
           </div>
-          <p className="mb-4 text-2xl font-semibold text-white">
-            <span className="font-pattaya text-4xl text-[#fb3570]">thiepmungonline</span>
-            <span className="text-zinc-400">{t("hero.domainSuffix")}</span>
+          <p className="mb-4 text-2xl font-semibold text-foreground">
+            <span className="font-pattaya text-4xl text-primary">thiepmungonline</span>
+            <span className="text-muted-foreground">{t("hero.domainSuffix")}</span>
           </p>
-          <h1 className="max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">
+          <h1 className="font-heading max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">
             {t("hero.title")}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-300">{t("hero.subtitle")}</p>
-          <p className="mt-4 text-sm font-semibold text-[#ffb5ca]">{t("hero.trialNote")}</p>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">{t("hero.subtitle")}</p>
+          <p className="mt-4 text-sm font-semibold text-accent">{t("hero.trialNote")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#templates"
-              className="inline-flex items-center gap-2 rounded-full bg-[#fb3570] px-6 py-3 text-sm font-bold text-white shadow-xl shadow-[#fb3570]/25 transition hover:-translate-y-1 hover:bg-[#ff4a82]"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-xl transition hover:-translate-y-1 hover:bg-primary/90"
             >
               {t("createNow")} <ArrowRight className="size-4" />
             </a>
             <a
               href="#how-it-works"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-bold text-foreground transition hover:-translate-y-1 hover:bg-muted"
             >
               {t("hero.watchGuide")} <Play className="size-4" />
             </a>
@@ -137,11 +137,11 @@ function TemplateCarousel() {
   const t = useTranslations("home");
 
   return (
-    <section className="overflow-hidden bg-[#18120f] py-16">
+    <section className="overflow-hidden bg-background py-16">
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <div className="reveal">
-          <h2 className="text-3xl font-black text-white sm:text-5xl">{t("carousel.title")}</h2>
-          <p className="mt-4 text-zinc-300">{t("carousel.subtitle")}</p>
+          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("carousel.title")}</h2>
+          <p className="mt-4 text-muted-foreground">{t("carousel.subtitle")}</p>
         </div>
       </div>
       <div className="reveal mt-12 overflow-hidden">
@@ -149,17 +149,17 @@ function TemplateCarousel() {
           {[...featuredTemplates, ...featuredTemplates].map((template, index) => (
             <article
               key={`${template.slug}-${index}`}
-              className="group relative h-[520px] w-[286px] shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-[#251b18] shadow-2xl shadow-black/35"
+              className="group relative h-[520px] w-[286px] shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
             >
               <img
                 src={template.listing}
                 alt={template.name}
                 className="h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5">
-                {template.isNew ? <span className="rounded-full bg-[#fb3570] px-2.5 py-1 text-xs font-bold text-white">{t("carousel.new")}</span> : null}
-                <h3 className="mt-2 text-lg font-black text-white">{template.name}</h3>
-                <p className="text-sm text-zinc-300">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
+                {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
+                <h3 className="mt-2 text-lg font-black text-background">{template.name}</h3>
+                <p className="text-sm text-background/80">
                   {template.category} - {template.color}
                 </p>
               </div>
@@ -178,17 +178,17 @@ function StatsSection() {
   const views = useCountUp(3100000);
 
   return (
-    <section className="bg-[#fb3570] py-10 text-white">
+    <section className="bg-primary py-10 text-primary-foreground">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 text-center sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8 lg:text-left">
-        <h2 className="text-2xl font-black leading-tight sm:text-3xl lg:max-w-lg">{t("stats.title")}</h2>
+        <h2 className="font-heading text-2xl font-black leading-tight sm:text-3xl lg:max-w-lg">{t("stats.title")}</h2>
         {[
           [registered, t("stats.registered")],
           [invitations, t("stats.invitationsCreated")],
           [views, t("stats.totalViews")],
         ].map(([value, label]) => (
-          <div key={label as string} className="rounded-3xl bg-white/13 p-5 text-center backdrop-blur">
+          <div key={label as string} className="rounded-3xl bg-background/15 p-5 text-center backdrop-blur">
             <p className="text-3xl font-black sm:text-4xl">{formatNumber(value as number)}+</p>
-            <p className="mt-2 text-sm font-semibold text-white/80">{label}</p>
+            <p className="mt-2 text-sm font-semibold text-primary-foreground/80">{label}</p>
           </div>
         ))}
       </div>
@@ -205,23 +205,23 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="bg-[#211815] py-16 sm:py-24">
+    <section id="how-it-works" className="bg-background py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
-          <h2 className="text-3xl font-black text-white sm:text-5xl">{t("howItWorks.title")}</h2>
-          <p className="mt-4 text-zinc-300">{t("howItWorks.subtitle")}</p>
+          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("howItWorks.title")}</h2>
+          <p className="mt-4 text-muted-foreground">{t("howItWorks.subtitle")}</p>
         </div>
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {steps.map(([title, copy, Icon], index) => (
-            <div key={title as string} className="reveal rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-xl shadow-black/20">
+            <div key={title as string} className="reveal rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
               <div className="flex items-center gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-[#fb3570] text-white">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-secondary text-primary">
                   <Icon className="size-5" />
                 </div>
-                <p className="text-sm font-bold text-[#ffb5ca]">{t("howItWorks.step", { number: index + 1 })}</p>
+                <p className="text-sm font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
               </div>
-              <h3 className="mt-6 text-2xl font-black text-white">{title}</h3>
-              <p className="mt-3 text-zinc-300">{copy}</p>
+              <h3 className="mt-6 font-heading text-2xl font-black text-foreground">{title}</h3>
+              <p className="mt-3 text-muted-foreground">{copy}</p>
             </div>
           ))}
         </div>
@@ -234,14 +234,14 @@ function SupportSection() {
   const t = useTranslations("home");
 
   return (
-    <section className="bg-[#2a211e] py-16">
+    <section className="bg-secondary py-16">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_0.8fr] lg:px-8">
         <div className="reveal">
-          <h2 className="text-3xl font-black text-white sm:text-5xl">{t("support.title")}</h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-300">{t("support.subtitle")}</p>
+          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("support.title")}</h2>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t("support.subtitle")}</p>
           <a
             href="#templates"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-black text-[#1f1715] transition hover:-translate-y-1"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition hover:-translate-y-1 hover:bg-primary/90"
           >
             {t("support.startCreating")} <ArrowRight className="size-4" />
           </a>
@@ -251,9 +251,9 @@ function SupportSection() {
             [t("support.replyTimeLabel"), t("support.replyTimeValue")],
             [t("support.helpEditsLabel"), t("support.helpEditsValue")],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-white/10 bg-white/[0.05] p-6">
-              <p className="text-sm text-zinc-400">{label}</p>
-              <p className="mt-4 text-3xl font-black text-white">{value}</p>
+            <div key={label} className="rounded-3xl border border-border bg-card p-6">
+              <p className="text-sm text-muted-foreground">{label}</p>
+              <p className="mt-4 text-3xl font-black text-foreground">{value}</p>
             </div>
           ))}
         </div>
@@ -266,14 +266,14 @@ function GuestsSection() {
   const t = useTranslations("home");
 
   return (
-    <section id="guests" className="relative overflow-hidden bg-[#211815] py-20">
-      <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(251,53,112,0.18),transparent_55%)]" />
+    <section id="guests" className="relative overflow-hidden bg-background py-20">
+      <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(140,166,140,0.16),transparent_55%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div className="reveal">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#ff8cad]">{t("guests.eyebrow")}</p>
-          <h2 className="mt-4 text-3xl font-black text-white sm:text-5xl">{t("guests.title")}</h2>
-          <p className="mt-6 text-lg leading-8 text-zinc-300">{t("guests.subtitle")}</p>
-          <ul className="mt-8 space-y-4 text-zinc-200">
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("guests.eyebrow")}</p>
+          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("guests.title")}</h2>
+          <p className="mt-6 text-lg leading-8 text-muted-foreground">{t("guests.subtitle")}</p>
+          <ul className="mt-8 space-y-4 text-foreground">
             {[
               t("guests.point1"),
               t("guests.point2"),
@@ -282,28 +282,28 @@ function GuestsSection() {
               t("guests.point5"),
             ].map((item) => (
               <li key={item} className="flex gap-3">
-                <Check className="mt-1 size-5 shrink-0 text-[#fb3570]" />
+                <Check className="mt-1 size-5 shrink-0 text-primary" />
                 <span>{item}</span>
               </li>
             ))}
           </ul>
         </div>
         <div className="reveal grid gap-5 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.05] p-5 shadow-2xl shadow-black/35">
-            <p className="text-sm text-zinc-400">{t("guests.personalLink")}</p>
-            <h3 className="mt-3 text-2xl font-black text-white">{t("guests.invitePrompt")}</h3>
+          <div className="rounded-[2rem] border border-border bg-card p-5 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
+            <p className="text-sm text-muted-foreground">{t("guests.personalLink")}</p>
+            <h3 className="mt-3 text-2xl font-black text-foreground">{t("guests.invitePrompt")}</h3>
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button className="rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-black text-emerald-950">{t("guests.attend")}</button>
-              <button className="rounded-2xl bg-white/10 px-4 py-3 text-sm font-black text-white">{t("guests.declined")}</button>
+              <button className="rounded-2xl bg-muted px-4 py-3 text-sm font-black text-foreground">{t("guests.declined")}</button>
             </div>
             {[t("guests.plusOnes"), t("guests.needShuttle"), t("guests.mealNotes"), t("guests.songRequest")].map((label) => (
-              <div key={label} className="mt-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-zinc-300">
+              <div key={label} className="mt-3 rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-muted-foreground">
                 {label}
               </div>
             ))}
           </div>
-          <div className="rounded-[2rem] border border-white/10 bg-[#fb3570] p-5 text-white shadow-2xl shadow-[#fb3570]/20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-white/75">{t("guests.guestManager")}</p>
+          <div className="rounded-[2rem] border border-border bg-primary p-5 text-primary-foreground shadow-[0_8px_30px_rgb(0_0_0/0.08)]">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary-foreground/75">{t("guests.guestManager")}</p>
             <h3 className="mt-4 text-2xl font-black">{t("guests.rsvpGathered")}</h3>
             <div className="mt-7 grid grid-cols-2 gap-3">
               {[
@@ -312,19 +312,19 @@ function GuestsSection() {
                 ["24", t("guests.attending")],
                 ["3", t("guests.declinedStat")],
               ].map(([value, label]) => (
-                <div key={label} className="rounded-2xl bg-white/15 p-4">
+                <div key={label} className="rounded-2xl bg-background/15 p-4">
                   <p className="text-3xl font-black">{value}</p>
-                  <p className="text-xs text-white/75">{label}</p>
+                  <p className="text-xs text-primary-foreground/75">{label}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-6 rounded-2xl bg-black/15 p-4">
+            <div className="mt-6 rounded-2xl bg-background/10 p-4">
               <div className="flex justify-between text-sm">
                 <span>{t("guests.needShuttle")}</span>
                 <span>18/24</span>
               </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/25">
-                <div className="h-full w-3/4 rounded-full bg-white" />
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-background/25">
+                <div className="h-full w-3/4 rounded-full bg-primary-foreground" />
               </div>
             </div>
           </div>
@@ -347,29 +347,29 @@ function LanguageAndFeatures() {
 
   return (
     <>
-      <section className="bg-[#18120f] py-20">
+      <section className="bg-background py-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div className="reveal rounded-[2rem] border border-white/10 bg-white/[0.05] p-6">
+          <div className="reveal rounded-[2rem] border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
             <div className="grid grid-cols-2 gap-3">
               {[
                 [t("languages.groomLabel"), "신랑"],
                 [t("languages.brideLabel"), "신부"],
                 [t("languages.invitedLabel"), "초대합니다"],
               ].map(([a, b]) => (
-                <div key={a} className="rounded-2xl bg-black/20 p-4">
-                  <p className="text-sm text-zinc-400">{a}</p>
-                  <p className="mt-2 text-xl font-black text-white">{b}</p>
+                <div key={a} className="rounded-2xl bg-muted p-4">
+                  <p className="text-sm text-muted-foreground">{a}</p>
+                  <p className="mt-2 text-xl font-black text-foreground">{b}</p>
                 </div>
               ))}
             </div>
           </div>
           <div className="reveal">
-            <Languages className="size-10 text-[#fb3570]" />
-            <h2 className="mt-5 text-3xl font-black text-white sm:text-5xl">{t("languages.title")}</h2>
-            <p className="mt-5 text-lg leading-8 text-zinc-300">{t("languages.subtitle")}</p>
+            <Languages className="size-10 text-primary" />
+            <h2 className="mt-5 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("languages.title")}</h2>
+            <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("languages.subtitle")}</p>
             <div className="mt-7 flex flex-wrap gap-2">
               {["English", "Tiếng Việt", "한국어", "日本語", "Français", "Español", "繁體中文"].map((label) => (
-                <span key={label} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200">
+                <span key={label} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
                   {label}
                 </span>
               ))}
@@ -377,18 +377,18 @@ function LanguageAndFeatures() {
           </div>
         </div>
       </section>
-      <section className="bg-[#211815] py-20">
+      <section className="bg-secondary py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="reveal text-center">
-            <h2 className="text-3xl font-black text-white sm:text-5xl">{t("features.title")}</h2>
-            <p className="mt-4 text-zinc-300">{t("features.subtitle")}</p>
+            <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("features.title")}</h2>
+            <p className="mt-4 text-muted-foreground">{t("features.subtitle")}</p>
           </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map(([title, copy, Icon]) => (
-              <div key={title as string} className="reveal rounded-3xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-[#fb3570]/50 hover:bg-white/[0.07]">
-                <Icon className="size-8 text-[#fb3570]" />
-                <h3 className="mt-5 text-xl font-black text-white">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-zinc-300">{copy}</p>
+              <div key={title as string} className="reveal rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50">
+                <Icon className="size-8 text-primary" />
+                <h3 className="mt-5 text-xl font-black text-foreground">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy}</p>
               </div>
             ))}
           </div>
@@ -423,19 +423,19 @@ function TemplateGallery() {
   }, [selected]);
 
   return (
-    <section id="templates" className="bg-[#18120f] py-20">
+    <section id="templates" className="bg-background py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-3xl font-black text-white sm:text-5xl">{t("gallery.title")}</h2>
-            <p className="mt-4 max-w-2xl text-zinc-300">{t("gallery.subtitle", { count: templates.length })}</p>
+            <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("gallery.title")}</h2>
+            <p className="mt-4 max-w-2xl text-muted-foreground">{t("gallery.subtitle", { count: templates.length })}</p>
           </div>
-          <div className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-bold text-white">
+          <div className="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold text-foreground">
             {t("gallery.countLabel", { shown: filtered.length, total: templates.length })}
           </div>
         </div>
 
-        <div className="reveal mt-8 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="reveal mt-8 flex flex-col gap-4 rounded-[2rem] border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
           <FilterPills label={t("gallery.styleLabel")} options={categories} value={category} onChange={setCategory} />
           <FilterPills label={t("gallery.colorLabel")} options={colors} value={color} onChange={setColor} />
         </div>
@@ -465,13 +465,13 @@ function FilterPills({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs font-black uppercase tracking-[0.18em] text-zinc-500">{label}</span>
+      <span className="mr-1 text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
       {options.map((option) => (
         <button
           key={option}
           onClick={() => onChange(option)}
           className={`rounded-full px-3 py-1.5 text-sm font-bold transition ${
-            value === option ? "bg-[#fb3570] text-white shadow-lg shadow-[#fb3570]/25" : "bg-white/5 text-zinc-300 hover:bg-white/10"
+            value === option ? "bg-primary text-primary-foreground shadow-lg" : "bg-muted text-muted-foreground hover:bg-secondary"
           }`}
         >
           {option}
@@ -488,36 +488,36 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
   const demoHref = `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
 
   return (
-    <article className="reveal group overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#251b18] shadow-xl shadow-black/25 transition hover:-translate-y-2 hover:border-[#fb3570]/50 hover:shadow-2xl hover:shadow-[#fb3570]/10">
+    <article className="reveal group overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.1)]">
       <button onClick={onSelect} className="block w-full text-left">
-        <div className="relative h-[460px] overflow-hidden bg-black">
+        <div className="relative h-[460px] overflow-hidden bg-muted">
           <img
             src={template.listing}
             alt={template.name}
             className="h-full w-full object-cover object-top transition-[object-position,transform] duration-[10000ms] ease-in-out group-hover:object-bottom group-hover:scale-[1.03]"
           />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4">
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-4">
             <div className="flex items-center gap-2">
-              {template.isNew ? <span className="rounded-full bg-[#fb3570] px-2.5 py-1 text-xs font-black text-white">{t("gallery.new")}</span> : null}
-              <span className="rounded-full bg-white/15 px-2.5 py-1 text-xs font-bold text-white">{template.color}</span>
+              {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-black text-primary-foreground">{t("gallery.new")}</span> : null}
+              <span className="rounded-full bg-background/20 px-2.5 py-1 text-xs font-bold text-background">{template.color}</span>
             </div>
           </div>
         </div>
       </button>
       <div className="p-5">
-        <h3 className="text-xl font-black text-white">{template.name}</h3>
-        <p className="mt-2 text-sm text-zinc-400">{template.category}</p>
-        <p className="mt-4 line-clamp-2 text-sm leading-6 text-zinc-300">{template.description}</p>
+        <h3 className="text-xl font-black text-foreground">{template.name}</h3>
+        <p className="mt-2 text-sm text-muted-foreground">{template.category}</p>
+        <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted-foreground">{template.description}</p>
         <div className="mt-5 grid grid-cols-2 gap-2">
           <button
             onClick={onSelect}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2.5 text-sm font-black text-white transition hover:bg-white/10"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-muted px-3 py-2.5 text-sm font-black text-foreground transition hover:bg-secondary"
           >
             {t("gallery.preview")}
           </button>
           <a
             href={demoHref}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#fb3570] px-3 py-2.5 text-sm font-black text-white transition hover:bg-[#ff4a82]"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
           >
             {t("gallery.viewDemo")} <ArrowRight className="size-4" />
           </a>
@@ -534,34 +534,34 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
   const demoHref = `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-black/75 p-4 backdrop-blur-xl" role="dialog" aria-modal="true">
-      <div className="mx-auto flex h-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#1d1513] shadow-2xl">
-        <div className="flex items-center justify-between border-b border-white/10 p-4 sm:p-6">
+    <div className="fixed inset-0 z-[80] bg-foreground/60 p-4 backdrop-blur-xl" role="dialog" aria-modal="true">
+      <div className="mx-auto flex h-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_16px_50px_rgb(0_0_0/0.15)]">
+        <div className="flex items-center justify-between border-b border-border p-4 sm:p-6">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff8cad]">{template.category}</p>
-            <h3 className="mt-1 text-2xl font-black text-white">{template.name}</h3>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-accent">{template.category}</p>
+            <h3 className="mt-1 text-2xl font-black text-foreground">{template.name}</h3>
           </div>
-          <button onClick={onClose} className="flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20">
+          <button onClick={onClose} className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary">
             <X className="size-5" />
           </button>
         </div>
         <div className="grid min-h-0 flex-1 gap-6 overflow-y-auto p-4 sm:p-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
-            <p className="text-zinc-300">{template.description}</p>
+            <p className="text-muted-foreground">{template.description}</p>
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-white/[0.05] p-4">
-                <p className="text-xs text-zinc-500">{t("gallery.colorWord")}</p>
-                <p className="mt-1 font-black text-white">{template.color}</p>
+              <div className="rounded-2xl bg-muted p-4">
+                <p className="text-xs text-muted-foreground">{t("gallery.colorWord")}</p>
+                <p className="mt-1 font-black text-foreground">{template.color}</p>
               </div>
-              <div className="rounded-2xl bg-white/[0.05] p-4">
-                <p className="text-xs text-zinc-500">{t("gallery.trialLabel")}</p>
-                <p className="mt-1 font-black text-white">{t("gallery.trialValue")}</p>
+              <div className="rounded-2xl bg-muted p-4">
+                <p className="text-xs text-muted-foreground">{t("gallery.trialLabel")}</p>
+                <p className="mt-1 font-black text-foreground">{t("gallery.trialValue")}</p>
               </div>
             </div>
             <ul className="mt-6 space-y-3">
               {(template.highlights.length ? template.highlights : [t("gallery.highlightMobile"), t("gallery.highlightRsvp"), t("gallery.highlightGallery")]).map((item) => (
-                <li key={item} className="flex gap-3 text-sm text-zinc-300">
-                  <Star className="mt-0.5 size-4 shrink-0 fill-[#fb3570] text-[#fb3570]" />
+                <li key={item} className="flex gap-3 text-sm text-muted-foreground">
+                  <Star className="mt-0.5 size-4 shrink-0 fill-primary text-primary" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -569,7 +569,7 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href={demoHref}
-                className="inline-flex items-center gap-2 rounded-full bg-[#fb3570] px-6 py-3 text-sm font-black text-white transition hover:bg-[#ff4a82]"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
               >
                 {t("gallery.viewInvitationDemo")} <ArrowRight className="size-4" />
               </a>
@@ -577,7 +577,7 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
                 <input type="hidden" name="templateId" value={template.slug} />
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-6 py-3 text-sm font-black text-foreground transition hover:bg-secondary"
                 >
                   {t("gallery.useStyle")}
                 </button>
@@ -585,10 +585,10 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
             </div>
           </div>
           <div className="grid gap-4 lg:grid-cols-[0.65fr_1fr]">
-            <div className="max-h-[70vh] overflow-y-auto rounded-3xl border border-white/10 bg-black">
+            <div className="max-h-[70vh] overflow-y-auto rounded-3xl border border-border bg-muted">
               <img src={template.portrait} alt={`${template.name} portrait preview`} className="w-full object-contain" />
             </div>
-            <div className="max-h-[70vh] overflow-auto rounded-3xl border border-white/10 bg-white">
+            <div className="max-h-[70vh] overflow-auto rounded-3xl border border-border bg-card">
               <img src={template.landscape} alt={`${template.name} landscape preview`} className="w-full object-contain" />
             </div>
           </div>
@@ -609,19 +609,19 @@ function PricingFaq() {
   const perks = [t("pricing.perk1"), t("pricing.perk2"), t("pricing.perk3"), t("pricing.perk4")];
 
   return (
-    <section id="pricing" className="bg-[#211815] py-20">
+    <section id="pricing" className="bg-secondary py-20">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.75fr_1fr] lg:px-8">
         <div className="reveal">
-          <h2 className="text-3xl font-black text-white sm:text-5xl">{t("pricing.title")}</h2>
-          <p className="mt-5 text-lg leading-8 text-zinc-300">{t("pricing.subtitle")}</p>
-          <div className="mt-8 rounded-[2rem] border border-[#fb3570]/35 bg-[#fb3570]/10 p-6">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#ff8cad]">{t("pricing.popular")}</p>
-            <p className="mt-4 text-5xl font-black text-white">{t("pricing.price")}</p>
-            <p className="mt-2 text-zinc-300">{t("pricing.priceNote")}</p>
-            <ul className="mt-6 space-y-3 text-sm text-zinc-200">
+          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("pricing.title")}</h2>
+          <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("pricing.subtitle")}</p>
+          <div className="mt-8 rounded-[2rem] border border-primary/35 bg-primary/10 p-6">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-accent">{t("pricing.popular")}</p>
+            <p className="mt-4 text-5xl font-black text-foreground">{t("pricing.price")}</p>
+            <p className="mt-2 text-muted-foreground">{t("pricing.priceNote")}</p>
+            <ul className="mt-6 space-y-3 text-sm text-foreground">
               {perks.map((item) => (
                 <li key={item} className="flex gap-2">
-                  <Check className="size-4 text-[#fb3570]" />
+                  <Check className="size-4 text-primary" />
                   {item}
                 </li>
               ))}
@@ -629,15 +629,15 @@ function PricingFaq() {
           </div>
         </div>
         <div className="reveal">
-          <h2 className="text-3xl font-black text-white">{t("pricing.faqTitle")}</h2>
-          <div className="mt-6 divide-y divide-white/10 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
+          <h2 className="font-heading text-3xl font-black text-foreground">{t("pricing.faqTitle")}</h2>
+          <div className="mt-6 divide-y divide-border overflow-hidden rounded-[2rem] border border-border bg-card">
             {faqs.map(([question, answer]) => (
               <details key={question} className="group p-5" open={question === faqs[0][0]}>
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 font-black text-white">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 font-black text-foreground">
                   {question}
                   <ChevronDown className="size-4 transition group-open:rotate-180" />
                 </summary>
-                <p className="mt-3 text-sm leading-6 text-zinc-300">{answer}</p>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{answer}</p>
               </details>
             ))}
           </div>
@@ -651,7 +651,7 @@ export function ChungDoiClone() {
   useRevealOnScroll();
 
   return (
-    <main className="min-h-screen bg-[#18120f] text-white">
+    <main className="min-h-screen bg-background text-foreground">
       <SiteHeader />
       <HeroSection />
       <TemplateCarousel />
