@@ -1,13 +1,32 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { Toaster, toast } from "sonner";
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, MUSIC_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
 import { saveDraft, publish, checkSlug, type EditorState } from "./actions";
+import { readDraft, type Draft } from "@/hooks/use-form-draft";
 import { VALID_TEMPLATE_IDS } from "./templates";
 
 type EditorFormProps = {
@@ -67,6 +86,20 @@ function slugFromNames(content: InvitationContent | null): string {
   return slugify(order.filter(Boolean).join(" "));
 }
 
+function normalizeBirthOrder(value: string): string {
+  const trimmed = value.trim();
+  const key = slugify(trimmed);
+  const labels: Record<string, string> = {
+    "ut-nu": "Út Nữ",
+    "ut-nam": "Út Nam",
+    "truong-nu": "Trưởng Nữ",
+    "truong-nam": "Trưởng Nam",
+    "thu-nu": "Thứ Nữ",
+    "thu-nam": "Thứ Nam",
+  };
+  return labels[key] ?? trimmed;
+}
+
 function buildPreviewContent(form: HTMLFormElement, invitationId: string): ChungDoiDemoContent {
   const read = (name: string) =>
     ((form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null)?.value ?? "").trim();
@@ -75,6 +108,10 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
   const brideFirst = (form.elements.namedItem("brideFirst") as HTMLInputElement | null)?.checked ?? true;
 
   const templateId = read("templateId");
+  const brideFullName = read("brideFullName");
+  const groomFullName = read("groomFullName");
+  const brideShortName = read("brideShortName") || brideFullName;
+  const groomShortName = read("groomShortName") || groomFullName;
   const times = readAll("scheduleTime");
   const labels = readAll("scheduleLabel");
   const schedule: { time: string; label: string }[] = [];
@@ -98,12 +135,12 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
       assets: [],
     },
     couple: {
-      brideFullName: read("brideFullName"),
-      groomFullName: read("groomFullName"),
-      brideShortName: read("brideShortName"),
-      groomShortName: read("groomShortName"),
-      brideBirthOrder: read("brideBirthOrder"),
-      groomBirthOrder: read("groomBirthOrder"),
+      brideFullName,
+      groomFullName,
+      brideShortName,
+      groomShortName,
+      brideBirthOrder: normalizeBirthOrder(read("brideBirthOrder")),
+      groomBirthOrder: normalizeBirthOrder(read("groomBirthOrder")),
       brideFirst,
       date: read("date"),
       time: read("time"),
@@ -216,6 +253,370 @@ function Text({
   );
 }
 
+function Select({
+  name,
+  label,
+  defaultValue,
+  options,
+  hint,
+  full,
+}: {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  options: SelectOption[];
+  hint?: string;
+  full?: boolean;
+}) {
+  return (
+    <div className={full ? "sm:col-span-2" : undefined}>
+      <label htmlFor={name} className={labelClass}>
+        {label}
+      </label>
+      <select id={name} name={name} defaultValue={defaultValue} className={inputClass}>
+        {options.map((o) => (
+          <option key={o.value} value={o.value} className="bg-[#1c1512]">
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {hint ? <p className="mt-1 text-xs text-zinc-500">{hint}</p> : null}
+    </div>
+  );
+}
+
+/** Dropdown thứ bậc với lựa chọn "Khác" cho phép gõ tự do, giữ tương thích giá trị cũ. */
+function BirthOrderField({
+  name,
+  label,
+  defaultValue = "",
+  hint,
+}: {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  hint?: string;
+}) {
+  const known = BIRTH_ORDER_OPTIONS.some((o) => o.value === defaultValue);
+  const [custom, setCustom] = useState(!!defaultValue && !known);
+  const [value, setValue] = useState(defaultValue);
+
+  return (
+    <div>
+      <label htmlFor={name} className={labelClass}>
+        {label}
+      </label>
+      {custom ? (
+        <input
+          id={name}
+          name={name}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="VD: Trưởng Nữ"
+          className={inputClass}
+          autoFocus
+        />
+      ) : (
+        <select
+          id={name}
+          name={name}
+          value={value}
+          onChange={(e) => {
+            if (e.target.value === "__custom__") {
+              setCustom(true);
+              setValue("");
+            } else {
+              setValue(e.target.value);
+            }
+          }}
+          className={inputClass}
+        >
+          <option value="" className="bg-[#1c1512]">
+            — Chọn thứ bậc —
+          </option>
+          {BIRTH_ORDER_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value} className="bg-[#1c1512]">
+              {o.label}
+            </option>
+          ))}
+          <option value="__custom__" className="bg-[#1c1512]">
+            Khác…
+          </option>
+        </select>
+      )}
+      {custom ? (
+        <button
+          type="button"
+          onClick={() => {
+            setCustom(false);
+            setValue("");
+          }}
+          className="mt-1 text-xs text-[#fb3570] hover:underline"
+        >
+          Chọn từ danh sách
+        </button>
+      ) : hint ? (
+        <p className="mt-1 text-xs text-zinc-500">{hint}</p>
+      ) : null}
+    </div>
+  );
+}
+
+/** Chọn nhạc nền từ danh sách + nghe thử. */
+function MusicField({ defaultValue = "" }: { defaultValue?: string }) {
+  const [value, setValue] = useState(defaultValue);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(false);
+
+  function togglePlay() {
+    const el = audioRef.current;
+    if (!el || !value) return;
+    if (playing) {
+      el.pause();
+      setPlaying(false);
+    } else {
+      void el.play();
+      setPlaying(true);
+    }
+  }
+
+  return (
+    <div>
+      <label htmlFor="music" className={labelClass}>
+        Nhạc nền
+      </label>
+      <div className="flex items-center gap-2">
+        <select
+          id="music"
+          name="music"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setPlaying(false);
+            audioRef.current?.pause();
+          }}
+          className={inputClass}
+        >
+          {MUSIC_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value} className="bg-[#1c1512]">
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={togglePlay}
+          disabled={!value}
+          className="shrink-0 rounded-lg border border-white/15 px-3 py-2 text-sm text-white hover:bg-white/5 disabled:opacity-40"
+          aria-label={playing ? "Dừng" : "Nghe thử"}
+        >
+          {playing ? "⏸" : "▶"}
+        </button>
+      </div>
+      {value ? (
+        <audio ref={audioRef} src={value} onEnded={() => setPlaying(false)} preload="none" />
+      ) : null}
+    </div>
+  );
+}
+
+/** Chọn mẫu thiệp bằng lưới thumbnail thay cho <select>. */
+function TemplatePicker({ defaultValue }: { defaultValue: string }) {
+  const [selected, setSelected] = useState(defaultValue);
+  return (
+    <div className="sm:col-span-2">
+      <span className={labelClass}>Mẫu thiệp</span>
+      <input type="hidden" name="templateId" value={selected} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {VALID_TEMPLATE_IDS.map((id) => {
+          const tpl = templates.find((t) => t.slug === id);
+          const active = selected === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setSelected(id)}
+              className={`group relative overflow-hidden rounded-xl border text-left transition ${
+                active
+                  ? "border-[#fb3570] ring-2 ring-[#fb3570]/40"
+                  : "border-white/10 hover:border-white/30"
+              }`}
+              aria-pressed={active}
+            >
+              {tpl?.listing ? (
+                <span className="block aspect-[3/4] bg-black/30">
+                  <Image
+                    src={tpl.listing}
+                    alt={TEMPLATE_LABELS[id]}
+                    width={240}
+                    height={320}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
+              ) : (
+                <span className="block aspect-[3/4] bg-black/30" />
+              )}
+              <span className="block px-2 py-1.5 text-xs font-semibold text-white">
+                {TEMPLATE_LABELS[id]}
+              </span>
+              {active ? (
+                <span className="absolute right-2 top-2 rounded-full bg-[#fb3570] px-1.5 text-xs text-white">
+                  ✓
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SortablePhoto({ url, onRemove }: { url: string; onRemove: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: url });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-black/30"
+    >
+      <input type="hidden" name="galleryUrl" value={url} />
+      <Image src={url} alt="Ảnh album" fill sizes="200px" className="object-cover" />
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="absolute left-1.5 top-1.5 cursor-grab rounded-md bg-black/60 px-1.5 py-0.5 text-xs text-white active:cursor-grabbing"
+        aria-label="Kéo để sắp xếp"
+      >
+        ⠿
+      </button>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-xs text-white hover:bg-red-500/80"
+        aria-label="Xoá ảnh"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
+/** Upload + sắp xếp ảnh album. Mỗi ảnh render hidden input galleryUrl để action đọc như cũ. */
+function GalleryUploader({ initial }: { initial: string[] }) {
+  const [urls, setUrls] = useState<string[]>(initial);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  async function uploadFiles(files: FileList | File[]) {
+    const list = Array.from(files);
+    if (!list.length) return;
+    const remaining = 30 - urls.length;
+    if (remaining <= 0) {
+      toast.error("Tối đa 30 ảnh");
+      return;
+    }
+    setUploading(true);
+    let added = 0;
+    for (const file of list.slice(0, remaining)) {
+      const body = new FormData();
+      body.append("file", file);
+      try {
+        const res = await fetch("/api/upload", { method: "POST", body });
+        const data = (await res.json()) as { url?: string; error?: string };
+        if (!res.ok || !data.url) {
+          toast.error(data.error ?? "Tải ảnh thất bại");
+          continue;
+        }
+        setUrls((prev) => [...prev, data.url!]);
+        added += 1;
+      } catch {
+        toast.error("Tải ảnh thất bại");
+      }
+    }
+    setUploading(false);
+    if (added) toast.success(`Đã thêm ${added} ảnh`);
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    if (e.dataTransfer.files?.length) void uploadFiles(e.dataTransfer.files);
+  }
+
+  function onDragEnd(e: DragEndEvent) {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    setUrls((prev) => {
+      const from = prev.indexOf(String(active.id));
+      const to = prev.indexOf(String(over.id));
+      if (from === -1 || to === -1) return prev;
+      return arrayMove(prev, from, to);
+    });
+  }
+
+  return (
+    <div>
+      <p className="mb-3 text-xs text-zinc-500">
+        Tải ảnh lên để hiển thị trong album thiệp. Kéo để sắp xếp thứ tự, tối đa 30 ảnh (≤5MB mỗi ảnh).
+      </p>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={onDrop}
+        onClick={() => inputRef.current?.click()}
+        className={`mb-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-8 text-center transition ${
+          dragOver ? "border-[#fb3570] bg-[#fb3570]/5" : "border-white/15 hover:border-white/30"
+        }`}
+      >
+        <span className="text-2xl" aria-hidden>
+          ◱
+        </span>
+        <p className="mt-2 text-sm text-zinc-300">
+          {uploading ? "Đang tải ảnh…" : "Kéo thả ảnh vào đây hoặc bấm để chọn"}
+        </p>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files?.length) void uploadFiles(e.target.files);
+            e.target.value = "";
+          }}
+        />
+      </div>
+      {urls.length ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={urls} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+              {urls.map((url) => (
+                <SortablePhoto
+                  key={url}
+                  url={url}
+                  onRemove={() => setUrls((prev) => prev.filter((u) => u !== url))}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : null}
+    </div>
+  );
+}
+
 function ColorField({ name, label, defaultValue }: { name: string; label: string; defaultValue: string }) {
   const [value, setValue] = useState(defaultValue || "#c8102e");
   const valid = /^#[0-9a-fA-F]{6}$/.test(value);
@@ -282,8 +683,29 @@ export function EditorForm({
     undefined,
   );
 
-  const [scheduleRows, setScheduleRows] = useState(schedule.length ? schedule : [{ time: "", label: "" }]);
-  const [galleryRows, setGalleryRows] = useState(gallery.length ? gallery : [""]);
+  const serverEmpty = content == null;
+  const draft = useMemo<Draft | null>(
+    () => (serverEmpty ? readDraft(invitationId) : null),
+    [serverEmpty, invitationId],
+  );
+  const seed = (key: string, fallback: string) =>
+    typeof draft?.[key] === "string" ? (draft[key] as string) : fallback;
+  const seedBool = (key: string, fallback: boolean) =>
+    typeof draft?.[key] === "boolean" ? (draft[key] as boolean) : fallback;
+
+  const [scheduleRows, setScheduleRows] = useState(() => {
+    const dTime = Array.isArray(draft?.scheduleTime) ? (draft!.scheduleTime as string[]) : null;
+    const dLabel = Array.isArray(draft?.scheduleLabel) ? (draft!.scheduleLabel as string[]) : null;
+    if (dTime || dLabel) {
+      const rows: { time: string; label: string }[] = [];
+      const n = Math.max(dTime?.length ?? 0, dLabel?.length ?? 0);
+      for (let i = 0; i < n; i++) {
+        rows.push({ time: dTime?.[i] ?? "", label: dLabel?.[i] ?? "" });
+      }
+      if (rows.length) return rows;
+    }
+    return schedule.length ? schedule : [{ time: "", label: "" }];
+  });
 
   const [slug, setSlug] = useState(currentSlug || slugFromNames(content));
   const [slugStatus, setSlugStatus] = useState<{ available: boolean; reason?: string } | null>(null);
@@ -291,6 +713,15 @@ export function EditorForm({
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   const [previewContent, setPreviewContent] = useState<ChungDoiDemoContent | null>(null);
+
+  useEffect(() => {
+    if (saveState?.ok) toast.success("Đã lưu bản nháp");
+    else if (saveState?.error) toast.error(saveState.error);
+  }, [saveState]);
+
+  useEffect(() => {
+    if (publishState?.error) toast.error(publishState.error);
+  }, [publishState]);
 
   function onShowPreview() {
     const form = document.getElementById("editor-form") as HTMLFormElement | null;
@@ -324,6 +755,7 @@ export function EditorForm({
 
   return (
     <>
+      <Toaster position="top-center" theme="dark" richColors />
       {tab === "preview" && previewContent ? (
         <>
           <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
@@ -352,61 +784,51 @@ export function EditorForm({
         </div>
 
         <form action={saveFormAction} className="space-y-4" id="editor-form">
+        <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
+          <TemplatePicker defaultValue={seed("templateId", templateId)} />
+        </Accordion>
+
         <Accordion title="Thông tin cơ bản" icon="♡">
           <Grid>
-            <div className="sm:col-span-2">
-              <label htmlFor="templateId" className={labelClass}>
-                Mẫu thiệp
-              </label>
-              <select id="templateId" name="templateId" defaultValue={templateId} className={inputClass}>
-                {VALID_TEMPLATE_IDS.map((id) => (
-                  <option key={id} value={id} className="bg-[#1c1512]">
-                    {TEMPLATE_LABELS[id]}
-                  </option>
-                ))}
-              </select>
-            </div>
             <Text
               name="brideFullName"
               label="Họ tên cô dâu"
-              defaultValue={field(content, "brideFullName")}
+              defaultValue={seed("brideFullName", field(content, "brideFullName"))}
               placeholder="VD: Nguyễn Quỳnh Anh"
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
             />
             <Text
               name="groomFullName"
               label="Họ tên chú rể"
-              defaultValue={field(content, "groomFullName")}
+              defaultValue={seed("groomFullName", field(content, "groomFullName"))}
               placeholder="VD: Trần Gia Khánh"
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
             />
             <Text
               name="brideShortName"
               label="Tên gọi cô dâu"
-              defaultValue={field(content, "brideShortName")}
+              defaultValue={seed("brideShortName", field(content, "brideShortName"))}
               placeholder="VD: Quỳnh Anh"
               hint="Tên ngắn để in to trên thiệp (VD: Quỳnh Anh & Gia Khánh)."
             />
             <Text
               name="groomShortName"
               label="Tên gọi chú rể"
-              defaultValue={field(content, "groomShortName")}
+              defaultValue={seed("groomShortName", field(content, "groomShortName"))}
               placeholder="VD: Gia Khánh"
               hint="Tên ngắn để in to trên thiệp."
             />
-            <Text
+            <BirthOrderField
               name="brideBirthOrder"
               label="Thứ bậc cô dâu"
-              defaultValue={field(content, "brideBirthOrder")}
-              placeholder="VD: Út Nữ"
-              hint="Thứ bậc trong gia đình, hiển thị dưới ảnh cô dâu (VD: Út Nữ, Trưởng Nữ, Thứ Nữ)."
+              defaultValue={seed("brideBirthOrder", field(content, "brideBirthOrder"))}
+              hint="Hiển thị dưới ảnh cô dâu."
             />
-            <Text
+            <BirthOrderField
               name="groomBirthOrder"
               label="Thứ bậc chú rể"
-              defaultValue={field(content, "groomBirthOrder")}
-              placeholder="VD: Trưởng Nam"
-              hint="Thứ bậc trong gia đình, hiển thị dưới ảnh chú rể (VD: Trưởng Nam, Thứ Nam, Út Nam)."
+              defaultValue={seed("groomBirthOrder", field(content, "groomBirthOrder"))}
+              hint="Hiển thị dưới ảnh chú rể."
             />
             <div className="sm:col-span-2 flex items-center gap-2">
               <input
@@ -414,54 +836,54 @@ export function EditorForm({
                 name="brideFirst"
                 type="checkbox"
                 value="true"
-                defaultChecked={content?.brideFirst ?? true}
+                defaultChecked={seedBool("brideFirst", content?.brideFirst ?? true)}
                 className="size-4 accent-[#fb3570]"
               />
               <label htmlFor="brideFirst" className="text-sm text-zinc-300">
                 Hiển thị cô dâu trước
               </label>
             </div>
-            <Text name="date" label="Ngày cưới" type="date" defaultValue={field(content, "date")} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." />
-            <Text name="time" label="Giờ cưới" type="time" defaultValue={field(content, "time")} />
-            <Text name="ceremonyDate" label="Ngày lễ" type="date" defaultValue={field(content, "ceremonyDate")} hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới." />
-            <Text name="ceremonyTime" label="Giờ lễ" type="time" defaultValue={field(content, "ceremonyTime")} />
+            <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." />
+            <Text name="time" label="Giờ cưới" type="time" defaultValue={seed("time", field(content, "time"))} />
+            <Text name="ceremonyDate" label="Ngày lễ" type="date" defaultValue={seed("ceremonyDate", field(content, "ceremonyDate"))} hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới." />
+            <Text name="ceremonyTime" label="Giờ lễ" type="time" defaultValue={seed("ceremonyTime", field(content, "ceremonyTime"))} />
             <Text
               name="ceremonyHeader"
               label="Tiêu đề lễ"
-              defaultValue={field(content, "ceremonyHeader")}
+              defaultValue={seed("ceremonyHeader", field(content, "ceremonyHeader"))}
               placeholder="VD: Lễ Thành Hôn"
               hint="Dòng chữ đặt trên phần thông tin lễ (VD: Lễ Vu Quy, Lễ Thành Hôn)."
               full
             />
-            <ColorField name="primaryColor" label="Màu chủ đạo" defaultValue={field(content, "primaryColor")} />
+            <ColorField name="primaryColor" label="Màu chủ đạo" defaultValue={seed("primaryColor", field(content, "primaryColor"))} />
           </Grid>
         </Accordion>
 
         <Accordion title="Thông tin gia đình" icon="⌂">
           <Grid>
             <SubHeader>Nhà trai</SubHeader>
-            <Text name="groomFather" label="Cha chú rể" defaultValue={field(content, "groomFather")} placeholder="VD: Ông Trần Văn Minh" />
-            <Text name="groomMother" label="Mẹ chú rể" defaultValue={field(content, "groomMother")} placeholder="VD: Bà Phạm Thị Hoa" />
+            <Text name="groomFather" label="Cha chú rể" defaultValue={seed("groomFather", field(content, "groomFather"))} placeholder="VD: Ông Trần Văn Minh" />
+            <Text name="groomMother" label="Mẹ chú rể" defaultValue={seed("groomMother", field(content, "groomMother"))} placeholder="VD: Bà Phạm Thị Hoa" />
             <Text
               name="groomParentTitle"
               label="Danh xưng nhà trai"
-              defaultValue={field(content, "groomParentTitle")}
-              placeholder="VD: Song thân"
-              hint="Cách gọi cha mẹ trên thiệp (VD: Song thân, Gia đình)."
+              defaultValue={seed("groomParentTitle", field(content, "groomParentTitle"))}
+              placeholder="VD: Ông Bà"
+              hint="Cách gọi cha mẹ trên thiệp (VD: Ông Bà, Gia đình)."
             />
-            <Text name="groomAddress" label="Địa chỉ nhà trai" defaultValue={field(content, "groomAddress")} placeholder="Số nhà, đường, phường/xã, tỉnh/thành" full />
+            <Text name="groomAddress" label="Địa chỉ nhà trai" defaultValue={seed("groomAddress", field(content, "groomAddress"))} placeholder="Số nhà, đường, phường/xã, tỉnh/thành" full />
 
             <SubHeader>Nhà gái</SubHeader>
-            <Text name="brideFather" label="Cha cô dâu" defaultValue={field(content, "brideFather")} placeholder="VD: Ông Nguyễn Văn Hưng" />
-            <Text name="brideMother" label="Mẹ cô dâu" defaultValue={field(content, "brideMother")} placeholder="VD: Bà Trần Thị Lan" />
+            <Text name="brideFather" label="Cha cô dâu" defaultValue={seed("brideFather", field(content, "brideFather"))} placeholder="VD: Ông Nguyễn Văn Hưng" />
+            <Text name="brideMother" label="Mẹ cô dâu" defaultValue={seed("brideMother", field(content, "brideMother"))} placeholder="VD: Bà Trần Thị Lan" />
             <Text
               name="brideParentTitle"
               label="Danh xưng nhà gái"
-              defaultValue={field(content, "brideParentTitle")}
-              placeholder="VD: Song thân"
-              hint="Cách gọi cha mẹ trên thiệp (VD: Song thân, Gia đình)."
+              defaultValue={seed("brideParentTitle", field(content, "brideParentTitle"))}
+              placeholder="VD: Ông Bà"
+              hint="Cách gọi cha mẹ trên thiệp (VD: Ông Bà, Gia đình)."
             />
-            <Text name="brideAddress" label="Địa chỉ nhà gái" defaultValue={field(content, "brideAddress")} placeholder="Số nhà, đường, phường/xã, tỉnh/thành" full />
+            <Text name="brideAddress" label="Địa chỉ nhà gái" defaultValue={seed("brideAddress", field(content, "brideAddress"))} placeholder="Số nhà, đường, phường/xã, tỉnh/thành" full />
           </Grid>
         </Accordion>
 
@@ -470,7 +892,7 @@ export function EditorForm({
             <Text
               name="address"
               label="Địa chỉ"
-              defaultValue={field(content, "address")}
+              defaultValue={seed("address", field(content, "address"))}
               placeholder="VD: Trung tâm tiệc cưới ABC, 123 Lê Lợi, Q.1, TP.HCM"
               hint="Địa chỉ hiển thị trên thiệp cho khách xem."
               full
@@ -478,7 +900,7 @@ export function EditorForm({
             <Text
               name="mapAddress"
               label="Địa chỉ bản đồ"
-              defaultValue={field(content, "mapAddress")}
+              defaultValue={seed("mapAddress", field(content, "mapAddress"))}
               placeholder="Dán địa chỉ hoặc tên nơi tổ chức để tìm trên Google Maps"
               hint="Dùng để nhúng bản đồ chỉ đường. Nên dán đúng như trên Google Maps."
               full
@@ -486,7 +908,7 @@ export function EditorForm({
             <Text
               name="banquetTime"
               label="Giờ đãi tiệc"
-              defaultValue={field(content, "banquetTime")}
+              defaultValue={seed("banquetTime", field(content, "banquetTime"))}
               placeholder="VD: 18:00 Thứ Bảy, 14/06/2026"
             />
           </Grid>
@@ -528,74 +950,52 @@ export function EditorForm({
         </Accordion>
 
         <Accordion title="Album ảnh" icon="◱">
-          <p className="mb-3 text-xs text-zinc-500">
-            Dán đường dẫn ảnh (URL) để hiển thị trong album của thiệp. Mỗi dòng là một ảnh, tối đa 30 ảnh.
-          </p>
-          <div className="mb-3 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setGalleryRows((r) => [...r, ""])}
-              className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-white hover:bg-white/5"
-            >
-              + Thêm ảnh
-            </button>
-          </div>
-          <div className="space-y-3">
-            {galleryRows.map((url, i) => (
-              <div key={i} className="flex gap-3">
-                <input
-                  name="galleryUrl"
-                  defaultValue={url}
-                  placeholder="/chungdoi/images/... hoặc URL ảnh"
-                  className={inputClass}
-                />
-                <button
-                  type="button"
-                  onClick={() => setGalleryRows((r) => r.filter((_, idx) => idx !== i))}
-                  className="shrink-0 rounded-lg border border-white/10 px-3 text-sm text-zinc-400 hover:text-red-400"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
+          <GalleryUploader initial={Array.isArray(draft?.galleryUrl) ? (draft!.galleryUrl as string[]) : gallery} />
         </Accordion>
 
         <Accordion title="Font & Nhạc" icon="♪" defaultOpen={false}>
           <Grid>
-            <Text name="fontFamily" label="Font chữ" defaultValue={field(content, "fontFamily")} />
-            <Text name="music" label="Nhạc nền (URL)" defaultValue={field(content, "music")} />
+            <Select
+              name="fontFamily"
+              label="Font chữ"
+              defaultValue={seed("fontFamily", field(content, "fontFamily"))}
+              options={FONT_OPTIONS}
+              hint="Font hiển thị tên cô dâu chú rể trên thiệp."
+            />
+            <MusicField defaultValue={seed("music", field(content, "music"))} />
           </Grid>
         </Accordion>
 
         <Accordion title="Thông tin chuyển khoản" icon="✉" defaultOpen={false}>
           <Grid>
             <SubHeader>Nhà trai</SubHeader>
-            <Text name="groomBankName" label="Ngân hàng chú rể" defaultValue={field(content, "groomBankName")} />
-            <Text name="groomAccountNumber" label="Số tài khoản chú rể" defaultValue={field(content, "groomAccountNumber")} />
-            <Text name="groomAccountName" label="Chủ tài khoản chú rể" defaultValue={field(content, "groomAccountName")} full />
+            <Text name="groomBankName" label="Ngân hàng chú rể" defaultValue={seed("groomBankName", field(content, "groomBankName"))} />
+            <Text name="groomAccountNumber" label="Số tài khoản chú rể" defaultValue={seed("groomAccountNumber", field(content, "groomAccountNumber"))} />
+            <Text name="groomAccountName" label="Chủ tài khoản chú rể" defaultValue={seed("groomAccountName", field(content, "groomAccountName"))} full />
 
             <SubHeader>Nhà gái</SubHeader>
-            <Text name="brideBankName" label="Ngân hàng cô dâu" defaultValue={field(content, "brideBankName")} />
-            <Text name="brideAccountNumber" label="Số tài khoản cô dâu" defaultValue={field(content, "brideAccountNumber")} />
-            <Text name="brideAccountName" label="Chủ tài khoản cô dâu" defaultValue={field(content, "brideAccountName")} full />
+            <Text name="brideBankName" label="Ngân hàng cô dâu" defaultValue={seed("brideBankName", field(content, "brideBankName"))} />
+            <Text name="brideAccountNumber" label="Số tài khoản cô dâu" defaultValue={seed("brideAccountNumber", field(content, "brideAccountNumber"))} />
+            <Text name="brideAccountName" label="Chủ tài khoản cô dâu" defaultValue={seed("brideAccountName", field(content, "brideAccountName"))} full />
           </Grid>
         </Accordion>
 
-        {saveState?.error ? (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">{saveState.error}</p>
-        ) : null}
-        {saveState?.ok ? (
-          <p className="rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">Đã lưu bản nháp</p>
-        ) : null}
-
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-full bg-white/10 px-6 py-2.5 font-bold text-white transition hover:bg-white/15 disabled:opacity-60"
-        >
-          {saving ? "Đang lưu..." : "Lưu bản nháp"}
-        </button>
+        <div className="sticky bottom-0 -mx-4 mt-2 flex items-center gap-3 border-t border-white/10 bg-[#0f0b09]/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded-full bg-white/10 px-6 py-2.5 font-bold text-white transition hover:bg-white/15 disabled:opacity-60"
+          >
+            {saving ? "Đang lưu..." : "Lưu bản nháp"}
+          </button>
+          <button
+            type="button"
+            onClick={onShowPreview}
+            className="rounded-full border border-white/15 px-6 py-2.5 font-semibold text-white transition hover:bg-white/5"
+          >
+            Xem trước
+          </button>
+        </div>
       </form>
 
       <section className="mt-8 rounded-2xl border border-[#fb3570]/30 bg-[#fb3570]/5 p-5">
