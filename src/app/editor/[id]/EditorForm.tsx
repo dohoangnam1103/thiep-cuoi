@@ -179,8 +179,9 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
 }
 
 const inputClass =
-  "w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none transition focus:border-[#fb3570]";
-const labelClass = "mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-400";
+  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-ring";
+const labelClass = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground";
+const optionClass = "bg-card text-foreground";
 
 function Accordion({
   title,
@@ -195,17 +196,17 @@ function Accordion({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#1c1512]/60">
+    <section className="overflow-hidden rounded-2xl border border-border bg-card">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between px-5 py-4 text-left"
       >
-        <span className="flex items-center gap-2 font-pattaya text-xl text-[#fb3570]">
+        <span className="flex items-center gap-2 font-pattaya text-xl text-primary">
           <span aria-hidden>{icon}</span>
           {title}
         </span>
-        <span className={`text-zinc-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden>
+        <span className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} aria-hidden>
           ⌄
         </span>
       </button>
@@ -248,7 +249,7 @@ function Text({
         placeholder={placeholder}
         className={inputClass}
       />
-      {hint ? <p className="mt-1 text-xs text-zinc-500">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
@@ -275,12 +276,12 @@ function Select({
       </label>
       <select id={name} name={name} defaultValue={defaultValue} className={inputClass}>
         {options.map((o) => (
-          <option key={o.value} value={o.value} className="bg-[#1c1512]">
+          <option key={o.value} value={o.value} className={optionClass}>
             {o.label}
           </option>
         ))}
       </select>
-      {hint ? <p className="mt-1 text-xs text-zinc-500">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
@@ -331,15 +332,15 @@ function BirthOrderField({
           }}
           className={inputClass}
         >
-          <option value="" className="bg-[#1c1512]">
+          <option value="" className={optionClass}>
             — Chọn thứ bậc —
           </option>
           {BIRTH_ORDER_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value} className="bg-[#1c1512]">
+            <option key={o.value} value={o.value} className={optionClass}>
               {o.label}
             </option>
           ))}
-          <option value="__custom__" className="bg-[#1c1512]">
+          <option value="__custom__" className={optionClass}>
             Khác…
           </option>
         </select>
@@ -351,12 +352,12 @@ function BirthOrderField({
             setCustom(false);
             setValue("");
           }}
-          className="mt-1 text-xs text-[#fb3570] hover:underline"
+          className="mt-1 text-xs text-primary hover:underline"
         >
           Chọn từ danh sách
         </button>
       ) : hint ? (
-        <p className="mt-1 text-xs text-zinc-500">{hint}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   );
@@ -398,7 +399,7 @@ function MusicField({ defaultValue = "" }: { defaultValue?: string }) {
           className={inputClass}
         >
           {MUSIC_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value} className="bg-[#1c1512]">
+            <option key={o.value} value={o.value} className={optionClass}>
               {o.label}
             </option>
           ))}
@@ -407,7 +408,7 @@ function MusicField({ defaultValue = "" }: { defaultValue?: string }) {
           type="button"
           onClick={togglePlay}
           disabled={!value}
-          className="shrink-0 rounded-lg border border-white/15 px-3 py-2 text-sm text-white hover:bg-white/5 disabled:opacity-40"
+          className="shrink-0 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground hover:bg-muted disabled:opacity-40"
           aria-label={playing ? "Dừng" : "Nghe thử"}
         >
           {playing ? "⏸" : "▶"}
@@ -438,13 +439,13 @@ function TemplatePicker({ defaultValue }: { defaultValue: string }) {
               onClick={() => setSelected(id)}
               className={`group relative overflow-hidden rounded-xl border text-left transition ${
                 active
-                  ? "border-[#fb3570] ring-2 ring-[#fb3570]/40"
-                  : "border-white/10 hover:border-white/30"
+                  ? "border-primary ring-2 ring-primary/40"
+                  : "border-border hover:border-primary/40"
               }`}
               aria-pressed={active}
             >
               {tpl?.listing ? (
-                <span className="block aspect-[3/4] bg-black/30">
+                <span className="block aspect-[3/4] bg-muted">
                   <Image
                     src={tpl.listing}
                     alt={TEMPLATE_LABELS[id]}
@@ -454,13 +455,13 @@ function TemplatePicker({ defaultValue }: { defaultValue: string }) {
                   />
                 </span>
               ) : (
-                <span className="block aspect-[3/4] bg-black/30" />
+                <span className="block aspect-[3/4] bg-muted" />
               )}
-              <span className="block px-2 py-1.5 text-xs font-semibold text-white">
+              <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
                 {TEMPLATE_LABELS[id]}
               </span>
               {active ? (
-                <span className="absolute right-2 top-2 rounded-full bg-[#fb3570] px-1.5 text-xs text-white">
+                <span className="absolute right-2 top-2 rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
                   ✓
                 </span>
               ) : null}
@@ -483,7 +484,7 @@ function SortablePhoto({ url, onRemove }: { url: string; onRemove: () => void })
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-black/30"
+      className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-muted"
     >
       <input type="hidden" name="galleryUrl" value={url} />
       <Image src={url} alt="Ảnh album" fill sizes="200px" className="object-cover" />
@@ -491,7 +492,7 @@ function SortablePhoto({ url, onRemove }: { url: string; onRemove: () => void })
         type="button"
         {...attributes}
         {...listeners}
-        className="absolute left-1.5 top-1.5 cursor-grab rounded-md bg-black/60 px-1.5 py-0.5 text-xs text-white active:cursor-grabbing"
+        className="absolute left-1.5 top-1.5 cursor-grab rounded-md bg-foreground/70 px-1.5 py-0.5 text-xs text-background active:cursor-grabbing"
         aria-label="Kéo để sắp xếp"
       >
         ⠿
@@ -499,7 +500,7 @@ function SortablePhoto({ url, onRemove }: { url: string; onRemove: () => void })
       <button
         type="button"
         onClick={onRemove}
-        className="absolute right-1.5 top-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-xs text-white hover:bg-red-500/80"
+        className="absolute right-1.5 top-1.5 rounded-md bg-foreground/70 px-1.5 py-0.5 text-xs text-background hover:bg-destructive"
         aria-label="Xoá ảnh"
       >
         ✕
@@ -565,7 +566,7 @@ function GalleryUploader({ initial }: { initial: string[] }) {
 
   return (
     <div>
-      <p className="mb-3 text-xs text-zinc-500">
+      <p className="mb-3 text-xs text-muted-foreground">
         Tải ảnh lên để hiển thị trong album thiệp. Kéo để sắp xếp thứ tự, tối đa 30 ảnh (≤5MB mỗi ảnh).
       </p>
       <div
@@ -577,13 +578,13 @@ function GalleryUploader({ initial }: { initial: string[] }) {
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
         className={`mb-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-4 py-8 text-center transition ${
-          dragOver ? "border-[#fb3570] bg-[#fb3570]/5" : "border-white/15 hover:border-white/30"
+          dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
         }`}
       >
         <span className="text-2xl" aria-hidden>
           ◱
         </span>
-        <p className="mt-2 text-sm text-zinc-300">
+        <p className="mt-2 text-sm text-muted-foreground">
           {uploading ? "Đang tải ảnh…" : "Kéo thả ảnh vào đây hoặc bấm để chọn"}
         </p>
         <input
@@ -630,7 +631,7 @@ function ColorField({ name, label, defaultValue }: { name: string; label: string
           type="color"
           value={valid ? value : "#c8102e"}
           onChange={(e) => setValue(e.target.value)}
-          className="h-9 w-12 shrink-0 cursor-pointer rounded-lg border border-white/10 bg-black/30"
+          className="h-9 w-12 shrink-0 cursor-pointer rounded-lg border border-input bg-background"
           aria-label={`${label} - bảng màu`}
         />
         <input
@@ -647,15 +648,15 @@ function ColorField({ name, label, defaultValue }: { name: string; label: string
 }
 
 function SubHeader({ children }: { children: React.ReactNode }) {
-  return <p className="sm:col-span-2 -mb-1 text-sm font-semibold text-zinc-300">{children}</p>;
+  return <p className="sm:col-span-2 -mb-1 text-sm font-semibold text-foreground">{children}</p>;
 }
 
 function TabBar({ tab, onEdit, onPreview }: { tab: "edit" | "preview"; onEdit: () => void; onPreview: () => void }) {
   const base = "rounded-full px-4 py-2 text-sm font-semibold transition";
-  const active = "bg-[#fb3570] text-white shadow-lg shadow-[#fb3570]/25";
-  const idle = "text-zinc-300 hover:bg-white/5";
+  const active = "bg-primary text-primary-foreground shadow-lg shadow-primary/25";
+  const idle = "text-muted-foreground hover:bg-muted";
   return (
-    <div className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-[#1c1512]/80 p-1 backdrop-blur">
+    <div className="inline-flex items-center gap-1 rounded-full border border-border bg-card/80 p-1 backdrop-blur">
       <button type="button" onClick={onEdit} className={`${base} ${tab === "edit" ? active : idle}`}>
         Chỉnh sửa
       </button>
@@ -762,7 +763,7 @@ export function EditorForm({
 
   return (
     <>
-      <Toaster position="top-center" theme="dark" richColors />
+      <Toaster position="top-center" theme="light" richColors />
       {tab === "preview" && previewContent ? (
         <>
           <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
@@ -779,11 +780,11 @@ export function EditorForm({
       <div className={`mx-auto max-w-4xl px-4 py-8 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-white">
+            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
               ← Bảng điều khiển
             </Link>
-            <h1 className="mt-1 font-pattaya text-3xl text-white">Chỉnh sửa thiệp</h1>
-            <p className="text-sm text-zinc-500">
+            <h1 className="mt-1 font-pattaya text-3xl text-foreground">Chỉnh sửa thiệp</h1>
+            <p className="text-sm text-muted-foreground">
               Trạng thái: {status === "published" ? "Đã xuất bản" : "Bản nháp"}
             </p>
           </div>
@@ -844,9 +845,9 @@ export function EditorForm({
                 type="checkbox"
                 value="true"
                 defaultChecked={seedBool("brideFirst", content?.brideFirst ?? true)}
-                className="size-4 accent-[#fb3570]"
+                className="size-4 accent-primary"
               />
-              <label htmlFor="brideFirst" className="text-sm text-zinc-300">
+              <label htmlFor="brideFirst" className="text-sm text-foreground">
                 Hiển thị cô dâu trước
               </label>
             </div>
@@ -922,14 +923,14 @@ export function EditorForm({
         </Accordion>
 
         <Accordion title="Chương trình" icon="✿">
-          <p className="mb-3 text-xs text-zinc-500">
+          <p className="mb-3 text-xs text-muted-foreground">
             Các mốc thời gian trong ngày cưới, ví dụ: 09:00 Lễ Vu Quy, 11:00 Đón khách, 18:00 Khai tiệc.
           </p>
           <div className="mb-3 flex justify-end">
             <button
               type="button"
               onClick={() => setScheduleRows((r) => [...r, { time: "", label: "" }])}
-              className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-white hover:bg-white/5"
+              className="rounded-full border border-border bg-secondary px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
             >
               + Thêm mốc
             </button>
@@ -947,7 +948,7 @@ export function EditorForm({
                 <button
                   type="button"
                   onClick={() => setScheduleRows((r) => r.filter((_, idx) => idx !== i))}
-                  className="shrink-0 rounded-lg border border-white/10 px-3 text-sm text-zinc-400 hover:text-red-400"
+                  className="shrink-0 rounded-lg border border-border px-3 text-sm text-muted-foreground hover:text-destructive"
                 >
                   ✕
                 </button>
@@ -987,26 +988,26 @@ export function EditorForm({
           </Grid>
         </Accordion>
 
-        <div className="sticky bottom-0 -mx-4 mt-2 flex items-center gap-3 border-t border-white/10 bg-[#0f0b09]/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+        <div className="sticky bottom-0 -mx-4 mt-2 flex items-center gap-3 border-t border-border bg-background/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
           <button
             type="submit"
             disabled={saving}
-            className="rounded-full bg-white/10 px-6 py-2.5 font-bold text-white transition hover:bg-white/15 disabled:opacity-60"
+            className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
           >
             {saving ? "Đang lưu..." : "Lưu bản nháp"}
           </button>
           <button
             type="button"
             onClick={onShowPreview}
-            className="rounded-full border border-white/15 px-6 py-2.5 font-semibold text-white transition hover:bg-white/5"
+            className="rounded-full border border-border bg-secondary px-6 py-2.5 font-semibold text-foreground transition hover:bg-muted"
           >
             Xem trước
           </button>
         </div>
       </form>
 
-      <section className="mt-8 rounded-2xl border border-[#fb3570]/30 bg-[#fb3570]/5 p-5">
-        <h2 className="mb-4 font-pattaya text-xl text-[#fb3570]">Xuất bản</h2>
+      <section className="mt-8 rounded-2xl border border-primary/30 bg-primary/5 p-5">
+        <h2 className="mb-4 font-pattaya text-xl text-primary">Xuất bản</h2>
         <form
           action={publishFormAction}
           onSubmit={() => {
@@ -1023,13 +1024,13 @@ export function EditorForm({
             <button
               type="button"
               onClick={onGenerateSlug}
-              className="text-xs font-semibold text-[#fb3570] hover:underline"
+              className="text-xs font-semibold text-primary hover:underline"
             >
               Tạo từ tên
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-zinc-400">/thiep/</span>
+            <span className="text-sm text-muted-foreground">/thiep/</span>
             <input
               id="slug"
               name="slug"
@@ -1045,28 +1046,28 @@ export function EditorForm({
               type="button"
               onClick={onCheckSlug}
               disabled={checking}
-              className="shrink-0 rounded-lg border border-white/15 px-3 py-2 text-sm text-white hover:bg-white/5 disabled:opacity-60"
+              className="shrink-0 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground hover:bg-muted disabled:opacity-60"
             >
               {checking ? "..." : "Kiểm tra"}
             </button>
           </div>
-          <p className="text-xs text-zinc-500">Tự tạo từ tên cô dâu/chú rể, bạn có thể sửa lại tuỳ ý.</p>
+          <p className="text-xs text-muted-foreground">Tự tạo từ tên cô dâu/chú rể, bạn có thể sửa lại tuỳ ý.</p>
           {slugStatus ? (
-            <p className={`text-sm ${slugStatus.available ? "text-emerald-300" : "text-red-300"}`}>
+            <p className={`text-sm ${slugStatus.available ? "text-emerald-700" : "text-red-700"}`}>
               {slugStatus.available ? "Đường dẫn khả dụng" : slugStatus.reason}
             </p>
           ) : null}
           {publishState?.error ? (
-            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">{publishState.error}</p>
+            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-700">{publishState.error}</p>
           ) : null}
           <button
             type="submit"
             disabled={publishing}
-            className="rounded-full bg-[#fb3570] px-6 py-2.5 font-bold text-white shadow-lg shadow-[#fb3570]/25 transition hover:bg-[#ff4a82] disabled:opacity-60"
+            className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90 disabled:opacity-60"
           >
             {publishing ? "Đang xuất bản..." : "Xuất bản thiệp"}
           </button>
-          <p className="text-xs text-zinc-500">Nhớ lưu bản nháp trước khi xuất bản.</p>
+          <p className="text-xs text-muted-foreground">Nhớ lưu bản nháp trước khi xuất bản.</p>
         </form>
       </section>
       </div>
