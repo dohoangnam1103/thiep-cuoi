@@ -844,10 +844,10 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
             </div>
             <div className="flex w-full flex-col items-center gap-2">
               <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">Út Nữ</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{couple.brideBirthOrder || "Út Nữ"}</div>
               <div className="text-[35px] md:text-[48px]">&amp;</div>
               <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">Út Nam</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{couple.groomBirthOrder || "Út Nam"}</div>
             </div>
             <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</p>
             {couple.ceremonyTime ? <p className="text-[14px] md:text-[15px]">Vào lúc {couple.ceremonyTime}</p> : null}
@@ -1157,8 +1157,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
   // lunar date is demo-specific; project has no lunar-calendar dependency
   const LUNAR = "(Tức ngày 17/06 năm Bính Ngọ)";
   const banks = ([
-    { title: `Trưởng Nam - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    { title: `Út Nữ - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
+    { title: `${couple.groomBirthOrder || "Trưởng Nam"} - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    { title: `${couple.brideBirthOrder || "Út Nữ"} - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
   ] as const).filter((q) => q.bank);
 
   return (
@@ -1170,14 +1170,14 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <p className="relative z-10 px-4 pt-10 text-center text-[11px] uppercase tracking-[0.35em] md:pt-[52px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Cormorant Garamond", "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>WELCOME TO OUR WEDDING</p>
         <div className="relative z-10 mx-auto mt-3 flex w-full max-w-[872px] items-center justify-center gap-4 px-4 md:mt-4 md:gap-5 md:px-10">
           <div className="min-w-0 flex-1 text-center">
-            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>Trưởng Nam</p>
+            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{couple.groomBirthOrder || "Trưởng Nam"}</p>
             <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{groomGiven}</p>
           </div>
           <div className="flex w-[64px] shrink-0 items-center justify-center md:w-[83px]">
             <img alt="" className="h-[64px] w-[64px] object-contain md:h-[83px] md:w-[83px]" src={`${SHR}/chu-hy.webp`} style={{ filter: palette.chuHyFilter }} />
           </div>
           <div className="min-w-0 flex-1 text-center">
-            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>Út Nữ</p>
+            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{couple.brideBirthOrder || "Út Nữ"}</p>
             <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{brideGiven}</p>
           </div>
         </div>
@@ -1225,10 +1225,10 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           </div>
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
             <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: palette.accent }}>{couple.groomFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Trưởng Nam</div>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
             <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: palette.accent }}>{couple.brideFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Út Nữ</div>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{couple.brideBirthOrder || "Út Nữ"}</div>
           </div>
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
             <div style={{ color: palette.accent }}>
@@ -1833,10 +1833,10 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
           </div>
           <div className="mt-10 flex w-full flex-col items-center gap-1 text-center md:gap-2">
             <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{couple.groomFullName}</FitText>
-            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>Trưởng Nam</div>
+            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
             <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: NB_CAROSELLO, color: RED }}>&amp;</div>
             <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{couple.brideFullName}</FitText>
-            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>Út Nữ</div>
+            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{couple.brideBirthOrder || "Út Nữ"}</div>
           </div>
           {ceremony ? (
             <div className="mt-10 flex flex-col items-center gap-4 text-center md:gap-5" style={{ fontFamily: NB_HELV, color: BROWN }}>
@@ -2261,10 +2261,10 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
 
             <div className="relative flex flex-col items-center gap-1 py-[10px] text-center md:gap-2 md:py-[15px] lg:py-[20px]">
               <h3 className="flex w-[90%] items-center justify-center whitespace-nowrap leading-tight md:w-[95%] md:leading-snug" style={{ fontSize: 70, fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.groomFullName}</h3>
-              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>Trưởng Nam</div>
+              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
               <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: COBA_HAYDON, color: RED }}>&amp;</div>
               <h3 className="flex w-[90%] items-center justify-center whitespace-nowrap leading-tight md:w-[95%] md:leading-snug" style={{ fontSize: 70, fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.brideFullName}</h3>
-              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>Út Nữ</div>
+              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{couple.brideBirthOrder || "Út Nữ"}</div>
             </div>
 
             {/* ceremony */}
@@ -2992,13 +2992,13 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           <div className="pointer-events-none relative z-20 flex items-start justify-center gap-2 sm:gap-4">
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
               <img src={DD_AVATARS.groom} alt={couple.groomShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{palette.groomLabel}</div>
+              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{couple.groomBirthOrder || palette.groomLabel}</div>
               <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: DD_RED, fontFamily: '"Fz Aghita", cursive' }}>{couple.groomShortName}</div>
             </div>
             <div className="w-[52px] shrink-0 sm:w-[70px] md:w-[96px]" />
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
               <img src={DD_AVATARS.bride} alt={couple.brideShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{palette.brideLabel}</div>
+              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{couple.brideBirthOrder || palette.brideLabel}</div>
               <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: DD_RED, fontFamily: '"Fz Aghita", cursive' }}>{couple.brideShortName}</div>
             </div>
           </div>
@@ -3033,10 +3033,10 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
 
             <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
               <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: DD_RED }}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{palette.groomLabel}</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{couple.groomBirthOrder || palette.groomLabel}</div>
               <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: DD_GRAY }}>&amp;</div>
               <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: DD_RED }}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{palette.brideLabel}</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{couple.brideBirthOrder || palette.brideLabel}</div>
             </div>
 
             <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>
@@ -3334,13 +3334,13 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
           <div className="pointer-events-none relative z-20 flex items-start justify-center gap-2 sm:gap-4">
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
               <img src={SLX_AVATARS.groom} alt={couple.groomShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>Trưởng Nam / 신랑</div>
+              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{couple.groomBirthOrder || "Trưởng Nam"} / 신랑</div>
               <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{couple.groomShortName}</div>
             </div>
             <div className="w-[52px] shrink-0 sm:w-[70px] md:w-[96px]" />
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
               <img src={SLX_AVATARS.bride} alt={couple.brideShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>Thứ Nữ / 신부</div>
+              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{couple.brideBirthOrder || "Thứ Nữ"} / 신부</div>
               <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{couple.brideShortName}</div>
             </div>
           </div>
@@ -3374,10 +3374,10 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
 
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
             <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: SLX_GREEN }}>{couple.groomFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>Trưởng Nam / 신랑</div>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{couple.groomBirthOrder || "Trưởng Nam"} / 신랑</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: SLX_GRAY }}>&amp;</div>
             <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: SLX_GREEN }}>{couple.brideFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>Thứ Nữ / 신부</div>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{couple.brideBirthOrder || "Thứ Nữ"} / 신부</div>
           </div>
 
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>

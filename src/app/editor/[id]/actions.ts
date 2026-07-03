@@ -25,6 +25,8 @@ const contentSchema = z.object({
   groomFullName: z.string().max(120).optional().default(""),
   brideShortName: z.string().max(60).optional().default(""),
   groomShortName: z.string().max(60).optional().default(""),
+  groomBirthOrder: z.string().max(40).optional().default(""),
+  brideBirthOrder: z.string().max(40).optional().default(""),
   brideFirst: z.coerce.boolean().optional().default(true),
   date: z.string().max(20).optional().default(""),
   time: z.string().max(20).optional().default(""),

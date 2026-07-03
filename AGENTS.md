@@ -4,17 +4,20 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# Website Reverse-Engineer Template
+# Chungdoi — Wedding Invitation App
 
 ## What This Is
-A reusable template for reverse-engineering any website into a clean, modern Next.js codebase using AI coding agents. The Next.js + shadcn/ui + Tailwind v4 base is pre-scaffolded — just run `/clone-website <url1> [<url2> ...]`.
+A web app for creating and sharing digital wedding invitations (thiệp cưới). Users pick a template, customize couple/family/event details in an editor, and publish a shareable invitation page. Supports multiple languages and multiple visual themes.
 
 ## Tech Stack
 - **Framework:** Next.js 16 (App Router, React 19, TypeScript strict)
 - **UI:** shadcn/ui (Radix primitives, Tailwind CSS v4, `cn()` utility)
-- **Icons:** Lucide React (default — will be replaced/supplemented by extracted SVGs)
 - **Styling:** Tailwind CSS v4 with oklch design tokens
-- **Deployment:** Vercel
+- **Icons:** Lucide React
+- **Database:** Prisma 7 + SQLite (better-sqlite3 adapter)
+- **Auth:** session-based (`jose` JWT, `bcryptjs` password hashing)
+- **i18n:** next-intl — vi (default), en, ko, ja, zh
+- **Deployment:** minipc / Docker (see `docs/deploy-minipc.md`)
 
 ## Commands
 - `npm run dev` — Start dev server
@@ -22,6 +25,9 @@ A reusable template for reverse-engineering any website into a clean, modern Nex
 - `npm run lint` — ESLint check
 - `npm run typecheck` — TypeScript check
 - `npm run check` — Run lint + typecheck + build
+- `npm run prisma:migrate` — Run Prisma migrations (dev)
+- `npm run prisma:generate` — Regenerate Prisma client
+- `npm run test:lightbox` — Playwright check for the demo lightbox
 
 ## Code Style
 - TypeScript strict mode, no `any`
@@ -29,37 +35,36 @@ A reusable template for reverse-engineering any website into a clean, modern Nex
 - Tailwind utility classes, no inline styles
 - 2-space indentation
 - Responsive: mobile-first
-
-## Design Principles
-- **Pixel-perfect emulation** — match the target's spacing, colors, typography exactly
-- **No personal aesthetic changes during emulation phase** — match 1:1 first, customize later
-- **Real content** — use actual text and assets from the target site, not placeholders
-- **Beauty-first** — every pixel matters
+- All user-facing copy goes through next-intl message catalogs (`messages/*.json`), never hardcoded
 
 ## Project Structure
 ```
 src/
-  app/              # Next.js routes
-  components/       # React components
-    ui/             # shadcn/ui primitives
-    icons.tsx       # Extracted SVG icons as React components
-  lib/
-    utils.ts        # cn() utility (shadcn)
+  app/
+    (auth)/         # login, signup, auth actions
+    [locale]/       # public localized pages (home, pricing, blog, help, templates, policies, tools)
+    api/            # route handlers
+    dashboard/      # authenticated user dashboard
+    editor/[id]/    # invitation editor
+    thiep/          # published invitation pages
+  components/       # React components (chungdoi-*.tsx) + ui/ (shadcn primitives)
+  data/             # invitation content, demo content, theme config
+  generated/prisma/ # generated Prisma client (do not edit)
+  hooks/            # custom React hooks
+  i18n/             # next-intl config
+  lib/              # dal.ts, prisma.ts, session.ts, utils.ts
   types/            # TypeScript interfaces
-  hooks/            # Custom React hooks
-public/
-  images/           # Downloaded images from target site
-  videos/           # Downloaded videos from target site
-  seo/              # Favicons, OG images, webmanifest
-docs/
-  research/         # Inspection output (design tokens, components, layout)
-  design-references/ # Screenshots and visual references
-scripts/            # Asset download scripts
+prisma/
+  schema.prisma     # DB schema
+  migrations/       # DB migrations
+messages/           # i18n catalogs: vi, en, ko, ja, zh
+public/chungdoi/    # fonts, images, music, uploads, icons
+docs/               # deploy guides + research notes
 ```
 
-## MOST IMPORTANT NOTES
-- When launching Claude Code agent teams, ALWAYS have each teammate work in their own worktree branch and merge everyone's work at the end, resolving any merge conflicts smartly since you are basically serving the orchestrator role and have full context to our goals, work given, work achieved, and desired outcomes.
-- After editing `AGENTS.md`, run `bash scripts/sync-agent-rules.sh` to regenerate platform-specific instruction files.
-- After editing `.claude/skills/clone-website/SKILL.md`, run `node scripts/sync-skills.mjs` to regenerate the skill for all platforms.
+## Notes
+- `dev.db` and `prisma/*.db` are gitignored — the SQLite database is local only.
+- Files in `src/data/` marked `// Auto-generated` were seeded from research crawls; edit them directly, there is no regeneration script anymore.
+- Some Prisma writes are wrapped in a data-access layer (`src/lib/dal.ts`) — prefer it over calling the client directly from components.
 
 @docs/research/INSPECTION_GUIDE.md

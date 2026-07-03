@@ -32,6 +32,8 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       groomFullName: c?.groomFullName ?? "",
       brideShortName: c?.brideShortName ?? "",
       groomShortName: c?.groomShortName ?? "",
+      brideBirthOrder: c?.brideBirthOrder ?? "",
+      groomBirthOrder: c?.groomBirthOrder ?? "",
       brideFirst: c?.brideFirst ?? true,
       date: c?.date ?? "",
       time: c?.time ?? "",

@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 
+import { ChungDoiDemo } from "@/components/chungdoi-demo";
+import { templates } from "@/data/chungdoi";
+import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { InvitationContent } from "@/generated/prisma/client";
 import { saveDraft, publish, checkSlug, type EditorState } from "./actions";
 import { VALID_TEMPLATE_IDS } from "./templates";
@@ -33,6 +36,109 @@ const TEMPLATE_LABELS: Record<(typeof VALID_TEMPLATE_IDS)[number], string> = {
 function field(content: InvitationContent | null, key: keyof InvitationContent): string {
   const v = content?.[key];
   return typeof v === "string" ? v : "";
+}
+
+function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Like slugify but keeps a trailing hyphen so the user can type multi-word slugs. */
+function slugifyInput(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+/, "");
+}
+
+function slugFromNames(content: InvitationContent | null): string {
+  const bride = (content?.brideShortName || content?.brideFullName || "").trim();
+  const groom = (content?.groomShortName || content?.groomFullName || "").trim();
+  if (!bride && !groom) return "";
+  const order = (content?.brideFirst ?? true) ? [bride, groom] : [groom, bride];
+  return slugify(order.filter(Boolean).join(" "));
+}
+
+function buildPreviewContent(form: HTMLFormElement, invitationId: string): ChungDoiDemoContent {
+  const read = (name: string) =>
+    ((form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null)?.value ?? "").trim();
+  const readAll = (name: string) =>
+    Array.from(form.querySelectorAll<HTMLInputElement>(`[name="${name}"]`)).map((el) => el.value);
+  const brideFirst = (form.elements.namedItem("brideFirst") as HTMLInputElement | null)?.checked ?? true;
+
+  const templateId = read("templateId");
+  const times = readAll("scheduleTime");
+  const labels = readAll("scheduleLabel");
+  const schedule: { time: string; label: string }[] = [];
+  for (let i = 0; i < Math.max(times.length, labels.length); i++) {
+    const time = (times[i] ?? "").trim();
+    const label = (labels[i] ?? "").trim();
+    if (time || label) schedule.push({ time, label });
+  }
+  const gallery = readAll("galleryUrl")
+    .map((u) => u.trim())
+    .filter(Boolean)
+    .slice(0, 30);
+
+  return {
+    slug: templateId,
+    invitationId,
+    theme: {
+      primaryColor: read("primaryColor") || "#c8102e",
+      fontFamily: read("fontFamily") || null,
+      assetFolder: null,
+      assets: [],
+    },
+    couple: {
+      brideFullName: read("brideFullName"),
+      groomFullName: read("groomFullName"),
+      brideShortName: read("brideShortName"),
+      groomShortName: read("groomShortName"),
+      brideBirthOrder: read("brideBirthOrder"),
+      groomBirthOrder: read("groomBirthOrder"),
+      brideFirst,
+      date: read("date"),
+      time: read("time"),
+      ceremonyDate: read("ceremonyDate"),
+      ceremonyTime: read("ceremonyTime"),
+      ceremonyHeader: read("ceremonyHeader"),
+    },
+    families: {
+      brideFather: read("brideFather"),
+      brideMother: read("brideMother"),
+      brideAddress: read("brideAddress"),
+      groomFather: read("groomFather"),
+      groomMother: read("groomMother"),
+      groomAddress: read("groomAddress"),
+      brideParentTitle: read("brideParentTitle"),
+      groomParentTitle: read("groomParentTitle"),
+    },
+    venue: {
+      address: read("address"),
+      mapAddress: read("mapAddress"),
+      banquetTime: read("banquetTime"),
+    },
+    schedule,
+    gallery,
+    wishes: [],
+    bank: {
+      brideBankName: read("brideBankName"),
+      brideAccountNumber: read("brideAccountNumber"),
+      brideAccountName: read("brideAccountName"),
+      groomBankName: read("groomBankName"),
+      groomAccountNumber: read("groomAccountNumber"),
+      groomAccountName: read("groomAccountName"),
+    },
+    music: read("music") || null,
+  };
 }
 
 const inputClass =
@@ -143,6 +249,22 @@ function SubHeader({ children }: { children: React.ReactNode }) {
   return <p className="sm:col-span-2 -mb-1 text-sm font-semibold text-zinc-300">{children}</p>;
 }
 
+function TabBar({ tab, onEdit, onPreview }: { tab: "edit" | "preview"; onEdit: () => void; onPreview: () => void }) {
+  const base = "rounded-full px-4 py-2 text-sm font-semibold transition";
+  const active = "bg-[#fb3570] text-white shadow-lg shadow-[#fb3570]/25";
+  const idle = "text-zinc-300 hover:bg-white/5";
+  return (
+    <div className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-[#1c1512]/80 p-1 backdrop-blur">
+      <button type="button" onClick={onEdit} className={`${base} ${tab === "edit" ? active : idle}`}>
+        Chỉnh sửa
+      </button>
+      <button type="button" onClick={onPreview} className={`${base} ${tab === "preview" ? active : idle}`}>
+        Xem trước
+      </button>
+    </div>
+  );
+}
+
 export function EditorForm({
   invitationId,
   status,
@@ -163,9 +285,31 @@ export function EditorForm({
   const [scheduleRows, setScheduleRows] = useState(schedule.length ? schedule : [{ time: "", label: "" }]);
   const [galleryRows, setGalleryRows] = useState(gallery.length ? gallery : [""]);
 
-  const [slug, setSlug] = useState(currentSlug ?? "");
+  const [slug, setSlug] = useState(currentSlug || slugFromNames(content));
   const [slugStatus, setSlugStatus] = useState<{ available: boolean; reason?: string } | null>(null);
   const [checking, startCheck] = useTransition();
+
+  const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [previewContent, setPreviewContent] = useState<ChungDoiDemoContent | null>(null);
+
+  function onShowPreview() {
+    const form = document.getElementById("editor-form") as HTMLFormElement | null;
+    if (!form) return;
+    setPreviewContent(buildPreviewContent(form, invitationId));
+    setTab("preview");
+  }
+
+  function onGenerateSlug() {
+    const form = document.getElementById("editor-form") as HTMLFormElement | null;
+    const read = (name: string) => (form?.elements.namedItem(name) as HTMLInputElement | null)?.value ?? "";
+    const bride = (read("brideShortName") || read("brideFullName")).trim();
+    const groom = (read("groomShortName") || read("groomFullName")).trim();
+    const brideFirst = (form?.elements.namedItem("brideFirst") as HTMLInputElement | null)?.checked ?? true;
+    const order = brideFirst ? [bride, groom] : [groom, bride];
+    const next = slugify(order.filter(Boolean).join(" "));
+    setSlug(next);
+    setSlugStatus(next ? null : { available: false, reason: "Chưa có tên cô dâu/chú rể" });
+  }
 
   function onCheckSlug() {
     if (!slug.trim()) {
@@ -179,26 +323,35 @@ export function EditorForm({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-white">
-            ← Bảng điều khiển
-          </Link>
-          <h1 className="mt-1 font-pattaya text-3xl text-white">Chỉnh sửa thiệp</h1>
-          <p className="text-sm text-zinc-500">
-            Trạng thái: {status === "published" ? "Đã xuất bản" : "Bản nháp"}
-          </p>
-        </div>
-        <Link
-          href={`/editor/${invitationId}/preview`}
-          className="rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/5"
-        >
-          Xem trước
-        </Link>
-      </div>
+    <>
+      {tab === "preview" && previewContent ? (
+        <>
+          <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
+            <TabBar tab={tab} onEdit={() => setTab("edit")} onPreview={onShowPreview} />
+          </div>
+          <ChungDoiDemo
+            key={JSON.stringify(previewContent)}
+            template={templates.find((t) => t.slug === previewContent.slug) ?? templates[0]}
+            content={previewContent}
+          />
+        </>
+      ) : null}
 
-      <form action={saveFormAction} className="space-y-4" id="editor-form">
+      <div className={`mx-auto max-w-4xl px-4 py-8 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-white">
+              ← Bảng điều khiển
+            </Link>
+            <h1 className="mt-1 font-pattaya text-3xl text-white">Chỉnh sửa thiệp</h1>
+            <p className="text-sm text-zinc-500">
+              Trạng thái: {status === "published" ? "Đã xuất bản" : "Bản nháp"}
+            </p>
+          </div>
+          <TabBar tab={tab} onEdit={() => setTab("edit")} onPreview={onShowPreview} />
+        </div>
+
+        <form action={saveFormAction} className="space-y-4" id="editor-form">
         <Accordion title="Thông tin cơ bản" icon="♡">
           <Grid>
             <div className="sm:col-span-2">
@@ -240,6 +393,20 @@ export function EditorForm({
               defaultValue={field(content, "groomShortName")}
               placeholder="VD: Gia Khánh"
               hint="Tên ngắn để in to trên thiệp."
+            />
+            <Text
+              name="brideBirthOrder"
+              label="Thứ bậc cô dâu"
+              defaultValue={field(content, "brideBirthOrder")}
+              placeholder="VD: Út Nữ"
+              hint="Thứ bậc trong gia đình, hiển thị dưới ảnh cô dâu (VD: Út Nữ, Trưởng Nữ, Thứ Nữ)."
+            />
+            <Text
+              name="groomBirthOrder"
+              label="Thứ bậc chú rể"
+              defaultValue={field(content, "groomBirthOrder")}
+              placeholder="VD: Trưởng Nam"
+              hint="Thứ bậc trong gia đình, hiển thị dưới ảnh chú rể (VD: Trưởng Nam, Thứ Nam, Út Nam)."
             />
             <div className="sm:col-span-2 flex items-center gap-2">
               <input
@@ -434,9 +601,18 @@ export function EditorForm({
       <section className="mt-8 rounded-2xl border border-[#fb3570]/30 bg-[#fb3570]/5 p-5">
         <h2 className="mb-4 font-pattaya text-xl text-[#fb3570]">Xuất bản</h2>
         <form action={publishFormAction} className="space-y-3">
-          <label htmlFor="slug" className={labelClass}>
-            Đường dẫn công khai
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="slug" className={labelClass}>
+              Đường dẫn công khai
+            </label>
+            <button
+              type="button"
+              onClick={onGenerateSlug}
+              className="text-xs font-semibold text-[#fb3570] hover:underline"
+            >
+              Tạo từ tên
+            </button>
+          </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-zinc-400">/thiep/</span>
             <input
@@ -444,7 +620,7 @@ export function EditorForm({
               name="slug"
               value={slug}
               onChange={(e) => {
-                setSlug(e.target.value);
+                setSlug(slugifyInput(e.target.value));
                 setSlugStatus(null);
               }}
               placeholder="quynh-anh-gia-khanh"
@@ -459,6 +635,7 @@ export function EditorForm({
               {checking ? "..." : "Kiểm tra"}
             </button>
           </div>
+          <p className="text-xs text-zinc-500">Tự tạo từ tên cô dâu/chú rể, bạn có thể sửa lại tuỳ ý.</p>
           {slugStatus ? (
             <p className={`text-sm ${slugStatus.available ? "text-emerald-300" : "text-red-300"}`}>
               {slugStatus.available ? "Đường dẫn khả dụng" : slugStatus.reason}
@@ -477,6 +654,7 @@ export function EditorForm({
           <p className="text-xs text-zinc-500">Nhớ lưu bản nháp trước khi xuất bản.</p>
         </form>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

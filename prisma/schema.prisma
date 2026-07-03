@@ -50,6 +50,8 @@ model InvitationContent {
   groomFullName  String @default("")
   brideShortName String @default("")
   groomShortName String @default("")
+  brideBirthOrder String @default("")
+  groomBirthOrder String @default("")
   brideFirst     Boolean @default(true)
   date           String  @default("")
   time           String  @default("")
