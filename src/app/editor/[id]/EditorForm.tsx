@@ -26,7 +26,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, MUSIC_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
 import { saveDraft, publish, checkSlug, type EditorState } from "./actions";
-import { readDraft, type Draft } from "@/hooks/use-form-draft";
+import { readDraft, useFormDraft, type Draft } from "@/hooks/use-form-draft";
 import { VALID_TEMPLATE_IDS } from "./templates";
 
 type EditorFormProps = {
@@ -723,6 +723,13 @@ export function EditorForm({
     if (publishState?.error) toast.error(publishState.error);
   }, [publishState]);
 
+  useFormDraft({
+    formId: "editor-form",
+    invitationId,
+    enabled: serverEmpty,
+    cleared: saveState?.ok === true,
+  });
+
   function onShowPreview() {
     const form = document.getElementById("editor-form") as HTMLFormElement | null;
     if (!form) return;
@@ -1000,7 +1007,15 @@ export function EditorForm({
 
       <section className="mt-8 rounded-2xl border border-[#fb3570]/30 bg-[#fb3570]/5 p-5">
         <h2 className="mb-4 font-pattaya text-xl text-[#fb3570]">Xuất bản</h2>
-        <form action={publishFormAction} className="space-y-3">
+        <form
+          action={publishFormAction}
+          onSubmit={() => {
+            try {
+              window.localStorage.removeItem(`chungdoi:draft:${invitationId}`);
+            } catch {}
+          }}
+          className="space-y-3"
+        >
           <div className="flex items-center justify-between">
             <label htmlFor="slug" className={labelClass}>
               Đường dẫn công khai
