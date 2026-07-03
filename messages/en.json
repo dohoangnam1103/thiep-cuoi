@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "ChungDoi - Personalized Online Wedding Invitations",
+    "title": "Thiệp Mừng Online - Personalized Online Wedding Invitations",
     "description": "Create personalized online wedding invitations with templates, RSVP, guest management, maps, galleries, music, and gift QR."
   },
   "chrome": {
@@ -28,7 +28,7 @@
       "helpCenter": "Help Center",
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
-      "copyright": "© 2026 ChungDoi - Online Wedding Invitations",
+      "copyright": "© 2026 Thiệp Mừng Online - Online Wedding Invitations",
       "chatWithUs": "Chat with us"
     }
   },
@@ -59,7 +59,7 @@
       "new": "New"
     },
     "stats": {
-      "title": "Over 65,000 couples have created their online wedding invitations with ChungDoi",
+      "title": "Over 65,000 couples have created their online wedding invitations with Thiệp Mừng Online",
       "registered": "Registered",
       "invitationsCreated": "Invitations Created",
       "totalViews": "Total Views"
@@ -77,7 +77,7 @@
     },
     "support": {
       "title": "When you need us, we're here",
-      "subtitle": "The ChungDoi team is online 24/7. Chat whenever you need help with edits, sharing, guests, or payments.",
+      "subtitle": "The Thiệp Mừng Online team is online 24/7. Chat whenever you need help with edits, sharing, guests, or payments.",
       "startCreating": "Start Creating",
       "replyTimeLabel": "Reply time",
       "replyTimeValue": "Usually under 1 minute",
@@ -133,7 +133,7 @@
     },
     "gallery": {
       "title": "Handcrafted wedding invitation templates",
-      "subtitle": "All {count} public ChungDoi templates are mirrored here as local assets, with the same tall preview style and hover motion.",
+      "subtitle": "All {count} public Thiệp Mừng Online templates are mirrored here as local assets, with the same tall preview style and hover motion.",
       "countLabel": "{shown} / {total} templates",
       "styleLabel": "Style",
       "colorLabel": "Color",
@@ -185,7 +185,7 @@
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
       "refundPolicy": "Refund Policy",
-      "copyright": "© 2026 ChungDoi - Online Wedding Invitations",
+      "copyright": "© 2026 Thiệp Mừng Online - Online Wedding Invitations",
       "mobileTemplates": "Templates",
       "mobileGuide": "Guide",
       "mobileGuests": "Guests",
@@ -193,11 +193,11 @@
     }
   },
   "listing": {
-    "metaTitle": "Wedding Invitation Templates | ChungDoi Clone",
-    "metaDescription": "Browse the ChungDoi wedding invitation templates: filter by style and color, preview and open a live demo with cover animation, gallery and RSVP.",
+    "metaTitle": "Wedding Invitation Templates | Thiệp Mừng Online",
+    "metaDescription": "Browse the Thiệp Mừng Online wedding invitation templates: filter by style and color, preview and open a live demo with cover animation, gallery and RSVP.",
     "eyebrow": "Wedding templates",
     "title": "Handcrafted wedding invitation templates",
-    "subtitle": "Every public ChungDoi template is mirrored here as local assets, with the same tall preview style and hover motion.",
+    "subtitle": "Every public Thiệp Mừng Online template is mirrored here as local assets, with the same tall preview style and hover motion.",
     "styleLabel": "Style",
     "colorLabel": "Color",
     "countSuffix": "templates",
@@ -211,8 +211,8 @@
     "new": "New"
   },
   "pricing": {
-    "metaTitle": "Pricing | ChungDoi Clone",
-    "metaDescription": "ChungDoi online wedding invitation pricing: one-time payment, no hidden fees, free 3-day trial.",
+    "metaTitle": "Pricing | Thiệp Mừng Online",
+    "metaDescription": "Thiệp Mừng Online online wedding invitation pricing: one-time payment, no hidden fees, free 3-day trial.",
     "eyebrow": "Pricing",
     "title": "Simple pricing, no hidden fees",
     "subtitle": "Beautiful, full-featured online wedding invitations for your big day.",
@@ -269,7 +269,7 @@
     "faq5A": "Refunds cover duplicate charges, unauthorized charges, or an outage we cannot fix within 7 days."
   },
   "tools": {
-    "metaTitle": "Wedding Tools | ChungDoi Clone",
+    "metaTitle": "Wedding Tools | Thiệp Mừng Online",
     "metaDescription": "Free wedding tools: Save the Date photo maker, AI wedding messages, QR code generator, image and video compressors.",
     "eyebrow": "Tools",
     "title": "Free wedding tools",
@@ -288,12 +288,12 @@
     "tool5Desc": "Compresses wedding videos entirely on your device with no upload required."
   },
   "policy": {
-    "privacyMetaTitle": "Privacy Policy | ChungDoi Clone",
-    "privacyMetaDescription": "How ChungDoi collects, uses, and protects your data.",
-    "termsMetaTitle": "Terms of Service | ChungDoi Clone",
-    "termsMetaDescription": "The terms that govern your use of ChungDoi.",
-    "refundMetaTitle": "Refund Policy | ChungDoi Clone",
-    "refundMetaDescription": "When and how ChungDoi issues refunds.",
+    "privacyMetaTitle": "Privacy Policy | Thiệp Mừng Online",
+    "privacyMetaDescription": "How Thiệp Mừng Online collects, uses, and protects your data.",
+    "termsMetaTitle": "Terms of Service | Thiệp Mừng Online",
+    "termsMetaDescription": "The terms that govern your use of Thiệp Mừng Online.",
+    "refundMetaTitle": "Refund Policy | Thiệp Mừng Online",
+    "refundMetaDescription": "When and how Thiệp Mừng Online issues refunds.",
     "updated": "Last updated: 2026-01-01",
     "privacyTitle": "Privacy Policy",
     "privacyS1H": "Information we collect",
@@ -306,7 +306,7 @@
     "privacyS4B": "You can edit or delete your invitation and guest data at any time. Contact our support team if you need help with your personal data.",
     "termsTitle": "Terms of Service",
     "termsS1H": "Acceptance of terms",
-    "termsS1B": "By using ChungDoi to create online wedding invitations, you agree to these terms. If you do not agree, please stop using the service.",
+    "termsS1B": "By using Thiệp Mừng Online to create online wedding invitations, you agree to these terms. If you do not agree, please stop using the service.",
     "termsS2H": "Account and content",
     "termsS2B": "You are responsible for the content, photos and information published on your invitation. Do not use the service for unlawful purposes or to infringe the rights of others.",
     "termsS3H": "Payment",
@@ -322,22 +322,22 @@
     "refundS3B": "Contact our support team with your payment details. We will process the request as soon as possible."
   },
   "blog": {
-    "metaTitle": "Blog | ChungDoi Clone",
-    "metaDescription": "The latest wedding invitation tips and trends from ChungDoi.",
+    "metaTitle": "Blog | Thiệp Mừng Online",
+    "metaDescription": "The latest wedding invitation tips and trends from Thiệp Mừng Online.",
     "eyebrow": "Blog",
     "title": "The latest wedding invitation tips and trends",
     "readMore": "Read more →",
     "pagination": "1 - 12 / 22 articles",
     "backToBlog": "← Back to Blog",
-    "cloneNote1": "This is a UI clone of ChungDoi. The full content of the original article is published at chungdoi.com. This copy keeps the article structure, summary and layout for design-reference purposes.",
+    "cloneNote1": "This is a UI clone of Thiệp Mừng Online. The full content of the original article is published at thiepmungonline.com. This copy keeps the article structure, summary and layout for design-reference purposes.",
     "cloneNote2": "You can browse all the online wedding invitation templates, helper tools and pricing right here in this clone via the navigation bar above.",
     "related": "Related articles"
   },
   "help": {
-    "metaTitle": "Help Center | ChungDoi",
-    "metaDescription": "Find answers quickly. Create the perfect wedding invitation with ChungDoi.",
+    "metaTitle": "Help Center | Thiệp Mừng Online",
+    "metaDescription": "Find answers quickly. Create the perfect wedding invitation with Thiệp Mừng Online.",
     "title": "Help Center",
-    "subtitle": "Find answers quickly. Create the perfect wedding invitation with ChungDoi.",
+    "subtitle": "Find answers quickly. Create the perfect wedding invitation with Thiệp Mừng Online.",
     "searchPlaceholder": "Search questions...",
     "popularTitle": "Popular articles"
   }

@@ -4,6 +4,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 @font-face {
   font-family: "Pattaya";
   src: url("/chungdoi/fonts/Pattaya-Regular.woff") format("woff");

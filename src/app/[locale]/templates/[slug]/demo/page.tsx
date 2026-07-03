@@ -29,11 +29,11 @@ export async function generateMetadata({
   const template = findTemplateByRouteSlug(slug);
 
   if (!template) {
-    return { title: "Demo | ChungDoi" };
+    return { title: "Demo | Thiệp Mừng Online" };
   }
 
   return {
-    title: `${template.name} Demo | ChungDoi Clone`,
+    title: `${template.name} Demo | Thiệp Mừng Online Clone`,
     description: template.description,
     openGraph: {
       title: `${template.name} Demo`,

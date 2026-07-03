@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "ChungDoi - Thiệp cưới online cá nhân hóa",
+    "title": "Thiệp Mừng Online - Thiệp cưới online cá nhân hóa",
     "description": "Tạo thiệp cưới online cá nhân hóa với mẫu thiệp, RSVP, quản lý khách mời, bản đồ, album ảnh, nhạc và mã QR nhận quà."
   },
   "chrome": {
@@ -28,7 +28,7 @@
       "helpCenter": "Trung tâm trợ giúp",
       "privacyPolicy": "Chính sách bảo mật",
       "termsOfService": "Điều khoản sử dụng",
-      "copyright": "© 2026 ChungDoi - Thiệp cưới online",
+      "copyright": "© 2026 Thiệp Mừng Online - Thiệp cưới online",
       "chatWithUs": "Chat với chúng tôi"
     }
   },
@@ -59,7 +59,7 @@
       "new": "Mới"
     },
     "stats": {
-      "title": "Hơn 65.000 cặp đôi đã tạo thiệp cưới online cùng ChungDoi",
+      "title": "Hơn 65.000 cặp đôi đã tạo thiệp cưới online cùng Thiệp Mừng Online",
       "registered": "Đã đăng ký",
       "invitationsCreated": "Thiệp đã tạo",
       "totalViews": "Tổng lượt xem"
@@ -77,7 +77,7 @@
     },
     "support": {
       "title": "Khi bạn cần, chúng tôi luôn ở đây",
-      "subtitle": "Đội ngũ ChungDoi trực tuyến 24/7. Nhắn tin bất cứ khi nào bạn cần hỗ trợ chỉnh sửa, chia sẻ, khách mời hay thanh toán.",
+      "subtitle": "Đội ngũ Thiệp Mừng Online trực tuyến 24/7. Nhắn tin bất cứ khi nào bạn cần hỗ trợ chỉnh sửa, chia sẻ, khách mời hay thanh toán.",
       "startCreating": "Bắt đầu tạo thiệp",
       "replyTimeLabel": "Thời gian phản hồi",
       "replyTimeValue": "Thường dưới 1 phút",
@@ -133,7 +133,7 @@
     },
     "gallery": {
       "title": "Mẫu thiệp cưới online thủ công",
-      "subtitle": "Tất cả {count} mẫu thiệp ChungDoi được sao lưu tại đây dưới dạng ảnh cục bộ, giữ nguyên phong cách preview dọc và hiệu ứng hover.",
+      "subtitle": "Tất cả {count} mẫu thiệp Thiệp Mừng Online được sao lưu tại đây dưới dạng ảnh cục bộ, giữ nguyên phong cách preview dọc và hiệu ứng hover.",
       "countLabel": "{shown} / {total} mẫu thiệp",
       "styleLabel": "Phong cách",
       "colorLabel": "Màu sắc",
@@ -185,7 +185,7 @@
       "privacyPolicy": "Chính sách bảo mật",
       "termsOfService": "Điều khoản sử dụng",
       "refundPolicy": "Chính sách hoàn tiền",
-      "copyright": "© 2026 ChungDoi - Thiệp cưới online",
+      "copyright": "© 2026 Thiệp Mừng Online - Thiệp cưới online",
       "mobileTemplates": "Mẫu thiệp",
       "mobileGuide": "Hướng dẫn",
       "mobileGuests": "Khách mời",
@@ -193,11 +193,11 @@
     }
   },
   "listing": {
-    "metaTitle": "Mẫu thiệp cưới online | ChungDoi Clone",
-    "metaDescription": "Kho mẫu thiệp cưới online của ChungDoi: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
+    "metaTitle": "Mẫu thiệp cưới online | Thiệp Mừng Online",
+    "metaDescription": "Kho mẫu thiệp cưới online của Thiệp Mừng Online: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
     "eyebrow": "Mẫu thiệp cưới",
     "title": "Mẫu thiệp cưới online thủ công",
-    "subtitle": "Tất cả mẫu thiệp ChungDoi được sao lưu tại đây dưới dạng ảnh cục bộ, giữ nguyên phong cách preview dọc và hiệu ứng hover.",
+    "subtitle": "Tất cả mẫu thiệp Thiệp Mừng Online được sao lưu tại đây dưới dạng ảnh cục bộ, giữ nguyên phong cách preview dọc và hiệu ứng hover.",
     "styleLabel": "Phong cách",
     "colorLabel": "Màu sắc",
     "countSuffix": "mẫu thiệp",
@@ -211,8 +211,8 @@
     "new": "Mới"
   },
   "pricing": {
-    "metaTitle": "Bảng giá | ChungDoi Clone",
-    "metaDescription": "Bảng giá thiệp cưới online ChungDoi: thanh toán một lần, không phí ẩn, dùng thử miễn phí 3 ngày.",
+    "metaTitle": "Bảng giá | Thiệp Mừng Online",
+    "metaDescription": "Bảng giá thiệp cưới online Thiệp Mừng Online: thanh toán một lần, không phí ẩn, dùng thử miễn phí 3 ngày.",
     "eyebrow": "Bảng giá",
     "title": "Giá đơn giản, không phí ẩn",
     "subtitle": "Thiệp cưới online đẹp, đầy đủ tính năng cho ngày trọng đại của bạn.",
@@ -269,7 +269,7 @@
     "faq5A": "Hoàn tiền cho trường hợp thanh toán trùng, thanh toán trái phép, hoặc sự cố chúng tôi không thể khắc phục trong 7 ngày."
   },
   "tools": {
-    "metaTitle": "Công cụ cưới | ChungDoi Clone",
+    "metaTitle": "Công cụ cưới | Thiệp Mừng Online",
     "metaDescription": "Công cụ cưới miễn phí: tạo ảnh Save the Date, lời mời AI, tạo mã QR, nén ảnh và video.",
     "eyebrow": "Công cụ",
     "title": "Công cụ cưới miễn phí",
@@ -288,12 +288,12 @@
     "tool5Desc": "Nén video cưới hoàn toàn trên thiết bị của bạn, không cần tải lên."
   },
   "policy": {
-    "privacyMetaTitle": "Chính sách bảo mật | ChungDoi Clone",
-    "privacyMetaDescription": "Cách ChungDoi thu thập, sử dụng và bảo vệ dữ liệu của bạn.",
-    "termsMetaTitle": "Điều khoản sử dụng | ChungDoi Clone",
-    "termsMetaDescription": "Các điều khoản chi phối việc bạn sử dụng ChungDoi.",
-    "refundMetaTitle": "Chính sách hoàn tiền | ChungDoi Clone",
-    "refundMetaDescription": "Khi nào và cách ChungDoi hoàn tiền.",
+    "privacyMetaTitle": "Chính sách bảo mật | Thiệp Mừng Online",
+    "privacyMetaDescription": "Cách Thiệp Mừng Online thu thập, sử dụng và bảo vệ dữ liệu của bạn.",
+    "termsMetaTitle": "Điều khoản sử dụng | Thiệp Mừng Online",
+    "termsMetaDescription": "Các điều khoản chi phối việc bạn sử dụng Thiệp Mừng Online.",
+    "refundMetaTitle": "Chính sách hoàn tiền | Thiệp Mừng Online",
+    "refundMetaDescription": "Khi nào và cách Thiệp Mừng Online hoàn tiền.",
     "updated": "Cập nhật lần cuối: 01/01/2026",
     "privacyTitle": "Chính sách bảo mật",
     "privacyS1H": "Thông tin chúng tôi thu thập",
@@ -306,7 +306,7 @@
     "privacyS4B": "Bạn có thể chỉnh sửa hoặc xóa thiệp và dữ liệu khách mời bất cứ lúc nào. Liên hệ đội ngũ hỗ trợ nếu cần trợ giúp về dữ liệu cá nhân.",
     "termsTitle": "Điều khoản sử dụng",
     "termsS1H": "Chấp nhận điều khoản",
-    "termsS1B": "Khi sử dụng ChungDoi để tạo thiệp cưới online, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng ngừng sử dụng dịch vụ.",
+    "termsS1B": "Khi sử dụng Thiệp Mừng Online để tạo thiệp cưới online, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng ngừng sử dụng dịch vụ.",
     "termsS2H": "Tài khoản và nội dung",
     "termsS2B": "Bạn chịu trách nhiệm về nội dung, ảnh và thông tin đăng tải trên thiệp. Không sử dụng dịch vụ cho mục đích vi phạm pháp luật hoặc xâm phạm quyền của người khác.",
     "termsS3H": "Thanh toán",
@@ -322,22 +322,22 @@
     "refundS3B": "Liên hệ đội ngũ hỗ trợ với thông tin thanh toán của bạn. Chúng tôi sẽ xử lý yêu cầu trong thời gian sớm nhất."
   },
   "blog": {
-    "metaTitle": "Blog | ChungDoi Clone",
-    "metaDescription": "Kinh nghiệm và xu hướng thiệp cưới mới nhất từ ChungDoi.",
+    "metaTitle": "Blog | Thiệp Mừng Online",
+    "metaDescription": "Kinh nghiệm và xu hướng thiệp cưới mới nhất từ Thiệp Mừng Online.",
     "eyebrow": "Blog",
     "title": "Kinh nghiệm và xu hướng thiệp cưới mới nhất",
     "readMore": "Đọc tiếp →",
     "pagination": "1 - 12 / 22 bài viết",
     "backToBlog": "← Quay lại Blog",
-    "cloneNote1": "Đây là bản clone giao diện của ChungDoi. Nội dung đầy đủ của bài viết gốc được xuất bản tại chungdoi.com. Bản sao này giữ nguyên cấu trúc bài viết, phần tóm tắt và bố cục để phục vụ mục đích tham khảo thiết kế.",
+    "cloneNote1": "Đây là bản clone giao diện của Thiệp Mừng Online. Nội dung đầy đủ của bài viết gốc được xuất bản tại thiepmungonline.com. Bản sao này giữ nguyên cấu trúc bài viết, phần tóm tắt và bố cục để phục vụ mục đích tham khảo thiết kế.",
     "cloneNote2": "Bạn có thể xem toàn bộ các mẫu thiệp cưới online, công cụ hỗ trợ và bảng giá ngay trong bản clone này thông qua thanh điều hướng phía trên.",
     "related": "Bài viết liên quan"
   },
   "help": {
-    "metaTitle": "Trung tâm trợ giúp | ChungDoi",
-    "metaDescription": "Tìm câu trả lời nhanh chóng. Tạo thiệp cưới hoàn hảo cùng ChungDoi.",
+    "metaTitle": "Trung tâm trợ giúp | Thiệp Mừng Online",
+    "metaDescription": "Tìm câu trả lời nhanh chóng. Tạo thiệp cưới hoàn hảo cùng Thiệp Mừng Online.",
     "title": "Trung tâm trợ giúp",
-    "subtitle": "Tìm câu trả lời nhanh chóng. Tạo thiệp cưới hoàn hảo cùng ChungDoi.",
+    "subtitle": "Tìm câu trả lời nhanh chóng. Tạo thiệp cưới hoàn hảo cùng Thiệp Mừng Online.",
     "searchPlaceholder": "Tìm kiếm câu hỏi...",
     "popularTitle": "Bài viết phổ biến"
   }

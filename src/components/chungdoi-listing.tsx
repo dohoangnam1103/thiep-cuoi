@@ -4,6 +4,7 @@ import { ArrowRight, Star, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
+import { createInvitation } from "@/app/dashboard/actions";
 import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { Link } from "@/i18n/navigation";
 import {
@@ -204,12 +205,15 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
               >
                 {t("demoCta")} <ArrowRight className="size-4" />
               </Link>
-              <button
-                onClick={onClose}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10"
-              >
-                {t("useStyle")}
-              </button>
+              <form action={createInvitation}>
+                <input type="hidden" name="templateId" value={template.slug} />
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10"
+                >
+                  {t("useStyle")}
+                </button>
+              </form>
             </div>
           </div>
           <div className="grid gap-4 lg:grid-cols-[0.65fr_1fr]">

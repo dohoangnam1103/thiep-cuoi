@@ -4,6 +4,7 @@ import { ImageIcon, MessageCircle, Play, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { LogoMark } from "@/components/logo-mark";
 import { Link } from "@/i18n/navigation";
 
 const NAV_LINKS = [
@@ -17,8 +18,8 @@ const NAV_LINKS = [
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-white/5">
-      <img src="/chungdoi/icon.png" alt="ChungDoi" className="size-8 rounded-lg" />
-      <span className="font-pattaya text-2xl text-white">ChungDoi</span>
+      <LogoMark className="size-8" />
+      <span className="font-pattaya text-2xl text-white">Thiệp Mừng Online</span>
     </Link>
   );
 }

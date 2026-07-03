@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "ChungDoi - 个性化在线婚礼请柬",
+    "title": "Thiệp Mừng Online - 个性化在线婚礼请柬",
     "description": "使用模板、RSVP、宾客管理、地图、相册、音乐和礼金二维码，创建个性化的在线婚礼请柬。"
   },
   "chrome": {
@@ -28,7 +28,7 @@
       "helpCenter": "帮助中心",
       "privacyPolicy": "隐私政策",
       "termsOfService": "服务条款",
-      "copyright": "© 2026 ChungDoi - 在线婚礼请柬",
+      "copyright": "© 2026 Thiệp Mừng Online - 在线婚礼请柬",
       "chatWithUs": "联系我们"
     }
   },
@@ -59,7 +59,7 @@
       "new": "新"
     },
     "stats": {
-      "title": "超过 65,000 对新人已用 ChungDoi 创建在线婚礼请柬",
+      "title": "超过 65,000 对新人已用 Thiệp Mừng Online 创建在线婚礼请柬",
       "registered": "已注册",
       "invitationsCreated": "已创建请柬",
       "totalViews": "总浏览量"
@@ -77,7 +77,7 @@
     },
     "support": {
       "title": "当您需要时，我们随时在此",
-      "subtitle": "ChungDoi 团队 24/7 在线。无论您在编辑、分享、宾客或付款方面需要帮助，随时与我们联系。",
+      "subtitle": "Thiệp Mừng Online 团队 24/7 在线。无论您在编辑、分享、宾客或付款方面需要帮助，随时与我们联系。",
       "startCreating": "开始创建",
       "replyTimeLabel": "回复时间",
       "replyTimeValue": "通常不到1分钟",
@@ -133,7 +133,7 @@
     },
     "gallery": {
       "title": "手工设计的婚礼请柬模板",
-      "subtitle": "所有 {count} 个公开的 ChungDoi 模板都以本地资源镜像于此，保留相同的竖版预览风格和悬停动效。",
+      "subtitle": "所有 {count} 个公开的 Thiệp Mừng Online 模板都以本地资源镜像于此，保留相同的竖版预览风格和悬停动效。",
       "countLabel": "{shown} / {total} 个模板",
       "styleLabel": "风格",
       "colorLabel": "颜色",
@@ -185,7 +185,7 @@
       "privacyPolicy": "隐私政策",
       "termsOfService": "服务条款",
       "refundPolicy": "退款政策",
-      "copyright": "© 2026 ChungDoi - 在线婚礼请柬",
+      "copyright": "© 2026 Thiệp Mừng Online - 在线婚礼请柬",
       "mobileTemplates": "模板",
       "mobileGuide": "指南",
       "mobileGuests": "宾客",
@@ -193,11 +193,11 @@
     }
   },
   "listing": {
-    "metaTitle": "婚礼请柬模板 | ChungDoi Clone",
-    "metaDescription": "浏览 ChungDoi 婚礼请柬模板：按风格和颜色筛选，预览并打开带封面动画、相册和 RSVP 的在线演示。",
+    "metaTitle": "婚礼请柬模板 | Thiệp Mừng Online",
+    "metaDescription": "浏览 Thiệp Mừng Online 婚礼请柬模板：按风格和颜色筛选，预览并打开带封面动画、相册和 RSVP 的在线演示。",
     "eyebrow": "婚礼模板",
     "title": "手工设计的婚礼请柬模板",
-    "subtitle": "所有公开的 ChungDoi 模板都以本地资源镜像于此，保留相同的竖版预览风格和悬停动效。",
+    "subtitle": "所有公开的 Thiệp Mừng Online 模板都以本地资源镜像于此，保留相同的竖版预览风格和悬停动效。",
     "styleLabel": "风格",
     "colorLabel": "颜色",
     "countSuffix": "个模板",
@@ -211,8 +211,8 @@
     "new": "新"
   },
   "pricing": {
-    "metaTitle": "价格 | ChungDoi Clone",
-    "metaDescription": "ChungDoi 在线婚礼请柬价格：一次性付款，无隐藏费用，3天免费试用。",
+    "metaTitle": "价格 | Thiệp Mừng Online",
+    "metaDescription": "Thiệp Mừng Online 在线婚礼请柬价格：一次性付款，无隐藏费用，3天免费试用。",
     "eyebrow": "价格",
     "title": "简单价格，无隐藏费用",
     "subtitle": "为您的大喜之日打造的精美、功能齐全的在线婚礼请柬。",
@@ -269,7 +269,7 @@
     "faq5A": "退款涵盖重复扣款、未经授权的扣款，或我们无法在7天内解决的故障。"
   },
   "tools": {
-    "metaTitle": "婚礼工具 | ChungDoi Clone",
+    "metaTitle": "婚礼工具 | Thiệp Mừng Online",
     "metaDescription": "免费婚礼工具：Save the Date 照片制作、AI 婚礼留言、二维码生成器、图片和视频压缩。",
     "eyebrow": "工具",
     "title": "免费婚礼工具",
@@ -288,12 +288,12 @@
     "tool5Desc": "完全在您的设备上压缩婚礼视频，无需上传。"
   },
   "policy": {
-    "privacyMetaTitle": "隐私政策 | ChungDoi Clone",
-    "privacyMetaDescription": "ChungDoi 如何收集、使用和保护您的数据。",
-    "termsMetaTitle": "服务条款 | ChungDoi Clone",
-    "termsMetaDescription": "规范您使用 ChungDoi 的条款。",
-    "refundMetaTitle": "退款政策 | ChungDoi Clone",
-    "refundMetaDescription": "ChungDoi 何时以及如何退款。",
+    "privacyMetaTitle": "隐私政策 | Thiệp Mừng Online",
+    "privacyMetaDescription": "Thiệp Mừng Online 如何收集、使用和保护您的数据。",
+    "termsMetaTitle": "服务条款 | Thiệp Mừng Online",
+    "termsMetaDescription": "规范您使用 Thiệp Mừng Online 的条款。",
+    "refundMetaTitle": "退款政策 | Thiệp Mừng Online",
+    "refundMetaDescription": "Thiệp Mừng Online 何时以及如何退款。",
     "updated": "最后更新：2026-01-01",
     "privacyTitle": "隐私政策",
     "privacyS1H": "我们收集的信息",
@@ -306,7 +306,7 @@
     "privacyS4B": "您可以随时编辑或删除您的请柬和宾客数据。如需有关个人数据的帮助，请联系我们的支持团队。",
     "termsTitle": "服务条款",
     "termsS1H": "接受条款",
-    "termsS1B": "使用 ChungDoi 创建在线婚礼请柬即表示您同意这些条款。如果您不同意，请停止使用本服务。",
+    "termsS1B": "使用 Thiệp Mừng Online 创建在线婚礼请柬即表示您同意这些条款。如果您不同意，请停止使用本服务。",
     "termsS2H": "账户和内容",
     "termsS2B": "您对请柬上发布的内容、照片和信息负责。请勿将服务用于非法目的或侵犯他人权利。",
     "termsS3H": "付款",
@@ -322,22 +322,22 @@
     "refundS3B": "请携带您的付款信息联系我们的支持团队。我们将尽快处理您的申请。"
   },
   "blog": {
-    "metaTitle": "博客 | ChungDoi Clone",
-    "metaDescription": "来自 ChungDoi 的最新婚礼请柬技巧和趋势。",
+    "metaTitle": "博客 | Thiệp Mừng Online",
+    "metaDescription": "来自 Thiệp Mừng Online 的最新婚礼请柬技巧和趋势。",
     "eyebrow": "博客",
     "title": "最新婚礼请柬技巧和趋势",
     "readMore": "阅读更多 →",
     "pagination": "1 - 12 / 22 篇文章",
     "backToBlog": "← 返回博客",
-    "cloneNote1": "这是 ChungDoi 的界面克隆。原文的完整内容发布于 chungdoi.com。此副本保留文章结构、摘要和布局，仅供设计参考。",
+    "cloneNote1": "这是 Thiệp Mừng Online 的界面克隆。原文的完整内容发布于 thiepmungonline.com。此副本保留文章结构、摘要和布局，仅供设计参考。",
     "cloneNote2": "您可以通过上方导航栏，在此克隆中浏览所有在线婚礼请柬模板、辅助工具和价格。",
     "related": "相关文章"
   },
   "help": {
-    "metaTitle": "帮助中心 | ChungDoi",
-    "metaDescription": "快速找到答案。用 ChungDoi 创建完美的婚礼请柬。",
+    "metaTitle": "帮助中心 | Thiệp Mừng Online",
+    "metaDescription": "快速找到答案。用 Thiệp Mừng Online 创建完美的婚礼请柬。",
     "title": "帮助中心",
-    "subtitle": "快速找到答案。用 ChungDoi 创建完美的婚礼请柬。",
+    "subtitle": "快速找到答案。用 Thiệp Mừng Online 创建完美的婚礼请柬。",
     "searchPlaceholder": "搜索问题...",
     "popularTitle": "热门文章"
   }

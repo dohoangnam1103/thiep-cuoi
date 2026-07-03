@@ -1,11 +1,13 @@
 "use client";
 
+import Lenis from "lenis";
 import { Pause, Play } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
+import { LiveFormsProvider, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -452,6 +454,20 @@ function FamilyBlock({
   );
 }
 
+function GenericWishForm({ tokens }: { tokens: Tokens }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mt-6 space-y-3">
+      <input name="name" required maxLength={120} className="w-full rounded-xl border bg-white/70 px-4 py-3 text-sm outline-none" style={{ borderColor: tokens.dividerTo, color: tokens.textPrimary }} placeholder="Nhập tên của bạn*" />
+      <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-xl border bg-white/70 px-4 py-3 text-sm outline-none" style={{ borderColor: tokens.dividerTo, color: tokens.textPrimary }} placeholder="Nhập lời chúc của bạn*" />
+      {state?.error ? <p className="text-sm text-red-600">{state.error}</p> : null}
+      {state?.ok ? <p className="text-sm" style={{ color: tokens.accent }}>Cảm ơn lời chúc của bạn!</p> : null}
+      <button type="submit" disabled={pending} className="w-full rounded-full py-3 text-sm font-bold uppercase tracking-widest transition hover:-translate-y-0.5 disabled:opacity-60" style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}>{pending ? "Đang gửi..." : "Gửi lời chúc"}</button>
+    </form>
+  );
+}
+
 function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tokens: Tokens }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
@@ -605,11 +621,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
 
       <section className="reveal is-visible mt-16">
         <h2 className="text-center font-pattaya text-3xl" style={{ color: tokens.accent }}>Sổ lưu bút</h2>
-        <div className="mt-6 space-y-3">
-          <input className="w-full rounded-xl border bg-white/70 px-4 py-3 text-sm outline-none" style={{ borderColor: tokens.dividerTo, color: tokens.textPrimary }} placeholder="Nhập tên của bạn*" />
-          <textarea rows={3} className="w-full rounded-xl border bg-white/70 px-4 py-3 text-sm outline-none" style={{ borderColor: tokens.dividerTo, color: tokens.textPrimary }} placeholder="Nhập lời chúc của bạn*" />
-          <button type="button" className="w-full rounded-full py-3 text-sm font-bold uppercase tracking-widest transition hover:-translate-y-0.5" style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}>Gửi lời chúc</button>
-        </div>
+        <GenericWishForm tokens={tokens} />
         {wishes.length > 0 ? (
           <div className="mt-8 space-y-4">
             {wishes.map((wish, index) => (
@@ -651,7 +663,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
 
       <section className="reveal is-visible mt-16 text-center">
         <p className="text-sm leading-7">Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</p>
-        <a href="https://chungdoi.com" target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1 text-sm font-semibold" style={{ color: tokens.accent }}>♡ chungdoi.com</a>
+        <a href="https://thiepmungonline.com" target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1 text-sm font-semibold" style={{ color: tokens.accent }}>♡ thiepmungonline.com</a>
       </section>
     </div>
   );
@@ -715,6 +727,24 @@ function FamilyColumn({ title, a, b, addr }: { title: string; a: string; b: stri
   );
 }
 
+function PhoenixWishForm({ M }: { M: string }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+      <div className="flex flex-col gap-3">
+        <input name="name" required maxLength={120} className="w-full rounded-[6px] border px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(M, 0.3) }} placeholder="Tên của bạn" />
+        <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-[6px] border px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(M, 0.3) }} placeholder="Lời chúc của bạn" />
+        {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
+        {state?.ok ? <p className="text-[12px]" style={{ color: M }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-2 flex items-center justify-end">
+          <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: M, color: "#fff" }}>{pending ? "Đang gửi..." : "Gửi lời chúc"}</button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
 /** Faithful rebuild of the Double Phoenix Red (song-phung-do) opened invitation. */
 function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
@@ -728,6 +758,18 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
+  const [lightbox, setLightbox] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+      else if (e.key === "ArrowLeft") setLightbox((v) => (v === null ? v : (v - 1 + gallery.length) % gallery.length));
+      else if (e.key === "ArrowRight") setLightbox((v) => (v === null ? v : (v + 1) % gallery.length));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, gallery.length]);
 
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -818,16 +860,33 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
             <div className="w-full max-w-[320px] md:max-w-[550px]">
               <div className="grid grid-cols-2 gap-3 p-4 md:gap-4 md:p-6">
                 {galleryShown.map((src, i) => (
-                  <div key={src} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg border bg-white/50" style={{ borderColor: "#00000011" }}>
+                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg border bg-white/50" style={{ borderColor: "#00000011" }}>
                     <img src={src} alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
                     {i === galleryShown.length - 1 && galleryExtra > 0 ? (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-lg font-semibold text-white">+{galleryExtra}</div>
                     ) : null}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           </section>
+        ) : null}
+
+        {lightbox !== null ? (
+          <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90" onClick={() => setLightbox(null)}>
+            <button type="button" aria-label="Đóng" onClick={() => setLightbox(null)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
+            <div className="absolute top-5 text-sm text-white/80">{lightbox + 1} / {gallery.length}</div>
+            <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v === null ? v : (v - 1 + gallery.length) % gallery.length)); }} className="absolute left-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
+            <img src={gallery[lightbox]} alt={`Wedding photo ${lightbox + 1}`} onClick={(e) => e.stopPropagation()} className="max-h-[78vh] max-w-[92vw] rounded-lg object-contain" />
+            <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v === null ? v : (v + 1) % gallery.length)); }} className="absolute right-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
+            <div className="absolute bottom-4 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
+              {gallery.map((src, i) => (
+                <button key={src} type="button" onClick={() => setLightbox(i)} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === lightbox ? CREAM : "transparent", opacity: i === lightbox ? 1 : 0.6 }}>
+                  <img src={src} alt={`Thumbnail ${i + 1}`} className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
         ) : null}
 
         {reception ? (
@@ -906,15 +965,7 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
           <div className="text-center">
             <h2 className="font-pattaya mb-6 text-[22px] md:text-[24px]">Sổ lưu bút</h2>
           </div>
-          <form className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]" onSubmit={(e) => e.preventDefault()}>
-            <div className="flex flex-col gap-3">
-              <input className="w-full rounded-[6px] border px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(M, 0.3) }} placeholder="Tên của bạn" />
-              <textarea rows={3} className="w-full rounded-[6px] border px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(M, 0.3) }} placeholder="Lời chúc của bạn" />
-              <div className="mt-2 flex items-center justify-end">
-                <button type="submit" className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ backgroundColor: M, color: "#fff" }}>Gửi lời chúc</button>
-              </div>
-            </div>
-          </form>
+          <PhoenixWishForm M={M} />
           {wishes.length > 0 ? (
             <div className="chungdoi-scroll mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
               {wishes.map((w, i) => (
@@ -962,7 +1013,7 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
           </span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
-          <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: M }}>♡ chungdoi.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: M }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
@@ -1023,6 +1074,26 @@ function SongHyBand({ palette, children }: { palette: SongHyPalette; children: R
   );
 }
 
+function SongHyWishForm({ palette }: { palette: SongHyPalette }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
+        <div className="mb-4">
+          <input name="name" required maxLength={120} placeholder="Nhập tên của bạn*" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-200" type="text" />
+        </div>
+        <textarea name="text" required maxLength={1000} placeholder="Nhập lời chúc của bạn*" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-200" rows={4} style={{ resize: "none" }} />
+        {state?.error ? <p className="mt-2 text-sm text-red-600">{state.error}</p> : null}
+        {state?.ok ? <p className="mt-2 text-sm" style={{ color: palette.accent }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-4 flex items-center justify-end text-xs">
+          <button type="submit" disabled={pending} className="rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 disabled:opacity-60 sm:px-8 sm:py-3 sm:text-base" style={{ backgroundColor: palette.accent }}>{pending ? "ĐANG GỬI..." : "GỬI LỜI CHÚC"}</button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
 function SongHyFamilyColumn({ palette, title, a, b, addr }: { palette: SongHyPalette; title: string; a: string; b: string; addr: string }) {
   return (
     <div className="flex min-w-0 max-w-[160px] flex-1 flex-col items-center gap-1 text-center md:max-w-[280px]">
@@ -1049,9 +1120,13 @@ function SongHyDateRow({ palette, weekday, day, month }: { palette: SongHyPalett
 function SongHyCountdown({ palette, target }: { palette: SongHyPalette; target: string }) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
-    setNow(Date.now());
-    const id = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(id);
+    const tick = () => setNow(Date.now());
+    const raf = requestAnimationFrame(tick);
+    const id = window.setInterval(tick, 1000);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearInterval(id);
+    };
   }, []);
   const targetMs = new Date(target).getTime();
   const diff = now === null ? 0 : Math.max(0, targetMs - now);
@@ -1292,17 +1367,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       <SongHyBand palette={palette}>Sổ lưu bút</SongHyBand>
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
         <section className="relative z-10 flex w-full flex-col items-center justify-center px-2 py-8 sm:px-4" style={{ color: palette.gray }}>
-          <form className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]" onSubmit={(e) => e.preventDefault()}>
-            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
-              <div className="mb-4">
-                <input placeholder="Nhập tên của bạn*" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-200" type="text" />
-              </div>
-              <textarea placeholder="Nhập lời chúc của bạn*" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-400 focus:ring-2 focus:ring-green-200" rows={4} style={{ resize: "none" }} />
-              <div className="mt-4 flex items-center justify-end text-xs">
-                <button type="submit" className="rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 sm:px-8 sm:py-3 sm:text-base" style={{ backgroundColor: palette.accent }}>GỬI LỜI CHÚC</button>
-              </div>
-            </div>
-          </form>
+          <SongHyWishForm palette={palette} />
           <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
             {wishes.length > 0 ? (
               wishes.map((w, i) => (
@@ -1392,7 +1457,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <span className="flex flex-col items-center gap-1 whitespace-pre-line text-xl" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
       </div>
       <footer className="flex w-full items-center justify-center py-1.5" style={{ backgroundColor: palette.cardBg }}>
-        <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: palette.gray }}>♡ chungdoi.com</a>
+        <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: palette.gray }}>♡ thiepmungonline.com</a>
       </footer>
     </div>
   );
@@ -1411,6 +1476,24 @@ function NhatBinhHeading({ children, red, small = false }: { children: React.Rea
     >
       {children}
     </h2>
+  );
+}
+
+function NhatBinhWishForm({ red, brown }: { red: string; brown: string }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-8 w-full max-w-full md:max-w-[600px]">
+      <div className="flex flex-col gap-3">
+        <input name="name" required maxLength={120} className="w-full rounded-[6px] border bg-white/70 px-4 py-2.5 text-[13px] outline-none" style={{ borderColor: hexToRgba(red, 0.3), color: brown }} placeholder="Nhập tên của bạn*" />
+        <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-[6px] border bg-white/70 px-4 py-2.5 text-[13px] outline-none" style={{ borderColor: hexToRgba(red, 0.3), color: brown }} placeholder="Nhập lời chúc của bạn*" />
+        {state?.error ? <p className="text-[12px] text-red-600">{state.error}</p> : null}
+        {state?.ok ? <p className="text-[12px]" style={{ color: red }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-1 flex items-center justify-end">
+          <button type="submit" disabled={pending} className="rounded-full px-5 py-2 text-[12px] font-semibold uppercase tracking-wider disabled:opacity-60" style={{ backgroundColor: red, color: "#fff" }}>{pending ? "Đang gửi..." : "Gửi lời chúc"}</button>
+        </div>
+      </div>
+    </form>
   );
 }
 
@@ -1586,6 +1669,53 @@ function NhatBinhCover({
   );
 }
 
+const NB_CORNER_W = "w-[clamp(45px,15vw,80px)] md:w-[clamp(68px,14vw,104px)] lg:w-[clamp(76px,12vw,112px)]";
+
+function NhatBinhSectionCorners({ nb, bottomOffsetClass = "bottom-[-15px]" }: { nb: string; bottomOffsetClass?: string }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[3]" aria-hidden="true">
+      <img src={`${nb}/corner.webp`} alt="" aria-hidden="true" className={`pointer-events-none absolute left-0 top-[-10px] h-auto object-contain md:top-[-5px] ${NB_CORNER_W}`} />
+      <div className={`pointer-events-none absolute right-0 top-[-10px] flex h-fit shrink-0 justify-end overflow-hidden md:top-[-5px] ${NB_CORNER_W}`}>
+        <img src={`${nb}/corner.webp`} alt="" aria-hidden="true" className="pointer-events-none h-auto w-full max-w-none object-contain [transform:scaleX(-1)]" />
+      </div>
+      <div className={`pointer-events-none absolute ${bottomOffsetClass} left-0 flex h-fit shrink-0 items-end justify-start overflow-hidden ${NB_CORNER_W}`}>
+        <img src={`${nb}/corner.webp`} alt="" aria-hidden="true" className="pointer-events-none h-auto w-full max-w-none object-contain [transform:scaleY(-1)]" />
+      </div>
+      <div className={`pointer-events-none absolute ${bottomOffsetClass} right-0 flex h-fit shrink-0 items-end justify-end overflow-hidden ${NB_CORNER_W}`}>
+        <img src={`${nb}/corner.webp`} alt="" aria-hidden="true" className="pointer-events-none h-auto w-full max-w-none object-contain [transform:scaleX(-1)_scaleY(-1)]" />
+      </div>
+    </div>
+  );
+}
+
+const NB_CLOUD_LAYERS = [
+  { top: "8%", side: "right" as const, opacity: 0.3, speed: 0.04 },
+  { top: "22%", side: "left" as const, opacity: 0.3, speed: 0.06 },
+  { top: "36%", side: "right" as const, opacity: 0.3, speed: 0.05 },
+  { top: "50%", side: "left" as const, opacity: 0.3, speed: 0.07 },
+  { top: "64%", side: "right" as const, opacity: 0.3, speed: 0.03 },
+  { top: "78%", side: "left" as const, opacity: 0.3, speed: 0.055 },
+  { top: "92%", side: "right" as const, opacity: 0.8, speed: 0.045 },
+];
+
+function NhatBinhCloudBackground({ nb }: { nb: string }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      {NB_CLOUD_LAYERS.map((c, i) => (
+        <div
+          key={i}
+          className="pointer-events-none absolute"
+          style={{ width: "168%", maxWidth: 1300, top: c.top, [c.side]: "25%", opacity: c.opacity }}
+        >
+          <div data-parallax={c.speed} className="will-change-transform">
+            <img src={`${nb}/may.webp`} alt="" aria-hidden="true" className="block h-auto w-full" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const NB = `/chungdoi/images/themes/${content.theme.assetFolder || "nhat-binh-red"}`;
@@ -1626,48 +1756,6 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
-
-  const CORNER_W = "w-[clamp(45px,15vw,80px)] md:w-[clamp(68px,14vw,104px)] lg:w-[clamp(76px,12vw,112px)]";
-  const SectionCorners = ({ bottomOffsetClass = "bottom-[-15px]" }: { bottomOffsetClass?: string }) => (
-    <div className="pointer-events-none absolute inset-0 z-[3]" aria-hidden="true">
-      <img src={`${NB}/corner.webp`} alt="" aria-hidden="true" className={`pointer-events-none absolute left-0 top-[-10px] h-auto object-contain md:top-[-5px] ${CORNER_W}`} />
-      <div className={`pointer-events-none absolute right-0 top-[-10px] flex h-fit shrink-0 justify-end overflow-hidden md:top-[-5px] ${CORNER_W}`}>
-        <img src={`${NB}/corner.webp`} alt="" aria-hidden="true" className="pointer-events-none h-auto w-full max-w-none object-contain [transform:scaleX(-1)]" />
-      </div>
-      <div className={`pointer-events-none absolute ${bottomOffsetClass} left-0 flex h-fit shrink-0 items-end justify-start overflow-hidden ${CORNER_W}`}>
-        <img src={`${NB}/corner.webp`} alt="" aria-hidden="true" className="pointer-events-none h-auto w-full max-w-none object-contain [transform:scaleY(-1)]" />
-      </div>
-      <div className={`pointer-events-none absolute ${bottomOffsetClass} right-0 flex h-fit shrink-0 items-end justify-end overflow-hidden ${CORNER_W}`}>
-        <img src={`${NB}/corner.webp`} alt="" aria-hidden="true" className="pointer-events-none h-auto w-full max-w-none object-contain [transform:scaleX(-1)_scaleY(-1)]" />
-      </div>
-    </div>
-  );
-
-  const CLOUD_LAYERS = [
-    { top: "8%", side: "right" as const, opacity: 0.3, speed: 0.04 },
-    { top: "22%", side: "left" as const, opacity: 0.3, speed: 0.06 },
-    { top: "36%", side: "right" as const, opacity: 0.3, speed: 0.05 },
-    { top: "50%", side: "left" as const, opacity: 0.3, speed: 0.07 },
-    { top: "64%", side: "right" as const, opacity: 0.3, speed: 0.03 },
-    { top: "78%", side: "left" as const, opacity: 0.3, speed: 0.055 },
-    { top: "92%", side: "right" as const, opacity: 0.8, speed: 0.045 },
-  ];
-
-  const CloudBackground = () => (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      {CLOUD_LAYERS.map((c, i) => (
-        <div
-          key={i}
-          className="pointer-events-none absolute"
-          style={{ width: "168%", maxWidth: 1300, top: c.top, [c.side]: "25%", opacity: c.opacity }}
-        >
-          <div data-parallax={c.speed} className="will-change-transform">
-            <img src={`${NB}/may.webp`} alt="" aria-hidden="true" className="block h-auto w-full" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white" style={{ color: BROWN }}>
@@ -1730,11 +1818,11 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
 
         {/* body — single wrapper with scattered-cloud background */}
         <div className="relative z-10 pt-[280px] md:pt-[350px] lg:pt-[380px]">
-          <CloudBackground />
+          <NhatBinhCloudBackground nb={NB} />
 
         {/* Thông Tin Lễ Cưới */}
         <section className="relative z-[2] px-6 py-10 md:px-10 md:py-14">
-          <SectionCorners />
+          <NhatBinhSectionCorners nb={NB} />
           <NhatBinhHeading red={RED}>Thông Tin Lễ Cưới</NhatBinhHeading>
           <div className="relative mx-auto mt-8 grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] items-start gap-3 text-center md:max-w-[520px] md:gap-6 lg:max-w-[600px]">
             <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />
@@ -1798,7 +1886,7 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
         {/* Thông Tin Tiệc Cưới */}
         {reception ? (
           <section className="relative z-[2] flex flex-col items-center gap-8 px-6 py-10 text-center md:gap-12 md:py-14" style={{ fontFamily: NB_HELV, color: BROWN }}>
-            <SectionCorners bottomOffsetClass="bottom-[20px]" />
+            <NhatBinhSectionCorners nb={NB} bottomOffsetClass="bottom-[20px]" />
             <NhatBinhHeading red={RED}>Thông Tin Tiệc Cưới</NhatBinhHeading>
             <div className="flex flex-col items-center gap-4 md:gap-5">
               <h3 className="flex flex-col items-center text-center font-bold uppercase text-[19px] md:text-[33px] lg:text-[36px]" style={{ fontFamily: NB_TITLING, fontWeight: 400, letterSpacing: "0.02em" }}>Tiệc cưới sẽ diễn ra vào lúc:</h3>
@@ -1887,15 +1975,7 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
         {/* Sổ lưu bút */}
         <section className="relative z-[2] px-6 py-10 md:px-10">
           <NhatBinhHeading red={RED}>Sổ lưu bút</NhatBinhHeading>
-          <form className="mx-auto mt-8 w-full max-w-full md:max-w-[600px]" onSubmit={(e) => e.preventDefault()}>
-            <div className="flex flex-col gap-3">
-              <input className="w-full rounded-[6px] border bg-white/70 px-4 py-2.5 text-[13px] outline-none" style={{ borderColor: hexToRgba(RED, 0.3), color: BROWN }} placeholder="Nhập tên của bạn*" />
-              <textarea rows={3} className="w-full rounded-[6px] border bg-white/70 px-4 py-2.5 text-[13px] outline-none" style={{ borderColor: hexToRgba(RED, 0.3), color: BROWN }} placeholder="Nhập lời chúc của bạn*" />
-              <div className="mt-1 flex items-center justify-end">
-                <button type="submit" className="rounded-full px-5 py-2 text-[12px] font-semibold uppercase tracking-wider" style={{ backgroundColor: RED, color: "#fff" }}>Gửi lời chúc</button>
-              </div>
-            </div>
-          </form>
+          <NhatBinhWishForm red={RED} brown={BROWN} />
           <div className="mx-auto mt-8 w-full max-w-full md:max-w-[600px]">
             {wishes.length > 0 ? (
               <div className="space-y-3">
@@ -2002,7 +2082,7 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
           <span className="flex flex-col items-center gap-1 whitespace-pre-line text-[14px] leading-normal md:text-base lg:text-lg" style={{ color: BROWN, fontFamily: NB_HELV }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center" style={{ color: BROWN, fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif' }}>
-          <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-[14px] text-xs opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: BROWN }}>♡ chungdoi.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-[14px] text-xs opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: BROWN }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
@@ -2041,6 +2121,27 @@ function CoBaDateRow({ weekday, day, month, dayFontClass, gap, dividerLen }: {
       <div className="shrink-0 bg-[#542e08]" style={{ width: dividerLen, height: 1, transform: "rotate(90deg)" }} />
       <span className="text-[15px] font-bold uppercase md:text-[18px] lg:text-[19px]" style={{ fontFamily: COBA_HELV, textAlign: "left" }}>Tháng {month}</span>
     </div>
+  );
+}
+
+function CoBaWishForm({ BROWN, CREAM }: { BROWN: string; CREAM: string }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+      <div className="rounded-md border border-solid p-4 md:p-5" style={{ borderColor: BROWN, backgroundColor: hexToRgba(CREAM, 0.35) }}>
+        <div className="mb-4">
+          <input name="name" required maxLength={120} placeholder="Nhập tên của bạn*" className="w-full rounded-lg border px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" type="text" style={{ borderColor: BROWN, color: BROWN, backgroundColor: hexToRgba(CREAM, 0.5) }} />
+        </div>
+        <textarea name="text" required maxLength={1000} placeholder="Nhập lời chúc của bạn*" className="w-full rounded-lg border px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" rows={4} style={{ borderColor: BROWN, color: BROWN, backgroundColor: hexToRgba(CREAM, 0.5), resize: "none" }} />
+        {state?.error ? <p className="mt-3 text-sm" style={{ color: "#c0392b" }}>{state.error}</p> : null}
+        {state?.ok ? <p className="mt-3 text-sm" style={{ color: BROWN }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-4 flex items-center justify-between text-sm md:text-[15px]">
+          <div />
+          <button type="submit" disabled={pending} className="rounded-full px-6 py-2.5 text-base font-semibold transition-transform hover:scale-105 disabled:opacity-60 md:px-7 md:text-[17px]" style={{ backgroundColor: BROWN, color: CREAM }}>{pending ? "ĐANG GỬI..." : "GỬI LỜI CHÚC"}</button>
+        </div>
+      </div>
+    </form>
   );
 }
 
@@ -2293,18 +2394,7 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
               <div className="text-center">
                 <h2 className="text-[30px] font-bold uppercase md:text-[35px] lg:text-[45px]" style={{ color: "#2F6982", fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Sổ lưu bút</h2>
               </div>
-              <form className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]" onSubmit={(e) => e.preventDefault()}>
-                <div className="rounded-md border border-solid p-4 md:p-5" style={{ borderColor: BROWN, backgroundColor: hexToRgba(CREAM, 0.35) }}>
-                  <div className="mb-4">
-                    <input placeholder="Nhập tên của bạn*" className="w-full rounded-lg border px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" type="text" style={{ borderColor: BROWN, color: BROWN, backgroundColor: hexToRgba(CREAM, 0.5) }} />
-                  </div>
-                  <textarea placeholder="Nhập lời chúc của bạn*" className="w-full rounded-lg border px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" rows={4} style={{ borderColor: BROWN, color: BROWN, backgroundColor: hexToRgba(CREAM, 0.5), resize: "none" }} />
-                  <div className="mt-4 flex items-center justify-between text-sm md:text-[15px]">
-                    <div />
-                    <button type="submit" className="rounded-full px-6 py-2.5 text-base font-semibold transition-transform hover:scale-105 md:px-7 md:text-[17px]" style={{ backgroundColor: BROWN, color: CREAM }}>GỬI LỜI CHÚC</button>
-                  </div>
-                </div>
-              </form>
+              <CoBaWishForm BROWN={BROWN} CREAM={CREAM} />
               <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.length > 0 ? (
                   wishes.map((w, i) => (
@@ -2381,7 +2471,7 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
         </section>
 
         <div className="relative z-20 flex items-center justify-center pb-3 pt-2">
-          <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-[14px] opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: BROWN, fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif' }}>♡ chungdoi.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-[14px] opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: BROWN, fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif' }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
@@ -2422,6 +2512,27 @@ function LpdDateRow({ vnWeekday, cnWeekday, day, month, gold, dayClass }: {
         <span className="text-[12px] opacity-70 md:text-[14px]">{Number(month)}月</span>
       </div>
     </div>
+  );
+}
+
+function DragonPhoenixWishForm({ GOLD, BTN_TEXT }: { GOLD: string; BTN_TEXT: string }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full">
+      <div className="rounded-2xl border p-4 md:p-5" style={{ borderColor: hexToRgba(GOLD, 0.35), backgroundColor: hexToRgba(GOLD, 0.06) }}>
+        <div className="mb-4">
+          <input name="name" required maxLength={120} placeholder="Nhập tên của bạn*" className="w-full rounded-lg border bg-transparent px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" type="text" style={{ borderColor: hexToRgba(GOLD, 0.4), color: GOLD }} />
+        </div>
+        <textarea name="text" required maxLength={1000} placeholder="Nhập lời chúc của bạn*" className="w-full rounded-lg border bg-transparent px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" rows={4} style={{ borderColor: hexToRgba(GOLD, 0.4), color: GOLD, resize: "none" }} />
+        {state?.error ? <p className="mt-2 text-sm" style={{ color: "#ffb4a2" }}>{state.error}</p> : null}
+        {state?.ok ? <p className="mt-2 text-sm" style={{ color: GOLD }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-4 flex items-center justify-between">
+          <span aria-hidden="true" className="text-xl">🪄</span>
+          <button type="submit" disabled={pending} className="rounded-full px-6 py-2.5 text-base font-semibold transition-transform hover:scale-105 disabled:opacity-60 md:px-7 md:text-[17px]" style={{ backgroundColor: GOLD, color: BTN_TEXT }}>{pending ? "Đang gửi..." : "GỬI LỜI CHÚC / 送出祝福"}</button>
+        </div>
+      </div>
+    </form>
   );
 }
 
@@ -2674,18 +2785,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
               <div className="text-center">
                 <h2 className="text-[26px] font-semibold uppercase md:text-[32px]" style={{ color: GOLD, letterSpacing: "0.04em" }}>Sổ lưu bút <span className="opacity-70">/ 賓客留言</span></h2>
               </div>
-              <form className="mx-auto mt-6 w-full" onSubmit={(e) => e.preventDefault()}>
-                <div className="rounded-2xl border p-4 md:p-5" style={{ borderColor: hexToRgba(GOLD, 0.35), backgroundColor: hexToRgba(GOLD, 0.06) }}>
-                  <div className="mb-4">
-                    <input placeholder="Nhập tên của bạn*" className="w-full rounded-lg border bg-transparent px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" type="text" style={{ borderColor: hexToRgba(GOLD, 0.4), color: GOLD }} />
-                  </div>
-                  <textarea placeholder="Nhập lời chúc của bạn*" className="w-full rounded-lg border bg-transparent px-4 py-3 text-base focus:outline-none md:py-3.5 md:text-[17px]" rows={4} style={{ borderColor: hexToRgba(GOLD, 0.4), color: GOLD, resize: "none" }} />
-                  <div className="mt-4 flex items-center justify-between">
-                    <span aria-hidden="true" className="text-xl">🪄</span>
-                    <button type="submit" className="rounded-full px-6 py-2.5 text-base font-semibold transition-transform hover:scale-105 md:px-7 md:text-[17px]" style={{ backgroundColor: GOLD, color: BTN_TEXT }}>GỬI LỜI CHÚC / 送出祝福</button>
-                  </div>
-                </div>
-              </form>
+              <DragonPhoenixWishForm GOLD={GOLD} BTN_TEXT={BTN_TEXT} />
               <div className="mx-auto mt-8 max-h-[500px] w-full space-y-3 overflow-y-auto pr-2">
                 {wishes.length > 0 ? (
                   wishes.map((w, i) => (
@@ -2769,7 +2869,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
         </section>
 
         <div className="relative z-20 flex items-center justify-center pb-3 pt-2">
-          <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-[14px] opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: GOLD }}>♡ chungdoi.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-[14px] opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: GOLD }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
@@ -2826,6 +2926,36 @@ function DdTexture({ posY, opacity = 0.25 }: { posY: string; opacity?: number })
   );
 }
 
+function DdRedBand({ children, red, linen }: { children: React.ReactNode; red: string; linen: string }) {
+  return (
+    <div className="w-full py-3 md:py-4" style={{ backgroundColor: red }}>
+      <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: linen, fontFamily: DD_TNR }}>
+        {children}
+      </h2>
+    </div>
+  );
+}
+
+function DoubleDragonWishForm({ red }: { red: string }) {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
+        <div className="mb-4">
+          <input name="name" required maxLength={120} placeholder="Nhập tên của bạn*" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-200" type="text" />
+        </div>
+        <textarea name="text" required maxLength={1000} placeholder="Nhập lời chúc của bạn*" rows={4} className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-200" style={{ resize: "none" }} />
+        {state?.error ? <p className="mt-3 text-sm text-red-600">{state.error}</p> : null}
+        {state?.ok ? <p className="mt-3 text-sm" style={{ color: red }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-4 flex items-center justify-end text-xs">
+          <button type="submit" disabled={pending} className="rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 disabled:opacity-60 sm:px-8 sm:py-3 sm:text-base" style={{ backgroundColor: red }}>{pending ? "Đang gửi..." : "GỬI LỜI CHÚC"}</button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
 function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content: ChungDoiDemoContent; palette?: DdPalette }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const DD_RED = palette.red;
@@ -2838,14 +2968,6 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-
-  const DdRedBand = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full py-3 md:py-4" style={{ backgroundColor: DD_RED }}>
-      <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: DD_LINEN, fontFamily: DD_TNR }}>
-        {children}
-      </h2>
-    </div>
-  );
 
   const bankCards = ([
     { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
@@ -2882,7 +3004,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           </div>
         </div>
 
-        <DdRedBand>THÔNG TIN LỄ CƯỚI</DdRedBand>
+        <DdRedBand red={DD_RED} linen={DD_LINEN}>THÔNG TIN LỄ CƯỚI</DdRedBand>
 
         {/* family + báo tin + ceremony */}
         <div className="relative w-full overflow-hidden" style={{ backgroundColor: DD_LINEN }}>
@@ -2941,7 +3063,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
 
         {galleryShown.length > 0 ? (
           <>
-            <DdRedBand>Album Ảnh Cưới</DdRedBand>
+            <DdRedBand red={DD_RED} linen={DD_LINEN}>Album Ảnh Cưới</DdRedBand>
             <div className="relative w-full overflow-hidden" style={{ backgroundColor: DD_LINEN }}>
               <DdTexture posY="40%" />
               <div className="relative z-10 mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
@@ -2964,7 +3086,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
 
         {reception ? (
           <>
-            <DdRedBand>THÔNG TIN TIỆC CƯỚI</DdRedBand>
+            <DdRedBand red={DD_RED} linen={DD_LINEN}>THÔNG TIN TIỆC CƯỚI</DdRedBand>
             <div className="relative w-full overflow-hidden" style={{ backgroundColor: DD_LINEN }}>
               <DdTexture posY="60%" />
               <div className="relative z-10 -mt-[1px] flex w-full flex-col items-center justify-center px-2 pb-8 pt-6 sm:px-4">
@@ -3020,7 +3142,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
 
         {mapQuery ? (
           <>
-            <DdRedBand>Tiệc cưới sẽ tổ chức tại</DdRedBand>
+            <DdRedBand red={DD_RED} linen={DD_LINEN}>Tiệc cưới sẽ tổ chức tại</DdRedBand>
             <div className="relative flex w-full flex-col items-center overflow-hidden pb-10" style={{ backgroundColor: DD_LINEN }}>
               <DdTexture posY="70%" />
               <div className="relative z-10 flex w-full flex-col items-center">
@@ -3053,22 +3175,11 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           </div>
         ) : null}
 
-        <DdRedBand>Sổ lưu bút</DdRedBand>
+        <DdRedBand red={DD_RED} linen={DD_LINEN}>Sổ lưu bút</DdRedBand>
         <div className="relative w-full overflow-hidden" style={{ backgroundColor: DD_LINEN }}>
           <DdTexture posY="85%" />
           <div className="relative z-10 px-4 py-10">
-            <form className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]" onSubmit={(e) => e.preventDefault()}>
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
-                <div className="mb-4">
-                  <input placeholder="Nhập tên của bạn*" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-200" type="text" />
-                </div>
-                <textarea placeholder="Nhập lời chúc của bạn*" rows={4} className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-200" style={{ resize: "none" }} />
-                <div className="mt-4 flex items-center justify-between text-xs">
-                  <button type="button" title="Tạo lời chúc bằng AI" className="rounded-lg p-2 text-base leading-none transition-all duration-200 hover:scale-110" style={{ backgroundColor: hexToRgba(DD_RED, 0.1), color: DD_RED }}>🪄</button>
-                  <button type="submit" className="rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 sm:px-8 sm:py-3 sm:text-base" style={{ backgroundColor: DD_RED }}>GỬI LỜI CHÚC</button>
-                </div>
-              </div>
-            </form>
+            <DoubleDragonWishForm red={DD_RED} />
             {wishes.length > 0 ? (
               <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
@@ -3117,7 +3228,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           <span className="whitespace-pre-line text-[12px] md:text-[15px] lg:text-[18px]" style={{ fontFamily: DD_SERIF, color: DD_LINEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ backgroundColor: DD_LINEN }}>
-          <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: DD_RED }}>♡ chungdoi.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: DD_RED }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
@@ -3150,6 +3261,37 @@ function shiftTime(hhmm: string, deltaMin: number) {
   return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
+function SlxBand({ vi, ko }: { vi: string; ko: string }) {
+  return (
+    <div className="w-full py-3 md:py-4" style={{ backgroundColor: SLX_GREEN }}>
+      <h2 className="flex flex-col items-center gap-0.5 text-center uppercase tracking-wide" style={{ color: SLX_LINEN, fontFamily: SLX_TNR }}>
+        <span className="text-[20px] font-bold md:text-[24px]">{vi}</span>
+        <span className="text-[12px] font-normal normal-case opacity-80 md:text-[13px]">{ko}</span>
+      </h2>
+    </div>
+  );
+}
+
+function SongLongXanhWishForm() {
+  const { formProps, pending, state } = useWishFormBinding();
+
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
+        <div className="mb-4">
+          <input name="name" required maxLength={120} placeholder="Nhập tên của bạn* / 이름" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200" type="text" />
+        </div>
+        <textarea name="text" required maxLength={1000} placeholder="Nhập lời chúc của bạn* / 축하 메시지" rows={4} className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200" style={{ resize: "none" }} />
+        {state?.error ? <p className="mt-2 text-sm text-red-600">{state.error}</p> : null}
+        {state?.ok ? <p className="mt-2 text-sm" style={{ color: SLX_GREEN }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-4 flex items-center justify-end text-xs">
+          <button type="submit" disabled={pending} className="rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 disabled:opacity-60 sm:px-8 sm:py-3 sm:text-base" style={{ backgroundColor: SLX_GREEN }}>{pending ? "Đang gửi..." : "Gửi lời chúc / 축하 보내기"}</button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
 function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const reception = formatDate(couple.date);
@@ -3178,15 +3320,6 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
     { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
   ] as const).filter((q) => q.bank);
 
-  const Band = ({ vi, ko }: { vi: string; ko: string }) => (
-    <div className="w-full py-3 md:py-4" style={{ backgroundColor: SLX_GREEN }}>
-      <h2 className="flex flex-col items-center gap-0.5 text-center uppercase tracking-wide" style={{ color: SLX_LINEN, fontFamily: SLX_TNR }}>
-        <span className="text-[20px] font-bold md:text-[24px]">{vi}</span>
-        <span className="text-[12px] font-normal normal-case opacity-80 md:text-[13px]">{ko}</span>
-      </h2>
-    </div>
-  );
-
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div className="relative flex w-full max-w-[480px] flex-col overflow-hidden md:mx-auto md:max-w-[900px] md:border md:border-[#1F3A2522]" style={{ backgroundColor: SLX_LINEN }}>
@@ -3213,7 +3346,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
           </div>
         </div>
 
-        <Band vi="Thông Tin Lễ Cưới" ko="예식 안내" />
+        <SlxBand vi="Thông Tin Lễ Cưới" ko="예식 안내" />
 
         {/* family + báo tin + ceremony */}
         <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
@@ -3277,7 +3410,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
 
         {galleryShown.length > 0 ? (
           <>
-            <Band vi="Album Ảnh Cưới" ko="웨딩 앨범" />
+            <SlxBand vi="Album Ảnh Cưới" ko="웨딩 앨범" />
             <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
               <div className="mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -3315,7 +3448,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
 
         {reception ? (
           <>
-            <Band vi="Thông Tin Tiệc Cưới" ko="피로연 안내" />
+            <SlxBand vi="Thông Tin Tiệc Cưới" ko="피로연 안내" />
             <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
               <div className="-mt-[1px] flex w-full flex-col items-center justify-center px-2 pb-8 pt-6 sm:px-4">
                 <h3 className="flex flex-col items-center gap-0.5 text-center text-[16px] uppercase md:text-[20px]" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
@@ -3383,7 +3516,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
 
         {mapQuery ? (
           <>
-            <Band vi="Tiệc cưới sẽ tổ chức tại" ko="피로연 장소" />
+            <SlxBand vi="Tiệc cưới sẽ tổ chức tại" ko="피로연 장소" />
             <div className="relative flex w-full flex-col items-center pb-10" style={{ backgroundColor: SLX_LINEN }}>
               <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{venue.address}</div>
               <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
@@ -3418,21 +3551,10 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
           </div>
         ) : null}
 
-        <Band vi="Sổ lưu bút" ko="방명록" />
+        <SlxBand vi="Sổ lưu bút" ko="방명록" />
         <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
           <div className="px-4 py-10">
-            <form className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]" onSubmit={(e) => e.preventDefault()}>
-              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
-                <div className="mb-4">
-                  <input placeholder="Nhập tên của bạn* / 이름" className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200" type="text" />
-                </div>
-                <textarea placeholder="Nhập lời chúc của bạn* / 축하 메시지" rows={4} className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200" style={{ resize: "none" }} />
-                <div className="mt-4 flex items-center justify-between text-xs">
-                  <button type="button" title="Tạo lời chúc bằng AI" className="rounded-lg p-2 text-base leading-none transition-all duration-200 hover:scale-110" style={{ backgroundColor: hexToRgba(SLX_GREEN, 0.1), color: SLX_GREEN }}>🪄</button>
-                  <button type="submit" className="rounded-full px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 sm:px-8 sm:py-3 sm:text-base" style={{ backgroundColor: SLX_GREEN }}>Gửi lời chúc / 축하 보내기</button>
-                </div>
-              </div>
-            </form>
+            <SongLongXanhWishForm />
             {wishes.length > 0 ? (
               <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
@@ -3483,21 +3605,37 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
           <span className="text-[11px] opacity-80 md:text-[13px]" style={{ fontFamily: SLX_SERIF, color: SLX_LINEN }}>여러분의 참석은 저희 가족의 큰 영광입니다!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ backgroundColor: SLX_LINEN }}>
-          <a href="https://chungdoi.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: SLX_GREEN }}>♡ chungdoi.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: SLX_GREEN }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
   );
 }
 
-export function ChungDoiDemo({ template }: { template: ChungDoiTemplate }) {
-  const content = chungdoiDemoContent[template.slug];
+export function ChungDoiDemo({
+  template,
+  content: contentProp,
+  liveForms = null,
+}: {
+  template: ChungDoiTemplate;
+  content?: ChungDoiDemoContent;
+  liveForms?: LiveForms;
+}) {
+  const content = contentProp ?? chungdoiDemoContent[template.slug];
 
   const [opened, setOpened] = useState(false);
   const [opening, setOpening] = useState(false);
   const [playing, setPlaying] = useState(false);
   const openTimerRef = useRef<number | null>(null);
+  const autoScrollFinishedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const lenisRef = useRef<Lenis | null>(null);
+  const [autoScrolling, setAutoScrolling] = useState(false);
+  const autoScrollingRef = useRef(false);
+
+  useEffect(() => {
+    autoScrollingRef.current = autoScrolling;
+  }, [autoScrolling]);
 
   const tokens = useMemo(() => (content ? resolveTokens(content) : null), [content]);
 
@@ -3511,8 +3649,88 @@ export function ChungDoiDemo({ template }: { template: ChungDoiTemplate }) {
   }, [opened, content]);
 
   useEffect(() => {
+    if (!opened) return;
+
+    const lenis = new Lenis({ syncTouch: true, touchInertiaExponent: 1.7 });
+    lenisRef.current = lenis;
+
+    let rafId = requestAnimationFrame(function raf(time) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    });
+
+    // Khi user tự cuộn (vuốt/lăn), dừng auto-scroll để tránh giật.
+    // Dùng touchmove chứ không phải touchstart: tap thuần (không kéo) do onClick
+    // xử lý toggle, tránh chồng chéo tap→touchstart→click.
+    const onUserGesture = () => {
+      if (autoScrollingRef.current) setAutoScrolling(false);
+    };
+    window.addEventListener("wheel", onUserGesture, { passive: true });
+    window.addEventListener("touchmove", onUserGesture, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("wheel", onUserGesture);
+      window.removeEventListener("touchmove", onUserGesture);
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, [opened]);
+
+  useEffect(() => {
+    if (!opened || !autoScrolling) return;
+    const lenis = lenisRef.current;
+    if (!lenis) return;
+
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const remaining = maxScroll - lenis.scroll;
+    if (remaining <= 1) {
+      autoScrollFinishedRef.current = true;
+      setAutoScrolling(false);
+      return;
+    }
+
+    // Tốc độ ~0.08 px/ms như bản cũ → suy ra duration theo quãng còn lại.
+    const duration = remaining / 0.08 / 1000;
+    lenis.scrollTo(maxScroll, {
+      duration,
+      easing: (t) => t,
+      onComplete: () => {
+        autoScrollFinishedRef.current = true;
+        setAutoScrolling(false);
+      },
+    });
+
+    return () => {
+      // Dừng animation scrollTo bằng cách neo về vị trí hiện tại.
+      lenis.scrollTo(lenis.scroll, { immediate: true });
+    };
+  }, [opened, autoScrolling]);
+
+  useEffect(() => {
     return () => {
       if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const originalScrollRestoration = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+
+    const jump = () => {
+      const root = document.documentElement;
+      const originalScrollBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, 0);
+      root.style.scrollBehavior = originalScrollBehavior;
+    };
+
+    jump();
+    const raf = requestAnimationFrame(jump);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      history.scrollRestoration = originalScrollRestoration;
     };
   }, []);
 
@@ -3528,8 +3746,18 @@ export function ChungDoiDemo({ template }: { template: ChungDoiTemplate }) {
   }
 
   function openInvitation() {
+    const root = document.documentElement;
+    const originalScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    root.style.scrollBehavior = originalScrollBehavior;
+
+    autoScrollFinishedRef.current = false;
     setOpening(true);
-    openTimerRef.current = window.setTimeout(() => setOpened(true), 800);
+    openTimerRef.current = window.setTimeout(() => {
+      setOpened(true);
+      setAutoScrolling(true);
+    }, 800);
     const audio = audioRef.current;
     if (audio) {
       audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
@@ -3547,8 +3775,16 @@ export function ChungDoiDemo({ template }: { template: ChungDoiTemplate }) {
     }
   }
 
+  function toggleAutoScroll(event: MouseEvent<HTMLElement>) {
+    if (!opened || autoScrollFinishedRef.current) return;
+    const target = event.target as HTMLElement;
+    if (target.closest("button,a,input,textarea,select,label,[role='button'],[contenteditable='true']")) return;
+    setAutoScrolling((value) => !value);
+  }
+
   return (
-    <main id="top" className="relative min-h-screen bg-white">
+    <LiveFormsProvider value={liveForms}>
+    <main id="top" className="relative min-h-screen bg-white" onClick={toggleAutoScroll}>
       <audio ref={audioRef} src={content.music ?? DEFAULT_MUSIC} loop preload="auto" />
 
       {!opened ? (
@@ -3595,5 +3831,6 @@ export function ChungDoiDemo({ template }: { template: ChungDoiTemplate }) {
         </button>
       ) : null}
     </main>
+    </LiveFormsProvider>
   );
 }

@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   }
 
   return {
-    title: `${post.title} | ChungDoi Blog`,
+    title: `${post.title} | Thiệp Mừng Online Blog`,
     description: post.excerpt,
   };
 }

@@ -23,7 +23,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { LogoMark } from "@/components/logo-mark";
 import { getVietnameseTemplateSlug, templates, type ChungDoiTemplate } from "@/data/chungdoi";
+import { createInvitation } from "@/app/dashboard/actions";
 
 const categories = ["All", ...Array.from(new Set(templates.map((template) => template.category)))];
 const colors = ["All", ...Array.from(new Set(templates.map((template) => template.color)))];
@@ -75,8 +77,8 @@ function useRevealOnScroll() {
 function Logo() {
   return (
     <a href="#top" className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-white/5">
-      <img src="/chungdoi/icon.png" alt="ChungDoi" className="size-8 rounded-lg" />
-      <span className="font-pattaya text-2xl text-white">ChungDoi</span>
+      <LogoMark className="size-8" />
+      <span className="font-pattaya text-2xl text-white">Thiệp Mừng Online</span>
     </a>
   );
 }
@@ -117,12 +119,6 @@ function Header() {
 
 function HeroSection() {
   const t = useTranslations("home");
-  const stats: Array<[string, string]> = [
-    ["58", t("hero.statGuests")],
-    ["84%", t("hero.statReplied")],
-    ["24", t("hero.statAttending")],
-  ];
-
   return (
     <section id="top" className="relative overflow-hidden bg-[#18120f]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(251,53,112,0.24),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(255,197,120,0.18),transparent_30%)]" />
@@ -137,7 +133,7 @@ function HeroSection() {
             />
           </div>
           <p className="mb-4 text-2xl font-semibold text-white">
-            <span className="font-pattaya text-4xl text-[#fb3570]">ChungDoi</span>
+            <span className="font-pattaya text-4xl text-[#fb3570]">thiepmungonline</span>
             <span className="text-zinc-400">{t("hero.domainSuffix")}</span>
           </p>
           <h1 className="max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">
@@ -162,38 +158,19 @@ function HeroSection() {
         </div>
 
         <div className="reveal relative min-h-[610px] lg:min-h-[720px]">
-          <div className="absolute left-5 top-8 w-[58%] max-w-[360px] animate-float-slow overflow-hidden rounded-[2rem] border border-white/10 bg-[#241a17] p-3 shadow-2xl shadow-black/45">
+          <div className="absolute left-5 top-8 w-[58%] max-w-[360px] animate-float-slow overflow-hidden rounded-[2rem]">
             <img
               src="/chungdoi/images/en/hero/hero-1.webp"
-              alt="ChungDoi invitation example"
+              alt="Thiệp Mừng Online invitation example"
               className="aspect-[2/3] w-full rounded-[1.4rem] object-cover"
             />
           </div>
-          <div className="absolute right-0 top-28 w-[49%] max-w-[300px] animate-float overflow-hidden rounded-[2rem] border border-white/10 bg-[#251b18] p-3 shadow-2xl shadow-black/55">
+          <div className="absolute right-0 top-28 w-[49%] max-w-[300px] animate-float overflow-hidden rounded-[2rem]">
             <img
               src="/chungdoi/images/en/hero/hero-2.webp"
               alt="Online wedding invitation on mobile"
               className="aspect-[2/3] w-full rounded-[1.4rem] object-cover"
             />
-          </div>
-          <div className="absolute bottom-16 left-0 right-8 rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/30 backdrop-blur">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm text-zinc-400">{t("hero.liveDemo")}</p>
-                <p className="mt-1 text-xl font-bold text-white">{t("hero.coupleName")}</p>
-              </div>
-              <div className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-bold text-emerald-200">
-                {t("hero.rsvpOpen")}
-              </div>
-            </div>
-            <div className="mt-5 grid grid-cols-3 gap-3 text-center">
-              {stats.map(([value, label]) => (
-                <div key={label} className="rounded-2xl bg-black/20 p-3">
-                  <p className="text-2xl font-black text-white">{value}</p>
-                  <p className="text-xs text-zinc-400">{label}</p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
@@ -292,15 +269,6 @@ function HowItWorks() {
               <p className="mt-3 text-zinc-300">{copy}</p>
             </div>
           ))}
-        </div>
-        <div className="reveal mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-2xl shadow-black/35">
-          <iframe
-            className="aspect-video w-full"
-            src="https://www.youtube.com/embed/YrReL9gJV9I"
-            title="ChungDoi Wedding Invitation Tutorial"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
         </div>
       </div>
     </section>
@@ -650,13 +618,15 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
               >
                 {t("gallery.viewInvitationDemo")} <ArrowRight className="size-4" />
               </a>
-              <a
-                href="#templates"
-                onClick={onClose}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10"
-              >
-                {t("gallery.useStyle")}
-              </a>
+              <form action={createInvitation}>
+                <input type="hidden" name="templateId" value={template.slug} />
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-black text-white transition hover:bg-white/10"
+                >
+                  {t("gallery.useStyle")}
+                </button>
+              </form>
             </div>
           </div>
           <div className="grid gap-4 lg:grid-cols-[0.65fr_1fr]">

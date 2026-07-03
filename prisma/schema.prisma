@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String?      @unique
+  passwordHash String?
+  createdAt    DateTime     @default(now())
+  invitations  Invitation[]
+}
+
+model Invitation {
+  id         String   @id @default(cuid())
+  userId     String
+  slug       String?  @unique
+  templateId String
+  status     String   @default("draft")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content  InvitationContent?
+  schedule ScheduleItem[]
+  gallery  GalleryPhoto[]
+  wishes   Wish[]
+  rsvps    Rsvp[]
+  guests   Guest[]
+
+  @@index([userId])
+}
+
+model InvitationContent {
+  id           String @id @default(cuid())
+  invitationId String @unique
+
+  // theme
+  primaryColor String  @default("#c8102e")
+  fontFamily   String?
+  assetFolder  String?
+  music        String?
+
+  // couple
+  brideFullName  String @default("")
+  groomFullName  String @default("")
+  brideShortName String @default("")
+  groomShortName String @default("")
+  brideFirst     Boolean @default(true)
+  date           String  @default("")
+  time           String  @default("")
+  ceremonyDate   String  @default("")
+  ceremonyTime   String  @default("")
+  ceremonyHeader String  @default("")
+
+  // families
+  brideFather      String @default("")
+  brideMother      String @default("")
+  brideAddress     String @default("")
+  groomFather      String @default("")
+  groomMother      String @default("")
+  groomAddress     String @default("")
+  brideParentTitle String @default("")
+  groomParentTitle String @default("")
+
+  // venue
+  address    String @default("")
+  mapAddress String @default("")
+  banquetTime String @default("")
+
+  // bank
+  brideBankName      String @default("")
+  brideAccountNumber String @default("")
+  brideAccountName   String @default("")
+  groomBankName      String @default("")
+  groomAccountNumber String @default("")
+  groomAccountName   String @default("")
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+}
+
+model ScheduleItem {
+  id           String @id @default(cuid())
+  invitationId String
+  time         String
+  label        String
+  sortOrder    Int    @default(0)
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model GalleryPhoto {
+  id           String @id @default(cuid())
+  invitationId String
+  url          String
+  sortOrder    Int    @default(0)
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model Wish {
+  id           String   @id @default(cuid())
+  invitationId String
+  name         String
+  text         String
+  createdAt    DateTime @default(now())
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model Rsvp {
+  id           String   @id @default(cuid())
+  invitationId String
+  guestId      String?
+  name         String
+  attending    Boolean  @default(true)
+  guests       Int      @default(1)
+  side         String?
+  message      String?
+  shuttle      Boolean  @default(false)
+  dietary      String?
+  songRequest  String?
+  createdAt    DateTime @default(now())
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  guest      Guest?     @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@index([invitationId])
+  @@index([guestId])
+}
+
+model Guest {
+  id           String   @id @default(cuid())
+  invitationId String
+  token        String   @unique
+  name         String
+  side         String?
+  role         String?
+  note         String?
+  createdAt    DateTime @default(now())
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  rsvps      Rsvp[]
+
+  @@index([invitationId])
+}

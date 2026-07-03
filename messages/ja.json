@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "ChungDoi - パーソナライズされたオンライン結婚式招待状",
+    "title": "Thiệp Mừng Online - パーソナライズされたオンライン結婚式招待状",
     "description": "テンプレート、RSVP、ゲスト管理、地図、ギャラリー、音楽、ご祝儀QRでパーソナライズされたオンライン結婚式招待状を作成。"
   },
   "chrome": {
@@ -28,7 +28,7 @@
       "helpCenter": "ヘルプセンター",
       "privacyPolicy": "プライバシーポリシー",
       "termsOfService": "利用規約",
-      "copyright": "© 2026 ChungDoi - オンライン結婚式招待状",
+      "copyright": "© 2026 Thiệp Mừng Online - オンライン結婚式招待状",
       "chatWithUs": "お問い合わせ"
     }
   },
@@ -59,7 +59,7 @@
       "new": "新着"
     },
     "stats": {
-      "title": "65,000組以上のカップルがChungDoiでオンライン結婚式招待状を作成しました",
+      "title": "65,000組以上のカップルがThiệp Mừng Onlineでオンライン結婚式招待状を作成しました",
       "registered": "登録",
       "invitationsCreated": "作成された招待状",
       "totalViews": "総閲覧数"
@@ -77,7 +77,7 @@
     },
     "support": {
       "title": "必要なときに、そばにいます",
-      "subtitle": "ChungDoiチームは24時間365日オンライン。編集、共有、ゲスト、お支払いのお手伝いが必要なときはいつでもチャットしてください。",
+      "subtitle": "Thiệp Mừng Onlineチームは24時間365日オンライン。編集、共有、ゲスト、お支払いのお手伝いが必要なときはいつでもチャットしてください。",
       "startCreating": "作成を始める",
       "replyTimeLabel": "返信時間",
       "replyTimeValue": "通常1分以内",
@@ -133,7 +133,7 @@
     },
     "gallery": {
       "title": "手作りの結婚式招待状テンプレート",
-      "subtitle": "すべての{count}個の公開ChungDoiテンプレートをローカルアセットとしてミラーリングし、同じ縦型プレビュースタイルとホバーモーションを提供します。",
+      "subtitle": "すべての{count}個の公開Thiệp Mừng Onlineテンプレートをローカルアセットとしてミラーリングし、同じ縦型プレビュースタイルとホバーモーションを提供します。",
       "countLabel": "{shown} / {total} テンプレート",
       "styleLabel": "スタイル",
       "colorLabel": "色",
@@ -185,7 +185,7 @@
       "privacyPolicy": "プライバシーポリシー",
       "termsOfService": "利用規約",
       "refundPolicy": "返金ポリシー",
-      "copyright": "© 2026 ChungDoi - オンライン結婚式招待状",
+      "copyright": "© 2026 Thiệp Mừng Online - オンライン結婚式招待状",
       "mobileTemplates": "テンプレート",
       "mobileGuide": "ガイド",
       "mobileGuests": "ゲスト",
@@ -193,11 +193,11 @@
     }
   },
   "listing": {
-    "metaTitle": "結婚式招待状テンプレート | ChungDoi Clone",
-    "metaDescription": "ChungDoiの結婚式招待状テンプレートを閲覧：スタイルと色で絞り込み、カバーアニメーション・ギャラリー・RSVP付きのライブデモをプレビューして開けます。",
+    "metaTitle": "結婚式招待状テンプレート | Thiệp Mừng Online",
+    "metaDescription": "Thiệp Mừng Onlineの結婚式招待状テンプレートを閲覧：スタイルと色で絞り込み、カバーアニメーション・ギャラリー・RSVP付きのライブデモをプレビューして開けます。",
     "eyebrow": "結婚式招待状テンプレート",
     "title": "手作りの結婚式招待状テンプレート",
-    "subtitle": "すべての公開ChungDoiテンプレートをローカルアセットとしてミラーリングし、同じ縦型プレビュースタイルとホバーモーションを提供します。",
+    "subtitle": "すべての公開Thiệp Mừng Onlineテンプレートをローカルアセットとしてミラーリングし、同じ縦型プレビュースタイルとホバーモーションを提供します。",
     "styleLabel": "スタイル",
     "colorLabel": "色",
     "countSuffix": "テンプレート",
@@ -211,8 +211,8 @@
     "new": "新着"
   },
   "pricing": {
-    "metaTitle": "料金 | ChungDoi Clone",
-    "metaDescription": "ChungDoiオンライン結婚式招待状の料金：一度のお支払い、隠れた費用なし、3日間無料お試し。",
+    "metaTitle": "料金 | Thiệp Mừng Online",
+    "metaDescription": "Thiệp Mừng Onlineオンライン結婚式招待状の料金：一度のお支払い、隠れた費用なし、3日間無料お試し。",
     "eyebrow": "料金",
     "title": "シンプルな料金、隠れた費用なし",
     "subtitle": "あなたの特別な日のための美しく、機能満載のオンライン結婚式招待状。",
@@ -269,7 +269,7 @@
     "faq5A": "重複請求、不正請求、または7日以内に解決できない障害の場合は返金いたします。"
   },
   "tools": {
-    "metaTitle": "ウェディングツール | ChungDoi Clone",
+    "metaTitle": "ウェディングツール | Thiệp Mừng Online",
     "metaDescription": "無料のウェディングツール：Save the Date写真メーカー、AI結婚式メッセージ、QRコード生成、画像・動画圧縮。",
     "eyebrow": "ツール",
     "title": "無料のウェディングツール",
@@ -288,12 +288,12 @@
     "tool5Desc": "アップロード不要で、ウェディング動画をデバイス上で完全に圧縮します。"
   },
   "policy": {
-    "privacyMetaTitle": "プライバシーポリシー | ChungDoi Clone",
-    "privacyMetaDescription": "ChungDoiがデータを収集・使用・保護する方法。",
-    "termsMetaTitle": "利用規約 | ChungDoi Clone",
-    "termsMetaDescription": "ChungDoiの利用を規定する規約。",
-    "refundMetaTitle": "返金ポリシー | ChungDoi Clone",
-    "refundMetaDescription": "ChungDoiがいつどのように返金するか。",
+    "privacyMetaTitle": "プライバシーポリシー | Thiệp Mừng Online",
+    "privacyMetaDescription": "Thiệp Mừng Onlineがデータを収集・使用・保護する方法。",
+    "termsMetaTitle": "利用規約 | Thiệp Mừng Online",
+    "termsMetaDescription": "Thiệp Mừng Onlineの利用を規定する規約。",
+    "refundMetaTitle": "返金ポリシー | Thiệp Mừng Online",
+    "refundMetaDescription": "Thiệp Mừng Onlineがいつどのように返金するか。",
     "updated": "最終更新：2026-01-01",
     "privacyTitle": "プライバシーポリシー",
     "privacyS1H": "収集する情報",
@@ -306,7 +306,7 @@
     "privacyS4B": "いつでも招待状とゲストデータを編集・削除できます。個人データについてサポートが必要な場合はサポートチームにお問い合わせください。",
     "termsTitle": "利用規約",
     "termsS1H": "規約への同意",
-    "termsS1B": "ChungDoiでオンライン結婚式招待状を作成することで、本規約に同意したものとみなされます。同意されない場合はサービスの利用を中止してください。",
+    "termsS1B": "Thiệp Mừng Onlineでオンライン結婚式招待状を作成することで、本規約に同意したものとみなされます。同意されない場合はサービスの利用を中止してください。",
     "termsS2H": "アカウントとコンテンツ",
     "termsS2B": "招待状に掲載するコンテンツ、写真、情報については、お客様が責任を負います。違法な目的や他者の権利を侵害する目的でサービスを使用しないでください。",
     "termsS3H": "お支払い",
@@ -322,22 +322,22 @@
     "refundS3B": "お支払い情報とともにサポートチームにお問い合わせください。できるだけ早く申請を処理いたします。"
   },
   "blog": {
-    "metaTitle": "ブログ | ChungDoi Clone",
-    "metaDescription": "ChungDoiの最新の結婚式招待状のヒントとトレンド。",
+    "metaTitle": "ブログ | Thiệp Mừng Online",
+    "metaDescription": "Thiệp Mừng Onlineの最新の結婚式招待状のヒントとトレンド。",
     "eyebrow": "ブログ",
     "title": "最新の結婚式招待状のヒントとトレンド",
     "readMore": "続きを読む →",
     "pagination": "1 - 12 / 22 記事",
     "backToBlog": "← ブログに戻る",
-    "cloneNote1": "これはChungDoiのUIクローンです。元記事の全内容はchungdoi.comに掲載されています。このコピーはデザイン参考のため、記事構造、要約、レイアウトを保持しています。",
+    "cloneNote1": "これはThiệp Mừng OnlineのUIクローンです。元記事の全内容はthiepmungonline.comに掲載されています。このコピーはデザイン参考のため、記事構造、要約、レイアウトを保持しています。",
     "cloneNote2": "上のナビゲーションバーから、このクローンですべてのオンライン結婚式招待状テンプレート、補助ツール、料金をご覧いただけます。",
     "related": "関連記事"
   },
   "help": {
-    "metaTitle": "ヘルプセンター | ChungDoi",
-    "metaDescription": "素早く答えを見つけましょう。ChungDoiで完璧な結婚式招待状を作成。",
+    "metaTitle": "ヘルプセンター | Thiệp Mừng Online",
+    "metaDescription": "素早く答えを見つけましょう。Thiệp Mừng Onlineで完璧な結婚式招待状を作成。",
     "title": "ヘルプセンター",
-    "subtitle": "素早く答えを見つけましょう。ChungDoiで完璧な結婚式招待状を作成。",
+    "subtitle": "素早く答えを見つけましょう。Thiệp Mừng Onlineで完璧な結婚式招待状を作成。",
     "searchPlaceholder": "質問を検索...",
     "popularTitle": "人気の記事"
   }
