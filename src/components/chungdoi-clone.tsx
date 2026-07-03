@@ -15,15 +15,13 @@ import {
   Play,
   Sparkles,
   Star,
-  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { LogoMark } from "@/components/logo-mark";
+import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { getVietnameseTemplateSlug, templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { createInvitation } from "@/app/dashboard/actions";
 
@@ -72,49 +70,6 @@ function useRevealOnScroll() {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
-}
-
-function Logo() {
-  return (
-    <a href="#top" className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-white/5">
-      <LogoMark className="size-8" />
-      <span className="font-pattaya text-2xl text-white">Thiệp Mừng Online</span>
-    </a>
-  );
-}
-
-function Header() {
-  const t = useTranslations("home");
-  const nav: Array<[string, string]> = [
-    [t("nav.templates"), "#templates"],
-    [t("nav.howItWorks"), "#how-it-works"],
-    [t("nav.guests"), "#guests"],
-    [t("nav.pricing"), "#pricing"],
-  ];
-
-  return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#18120f]/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
-        <nav className="hidden items-center gap-7 text-sm font-semibold text-zinc-200 lg:flex">
-          {nav.map(([label, href]) => (
-            <a key={href} href={href} className="transition hover:text-[#fb3570]">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
-          <a
-            href="#templates"
-            className="rounded-full bg-[#fb3570] px-4 py-2 text-sm font-bold text-white shadow-lg shadow-[#fb3570]/25 transition hover:-translate-y-0.5 hover:bg-[#ff4a82]"
-          >
-            {t("createNow")}
-          </a>
-        </div>
-      </div>
-    </header>
-  );
 }
 
 function HeroSection() {
@@ -692,69 +647,12 @@ function PricingFaq() {
   );
 }
 
-function Footer() {
-  const t = useTranslations("home");
-  const columns: Array<[string, string[]]> = [
-    [t("footer.product"), [t("footer.weddingTemplates"), t("footer.pricing"), t("footer.howItWorks")]],
-    [t("footer.tools"), [t("footer.saveTheDate"), t("footer.aiMessages"), t("footer.imageCompressor"), t("footer.videoCompressor")]],
-    [t("footer.resources"), [t("footer.helpCenter"), t("footer.privacyPolicy"), t("footer.termsOfService"), t("footer.refundPolicy")]],
-  ];
-
-  return (
-    <footer className="border-t border-white/10 bg-[#18120f] pb-24 pt-12 lg:pb-8">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:px-8">
-        <div>
-          <Logo />
-          <p className="mt-4 max-w-sm text-sm leading-6 text-zinc-400">{t("footer.tagline")}</p>
-        </div>
-        {columns.map(([heading, items]) => (
-          <div key={heading}>
-            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-zinc-500">{heading}</h3>
-            <ul className="mt-4 space-y-3 text-sm text-zinc-300">
-              {items.map((item) => (
-                <li key={item}>
-                  <a href="#top" className="transition hover:text-[#fb3570]">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 px-4 text-sm text-zinc-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        <p>{t("footer.copyright")}</p>
-      </div>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#18120f]/95 backdrop-blur-lg lg:hidden">
-        <div className="mx-auto grid h-16 max-w-md grid-cols-3 text-xs font-bold text-zinc-400">
-          <a href="#templates" className="flex flex-col items-center justify-center gap-1 hover:text-white">
-            <ImageIcon className="size-5" /> {t("footer.mobileTemplates")}
-          </a>
-          <a href="#how-it-works" className="flex flex-col items-center justify-center gap-1 hover:text-white">
-            <Play className="size-5" /> {t("footer.mobileGuide")}
-          </a>
-          <a href="#guests" className="flex flex-col items-center justify-center gap-1 hover:text-white">
-            <Users className="size-5" /> {t("footer.mobileGuests")}
-          </a>
-        </div>
-      </nav>
-      <a
-        href="#support"
-        className="fixed bottom-20 right-4 z-50 flex size-14 items-center justify-center rounded-full bg-[#fb3570] text-white shadow-2xl shadow-[#fb3570]/30 transition hover:-translate-y-1 sm:bottom-6"
-        aria-label={t("footer.chatWithUs")}
-      >
-        <MessageCircle className="size-6" />
-      </a>
-    </footer>
-  );
-}
-
 export function ChungDoiClone() {
   useRevealOnScroll();
 
   return (
     <main className="min-h-screen bg-[#18120f] text-white">
-      <Header />
+      <SiteHeader />
       <HeroSection />
       <TemplateCarousel />
       <StatsSection />
@@ -764,7 +662,7 @@ export function ChungDoiClone() {
       <LanguageAndFeatures />
       <TemplateGallery />
       <PricingFaq />
-      <Footer />
+      <SiteFooter />
     </main>
   );
 }
