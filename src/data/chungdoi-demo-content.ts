@@ -3613,7 +3613,7 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
     "families": {
       "brideFather": "Đỗ Văn Tuyên",
       "brideMother": "Lê Thị Vân",
-      "brideAddress": "ố 32, Phố Đội Cấn, Ba Đình, Hà Nội",
+      "brideAddress": "Số 32, Phố Đội Cấn, Ba Đình, Hà Nội",
       "groomFather": "Vũ Văn Hiệp",
       "groomMother": "Nguyễn Thị Ánh",
       "groomAddress": "Số 9, Ngõ 102 Trường Chinh, Đống Đa, Hà Nội",

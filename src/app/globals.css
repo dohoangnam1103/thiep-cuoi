@@ -205,8 +205,11 @@ html.lenis body {
 
 @layer utilities {
   .chungdoi-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    touch-action: pan-y;
   }
   .chungdoi-scroll::-webkit-scrollbar {
     width: 4px;

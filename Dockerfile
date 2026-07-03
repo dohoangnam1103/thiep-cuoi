@@ -31,6 +31,11 @@ RUN --mount=type=cache,target=/root/.npm \
   echo "No lockfile found." && exit 1; \
   fi
 
+# --ignore-scripts above skips better-sqlite3's install script (prebuild-install),
+# so its native .node binding is never fetched. Rebuild just that package to pull
+# the prebuilt binary for this Node ABI/platform.
+RUN npm rebuild better-sqlite3
+
 # ============================================
 # Stage 2: Build Next.js application in standalone mode
 # ============================================
@@ -49,6 +54,9 @@ COPY . .
 ENV NODE_ENV=production
 ENV DATABASE_URL="file:./dev.db"
 ENV SESSION_SECRET="build-time-placeholder"
+# QEMU (amd64 emulation on arm64 hosts) lacks io_uring support that Node 24's
+# libuv enables by default, aborting the build at finalize. Disable it.
+ENV UV_USE_IO_URING=0
 
 RUN npm run prisma:generate
 

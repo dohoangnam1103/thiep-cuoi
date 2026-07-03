@@ -15,6 +15,28 @@ const clean = (v: string | null | undefined): string | null => {
   return trimmed ? trimmed : null;
 };
 
+const slugify = (value: string): string =>
+  value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const normalizeBirthOrder = (value: string | null | undefined): string => {
+  const trimmed = value?.trim() ?? "";
+  const labels: Record<string, string> = {
+    "ut-nu": "Út Nữ",
+    "ut-nam": "Út Nam",
+    "truong-nu": "Trưởng Nữ",
+    "truong-nam": "Trưởng Nam",
+    "thu-nu": "Thứ Nữ",
+    "thu-nam": "Thứ Nam",
+  };
+  return labels[slugify(trimmed)] ?? trimmed;
+};
+
 export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemoContent {
   const c = invitation.content;
 
@@ -32,8 +54,8 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       groomFullName: c?.groomFullName ?? "",
       brideShortName: c?.brideShortName ?? "",
       groomShortName: c?.groomShortName ?? "",
-      brideBirthOrder: c?.brideBirthOrder ?? "",
-      groomBirthOrder: c?.groomBirthOrder ?? "",
+      brideBirthOrder: normalizeBirthOrder(c?.brideBirthOrder),
+      groomBirthOrder: normalizeBirthOrder(c?.groomBirthOrder),
       brideFirst: c?.brideFirst ?? true,
       date: c?.date ?? "",
       time: c?.time ?? "",

@@ -2,7 +2,7 @@
 
 import Lenis from "lenis";
 import { Pause, Play } from "lucide-react";
-import { type MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type Dispatch, type MouseEvent, type SetStateAction, type TouchEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -69,6 +69,113 @@ function formatWishTime(raw: string) {
   if (Number.isNaN(d.getTime())) return raw;
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}/${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
+function useLightbox(count: number) {
+  const [lightbox, setLightbox] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+      else if (e.key === "ArrowLeft") setLightbox((v) => (v === null ? v : (v - 1 + count) % count));
+      else if (e.key === "ArrowRight") setLightbox((v) => (v === null ? v : (v + 1) % count));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, count]);
+
+  return { lightbox, setLightbox };
+}
+
+function Lightbox({
+  gallery,
+  index,
+  setIndex,
+  accent = "#ffffff",
+}: {
+  gallery: string[];
+  index: number | null;
+  setIndex: Dispatch<SetStateAction<number | null>>;
+  accent?: string;
+}) {
+  const count = gallery.length;
+  const [drag, setDrag] = useState(0);
+  const [animate, setAnimate] = useState(true);
+  const startRef = useRef<{ x: number; y: number; dragging: boolean } | null>(null);
+
+  if (index === null) return null;
+
+  const step = (dir: number) => setIndex((v) => (v === null ? v : (v + dir + count) % count));
+
+  const onTouchStart = (e: TouchEvent) => {
+    const t = e.touches[0];
+    if (!t) return;
+    startRef.current = { x: t.clientX, y: t.clientY, dragging: false };
+    setAnimate(false);
+  };
+  const onTouchMove = (e: TouchEvent) => {
+    const s = startRef.current;
+    const t = e.touches[0];
+    if (!s || !t) return;
+    const dx = t.clientX - s.x;
+    const dy = t.clientY - s.y;
+    if (!s.dragging && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) s.dragging = true;
+    if (s.dragging) setDrag(dx);
+  };
+  const onTouchEnd = () => {
+    const s = startRef.current;
+    startRef.current = null;
+    const dx = drag;
+    setAnimate(true);
+    setDrag(0);
+    if (!s || !s.dragging) return;
+    const width = typeof window !== "undefined" ? window.innerWidth : 320;
+    if (Math.abs(dx) > Math.min(80, width * 0.2)) step(dx < 0 ? 1 : -1);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black/90 touch-pan-y"
+      onClick={() => setIndex(null)}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      <button type="button" aria-label="Đóng" onClick={(e) => { e.stopPropagation(); setIndex(null); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
+      <div className="absolute top-5 z-10 text-sm text-white/80">{index + 1} / {count}</div>
+      <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); step(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
+      <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); step(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
+
+      <div
+        className="flex h-full w-full"
+        style={{
+          transform: `translate3d(calc(${-index * 100}% + ${drag}px), 0, 0)`,
+          transition: animate ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
+        }}
+      >
+        {gallery.map((src, i) => (
+          <div key={src} className="flex h-full w-full shrink-0 items-center justify-center px-4">
+            <img
+              src={src}
+              alt={`Wedding photo ${i + 1}`}
+              draggable={false}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[78vh] max-w-[92vw] select-none rounded-lg object-contain"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="absolute bottom-4 z-10 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
+        {gallery.map((src, i) => (
+          <button key={src} type="button" onClick={() => { setAnimate(true); setIndex(i); }} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === index ? accent : "transparent", opacity: i === index ? 1 : 0.6 }}>
+            <img src={src} alt={`Thumbnail ${i + 1}`} draggable={false} className="h-full w-full object-cover" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function googleCalendarUrl(content: ChungDoiDemoContent) {
@@ -486,6 +593,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
   const galleryPreview = gallery.slice(0, 4);
   const extraCount = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
 
   return (
     <div className="relative mx-auto w-full max-w-[440px] px-5 pb-16 pt-10" style={{ color: tokens.textPrimary }}>
@@ -531,17 +639,19 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
             {galleryPreview.map((src, index) => {
               const isLast = index === galleryPreview.length - 1;
               return (
-                <div key={src} className="relative overflow-hidden rounded-lg">
+                <button key={src} type="button" onClick={() => setLightbox(index)} className="relative cursor-pointer overflow-hidden rounded-lg">
                   <img src={src} alt={`Ảnh cưới ${index + 1}`} className="aspect-[3/4] w-full object-cover" />
                   {isLast && extraCount > 0 ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/45 text-2xl font-bold text-white">+{extraCount}</div>
                   ) : null}
-                </div>
+                </button>
               );
             })}
           </div>
         </section>
       ) : null}
+
+      <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={tokens.accent} />
 
       {reception ? (
         <section className="reveal is-visible mt-16 text-center">
@@ -758,18 +868,7 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const [lightbox, setLightbox] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (lightbox === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightbox(null);
-      else if (e.key === "ArrowLeft") setLightbox((v) => (v === null ? v : (v - 1 + gallery.length) % gallery.length));
-      else if (e.key === "ArrowRight") setLightbox((v) => (v === null ? v : (v + 1) % gallery.length));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [lightbox, gallery.length]);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
 
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -872,22 +971,7 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
           </section>
         ) : null}
 
-        {lightbox !== null ? (
-          <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90" onClick={() => setLightbox(null)}>
-            <button type="button" aria-label="Đóng" onClick={() => setLightbox(null)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
-            <div className="absolute top-5 text-sm text-white/80">{lightbox + 1} / {gallery.length}</div>
-            <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v === null ? v : (v - 1 + gallery.length) % gallery.length)); }} className="absolute left-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
-            <img src={gallery[lightbox]} alt={`Wedding photo ${lightbox + 1}`} onClick={(e) => e.stopPropagation()} className="max-h-[78vh] max-w-[92vw] rounded-lg object-contain" />
-            <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v === null ? v : (v + 1) % gallery.length)); }} className="absolute right-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
-            <div className="absolute bottom-4 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
-              {gallery.map((src, i) => (
-                <button key={src} type="button" onClick={() => setLightbox(i)} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === lightbox ? CREAM : "transparent", opacity: i === lightbox ? 1 : 0.6 }}>
-                  <img src={src} alt={`Thumbnail ${i + 1}`} className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
+        <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={CREAM} />
 
         {reception ? (
           <section className="relative z-10 flex flex-col items-center gap-4 px-6 py-10 text-center md:gap-6 md:py-14">
@@ -967,7 +1051,7 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
           </div>
           <PhoenixWishForm M={M} />
           {wishes.length > 0 ? (
-            <div className="chungdoi-scroll mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+            <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
               {wishes.map((w, i) => (
                 <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-xs" style={{ borderColor: hexToRgba(M, 0.2), backgroundColor: "#ffffff" }}>
                   <div className="flex items-start justify-between">
@@ -1153,6 +1237,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
   const portrait = gallery[0];
   const albumShown = gallery.slice(0, 4);
   const albumExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   // lunar date is demo-specific; project has no lunar-calendar dependency
   const LUNAR = "(Tức ngày 17/06 năm Bính Ngọ)";
@@ -1249,20 +1334,22 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <div className="relative z-10 mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
               <div className="grid grid-cols-2 gap-4">
                 {albumShown.map((src, i) => (
-                  <div key={src} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
+                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
                     <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
                     {i === albumShown.length - 1 && albumExtra > 0 ? (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                         <span className="text-lg font-semibold text-white">+{albumExtra}</span>
                       </div>
                     ) : null}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
         </>
       ) : null}
+
+      <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={palette.accent} />
 
       <SongHyBand palette={palette}>THÔNG TIN TIỆC CƯỚI</SongHyBand>
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
@@ -1368,7 +1455,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
         <section className="relative z-10 flex w-full flex-col items-center justify-center px-2 py-8 sm:px-4" style={{ color: palette.gray }}>
           <SongHyWishForm palette={palette} />
-          <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+          <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
             {wishes.length > 0 ? (
               wishes.map((w, i) => (
                 <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-xs" style={{ borderColor: hexToRgba(palette.accent, 0.2), backgroundColor: "#fff" }}>
@@ -1388,7 +1475,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
 
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
         <div className="relative z-10 flex flex-col items-center justify-center py-8">
-          <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
+          <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bì Mừng Cưới</h2>
           <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
             <div className="relative flex h-full w-full items-center justify-center">
               {[
@@ -1426,7 +1513,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: palette.modalBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: palette.accent }}>
               <button type="button" onClick={() => setGiftOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
-              <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
+              <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bì Mừng Cưới</h2>
             </div>
             <div className="p-4 sm:p-6">
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: "rgb(70, 70, 70)" }}>
@@ -1729,6 +1816,7 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const LUNAR = "(Tức ngày 17/03 năm Bính Ngọ)";
   const [giftOpen, setGiftOpen] = useState(false);
@@ -1868,18 +1956,19 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
                 {galleryShown.map((src, i) => {
                   const isLast = i === galleryShown.length - 1;
                   return (
-                    <div key={src} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(BROWN, 0.2), backgroundColor: hexToRgba(BROWN, 0.03) }}>
+                    <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(BROWN, 0.2), backgroundColor: hexToRgba(BROWN, 0.03) }}>
                       <img src={src} alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
                       {isLast && galleryExtra > 0 ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/55">
                           <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
                         </div>
                       ) : null}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
             </section>
+            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={RED} />
           </>
         ) : null}
 
@@ -1996,10 +2085,10 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
         </section>
 
 
-        {/* Phong Bao Mừng Cưới */}
+        {/* Phong Bì Mừng Cưới */}
         {banks.length > 0 ? (
           <div className="relative z-[2] flex flex-col items-center justify-center px-2 py-[10px] text-center md:px-10 md:py-[15px] lg:py-[20px]">
-            <h2 className="mb-4 flex flex-col items-center text-[21px] md:text-[25px] lg:text-[32px]" style={{ color: BROWN, fontFamily: NB_TITLING, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
+            <h2 className="mb-4 flex flex-col items-center text-[21px] md:text-[25px] lg:text-[32px]" style={{ color: BROWN, fontFamily: NB_TITLING, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới</h2>
             <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
               <div className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
                 {[
@@ -2051,7 +2140,7 @@ function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
             <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CREAM }} onClick={(e) => e.stopPropagation()}>
               <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: RED }}>
                 <button type="button" onClick={() => setGiftOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
-                <h2 className="text-[21px] text-white md:text-[25px] lg:text-[32px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: NB_TITLING, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
+                <h2 className="text-[21px] text-white md:text-[25px] lg:text-[32px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: NB_TITLING, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới</h2>
               </div>
               <div className="p-4 sm:p-6">
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: BROWN }}>
@@ -2160,6 +2249,7 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const LUNAR = "(Tức ngày 25/03 năm Bính Ngọ)";
 
@@ -2290,17 +2380,18 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                 <div className="mt-6 w-full max-w-[390px] md:max-w-[560px] lg:max-w-[600px]">
                   <div className="grid grid-cols-2 gap-3 md:gap-4">
                     {galleryShown.map((src, i) => (
-                      <div key={src} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-[#542e0833] bg-[#542e0808]">
+                      <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-[#542e0833] bg-[#542e0808]">
                         <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} style={{ objectPosition: "50% 50%" }} />
                         {i === galleryShown.length - 1 && galleryExtra > 0 ? (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/55">
                             <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
                           </div>
                         ) : null}
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
+                <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={RED} />
               </div>
             ) : null}
 
@@ -2395,7 +2486,7 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                 <h2 className="text-[30px] font-bold uppercase md:text-[35px] lg:text-[45px]" style={{ color: "#2F6982", fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Sổ lưu bút</h2>
               </div>
               <CoBaWishForm BROWN={BROWN} CREAM={CREAM} />
-              <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+              <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.length > 0 ? (
                   wishes.map((w, i) => (
                     <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-sm" style={{ borderColor: hexToRgba(BROWN, 0.2), backgroundColor: "#fff" }}>
@@ -2415,7 +2506,7 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             {/* bank envelope */}
             {bankCards.length > 0 ? (
               <div className="relative flex w-full max-w-[248px] flex-col items-center justify-center px-2 py-[10px] md:max-w-none md:px-10 md:py-[15px] lg:py-[20px]">
-                <h2 className="mb-4 flex flex-col items-center text-[21px] md:text-[25px] lg:text-[32px]" style={{ color: BROWN, fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
+                <h2 className="mb-4 flex flex-col items-center text-[21px] md:text-[25px] lg:text-[32px]" style={{ color: BROWN, fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới</h2>
                 <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setBankOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
                   <div className="relative flex h-full w-full items-center justify-center">
                     {/* envelope body */}
@@ -2435,7 +2526,7 @@ function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                     <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CREAM }} onClick={(e) => e.stopPropagation()}>
                       <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: RED }}>
                         <button type="button" aria-label="Đóng" onClick={() => setBankOpen(false)} className="absolute right-3 top-3 text-white/80 hover:text-white">✕</button>
-                        <h2 className="text-[21px] text-white md:text-[25px] lg:text-[32px]" style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.2)", fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
+                        <h2 className="text-[21px] text-white md:text-[25px] lg:text-[32px]" style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.2)", fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới</h2>
                       </div>
                       <div className="p-4 sm:p-6">
                         <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: BROWN }}>
@@ -2552,6 +2643,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const CEREMONY_LUNAR = "(Tức ngày 14/12 năm Ất Tỵ / 農曆 14/12 乙巳)";
   const RECEPTION_LUNAR = "(Tức ngày 14/04 năm Bính Ngọ / 農曆 14/04 丙午)";
@@ -2626,17 +2718,18 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
                 <div className="mt-6 w-full max-w-[390px] md:max-w-[560px]">
                   <div className="grid grid-cols-2 gap-3 md:gap-4">
                     {galleryShown.map((src, i) => (
-                      <div key={src} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(GOLD, 0.25) }}>
+                      <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(GOLD, 0.25) }}>
                         <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
                         {i === galleryShown.length - 1 && galleryExtra > 0 ? (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/55">
                             <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
                           </div>
                         ) : null}
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
+                <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GOLD} />
               </div>
             ) : null}
 
@@ -2786,7 +2879,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
                 <h2 className="text-[26px] font-semibold uppercase md:text-[32px]" style={{ color: GOLD, letterSpacing: "0.04em" }}>Sổ lưu bút <span className="opacity-70">/ 賓客留言</span></h2>
               </div>
               <DragonPhoenixWishForm GOLD={GOLD} BTN_TEXT={BTN_TEXT} />
-              <div className="mx-auto mt-8 max-h-[500px] w-full space-y-3 overflow-y-auto pr-2">
+              <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full space-y-3 overflow-y-auto pr-2">
                 {wishes.length > 0 ? (
                   wishes.map((w, i) => (
                     <div key={`${w.name}-${i}`} className="rounded-xl border p-3 text-sm" style={{ borderColor: hexToRgba(GOLD, 0.25), backgroundColor: hexToRgba(GOLD, 0.05) }}>
@@ -2806,7 +2899,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
             {/* bank envelope */}
             {bankCards.length > 0 ? (
               <div className="flex w-full flex-col items-center justify-center">
-                <h2 className="mb-1 text-[24px] font-semibold md:text-[30px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
+                <h2 className="mb-1 text-[24px] font-semibold md:text-[30px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới</h2>
                 <p className="mb-4 text-[14px] opacity-70 md:text-[16px]" style={{ color: GOLD }}>結婚紅包</p>
                 <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setBankOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
                   <div className="relative flex h-full w-full items-center justify-center">
@@ -2832,7 +2925,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
                     <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CARD_BG }} onClick={(e) => e.stopPropagation()}>
                       <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: "#8a1220" }}>
                         <button type="button" aria-label="Đóng" onClick={() => setBankOpen(false)} className="absolute right-3 top-3 text-white/80 hover:text-white">✕</button>
-                        <h2 className="text-[21px] md:text-[26px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới / 結婚紅包</h2>
+                        <h2 className="text-[21px] md:text-[26px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới / 結婚紅包</h2>
                       </div>
                       <div className="p-4 sm:p-6">
                         <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: GOLD }}>
@@ -2967,6 +3060,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
   const bankCards = ([
@@ -3069,18 +3163,19 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
               <div className="relative z-10 mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
                 <div className="grid grid-cols-2 gap-4">
                   {galleryShown.map((src, i) => (
-                    <div key={src} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
+                    <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
                       <img src={src} alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
                       {i === galleryShown.length - 1 && galleryExtra > 0 ? (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                           <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
                         </div>
                       ) : null}
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
             </div>
+            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={DD_RED} />
           </>
         ) : null}
 
@@ -3181,7 +3276,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           <div className="relative z-10 px-4 py-10">
             <DoubleDragonWishForm red={DD_RED} />
             {wishes.length > 0 ? (
-              <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+              <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
                   <div key={`${w.name}-${i}`} className="rounded-lg border border-gray-100 bg-white p-4 shadow-md">
                     <div className="flex items-start justify-between">
@@ -3202,7 +3297,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
               <div className="absolute inset-0 opacity-40" style={{ backgroundImage: `url("${DD_TEX}")`, backgroundSize: "clamp(300px, 50vw, 500px)" }} />
             </div>
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: DD_LINEN }}>
-              <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: DD_RED, fontFamily: DD_SERIF }}>Phong Bao Mừng Cưới</h2>
+              <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: DD_RED, fontFamily: DD_SERIF }}>Phong Bì Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {bankCards.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
@@ -3300,18 +3395,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const krWeekday = recDate ? KR_DAYS[recDate.getDay()] : "";
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
-  const [lightbox, setLightbox] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (lightbox === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightbox(null);
-      else if (e.key === "ArrowLeft") setLightbox((v) => (v === null ? v : (v - 1 + gallery.length) % gallery.length));
-      else if (e.key === "ArrowRight") setLightbox((v) => (v === null ? v : (v + 1) % gallery.length));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [lightbox, gallery.length]);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time || "11:00";
 
@@ -3427,22 +3511,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
                 </div>
               </div>
             </div>
-            {lightbox !== null ? (
-              <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90" onClick={() => setLightbox(null)}>
-                <button type="button" aria-label="Đóng" onClick={() => setLightbox(null)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
-                <div className="absolute top-5 text-sm text-white/80">{lightbox + 1} / {gallery.length}</div>
-                <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v === null ? v : (v - 1 + gallery.length) % gallery.length)); }} className="absolute left-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
-                <img src={gallery[lightbox]} alt={`Wedding photo ${lightbox + 1}`} onClick={(e) => e.stopPropagation()} className="max-h-[78vh] max-w-[92vw] rounded-lg object-contain" />
-                <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); setLightbox((v) => (v === null ? v : (v + 1) % gallery.length)); }} className="absolute right-3 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
-                <div className="absolute bottom-4 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
-                  {gallery.map((src, i) => (
-                    <button key={src} type="button" onClick={() => setLightbox(i)} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === lightbox ? SLX_LINEN : "transparent", opacity: i === lightbox ? 1 : 0.6 }}>
-                      <img src={src} alt={`Thumbnail ${i + 1}`} className="h-full w-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={SLX_LINEN} />
           </>
         ) : null}
 
@@ -3556,7 +3625,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
           <div className="px-4 py-10">
             <SongLongXanhWishForm />
             {wishes.length > 0 ? (
-              <div className="mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+              <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
                   <div key={`${w.name}-${i}`} className="rounded-lg border border-gray-100 bg-white p-4 shadow-md">
                     <div className="flex items-start justify-between">
@@ -3576,7 +3645,7 @@ function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
             <div className="relative z-10 h-[80px] w-full" style={{ backgroundColor: SLX_GREEN }} />
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: SLX_LINEN }}>
               <h2 className="mb-4 flex flex-col items-center gap-0.5 text-center uppercase tracking-wide" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
-                <span className="text-[20px] font-bold md:text-[24px]">Phong Bao Mừng Cưới</span>
+                <span className="text-[20px] font-bold md:text-[24px]">Phong Bì Mừng Cưới</span>
                 <span className="text-[12px] font-normal normal-case opacity-80 md:text-[13px]">축의금</span>
               </h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
@@ -3651,7 +3720,7 @@ export function ChungDoiDemo({
   useEffect(() => {
     if (!opened) return;
 
-    const lenis = new Lenis({ syncTouch: true, touchInertiaExponent: 1.7 });
+    const lenis = new Lenis({ syncTouch: false, allowNestedScroll: true });
     lenisRef.current = lenis;
 
     let rafId = requestAnimationFrame(function raf(time) {

@@ -3,6 +3,9 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  outputFileTracingIncludes: {
+    "/*": ["node_modules/better-sqlite3/build/Release/*.node"],
+  },
 };
 
 const withNextIntl = createNextIntlPlugin();
