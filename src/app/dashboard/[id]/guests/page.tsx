@@ -33,20 +33,20 @@ export default async function GuestsPage({ params }: { params: Promise<{ id: str
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <Link
         href={`/dashboard/${id}/rsvp`}
-        className="text-sm text-zinc-400 transition hover:text-white"
+        className="text-sm text-muted-foreground transition hover:text-foreground"
       >
         &larr; Về xác nhận tham dự
       </Link>
-      <h1 className="mt-3 font-pattaya text-3xl text-white">Khách mời</h1>
+      <h1 className="mt-3 font-pattaya text-3xl text-foreground">Khách mời</h1>
 
       <div className="mt-6 grid grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-4 text-center">
-          <p className="text-2xl font-bold text-white">{rows.length}</p>
-          <p className="text-sm text-zinc-400">Tổng khách mời</p>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{rows.length}</p>
+          <p className="text-sm text-muted-foreground">Tổng khách mời</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-4 text-center">
-          <p className="text-2xl font-bold text-white">{responded}</p>
-          <p className="text-sm text-zinc-400">Đã phản hồi</p>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{responded}</p>
+          <p className="text-sm text-muted-foreground">Đã phản hồi</p>
         </div>
       </div>
 

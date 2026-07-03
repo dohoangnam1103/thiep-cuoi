@@ -41,7 +41,7 @@ export function GuestManager({ invitationId, slug, guests }: Props) {
 
   if (!slug) {
     return (
-      <p className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-200">
+      <p className="mt-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-700">
         Thiệp chưa được xuất bản. Hãy xuất bản thiệp trước để tạo link riêng cho khách mời.
       </p>
     );
@@ -51,26 +51,26 @@ export function GuestManager({ invitationId, slug, guests }: Props) {
     <div className="mt-6 space-y-8">
       <form
         action={formAction}
-        className="grid gap-3 rounded-2xl border border-white/10 bg-[#1c1512]/80 p-5 sm:grid-cols-2"
+        className="grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2"
       >
         <input
           name="name"
           required
           maxLength={120}
           placeholder="Tên khách*"
-          className="rounded-lg border border-white/15 bg-black/20 px-4 py-2.5 text-sm text-white outline-none focus:border-white/40"
+          className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
         />
         <input
           name="role"
           maxLength={60}
           placeholder="Vai (anh, chị, bạn...)"
-          className="rounded-lg border border-white/15 bg-black/20 px-4 py-2.5 text-sm text-white outline-none focus:border-white/40"
+          className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
         />
         <select
           name="side"
           defaultValue=""
           aria-label="Nhà"
-          className="rounded-lg border border-white/15 bg-black/20 px-4 py-2.5 text-sm text-white outline-none focus:border-white/40"
+          className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
         >
           <option value="">Chọn nhà</option>
           <option value="Nhà trai">Nhà trai</option>
@@ -80,26 +80,26 @@ export function GuestManager({ invitationId, slug, guests }: Props) {
           name="note"
           maxLength={300}
           placeholder="Ghi chú (không bắt buộc)"
-          className="rounded-lg border border-white/15 bg-black/20 px-4 py-2.5 text-sm text-white outline-none focus:border-white/40"
+          className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
         />
         {state?.error ? (
-          <p className="text-sm text-red-400 sm:col-span-2">{state.error}</p>
+          <p className="text-sm text-red-600 sm:col-span-2">{state.error}</p>
         ) : null}
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-[#fb3570] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#ff4a82] disabled:opacity-60 sm:col-span-2"
+          className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60 sm:col-span-2"
         >
           {pending ? "Đang thêm..." : "+ Thêm khách"}
         </button>
       </form>
 
       {guests.length === 0 ? (
-        <p className="text-zinc-400">Chưa có khách mời nào.</p>
+        <p className="text-muted-foreground">Chưa có khách mời nào.</p>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10">
+        <div className="overflow-hidden rounded-2xl border border-border">
           <table className="w-full text-left text-sm">
-            <thead className="bg-white/5 text-zinc-400">
+            <thead className="bg-secondary text-secondary-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Tên</th>
                 <th className="px-4 py-3 font-medium">Vai</th>
@@ -108,17 +108,17 @@ export function GuestManager({ invitationId, slug, guests }: Props) {
                 <th className="px-4 py-3 font-medium">Link riêng</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-zinc-200">
+            <tbody className="divide-y divide-border text-foreground">
               {guests.map((g) => (
-                <tr key={g.id}>
+                <tr key={g.id} className="transition hover:bg-muted">
                   <td className="px-4 py-3">{g.name}</td>
                   <td className="px-4 py-3">{g.role ?? "—"}</td>
                   <td className="px-4 py-3">{g.side ?? "—"}</td>
                   <td className="px-4 py-3">
                     {g.responded ? (
-                      <span className="text-green-300">Đã phản hồi</span>
+                      <span className="text-green-700">Đã phản hồi</span>
                     ) : (
-                      <span className="text-zinc-500">Chưa</span>
+                      <span className="text-muted-foreground">Chưa</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -126,14 +126,14 @@ export function GuestManager({ invitationId, slug, guests }: Props) {
                       <button
                         type="button"
                         onClick={() => copyLink(g)}
-                        className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white transition hover:bg-white/20"
+                        className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition hover:bg-muted"
                       >
                         {copiedId === g.id ? "Đã copy!" : "Copy link"}
                       </button>
                       <button
                         type="button"
                         onClick={() => setQrGuest(g)}
-                        className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white transition hover:bg-white/20"
+                        className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition hover:bg-muted"
                       >
                         QR
                       </button>

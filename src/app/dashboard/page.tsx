@@ -25,11 +25,11 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-pattaya text-3xl text-white">Thiệp của tôi</h1>
+        <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
         <form action={logout}>
           <button
             type="submit"
-            className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-white/5"
+            className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary"
           >
             Đăng xuất
           </button>
@@ -39,14 +39,14 @@ export default async function DashboardPage() {
       <form action={createInvitation} className="mt-6">
         <button
           type="submit"
-          className="rounded-full bg-[#fb3570] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#fb3570]/25 transition hover:bg-[#ff4a82]"
+          className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
         >
           + Tạo thiệp mới
         </button>
       </form>
 
       {invitations.length === 0 ? (
-        <p className="mt-12 text-center text-zinc-400">
+        <p className="mt-12 text-center text-muted-foreground">
           Bạn chưa có thiệp nào. Nhấn &quot;Tạo thiệp mới&quot; để bắt đầu.
         </p>
       ) : (
@@ -59,25 +59,25 @@ export default async function DashboardPage() {
             return (
               <li
                 key={inv.id}
-                className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-5 shadow-lg"
+                className="rounded-2xl border border-border bg-card p-5 shadow"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="text-lg font-semibold text-white">{label}</h2>
-                    <p className="mt-0.5 text-sm text-zinc-400">{templateName(inv.templateId)}</p>
+                    <h2 className="font-heading text-lg font-semibold text-foreground">{label}</h2>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{templateName(inv.templateId)}</p>
                   </div>
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                       published
-                        ? "bg-green-500/15 text-green-300"
-                        : "bg-amber-500/15 text-amber-300"
+                        ? "bg-green-500/15 text-green-700"
+                        : "bg-amber-500/15 text-amber-700"
                     }`}
                   >
                     {published ? "Đã xuất bản" : "Bản nháp"}
                   </span>
                 </div>
 
-                <div className="mt-4 flex gap-4 text-sm text-zinc-400">
+                <div className="mt-4 flex gap-4 text-sm text-muted-foreground">
                   <span>{inv._count.rsvps} xác nhận</span>
                   <span>{inv._count.wishes} lời chúc</span>
                 </div>
@@ -85,20 +85,20 @@ export default async function DashboardPage() {
                 <div className="mt-4 flex flex-wrap gap-2 text-sm">
                   <Link
                     href={`/editor/${inv.id}`}
-                    className="rounded-full bg-white/10 px-4 py-1.5 font-medium text-white transition hover:bg-white/20"
+                    className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
                   >
                     Chỉnh sửa
                   </Link>
                   <Link
                     href={`/dashboard/${inv.id}/rsvp`}
-                    className="rounded-full bg-white/10 px-4 py-1.5 font-medium text-white transition hover:bg-white/20"
+                    className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
                   >
                     Xem xác nhận
                   </Link>
                   {published && inv.slug ? (
                     <Link
                       href={`/thiep/${inv.slug}`}
-                      className="rounded-full bg-[#fb3570]/90 px-4 py-1.5 font-medium text-white transition hover:bg-[#fb3570]"
+                      className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground transition hover:bg-primary/90"
                     >
                       Xem thiệp
                     </Link>
