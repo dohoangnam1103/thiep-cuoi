@@ -27,6 +27,7 @@ import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, MUSIC_OPTIONS, type SelectOption } f
 import type { InvitationContent } from "@/generated/prisma/client";
 import { saveDraft, publish, checkSlug, type EditorState } from "./actions";
 import { readDraft, useFormDraft, type Draft } from "@/hooks/use-form-draft";
+import { slugify, slugifyInput, slugFromFormFields } from "./slug";
 import { VALID_TEMPLATE_IDS, TEMPLATE_LABELS } from "./templates";
 
 type EditorFormProps = {
@@ -38,6 +39,8 @@ type EditorFormProps = {
   content: InvitationContent | null;
   schedule: { time: string; label: string }[];
   gallery: string[];
+  saveAction?: (id: string, prev: EditorState, formData: FormData) => Promise<EditorState>;
+  adminMode?: boolean;
 };
 
 function field(content: InvitationContent | null, key: keyof InvitationContent): string {
@@ -45,39 +48,14 @@ function field(content: InvitationContent | null, key: keyof InvitationContent):
   return typeof v === "string" ? v : "";
 }
 
-function slugify(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[đĐ]/g, "d")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-/** Like slugify but keeps a trailing hyphen so the user can type multi-word slugs. */
-function slugifyInput(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[đĐ]/g, "d")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+/, "");
-}
-
-/** Hậu tố ngẫu nhiên ngắn để slug tự tạo không trùng nhau. */
-function slugSuffix(): string {
-  return Math.random().toString(36).slice(2, 8);
-}
-
 function slugFromNames(content: InvitationContent | null): string {
-  const bride = (content?.brideShortName || content?.brideFullName || "").trim();
-  const groom = (content?.groomShortName || content?.groomFullName || "").trim();
-  if (!bride && !groom) return "";
-  const order = (content?.brideFirst ?? true) ? [bride, groom] : [groom, bride];
-  const base = slugify(order.filter(Boolean).join(" "));
-  return base ? `${base}-${slugSuffix()}` : "";
+  return slugFromFormFields({
+    brideFullName: content?.brideFullName,
+    groomFullName: content?.groomFullName,
+    brideShortName: content?.brideShortName,
+    groomShortName: content?.groomShortName,
+    brideFirst: content?.brideFirst,
+  });
 }
 
 function normalizeBirthOrder(value: string): string {
@@ -670,8 +648,10 @@ export function EditorForm({
   content,
   schedule,
   gallery,
+  saveAction: saveActionProp,
+  adminMode = false,
 }: EditorFormProps) {
-  const saveAction = saveDraft.bind(null, invitationId);
+  const saveAction = (saveActionProp ?? saveDraft).bind(null, invitationId);
   const publishAction = publish.bind(null, invitationId);
   const [saveState, saveFormAction, saving] = useActionState<EditorState, FormData>(saveAction, undefined);
   const [publishState, publishFormAction, publishing] = useActionState<EditorState, FormData>(
@@ -703,6 +683,7 @@ export function EditorForm({
   });
 
   const [slug, setSlug] = useState(currentSlug || slugFromNames(content));
+  const [slugEdited, setSlugEdited] = useState(Boolean(currentSlug));
   const [slugStatus, setSlugStatus] = useState<{ available: boolean; reason?: string } | null>(null);
   const [checking, startCheck] = useTransition();
 
@@ -732,16 +713,22 @@ export function EditorForm({
     setTab("preview");
   }
 
-  function onGenerateSlug() {
+  function nextSlugFromForm() {
     const form = document.getElementById("editor-form") as HTMLFormElement | null;
     const read = (name: string) => (form?.elements.namedItem(name) as HTMLInputElement | null)?.value ?? "";
-    const bride = (read("brideShortName") || read("brideFullName")).trim();
-    const groom = (read("groomShortName") || read("groomFullName")).trim();
-    const brideFirst = (form?.elements.namedItem("brideFirst") as HTMLInputElement | null)?.checked ?? true;
-    const order = brideFirst ? [bride, groom] : [groom, bride];
-    const base = slugify(order.filter(Boolean).join(" "));
-    const next = base ? `${base}-${slugSuffix()}` : "";
+    return slugFromFormFields({
+      brideFullName: read("brideFullName"),
+      groomFullName: read("groomFullName"),
+      brideShortName: read("brideShortName"),
+      groomShortName: read("groomShortName"),
+      brideFirst: (form?.elements.namedItem("brideFirst") as HTMLInputElement | null)?.checked ?? true,
+    });
+  }
+
+  function onGenerateSlug() {
+    const next = nextSlugFromForm();
     setSlug(next);
+    setSlugEdited(false);
     setSlugStatus(next ? null : { available: false, reason: "Chưa có tên cô dâu/chú rể" });
   }
 
@@ -754,6 +741,14 @@ export function EditorForm({
       const result = await checkSlug(slug, invitationId);
       setSlugStatus(result);
     });
+  }
+
+  function onEditorInput(event: React.FormEvent<HTMLFormElement>) {
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    if (target?.name === "slug" || slugEdited) return;
+    const next = nextSlugFromForm();
+    setSlug(next);
+    setSlugStatus(null);
   }
 
   return (
@@ -781,7 +776,7 @@ export function EditorForm({
           </p>
         </div>
 
-        <form action={saveFormAction} className="space-y-4" id="editor-form">
+        <form action={saveFormAction} onInput={onEditorInput} className="space-y-4" id="editor-form">
         <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
           <TemplatePicker defaultValue={seed("templateId", templateId)} />
         </Accordion>
@@ -994,19 +989,11 @@ export function EditorForm({
             Xem trước
           </button>
         </div>
-      </form>
 
+      {!adminMode && (
       <section className="mt-8 rounded-2xl border border-primary/30 bg-primary/5 p-5">
         <h2 className="mb-4 font-pattaya text-xl text-primary">Xuất bản</h2>
-        <form
-          action={publishFormAction}
-          onSubmit={() => {
-            try {
-              window.localStorage.removeItem(`chungdoi:draft:${invitationId}`);
-            } catch {}
-          }}
-          className="space-y-3"
-        >
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label htmlFor="slug" className={labelClass}>
               Đường dẫn công khai
@@ -1026,6 +1013,7 @@ export function EditorForm({
               name="slug"
               value={slug}
               onChange={(e) => {
+                setSlugEdited(true);
                 setSlug(slugifyInput(e.target.value));
                 setSlugStatus(null);
               }}
@@ -1052,13 +1040,14 @@ export function EditorForm({
           ) : null}
           <button
             type="submit"
+            formAction={publishFormAction}
             disabled={publishing}
             className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90 disabled:opacity-60"
           >
-            {publishing ? "Đang xuất bản..." : "Xuất bản thiệp"}
+            {publishing ? "Đang lưu và xuất bản..." : "Xuất bản thiệp"}
           </button>
-          <p className="text-xs text-muted-foreground">Nhớ lưu bản nháp trước khi xuất bản.</p>
-        </form>
+          <p className="text-xs text-muted-foreground">Hệ thống sẽ tự lưu nội dung mới nhất trước khi xuất bản.</p>
+        </div>
 
         {paid ? (
           <p className="mt-4 text-sm font-semibold text-emerald-700">
@@ -1078,6 +1067,8 @@ export function EditorForm({
           </div>
         )}
       </section>
+      )}
+      </form>
       </div>
     </>
   );

@@ -9,6 +9,8 @@ import {
   templates,
 } from "@/data/chungdoi";
 import { routing, type Locale } from "@/i18n/routing";
+import { prisma } from "@/lib/prisma";
+import { toDemoContent } from "@/lib/to-demo-content";
 
 function localeSlug(sourceSlug: string, locale: Locale) {
   return locale === "vi" ? getVietnameseTemplateSlug(sourceSlug) : sourceSlug;
@@ -54,5 +56,11 @@ export default async function DemoPage({
   const template = findTemplateByRouteSlug(slug);
   if (!template) notFound();
 
-  return <ChungDoiDemo template={template} />;
+  const invitation = await prisma.invitation.findFirst({
+    where: { isDemo: true, templateId: template.slug },
+    include: { content: true, schedule: true, gallery: true, wishes: true },
+  });
+  const content = invitation ? toDemoContent(invitation) : undefined;
+
+  return <ChungDoiDemo template={template} content={content} />;
 }

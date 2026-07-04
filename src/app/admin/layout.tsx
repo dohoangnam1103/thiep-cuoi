@@ -1,0 +1,62 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
+import type { ReactNode } from "react";
+
+import "../globals.css";
+import { getCurrentAdmin } from "@/lib/admin-dal";
+import { adminLogout } from "./actions";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Quản trị | Thiệp Mừng Online",
+  icons: { icon: "/chungdoi/icon-v2.png" },
+};
+
+const NAV = [
+  { href: "/admin", label: "Tổng quan" },
+  { href: "/admin/users", label: "Người dùng" },
+  { href: "/admin/demos", label: "Thiệp demo" },
+  { href: "/admin/payments", label: "Giao dịch" },
+  { href: "/admin/vouchers", label: "Voucher" },
+];
+
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  const admin = await getCurrentAdmin();
+
+  return (
+    <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="min-h-full bg-muted/20 text-foreground">
+        {admin ? (
+          <header className="border-b border-border bg-background">
+            <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+              <span className="font-heading text-lg text-primary">Quản trị</span>
+              <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                {NAV.map((item) => (
+                  <Link key={item.href} href={item.href} className="text-muted-foreground hover:text-foreground">
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+              <form action={adminLogout} className="ml-auto">
+                <button type="submit" className="text-sm text-muted-foreground hover:text-destructive">
+                  Đăng xuất
+                </button>
+              </form>
+            </div>
+          </header>
+        ) : null}
+        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+      </body>
+    </html>
+  );
+}
