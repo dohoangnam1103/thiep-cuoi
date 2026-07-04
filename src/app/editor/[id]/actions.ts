@@ -166,7 +166,11 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
 
   await prisma.invitation.update({
     where: { id },
-    data: { slug: rawSlug, status: "published" },
+    data: {
+      slug: rawSlug,
+      status: "published",
+      ...(invitation.publishedAt ? {} : { publishedAt: new Date() }),
+    },
   });
 
   revalidatePath(`/thiep/${rawSlug}`);

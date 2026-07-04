@@ -715,8 +715,25 @@ export const templates = [
   }
 ] satisfies ChungDoiTemplate[];
 
-export const templateCategories = ["All", ...Array.from(new Set(templates.map((template) => template.category)))] as const;
-export const templateColors = ["All", ...Array.from(new Set(templates.map((template) => template.color)))] as const;
+// Slugs with a faithful, pixel-accurate rebuild in chungdoi-demo.tsx. Others still
+// fall back to the generic InvitationBody, so we hide them from the public listing.
+export const completedTemplateSlugs = new Set<string>([
+  "double-phoenix-red",
+  "double-phoenix-green",
+  "song-hy-red",
+  "song-hy-green",
+  "nhat-binh-red",
+  "co-ba-red",
+  "dragon-phoenix-red",
+  "double-dragon-red",
+  "double-dragon-blue",
+  "double-dragon-green",
+]);
+
+export const completedTemplates = templates.filter((template) => completedTemplateSlugs.has(template.slug));
+
+export const templateCategories = ["All", ...Array.from(new Set(completedTemplates.map((template) => template.category)))] as const;
+export const templateColors = ["All", ...Array.from(new Set(completedTemplates.map((template) => template.color)))] as const;
 
 export const vietnameseTemplateSlugs = [
   ["song-hy-red", "song-hy-do"],

@@ -192,8 +192,23 @@ function googleCalendarUrl(content: ChungDoiDemoContent) {
   return `https://www.google.com/calendar/render?${params.toString()}`;
 }
 
+/** Tọa độ marker trong link Google Maps: ưu tiên !3d..!4d.. (điểm ghim), sau đó @lat,lng. */
+function coordsFromMapsUrl(value: string): string | null {
+  const place = value.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (place) return `${place[1]},${place[2]}`;
+  const at = value.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (at) return `${at[1]},${at[2]}`;
+  return null;
+}
+
 function mapEmbedUrl(query: string) {
-  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+  const trimmed = query.trim();
+  // Link Google Maps dán vào không nhúng iframe trực tiếp được; rút tọa độ marker ra.
+  if (/^https?:\/\/\S*google\.[^/]*\/maps/i.test(trimmed)) {
+    const coords = coordsFromMapsUrl(trimmed);
+    if (coords) return `https://www.google.com/maps?q=${coords}&output=embed`;
+  }
+  return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
 }
 
 /** Resolved visual tokens for one template (from the reverse-engineered config, with fallbacks). */

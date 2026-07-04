@@ -8,10 +8,10 @@ import { createInvitation } from "@/app/dashboard/actions";
 import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { Link } from "@/i18n/navigation";
 import {
+  completedTemplates,
   getVietnameseTemplateSlug,
   templateCategories,
   templateColors,
-  templates,
   type ChungDoiTemplate,
 } from "@/data/chungdoi";
 
@@ -27,7 +27,7 @@ export function ChungDoiListing() {
 
   const filtered = useMemo(
     () =>
-      templates.filter(
+      completedTemplates.filter(
         (template) =>
           (category === "All" || template.category === category) &&
           (color === "All" || template.color === color),
@@ -64,7 +64,7 @@ export function ChungDoiListing() {
             <FilterPills label={t("colorLabel")} options={[...templateColors]} value={color} onChange={setColor} />
           </div>
           <div className="mt-6 rounded-full border border-border bg-card px-5 py-2 text-sm font-bold text-foreground inline-block">
-            {filtered.length} / {templates.length} {t("countSuffix")}
+            {filtered.length} / {completedTemplates.length} {t("countSuffix")}
           </div>
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

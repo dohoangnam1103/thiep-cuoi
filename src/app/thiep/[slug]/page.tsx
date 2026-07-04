@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
 import { prisma } from "@/lib/prisma";
+import { FREE_TRIAL_DAYS } from "@/lib/payment";
 import { toDemoContent } from "@/lib/to-demo-content";
 import { submitRsvp, submitWish } from "./actions";
+
+function isExpired(paid: boolean, publishedAt: Date | null): boolean {
+  if (paid) return false;
+  if (!publishedAt) return false;
+  const deadline = publishedAt.getTime() + FREE_TRIAL_DAYS * 24 * 60 * 60 * 1000;
+  return Date.now() > deadline;
+}
 
 async function loadPublished(slug: string) {
   return prisma.invitation.findFirst({
@@ -52,6 +61,28 @@ export default async function PublicInvitationPage({
   const { g } = await searchParams;
   const invitation = await loadPublished(slug);
   if (!invitation) notFound();
+
+  if (isExpired(invitation.paid, invitation.publishedAt)) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-4 text-center">
+        <div className="rounded-3xl border border-border bg-card p-10 shadow">
+          <h1 className="font-heading text-2xl font-semibold text-foreground">
+            Thiệp đã hết hạn dùng thử
+          </h1>
+          <p className="mt-3 text-muted-foreground">
+            Thiệp này đã hết {FREE_TRIAL_DAYS} ngày dùng thử miễn phí. Vui lòng thanh toán để
+            kích hoạt vĩnh viễn.
+          </p>
+          <Link
+            href={`/dashboard/${invitation.id}/thanh-toan`}
+            className="mt-6 inline-block rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
+          >
+            Gia hạn / Thanh toán
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   const template = templates.find((t) => t.slug === invitation.templateId) ?? templates[0];
   const content = toDemoContent(invitation);

@@ -20,6 +20,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
     <EditorForm
       invitationId={id}
       status={invitation.status}
+      paid={invitation.paid}
       currentSlug={invitation.slug}
       templateId={invitation.templateId}
       content={content}

@@ -27,29 +27,17 @@ import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, MUSIC_OPTIONS, type SelectOption } f
 import type { InvitationContent } from "@/generated/prisma/client";
 import { saveDraft, publish, checkSlug, type EditorState } from "./actions";
 import { readDraft, useFormDraft, type Draft } from "@/hooks/use-form-draft";
-import { VALID_TEMPLATE_IDS } from "./templates";
+import { VALID_TEMPLATE_IDS, TEMPLATE_LABELS } from "./templates";
 
 type EditorFormProps = {
   invitationId: string;
   status: string;
+  paid: boolean;
   currentSlug: string | null;
   templateId: string;
   content: InvitationContent | null;
   schedule: { time: string; label: string }[];
   gallery: string[];
-};
-
-const TEMPLATE_LABELS: Record<(typeof VALID_TEMPLATE_IDS)[number], string> = {
-  "double-phoenix-red": "Song Phụng Đỏ",
-  "double-phoenix-green": "Song Phụng Xanh",
-  "song-hy-red": "Song Hỷ Đỏ",
-  "song-hy-green": "Song Hỷ Xanh",
-  "nhat-binh-red": "Nhật Bình Đỏ",
-  "co-ba-red": "Cô Ba Đỏ",
-  "dragon-phoenix-red": "Long Phụng Đỏ",
-  "double-dragon-red": "Song Long Đỏ",
-  "double-dragon-blue": "Song Long Xanh Dương",
-  "double-dragon-green": "Song Long Xanh Lá",
 };
 
 function field(content: InvitationContent | null, key: keyof InvitationContent): string {
@@ -78,12 +66,18 @@ function slugifyInput(value: string): string {
     .replace(/^-+/, "");
 }
 
+/** Hậu tố ngẫu nhiên ngắn để slug tự tạo không trùng nhau. */
+function slugSuffix(): string {
+  return Math.random().toString(36).slice(2, 8);
+}
+
 function slugFromNames(content: InvitationContent | null): string {
   const bride = (content?.brideShortName || content?.brideFullName || "").trim();
   const groom = (content?.groomShortName || content?.groomFullName || "").trim();
   if (!bride && !groom) return "";
   const order = (content?.brideFirst ?? true) ? [bride, groom] : [groom, bride];
-  return slugify(order.filter(Boolean).join(" "));
+  const base = slugify(order.filter(Boolean).join(" "));
+  return base ? `${base}-${slugSuffix()}` : "";
 }
 
 function normalizeBirthOrder(value: string): string {
@@ -670,6 +664,7 @@ function TabBar({ tab, onEdit, onPreview }: { tab: "edit" | "preview"; onEdit: (
 export function EditorForm({
   invitationId,
   status,
+  paid,
   currentSlug,
   templateId,
   content,
@@ -684,10 +679,9 @@ export function EditorForm({
     undefined,
   );
 
-  const serverEmpty = content == null;
   const draft = useMemo<Draft | null>(
-    () => (serverEmpty ? readDraft(invitationId) : null),
-    [serverEmpty, invitationId],
+    () => readDraft(invitationId),
+    [invitationId],
   );
   const seed = (key: string, fallback: string) =>
     typeof draft?.[key] === "string" ? (draft[key] as string) : fallback;
@@ -727,7 +721,7 @@ export function EditorForm({
   useFormDraft({
     formId: "editor-form",
     invitationId,
-    enabled: serverEmpty,
+    enabled: true,
     cleared: saveState?.ok === true,
   });
 
@@ -745,7 +739,8 @@ export function EditorForm({
     const groom = (read("groomShortName") || read("groomFullName")).trim();
     const brideFirst = (form?.elements.namedItem("brideFirst") as HTMLInputElement | null)?.checked ?? true;
     const order = brideFirst ? [bride, groom] : [groom, bride];
-    const next = slugify(order.filter(Boolean).join(" "));
+    const base = slugify(order.filter(Boolean).join(" "));
+    const next = base ? `${base}-${slugSuffix()}` : "";
     setSlug(next);
     setSlugStatus(next ? null : { available: false, reason: "Chưa có tên cô dâu/chú rể" });
   }
@@ -764,31 +759,26 @@ export function EditorForm({
   return (
     <>
       <Toaster position="top-center" theme="light" richColors />
+      <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
+        <TabBar tab={tab} onEdit={() => setTab("edit")} onPreview={onShowPreview} />
+      </div>
       {tab === "preview" && previewContent ? (
-        <>
-          <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
-            <TabBar tab={tab} onEdit={() => setTab("edit")} onPreview={onShowPreview} />
-          </div>
-          <ChungDoiDemo
-            key={JSON.stringify(previewContent)}
-            template={templates.find((t) => t.slug === previewContent.slug) ?? templates[0]}
-            content={previewContent}
-          />
-        </>
+        <ChungDoiDemo
+          key={JSON.stringify(previewContent)}
+          template={templates.find((t) => t.slug === previewContent.slug) ?? templates[0]}
+          content={previewContent}
+        />
       ) : null}
 
-      <div className={`mx-auto max-w-4xl px-4 py-8 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
-              ← Bảng điều khiển
-            </Link>
-            <h1 className="mt-1 font-pattaya text-3xl text-foreground">Chỉnh sửa thiệp</h1>
-            <p className="text-sm text-muted-foreground">
-              Trạng thái: {status === "published" ? "Đã xuất bản" : "Bản nháp"}
-            </p>
-          </div>
-          <TabBar tab={tab} onEdit={() => setTab("edit")} onPreview={onShowPreview} />
+      <div className={`mx-auto max-w-4xl px-4 pb-8 pt-24 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
+        <div className="mb-6">
+          <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
+            ← Bảng điều khiển
+          </Link>
+          <h1 className="mt-1 font-pattaya text-3xl text-foreground">Chỉnh sửa thiệp</h1>
+          <p className="text-sm text-muted-foreground">
+            Trạng thái: {status === "published" ? "Đã xuất bản" : "Bản nháp"}
+          </p>
         </div>
 
         <form action={saveFormAction} className="space-y-4" id="editor-form">
@@ -909,8 +899,8 @@ export function EditorForm({
               name="mapAddress"
               label="Địa chỉ bản đồ"
               defaultValue={seed("mapAddress", field(content, "mapAddress"))}
-              placeholder="Dán địa chỉ hoặc tên nơi tổ chức để tìm trên Google Maps"
-              hint="Dùng để nhúng bản đồ chỉ đường. Nên dán đúng như trên Google Maps."
+              placeholder="Dán link Google Maps (có ghim vị trí) hoặc địa chỉ nơi tổ chức"
+              hint="Mở Google Maps trên máy tính, tìm nhà hàng rồi copy link trên thanh địa chỉ trình duyệt (có @toạ-độ) và dán vào đây để bản đồ hiện đúng ghim. Hoặc dán địa chỉ/tên nơi tổ chức để tìm gần đúng."
               full
             />
             <Text
@@ -1069,6 +1059,24 @@ export function EditorForm({
           </button>
           <p className="text-xs text-muted-foreground">Nhớ lưu bản nháp trước khi xuất bản.</p>
         </form>
+
+        {paid ? (
+          <p className="mt-4 text-sm font-semibold text-emerald-700">
+            Thiệp đã được kích hoạt vĩnh viễn.
+          </p>
+        ) : (
+          <div className="mt-4 border-t border-primary/20 pt-4">
+            <p className="text-sm text-muted-foreground">
+              Thiệp dùng thử miễn phí 7 ngày. Thanh toán để kích hoạt vĩnh viễn.
+            </p>
+            <Link
+              href={`/dashboard/${invitationId}/thanh-toan`}
+              className="mt-3 inline-block rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
+            >
+              Thanh toán để kích hoạt vĩnh viễn
+            </Link>
+          </div>
+        )}
       </section>
       </div>
     </>

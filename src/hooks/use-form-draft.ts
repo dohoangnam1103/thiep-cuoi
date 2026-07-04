@@ -55,7 +55,7 @@ export function useFormDraft(opts: {
   }, [cleared, invitationId]);
 
   useEffect(() => {
-    if (!enabled || cleared) return;
+    if (!enabled) return;
     const form = document.getElementById(formId) as HTMLFormElement | null;
     if (!form) return;
 
@@ -77,5 +77,5 @@ export function useFormDraft(opts: {
       form.removeEventListener("change", write);
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [formId, invitationId, enabled, cleared]);
+  }, [formId, invitationId, enabled]);
 }
