@@ -38,7 +38,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-zinc-200 transition hover:border-[#fb3570]/60 hover:text-white"
+        className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-2 text-sm font-bold text-foreground transition hover:border-primary/60 hover:text-primary"
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -49,7 +49,7 @@ export function LanguageSwitcher() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <ul
-            className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-white/10 bg-[#241a17] p-1 shadow-2xl shadow-black/40"
+            className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-border bg-popover p-1 shadow-2xl shadow-black/10"
             role="listbox"
           >
             {routing.locales.map((code) => (
@@ -58,13 +58,15 @@ export function LanguageSwitcher() {
                   type="button"
                   onClick={() => selectLocale(code)}
                   className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-bold transition ${
-                    code === locale ? "bg-white/10 text-white" : "text-zinc-300 hover:bg-white/5"
+                    code === locale
+                      ? "bg-secondary text-foreground"
+                      : "text-muted-foreground hover:bg-muted"
                   }`}
                   role="option"
                   aria-selected={code === locale}
                 >
                   {LOCALE_LABELS[code]}
-                  {code === locale ? <Check className="size-4 text-[#fb3570]" /> : null}
+                  {code === locale ? <Check className="size-4 text-primary" /> : null}
                 </button>
               </li>
             ))}
