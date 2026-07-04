@@ -41,37 +41,37 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
   const related = blogPosts.filter((item) => item.slug !== post.slug).slice(0, 3);
 
   return (
-    <main className="min-h-screen bg-[#18120f] text-white">
+    <main className="min-h-screen bg-background text-foreground">
       <SiteHeader />
 
       <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-        <Link href="/blog" className="text-sm font-bold text-[#ff8cad] transition hover:text-[#fb3570]">
+        <Link href="/blog" className="text-sm font-bold text-primary transition hover:text-primary/80">
           ← {t("backToBlog")}
         </Link>
-        <h1 className="mt-6 text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl">
+        <h1 className="mt-6 font-heading text-3xl font-black leading-tight tracking-tight text-foreground sm:text-5xl">
           {post.title}
         </h1>
-        <p className="mt-6 text-lg leading-8 text-zinc-300">{post.excerpt}</p>
-        <div className="mt-8 space-y-5 text-base leading-8 text-zinc-400">
+        <p className="mt-6 text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
+        <div className="mt-8 space-y-5 text-base leading-8 text-foreground">
           <p>{t("cloneNote1")}</p>
           <p>{t("cloneNote2")}</p>
         </div>
       </article>
 
-      <section className="border-t border-white/10 bg-[#211815] py-14 sm:py-20">
+      <section className="border-t border-border bg-secondary py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-black text-white sm:text-3xl">{t("related")}</h2>
+          <h2 className="font-heading text-2xl font-black text-foreground sm:text-3xl">{t("related")}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
             {related.map((item) => (
               <Link
                 key={item.slug}
                 href={{ pathname: "/blog/[slug]", params: { slug: item.slug } }}
-                className="group flex flex-col rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:border-[#fb3570]/50 hover:bg-white/[0.07]"
+                className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50"
               >
-                <h3 className="text-lg font-black leading-snug text-white group-hover:text-[#ff8cad]">
+                <h3 className="font-heading text-lg font-black leading-snug text-foreground group-hover:text-primary">
                   {item.title}
                 </h3>
-                <p className="mt-3 line-clamp-2 text-sm leading-6 text-zinc-400">{item.excerpt}</p>
+                <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">{item.excerpt}</p>
               </Link>
             ))}
           </div>

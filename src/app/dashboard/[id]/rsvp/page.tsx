@@ -24,41 +24,41 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <Link href="/dashboard" className="text-sm text-zinc-400 transition hover:text-white">
+      <Link href="/dashboard" className="text-sm text-muted-foreground transition hover:text-foreground">
         &larr; Về danh sách thiệp
       </Link>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <h1 className="font-pattaya text-3xl text-white">Xác nhận tham dự</h1>
+        <h1 className="font-pattaya text-3xl text-foreground">Xác nhận tham dự</h1>
         <Link
           href={`/dashboard/${id}/guests`}
-          className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
+          className="rounded-full bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition hover:bg-muted"
         >
           Khách mời
         </Link>
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-4 text-center">
-          <p className="text-2xl font-bold text-white">{attending.length}</p>
-          <p className="text-sm text-zinc-400">Sẽ tham dự</p>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{attending.length}</p>
+          <p className="text-sm text-muted-foreground">Sẽ tham dự</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-4 text-center">
-          <p className="text-2xl font-bold text-white">{totalGuests}</p>
-          <p className="text-sm text-zinc-400">Tổng khách</p>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{totalGuests}</p>
+          <p className="text-sm text-muted-foreground">Tổng khách</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-4 text-center">
-          <p className="text-2xl font-bold text-white">{wishes.length}</p>
-          <p className="text-sm text-zinc-400">Lời chúc</p>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{wishes.length}</p>
+          <p className="text-sm text-muted-foreground">Lời chúc</p>
         </div>
       </div>
 
-      <h2 className="mt-10 text-lg font-semibold text-white">Danh sách phản hồi</h2>
+      <h2 className="mt-10 font-heading text-lg font-semibold text-foreground">Danh sách phản hồi</h2>
       {rsvps.length === 0 ? (
-        <p className="mt-4 text-zinc-400">Chưa có phản hồi nào.</p>
+        <p className="mt-4 text-muted-foreground">Chưa có phản hồi nào.</p>
       ) : (
-        <div className="mt-4 overflow-hidden rounded-2xl border border-white/10">
+        <div className="mt-4 overflow-hidden rounded-2xl border border-border">
           <table className="w-full text-left text-sm">
-            <thead className="bg-white/5 text-zinc-400">
+            <thead className="bg-secondary text-secondary-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Tên</th>
                 <th className="px-4 py-3 font-medium">Khách mời</th>
@@ -71,16 +71,16 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
                 <th className="px-4 py-3 font-medium">Lời nhắn</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 text-zinc-200">
+            <tbody className="divide-y divide-border text-foreground">
               {rsvps.map((r) => (
-                <tr key={r.id}>
+                <tr key={r.id} className="transition hover:bg-muted">
                   <td className="px-4 py-3">{r.name}</td>
                   <td className="px-4 py-3">{r.guest?.name ?? "—"}</td>
                   <td className="px-4 py-3">
                     {r.attending ? (
-                      <span className="text-green-300">Có</span>
+                      <span className="text-green-700">Có</span>
                     ) : (
-                      <span className="text-zinc-500">Không</span>
+                      <span className="text-muted-foreground">Không</span>
                     )}
                   </td>
                   <td className="px-4 py-3">{r.guests}</td>
@@ -96,15 +96,15 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
         </div>
       )}
 
-      <h2 className="mt-10 text-lg font-semibold text-white">Lời chúc</h2>
+      <h2 className="mt-10 font-heading text-lg font-semibold text-foreground">Lời chúc</h2>
       {wishes.length === 0 ? (
-        <p className="mt-4 text-zinc-400">Chưa có lời chúc nào.</p>
+        <p className="mt-4 text-muted-foreground">Chưa có lời chúc nào.</p>
       ) : (
         <ul className="mt-4 space-y-3">
           {wishes.map((w) => (
-            <li key={w.id} className="rounded-2xl border border-white/10 bg-[#1c1512]/80 p-4">
-              <p className="font-semibold text-white">{w.name}</p>
-              <p className="mt-1 text-sm text-zinc-300">{w.text}</p>
+            <li key={w.id} className="rounded-2xl border border-border bg-card p-4">
+              <p className="font-semibold text-foreground">{w.name}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{w.text}</p>
             </li>
           ))}
         </ul>

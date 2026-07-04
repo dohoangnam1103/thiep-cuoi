@@ -69,3 +69,6 @@ temp/
 /*.png
 /original-body-snapshot.md
 docs/research/original-dom/
+
+# Visual brainstorm companion
+.superpowers/

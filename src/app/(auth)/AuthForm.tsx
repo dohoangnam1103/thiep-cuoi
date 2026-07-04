@@ -16,17 +16,17 @@ export function AuthForm({ mode, action }: AuthFormProps) {
   const isLogin = mode === "login";
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#1c1512]/90 p-8 shadow-2xl">
-      <h1 className="text-center font-pattaya text-3xl text-white">
+    <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow">
+      <h1 className="text-center font-heading text-3xl text-foreground">
         {isLogin ? "Đăng nhập" : "Tạo tài khoản"}
       </h1>
-      <p className="mt-2 text-center text-sm text-zinc-400">
+      <p className="mt-2 text-center text-sm text-muted-foreground">
         {isLogin ? "Chào mừng bạn quay lại Thiệp Mừng Online" : "Bắt đầu tạo thiệp cưới của bạn"}
       </p>
 
       <form action={formAction} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-zinc-200">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-foreground">
             Email
           </label>
           <input
@@ -35,11 +35,11 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             type="email"
             required
             autoComplete="email"
-            className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white outline-none transition focus:border-[#fb3570]"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-foreground outline-none transition focus:ring-2 focus:ring-ring"
           />
         </div>
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium text-zinc-200">
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-foreground">
             Mật khẩu
           </label>
           <input
@@ -49,35 +49,35 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             required
             minLength={6}
             autoComplete={isLogin ? "current-password" : "new-password"}
-            className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-white outline-none transition focus:border-[#fb3570]"
+            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-foreground outline-none transition focus:ring-2 focus:ring-ring"
           />
         </div>
 
         {state?.error ? (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">{state.error}</p>
+          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</p>
         ) : null}
 
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-full bg-[#fb3570] px-4 py-2.5 font-bold text-white shadow-lg shadow-[#fb3570]/25 transition hover:bg-[#ff4a82] disabled:opacity-60"
+          className="w-full rounded-full bg-primary px-4 py-2.5 font-bold text-primary-foreground shadow-lg transition hover:bg-primary/90 disabled:opacity-60"
         >
           {pending ? "Đang xử lý..." : isLogin ? "Đăng nhập" : "Đăng ký"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-zinc-400">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         {isLogin ? (
           <>
             Chưa có tài khoản?{" "}
-            <Link href="/signup" className="font-semibold text-[#fb3570] hover:underline">
+            <Link href="/signup" className="font-semibold text-primary hover:underline">
               Đăng ký
             </Link>
           </>
         ) : (
           <>
             Đã có tài khoản?{" "}
-            <Link href="/login" className="font-semibold text-[#fb3570] hover:underline">
+            <Link href="/login" className="font-semibold text-primary hover:underline">
               Đăng nhập
             </Link>
           </>
