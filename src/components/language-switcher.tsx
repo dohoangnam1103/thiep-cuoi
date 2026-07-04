@@ -3,7 +3,7 @@
 import { Check, Globe2 } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -22,6 +22,30 @@ export function LanguageSwitcher() {
   const params = useParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   function selectLocale(nextLocale: string) {
     setOpen(false);
@@ -34,7 +58,7 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -46,32 +70,29 @@ export function LanguageSwitcher() {
         <span className="hidden sm:inline">{LOCALE_LABELS[locale]}</span>
       </button>
       {open ? (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <ul
-            className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-border bg-popover p-1 shadow-2xl shadow-black/10"
-            role="listbox"
-          >
-            {routing.locales.map((code) => (
-              <li key={code}>
-                <button
-                  type="button"
-                  onClick={() => selectLocale(code)}
-                  className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-bold transition ${
-                    code === locale
-                      ? "bg-secondary text-foreground"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
-                  role="option"
-                  aria-selected={code === locale}
-                >
-                  {LOCALE_LABELS[code]}
-                  {code === locale ? <Check className="size-4 text-primary" /> : null}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </>
+        <ul
+          className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-border bg-popover p-1 shadow-2xl shadow-black/10"
+          role="listbox"
+        >
+          {routing.locales.map((code) => (
+            <li key={code}>
+              <button
+                type="button"
+                onClick={() => selectLocale(code)}
+                className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-bold transition ${
+                  code === locale
+                    ? "bg-secondary text-foreground"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
+                role="option"
+                aria-selected={code === locale}
+              >
+                {LOCALE_LABELS[code]}
+                {code === locale ? <Check className="size-4 text-primary" /> : null}
+              </button>
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   );
