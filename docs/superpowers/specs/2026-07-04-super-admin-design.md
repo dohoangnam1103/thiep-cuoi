@@ -7,14 +7,14 @@
 
 Xây trang quản trị nội bộ (`/admin`) cho super admin để: xem danh sách user đã đăng ký, quản lý danh sách thiệp demo, và chỉnh sửa nội dung thiệp demo bằng chính form editor sẵn có.
 
-**Trong phạm vi đợt này:** quyền admin + login admin riêng, danh sách user (chỉ đọc), danh sách + chỉnh sửa thiệp demo (chuyển demo vào DB).
+**Trong phạm vi đợt này:** quyền admin + login admin riêng, danh sách user (chỉ đọc), danh sách + chỉnh sửa thiệp demo (chuyển demo vào DB), danh sách giao dịch (chỉ đọc), quản lý voucher (tạo/tắt).
 
-**Ngoài phạm vi (hoãn):** thanh toán / danh sách giao dịch — hệ thống chưa tích hợp cổng thanh toán và chưa có model lưu giao dịch, nên không có dữ liệu để hiển thị. Sẽ là một dự án riêng khi chọn được nhà cung cấp thanh toán.
+**Đã có sẵn trong code (không làm lại):** hệ thống thanh toán đã tích hợp — `Payment`/`Voucher` model + migration `20260704031005_add_payment_voucher`, `src/lib/payment.ts` (VietQR, sinh mã đơn, verify webhook), trang `/dashboard/[id]/thanh-toan`, webhook `/api/casso/webhook` (khớp mã → đánh dấu `paid`), polling `/api/payment/[code]/status`. Trang admin chỉ **đọc** dữ liệu giao dịch này và **quản lý voucher**, không đụng luồng thanh toán.
 
 ## Ràng buộc & bối cảnh (từ code hiện tại)
 
 1. **Chưa có hệ thống quyền/role.** `User` chỉ có `id, email, passwordHash, createdAt`. Auth là session email+mật khẩu (`jose` JWT, cookie `session`).
-2. **Chưa có bất kỳ dữ liệu thanh toán nào.** `chungdoi-pricing.tsx` chỉ là trang marketing.
+2. **Thanh toán đã có dữ liệu thật.** `Payment` (mã đơn `CDxxxxxx`, `amount`, `voucherCode?`, `status` pending/paid, `paidAt?`) gắn `invitationId`; `Voucher` (`code`, `amountOff`, `active`, `maxUses?`, `usedCount`, `expiresAt?`). Webhook Casso đánh dấu `paid`. Admin đọc các bảng này (chỉ đọc giao dịch) và CRUD tối thiểu voucher.
 3. **Thiệp demo là file tĩnh** `src/data/chungdoi-demo-content.ts` (auto-generated), build cứng vào Docker image, runtime không ghi được. Muốn sửa qua web phải chuyển vào DB.
 4. **Trang demo công khai là SSG** — `src/app/[locale]/templates/[slug]/demo/page.tsx` prerender ~200 trang (template × locale) qua `generateStaticParams`, đọc nội dung đồng bộ từ file tĩnh.
 5. **Form editor gắn cứng session user** — `saveDraft`/`publish`/`checkSlug` gọi `verifySession()` + `ownInvitation()`.
@@ -63,14 +63,17 @@ Tách hoàn toàn khỏi session user.
 
 Tất cả dưới `/admin`, ngoài `[locale]` (không cần i18n — trang nội bộ).
 
-- **`src/app/admin/layout.tsx`** — layout riêng (nền sáng, không header/footer marketing). Nav: Người dùng · Thiệp demo · Đăng xuất.
+- **`src/app/admin/layout.tsx`** — layout riêng (nền sáng, không header/footer marketing). Nav: Người dùng · Thiệp demo · Giao dịch · Voucher · Đăng xuất.
 - **`src/app/admin/login/page.tsx` + `AdminLoginForm.tsx`** — form email+mật khẩu; server action `adminLogin` (bcrypt như `login` user), tạo `admin_session`, redirect `/admin`. Trang này **không** gọi `verifyAdmin` (tránh loop).
-- **`src/app/admin/page.tsx`** — trang chủ admin, gọi `verifyAdmin()`, hiện số liệu tổng (số user, số thiệp thật, số demo) + link nhanh.
+- **`src/app/admin/page.tsx`** — trang chủ admin, gọi `verifyAdmin()`, hiện số liệu tổng (số user, số thiệp thật, số demo, số đơn đã trả, tổng doanh thu) + link nhanh.
 - **`src/app/admin/users/page.tsx`** — danh sách user: email, ngày đăng ký, số thiệp. Chỉ đọc.
 - **`src/app/admin/demos/page.tsx`** — danh sách demo (`Invitation` có `isDemo=true`): tên template, tên cô dâu/chú rể, nút "Chỉnh sửa".
+- **`src/app/admin/payments/page.tsx`** — danh sách giao dịch (`Payment`): mã đơn, thiệp (templateId + tên cô dâu/chú rể), email user, số tiền, voucher, trạng thái, ngày tạo/ngày trả. Chỉ đọc, sắp xếp mới nhất trước; tổng doanh thu (tổng `amount` các đơn `paid`) ở đầu trang.
+- **`src/app/admin/vouchers/page.tsx` + `VoucherForm.tsx`** — danh sách voucher (`code`, `amountOff`, `active`, `usedCount`/`maxUses`, `expiresAt`) + form tạo mới; mỗi voucher có nút bật/tắt (`active`).
 - **`src/app/admin/actions.ts`** — `adminLogin`, `adminLogout`.
+- **`src/app/admin/vouchers/actions.ts`** — `createVoucher`, `toggleVoucher` (đều gọi `verifyAdmin()` + `revalidatePath("/admin/vouchers")`).
 
-Điều hướng: `adminLogin` → `/admin`; `adminLogout` → `/admin/login`.
+Điều hướng: `adminLogin` → `/admin`; `adminLogout` → `/admin/login`. Nav thêm mục: Người dùng · Thiệp demo · Giao dịch · Voucher · Đăng xuất.
 
 ## Phần 4 — Sửa nội dung demo (tái dụng form editor)
 
@@ -111,6 +114,9 @@ Cách làm — thêm nhánh phân quyền admin, không đổi hành vi user:
 - `src/app/admin/demos/page.tsx` — danh sách demo
 - `src/app/admin/demos/[id]/page.tsx` — sửa demo (render EditorForm)
 - `src/app/admin/demos/actions.ts` — `saveDemo`
+- `src/app/admin/payments/page.tsx` — danh sách giao dịch (chỉ đọc)
+- `src/app/admin/vouchers/page.tsx` + `VoucherForm.tsx` — danh sách + tạo voucher
+- `src/app/admin/vouchers/actions.ts` — `createVoucher`, `toggleVoucher`
 - `scripts/seed-demos.ts` — seed demo vào DB
 - `scripts/create-admin.ts` — tạo admin đầu tiên
 
@@ -129,5 +135,7 @@ Cách làm — thêm nhánh phân quyền admin, không đổi hành vi user:
 2. Chạy `scripts/seed-demos.ts` → DB có user hệ thống + N invitation demo.
 3. Chạy `scripts/create-admin.ts`, đăng nhập `/admin/login` → vào `/admin`, xem danh sách user + demo.
 4. Sửa 1 demo qua form editor → lưu → mở `/vi/templates/<slug>/demo` thấy nội dung đổi.
-5. Cô lập: user thường **không** vào được `/admin` (redirect login); action demo bắt buộc `isDemo=true` nên admin không sửa nhầm invitation thật.
-6. `npm run check` sạch (lint + typecheck + build), không `any`, copy tiếng Việt.
+5. `/admin/payments` hiện danh sách giao dịch + tổng doanh thu khớp dữ liệu `Payment` (kiểm chứng bằng đơn `paid` seed tay hoặc từ webhook thật).
+6. `/admin/vouchers`: tạo 1 voucher mới → thấy trong danh sách; bật/tắt `active` → trạng thái đổi; áp voucher đó ở `/dashboard/[id]/thanh-toan` giảm giá đúng.
+7. Cô lập: user thường **không** vào được `/admin` (redirect login); action demo bắt buộc `isDemo=true` nên admin không sửa nhầm invitation thật.
+8. `npm run check` sạch (lint + typecheck + build), không `any`, copy tiếng Việt.
