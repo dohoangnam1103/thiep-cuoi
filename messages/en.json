@@ -3,6 +3,23 @@
     "title": "Thiệp Mừng Online - Personalized Online Wedding Invitations",
     "description": "Create personalized online wedding invitations with templates, RSVP, guest management, maps, galleries, music, and gift QR."
   },
+  "auth": {
+    "loginTitle": "Sign in",
+    "signupTitle": "Create account",
+    "loginSubtitle": "Welcome back to Thiệp Mừng Online",
+    "signupSubtitle": "Start creating your wedding invitation",
+    "email": "Email",
+    "password": "Password",
+    "pending": "Processing...",
+    "loginSubmit": "Sign in",
+    "signupSubmit": "Sign up",
+    "loginWithGoogle": "Continue with Google",
+    "signupWithGoogle": "Sign up with Google",
+    "or": "or",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "oauthError": "Could not sign in with Google. Please try again."
+  },
   "chrome": {
     "nav": {
       "templates": "Templates",

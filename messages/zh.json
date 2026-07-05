@@ -3,6 +3,23 @@
     "title": "Thiệp Mừng Online - 个性化在线婚礼请柬",
     "description": "使用模板、RSVP、宾客管理、地图、相册、音乐和礼金二维码，创建个性化的在线婚礼请柬。"
   },
+  "auth": {
+    "loginTitle": "登录",
+    "signupTitle": "创建账户",
+    "loginSubtitle": "欢迎回到 Thiệp Mừng Online",
+    "signupSubtitle": "开始创建你的婚礼请柬",
+    "email": "邮箱",
+    "password": "密码",
+    "pending": "处理中...",
+    "loginSubmit": "登录",
+    "signupSubmit": "注册",
+    "loginWithGoogle": "使用 Google 继续",
+    "signupWithGoogle": "使用 Google 注册",
+    "or": "或",
+    "noAccount": "还没有账户？",
+    "haveAccount": "已有账户？",
+    "oauthError": "无法使用 Google 登录。请重试。"
+  },
   "chrome": {
     "nav": {
       "templates": "模板",

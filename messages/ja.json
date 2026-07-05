@@ -3,6 +3,23 @@
     "title": "Thiệp Mừng Online - パーソナライズされたオンライン結婚式招待状",
     "description": "テンプレート、RSVP、ゲスト管理、地図、ギャラリー、音楽、ご祝儀QRでパーソナライズされたオンライン結婚式招待状を作成。"
   },
+  "auth": {
+    "loginTitle": "ログイン",
+    "signupTitle": "アカウント作成",
+    "loginSubtitle": "Thiệp Mừng Onlineへようこそ",
+    "signupSubtitle": "結婚式招待状の作成を始めましょう",
+    "email": "メール",
+    "password": "パスワード",
+    "pending": "処理中...",
+    "loginSubmit": "ログイン",
+    "signupSubmit": "登録",
+    "loginWithGoogle": "Googleで続行",
+    "signupWithGoogle": "Googleで登録",
+    "or": "または",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "haveAccount": "すでにアカウントをお持ちですか？",
+    "oauthError": "Googleでログインできませんでした。もう一度お試しください。"
+  },
   "chrome": {
     "nav": {
       "templates": "テンプレート",

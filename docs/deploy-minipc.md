@@ -55,6 +55,19 @@ Ví dụ deploy sang host khác:
 REMOTE_HOST=192.168.0.77 PUBLIC_URL=https://staging.example.com ./scripts/deploy-minipc.sh
 ```
 
+## Secrets runtime trên Mini PC
+
+`.env` trên Mini PC không bị rsync ghi đè. Google SSO cần thêm:
+
+- `AUTH_SECRET` — Auth.js secret dùng cho OAuth session state.
+- `GOOGLE_CLIENT_ID` — OAuth client ID từ Google Cloud Console.
+- `GOOGLE_CLIENT_SECRET` — OAuth client secret từ Google Cloud Console.
+
+Google OAuth callback URLs phải gồm:
+
+- Local: `http://localhost:3000/api/auth/callback/google`
+- Production: `https://thiepmungonline.com/api/auth/callback/google`
+
 ## Bố cục trên Mini PC
 
 ```

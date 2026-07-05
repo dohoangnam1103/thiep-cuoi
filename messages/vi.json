@@ -3,6 +3,23 @@
     "title": "Thiệp Mừng Online - Thiệp cưới online cá nhân hóa",
     "description": "Tạo thiệp cưới online cá nhân hóa với mẫu thiệp, RSVP, quản lý khách mời, bản đồ, album ảnh, nhạc và mã QR nhận quà."
   },
+  "auth": {
+    "loginTitle": "Đăng nhập",
+    "signupTitle": "Tạo tài khoản",
+    "loginSubtitle": "Chào mừng bạn quay lại Thiệp Mừng Online",
+    "signupSubtitle": "Bắt đầu tạo thiệp cưới của bạn",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "pending": "Đang xử lý...",
+    "loginSubmit": "Đăng nhập",
+    "signupSubmit": "Đăng ký",
+    "loginWithGoogle": "Tiếp tục với Google",
+    "signupWithGoogle": "Đăng ký với Google",
+    "or": "hoặc",
+    "noAccount": "Chưa có tài khoản?",
+    "haveAccount": "Đã có tài khoản?",
+    "oauthError": "Không thể đăng nhập bằng Google. Vui lòng thử lại."
+  },
   "chrome": {
     "nav": {
       "templates": "Mẫu thiệp",
