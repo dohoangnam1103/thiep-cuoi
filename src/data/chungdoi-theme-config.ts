@@ -99,12 +99,12 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
     "decorations": {
       "cardImages": [
         {
-          "className": "w-[120px] md:w-[220px] -top-[20px] -left-[20px] md:-top-[20px] md:-left-[50px] opacity-90 rotate-10",
+          "className": "w-[120px] md:w-[220px] -top-[20px] -left-[70px] md:-top-[20px] md:-left-[110px] opacity-90 rotate-10",
           "flyOnOpen": true,
           "src": "/chungdoi/images/themes/_decor/songphung-red/Phuong.webp"
         },
         {
-          "className": "w-[140px] md:w-[220px] -bottom-[120px] -right-[40px]  md:-bottom-[110px] md:-right-[50px] opacity-90 -scale-x-100 rotate-5",
+          "className": "w-[140px] md:w-[220px] -bottom-[120px] -right-[90px]  md:-bottom-[110px] md:-right-[110px] opacity-90 -scale-x-100 rotate-5",
           "flyOnOpen": true,
           "src": "/chungdoi/images/themes/_decor/songphung-red/Phuong.webp"
         },

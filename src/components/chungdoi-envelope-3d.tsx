@@ -1,17 +1,19 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Html, OrbitControls } from "@react-three/drei";
-import { useMemo, useRef, type ReactNode } from "react";
+import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { toCanvas } from "html-to-image";
 import {
   CanvasTexture,
   Color,
   DoubleSide,
   ExtrudeGeometry,
+  LinearFilter,
   Shape,
   SRGBColorSpace,
   type Group,
-  type Mesh,
+  type Texture,
 } from "three";
 
 type Envelope3DProps = {
@@ -21,23 +23,23 @@ type Envelope3DProps = {
   accentColor: string;
 };
 
-// Card thiết kế ở 560px. drei Html transform dùng CSS scale literal (không map
-// thẳng px→world), nên cần hệ số hiệu chỉnh để 560px phủ đúng mặt box CARD_W.
-const CARD_PX = 560;
+// Card DOM chụp thành texture rồi dán lên plane phủ đúng mặt box CARD_W.
+// Hẹp chiều ngang (420px) để card cao/dọc hơn — dễ xem trên điện thoại.
+const CARD_PX = 420;
 const CARD_W = 3;
-const CARD_H = 2.81; // card DOM 560×524 → giữ đúng aspect 0.936
+// Fallback aspect (H/W) khi chưa chụp xong; sau khi chụp lấy tỉ lệ thật từ canvas.
+const FALLBACK_RATIO = 1.35;
 const DEPTH = 0.008; // giấy mỏng, chỉ đủ dày để có mặt bên
 const CORNER = 0.08; // bo góc mặt phẳng, độc lập DEPTH
-const HTML_SCALE = 0.214;
 
 const BACK_Z = -(DEPTH / 2);
 
 // Mặt sau vẽ nguyên bằng CanvasTexture (4 nắp + seam + bóng + wax seal) → không
 // phụ thuộc góc đèn/camera, luôn nét, giữ giấy mỏng (không cần chóp hình học).
-function backTexture(paper: string, accent: string) {
+function backTexture(paper: string, accent: string, ratio: number) {
   if (typeof document === "undefined") return null;
   const w = 600;
-  const h = Math.round(w * (CARD_H / CARD_W)); // giữ aspect mặt box
+  const h = Math.round(w * ratio); // giữ aspect mặt box (ratio = H/W)
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
@@ -122,19 +124,34 @@ function backTexture(paper: string, accent: string) {
   return tex;
 }
 
-function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DProps) {
+// Mặt trước = card DOM chụp thành texture (frontTex), mặt sau = backTexture.
+// Cả 2 đều là plane WebGL cùng hệ chiếu three.js → không lệch nhau khi xoay
+// (bug cũ: mặt trước là drei <Html transform>/CSS3D, mặt sau WebGL — 2 hệ
+// perspective khác nhau nên trôi tách rời trên iOS Safari/Chrome).
+function Envelope({
+  onOpen,
+  paperColor,
+  accentColor,
+  frontTex,
+  ratio,
+}: {
+  onOpen: () => void;
+  paperColor: string;
+  accentColor: string;
+  frontTex: Texture | null;
+  ratio: number;
+}) {
   const groupRef = useRef<Group>(null);
-  const boxRef = useRef<Mesh>(null!);
+  const cardH = CARD_W * ratio;
 
-  // Giấy phong bì khớp màu card (chỉ hơi tối) → 2 mặt cùng tông.
   const envColor = useMemo(
     () => new Color(paperColor).multiplyScalar(0.96).getStyle(),
     [paperColor],
   );
 
   const back = useMemo(
-    () => backTexture(paperColor, accentColor),
-    [paperColor, accentColor],
+    () => backTexture(paperColor, accentColor, ratio),
+    [paperColor, accentColor, ratio],
   );
 
   // Rounded-rect extrude: bo góc mặt phẳng (CORNER) độc lập với độ dày (DEPTH),
@@ -142,7 +159,7 @@ function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DPro
   const geometry = useMemo(() => {
     const shape = new Shape();
     const hw = CARD_W / 2;
-    const hh = CARD_H / 2;
+    const hh = cardH / 2;
     const rad = CORNER;
     shape.moveTo(-hw + rad, -hh);
     shape.lineTo(hw - rad, -hh);
@@ -159,7 +176,7 @@ function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DPro
     });
     geo.translate(0, 0, -DEPTH / 2); // extrude chạy 0→depth, dời để tâm ở z=0
     return geo;
-  }, []);
+  }, [cardH]);
 
   const reducedMotion = useMemo(
     () =>
@@ -174,9 +191,14 @@ function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DPro
     }
   });
 
+  const handleOpen = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    onOpen();
+  };
+
   return (
-    <group ref={groupRef}>
-      <mesh ref={boxRef} geometry={geometry}>
+    <group ref={groupRef} onClick={handleOpen}>
+      <mesh geometry={geometry}>
         {/* emissive = màu paper ở cường độ thấp → nền tông giấy không phụ thuộc
             đèn, directional chỉ thêm khối nhẹ, hết bị xám khi xoay ra sau. */}
         <meshStandardMaterial
@@ -191,53 +213,108 @@ function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DPro
       {/* Mặt sau: 1 plane mang texture phong bì vẽ sẵn, đặt sát mặt -z của box. */}
       {back && (
         <mesh position={[0, 0, BACK_Z - 0.002]} rotation={[0, Math.PI, 0]}>
-          <planeGeometry args={[CARD_W, CARD_H]} />
+          <planeGeometry args={[CARD_W, cardH]} />
           <meshBasicMaterial map={back} side={DoubleSide} />
         </mesh>
       )}
 
-      {/* Mặt thiệp = DOM thật áp phẳng lên mặt trước. occlude={[boxRef]}: khi box
-          nằm giữa camera↔card (xoay ra sau) thì thân giấy che card → hết ảnh gương. */}
-      <Html
-        transform
-        occlude={[boxRef]}
-        position={[0, 0, DEPTH / 2 + 0.01]}
-        scale={HTML_SCALE}
-        style={{
-          width: CARD_PX,
-          pointerEvents: "auto",
-          userSelect: "none",
-          WebkitUserSelect: "none",
-        }}
-        zIndexRange={[10, 0]}
-      >
-        <div style={{ width: CARD_PX }}>{renderCard(onOpen)}</div>
-      </Html>
+      {/* Mặt trước: card DOM đã chụp, dán sát mặt +z. */}
+      {frontTex && (
+        <mesh position={[0, 0, DEPTH / 2 + 0.002]}>
+          <planeGeometry args={[CARD_W, cardH]} />
+          <meshBasicMaterial map={frontTex} toneMapped={false} />
+        </mesh>
+      )}
     </group>
   );
 }
 
-export default function Envelope3D(props: Envelope3DProps) {
+export default function Envelope3D({
+  renderCard,
+  onOpen,
+  paperColor,
+  accentColor,
+}: Envelope3DProps) {
+  const captureRef = useRef<HTMLDivElement>(null);
+  const [frontTex, setFrontTex] = useState<Texture | null>(null);
+  const [ratio, setRatio] = useState(FALLBACK_RATIO);
+
+  // Chụp card DOM (ẩn ngoài màn) → CanvasTexture cho mặt trước 3D.
+  useEffect(() => {
+    let cancelled = false;
+    const node = captureRef.current;
+    if (!node) return;
+
+    const capture = async () => {
+      try {
+        if (document.fonts?.ready) await document.fonts.ready;
+        // 2 lượt: html-to-image đôi khi trượt ảnh/font ở lượt đầu (cache lạnh).
+        await toCanvas(node, { pixelRatio: 2, cacheBust: true });
+        const canvas = await toCanvas(node, { pixelRatio: 2, cacheBust: true });
+        if (cancelled) return;
+        const tex = new CanvasTexture(canvas);
+        tex.colorSpace = SRGBColorSpace;
+        tex.anisotropy = 4;
+        tex.minFilter = LinearFilter;
+        tex.needsUpdate = true;
+        if (canvas.width > 0) setRatio(canvas.height / canvas.width);
+        setFrontTex(tex);
+      } catch {
+        // Chụp lỗi → mặt trước để trống (box giấy vẫn hiện), user vẫn mở được.
+      }
+    };
+    capture();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
-    <Canvas
-      camera={{ position: [0, 0, 6], fov: 40 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true }}
-      style={{ width: "100%", height: "100%" }}
-    >
-      {/* ambient cao giữ tông giấy đều; 2 directional yếu chỉ thêm khối nhẹ +
-          sáng mặt sau (-z) khi xoay tới, không làm xám. */}
-      <ambientLight intensity={1.0} />
-      <directionalLight position={[4, 6, 5]} intensity={0.5} />
-      <directionalLight position={[-3, 4, -5]} intensity={0.4} />
-      <Envelope {...props} />
-      <OrbitControls
-        enablePan={false}
-        enableDamping
-        dampingFactor={0.08}
-        minDistance={3.5}
-        maxDistance={9}
-      />
-    </Canvas>
+    <>
+      {/* Node chụp: render thật để có layout/font, nhưng đẩy ra ngoài viewport
+          và ẩn khỏi a11y. Không display:none (html-to-image cần layout thật). */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: -99999,
+          width: CARD_PX,
+          pointerEvents: "none",
+          opacity: 0,
+        }}
+      >
+        <div ref={captureRef} style={{ width: CARD_PX }}>
+          {renderCard(() => {})}
+        </div>
+      </div>
+
+      <Canvas
+        camera={{ position: [0, 0, 6], fov: 40 }}
+        dpr={[1, 2]}
+        gl={{ antialias: true, alpha: true }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {/* ambient cao giữ tông giấy đều; 2 directional yếu chỉ thêm khối nhẹ +
+            sáng mặt sau (-z) khi xoay tới, không làm xám. */}
+        <ambientLight intensity={1.0} />
+        <directionalLight position={[4, 6, 5]} intensity={0.5} />
+        <directionalLight position={[-3, 4, -5]} intensity={0.4} />
+        <Envelope
+          onOpen={onOpen}
+          paperColor={paperColor}
+          accentColor={accentColor}
+          frontTex={frontTex}
+          ratio={ratio}
+        />
+        <OrbitControls
+          enablePan={false}
+          enableDamping
+          dampingFactor={0.08}
+          minDistance={3.5}
+          maxDistance={9}
+        />
+      </Canvas>
+    </>
   );
 }

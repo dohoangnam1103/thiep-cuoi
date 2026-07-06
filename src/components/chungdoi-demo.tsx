@@ -457,6 +457,25 @@ function CoverCard({
         ))}
       </div>
 
+      {/* fly-out layer (không clip): bản gốc phía trên ẩn đi, bản này phóng to bay ra */}
+      {opening ? (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          {tokens.cardImages
+            .filter((img) => img.flyOnOpen)
+            .map((img, i) => (
+              <div key={i} className={`pointer-events-none absolute ${img.className}`}>
+                <img
+                  src={img.src}
+                  alt=""
+                  aria-hidden="true"
+                  className="block h-auto w-full"
+                  style={{ animation: "demo-dragon-fly 1.2s ease-in forwards" }}
+                />
+              </div>
+            ))}
+        </div>
+      ) : null}
+
       {/* transparent text layer on top */}
       <div className="relative z-10 px-6 pb-14 pt-24 text-center md:pb-10">
         <h1 className="mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl" style={{ color: tokens.textPrimary }}>
@@ -529,13 +548,33 @@ function EnvelopeCover({
   onOpen: () => void;
   opening: boolean;
 }) {
+  // Lúc mở: 3D face là texture tĩnh, không diễn được fly-phượng/bay-away. Swap
+  // sang DOM phẳng để chạy animation mở. Giữ đúng bề ngang dọc (portrait ~420px)
+  // như card 3D — KHÔNG dùng CoverOverlay chung (md:max-w-560px) vì nó nở thành
+  // gần-vuông → card giật từ dọc sang vuông ngay lúc bấm mở.
+  if (opening) {
+    return (
+      <div
+        className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
+        style={{ background: tokens.background, animation: "demo-cover-out 0.8s ease-in forwards" }}
+      >
+        <ParticleField tokens={tokens} />
+        <BurstParticles tokens={tokens} />
+        <div
+          className="relative z-10 w-full max-w-[310px] sm:max-w-[360px] md:max-w-[420px]"
+          style={{ animation: "demo-envelope-away 0.8s ease-in forwards" }}
+        >
+          <Seal tokens={tokens} opening={opening} />
+          <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
-      style={{
-        background: tokens.background,
-        animation: opening ? "demo-cover-out 0.8s ease-in forwards" : undefined,
-      }}
+      style={{ background: tokens.background }}
     >
       <ParticleField tokens={tokens} />
 
@@ -570,8 +609,6 @@ function CoverOverlay({
   onOpen: () => void;
   opening: boolean;
 }) {
-  const flyImages = tokens.cardImages.filter((img) => img.flyOnOpen);
-
   return (
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
@@ -590,20 +627,6 @@ function CoverOverlay({
       >
         <Seal tokens={tokens} opening={opening} />
         <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
-
-        {opening
-          ? flyImages.map((img, i) => (
-              <div key={i} className={`pointer-events-none absolute ${img.className}`}>
-                <img
-                  src={img.src}
-                  alt=""
-                  aria-hidden="true"
-                  className="block h-auto w-full"
-                  style={{ animation: "demo-dragon-fly 1.2s ease-in forwards" }}
-                />
-              </div>
-            ))
-          : null}
       </div>
     </div>
   );
