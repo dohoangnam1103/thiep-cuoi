@@ -948,7 +948,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
   },
   "nhat-binh-red": {
     "theme": {
-      "background": "linear-gradient(165deg, #f8f3e0 0%, #f2ead2 45%, #ece0c4 100%)",
+      "background": "linear-gradient(165deg, #4a3428 0%, #352518 45%, #241a12 100%)",
       "cardBg": "linear-gradient(to bottom right, #f8f3e0, #efe6d0, #f8f3e0)",
       "textPrimary": "#542e08",
       "textSecondary": "rgba(84, 46, 8, 0.88)",
@@ -972,7 +972,28 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
     },
     "sealType": null,
     "decorations": {
-      "cardImages": []
+      "cardImages": [
+        {
+          "src": "/chungdoi/images/themes/nhat-binh-red/hoa.webp",
+          "className": "left-[calc(2.5rem-30px)] top-[calc(3.5rem+50px+30px)] z-0 max-h-[min(150px,32vh)] w-[min(150px,40%)] max-w-[min(200px,46%)] origin-top-left object-contain opacity-[0.42] [transform:scaleY(-1)_rotate(20deg)] sm:left-[calc(3rem-30px)] sm:top-[calc(4rem+50px+30px)] sm:w-[min(165px,38%)] md:left-[calc(3.5rem-30px)] md:top-[calc(4.75rem+50px+30px)] md:max-h-[170px] md:w-[min(175px,36%)]",
+          "flyOnOpen": false
+        },
+        {
+          "src": "/chungdoi/images/themes/nhat-binh-red/long-den.webp",
+          "className": "right-0 top-0 w-[52px] min-w-[48px] max-w-[18%] -translate-x-[10px] -translate-y-[15px] object-contain opacity-[0.42] sm:right-1 sm:top-1 sm:w-14 md:-top-0.5 md:right-2 md:w-16 md:max-w-[85px]",
+          "flyOnOpen": false
+        },
+        {
+          "src": "/chungdoi/images/themes/nhat-binh-red/quat.webp",
+          "className": "bottom-3 left-1 z-0 max-h-[min(276px,50vh)] w-[min(228px,72%)] origin-center -translate-x-[100px] translate-y-[30px] rotate-45 object-contain opacity-[0.42] sm:bottom-4 sm:left-2 sm:w-[min(252px,68%)] md:bottom-5 md:left-3 md:max-h-[300px]",
+          "flyOnOpen": false
+        },
+        {
+          "src": "/chungdoi/images/themes/nhat-binh-red/may.webp",
+          "className": "bottom-3 right-1 z-0 max-h-[min(264px,48vh)] w-[min(300px,78%)] origin-center -scale-x-100 translate-x-[150px] translate-y-[40px] object-contain opacity-[0.42] sm:bottom-4 sm:right-2 sm:w-[min(330px,74%)] md:bottom-5 md:right-3 md:max-h-[288px]",
+          "flyOnOpen": false
+        }
+      ]
     }
   },
   "qasr-green": {

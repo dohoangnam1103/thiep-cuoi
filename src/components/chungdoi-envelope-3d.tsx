@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toCanvas } from "html-to-image";
@@ -11,6 +11,7 @@ import {
   ExtrudeGeometry,
   LinearFilter,
   Shape,
+  ShapeGeometry,
   SRGBColorSpace,
   type Group,
   type Texture,
@@ -27,6 +28,9 @@ type Envelope3DProps = {
 // Hẹp chiều ngang (420px) để card cao/dọc hơn — dễ xem trên điện thoại.
 const CARD_PX = 420;
 const CARD_W = 3;
+// Đích chung: card chiếu ra màn đúng TARGET_PX bất kể chiều cao viewport (màn cao
+// không làm box bự). Demo dùng CÙNG số này cho DOM lúc mở → swap 3D→DOM không giật.
+export const TARGET_PX = 340;
 // Fallback aspect (H/W) khi chưa chụp xong; sau khi chụp lấy tỉ lệ thật từ canvas.
 const FALLBACK_RATIO = 1.35;
 const DEPTH = 0.008; // giấy mỏng, chỉ đủ dày để có mặt bên
@@ -124,6 +128,25 @@ function backTexture(paper: string, accent: string, ratio: number) {
   return tex;
 }
 
+// Shape bo tròn dùng chung: box extrude VÀ mặt trước phẳng đều dùng nó → mép bo
+// khớp nhau, hết 4 góc plane thò ra ngoài silhouette box gây viền mờ.
+function roundedRectShape(cardH: number) {
+  const shape = new Shape();
+  const hw = CARD_W / 2;
+  const hh = cardH / 2;
+  const rad = CORNER;
+  shape.moveTo(-hw + rad, -hh);
+  shape.lineTo(hw - rad, -hh);
+  shape.quadraticCurveTo(hw, -hh, hw, -hh + rad);
+  shape.lineTo(hw, hh - rad);
+  shape.quadraticCurveTo(hw, hh, hw - rad, hh);
+  shape.lineTo(-hw + rad, hh);
+  shape.quadraticCurveTo(-hw, hh, -hw, hh - rad);
+  shape.lineTo(-hw, -hh + rad);
+  shape.quadraticCurveTo(-hw, -hh, -hw + rad, -hh);
+  return shape;
+}
+
 // Mặt trước = card DOM chụp thành texture (frontTex), mặt sau = backTexture.
 // Cả 2 đều là plane WebGL cùng hệ chiếu three.js → không lệch nhau khi xoay
 // (bug cũ: mặt trước là drei <Html transform>/CSS3D, mặt sau WebGL — 2 hệ
@@ -144,6 +167,12 @@ function Envelope({
   const groupRef = useRef<Group>(null);
   const cardH = CARD_W * ratio;
 
+  // Scale box sao cho chiều ngang CARD_W (world) chiếu ra đúng TARGET_PX trên màn,
+  // bất kể chiều cao viewport → màn desktop cao không làm thiệp bự. worldPerPx =
+  // viewport.width/size.width (world unit trên 1 px màn ở z=0).
+  const { viewport, size } = useThree();
+  const scale = (TARGET_PX * (viewport.width / size.width)) / CARD_W;
+
   const envColor = useMemo(
     () => new Color(paperColor).multiplyScalar(0.96).getStyle(),
     [paperColor],
@@ -157,24 +186,28 @@ function Envelope({
   // Rounded-rect extrude: bo góc mặt phẳng (CORNER) độc lập với độ dày (DEPTH),
   // nên giữ giấy mỏng mà 4 góc vẫn bo. RoundedBox không làm được vì radius uniform.
   const geometry = useMemo(() => {
-    const shape = new Shape();
-    const hw = CARD_W / 2;
-    const hh = cardH / 2;
-    const rad = CORNER;
-    shape.moveTo(-hw + rad, -hh);
-    shape.lineTo(hw - rad, -hh);
-    shape.quadraticCurveTo(hw, -hh, hw, -hh + rad);
-    shape.lineTo(hw, hh - rad);
-    shape.quadraticCurveTo(hw, hh, hw - rad, hh);
-    shape.lineTo(-hw + rad, hh);
-    shape.quadraticCurveTo(-hw, hh, -hw, hh - rad);
-    shape.lineTo(-hw, -hh + rad);
-    shape.quadraticCurveTo(-hw, -hh, -hw + rad, -hh);
-    const geo = new ExtrudeGeometry(shape, {
+    const geo = new ExtrudeGeometry(roundedRectShape(cardH), {
       depth: DEPTH,
       bevelEnabled: false,
     });
     geo.translate(0, 0, -DEPTH / 2); // extrude chạy 0→depth, dời để tâm ở z=0
+    return geo;
+  }, [cardH]);
+
+  // Mặt trước dùng CÙNG shape bo tròn (không phải plane chữ nhật) → texture bị cắt
+  // đúng theo mép bo của box, hết 4 góc thò ra ngoài silhouette gây viền mờ.
+  // ShapeGeometry sinh UV theo toạ độ world nên phải remap về 0–1 cho khớp texture.
+  const faceGeometry = useMemo(() => {
+    const geo = new ShapeGeometry(roundedRectShape(cardH));
+    const uv = geo.attributes.uv;
+    const hw = CARD_W / 2;
+    const hh = cardH / 2;
+    for (let i = 0; i < uv.count; i++) {
+      const x = uv.getX(i);
+      const y = uv.getY(i);
+      uv.setXY(i, (x + hw) / CARD_W, (y + hh) / cardH);
+    }
+    uv.needsUpdate = true;
     return geo;
   }, [cardH]);
 
@@ -191,13 +224,27 @@ function Envelope({
     }
   });
 
-  const handleOpen = (e: ThreeEvent<MouseEvent>) => {
+  // Drag xoay (OrbitControls) kết thúc bằng pointerup → trình duyệt tính là click,
+  // làm mở thiệp ngoài ý muốn. Lưu điểm pointerdown, chỉ mở nếu con trỏ gần như
+  // đứng yên (< 6px) → phân biệt tap thật với kéo xoay.
+  const downPos = useRef<{ x: number; y: number } | null>(null);
+
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    downPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+    const start = downPos.current;
+    downPos.current = null;
+    if (!start) return;
+    const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+    if (moved > 6) return; // kéo xoay → không mở
     e.stopPropagation();
     onOpen();
   };
 
   return (
-    <group ref={groupRef} onClick={handleOpen}>
+    <group ref={groupRef} scale={scale} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
       <mesh geometry={geometry}>
         {/* emissive = màu paper ở cường độ thấp → nền tông giấy không phụ thuộc
             đèn, directional chỉ thêm khối nhẹ, hết bị xám khi xoay ra sau. */}
@@ -218,11 +265,11 @@ function Envelope({
         </mesh>
       )}
 
-      {/* Mặt trước: card DOM đã chụp, dán sát mặt +z. */}
+      {/* Mặt trước: card DOM đã chụp, dán sát mặt +z. Dùng faceGeometry bo tròn
+          (không plane chữ nhật) → khớp mép box, hết góc thừa. */}
       {frontTex && (
-        <mesh position={[0, 0, DEPTH / 2 + 0.002]}>
-          <planeGeometry args={[CARD_W, cardH]} />
-          <meshBasicMaterial map={frontTex} toneMapped={false} />
+        <mesh geometry={faceGeometry} position={[0, 0, DEPTH / 2 + 0.002]}>
+          <meshBasicMaterial map={frontTex} toneMapped={false} transparent />
         </mesh>
       )}
     </group>
@@ -284,7 +331,10 @@ export default function Envelope3D({
           opacity: 0,
         }}
       >
-        <div ref={captureRef} style={{ width: CARD_PX }}>
+        {/* Nền giấy đặc: card bo rounded-lg nên 4 góc ngoài radius trong suốt khi
+            chụp → front plane transparent để lộ đen. Tô nền paper → góc thành màu
+            giấy, mép bo vẫn do box 3D (ExtrudeGeometry CORNER) lo. */}
+        <div ref={captureRef} style={{ width: CARD_PX, background: paperColor }}>
           {renderCard(() => {})}
         </div>
       </div>

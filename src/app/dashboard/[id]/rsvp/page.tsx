@@ -20,7 +20,14 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
   ]);
 
   const attending = rsvps.filter((r) => r.attending);
+  const declined = rsvps.filter((r) => !r.attending);
   const totalGuests = attending.reduce((sum, r) => sum + r.guests, 0);
+  const groomGuests = attending
+    .filter((r) => r.side === "Nhà trai")
+    .reduce((sum, r) => sum + r.guests, 0);
+  const brideGuests = attending
+    .filter((r) => r.side === "Nhà gái")
+    .reduce((sum, r) => sum + r.guests, 0);
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -37,14 +44,26 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{attending.length}</p>
+          <p className="text-2xl font-bold text-green-700">{attending.length}</p>
           <p className="text-sm text-muted-foreground">Sẽ tham dự</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-red-600">{declined.length}</p>
+          <p className="text-sm text-muted-foreground">Không tham dự</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
           <p className="text-2xl font-bold text-foreground">{totalGuests}</p>
           <p className="text-sm text-muted-foreground">Tổng khách</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{groomGuests}</p>
+          <p className="text-sm text-muted-foreground">Khách nhà trai</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-foreground">{brideGuests}</p>
+          <p className="text-sm text-muted-foreground">Khách nhà gái</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
           <p className="text-2xl font-bold text-foreground">{wishes.length}</p>

@@ -26,17 +26,54 @@ function guestLink(slug: string, token: string) {
   return `${origin}/thiep/${slug}?g=${token}`;
 }
 
+function zaloShareUrl(url: string) {
+  return `https://sp.zalo.me/plugins/share?url=${encodeURIComponent(url)}`;
+}
+
+function messengerShareUrl(url: string) {
+  return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+}
+
 export function GuestManager({ invitationId, slug, guests }: Props) {
   const addAction = addGuest.bind(null, invitationId);
   const [state, formAction, pending] = useActionState<GuestState, FormData>(addAction, undefined);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [qrGuest, setQrGuest] = useState<GuestRow | null>(null);
+  const [search, setSearch] = useState("");
+  const [sideFilter, setSideFilter] = useState<string>("");
+  const [respFilter, setRespFilter] = useState<string>("");
+
+  const filtered = guests.filter((g) => {
+    const q = search.trim().toLowerCase();
+    if (q && !g.name.toLowerCase().includes(q) && !(g.role ?? "").toLowerCase().includes(q)) {
+      return false;
+    }
+    if (sideFilter && g.side !== sideFilter) return false;
+    if (respFilter === "yes" && !g.responded) return false;
+    if (respFilter === "no" && g.responded) return false;
+    return true;
+  });
 
   async function copyLink(g: GuestRow) {
     if (!slug) return;
     await navigator.clipboard.writeText(guestLink(slug, g.token));
     setCopiedId(g.id);
     setTimeout(() => setCopiedId((cur) => (cur === g.id ? null : cur)), 1500);
+  }
+
+  async function shareLink(g: GuestRow) {
+    if (!slug) return;
+    const url = guestLink(slug, g.token);
+    const shareData = { title: "Thiệp mời cưới", text: `Thiệp mời gửi ${g.name}`, url };
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // user hủy hoặc không hỗ trợ — rơi xuống copy
+      }
+    }
+    await copyLink(g);
   }
 
   if (!slug) {
@@ -97,59 +134,121 @@ export function GuestManager({ invitationId, slug, guests }: Props) {
       {guests.length === 0 ? (
         <p className="text-muted-foreground">Chưa có khách mời nào.</p>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-secondary text-secondary-foreground">
-              <tr>
-                <th className="px-4 py-3 font-medium">Tên</th>
-                <th className="px-4 py-3 font-medium">Vai</th>
-                <th className="px-4 py-3 font-medium">Nhà</th>
-                <th className="px-4 py-3 font-medium">Phản hồi</th>
-                <th className="px-4 py-3 font-medium">Link riêng</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border text-foreground">
-              {guests.map((g) => (
-                <tr key={g.id} className="transition hover:bg-muted">
-                  <td className="px-4 py-3">{g.name}</td>
-                  <td className="px-4 py-3">{g.role ?? "—"}</td>
-                  <td className="px-4 py-3">{g.side ?? "—"}</td>
-                  <td className="px-4 py-3">
-                    {g.responded ? (
-                      <span className="text-green-700">Đã phản hồi</span>
-                    ) : (
-                      <span className="text-muted-foreground">Chưa</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => copyLink(g)}
-                        className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition hover:bg-muted"
-                      >
-                        {copiedId === g.id ? "Đã copy!" : "Copy link"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setQrGuest(g)}
-                        className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition hover:bg-muted"
-                      >
-                        QR
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => deleteGuest(invitationId, g.id)}
-                        className="rounded-full bg-red-500/15 px-3 py-1 text-xs font-medium text-red-300 transition hover:bg-red-500/25"
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm theo tên hoặc vai..."
+              className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+            />
+            <select
+              value={sideFilter}
+              onChange={(e) => setSideFilter(e.target.value)}
+              aria-label="Lọc theo nhà"
+              className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+            >
+              <option value="">Tất cả nhà</option>
+              <option value="Nhà trai">Nhà trai</option>
+              <option value="Nhà gái">Nhà gái</option>
+            </select>
+            <select
+              value={respFilter}
+              onChange={(e) => setRespFilter(e.target.value)}
+              aria-label="Lọc theo phản hồi"
+              className="rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+            >
+              <option value="">Tất cả phản hồi</option>
+              <option value="yes">Đã phản hồi</option>
+              <option value="no">Chưa phản hồi</option>
+            </select>
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            Hiển thị {filtered.length}/{guests.length} khách
+          </p>
+
+          {filtered.length === 0 ? (
+            <p className="text-muted-foreground">Không có khách nào khớp bộ lọc.</p>
+          ) : (
+            <div className="overflow-hidden rounded-2xl border border-border">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-secondary text-secondary-foreground">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Tên</th>
+                    <th className="px-4 py-3 font-medium">Vai</th>
+                    <th className="px-4 py-3 font-medium">Nhà</th>
+                    <th className="px-4 py-3 font-medium">Phản hồi</th>
+                    <th className="px-4 py-3 font-medium">Link riêng</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border text-foreground">
+                  {filtered.map((g) => (
+                    <tr key={g.id} className="transition hover:bg-muted">
+                      <td className="px-4 py-3">{g.name}</td>
+                      <td className="px-4 py-3">{g.role ?? "—"}</td>
+                      <td className="px-4 py-3">{g.side ?? "—"}</td>
+                      <td className="px-4 py-3">
+                        {g.responded ? (
+                          <span className="text-green-700">Đã phản hồi</span>
+                        ) : (
+                          <span className="text-muted-foreground">Chưa</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => shareLink(g)}
+                            className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground transition hover:bg-primary/90"
+                          >
+                            Chia sẻ
+                          </button>
+                          <a
+                            href={zaloShareUrl(guestLink(slug, g.token))}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-full bg-[#0068ff]/15 px-3 py-1 text-xs font-medium text-[#0068ff] transition hover:bg-[#0068ff]/25"
+                          >
+                            Zalo
+                          </a>
+                          <a
+                            href={messengerShareUrl(guestLink(slug, g.token))}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-full bg-[#0084ff]/15 px-3 py-1 text-xs font-medium text-[#0084ff] transition hover:bg-[#0084ff]/25"
+                          >
+                            Messenger
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => copyLink(g)}
+                            className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition hover:bg-muted"
+                          >
+                            {copiedId === g.id ? "Đã copy!" : "Copy link"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setQrGuest(g)}
+                            className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition hover:bg-muted"
+                          >
+                            QR
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteGuest(invitationId, g.id)}
+                            className="rounded-full bg-red-500/15 px-3 py-1 text-xs font-medium text-red-300 transition hover:bg-red-500/25"
+                          >
+                            Xóa
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 

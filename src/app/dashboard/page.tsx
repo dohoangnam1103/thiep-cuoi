@@ -94,6 +94,12 @@ export default async function DashboardPage() {
                   >
                     Xem xác nhận
                   </Link>
+                  <Link
+                    href={`/dashboard/${inv.id}/guests`}
+                    className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
+                  >
+                    Khách mời
+                  </Link>
                   {published && inv.slug ? (
                     <Link
                       href={`/thiep/${inv.slug}`}

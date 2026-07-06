@@ -158,7 +158,7 @@ function StackFan() {
       setActive((prev) => (prev + 1) % count);
     }, 2800);
     return () => window.clearInterval(id);
-  }, [count]);
+  }, [count, active]);
 
   // slot: vị trí trong quạt tính từ thẻ active (0 = giữa nổi lên, 1..n xòe sang phải theo vòng).
   const slotOf = (index: number) => (index - active + count) % count;

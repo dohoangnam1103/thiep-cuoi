@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Tailwind v4 bỏ default cursor:pointer cho button — khôi phục cho mọi phần tử bấm được. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+summary,
+label[for] {
+  cursor: pointer;
+}
+
 html.lenis,
 html.lenis body {
   height: auto;

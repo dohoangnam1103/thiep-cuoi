@@ -11,6 +11,7 @@ import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { LiveFormsProvider, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
 
 const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
+import { TARGET_PX } from "@/components/chungdoi-envelope-3d";
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -438,7 +439,7 @@ function CoverCard({
   return (
     <div
       className="relative rounded-lg"
-      style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
+      style={{ aspectRatio: "3 / 4.5", boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
     >
       {/* base cream layer + corner decorations (behind the text) */}
       <div
@@ -476,8 +477,9 @@ function CoverCard({
         </div>
       ) : null}
 
-      {/* transparent text layer on top */}
-      <div className="relative z-10 px-6 pb-14 pt-24 text-center md:pb-10">
+      {/* transparent text layer on top: absolute + flex center → không đẩy chiều
+          cao, cha giữ đúng aspectRatio 3:4.5 (portrait), 2D và texture 3D khớp. */}
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center">
         <h1 className="mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl" style={{ color: tokens.textPrimary }}>
           <span className="block w-full" style={nameStyle}>
             {names[0]}
@@ -533,7 +535,10 @@ function CoverCard({
 
 /** Màu three.js không nhận rgba()/gradient — ép về hex an toàn với fallback. */
 function toSolidColor(value: string, fallback: string) {
-  return value.startsWith("#") ? value : fallback;
+  if (value.startsWith("#")) return value;
+  // cardBg thường là linear-gradient(...) → rút hex đầu tiên làm màu đặc.
+  const hex = value.match(/#[0-9a-fA-F]{3,8}/);
+  return hex ? hex[0] : fallback;
 }
 
 /** Cover phong bì 3D: render CoverCard DOM thật áp phẳng lên mặt phong bì R3F qua drei <Html transform>. */
@@ -549,10 +554,12 @@ function EnvelopeCover({
   opening: boolean;
 }) {
   // Lúc mở: 3D face là texture tĩnh, không diễn được fly-phượng/bay-away. Swap
-  // sang DOM phẳng để chạy animation mở. Giữ đúng bề ngang dọc (portrait ~420px)
-  // như card 3D — KHÔNG dùng CoverOverlay chung (md:max-w-560px) vì nó nở thành
-  // gần-vuông → card giật từ dọc sang vuông ngay lúc bấm mở.
+  // sang DOM phẳng để chạy animation mở. Dùng cùng TARGET_PX như card 3D —
+  // KHÔNG dùng CoverOverlay chung (md:max-w-560px) vì nó nở gần-vuông → card
+  // giật từ dọc sang vuông ngay lúc bấm mở.
   if (opening) {
+    // Box 3D scale để chiếu ra đúng TARGET_PX (xem chungdoi-envelope-3d). DOM lúc
+    // mở dùng CÙNG TARGET_PX → swap 3D→DOM không đổi cỡ, hết giật.
     return (
       <div
         className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
@@ -561,8 +568,8 @@ function EnvelopeCover({
         <ParticleField tokens={tokens} />
         <BurstParticles tokens={tokens} />
         <div
-          className="relative z-10 w-full max-w-[310px] sm:max-w-[360px] md:max-w-[420px]"
-          style={{ animation: "demo-envelope-away 0.8s ease-in forwards" }}
+          className="relative z-10 w-full"
+          style={{ maxWidth: TARGET_PX, animation: "demo-envelope-away 0.8s ease-in forwards" }}
         >
           <Seal tokens={tokens} opening={opening} />
           <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
@@ -584,7 +591,10 @@ function EnvelopeCover({
           paperColor={toSolidColor(tokens.cardBg, "#FFF0E7")}
           accentColor={toSolidColor(tokens.accent, "#8C1C13")}
           renderCard={(handleOpen) => (
-            <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} />
+            <div className="relative">
+              <Seal tokens={tokens} opening={opening} />
+              <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} />
+            </div>
           )}
         />
         <p
@@ -593,40 +603,6 @@ function EnvelopeCover({
         >
           Kéo để xoay · Chụm 2 ngón để zoom
         </p>
-      </div>
-    </div>
-  );
-}
-
-function CoverOverlay({
-  content,
-  tokens,
-  onOpen,
-  opening,
-}: {
-  content: ChungDoiDemoContent;
-  tokens: Tokens;
-  onOpen: () => void;
-  opening: boolean;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
-      style={{
-        background: tokens.background,
-        animation: opening ? "demo-cover-out 0.8s ease-in forwards" : undefined,
-      }}
-    >
-      <ParticleField tokens={tokens} />
-
-      {opening ? <BurstParticles tokens={tokens} /> : null}
-
-      <div
-        className="relative z-10 w-full max-w-[310px] sm:max-w-[340px] md:max-w-[560px]"
-        style={{ animation: opening ? "demo-envelope-away 0.8s ease-in forwards" : undefined }}
-      >
-        <Seal tokens={tokens} opening={opening} />
-        <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
       </div>
     </div>
   );
@@ -2050,178 +2026,6 @@ function NhatBinhWishForm({ red, brown }: { red: string; brown: string }) {
         </div>
       </div>
     </form>
-  );
-}
-
-/** Faithful rebuild of the Nhật Bình Đỏ (nhat-binh-red) opened invitation. */
-function NhatBinhCover({
-  content,
-  tokens,
-  onOpen,
-  opening,
-}: {
-  content: ChungDoiDemoContent;
-  tokens: Tokens;
-  onOpen: () => void;
-  opening: boolean;
-}) {
-  const NB = `/chungdoi/images/themes/${content.theme.assetFolder || "nhat-binh-red"}`;
-  const RED = content.theme.primaryColor || "#c32a29";
-  const BROWN = "#542E08";
-  const date = formatDate(content.couple.date);
-  const groomShort = content.couple.groomShortName || "Thế Bảo";
-  const brideShort = content.couple.brideShortName || "Ngọc Ánh";
-  const names = content.couple.brideFirst ? [brideShort, groomShort] : [groomShort, brideShort];
-
-  return (
-    <div
-      className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
-      style={{
-        background: "linear-gradient(165deg, #4a3428 0%, #352518 45%, #241a12 100%)",
-        animation: opening ? "demo-cover-out 0.8s ease-in forwards" : undefined,
-      }}
-    >
-      <ParticleField tokens={tokens} />
-      {opening ? <BurstParticles tokens={tokens} /> : null}
-
-      <div
-        className="relative z-10 w-full max-w-[310px] sm:max-w-[340px] md:max-w-[560px]"
-        style={{ animation: opening ? "demo-envelope-away 0.8s ease-in forwards" : undefined }}
-      >
-        {/* seal — cream 囍 mask on the red disc */}
-        {opening ? (
-          <span
-            className="pointer-events-none absolute left-1/2 top-[50px] z-20 size-14 rounded-full"
-            style={{
-              transform: "translate(-50%, -50%)",
-              border: `2px solid ${RED}`,
-              animation: "demo-seal-ring 0.6s ease-out forwards",
-            }}
-          />
-        ) : null}
-        <div
-          className="absolute left-1/2 top-[50px] z-30 flex size-[56px] items-center justify-center rounded-full"
-          style={{
-            transform: "translate(-50%, -50%)",
-            background: `radial-gradient(circle at 30% 30%, ${RED}, ${hexToRgba(RED, 0.85)})`,
-            boxShadow: `0 4px 20px ${hexToRgba(RED, 0.5)}, inset 0 2px 4px rgba(255,255,255,0.3)`,
-            animation: opening
-              ? "demo-seal-break 0.5s ease-in forwards"
-              : "demo-seal-pulse 2s ease-in-out infinite",
-          }}
-        >
-          <span
-            className="block size-8"
-            style={{
-              backgroundColor: "#f8f3e0",
-              opacity: 0.9,
-              WebkitMaskImage: `url('${NB}/chinese_happiness.webp')`,
-              maskImage: `url('${NB}/chinese_happiness.webp')`,
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-            }}
-          />
-        </div>
-
-        <div
-          className="relative rounded-lg"
-          style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
-        >
-          {/* base cream layer + 4 decorations (opacity 0.42) */}
-          <div
-            className="absolute inset-0 overflow-hidden rounded-lg"
-            style={{
-              background: "linear-gradient(to bottom right, #f8f3e0, #efe6d0, #f8f3e0)",
-              border: `1px solid ${hexToRgba(RED, 0.15)}`,
-            }}
-          >
-            <img
-              src={`${NB}/hoa.webp`}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute left-[calc(2.5rem-30px)] top-[calc(3.5rem+50px+30px)] z-0 max-h-[min(150px,32vh)] w-[min(150px,40%)] max-w-[min(200px,46%)] origin-top-left object-contain opacity-[0.42] [transform:scaleY(-1)_rotate(20deg)] sm:left-[calc(3rem-30px)] sm:top-[calc(4rem+50px+30px)] sm:w-[min(165px,38%)] md:left-[calc(3.5rem-30px)] md:top-[calc(4.75rem+50px+30px)] md:max-h-[170px] md:w-[min(175px,36%)]"
-            />
-            <img
-              src={`${NB}/long-den.webp`}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute right-0 top-0 w-[52px] min-w-[48px] max-w-[18%] -translate-x-[10px] -translate-y-[15px] object-contain opacity-[0.42] sm:right-1 sm:top-1 sm:w-14 md:-top-0.5 md:right-2 md:w-16 md:max-w-[85px]"
-            />
-            <img
-              src={`${NB}/quat.webp`}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute bottom-3 left-1 z-0 max-h-[min(276px,50vh)] w-[min(228px,72%)] origin-center -translate-x-[100px] translate-y-[30px] rotate-45 object-contain opacity-[0.42] sm:bottom-4 sm:left-2 sm:w-[min(252px,68%)] md:bottom-5 md:left-3 md:max-h-[300px]"
-            />
-            <img
-              src={`${NB}/may.webp`}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute bottom-3 right-1 z-0 max-h-[min(264px,48vh)] w-[min(300px,78%)] origin-center -scale-x-100 translate-x-[150px] translate-y-[40px] object-contain opacity-[0.42] sm:bottom-4 sm:right-2 sm:w-[min(330px,74%)] md:bottom-5 md:right-3 md:max-h-[288px]"
-            />
-          </div>
-
-          {/* text layer */}
-          <div className="relative z-10 px-6 pb-14 pt-24 text-center md:pb-10">
-            <h1 className="mb-2 flex flex-col items-center leading-tight">
-              <span className="block w-full" style={{ fontFamily: NB_PACIFICO, color: RED, fontSize: "30px" }}>
-                {names[0]}
-              </span>
-              <span
-                className="my-1 block w-full leading-none"
-                style={{ fontFamily: 'Baskerville, "Times New Roman", serif', color: BROWN, fontSize: "18px" }}
-              >
-                &amp;
-              </span>
-              <span className="block w-full" style={{ fontFamily: NB_PACIFICO, color: RED, fontSize: "30px" }}>
-                {names[1]}
-              </span>
-            </h1>
-
-            <div className="mb-3 flex items-center justify-center gap-3">
-              <span className="h-px w-10" style={{ background: `linear-gradient(to right, transparent, ${RED})` }} />
-              <span className="text-sm" style={{ color: RED, opacity: 0.7 }}>
-                ❦
-              </span>
-              <span className="h-px w-10" style={{ background: `linear-gradient(to left, transparent, ${RED})` }} />
-            </div>
-
-            {date ? (
-              <p className="mb-5 text-[18px]" style={{ color: hexToRgba(BROWN, 0.88) }}>
-                {date.dayNumber} tháng {date.monthNumber}, {date.yearNumber}
-              </p>
-            ) : null}
-
-            <div className="mb-6">
-              <p className="mb-2 text-[16px] font-light" style={{ color: hexToRgba(BROWN, 0.88) }}>
-                Thân Mời
-              </p>
-              <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: hexToRgba(BROWN, 0.06) }}>
-                <h2 className="text-lg font-semibold sm:text-xl" style={{ color: BROWN }}>
-                  Gia đình em Tính &amp; Tuyết
-                </h2>
-              </div>
-              <p className="mx-auto max-w-xs text-[15px] font-light" style={{ color: hexToRgba(BROWN, 0.88) }}>
-                Dự tiệc chung vui cùng anh chị
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={onOpen}
-              className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold shadow-lg transition hover:-translate-y-0.5"
-              style={{ backgroundColor: RED, color: "#f8f3e0" }}
-            >
-              Mở thiệp
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -4360,13 +4164,7 @@ export function ChungDoiDemo({
       <audio ref={audioRef} src={content.music ?? DEFAULT_MUSIC} loop preload="auto" />
 
       {!opened ? (
-        content.slug === "nhat-binh-red" ? (
-          <NhatBinhCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
-        ) : content.slug === "double-phoenix-red" ? (
-          <EnvelopeCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
-        ) : (
-          <CoverOverlay content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
-        )
+        <EnvelopeCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
       ) : null}
 
       {content.slug === "double-phoenix-red" || content.slug === "double-phoenix-green" ? (
