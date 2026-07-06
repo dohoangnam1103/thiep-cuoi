@@ -9,6 +9,7 @@ import {
   DoubleSide,
   ExtrudeGeometry,
   Shape,
+  SRGBColorSpace,
   type Group,
   type Mesh,
 } from "three";
@@ -51,15 +52,15 @@ function backTexture(paper: string, accent: string) {
   const TL: [number, number] = [0, 0];
   const TR: [number, number] = [w, 0];
 
-  // Thân phong bì: nền phẳng tối hơn để nắp trên nổi lên.
-  ctx.fillStyle = shade(0.78);
+  // Thân phong bì: nền phẳng ngang màu giấy gốc (khớp mặt trước), chỉ hơi tối.
+  ctx.fillStyle = shade(0.96);
   ctx.fillRect(0, 0, w, h);
 
   // 1 nắp trên: tam giác lớn TL→TR→tâm (đỉnh chúc xuống), gấp từ mép trên.
-  // Gradient từ mép trên (sáng) xuống đỉnh (tối) → cảm giác gấp nghiêng.
+  // Gradient nhẹ quanh màu gốc → cảm giác gấp nghiêng mà không lệch tông.
   const flapGrad = ctx.createLinearGradient(0, 0, 0, cy);
-  flapGrad.addColorStop(0, shade(1.08));
-  flapGrad.addColorStop(1, shade(0.86));
+  flapGrad.addColorStop(0, shade(1.04));
+  flapGrad.addColorStop(1, shade(0.92));
   ctx.beginPath();
   ctx.moveTo(TL[0], TL[1]);
   ctx.lineTo(TR[0], TR[1]);
@@ -96,18 +97,20 @@ function backTexture(paper: string, accent: string) {
     cy,
     r,
   );
-  sealGrad.addColorStop(0, acc.clone().multiplyScalar(1.4).getStyle());
-  sealGrad.addColorStop(1, acc.clone().multiplyScalar(0.7).getStyle());
+  sealGrad.addColorStop(0, acc.clone().multiplyScalar(1.15).getStyle());
+  sealGrad.addColorStop(1, acc.clone().multiplyScalar(0.85).getStyle());
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = sealGrad;
   ctx.fill();
-  ctx.lineWidth = r * 0.12;
-  ctx.strokeStyle = acc.clone().multiplyScalar(0.6).getStyle();
+  // viền trong: sáng hơn nền seal → gờ nổi, tách chữ khỏi nền.
+  ctx.lineWidth = r * 0.1;
+  ctx.strokeStyle = acc.clone().multiplyScalar(1.35).getStyle();
   ctx.beginPath();
-  ctx.arc(cx, cy, r * 0.74, 0, Math.PI * 2);
+  ctx.arc(cx, cy, r * 0.76, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = acc.clone().multiplyScalar(1.5).getStyle();
+  // chữ 囍 màu vàng kem sáng → tương phản mạnh trên nền đỏ, dễ đọc.
+  ctx.fillStyle = "#f3e3c0";
   ctx.font = `bold ${r * 1.05}px serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -115,6 +118,7 @@ function backTexture(paper: string, accent: string) {
 
   const tex = new CanvasTexture(canvas);
   tex.anisotropy = 4;
+  tex.colorSpace = SRGBColorSpace;
   return tex;
 }
 
@@ -122,9 +126,9 @@ function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DPro
   const groupRef = useRef<Group>(null);
   const boxRef = useRef<Mesh>(null!);
 
-  // Giấy phong bì tông ấm, đậm hơn card → tương phản với mặt thiệp gần trắng.
+  // Giấy phong bì khớp màu card (chỉ hơi tối) → 2 mặt cùng tông.
   const envColor = useMemo(
-    () => new Color(paperColor).multiplyScalar(0.86).getStyle(),
+    () => new Color(paperColor).multiplyScalar(0.96).getStyle(),
     [paperColor],
   );
 
@@ -173,19 +177,22 @@ function Envelope({ renderCard, onOpen, paperColor, accentColor }: Envelope3DPro
   return (
     <group ref={groupRef}>
       <mesh ref={boxRef} geometry={geometry}>
-        <meshStandardMaterial color={envColor} roughness={0.85} metalness={0} />
+        {/* emissive = màu paper ở cường độ thấp → nền tông giấy không phụ thuộc
+            đèn, directional chỉ thêm khối nhẹ, hết bị xám khi xoay ra sau. */}
+        <meshStandardMaterial
+          color={envColor}
+          emissive={envColor}
+          emissiveIntensity={0.35}
+          roughness={0.85}
+          metalness={0}
+        />
       </mesh>
 
       {/* Mặt sau: 1 plane mang texture phong bì vẽ sẵn, đặt sát mặt -z của box. */}
       {back && (
         <mesh position={[0, 0, BACK_Z - 0.002]} rotation={[0, Math.PI, 0]}>
           <planeGeometry args={[CARD_W, CARD_H]} />
-          <meshStandardMaterial
-            map={back}
-            roughness={0.8}
-            metalness={0}
-            side={DoubleSide}
-          />
+          <meshBasicMaterial map={back} side={DoubleSide} />
         </mesh>
       )}
 
@@ -218,11 +225,11 @@ export default function Envelope3D(props: Envelope3DProps) {
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%" }}
     >
-      {/* ambient thấp để directional tạo tương phản khối flap; thêm đèn phía sau
-          để mặt phong bì (-z) luôn có sáng khi xoay tới. */}
-      <ambientLight intensity={0.7} />
-      <directionalLight position={[4, 6, 5]} intensity={1.1} />
-      <directionalLight position={[-3, 4, -5]} intensity={0.9} />
+      {/* ambient cao giữ tông giấy đều; 2 directional yếu chỉ thêm khối nhẹ +
+          sáng mặt sau (-z) khi xoay tới, không làm xám. */}
+      <ambientLight intensity={1.0} />
+      <directionalLight position={[4, 6, 5]} intensity={0.5} />
+      <directionalLight position={[-3, 4, -5]} intensity={0.4} />
       <Envelope {...props} />
       <OrbitControls
         enablePan={false}
