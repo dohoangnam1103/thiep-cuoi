@@ -12,7 +12,6 @@ import {
   Mail,
   MapPin,
   MessageCircle,
-  MoveHorizontal,
   Play,
   Sparkles,
   Star,
@@ -140,17 +139,10 @@ function useRevealOnScroll() {
 
 const heroPreviewTemplates = featuredTemplates.slice(0, 6);
 
-function CardSwap() {
-  const t = useTranslations("home");
+function StackFan() {
   const locale = useLocale();
-  const cardsRef = useRef<Array<HTMLAnchorElement | null>>([]);
-  const orderRef = useRef<number[]>(heroPreviewTemplates.map((_, i) => i));
+  const [active, setActive] = useState(0);
   const pausedRef = useRef(false);
-  const applyRef = useRef<() => void>(() => {});
-  const cycleRef = useRef<(dir: number) => void>(() => {});
-  const promoteRef = useRef<(cardIndex: number) => void>(() => {});
-  const resetAutoRef = useRef<() => void>(() => {});
-  const hintRef = useRef<HTMLDivElement | null>(null);
 
   const count = heroPreviewTemplates.length;
 
@@ -160,181 +152,52 @@ function CardSwap() {
   };
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const slotTransform = (slot: number) =>
-      `translateX(${slot * 42}px) translateY(${slot * -46}px) translateZ(${slot * -70}px)`;
-
-    const applyLayout = () => {
-      orderRef.current.forEach((cardIndex, slot) => {
-        const el = cardsRef.current[cardIndex];
-        if (!el) return;
-        el.style.transform = slotTransform(slot);
-        el.style.zIndex = String(count - slot);
-        el.style.opacity = "1";
-      });
-    };
-    applyRef.current = applyLayout;
-    applyLayout();
-
-    // Đưa 1 thẻ bất kỳ lên đầu (click thẻ sau).
-    promoteRef.current = (cardIndex: number) => {
-      const pos = orderRef.current.indexOf(cardIndex);
-      if (pos <= 0) return;
-      orderRef.current = [cardIndex, ...orderRef.current.filter((i) => i !== cardIndex)];
-      applyLayout();
-    };
-
-    // Cycle: thẻ front (đang cầm) bay ra theo hướng kéo (dir>=0 sang phải, dir<0 sang trái) rồi xuống cuối.
-    let dropping = false;
-    cycleRef.current = (dir: number) => {
-      if (dropping) return;
-      dropping = true;
-      const sign = dir >= 0 ? 1 : -1;
-      const frontIndex = orderRef.current[0];
-      const front = cardsRef.current[frontIndex];
-      if (front) {
-        front.style.zIndex = String(count + 1);
-        front.style.transform = `translateX(${sign * 140}%) translateY(40px) translateZ(120px) rotate(${sign * 14}deg)`;
-        front.style.opacity = "0";
-      }
-      window.setTimeout(() => {
-        orderRef.current = [...orderRef.current.slice(1), frontIndex];
-        applyLayout();
-        dropping = false;
-      }, 460);
-    };
-
-    const DELAY = 2600;
-    let nextAt = Date.now() + DELAY;
-    resetAutoRef.current = () => {
-      nextAt = Date.now() + DELAY;
-    };
-
-    // Back-forward cache restore không chạy lại effect → card giữ transform cũ (thẻ đã bay ra).
-    // Reset về layout gốc khi trang được restore từ bfcache.
-    const onPageShow = (e: PageTransitionEvent) => {
-      if (!e.persisted) return;
-      dropping = false;
-      orderRef.current = heroPreviewTemplates.map((_, i) => i);
-      applyLayout();
-      nextAt = Date.now() + DELAY;
-    };
-    window.addEventListener("pageshow", onPageShow);
-
-    if (reduce) {
-      return () => window.removeEventListener("pageshow", onPageShow);
-    }
-
-    const interval = window.setInterval(() => {
-      if (pausedRef.current) {
-        nextAt = Date.now() + DELAY;
-        return;
-      }
-      if (Date.now() >= nextAt) {
-        cycleRef.current(1);
-        nextAt = Date.now() + DELAY;
-      }
-    }, 120);
-
-    return () => {
-      window.clearInterval(interval);
-      window.removeEventListener("pageshow", onPageShow);
-    };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => {
+      if (pausedRef.current) return;
+      setActive((prev) => (prev + 1) % count);
+    }, 2800);
+    return () => window.clearInterval(id);
   }, [count]);
 
-  // Kéo/vuốt thẻ đầu để đổi.
-  const dragRef = useRef({ active: false, startX: 0, lastX: 0, lastT: 0, vx: 0, moved: false, cardIndex: -1 });
-
-  const onCardPointerDown = (cardIndex: number) => (e: React.PointerEvent<HTMLAnchorElement>) => {
-    const isFront = orderRef.current[0] === cardIndex;
-    if (!isFront) return;
-    pausedRef.current = true;
-    dragRef.current = { active: true, startX: e.clientX, lastX: e.clientX, lastT: e.timeStamp, vx: 0, moved: false, cardIndex };
-    const el = cardsRef.current[cardIndex];
-    if (el) {
-      el.style.transition = "none";
-      el.setPointerCapture?.(e.pointerId);
-    }
-  };
-
-  const onCardPointerMove = (e: React.PointerEvent<HTMLAnchorElement>) => {
-    const d = dragRef.current;
-    if (!d.active) return;
-    const dx = e.clientX - d.startX;
-    if (Math.abs(dx) > 4) d.moved = true;
-    const dt = e.timeStamp - d.lastT;
-    if (dt > 0) d.vx = (e.clientX - d.lastX) / dt;
-    d.lastX = e.clientX;
-    d.lastT = e.timeStamp;
-    const el = cardsRef.current[d.cardIndex];
-    if (el) el.style.transform = `translateX(${dx}px) translateY(0) translateZ(0) rotate(${dx * 0.03}deg)`;
-  };
-
-  const endDrag = (e: React.PointerEvent<HTMLAnchorElement>) => {
-    const d = dragRef.current;
-    if (!d.active) return;
-    d.active = false;
-    const el = cardsRef.current[d.cardIndex];
-    if (el) {
-      el.style.transition = "";
-      el.releasePointerCapture?.(e.pointerId);
-    }
-    const dx = e.clientX - d.startX;
-    // Hướng LUÔN theo dx tổng (điểm đầu→cuối); vx chỉ để hạ ngưỡng khi vẩy nhanh.
-    // Không dùng vx cho hướng vì micro-movement lúc thả hay đảo dấu → thẻ bay ngược.
-    const flick = Math.abs(d.vx) > 0.45;
-    const far = Math.abs(dx) > 70;
-    if ((flick || far) && Math.abs(dx) > 8) {
-      cycleRef.current(dx < 0 ? -1 : 1);
-    } else {
-      applyRef.current();
-    }
-    resetAutoRef.current();
-    if (hintRef.current) hintRef.current.style.opacity = "0";
-    window.setTimeout(() => (pausedRef.current = false), 400);
-  };
-
-  const onCardClick = (cardIndex: number) => (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Vừa kéo → chặn navigate.
-    if (dragRef.current.moved) {
-      e.preventDefault();
-      dragRef.current.moved = false;
-      return;
-    }
-    // Thẻ sau → đưa lên đầu, không navigate.
-    if (orderRef.current[0] !== cardIndex) {
-      e.preventDefault();
-      pausedRef.current = true;
-      promoteRef.current(cardIndex);
-      resetAutoRef.current();
-      window.setTimeout(() => (pausedRef.current = false), 1800);
-    }
-  };
+  // slot: vị trí trong quạt tính từ thẻ active (0 = giữa nổi lên, 1..n xòe sang phải theo vòng).
+  const slotOf = (index: number) => (index - active + count) % count;
 
   return (
-    <div className="relative mx-auto w-full max-w-[380px]" data-parallax="0.4">
+    <div className="relative mx-auto w-full max-w-[380px]">
       <div
-        className="card-swap-stage"
+        className="stack-fan-stage"
         onMouseEnter={() => (pausedRef.current = true)}
-        onMouseLeave={() => {
-          if (!dragRef.current.active) pausedRef.current = false;
-        }}
+        onMouseLeave={() => (pausedRef.current = false)}
       >
-        <div className="card-swap-track">
-          {heroPreviewTemplates.map((template, index) => (
+        {heroPreviewTemplates.map((template, index) => {
+          const slot = slotOf(index);
+          const isCenter = slot === 0;
+          // Quạt: thẻ sau active xòe sang 2 bên. Ánh xạ slot 1..count-1 về dải cân đối quanh 0.
+          const half = (count - 1) / 2;
+          const fan = slot === 0 ? 0 : slot - 1 - (half - 0.5);
+          const angle = isCenter ? 0 : fan * 9;
+          const tx = isCenter ? 0 : fan * 30;
+          const ty = isCenter ? -14 : Math.abs(fan) * 10;
+          const style: CSSProperties = {
+            transform: `translateX(${tx}px) translateY(${ty}px) rotate(${angle}deg) scale(${isCenter ? 1 : 0.9})`,
+            zIndex: isCenter ? count + 1 : count - slot,
+            opacity: isCenter ? 1 : 0.72,
+          };
+          return (
             <a
               key={template.slug}
-              ref={(el) => {
-                cardsRef.current[index] = el;
-              }}
               href={hrefFor(template.slug)}
-              className="card-swap-card group"
-              onPointerDown={onCardPointerDown(index)}
-              onPointerMove={onCardPointerMove}
-              onPointerUp={endDrag}
-              onPointerCancel={endDrag}
-              onClick={onCardClick(index)}
+              className="stack-fan-card group"
+              style={style}
+              onClick={(e) => {
+                if (!isCenter) {
+                  e.preventDefault();
+                  setActive(index);
+                  pausedRef.current = true;
+                  window.setTimeout(() => (pausedRef.current = false), 2000);
+                }
+              }}
             >
               <img
                 src={template.listing}
@@ -347,60 +210,32 @@ function CardSwap() {
                 <p className="text-[10px] text-background/80">{template.category} · {template.color}</p>
               </div>
             </a>
-          ))}
-        </div>
+          );
+        })}
       </div>
-      <div ref={hintRef} className="card-swap-hint pointer-events-none" aria-hidden>
-        <MoveHorizontal className="size-3.5" />
-        {t("hero.dragHint")}
+      <div className="coverflow-dots" role="tablist" aria-label="Chọn mẫu thiệp">
+        {heroPreviewTemplates.map((template, index) => (
+          <button
+            key={template.slug}
+            type="button"
+            className={`coverflow-dot${index === active ? " is-active" : ""}`}
+            aria-label={template.name}
+            aria-selected={index === active}
+            role="tab"
+            onClick={() => {
+              setActive(index);
+              pausedRef.current = true;
+              window.setTimeout(() => (pausedRef.current = false), 2000);
+            }}
+          />
+        ))}
       </div>
     </div>
   );
 }
 
-function useHeroParallax() {
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.matchMedia("(hover: none)").matches) return;
-
-    const root = document.getElementById("hero-parallax");
-    if (!root) return;
-    const layers = Array.from(root.querySelectorAll<HTMLElement>("[data-parallax]"));
-
-    let raf = 0;
-    let tx = 0;
-    let ty = 0;
-    const onMove = (e: MouseEvent) => {
-      const rect = root.getBoundingClientRect();
-      tx = (e.clientX - rect.left - rect.width / 2) / rect.width;
-      ty = (e.clientY - rect.top - rect.height / 2) / rect.height;
-      if (!raf) {
-        raf = requestAnimationFrame(() => {
-          for (const layer of layers) {
-            const depth = Number(layer.dataset.parallax ?? 0);
-            layer.style.transform = `translate3d(${tx * depth * 30}px, ${ty * depth * 30}px, 0)`;
-          }
-          raf = 0;
-        });
-      }
-    };
-    const onLeave = () => {
-      for (const layer of layers) layer.style.transform = "";
-    };
-
-    root.addEventListener("mousemove", onMove);
-    root.addEventListener("mouseleave", onLeave);
-    return () => {
-      root.removeEventListener("mousemove", onMove);
-      root.removeEventListener("mouseleave", onLeave);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-}
-
 function HeroSection() {
   const t = useTranslations("home");
-  useHeroParallax();
   const auroraEnabled = useAuroraEnabled();
   return (
     <section id="top" className="relative overflow-hidden bg-background">
@@ -409,7 +244,7 @@ function HeroSection() {
       ) : null}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(214,69,80,0.05),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(224,168,112,0.05),transparent_30%)]" />
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
-      <div id="hero-parallax" className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="flex flex-col justify-center">
           <div className="hero-enter mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
             <img
@@ -444,7 +279,7 @@ function HeroSection() {
         </div>
 
         <div className="hero-enter flex items-center justify-center" style={{ "--hero-delay": "300ms" } as CSSProperties}>
-          <CardSwap />
+          <StackFan />
         </div>
       </div>
     </section>

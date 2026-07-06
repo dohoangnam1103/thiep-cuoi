@@ -337,20 +337,16 @@ html.lenis body {
   opacity: 1;
 }
 
-.card-swap-stage {
+.stack-fan-stage {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  perspective: 1400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.card-swap-track {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-.card-swap-card {
+.stack-fan-card {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -358,54 +354,48 @@ html.lenis body {
   height: 345px;
   margin-left: -115px;
   margin-top: -172px;
-  transform-style: preserve-3d;
-  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms ease;
+  transform-origin: bottom center;
+  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1), opacity 620ms ease;
   will-change: transform, opacity;
   cursor: pointer;
-  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
-.card-swap-card:first-child {
-  cursor: grab;
+.stack-fan-card img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.card-swap-card:first-child:active {
-  cursor: grabbing;
+.coverflow-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
 }
 
-.card-swap-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  position: absolute;
-  left: 50%;
-  bottom: -0.5rem;
-  transform: translateX(-50%);
-  padding: 0.3rem 0.75rem;
+.coverflow-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 9999px;
-  background: color-mix(in oklch, var(--foreground) 82%, transparent);
-  color: var(--background);
-  font-size: 0.7rem;
-  font-weight: 700;
-  white-space: nowrap;
-  opacity: 0;
-  animation: card-swap-hint-pulse 3s ease-in-out 1s 2;
+  background: color-mix(in oklch, var(--foreground) 22%, transparent);
+  transition: width 300ms ease, background 300ms ease;
+  cursor: pointer;
 }
 
-@keyframes card-swap-hint-pulse {
-  0%, 100% { opacity: 0; }
-  25%, 75% { opacity: 0.92; }
+.coverflow-dot.is-active {
+  width: 26px;
+  background: var(--primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card-swap-stage {
+  .stack-fan-stage {
     perspective: none;
   }
-  .card-swap-card {
+  .stack-fan-card {
     transition: none;
-  }
-  .card-swap-hint {
-    animation: none;
   }
 }
 
