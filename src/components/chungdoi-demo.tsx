@@ -522,6 +522,7 @@ function CoverCard({
 
         <button
           type="button"
+          data-open-btn
           onClick={onOpen}
           className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold shadow-lg transition hover:-translate-y-0.5"
           style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
@@ -4003,6 +4004,7 @@ export function ChungDoiDemo({
   const [opening, setOpening] = useState(false);
   const [playing, setPlaying] = useState(false);
   const openTimerRef = useRef<number | null>(null);
+  const autoScrollTimerRef = useRef<number | null>(null);
   const autoScrollFinishedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
@@ -4086,6 +4088,7 @@ export function ChungDoiDemo({
   useEffect(() => {
     return () => {
       if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
+      if (autoScrollTimerRef.current) window.clearTimeout(autoScrollTimerRef.current);
     };
   }, []);
 
@@ -4132,7 +4135,9 @@ export function ChungDoiDemo({
     setOpening(true);
     openTimerRef.current = window.setTimeout(() => {
       setOpened(true);
-      setAutoScrolling(true);
+      autoScrollTimerRef.current = window.setTimeout(() => {
+        setAutoScrolling(true);
+      }, 2000);
     }, 800);
     const audio = audioRef.current;
     if (audio) {

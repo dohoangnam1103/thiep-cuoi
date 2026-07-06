@@ -4,7 +4,7 @@ import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { templateLabel } from "@/app/editor/[id]/templates";
 import { logout } from "../(auth)/actions";
-import { createInvitation } from "./actions";
+import { NewInvitationButton } from "./NewInvitationButton";
 
 export default async function DashboardPage() {
   const { userId } = await verifySession();
@@ -32,14 +32,9 @@ export default async function DashboardPage() {
         </form>
       </div>
 
-      <form action={createInvitation} className="mt-6">
-        <button
-          type="submit"
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
-        >
-          + Tạo thiệp mới
-        </button>
-      </form>
+      <div className="mt-6">
+        <NewInvitationButton />
+      </div>
 
       {invitations.length === 0 ? (
         <p className="mt-12 text-center text-muted-foreground">

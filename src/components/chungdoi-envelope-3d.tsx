@@ -24,6 +24,27 @@ type Envelope3DProps = {
   accentColor: string;
 };
 
+// Vùng nút trong hệ UV mặt trước (0–1), gốc dưới-trái (three UV convention).
+type BtnUV = { u0: number; u1: number; v0: number; v1: number };
+
+// Đo box nút [data-open-btn] so với card root → chuyển sang UV mặt trước.
+// DOM: top→bottom, y xuống. UV three: v đi lên → v = 1 - (y/height).
+function measureButtonUV(root: HTMLElement): BtnUV | null {
+  const btn = root.querySelector<HTMLElement>("[data-open-btn]");
+  if (!btn) return null;
+  const r = root.getBoundingClientRect();
+  const b = btn.getBoundingClientRect();
+  if (r.width <= 0 || r.height <= 0) return null;
+  // Nới nhẹ 6% mỗi phía cho dễ chạm trên mobile.
+  const padX = (b.width * 0.06) / r.width;
+  const padY = (b.height * 0.06) / r.height;
+  const u0 = (b.left - r.left) / r.width - padX;
+  const u1 = (b.right - r.left) / r.width + padX;
+  const yTop = (b.top - r.top) / r.height;
+  const yBot = (b.bottom - r.top) / r.height;
+  return { u0, u1, v0: 1 - yBot - padY, v1: 1 - yTop + padY };
+}
+
 // Card DOM chụp thành texture rồi dán lên plane phủ đúng mặt box CARD_W.
 // Hẹp chiều ngang (420px) để card cao/dọc hơn — dễ xem trên điện thoại.
 const CARD_PX = 420;
@@ -157,12 +178,14 @@ function Envelope({
   accentColor,
   frontTex,
   ratio,
+  btnUV,
 }: {
   onOpen: () => void;
   paperColor: string;
   accentColor: string;
   frontTex: Texture | null;
   ratio: number;
+  btnUV: BtnUV | null;
 }) {
   const groupRef = useRef<Group>(null);
   const cardH = CARD_W * ratio;
@@ -233,18 +256,23 @@ function Envelope({
     downPos.current = { x: e.clientX, y: e.clientY };
   };
 
-  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+  // Mở CHỈ khi tap gần như đứng yên (phân biệt kéo xoay) VÀ điểm chạm rơi trong
+  // vùng nút theo UV mặt trước. e.uv có sẵn vì raycast trúng mesh có texture.
+  const handleFacePointerUp = (e: ThreeEvent<PointerEvent>) => {
     const start = downPos.current;
     downPos.current = null;
-    if (!start) return;
+    if (!start || !btnUV || !e.uv) return;
     const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
     if (moved > 6) return; // kéo xoay → không mở
+    const u = e.uv.x;
+    const v = e.uv.y;
+    if (u < btnUV.u0 || u > btnUV.u1 || v < btnUV.v0 || v > btnUV.v1) return;
     e.stopPropagation();
     onOpen();
   };
 
   return (
-    <group ref={groupRef} scale={scale} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
+    <group ref={groupRef} scale={scale} onPointerDown={handlePointerDown}>
       <mesh geometry={geometry}>
         {/* emissive = màu paper ở cường độ thấp → nền tông giấy không phụ thuộc
             đèn, directional chỉ thêm khối nhẹ, hết bị xám khi xoay ra sau. */}
@@ -268,7 +296,7 @@ function Envelope({
       {/* Mặt trước: card DOM đã chụp, dán sát mặt +z. Dùng faceGeometry bo tròn
           (không plane chữ nhật) → khớp mép box, hết góc thừa. */}
       {frontTex && (
-        <mesh geometry={faceGeometry} position={[0, 0, DEPTH / 2 + 0.002]}>
+        <mesh geometry={faceGeometry} position={[0, 0, DEPTH / 2 + 0.002]} onPointerUp={handleFacePointerUp}>
           <meshBasicMaterial map={frontTex} toneMapped={false} transparent />
         </mesh>
       )}
@@ -285,6 +313,9 @@ export default function Envelope3D({
   const captureRef = useRef<HTMLDivElement>(null);
   const [frontTex, setFrontTex] = useState<Texture | null>(null);
   const [ratio, setRatio] = useState(FALLBACK_RATIO);
+  // Vùng nút "Mở thiệp" trong hệ UV mặt trước (0–1). Đo runtime từ DOM đã chụp
+  // → hit-test tap theo UV, mở đúng khi chạm nút bất kể card đang xoay góc nào.
+  const [btnUV, setBtnUV] = useState<BtnUV | null>(null);
 
   // Chụp card DOM (ẩn ngoài màn) → CanvasTexture cho mặt trước 3D.
   useEffect(() => {
@@ -306,6 +337,7 @@ export default function Envelope3D({
         tex.needsUpdate = true;
         if (canvas.width > 0) setRatio(canvas.height / canvas.width);
         setFrontTex(tex);
+        setBtnUV(measureButtonUV(node));
       } catch {
         // Chụp lỗi → mặt trước để trống (box giấy vẫn hiện), user vẫn mở được.
       }
@@ -334,7 +366,14 @@ export default function Envelope3D({
         {/* Nền giấy đặc: card bo rounded-lg nên 4 góc ngoài radius trong suốt khi
             chụp → front plane transparent để lộ đen. Tô nền paper → góc thành màu
             giấy, mép bo vẫn do box 3D (ExtrudeGeometry CORNER) lo. */}
-        <div ref={captureRef} style={{ width: CARD_PX, background: paperColor }}>
+        <div
+          ref={captureRef}
+          className="envelope3d-capture-root"
+          style={{ width: CARD_PX, background: paperColor }}
+        >
+          {/* Safari/iOS: html-to-image render box-shadow lệch → ghost mờ bên phải
+              trên texture. Tắt shadow trong node chụp; khối depth do box 3D lo. */}
+          <style>{".envelope3d-capture-root *{box-shadow:none!important;filter:none!important}"}</style>
           {renderCard(() => {})}
         </div>
       </div>
@@ -356,6 +395,7 @@ export default function Envelope3D({
           accentColor={accentColor}
           frontTex={frontTex}
           ratio={ratio}
+          btnUV={btnUV}
         />
         <OrbitControls
           enablePan={false}
