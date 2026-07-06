@@ -17,3 +17,14 @@ export async function verifyAdmin(): Promise<{ adminId: string }> {
   }
   return { adminId: admin.id };
 }
+
+export async function verifySuperAdmin(): Promise<{ adminId: string }> {
+  const admin = await getCurrentAdmin();
+  if (!admin) {
+    redirect("/admin/login");
+  }
+  if (!admin.isSuperAdmin) {
+    redirect("/admin");
+  }
+  return { adminId: admin.id };
+}

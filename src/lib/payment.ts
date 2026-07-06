@@ -1,8 +1,14 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-export const BASE_PRICE = 150000;
+export const DEFAULT_PRODUCT_PRICE = 150000;
+
+export const DEFAULT_REPEAT_CUSTOMER_PRICE = 99000;
 
 export const FREE_TRIAL_DAYS = 7;
+
+export const PAYMENT_PENDING_EXPIRES_HOURS = 24;
+
+export const PAYMENT_PENDING_EXPIRES_MS = PAYMENT_PENDING_EXPIRES_HOURS * 60 * 60 * 1000;
 
 export const BANK = {
   bin: "970422",
@@ -34,6 +40,10 @@ export function buildVietQrUrl({ amount, code }: { amount: number; code: string 
 
 export function applyVoucher(base: number, amountOff: number): number {
   return Math.max(0, base - amountOff);
+}
+
+export function isPendingPaymentExpired(createdAt: Date, now = new Date()): boolean {
+  return now.getTime() - createdAt.getTime() >= PAYMENT_PENDING_EXPIRES_MS;
 }
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };

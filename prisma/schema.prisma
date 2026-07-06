@@ -19,6 +19,7 @@ model Admin {
   id           String   @id @default(cuid())
   email        String   @unique
   passwordHash String
+  isSuperAdmin Boolean  @default(false)
   createdAt    DateTime @default(now())
 }
 
@@ -71,6 +72,13 @@ model Voucher {
   usedCount Int       @default(0)
   expiresAt DateTime?
   createdAt DateTime  @default(now())
+}
+
+model AppConfig {
+  id                  String   @id @default("default")
+  productPrice        Int      @default(150000)
+  repeatCustomerPrice Int      @default(99000)
+  updatedAt           DateTime @updatedAt
 }
 
 model InvitationContent {

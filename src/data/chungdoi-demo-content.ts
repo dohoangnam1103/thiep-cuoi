@@ -3398,7 +3398,16 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
         "label": "Kết thúc tiệc"
       }
     ],
-    "gallery": [],
+    "gallery": [
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-1.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-2.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-3.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-4.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-5.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-6.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-7.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-green/photo-8.webp"
+    ],
     "wishes": [
       {
         "name": "Huy Quân",

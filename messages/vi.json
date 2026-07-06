@@ -15,10 +15,12 @@
     "signupSubmit": "Đăng ký",
     "loginWithGoogle": "Tiếp tục với Google",
     "signupWithGoogle": "Đăng ký với Google",
+    "loginWithFacebook": "Tiếp tục với Facebook",
+    "signupWithFacebook": "Đăng ký với Facebook",
     "or": "hoặc",
     "noAccount": "Chưa có tài khoản?",
     "haveAccount": "Đã có tài khoản?",
-    "oauthError": "Không thể đăng nhập bằng Google. Vui lòng thử lại."
+    "oauthError": "Không thể đăng nhập bằng mạng xã hội. Vui lòng thử lại."
   },
   "chrome": {
     "nav": {
@@ -64,7 +66,7 @@
       "subtitle": "Thiệp cưới online với mẫu thiết kế thủ công, tên khách mời, RSVP, bản đồ, album ảnh, nhạc và hộp quà QR.",
       "trialNote": "Tạo miễn phí - Dùng thử 3 ngày - Chỉ trả khi bạn hài lòng",
       "watchGuide": "Xem hướng dẫn",
-      "liveDemo": "Demo thiệp trực tiếp",
+      "dragHint": "Kéo để đổi thiệp",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "Đang nhận RSVP",
       "statGuests": "khách mời",
@@ -186,6 +188,43 @@
       "faq3A": "Tạo và tùy chỉnh miễn phí. Xuất bản gồm 3 ngày dùng thử miễn phí, sau đó thanh toán một lần để thiệp tồn tại.",
       "faq4Q": "Có chỉnh sửa được sau khi xuất bản không?",
       "faq4A": "Có. Chỉnh sửa cập nhật tức thì trên cùng một link chia sẻ."
+    },
+    "instant": {
+      "eyebrow": "Thử ngay lập tức",
+      "title": "Gõ tên bạn, xem thiệp sống động ngay",
+      "subtitle": "Không cần đăng ký. Nhập tên cô dâu chú rể để xem trước tấm thiệp của riêng bạn, rồi bắt đầu tạo trong vài giây.",
+      "defaultGroom": "Alex",
+      "defaultBride": "Jordan",
+      "groomPlaceholder": "Tên chú rể",
+      "bridePlaceholder": "Tên cô dâu",
+      "cta": "Tạo thiệp của tôi",
+      "previewInvited": "Trân trọng kính mời"
+    },
+    "testimonials": {
+      "eyebrow": "Cặp đôi nói gì",
+      "title": "Được hàng nghìn cặp đôi tin chọn",
+      "subtitle": "Những lời chia sẻ thật từ các cặp đôi đã tạo thiệp cưới cùng Thiệp Mừng Online.",
+      "t1Quote": "Làm thiệp chưa tới 10 phút mà đẹp hơn cả thiệp giấy. Khách khen suốt!",
+      "t1Author": "Minh & Hà",
+      "t1Role": "Cưới tháng 3, Hà Nội",
+      "t2Quote": "RSVP tự động giúp mình nắm chính xác số khách, đỡ gọi điện từng người.",
+      "t2Author": "Tuấn & Linh",
+      "t2Role": "Cưới tháng 5, TP.HCM",
+      "t3Quote": "Bản đồ và album ảnh tích hợp sẵn, khách khen tiện và sang.",
+      "t3Author": "Quang & Mai",
+      "t3Role": "Cưới tháng 4, Đà Nẵng",
+      "t4Quote": "Chỉnh sửa được sau khi gửi nên mình yên tâm, sai gì sửa ngay.",
+      "t4Author": "Đức & Trang",
+      "t4Role": "Cưới tháng 6, Hải Phòng",
+      "t5Quote": "Hộp quà QR quá tiện cho khách ở xa không tới dự được.",
+      "t5Author": "Nam & Vy",
+      "t5Role": "Cưới tháng 2, Cần Thơ",
+      "t6Quote": "Hỗ trợ trả lời cực nhanh, mình nhắn lúc nào cũng có người giúp.",
+      "t6Author": "Hùng & Thu",
+      "t6Role": "Cưới tháng 7, Huế"
+    },
+    "stickyCta": {
+      "button": "Tạo thiệp"
     },
     "footer": {
       "tagline": "Tạo thiệp cưới online đẹp miễn phí, chỉ trong 10 phút.",

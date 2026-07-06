@@ -12,18 +12,23 @@ import {
   Mail,
   MapPin,
   MessageCircle,
+  MoveHorizontal,
   Play,
   Sparkles,
   Star,
   X,
   type LucideIcon,
 } from "lucide-react";
+import Lenis from "lenis";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { getVietnameseTemplateSlug, templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { createInvitation } from "@/app/dashboard/actions";
+
+const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
 const categories = ["All", ...Array.from(new Set(templates.map((template) => template.category)))];
 const colors = ["All", ...Array.from(new Set(templates.map((template) => template.color)))];
@@ -52,9 +57,70 @@ function useCountUp(target: number, duration = 1600) {
   return value;
 }
 
+function useSmoothScroll() {
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const lenis = new Lenis({ syncTouch: false });
+    let rafId = requestAnimationFrame(function raf(time) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+    };
+  }, []);
+}
+
+function useScrollProgress() {
+  useEffect(() => {
+    const bar = document.getElementById("scroll-progress");
+    if (!bar) return;
+    let raf = 0;
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+      bar.style.setProperty("--scroll-progress", `${ratio}`);
+      raf = 0;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+}
+
+function useAuroraEnabled() {
+  const subscribe = (onChange: () => void) => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const width = window.matchMedia("(min-width: 1024px)");
+    motion.addEventListener("change", onChange);
+    width.addEventListener("change", onChange);
+    return () => {
+      motion.removeEventListener("change", onChange);
+      width.removeEventListener("change", onChange);
+    };
+  };
+  const getSnapshot = () =>
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    window.matchMedia("(min-width: 1024px)").matches;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
+}
+
 function useRevealOnScroll() {
   useEffect(() => {
-    const elements = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    const elements = Array.from(
+      document.querySelectorAll<HTMLElement>(".reveal, .reveal-left, .reveal-right, .reveal-scale"),
+    );
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -72,36 +138,301 @@ function useRevealOnScroll() {
   }, []);
 }
 
+const heroPreviewTemplates = featuredTemplates.slice(0, 6);
+
+function CardSwap() {
+  const t = useTranslations("home");
+  const locale = useLocale();
+  const cardsRef = useRef<Array<HTMLAnchorElement | null>>([]);
+  const orderRef = useRef<number[]>(heroPreviewTemplates.map((_, i) => i));
+  const pausedRef = useRef(false);
+  const applyRef = useRef<() => void>(() => {});
+  const cycleRef = useRef<(dir: number) => void>(() => {});
+  const promoteRef = useRef<(cardIndex: number) => void>(() => {});
+  const resetAutoRef = useRef<() => void>(() => {});
+  const hintRef = useRef<HTMLDivElement | null>(null);
+
+  const count = heroPreviewTemplates.length;
+
+  const hrefFor = (slug: string) => {
+    const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(slug) : slug;
+    return `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
+  };
+
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const slotTransform = (slot: number) =>
+      `translateX(${slot * 42}px) translateY(${slot * -46}px) translateZ(${slot * -70}px)`;
+
+    const applyLayout = () => {
+      orderRef.current.forEach((cardIndex, slot) => {
+        const el = cardsRef.current[cardIndex];
+        if (!el) return;
+        el.style.transform = slotTransform(slot);
+        el.style.zIndex = String(count - slot);
+        el.style.opacity = "1";
+      });
+    };
+    applyRef.current = applyLayout;
+    applyLayout();
+
+    // Đưa 1 thẻ bất kỳ lên đầu (click thẻ sau).
+    promoteRef.current = (cardIndex: number) => {
+      const pos = orderRef.current.indexOf(cardIndex);
+      if (pos <= 0) return;
+      orderRef.current = [cardIndex, ...orderRef.current.filter((i) => i !== cardIndex)];
+      applyLayout();
+    };
+
+    // Cycle: thẻ front (đang cầm) bay ra theo hướng kéo (dir>=0 sang phải, dir<0 sang trái) rồi xuống cuối.
+    let dropping = false;
+    cycleRef.current = (dir: number) => {
+      if (dropping) return;
+      dropping = true;
+      const sign = dir >= 0 ? 1 : -1;
+      const frontIndex = orderRef.current[0];
+      const front = cardsRef.current[frontIndex];
+      if (front) {
+        front.style.zIndex = String(count + 1);
+        front.style.transform = `translateX(${sign * 140}%) translateY(40px) translateZ(120px) rotate(${sign * 14}deg)`;
+        front.style.opacity = "0";
+      }
+      window.setTimeout(() => {
+        orderRef.current = [...orderRef.current.slice(1), frontIndex];
+        applyLayout();
+        dropping = false;
+      }, 460);
+    };
+
+    const DELAY = 2600;
+    let nextAt = Date.now() + DELAY;
+    resetAutoRef.current = () => {
+      nextAt = Date.now() + DELAY;
+    };
+
+    // Back-forward cache restore không chạy lại effect → card giữ transform cũ (thẻ đã bay ra).
+    // Reset về layout gốc khi trang được restore từ bfcache.
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (!e.persisted) return;
+      dropping = false;
+      orderRef.current = heroPreviewTemplates.map((_, i) => i);
+      applyLayout();
+      nextAt = Date.now() + DELAY;
+    };
+    window.addEventListener("pageshow", onPageShow);
+
+    if (reduce) {
+      return () => window.removeEventListener("pageshow", onPageShow);
+    }
+
+    const interval = window.setInterval(() => {
+      if (pausedRef.current) {
+        nextAt = Date.now() + DELAY;
+        return;
+      }
+      if (Date.now() >= nextAt) {
+        cycleRef.current(1);
+        nextAt = Date.now() + DELAY;
+      }
+    }, 120);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [count]);
+
+  // Kéo/vuốt thẻ đầu để đổi.
+  const dragRef = useRef({ active: false, startX: 0, lastX: 0, lastT: 0, vx: 0, moved: false, cardIndex: -1 });
+
+  const onCardPointerDown = (cardIndex: number) => (e: React.PointerEvent<HTMLAnchorElement>) => {
+    const isFront = orderRef.current[0] === cardIndex;
+    if (!isFront) return;
+    pausedRef.current = true;
+    dragRef.current = { active: true, startX: e.clientX, lastX: e.clientX, lastT: e.timeStamp, vx: 0, moved: false, cardIndex };
+    const el = cardsRef.current[cardIndex];
+    if (el) {
+      el.style.transition = "none";
+      el.setPointerCapture?.(e.pointerId);
+    }
+  };
+
+  const onCardPointerMove = (e: React.PointerEvent<HTMLAnchorElement>) => {
+    const d = dragRef.current;
+    if (!d.active) return;
+    const dx = e.clientX - d.startX;
+    if (Math.abs(dx) > 4) d.moved = true;
+    const dt = e.timeStamp - d.lastT;
+    if (dt > 0) d.vx = (e.clientX - d.lastX) / dt;
+    d.lastX = e.clientX;
+    d.lastT = e.timeStamp;
+    const el = cardsRef.current[d.cardIndex];
+    if (el) el.style.transform = `translateX(${dx}px) translateY(0) translateZ(0) rotate(${dx * 0.03}deg)`;
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLAnchorElement>) => {
+    const d = dragRef.current;
+    if (!d.active) return;
+    d.active = false;
+    const el = cardsRef.current[d.cardIndex];
+    if (el) {
+      el.style.transition = "";
+      el.releasePointerCapture?.(e.pointerId);
+    }
+    const dx = e.clientX - d.startX;
+    // Hướng LUÔN theo dx tổng (điểm đầu→cuối); vx chỉ để hạ ngưỡng khi vẩy nhanh.
+    // Không dùng vx cho hướng vì micro-movement lúc thả hay đảo dấu → thẻ bay ngược.
+    const flick = Math.abs(d.vx) > 0.45;
+    const far = Math.abs(dx) > 70;
+    if ((flick || far) && Math.abs(dx) > 8) {
+      cycleRef.current(dx < 0 ? -1 : 1);
+    } else {
+      applyRef.current();
+    }
+    resetAutoRef.current();
+    if (hintRef.current) hintRef.current.style.opacity = "0";
+    window.setTimeout(() => (pausedRef.current = false), 400);
+  };
+
+  const onCardClick = (cardIndex: number) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Vừa kéo → chặn navigate.
+    if (dragRef.current.moved) {
+      e.preventDefault();
+      dragRef.current.moved = false;
+      return;
+    }
+    // Thẻ sau → đưa lên đầu, không navigate.
+    if (orderRef.current[0] !== cardIndex) {
+      e.preventDefault();
+      pausedRef.current = true;
+      promoteRef.current(cardIndex);
+      resetAutoRef.current();
+      window.setTimeout(() => (pausedRef.current = false), 1800);
+    }
+  };
+
+  return (
+    <div className="relative mx-auto w-full max-w-[380px]" data-parallax="0.4">
+      <div
+        className="card-swap-stage"
+        onMouseEnter={() => (pausedRef.current = true)}
+        onMouseLeave={() => {
+          if (!dragRef.current.active) pausedRef.current = false;
+        }}
+      >
+        <div className="card-swap-track">
+          {heroPreviewTemplates.map((template, index) => (
+            <a
+              key={template.slug}
+              ref={(el) => {
+                cardsRef.current[index] = el;
+              }}
+              href={hrefFor(template.slug)}
+              className="card-swap-card group"
+              onPointerDown={onCardPointerDown(index)}
+              onPointerMove={onCardPointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              onClick={onCardClick(index)}
+            >
+              <img
+                src={template.listing}
+                alt={template.name}
+                draggable={false}
+                className="h-full w-full rounded-2xl object-cover object-top shadow-[0_18px_44px_rgb(0_0_0/0.22)]"
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent p-4 opacity-0 transition-opacity group-hover:opacity-100">
+                <p className="font-heading text-sm font-black text-background">{template.name}</p>
+                <p className="text-[10px] text-background/80">{template.category} · {template.color}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+      <div ref={hintRef} className="card-swap-hint pointer-events-none" aria-hidden>
+        <MoveHorizontal className="size-3.5" />
+        {t("hero.dragHint")}
+      </div>
+    </div>
+  );
+}
+
+function useHeroParallax() {
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(hover: none)").matches) return;
+
+    const root = document.getElementById("hero-parallax");
+    if (!root) return;
+    const layers = Array.from(root.querySelectorAll<HTMLElement>("[data-parallax]"));
+
+    let raf = 0;
+    let tx = 0;
+    let ty = 0;
+    const onMove = (e: MouseEvent) => {
+      const rect = root.getBoundingClientRect();
+      tx = (e.clientX - rect.left - rect.width / 2) / rect.width;
+      ty = (e.clientY - rect.top - rect.height / 2) / rect.height;
+      if (!raf) {
+        raf = requestAnimationFrame(() => {
+          for (const layer of layers) {
+            const depth = Number(layer.dataset.parallax ?? 0);
+            layer.style.transform = `translate3d(${tx * depth * 30}px, ${ty * depth * 30}px, 0)`;
+          }
+          raf = 0;
+        });
+      }
+    };
+    const onLeave = () => {
+      for (const layer of layers) layer.style.transform = "";
+    };
+
+    root.addEventListener("mousemove", onMove);
+    root.addEventListener("mouseleave", onLeave);
+    return () => {
+      root.removeEventListener("mousemove", onMove);
+      root.removeEventListener("mouseleave", onLeave);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+}
+
 function HeroSection() {
   const t = useTranslations("home");
+  useHeroParallax();
+  const auroraEnabled = useAuroraEnabled();
   return (
     <section id="top" className="relative overflow-hidden bg-background">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(140,166,140,0.18),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(214,178,110,0.16),transparent_30%)]" />
+      {auroraEnabled ? (
+        <AuroraBackground className="pointer-events-none absolute inset-0 opacity-20" amplitude={1.1} blend={0.55} />
+      ) : null}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(214,69,80,0.05),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(224,168,112,0.05),transparent_30%)]" />
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
-        <div className="reveal flex flex-col justify-center">
-          <div className="mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
+      <div id="hero-parallax" className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
+        <div className="flex flex-col justify-center">
+          <div className="hero-enter mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
             <img
               src="/chungdoi/images/en/banner_hero.webp"
               alt="Beautiful online wedding invitations"
               className="h-full w-full object-cover"
             />
           </div>
-          <p className="mb-4 text-2xl font-semibold text-foreground">
+          <p className="hero-enter mb-4 text-2xl font-semibold text-foreground" style={{ "--hero-delay": "80ms" } as CSSProperties}>
             <span className="font-pattaya text-4xl text-primary">thiepmungonline</span>
             <span className="text-muted-foreground">{t("hero.domainSuffix")}</span>
           </p>
-          <h1 className="font-heading max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-            {t("hero.title")}
+          <h1 className="hero-enter font-heading max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
+            <span className="shiny-text">{t("hero.title")}</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">{t("hero.subtitle")}</p>
-          <p className="mt-4 text-sm font-semibold text-accent">{t("hero.trialNote")}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <p className="hero-enter mt-6 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
+          <p className="hero-enter mt-4 text-sm font-semibold text-primary" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
+          <div className="hero-enter mt-8 flex flex-wrap gap-3" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href="#templates"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-xl transition hover:-translate-y-1 hover:bg-primary/90"
+              className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
             >
-              {t("createNow")} <ArrowRight className="size-4" />
+              {t("createNow")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#how-it-works"
@@ -112,21 +443,8 @@ function HeroSection() {
           </div>
         </div>
 
-        <div className="reveal relative min-h-[610px] lg:min-h-[720px]">
-          <div className="absolute left-5 top-8 w-[58%] max-w-[360px] animate-float-slow overflow-hidden rounded-[2rem]">
-            <img
-              src="/chungdoi/images/en/hero/hero-1.webp"
-              alt="Thiệp Mừng Online invitation example"
-              className="aspect-[2/3] w-full rounded-[1.4rem] object-cover"
-            />
-          </div>
-          <div className="absolute right-0 top-28 w-[49%] max-w-[300px] animate-float overflow-hidden rounded-[2rem]">
-            <img
-              src="/chungdoi/images/en/hero/hero-2.webp"
-              alt="Online wedding invitation on mobile"
-              className="aspect-[2/3] w-full rounded-[1.4rem] object-cover"
-            />
-          </div>
+        <div className="hero-enter flex items-center justify-center" style={{ "--hero-delay": "300ms" } as CSSProperties}>
+          <CardSwap />
         </div>
       </div>
     </section>
@@ -213,9 +531,9 @@ function HowItWorks() {
         </div>
         <div className="mt-12 grid gap-5 lg:grid-cols-3">
           {steps.map(([title, copy, Icon], index) => (
-            <div key={title as string} className="reveal rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
+            <div key={title as string} className="reveal group rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.1)]">
               <div className="flex items-center gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-secondary text-primary">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-secondary text-primary transition-transform group-hover:scale-110">
                   <Icon className="size-5" />
                 </div>
                 <p className="text-sm font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
@@ -241,9 +559,9 @@ function SupportSection() {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t("support.subtitle")}</p>
           <a
             href="#templates"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition hover:-translate-y-1 hover:bg-primary/90"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
           >
-            {t("support.startCreating")} <ArrowRight className="size-4" />
+            {t("support.startCreating")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
         <div className="reveal grid gap-4 sm:grid-cols-2">
@@ -251,7 +569,7 @@ function SupportSection() {
             [t("support.replyTimeLabel"), t("support.replyTimeValue")],
             [t("support.helpEditsLabel"), t("support.helpEditsValue")],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-border bg-card p-6">
+            <div key={label} className="rounded-3xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.08)]">
               <p className="text-sm text-muted-foreground">{label}</p>
               <p className="mt-4 text-3xl font-black text-foreground">{value}</p>
             </div>
@@ -267,7 +585,7 @@ function GuestsSection() {
 
   return (
     <section id="guests" className="relative overflow-hidden bg-background py-20">
-      <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(140,166,140,0.16),transparent_55%)]" />
+      <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(214,64,69,0.14),transparent_55%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div className="reveal">
           <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("guests.eyebrow")}</p>
@@ -519,7 +837,7 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
             href={demoHref}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
           >
-            {t("gallery.viewDemo")} <ArrowRight className="size-4" />
+            {t("gallery.viewDemo")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>
@@ -647,22 +965,166 @@ function PricingFaq() {
   );
 }
 
+function InstantDemo() {
+  const t = useTranslations("home");
+  const defaultGroom = t("instant.defaultGroom");
+  const defaultBride = t("instant.defaultBride");
+  const [groom, setGroom] = useState("");
+  const [bride, setBride] = useState("");
+
+  const groomName = groom.trim() || defaultGroom;
+  const brideName = bride.trim() || defaultBride;
+
+  return (
+    <section className="bg-secondary py-20">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8">
+        <div className="reveal-left">
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("instant.eyebrow")}</p>
+          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("instant.title")}</h2>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">{t("instant.subtitle")}</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-sm font-bold text-muted-foreground">{t("languages.groomLabel")}</span>
+              <input
+                value={groom}
+                onChange={(e) => setGroom(e.target.value)}
+                placeholder={t("instant.groomPlaceholder")}
+                maxLength={24}
+                className="mt-2 w-full rounded-2xl border border-border bg-card px-4 py-3 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+              />
+            </label>
+            <label className="block">
+              <span className="text-sm font-bold text-muted-foreground">{t("languages.brideLabel")}</span>
+              <input
+                value={bride}
+                onChange={(e) => setBride(e.target.value)}
+                placeholder={t("instant.bridePlaceholder")}
+                maxLength={24}
+                className="mt-2 w-full rounded-2xl border border-border bg-card px-4 py-3 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+              />
+            </label>
+          </div>
+          <form action={createInvitation} className="mt-6">
+            <button
+              type="submit"
+              className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-black text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+            >
+              {t("instant.cta")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </button>
+          </form>
+        </div>
+        <div className="reveal-right">
+          <div className="relative mx-auto aspect-[3/4] w-full max-w-[380px] overflow-hidden rounded-[2rem] border border-border shadow-[0_24px_60px_rgb(0_0_0/0.18)]">
+            <img
+              src={heroPreviewTemplates[0].portrait}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-foreground/25 via-foreground/10 to-foreground/55" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+              <p className="font-heading text-xs font-black uppercase tracking-[0.35em] text-background/90">{t("instant.previewInvited")}</p>
+              <p className="mt-6 font-pattaya text-4xl text-background drop-shadow-lg sm:text-5xl">{groomName}</p>
+              <p className="my-2 text-2xl text-background/90">&</p>
+              <p className="font-pattaya text-4xl text-background drop-shadow-lg sm:text-5xl">{brideName}</p>
+              <span className="mt-8 rounded-full bg-background/20 px-4 py-1.5 text-xs font-bold text-background backdrop-blur">{t("hero.rsvpOpen")}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const testimonialKeys = ["t1", "t2", "t3", "t4", "t5", "t6"] as const;
+
+function TestimonialsSection() {
+  const t = useTranslations("home");
+
+  return (
+    <section className="bg-background py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="reveal text-center">
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("testimonials.eyebrow")}</p>
+          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("testimonials.title")}</h2>
+          <p className="mt-4 text-muted-foreground">{t("testimonials.subtitle")}</p>
+        </div>
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {testimonialKeys.map((key) => (
+            <figure
+              key={key}
+              className="reveal-scale flex flex-col rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/40"
+            >
+              <div className="flex gap-1 text-primary">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="size-4 fill-primary text-primary" />
+                ))}
+              </div>
+              <blockquote className="mt-4 flex-1 text-sm leading-6 text-foreground">“{t(`testimonials.${key}Quote`)}”</blockquote>
+              <figcaption className="mt-5 flex items-center gap-3">
+                <span className="flex size-10 items-center justify-center rounded-full bg-secondary font-black text-primary">
+                  {t(`testimonials.${key}Author`).charAt(0)}
+                </span>
+                <span>
+                  <span className="block text-sm font-black text-foreground">{t(`testimonials.${key}Author`)}</span>
+                  <span className="block text-xs text-muted-foreground">{t(`testimonials.${key}Role`)}</span>
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StickyCta() {
+  const t = useTranslations("home");
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 900);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <a
+      href="#templates"
+      className={`group fixed bottom-5 right-5 z-[95] inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-black text-primary-foreground shadow-[0_10px_30px_rgba(214,69,80,0.45)] transition-all duration-300 hover:bg-primary/90 ${
+        show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-16 opacity-0"
+      }`}
+    >
+      <Sparkles className="size-4" />
+      {t("stickyCta.button")}
+      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+    </a>
+  );
+}
+
 export function ChungDoiClone() {
+  useSmoothScroll();
   useRevealOnScroll();
+  useScrollProgress();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      <div id="scroll-progress" className="scroll-progress" aria-hidden />
       <SiteHeader />
       <HeroSection />
       <TemplateCarousel />
       <StatsSection />
+      <InstantDemo />
       <HowItWorks />
       <SupportSection />
       <GuestsSection />
+      <TestimonialsSection />
       <LanguageAndFeatures />
       <TemplateGallery />
       <PricingFaq />
       <SiteFooter />
+      <StickyCta />
     </main>
   );
 }

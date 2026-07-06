@@ -2,7 +2,8 @@
 
 import { verifySession, ownInvitation } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
-import { BASE_PRICE, applyVoucher, genOrderCode } from "@/lib/payment";
+import { getPriceForUser } from "@/lib/payment-config";
+import { applyVoucher, genOrderCode, isPendingPaymentExpired, PAYMENT_PENDING_EXPIRES_MS } from "@/lib/payment";
 
 export type PaymentInfo = {
   paymentId: string;
@@ -10,7 +11,12 @@ export type PaymentInfo = {
   amount: number;
   voucherCode: string | null;
   status: string;
+  expiresAt: string;
 };
+
+function paymentExpiresAt(createdAt: Date): string {
+  return new Date(createdAt.getTime() + PAYMENT_PENDING_EXPIRES_MS).toISOString();
+}
 
 export async function createOrGetPayment(invitationId: string): Promise<PaymentInfo> {
   const { userId } = await verifySession();
@@ -21,21 +27,23 @@ export async function createOrGetPayment(invitationId: string): Promise<PaymentI
     where: { invitationId, status: "pending" },
     orderBy: { createdAt: "desc" },
   });
-  if (existing) {
+  if (existing && !isPendingPaymentExpired(existing.createdAt)) {
     return {
       paymentId: existing.id,
       code: existing.code,
       amount: existing.amount,
       voucherCode: existing.voucherCode,
       status: existing.status,
+      expiresAt: paymentExpiresAt(existing.createdAt),
     };
   }
 
+  const price = await getPriceForUser(userId, invitationId);
   const payment = await prisma.payment.create({
     data: {
       invitationId,
       code: genOrderCode(),
-      amount: BASE_PRICE,
+      amount: price,
     },
   });
   return {
@@ -44,6 +52,7 @@ export async function createOrGetPayment(invitationId: string): Promise<PaymentI
     amount: payment.amount,
     voucherCode: payment.voucherCode,
     status: payment.status,
+    expiresAt: paymentExpiresAt(payment.createdAt),
   };
 }
 
@@ -65,6 +74,8 @@ export async function applyVoucherToPayment(
   const invitation = await ownInvitation(payment.invitationId, userId);
   if (!invitation) return { ok: false, error: "Không có quyền" };
   if (payment.status !== "pending") return { ok: false, error: "Đơn đã xử lý" };
+  if (payment.voucherCode) return { ok: false, error: "Đơn đã áp mã giảm giá" };
+  if (isPendingPaymentExpired(payment.createdAt)) return { ok: false, error: "Đơn đã hết hạn, tải lại trang để lấy mã mới" };
 
   const voucher = await prisma.voucher.findUnique({ where: { code } });
   if (!voucher || !voucher.active) return { ok: false, error: "Mã không hợp lệ" };
@@ -75,7 +86,7 @@ export async function applyVoucherToPayment(
     return { ok: false, error: "Mã đã hết lượt dùng" };
   }
 
-  const amount = applyVoucher(BASE_PRICE, voucher.amountOff);
+  const amount = applyVoucher(payment.amount, voucher.amountOff);
   await prisma.payment.update({
     where: { id: paymentId },
     data: { amount, voucherCode: code },

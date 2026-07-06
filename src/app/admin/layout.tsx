@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import "../globals.css";
+import { PetalField } from "@/components/petal-field";
 import { getCurrentAdmin } from "@/lib/admin-dal";
 import { adminLogout } from "./actions";
 
@@ -30,18 +31,22 @@ const NAV = [
   { href: "/admin/vouchers", label: "Voucher" },
 ];
 
+const SUPER_ADMIN_NAV = { href: "/admin/admins", label: "Admin" };
+
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const admin = await getCurrentAdmin();
+  const nav = admin?.isSuperAdmin ? [...NAV, SUPER_ADMIN_NAV] : NAV;
 
   return (
     <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-muted/20 text-foreground">
+        <PetalField />
         {admin ? (
           <header className="border-b border-border bg-background">
             <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
               <span className="font-heading text-lg text-primary">Quản trị</span>
               <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                {NAV.map((item) => (
+                {nav.map((item) => (
                   <Link key={item.href} href={item.href} className="text-muted-foreground hover:text-foreground">
                     {item.label}
                   </Link>

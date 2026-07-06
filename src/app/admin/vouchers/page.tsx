@@ -1,7 +1,9 @@
 import { verifyAdmin } from "@/lib/admin-dal";
+import { getPaymentPrices } from "@/lib/payment-config";
 import { prisma } from "@/lib/prisma";
+import { ProductPriceForm } from "./ProductPriceForm";
 import { VoucherForm } from "./VoucherForm";
-import { toggleVoucher } from "./actions";
+import { deleteVoucher, toggleVoucher } from "./actions";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium" }).format(date);
@@ -14,11 +16,16 @@ function formatVnd(amount: number): string {
 export default async function AdminVouchersPage() {
   await verifyAdmin();
 
-  const vouchers = await prisma.voucher.findMany({ orderBy: { createdAt: "desc" } });
+  const [vouchers, prices] = await Promise.all([
+    prisma.voucher.findMany({ orderBy: { createdAt: "desc" } }),
+    getPaymentPrices(),
+  ]);
 
   return (
     <div className="space-y-6">
       <h1 className="font-heading text-2xl text-foreground">Voucher ({vouchers.length})</h1>
+
+      <ProductPriceForm prices={prices} />
 
       <VoucherForm />
 
@@ -57,18 +64,25 @@ export default async function AdminVouchersPage() {
                         className={
                           voucher.active
                             ? "rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-700"
-                            : "rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                            : "rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-medium text-destructive"
                         }
                       >
                         {voucher.active ? "Đang bật" : "Đã tắt"}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <form action={toggleVoucher.bind(null, voucher.id)}>
-                        <button type="submit" className="text-sm text-primary hover:underline">
-                          {voucher.active ? "Tắt" : "Bật"}
-                        </button>
-                      </form>
+                      <div className="flex flex-wrap gap-3">
+                        <form action={toggleVoucher.bind(null, voucher.id)}>
+                          <button type="submit" className="text-sm text-primary hover:underline">
+                            {voucher.active ? "Tắt" : "Bật"}
+                          </button>
+                        </form>
+                        <form action={deleteVoucher.bind(null, voucher.id)}>
+                          <button type="submit" className="text-sm text-destructive hover:underline">
+                            Xoá
+                          </button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                 );

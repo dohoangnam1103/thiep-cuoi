@@ -15,10 +15,12 @@
     "signupSubmit": "登録",
     "loginWithGoogle": "Googleで続行",
     "signupWithGoogle": "Googleで登録",
+    "loginWithFacebook": "Facebookで続行",
+    "signupWithFacebook": "Facebookで登録",
     "or": "または",
     "noAccount": "アカウントをお持ちでないですか？",
     "haveAccount": "すでにアカウントをお持ちですか？",
-    "oauthError": "Googleでログインできませんでした。もう一度お試しください。"
+    "oauthError": "ソーシャルログインできませんでした。もう一度お試しください。"
   },
   "chrome": {
     "nav": {
@@ -64,7 +66,7 @@
       "subtitle": "手作りテンプレート、ゲスト名、RSVP、地図、ギャラリー、音楽、ご祝儀QRを備えたオンライン結婚式招待状。",
       "trialNote": "無料作成 - 3日間お試し - 気に入ったときだけお支払い",
       "watchGuide": "ガイドを見る",
-      "liveDemo": "ライブ招待状デモ",
+      "dragHint": "ドラッグして招待状を切り替え",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "RSVP受付中",
       "statGuests": "ゲスト",
@@ -186,6 +188,43 @@
       "faq3A": "作成とカスタマイズは無料です。公開には3日間の無料お試しが含まれ、その後は一度のお支払いで維持されます。",
       "faq4Q": "公開後に編集できますか？",
       "faq4A": "はい。編集は同じ共有リンクに即座に反映されます。"
+    },
+    "instant": {
+      "eyebrow": "今すぐ試す",
+      "title": "お名前を入力して、招待状が動き出す様子を見てみましょう",
+      "subtitle": "登録不要。新郎新婦のお名前を入力してご自分の招待状をプレビューし、数秒で作成を始められます。",
+      "defaultGroom": "Alex",
+      "defaultBride": "Jordan",
+      "groomPlaceholder": "新郎のお名前",
+      "bridePlaceholder": "新婦のお名前",
+      "cta": "招待状を作成する",
+      "previewInvited": "両家より謹んでご案内申し上げます"
+    },
+    "testimonials": {
+      "eyebrow": "カップルの声",
+      "title": "何千組ものカップルに選ばれています",
+      "subtitle": "Thiệp Mừng Online で結婚式の招待状を作成したカップルからの本当の声です。",
+      "t1Quote": "10分もかからず招待状ができて、紙よりも素敵でした。ゲストにずっと褒められました！",
+      "t1Author": "Minh & Ha",
+      "t1Role": "3月に結婚、ハノイ",
+      "t2Quote": "自動RSVPのおかげで一人ひとりに電話せずに正確な出席人数がわかりました。",
+      "t2Author": "Tuan & Linh",
+      "t2Role": "5月に結婚、ホーチミン",
+      "t3Quote": "地図とフォトアルバムが最初から組み込まれていて、ゲストに便利で上品だと好評でした。",
+      "t3Author": "Quang & Mai",
+      "t3Role": "4月に結婚、ダナン",
+      "t4Quote": "送った後でも編集できるので安心でした。間違いをすぐ直せました。",
+      "t4Author": "Duc & Trang",
+      "t4Role": "6月に結婚、ハイフォン",
+      "t5Quote": "QRギフトボックスは、遠方で出席できないゲストにぴったりでした。",
+      "t5Author": "Nam & Vy",
+      "t5Role": "2月に結婚、カントー",
+      "t6Quote": "サポートの返信がとても速く、メッセージするといつも誰かが助けてくれました。",
+      "t6Author": "Hung & Thu",
+      "t6Role": "7月に結婚、フエ"
+    },
+    "stickyCta": {
+      "button": "招待状を作成"
     },
     "footer": {
       "tagline": "10分で無料の美しいオンライン結婚式招待状を作成。",

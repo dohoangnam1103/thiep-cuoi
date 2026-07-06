@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-import { VALID_TEMPLATE_IDS } from "./templates";
+import { templates } from "@/data/chungdoi";
+
+const ALL_TEMPLATE_SLUGS = new Set(templates.map((t) => t.slug));
 
 export const scheduleItemSchema = z.object({
   time: z.string().max(20),
@@ -8,7 +10,9 @@ export const scheduleItemSchema = z.object({
 });
 
 export const contentSchema = z.object({
-  templateId: z.enum(VALID_TEMPLATE_IDS),
+  templateId: z.string().refine((v) => ALL_TEMPLATE_SLUGS.has(v), {
+    message: "Mẫu thiệp không hợp lệ",
+  }),
   primaryColor: z.string().max(32).optional().default(""),
   fontFamily: z.string().max(80).optional().default(""),
   music: z.string().max(300).optional().default(""),

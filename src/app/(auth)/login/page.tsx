@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   const { authError, error } = await searchParams;
-  const oauthError = authError === "google" || error ? authCopy.oauthError : undefined;
+  const oauthError = authError === "google" || authError === "facebook" || error ? authCopy.oauthError : undefined;
 
   return <AuthForm mode="login" action={login} copy={authCopy} oauthError={oauthError} />;
 }

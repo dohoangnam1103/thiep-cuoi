@@ -1,4 +1,5 @@
 import { verifyAdmin } from "@/lib/admin-dal";
+import { isPendingPaymentExpired } from "@/lib/payment";
 import { prisma } from "@/lib/prisma";
 
 function formatDate(date: Date): string {
@@ -65,6 +66,7 @@ export default async function AdminPaymentsPage() {
                   ? `${c.groomShortName} & ${c.brideShortName}`.trim()
                   : "—";
                 const paid = payment.status === "paid";
+                const expired = payment.status === "pending" && isPendingPaymentExpired(payment.createdAt);
                 return (
                   <tr key={payment.id} className="border-b border-border last:border-0">
                     <td className="px-4 py-3 font-mono text-xs">{payment.code}</td>
@@ -81,10 +83,12 @@ export default async function AdminPaymentsPage() {
                         className={
                           paid
                             ? "rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-700"
-                            : "rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-700"
+                            : expired
+                              ? "rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                              : "rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-700"
                         }
                       >
-                        {paid ? "Đã trả" : "Chờ"}
+                        {paid ? "Đã trả" : expired ? "Hết hạn" : "Chờ"}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{formatDate(payment.createdAt)}</td>

@@ -15,10 +15,12 @@
     "signupSubmit": "가입하기",
     "loginWithGoogle": "Google로 계속하기",
     "signupWithGoogle": "Google로 가입하기",
+    "loginWithFacebook": "Facebook으로 계속하기",
+    "signupWithFacebook": "Facebook으로 가입하기",
     "or": "또는",
     "noAccount": "계정이 없으신가요?",
     "haveAccount": "이미 계정이 있으신가요?",
-    "oauthError": "Google로 로그인할 수 없습니다. 다시 시도해 주세요."
+    "oauthError": "소셜 로그인으로 로그인할 수 없습니다. 다시 시도해 주세요."
   },
   "chrome": {
     "nav": {
@@ -64,7 +66,7 @@
       "subtitle": "수제 템플릿, 하객 이름, RSVP, 지도, 갤러리, 음악, 축의금 QR이 담긴 온라인 청첩장.",
       "trialNote": "무료 제작 - 3일 체험 - 마음에 들 때만 결제",
       "watchGuide": "가이드 보기",
-      "liveDemo": "실시간 청첩장 데모",
+      "dragHint": "드래그하여 청첩장 바꾸기",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "RSVP 접수 중",
       "statGuests": "하객",
@@ -186,6 +188,43 @@
       "faq3A": "제작과 편집은 무료입니다. 게시에는 3일 무료 체험이 포함되며, 이후 한 번의 결제로 유지됩니다.",
       "faq4Q": "게시 후 편집할 수 있나요?",
       "faq4A": "네. 편집 내용은 동일한 공유 링크에 즉시 반영됩니다."
+    },
+    "instant": {
+      "eyebrow": "바로 체험하기",
+      "title": "이름을 입력하고 살아있는 청첩장을 확인하세요",
+      "subtitle": "가입 불필요. 신랑 신부 이름을 입력해 나만의 청첩장을 미리 보고 몇 초 만에 제작을 시작하세요.",
+      "defaultGroom": "Alex",
+      "defaultBride": "Jordan",
+      "groomPlaceholder": "신랑 이름",
+      "bridePlaceholder": "신부 이름",
+      "cta": "내 청첩장 만들기",
+      "previewInvited": "삼가 초대합니다"
+    },
+    "testimonials": {
+      "eyebrow": "커플들의 이야기",
+      "title": "수천 쌍의 커플이 선택했습니다",
+      "subtitle": "Thiệp Mừng Online으로 청첩장을 만든 커플들의 진솔한 후기입니다.",
+      "t1Quote": "10분도 안 걸려 만들었는데 종이 청첩장보다 예뻤어요. 하객들이 계속 칭찬했어요!",
+      "t1Author": "Minh & Ha",
+      "t1Role": "3월 결혼, 하노이",
+      "t2Quote": "자동 RSVP 덕분에 한 명씩 전화하지 않고도 정확한 하객 수를 알 수 있었어요.",
+      "t2Author": "Tuan & Linh",
+      "t2Role": "5월 결혼, 호치민",
+      "t3Quote": "지도와 사진 앨범이 기본 제공되어 하객들이 편리하고 고급스럽다고 칭찬했어요.",
+      "t3Author": "Quang & Mai",
+      "t3Role": "4월 결혼, 다낭",
+      "t4Quote": "보낸 후에도 편집할 수 있어 안심됐어요. 잘못된 부분을 바로 고쳤어요.",
+      "t4Author": "Duc & Trang",
+      "t4Role": "6월 결혼, 하이퐁",
+      "t5Quote": "QR 선물함은 멀리 있어 참석 못 하는 하객에게 정말 편했어요.",
+      "t5Author": "Nam & Vy",
+      "t5Role": "2월 결혼, 껀터",
+      "t6Quote": "지원 응답이 아주 빨라서 메시지를 보내면 항상 누군가 도와줬어요.",
+      "t6Author": "Hung & Thu",
+      "t6Role": "7월 결혼, 후에"
+    },
+    "stickyCta": {
+      "button": "청첩장 만들기"
     },
     "footer": {
       "tagline": "10분 만에 무료로 아름다운 온라인 청첩장을 만드세요.",

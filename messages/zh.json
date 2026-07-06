@@ -15,10 +15,12 @@
     "signupSubmit": "注册",
     "loginWithGoogle": "使用 Google 继续",
     "signupWithGoogle": "使用 Google 注册",
+    "loginWithFacebook": "使用 Facebook 继续",
+    "signupWithFacebook": "使用 Facebook 注册",
     "or": "或",
     "noAccount": "还没有账户？",
     "haveAccount": "已有账户？",
-    "oauthError": "无法使用 Google 登录。请重试。"
+    "oauthError": "无法使用社交登录。请重试。"
   },
   "chrome": {
     "nav": {
@@ -64,7 +66,7 @@
       "subtitle": "在线婚礼请柬，配有手工设计模板、宾客姓名、RSVP、地图、相册、音乐和礼金二维码。",
       "trialNote": "免费创建 - 3天试用 - 满意才付款",
       "watchGuide": "观看指南",
-      "liveDemo": "在线请柬演示",
+      "dragHint": "拖动切换请柬",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "RSVP 开放中",
       "statGuests": "宾客",
@@ -186,6 +188,43 @@
       "faq3A": "创建和自定义免费。发布包含3天免费试用，之后一次性付款即可保持在线。",
       "faq4Q": "发布后能编辑吗？",
       "faq4A": "可以。编辑会即时更新到同一分享链接上。"
+    },
+    "instant": {
+      "eyebrow": "立即体验",
+      "title": "输入名字，即刻看到专属请柬",
+      "subtitle": "无需注册。输入新郎新娘的名字，预览属于你的请柬，几秒即可开始创建。",
+      "defaultGroom": "Alex",
+      "defaultBride": "Jordan",
+      "groomPlaceholder": "新郎姓名",
+      "bridePlaceholder": "新娘姓名",
+      "cta": "创建我的请柬",
+      "previewInvited": "诚挚邀请"
+    },
+    "testimonials": {
+      "eyebrow": "新人怎么说",
+      "title": "数千对新人的信赖之选",
+      "subtitle": "来自在 Thiệp Mừng Online 创建婚礼请柬的新人的真实分享。",
+      "t1Quote": "不到10分钟就做好了，比纸质请柬还漂亮。宾客一直夸！",
+      "t1Author": "Minh & Ha",
+      "t1Role": "3月婚礼，河内",
+      "t2Quote": "自动 RSVP 让我准确掌握宾客人数，不用一个个打电话。",
+      "t2Author": "Tuan & Linh",
+      "t2Role": "5月婚礼，胡志明市",
+      "t3Quote": "内置地图和相册，宾客都说方便又高档。",
+      "t3Author": "Quang & Mai",
+      "t3Role": "4月婚礼，岘港",
+      "t4Quote": "发送后还能编辑，让我很安心，有错马上改。",
+      "t4Author": "Duc & Trang",
+      "t4Role": "6月婚礼，海防",
+      "t5Quote": "QR 礼金盒对无法到场的远方宾客太方便了。",
+      "t5Author": "Nam & Vy",
+      "t5Role": "2月婚礼，芹苴",
+      "t6Quote": "客服回复超快，我随时发消息都有人帮忙。",
+      "t6Author": "Hung & Thu",
+      "t6Role": "7月婚礼，顺化"
+    },
+    "stickyCta": {
+      "button": "创建请柬"
     },
     "footer": {
       "tagline": "10分钟免费创建精美的在线婚礼请柬。",

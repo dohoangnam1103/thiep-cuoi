@@ -2,12 +2,15 @@
 
 import Lenis from "lenis";
 import { Pause, Play } from "lucide-react";
+import dynamic from "next/dynamic";
 import { type Dispatch, type MouseEvent, type SetStateAction, type TouchEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { LiveFormsProvider, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
+
+const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -414,6 +417,148 @@ function BurstParticles({ tokens }: { tokens: Tokens }) {
   );
 }
 
+/** Chỉ phần thẻ thiệp (không có overlay/particle) — dùng chung cho cover 2D và node chụp texture 3D. */
+function CoverCard({
+  content,
+  tokens,
+  onOpen,
+  opening = false,
+}: {
+  content: ChungDoiDemoContent;
+  tokens: Tokens;
+  onOpen: () => void;
+  opening?: boolean;
+}) {
+  const date = formatDate(content.couple.date);
+  const names = content.couple.brideFirst
+    ? [content.couple.brideShortName, content.couple.groomShortName]
+    : [content.couple.groomShortName, content.couple.brideShortName];
+  const nameStyle = tokens.coupleFont ? { fontFamily: tokens.coupleFont } : undefined;
+
+  return (
+    <div
+      className="relative rounded-lg"
+      style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
+    >
+      {/* base cream layer + corner decorations (behind the text) */}
+      <div
+        className="absolute inset-0 overflow-hidden rounded-lg"
+        style={{ background: tokens.cardBg, border: `1px solid ${tokens.guestBoxBorder}` }}
+      >
+        {tokens.cardImages.map((img, i) => (
+          <img
+            key={i}
+            src={img.src}
+            alt=""
+            aria-hidden="true"
+            className={`pointer-events-none absolute ${img.className}`}
+            style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
+          />
+        ))}
+      </div>
+
+      {/* transparent text layer on top */}
+      <div className="relative z-10 px-6 pb-14 pt-24 text-center md:pb-10">
+        <h1 className="mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl" style={{ color: tokens.textPrimary }}>
+          <span className="block w-full" style={nameStyle}>
+            {names[0]}
+          </span>
+          <span className="my-1 block w-full text-lg leading-none sm:text-xl" style={nameStyle}>
+            &amp;
+          </span>
+          <span className="block w-full" style={nameStyle}>
+            {names[1]}
+          </span>
+        </h1>
+
+        <div className="mb-3 flex items-center justify-center gap-3">
+          <span className="h-px w-10" style={{ background: `linear-gradient(to right, ${tokens.dividerFrom}, ${tokens.accent})` }} />
+          <span className="text-sm" style={{ color: tokens.accent, opacity: 0.7 }}>
+            ❦
+          </span>
+          <span className="h-px w-10" style={{ background: `linear-gradient(to left, ${tokens.dividerFrom}, ${tokens.accent})` }} />
+        </div>
+
+        {date ? (
+          <p className="mb-5 text-[18px]" style={{ color: tokens.textSecondary }}>
+            {date.dayNumber} tháng {date.monthNumber}, {date.yearNumber}
+          </p>
+        ) : null}
+
+        <div className="mb-6">
+          <p className="mb-2 text-[16px] font-light" style={{ color: tokens.textSecondary }}>
+            Thân Mời
+          </p>
+          <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: tokens.guestBoxBg }}>
+            <h2 className="text-lg font-semibold sm:text-xl" style={{ color: tokens.textPrimary }}>
+              Gia đình Anh Mạnh
+            </h2>
+          </div>
+          <p className="mx-auto max-w-xs text-[15px] font-light" style={{ color: tokens.textSecondary }}>
+            đến dự buổi tiệc chung vui cùng gia đình
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onOpen}
+          className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold shadow-lg transition hover:-translate-y-0.5"
+          style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
+        >
+          Mở thiệp
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Màu three.js không nhận rgba()/gradient — ép về hex an toàn với fallback. */
+function toSolidColor(value: string, fallback: string) {
+  return value.startsWith("#") ? value : fallback;
+}
+
+/** Cover phong bì 3D: render CoverCard DOM thật áp phẳng lên mặt phong bì R3F qua drei <Html transform>. */
+function EnvelopeCover({
+  content,
+  tokens,
+  onOpen,
+  opening,
+}: {
+  content: ChungDoiDemoContent;
+  tokens: Tokens;
+  onOpen: () => void;
+  opening: boolean;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
+      style={{
+        background: tokens.background,
+        animation: opening ? "demo-cover-out 0.8s ease-in forwards" : undefined,
+      }}
+    >
+      <ParticleField tokens={tokens} />
+
+      <div className="relative z-10 h-full w-full">
+        <Envelope3D
+          onOpen={onOpen}
+          paperColor={toSolidColor(tokens.cardBg, "#FFF0E7")}
+          accentColor={toSolidColor(tokens.accent, "#8C1C13")}
+          renderCard={(handleOpen) => (
+            <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} />
+          )}
+        />
+        <p
+          className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
+          style={{ color: tokens.accent }}
+        >
+          Kéo để xoay · Chụm 2 ngón để zoom
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function CoverOverlay({
   content,
   tokens,
@@ -425,12 +570,6 @@ function CoverOverlay({
   onOpen: () => void;
   opening: boolean;
 }) {
-  const date = formatDate(content.couple.date);
-  const names = content.couple.brideFirst
-    ? [content.couple.brideShortName, content.couple.groomShortName]
-    : [content.couple.groomShortName, content.couple.brideShortName];
-  const nameStyle = tokens.coupleFont ? { fontFamily: tokens.coupleFont } : undefined;
-
   const flyImages = tokens.cardImages.filter((img) => img.flyOnOpen);
 
   return (
@@ -450,79 +589,7 @@ function CoverOverlay({
         style={{ animation: opening ? "demo-envelope-away 0.8s ease-in forwards" : undefined }}
       >
         <Seal tokens={tokens} opening={opening} />
-        <div
-          className="relative rounded-lg"
-          style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
-        >
-          {/* base cream layer + corner decorations (behind the text) */}
-          <div
-            className="absolute inset-0 overflow-hidden rounded-lg"
-            style={{ background: tokens.cardBg, border: `1px solid ${tokens.guestBoxBorder}` }}
-          >
-            {tokens.cardImages.map((img, i) => (
-              <img
-                key={i}
-                src={img.src}
-                alt=""
-                aria-hidden="true"
-                className={`pointer-events-none absolute ${img.className}`}
-                style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
-              />
-            ))}
-          </div>
-
-          {/* transparent text layer on top */}
-          <div className="relative z-10 px-6 pb-14 pt-24 text-center md:pb-10">
-            <h1 className="mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl" style={{ color: tokens.textPrimary }}>
-              <span className="block w-full" style={nameStyle}>
-                {names[0]}
-              </span>
-              <span className="my-1 block w-full text-lg leading-none sm:text-xl" style={nameStyle}>
-                &amp;
-              </span>
-              <span className="block w-full" style={nameStyle}>
-                {names[1]}
-              </span>
-            </h1>
-
-            <div className="mb-3 flex items-center justify-center gap-3">
-              <span className="h-px w-10" style={{ background: `linear-gradient(to right, ${tokens.dividerFrom}, ${tokens.accent})` }} />
-              <span className="text-sm" style={{ color: tokens.accent, opacity: 0.7 }}>
-                ❦
-              </span>
-              <span className="h-px w-10" style={{ background: `linear-gradient(to left, ${tokens.dividerFrom}, ${tokens.accent})` }} />
-            </div>
-
-            {date ? (
-              <p className="mb-5 text-[18px]" style={{ color: tokens.textSecondary }}>
-                {date.dayNumber} tháng {date.monthNumber}, {date.yearNumber}
-              </p>
-            ) : null}
-
-            <div className="mb-6">
-              <p className="mb-2 text-[16px] font-light" style={{ color: tokens.textSecondary }}>
-                Thân Mời
-              </p>
-              <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: tokens.guestBoxBg }}>
-                <h2 className="text-lg font-semibold sm:text-xl" style={{ color: tokens.textPrimary }}>
-                  Gia đình Anh Mạnh
-                </h2>
-              </div>
-              <p className="mx-auto max-w-xs text-[15px] font-light" style={{ color: tokens.textSecondary }}>
-                đến dự buổi tiệc chung vui cùng gia đình
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={onOpen}
-              className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold shadow-lg transition hover:-translate-y-0.5"
-              style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
-            >
-              Mở thiệp
-            </button>
-          </div>
-        </div>
+        <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
 
         {opening
           ? flyImages.map((img, i) => (
@@ -1113,6 +1180,370 @@ function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: M }}>♡ thiepmungonline.com</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ROYAL_GOLD = "#E1BC7C";
+const ROYAL_GOLD_MUTED = "#C39E5E";
+const ROYAL_SERIF = '"Times New Roman", Times, serif';
+
+type RoyalPalette = {
+  assetPath: string;
+  baseFrom: string;
+  baseTo: string;
+  btnText: string;
+  modalBg: string;
+};
+
+const ROYAL_RED_PALETTE: RoyalPalette = {
+  assetPath: "/chungdoi/images/themes/royal-red",
+  baseFrom: "#3E0001",
+  baseTo: "#7A0003",
+  btnText: "#3E0001",
+  modalBg: "#4a0002",
+};
+
+const ROYAL_BLUE_PALETTE: RoyalPalette = {
+  assetPath: "/chungdoi/images/themes/royal-blue",
+  baseFrom: "#00112E",
+  baseTo: "#002875",
+  btnText: "#00112E",
+  modalBg: "#001b3f",
+};
+
+const ROYAL_GREEN_PALETTE: RoyalPalette = {
+  assetPath: "/chungdoi/images/themes/royal-green",
+  baseFrom: "#001A08",
+  baseTo: "#003F1E",
+  btnText: "#001A08",
+  modalBg: "#002913",
+};
+
+function RoyalHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-center text-[24px] font-bold uppercase md:text-[32px]" style={{ color: ROYAL_GOLD, fontFamily: ROYAL_SERIF, letterSpacing: "0.04em" }}>
+      {children}
+    </h2>
+  );
+}
+
+function RoyalDateRow({ weekday, day, month }: { weekday: string; day: string; month: string }) {
+  return (
+    <div className="mt-4 flex items-center justify-center" style={{ fontFamily: 'Baskerville, "Times New Roman", serif' }}>
+      <span className="w-[85px] whitespace-nowrap text-right text-[15px] uppercase md:w-[100px] md:text-[16px]" style={{ color: ROYAL_GOLD }}>{weekday}</span>
+      <span className="mx-3 h-[28px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: ROYAL_GOLD }} />
+      <span className="text-[36px] md:text-[42px]" style={{ color: ROYAL_GOLD }}>{day}</span>
+      <span className="mx-3 h-[28px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: ROYAL_GOLD }} />
+      <span className="w-[85px] whitespace-nowrap text-left text-[15px] uppercase md:w-[100px] md:text-[16px]" style={{ color: ROYAL_GOLD }}>Tháng {month}</span>
+    </div>
+  );
+}
+
+function RoyalCountdown({ target }: { target: string }) {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const tick = () => setNow(Date.now());
+    const raf = requestAnimationFrame(tick);
+    const id = window.setInterval(tick, 1000);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearInterval(id);
+    };
+  }, []);
+  const targetMs = new Date(target).getTime();
+  const diff = now === null ? 0 : Math.max(0, targetMs - now);
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+  return (
+    <p className="mt-2 text-center text-[20px] font-semibold" style={{ color: ROYAL_GOLD, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{days} ngày {hours} giờ {mins} phút {secs} giây</p>
+  );
+}
+
+function RoyalFamilyColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  return (
+    <div className="flex min-w-0 max-w-[170px] flex-1 flex-col items-center gap-1.5 text-center md:max-w-[280px]" style={{ color: ROYAL_GOLD, fontFamily: ROYAL_SERIF }}>
+      <span className="text-[15px] md:text-[18px]">{title}</span>
+      <span className="whitespace-nowrap text-[18px] font-semibold md:text-[21px]">{a}</span>
+      <span className="whitespace-nowrap text-[18px] font-semibold md:text-[21px]">{b}</span>
+      {addr ? <div className="mt-1 whitespace-pre-line text-[13px] leading-normal opacity-90 md:text-[15px]">{addr}</div> : null}
+    </div>
+  );
+}
+
+function RoyalWishForm({ btnText }: { btnText: string }) {
+  const { formProps, pending, state } = useWishFormBinding();
+  return (
+    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+      <div className="flex flex-col gap-3">
+        <input name="name" required maxLength={120} className="w-full rounded-[6px] border px-4 py-2.5 text-[13px] outline-none" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.35), color: ROYAL_GOLD, backgroundColor: hexToRgba(ROYAL_GOLD, 0.05) }} placeholder="Nhập tên của bạn*" />
+        <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-[6px] border px-4 py-2.5 text-[13px] outline-none" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.35), color: ROYAL_GOLD, backgroundColor: hexToRgba(ROYAL_GOLD, 0.05) }} placeholder="Nhập lời chúc của bạn*" />
+        {state?.error ? <p className="text-[12px] text-red-400">{state.error}</p> : null}
+        {state?.ok ? <p className="text-[12px]" style={{ color: ROYAL_GOLD }}>Cảm ơn lời chúc của bạn!</p> : null}
+        <div className="mt-1 flex items-center justify-end">
+          <button type="submit" disabled={pending} className="rounded-full px-6 py-2 text-[13px] font-semibold uppercase tracking-wider disabled:opacity-60" style={{ backgroundColor: ROYAL_GOLD, color: btnText }}>{pending ? "Đang gửi..." : "Gửi lời chúc"}</button>
+        </div>
+      </div>
+    </form>
+  );
+}
+
+/** Faithful rebuild of the Royal (Hoàng Kim) opened invitation — dark base + gold frame, palette-parametrized for red/blue/green. */
+function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: ChungDoiDemoContent; palette?: RoyalPalette }) {
+  const { couple, families, venue, schedule, gallery, wishes } = content;
+  const RYL = palette.assetPath;
+  const BASE_GRADIENT = `linear-gradient(to bottom right, ${palette.baseFrom}, ${palette.baseTo}, ${palette.baseFrom})`;
+  const wedding = formatDate(couple.date);
+  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
+  const ceremonyWeekdayUpper = ceremony ? ceremony.weekday.toUpperCase() : "";
+  const calendar = buildCalendar(couple.date);
+  const albumShown = gallery.slice(0, 4);
+  const albumExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
+  const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
+  const [giftOpen, setGiftOpen] = useState(false);
+
+  const banks = ([
+    { title: content.bank.groomAccountName, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    { title: content.bank.brideAccountName, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
+  ] as const).filter((q) => q.bank);
+
+  return (
+    <div className="flex w-full justify-center overflow-x-clip bg-white">
+      <div
+        className="relative isolate w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
+        style={{ background: BASE_GRADIENT, color: ROYAL_GOLD, fontFamily: ROYAL_SERIF, borderColor: hexToRgba(ROYAL_GOLD, 0.2) }}
+      >
+        {/* faint background texture */}
+        <div className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url("${RYL}/background.webp")` }} aria-hidden="true" />
+
+        {/* header — gold frame + flower + couple names */}
+        <header className="relative z-10 flex flex-col items-center justify-center px-6 pb-10 pt-16 text-center md:pt-20">
+          <img alt="" aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 w-[70%] max-w-[360px] -translate-x-1/2 opacity-25" src={`${RYL}/flower.webp`} />
+          <h1 className="relative z-10 flex flex-col items-center gap-1" style={{ color: ROYAL_GOLD }}>
+            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="font-qellia text-[28px] md:text-[34px]">&amp;</span>
+            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{couple.brideShortName || couple.brideFullName}</span>
+          </h1>
+          {wedding ? (
+            <p className="relative z-10 mt-4 text-[16px] tracking-wide md:text-[18px]" style={{ color: ROYAL_GOLD_MUTED, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.dayNumber} tháng {wedding.monthNumber}, {wedding.yearNumber}</p>
+          ) : null}
+        </header>
+
+        <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
+          {/* CEREMONY INFO — families */}
+          <div className="flex w-full flex-col items-center gap-8">
+            <RoyalHeading>Thông tin lễ cưới</RoyalHeading>
+            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+              <RoyalFamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />
+              <div className="h-[70px] w-px self-center" style={{ backgroundColor: hexToRgba(ROYAL_GOLD, 0.4) }} />
+              <RoyalFamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />
+            </div>
+            <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]" style={{ color: ROYAL_GOLD }}>
+              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+            </div>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: ROYAL_GOLD }}>{couple.groomFullName}</h3>
+              <div className="font-qellia text-[32px] md:text-[40px]" style={{ color: ROYAL_GOLD_MUTED }}>&amp;</div>
+              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: ROYAL_GOLD }}>{couple.brideFullName}</h3>
+            </div>
+            {/* ceremony date */}
+            <div className="flex flex-col items-center gap-2 text-center" style={{ color: ROYAL_GOLD }}>
+              <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+              {couple.ceremonyTime ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: ROYAL_GOLD_MUTED }}>Vào lúc {couple.ceremonyTime}</p> : null}
+              {ceremony ? <RoyalDateRow weekday={ceremonyWeekdayUpper} day={ceremony.day} month={ceremony.month} /> : null}
+              {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.yearNumber}</div> : null}
+            </div>
+          </div>
+
+          {/* Album */}
+          {albumShown.length > 0 ? (
+            <div className="flex w-full flex-col items-center gap-6">
+              <RoyalHeading>Album ảnh cưới</RoyalHeading>
+              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+                {albumShown.map((src, i) => (
+                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.3) }}>
+                    <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
+                    {i === albumShown.length - 1 && albumExtra > 0 ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                        <span className="text-lg font-semibold text-white">+{albumExtra}</span>
+                      </div>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={ROYAL_GOLD} />
+            </div>
+          ) : null}
+
+          {/* Reception info */}
+          <div className="flex w-full flex-col items-center gap-3">
+            <RoyalHeading>Thông tin tiệc cưới</RoyalHeading>
+            <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]" style={{ color: ROYAL_GOLD, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Tiệc cưới sẽ diễn ra vào lúc:</p>
+            <div className="text-[20px] font-semibold md:text-[24px]" style={{ color: ROYAL_GOLD, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</div>
+            {wedding ? <RoyalDateRow weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
+            {wedding ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: ROYAL_GOLD_MUTED }}>{wedding.yearNumber}</div> : null}
+
+            {/* countdown */}
+            <div className="mt-4 flex flex-col items-center">
+              <h3 className="text-[16px] uppercase tracking-wide md:text-[18px]" style={{ color: ROYAL_GOLD, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Cùng đếm ngược</h3>
+              <RoyalCountdown target={`${couple.date}T${couple.time || "18:00"}`} />
+            </div>
+
+            {/* calendar */}
+            {calendar ? (
+              <div className="mx-auto mt-4 w-[296px] max-w-full md:w-[352px]">
+                <div className="mx-auto w-full overflow-hidden rounded-lg border" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.3), color: ROYAL_GOLD }}>
+                  <div className="border-b py-2.5 text-center text-[13px] font-semibold tracking-wide md:text-[14px]" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.3) }}>Tháng {calendar.month} / {calendar.year}</div>
+                  <div className="grid grid-cols-7 border-b-2" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.5) }}>
+                    {WEEKDAY_LABELS.map((d) => (<div key={d} className="py-1.5 text-center text-[10px] font-medium opacity-60 md:text-[11px]">{d}</div>))}
+                  </div>
+                  <div className="grid grid-cols-7 gap-y-0.5 px-1 py-2">
+                    {calendar.cells.map((day, i) => (
+                      <div key={i} className="flex h-[30px] items-center justify-center md:h-[34px]">
+                        {day === calendar.highlight ? (
+                          <div className="relative flex h-[24px] w-[26px] items-center justify-center md:h-[28px] md:w-[30px]">
+                            <svg viewBox="0 0 24 22" className="absolute inset-0 h-full w-full drop-shadow-sm" fill={ROYAL_GOLD}>
+                              <path d="M12 21C12 21 1.5 13.5 1.5 7.5C1.5 4.46 3.96 2 7 2C8.76 2 10.35 2.81 11.4 4.09L12 4.8L12.6 4.09C13.65 2.81 15.24 2 17 2C20.04 2 22.5 4.46 22.5 7.5C22.5 13.5 12 21 12 21Z" />
+                            </svg>
+                            <span className="relative z-10 text-[11px] font-bold md:text-[12px]" style={{ color: palette.btnText }}>{day}</span>
+                          </div>
+                        ) : day ? (<span className="text-[12px] md:text-[13px]">{day}</span>) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            <a href={googleCalendarUrl(content)} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center justify-center text-sm tracking-wide underline decoration-1 underline-offset-4 transition-opacity hover:opacity-70" style={{ color: ROYAL_GOLD }}>Thêm vào lịch</a>
+            <button type="button" className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-full px-7 text-sm font-semibold tracking-wide transition-transform hover:scale-[1.03] md:text-base" style={{ backgroundColor: ROYAL_GOLD, color: palette.btnText, fontFamily: 'Baskerville, "Times New Roman", serif' }}>XÁC NHẬN</button>
+          </div>
+
+          {/* map */}
+          {mapQuery ? (
+            <div className="flex w-full flex-col items-center gap-4">
+              <RoyalHeading>Tiệc cưới sẽ tổ chức tại</RoyalHeading>
+              <div className="mx-auto max-w-[320px] whitespace-pre-line text-center text-[15px] leading-snug opacity-90 md:max-w-md md:text-[18px]" style={{ color: ROYAL_GOLD }}>{venue.address}</div>
+              <iframe title={mapQuery} className="mt-2 h-[300px] w-full max-w-[340px] overflow-hidden rounded-2xl md:h-[400px] md:max-w-[560px]" src={mapEmbedUrl(mapQuery)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            </div>
+          ) : null}
+
+          {/* schedule */}
+          {schedule.length > 0 ? (
+            <div className="flex w-full flex-col gap-6">
+              <RoyalHeading>Lịch trình ngày cưới</RoyalHeading>
+              <ol className="relative mx-auto grid w-full max-w-[460px] grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-x-6 gap-y-8 md:gap-x-8 md:gap-y-10" style={{ fontFamily: 'Baskerville, "Times New Roman", serif' }}>
+                {schedule.map((s, i) => {
+                  const isFirst = i === 0;
+                  const isLast = i === schedule.length - 1;
+                  const lineClass = isFirst
+                    ? "absolute left-1/2 w-px -translate-x-1/2 top-1/2 -bottom-8 md:-bottom-10"
+                    : isLast
+                      ? "absolute left-1/2 w-px -translate-x-1/2 -top-8 md:-top-10 bottom-1/2"
+                      : "absolute left-1/2 w-px -translate-x-1/2 -top-8 md:-top-10 -bottom-8 md:-bottom-10";
+                  return (
+                    <li key={`${s.time}-${i}`} className="contents">
+                      <span className="pt-0.5 text-right text-[16px] leading-snug tabular-nums tracking-wide md:text-[17px]" style={{ color: ROYAL_GOLD_MUTED }}>{s.time}</span>
+                      <span aria-hidden="true" className="relative flex items-center justify-center self-stretch">
+                        <span className={lineClass} style={{ backgroundColor: hexToRgba(ROYAL_GOLD, 0.4) }} />
+                        <span className="relative block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: ROYAL_GOLD, boxShadow: `0 0 0 2px ${hexToRgba(ROYAL_GOLD, 0.2)}` }} />
+                      </span>
+                      <span className="pt-0.5 text-left text-[17px] font-medium leading-snug md:text-[19px]" style={{ color: ROYAL_GOLD }}>{s.label}</span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          ) : null}
+
+          {/* guestbook */}
+          <section className="mx-auto w-full max-w-[340px] md:max-w-[560px]">
+            <RoyalHeading>Sổ lưu bút</RoyalHeading>
+            <RoyalWishForm btnText={palette.btnText} />
+            <div className="chungdoi-scroll touch-pan-y [-webkit-overflow-scrolling:touch] mx-auto mt-8 max-h-[500px] w-full space-y-3 overflow-y-auto pr-2">
+              {wishes.length > 0 ? (
+                wishes.map((w, i) => (
+                  <div key={`${w.name}-${i}`} className="rounded-xl border p-3 text-sm" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.25), backgroundColor: hexToRgba(ROYAL_GOLD, 0.05) }}>
+                    <div className="flex items-start justify-between">
+                      <span className="font-semibold" style={{ color: ROYAL_GOLD }}>{w.name}</span>
+                      <span className="opacity-60">{formatWishTime(w.time)}</span>
+                    </div>
+                    <p className="mt-2 whitespace-pre-line leading-relaxed" style={{ color: ROYAL_GOLD_MUTED }}>{w.text}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-base opacity-70 md:text-[17px]">Chưa có lời chúc nào. Hãy là người đầu tiên!</p>
+              )}
+            </div>
+          </section>
+
+          {/* gift box */}
+          {banks.length > 0 ? (
+            <div className="flex w-full flex-col items-center">
+              <RoyalHeading>Phong bì mừng cưới</RoyalHeading>
+              <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative mt-4 cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 240 }}>
+                <div className="relative flex h-full w-full items-center justify-center">
+                  <span aria-hidden="true" className="absolute left-6 top-6 text-lg" style={{ color: ROYAL_GOLD }}>✦</span>
+                  <span aria-hidden="true" className="absolute right-7 top-10 text-sm" style={{ color: ROYAL_GOLD }}>✦</span>
+                  <span aria-hidden="true" className="absolute bottom-10 left-10 text-sm" style={{ color: ROYAL_GOLD }}>✦</span>
+                  <div className="relative" style={{ width: 140, height: 196 }}>
+                    <div className="absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: palette.modalBg, boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+                      <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: ROYAL_GOLD }} />
+                      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${ROYAL_GOLD} 0%, ${ROYAL_GOLD_MUTED} 100%)`, border: `3px solid ${hexToRgba(ROYAL_GOLD, 0.6)}` }}>
+                        <span className="font-bold" style={{ fontSize: 30.8, color: palette.btnText, lineHeight: 1 }}>♡</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: ROYAL_GOLD }}>Nhấn để mở</p>
+              </button>
+            </div>
+          ) : null}
+
+          {giftOpen ? (
+            <div className="fixed inset-0 z-[95] flex items-end justify-center bg-black/60 sm:items-center sm:p-4" onClick={() => setGiftOpen(false)}>
+              <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: palette.modalBg }} onClick={(e) => e.stopPropagation()}>
+                <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: hexToRgba(ROYAL_GOLD, 0.12) }}>
+                  <button type="button" aria-label="Đóng" onClick={() => setGiftOpen(false)} className="absolute right-3 top-3 text-white/80 hover:text-white">✕</button>
+                  <h2 className="text-[21px] md:text-[26px]" style={{ color: ROYAL_GOLD, fontFamily: ROYAL_SERIF }}>Phong Bì Mừng Cưới</h2>
+                </div>
+                <div className="p-4 sm:p-6">
+                  <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: ROYAL_GOLD }}>
+                    {banks.map((q) => {
+                      const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                      return (
+                        <div key={q.title} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
+                          <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: ROYAL_GOLD }}>{q.name}</h3>
+                          <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(ROYAL_GOLD, 0.3)}` }}>
+                            <img alt={`QR - ${q.name}`} className="h-full w-full object-contain" src={qr} />
+                          </div>
+                          <div className="mt-2 space-y-0.5 text-center">
+                            <p className="text-[10px]">{q.bank}</p>
+                            <p className="font-mono text-[10px]">{q.num}</p>
+                            <p className="text-[10px] font-semibold">{q.name}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* footer */}
+          <footer className="flex w-full flex-col items-center gap-1 text-center">
+            <span className="text-[14px] leading-normal md:text-base" style={{ color: ROYAL_GOLD }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+          </footer>
+        </div>
+
+        <div className="relative z-20 flex items-center justify-center pb-3 pt-2">
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-[14px] opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: ROYAL_GOLD }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
@@ -2642,14 +3073,60 @@ function DragonPhoenixWishForm({ GOLD, BTN_TEXT }: { GOLD: string; BTN_TEXT: str
   );
 }
 
-/** Faithful rebuild of the Long Phụng Đỏ (dragon-phoenix-red) opened invitation — dark red + gold, bilingual VN/中文. */
-function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
+interface DpPalette {
+  assetPath: string;
+  gold: string;
+  goldMuted: string;
+  cardBg: string;
+  btnText: string;
+  envelope: string;
+}
+
+const DP_RED_PALETTE: DpPalette = {
+  assetPath: "/chungdoi/images/themes/dragon-phoenix-red",
+  gold: "#e9ce9e",
+  goldMuted: "#d9bc86",
+  cardBg: "#680e0e",
+  btnText: "#553f18",
+  envelope: "#8a1220",
+};
+
+const DP_GREEN_PALETTE: DpPalette = {
+  assetPath: "/chungdoi/images/themes/dragon-phoenix-green",
+  gold: "#e9ce9e",
+  goldMuted: "#d9bc86",
+  cardBg: "#162614",
+  btnText: "#553f18",
+  envelope: "#24401f",
+};
+
+const DP_BLUE_PALETTE: DpPalette = {
+  assetPath: "/chungdoi/images/themes/dragon-phoenix-blue",
+  gold: "#e9ce9e",
+  goldMuted: "#d9bc86",
+  cardBg: "#0A202F",
+  btnText: "#553f18",
+  envelope: "#123a52",
+};
+
+const DP_BLACK_PALETTE: DpPalette = {
+  assetPath: "/chungdoi/images/themes/dragon-phoenix-black",
+  gold: "#FFC662",
+  goldMuted: "#e0ac52",
+  cardBg: "#0a0a0a",
+  btnText: "#553f18",
+  envelope: "#1a1a1a",
+};
+
+/** Faithful rebuild of the Long Phụng (dragon-phoenix) opened invitation — dark base + gold, bilingual VN/中文. */
+function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { content: ChungDoiDemoContent; palette?: DpPalette }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
-  const LPD = "/chungdoi/images/themes/dragon-phoenix-red";
-  const GOLD = "#e9ce9e";
-  const GOLD_MUTED = "#d9bc86";
-  const CARD_BG = "#680e0e";
-  const BTN_TEXT = "#553f18";
+  const LPD = palette.assetPath;
+  const GOLD = palette.gold;
+  const GOLD_MUTED = palette.goldMuted;
+  const CARD_BG = palette.cardBg;
+  const BTN_TEXT = palette.btnText;
+  const ENVELOPE = palette.envelope;
   const groomShort = couple.groomShortName || couple.groomFullName;
   const brideShort = couple.brideShortName || couple.brideFullName;
   const headerNames = couple.brideFirst ? [brideShort, groomShort] : [groomShort, brideShort];
@@ -2696,18 +3173,6 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
         className="relative isolate w-full max-w-[480px] overflow-hidden rounded md:mx-auto md:max-w-[900px] md:border md:border-[#e9ce9e22]"
         style={{ backgroundColor: CARD_BG, color: GOLD, fontFamily: LPD_BODY }}
       >
-        {/* parallax dragon / phoenix artwork */}
-        <div className="pointer-events-none absolute -top-[40px] left-1/2 z-[1] w-[clamp(800px,150vw,1600px)] max-w-none -translate-x-1/2 opacity-[0.12]" aria-hidden="true">
-          <div data-parallax="0.04" className="will-change-transform">
-            <img alt="" aria-hidden="true" className="h-auto w-full object-contain" src={`${LPD}/rong.webp`} />
-          </div>
-        </div>
-        <div className="pointer-events-none absolute bottom-[6%] left-1/2 z-[1] w-[clamp(800px,150vw,1600px)] max-w-none -translate-x-1/2 opacity-[0.12]" aria-hidden="true">
-          <div data-parallax="-0.03" className="will-change-transform">
-            <img alt="" aria-hidden="true" className="h-auto w-full object-contain" src={`${LPD}/phuong.webp`} />
-          </div>
-        </div>
-
         {/* header */}
         <header className="relative z-10 flex h-[472px] flex-col items-center justify-center text-center md:h-[650px]">
           <div className="pointer-events-none absolute left-1/2 top-12 flex w-full -translate-x-1/2 justify-center gap-8 opacity-[0.15] md:top-16" aria-hidden="true">
@@ -2922,10 +3387,10 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
                     <span aria-hidden="true" className="absolute right-7 top-10 text-sm" style={{ color: GOLD }}>✦</span>
                     <span aria-hidden="true" className="absolute bottom-10 left-10 text-sm" style={{ color: GOLD }}>✦</span>
                     <div className="relative" style={{ width: 140, height: 196 }}>
-                      <div className="absolute overflow-hidden rounded-lg" style={{ inset: 0, backgroundColor: "#8a1220", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
+                      <div className="absolute overflow-hidden rounded-lg" style={{ inset: 0, backgroundColor: ENVELOPE, boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
                         <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: GOLD }} />
                         <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${GOLD} 0%, #d97706 100%)`, border: "3px solid #fef3c7" }}>
-                          <span className="font-bold" style={{ fontSize: 30.8, color: "#8a1220", lineHeight: 1 }}>囍</span>
+                          <span className="font-bold" style={{ fontSize: 30.8, color: ENVELOPE, lineHeight: 1 }}>囍</span>
                         </div>
                       </div>
                     </div>
@@ -2938,7 +3403,7 @@ function DragonPhoenixInvitation({ content }: { content: ChungDoiDemoContent }) 
                 {bankOpen ? (
                   <div className="fixed inset-0 z-[95] flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" onClick={() => setBankOpen(false)}>
                     <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CARD_BG }} onClick={(e) => e.stopPropagation()}>
-                      <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: "#8a1220" }}>
+                      <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: ENVELOPE }}>
                         <button type="button" aria-label="Đóng" onClick={() => setBankOpen(false)} className="absolute right-3 top-3 text-white/80 hover:text-white">✕</button>
                         <h2 className="text-[21px] md:text-[26px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bì Mừng Cưới / 結婚紅包</h2>
                       </div>
@@ -3874,6 +4339,8 @@ export function ChungDoiDemo({
       {!opened ? (
         content.slug === "nhat-binh-red" ? (
           <NhatBinhCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
+        ) : content.slug === "double-phoenix-red" ? (
+          <EnvelopeCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
         ) : (
           <CoverOverlay content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
         )
@@ -3891,12 +4358,24 @@ export function ChungDoiDemo({
         <CoBaInvitation content={content} />
       ) : content.slug === "dragon-phoenix-red" ? (
         <DragonPhoenixInvitation content={content} />
+      ) : content.slug === "dragon-phoenix-green" ? (
+        <DragonPhoenixInvitation content={content} palette={DP_GREEN_PALETTE} />
+      ) : content.slug === "dragon-phoenix-blue" ? (
+        <DragonPhoenixInvitation content={content} palette={DP_BLUE_PALETTE} />
+      ) : content.slug === "dragon-phoenix-black" ? (
+        <DragonPhoenixInvitation content={content} palette={DP_BLACK_PALETTE} />
       ) : content.slug === "double-dragon-red" ? (
         <DoubleDragonInvitation content={content} />
       ) : content.slug === "double-dragon-blue" ? (
         <DoubleDragonInvitation content={content} palette={DD_BLUE_PALETTE} />
       ) : content.slug === "double-dragon-green" ? (
         <SongLongXanhInvitation content={content} />
+      ) : content.slug === "royal-red" ? (
+        <RoyalInvitation content={content} palette={ROYAL_RED_PALETTE} />
+      ) : content.slug === "royal-blue" ? (
+        <RoyalInvitation content={content} palette={ROYAL_BLUE_PALETTE} />
+      ) : content.slug === "royal-green" ? (
+        <RoyalInvitation content={content} palette={ROYAL_GREEN_PALETTE} />
       ) : (
         <div className="mx-auto max-w-[520px]" style={{ background: tokens.cardBg, minHeight: "100vh" }}>
           <InvitationBody content={content} tokens={tokens} />

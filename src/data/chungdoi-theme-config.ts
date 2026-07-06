@@ -693,7 +693,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
   },
   "dragon-phoenix-v2-red": {
     "theme": {
-      "background": "url('/images/themes/longphung-v2-red/bg-frame.jpg') center/cover",
+      "background": "url('/chungdoi/images/themes/dragon-phoenix-v2-red/bg-frame.jpg') center/cover",
       "cardBg": "#680d0e",
       "textPrimary": "#e9ce9e",
       "textSecondary": "rgba(233, 206, 158, 0.8)",

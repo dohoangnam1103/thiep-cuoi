@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../globals.css";
+import { PetalField } from "@/components/petal-field";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +22,10 @@ export const metadata: Metadata = {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">{children}</body>
+      <body className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+        <PetalField />
+        {children}
+      </body>
     </html>
   );
 }

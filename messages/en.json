@@ -15,10 +15,12 @@
     "signupSubmit": "Sign up",
     "loginWithGoogle": "Continue with Google",
     "signupWithGoogle": "Sign up with Google",
+    "loginWithFacebook": "Continue with Facebook",
+    "signupWithFacebook": "Sign up with Facebook",
     "or": "or",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
-    "oauthError": "Could not sign in with Google. Please try again."
+    "oauthError": "Could not sign in with social login. Please try again."
   },
   "chrome": {
     "nav": {
@@ -64,7 +66,7 @@
       "subtitle": "Online wedding invitations with handcrafted templates, guest names, RSVP, maps, gallery, music and a QR gift box.",
       "trialNote": "Free to create - 3-day trial - Pay only if you love it",
       "watchGuide": "Watch guide",
-      "liveDemo": "Live invite demo",
+      "dragHint": "Drag to swap cards",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "RSVP open",
       "statGuests": "guests",
@@ -186,6 +188,43 @@
       "faq3A": "Creating and customizing is free. Publishing includes a free 3-day trial, then a one-time payment keeps it live.",
       "faq4Q": "Can I edit after publishing?",
       "faq4A": "Yes. Edits update instantly on the same shared link."
+    },
+    "instant": {
+      "eyebrow": "Try it instantly",
+      "title": "Type your names, see your invitation come alive",
+      "subtitle": "No sign-up needed. Enter the couple's names to preview your own invitation, then start creating in seconds.",
+      "defaultGroom": "Alex",
+      "defaultBride": "Jordan",
+      "groomPlaceholder": "Groom's name",
+      "bridePlaceholder": "Bride's name",
+      "cta": "Create my invitation",
+      "previewInvited": "Together with their families"
+    },
+    "testimonials": {
+      "eyebrow": "What couples say",
+      "title": "Trusted by thousands of couples",
+      "subtitle": "Real words from couples who made their wedding invitations with Thiệp Mừng Online.",
+      "t1Quote": "Made our invitation in under 10 minutes and it looked better than paper. Guests kept complimenting it!",
+      "t1Author": "Minh & Ha",
+      "t1Role": "Married in March, Hanoi",
+      "t2Quote": "Automatic RSVP let us know the exact headcount without calling everyone one by one.",
+      "t2Author": "Tuan & Linh",
+      "t2Role": "Married in May, Ho Chi Minh City",
+      "t3Quote": "The built-in map and photo album felt so convenient and elegant to our guests.",
+      "t3Author": "Quang & Mai",
+      "t3Role": "Married in April, Da Nang",
+      "t4Quote": "Being able to edit after sending gave us peace of mind, we fixed things instantly.",
+      "t4Author": "Duc & Trang",
+      "t4Role": "Married in June, Hai Phong",
+      "t5Quote": "The QR gift box was perfect for guests who lived too far to attend.",
+      "t5Author": "Nam & Vy",
+      "t5Role": "Married in February, Can Tho",
+      "t6Quote": "Support replied incredibly fast, someone was always there whenever I messaged.",
+      "t6Author": "Hung & Thu",
+      "t6Role": "Married in July, Hue"
+    },
+    "stickyCta": {
+      "button": "Create invitation"
     },
     "footer": {
       "tagline": "Create beautiful online wedding invitations for free, in 10 minutes.",

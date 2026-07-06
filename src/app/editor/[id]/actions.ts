@@ -11,9 +11,7 @@ import {
   parseGallery,
   type EditorState,
 } from "./content-schema";
-import { slugFromFormFields } from "./slug";
-
-export type { EditorState };
+import { slugFromFormFields, slugSuffix } from "./slug";
 
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
@@ -104,8 +102,15 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
   }
 
   const formSlug = String(formData.get("slug") ?? "").trim().toLowerCase();
-  const rawSlug = formSlug || slugFromFormFields(draft.data);
-  const slugCheck = await checkSlug(rawSlug, id);
+  const baseSlug = formSlug || slugFromFormFields(draft.data);
+  if (!baseSlug) return { error: "Chưa có tên cô dâu/chú rể để tạo đường dẫn" };
+
+  let rawSlug = baseSlug;
+  let slugCheck = await checkSlug(rawSlug, id);
+  if (!slugCheck.available && slugCheck.reason === "Đường dẫn đã được dùng") {
+    rawSlug = `${baseSlug}-${slugSuffix()}`;
+    slugCheck = await checkSlug(rawSlug, id);
+  }
   if (!slugCheck.available) {
     return { error: slugCheck.reason ?? "Đường dẫn không hợp lệ" };
   }

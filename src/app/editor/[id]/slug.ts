@@ -33,3 +33,7 @@ export function slugFromFormFields(source: SlugSource): string {
   const order = source.brideFirst ?? true ? [bride, groom] : [groom, bride];
   return slugify(order.filter(Boolean).join(" "));
 }
+
+export function slugSuffix(): string {
+  return Math.random().toString(36).slice(2, 8);
+}

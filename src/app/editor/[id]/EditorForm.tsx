@@ -25,7 +25,8 @@ import { templates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, MUSIC_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
-import { saveDraft, publish, checkSlug, type EditorState } from "./actions";
+import { saveDraft, publish, checkSlug } from "./actions";
+import { type EditorState } from "./content-schema";
 import { readDraft, useFormDraft, type Draft } from "@/hooks/use-form-draft";
 import { slugify, slugifyInput, slugFromFormFields } from "./slug";
 import { VALID_TEMPLATE_IDS, TEMPLATE_LABELS } from "./templates";
@@ -46,16 +47,6 @@ type EditorFormProps = {
 function field(content: InvitationContent | null, key: keyof InvitationContent): string {
   const v = content?.[key];
   return typeof v === "string" ? v : "";
-}
-
-function slugFromNames(content: InvitationContent | null): string {
-  return slugFromFormFields({
-    brideFullName: content?.brideFullName,
-    groomFullName: content?.groomFullName,
-    brideShortName: content?.brideShortName,
-    groomShortName: content?.groomShortName,
-    brideFirst: content?.brideFirst,
-  });
 }
 
 function normalizeBirthOrder(value: string): string {
@@ -682,7 +673,14 @@ export function EditorForm({
     return schedule.length ? schedule : [{ time: "", label: "" }];
   });
 
-  const [slug, setSlug] = useState(currentSlug || slugFromNames(content));
+  const initialSlug = currentSlug || slugFromFormFields({
+    brideFullName: seed("brideFullName", field(content, "brideFullName")),
+    groomFullName: seed("groomFullName", field(content, "groomFullName")),
+    brideShortName: seed("brideShortName", field(content, "brideShortName")),
+    groomShortName: seed("groomShortName", field(content, "groomShortName")),
+    brideFirst: seedBool("brideFirst", content?.brideFirst ?? true),
+  });
+  const [slug, setSlug] = useState(initialSlug);
   const [slugEdited, setSlugEdited] = useState(Boolean(currentSlug));
   const [slugStatus, setSlugStatus] = useState<{ available: boolean; reason?: string } | null>(null);
   const [checking, startCheck] = useTransition();
@@ -725,13 +723,6 @@ export function EditorForm({
     });
   }
 
-  function onGenerateSlug() {
-    const next = nextSlugFromForm();
-    setSlug(next);
-    setSlugEdited(false);
-    setSlugStatus(next ? null : { available: false, reason: "Chưa có tên cô dâu/chú rể" });
-  }
-
   function onCheckSlug() {
     if (!slug.trim()) {
       setSlugStatus({ available: false, reason: "Chưa nhập đường dẫn" });
@@ -767,8 +758,11 @@ export function EditorForm({
 
       <div className={`mx-auto max-w-4xl px-4 pb-8 pt-24 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
         <div className="mb-6">
-          <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
-            ← Bảng điều khiển
+          <Link
+            href={adminMode ? "/admin/demos" : "/dashboard"}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            {adminMode ? "← Danh sách thiệp demo" : "← Bảng điều khiển"}
           </Link>
           <h1 className="mt-1 font-pattaya text-3xl text-foreground">Chỉnh sửa thiệp</h1>
           <p className="text-sm text-muted-foreground">
@@ -994,18 +988,9 @@ export function EditorForm({
       <section className="mt-8 rounded-2xl border border-primary/30 bg-primary/5 p-5">
         <h2 className="mb-4 font-pattaya text-xl text-primary">Xuất bản</h2>
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label htmlFor="slug" className={labelClass}>
-              Đường dẫn công khai
-            </label>
-            <button
-              type="button"
-              onClick={onGenerateSlug}
-              className="text-xs font-semibold text-primary hover:underline"
-            >
-              Tạo từ tên
-            </button>
-          </div>
+          <label htmlFor="slug" className={labelClass}>
+            Đường dẫn công khai
+          </label>
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">/thiep/</span>
             <input

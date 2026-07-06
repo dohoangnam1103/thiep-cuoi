@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
-import { ORDER_CODE_REGEX, verifyCassoSignature } from "@/lib/payment";
+import { ORDER_CODE_REGEX, isPendingPaymentExpired, verifyCassoSignature } from "@/lib/payment";
 
 type CassoV2Data = {
   id?: number;
@@ -41,7 +41,12 @@ export async function POST(req: Request) {
     if (match) {
       const code = match[0];
       const payment = await prisma.payment.findUnique({ where: { code } });
-      if (payment && payment.status === "pending" && received >= payment.amount) {
+      if (
+        payment &&
+        payment.status === "pending" &&
+        !isPendingPaymentExpired(payment.createdAt) &&
+        received >= payment.amount
+      ) {
         await prisma.$transaction(async (db) => {
           await db.payment.update({
             where: { id: payment.id },
