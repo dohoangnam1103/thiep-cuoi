@@ -32,7 +32,6 @@ function SpringHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Faithful rebuild of the Spring Garden Red (vườn xuân đỏ) opened invitation. */
 export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
@@ -58,12 +57,10 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
         className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
         style={{ color: SGR_ACCENT, borderColor: hexToRgba(SGR_TEXT, 0.25) }}
       >
-        {/* corner florals */}
         <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[40px] -right-[50px] z-0 w-[300px] max-w-none object-contain opacity-60 md:-top-[60px] md:-right-[70px] md:w-[420px]" />
         <img src={`${SGR_BASE}/button-left.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-[40px] -left-[50px] z-0 w-[300px] max-w-none object-contain opacity-60 md:-bottom-[60px] md:-left-[70px] md:w-[420px]" />
         <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[38%] -left-[10%] -z-10 h-[240px] w-auto max-w-none -scale-x-100 object-contain opacity-[0.14] md:h-[360px]" />
 
-        {/* HEADER */}
         <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
           <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: SGR_MUTED }}>Welcome To Our Wedding</p>
           <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: SGR_TEXT }}>
@@ -85,7 +82,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
         </header>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
-          {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
             <SpringHeading>Thông Tin Lễ Cưới</SpringHeading>
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
@@ -110,7 +106,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             ) : null}
           </section>
 
-          {/* ALBUM */}
           {albumShown.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <SpringHeading>Album Ảnh Cưới</SpringHeading>
@@ -128,7 +123,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             </section>
           ) : null}
 
-          {/* RECEPTION + CALENDAR */}
           <section className="relative flex w-full flex-col items-center gap-3">
             <SpringHeading>Thông Tin Tiệc Cưới</SpringHeading>
             <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]">Tiệc cưới sẽ diễn ra vào lúc:</p>
@@ -159,7 +153,81 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition" style={{ borderColor: SGR_TEXT, color: SGR_TEXT }}>Thêm vào lịch</a>
           </section>
 
-          {/* SPRING_BODY_PLACEHOLDER */}
+          {mapQuery ? (
+            <section className="flex w-full flex-col items-center gap-3 text-center">
+              <SpringHeading>Tiệc cưới sẽ tổ chức tại</SpringHeading>
+              <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
+              <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(SGR_TEXT, 0.35) }}>
+                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              </div>
+            </section>
+          ) : null}
+
+          {/* SCHEDULE */}
+          {schedule.length > 0 ? (
+            <section className="relative flex w-full flex-col items-center gap-6 rounded-[28px] border px-5 py-8" style={{ borderColor: hexToRgba(SGR_TEXT, 0.2), backgroundColor: hexToRgba("#ffffff", 0.55) }}>
+              <img src={`${SGR_BASE}/button-left.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-12 -left-12 -z-10 h-[190px] w-auto max-w-none object-contain opacity-30 md:h-[260px]" />
+              <SpringHeading>Lịch Trình Ngày Cưới</SpringHeading>
+              <ol className="mx-auto flex w-full max-w-sm flex-col gap-4">
+                {schedule.map((s, i) => (
+                  <li key={`${s.time}-${i}`} className="flex items-baseline gap-4">
+                    <span className="w-[64px] shrink-0 pt-0.5 text-right text-[16px] tabular-nums tracking-wide md:text-[17px]" style={{ color: SGR_TEXT }}>{s.time}</span>
+                    <span className="text-[16px] font-medium leading-tight md:text-[18px]">{s.label}</span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+
+          {/* WISHES */}
+          <section className="relative w-full">
+            <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-24 right-0 -z-10 h-[320px] w-auto max-w-none object-contain opacity-[0.12] md:-top-32 md:right-32 md:h-[460px]" />
+            <div className="text-center"><SpringHeading>Sổ Lưu Bút</SpringHeading></div>
+            <SharedWishForm accent={SGR_TEXT} />
+            {wishes.length > 0 ? (
+              <div className="chungdoi-scroll touch-pan-y mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+                {wishes.map((w, i) => (
+                  <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-xs" style={{ borderColor: hexToRgba(SGR_TEXT, 0.22), backgroundColor: SGR_CARD }}>
+                    <div className="flex items-start justify-between">
+                      <span className="font-semibold" style={{ color: SGR_TEXT }}>{w.name}</span>
+                      <span className="text-xs opacity-70">{formatWishTime(w.time)}</span>
+                    </div>
+                    <p className="mt-2 leading-relaxed">{w.text}</p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </section>
+
+          {/* QR GIFT */}
+          {banks.length > 0 ? (
+            <section className="w-full text-center">
+              <SpringHeading>QR Mừng Cưới</SpringHeading>
+              <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
+                {banks.map((q) => {
+                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  return (
+                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
+                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
+                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
+                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
+                      <p className="text-[13px] font-mono">{q.num}</p>
+                      <p className="text-[13px]">{q.name}</p>
+                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: SGR_TEXT, color: SGR_TEXT }}>Lưu QR</a>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
+        </div>
+
+        {/* FOOTER */}
+        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: SGR_TEXT }}>
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#fff5f5" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        </footer>
+        <div className="relative z-10 flex items-center justify-center py-3" style={{ background: SGR_BG }}>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: SGR_ACCENT }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>
