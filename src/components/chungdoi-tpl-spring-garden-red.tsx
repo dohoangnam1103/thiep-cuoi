@@ -163,7 +163,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             </section>
           ) : null}
 
-          {/* SCHEDULE */}
           {schedule.length > 0 ? (
             <section className="relative flex w-full flex-col items-center gap-6 rounded-[28px] border px-5 py-8" style={{ borderColor: hexToRgba(SGR_TEXT, 0.2), backgroundColor: hexToRgba("#ffffff", 0.55) }}>
               <img src={`${SGR_BASE}/button-left.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-12 -left-12 -z-10 h-[190px] w-auto max-w-none object-contain opacity-30 md:h-[260px]" />
@@ -179,7 +178,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             </section>
           ) : null}
 
-          {/* WISHES */}
           <section className="relative w-full">
             <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-24 right-0 -z-10 h-[320px] w-auto max-w-none object-contain opacity-[0.12] md:-top-32 md:right-32 md:h-[460px]" />
             <div className="text-center"><SpringHeading>Sổ Lưu Bút</SpringHeading></div>
@@ -199,7 +197,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             ) : null}
           </section>
 
-          {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
               <SpringHeading>QR Mừng Cưới</SpringHeading>
@@ -222,7 +219,6 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
           ) : null}
         </div>
 
-        {/* FOOTER */}
         <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: SGR_TEXT }}>
           <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#fff5f5" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
