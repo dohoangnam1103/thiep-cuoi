@@ -50,6 +50,10 @@ next-env.d.ts
 
 # Local settings (not project config)
 .claude/settings.local.json
+.claude/proven-config.json
+.claude/.proven-config-version
+.claude/worktrees/
+.claude-flow/
 
 # User-specific skills (not part of the template)
 .claude/skills/customize/
@@ -62,11 +66,21 @@ temp/
 # Playwright MCP artifacts
 .playwright-mcp/
 
+# Playwright E2E artifacts + isolated test db
+/tests/e2e/.data/
+/tests/e2e/.artifacts/
+/tests/e2e/.report/
+/tests/e2e/*.log
+/tests/e2e/.fails2.txt
+/test-results/
+/playwright-report/
+
 # Kiro local
 .kiro/
 
 # Scratch screenshots / DOM snapshots at repo root
 /*.png
+/*.jpeg
 /original-body-snapshot.md
 docs/research/original-dom/
 

@@ -288,6 +288,12 @@ function HeroSection() {
 
 function TemplateCarousel() {
   const t = useTranslations("home");
+  const locale = useLocale();
+
+  const hrefFor = (slug: string) => {
+    const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(slug) : slug;
+    return `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
+  };
 
   return (
     <section className="overflow-hidden bg-background py-16">
@@ -300,9 +306,10 @@ function TemplateCarousel() {
       <div className="reveal mt-12 overflow-hidden">
         <div className="template-marquee flex w-max gap-5">
           {[...featuredTemplates, ...featuredTemplates].map((template, index) => (
-            <article
+            <a
               key={`${template.slug}-${index}`}
-              className="group relative h-[520px] w-[286px] shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
+              href={hrefFor(template.slug)}
+              className="group relative block h-[520px] w-[286px] shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
             >
               <img
                 src={template.listing}
@@ -316,7 +323,7 @@ function TemplateCarousel() {
                   {template.category} - {template.color}
                 </p>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </div>
@@ -737,12 +744,12 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
               </form>
             </div>
           </div>
-          <div className="grid gap-4 lg:grid-cols-[0.65fr_1fr]">
+          <div className="grid items-start gap-4 lg:grid-cols-[0.65fr_1fr]">
             <div className="max-h-[70vh] overflow-y-auto rounded-3xl border border-border bg-muted">
-              <img src={template.portrait} alt={`${template.name} portrait preview`} className="w-full object-contain" />
+              <img src={template.portrait} alt={`${template.name} portrait preview`} className="block h-auto w-full object-top" />
             </div>
-            <div className="max-h-[70vh] overflow-auto rounded-3xl border border-border bg-card">
-              <img src={template.landscape} alt={`${template.name} landscape preview`} className="w-full object-contain" />
+            <div className="max-h-[70vh] overflow-y-auto rounded-3xl border border-border bg-card">
+              <img src={template.landscape} alt={`${template.name} landscape preview`} className="block h-auto w-full object-top" />
             </div>
           </div>
         </div>
@@ -840,6 +847,8 @@ function InstantDemo() {
             </label>
           </div>
           <form action={createInvitation} className="mt-6">
+            <input type="hidden" name="groomShortName" value={groom.trim()} />
+            <input type="hidden" name="brideShortName" value={bride.trim()} />
             <button
               type="submit"
               className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-black text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
@@ -913,31 +922,6 @@ function TestimonialsSection() {
   );
 }
 
-function StickyCta() {
-  const t = useTranslations("home");
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 900);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <a
-      href="#templates"
-      className={`group fixed bottom-5 right-5 z-[95] inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-black text-primary-foreground shadow-[0_10px_30px_rgba(214,69,80,0.45)] transition-all duration-300 hover:bg-primary/90 ${
-        show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-16 opacity-0"
-      }`}
-    >
-      <Sparkles className="size-4" />
-      {t("stickyCta.button")}
-      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-    </a>
-  );
-}
-
 export function ChungDoiClone() {
   useSmoothScroll();
   useRevealOnScroll();
@@ -959,7 +943,6 @@ export function ChungDoiClone() {
       <TemplateGallery />
       <PricingFaq />
       <SiteFooter />
-      <StickyCta />
     </main>
   );
 }

@@ -325,7 +325,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
   },
   "glass-garden-green": {
     "theme": {
-      "background": "#eef3e8 url(__ASSET_VAR__) center / 180% auto repeat",
+      "background": "#eef3e8 url(/chungdoi/images/themes/glass-garden-green/floral-background.webp) center / 180% auto repeat",
       "cardBg": "rgba(255, 255, 255, 0.3)",
       "textPrimary": "#47613e",
       "textSecondary": "rgba(53, 69, 47, 0.8)",
@@ -967,7 +967,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       "particleType": "happiness"
     },
     "fonts": {
-      "couple": "__ASSET_VAR__",
+      "couple": "\"Pattaya\", cursive",
       "ampersand": null
     },
     "sealType": null,
@@ -1184,7 +1184,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
   },
   "brocade-flower-red": {
     "theme": {
-      "background": "linear-gradient(to bottom right, rgba(74,21,3,0.92), rgba(106,33,4,0.92), rgba(138,48,16,0.92)), url(__ASSET_VAR__) center / 420px repeat",
+      "background": "linear-gradient(to bottom right, rgba(74,21,3,0.92), rgba(106,33,4,0.92), rgba(138,48,16,0.92)), url(/chungdoi/images/themes/brocade-flower-red/tile-background.webp) center / 420px repeat",
       "cardBg": "rgba(248, 236, 219, 0.98)",
       "textPrimary": "#6a2104",
       "textSecondary": "rgba(60, 77, 32, 0.85)",
@@ -1438,7 +1438,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
   },
   "qasr-gold": {
     "theme": {
-      "background": "linear-gradient(to bottom right, rgba(110,100,51,0.82), rgba(84,78,39,0.82), rgba(58,53,32,0.82)), url(__ASSET_VAR__) center / cover",
+      "background": "linear-gradient(to bottom right, rgba(110,100,51,0.82), rgba(84,78,39,0.82), rgba(58,53,32,0.82)), url(/chungdoi/images/themes/qasr-gold/background.webp) center / cover",
       "cardBg": "rgba(249, 241, 230, 0.98)",
       "textPrimary": "#544E27",
       "textSecondary": "rgba(84, 78, 39, 0.78)",
@@ -1573,7 +1573,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
   },
   "baroque-gold": {
     "theme": {
-      "background": "linear-gradient(to bottom right, rgba(138,90,42,0.9), rgba(185,125,62,0.9), rgba(216,175,135,0.9)), url(__ASSET_VAR__) center / 1200px repeat",
+      "background": "linear-gradient(to bottom right, rgba(138,90,42,0.9), rgba(185,125,62,0.9), rgba(216,175,135,0.9)), url(/chungdoi/images/themes/baroque-gold/bg.webp) center / 1200px repeat",
       "cardBg": "rgba(251, 248, 241, 0.98)",
       "textPrimary": "#B97D3E",
       "textSecondary": "rgba(141, 143, 88, 0.85)",

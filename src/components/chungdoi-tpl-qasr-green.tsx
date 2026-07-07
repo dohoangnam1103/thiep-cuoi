@@ -1,0 +1,248 @@
+import {
+  hexToRgba,
+  formatDate,
+  buildCalendar,
+  formatWishTime,
+  useLightbox,
+  Lightbox,
+  googleCalendarUrl,
+  mapEmbedUrl,
+  FamilyColumn,
+  SharedWishForm,
+  WEEKDAY_LABELS,
+} from "@/components/chungdoi-tpl-shared";
+import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+
+const QASR_BASE = "/chungdoi/images/themes/_decor/qasr-green";
+const QASR_GREEN = "#1e3d2f";
+const QASR_GOLD = "#c9a24a";
+const QASR_GREEN_MUTED = "rgba(30, 61, 47, 0.72)";
+const QASR_LUNAR = "( Tức ngày 20/06 năm Bính Ngọ )";
+
+const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
+const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
+
+function QasrHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: QASR_GREEN }}>
+        {children}
+      </h2>
+      <img src={`${QASR_BASE}/golden-line.webp`} alt="" aria-hidden className="h-auto w-[180px] object-contain opacity-90 md:w-[240px]" />
+    </div>
+  );
+}
+
+/** Faithful rebuild of the Qasr Green (thanh cung xanh) opened invitation. */
+export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent }) {
+  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const reception = formatDate(couple.date);
+  const calendar = buildCalendar(couple.date);
+  const albumShown = gallery.slice(0, 4);
+  const albumExtra = Math.max(0, gallery.length - 4);
+  const { lightbox, setLightbox } = useLightbox(gallery.length);
+  const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
+
+  const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
+  const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
+
+  const banks = ([
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
+  ] as const).filter((q) => q.bank);
+
+  return (
+    <div className="flex w-full justify-center overflow-x-clip bg-white">
+      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: QASR_GREEN, borderColor: hexToRgba(QASR_GREEN, 0.2) }}>
+        {/* page corner flowers */}
+        <img src={`${QASR_BASE}/flower-top.webp`} alt="" aria-hidden className="pointer-events-none absolute top-0 left-0 z-20 h-auto w-[180px] max-w-none object-contain md:w-[300px]" />
+        <img src={`${QASR_BASE}/flower-bottom.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-20 h-auto w-[180px] max-w-none object-contain md:w-[300px]" />
+
+        {/* HEADER — castle + names */}
+        <header className="relative z-10 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
+          <div className="relative z-10 flex items-center justify-center gap-3 md:gap-4">
+            <img src={`${QASR_BASE}/heart.webp`} alt="" aria-hidden className="h-auto w-[26px] object-contain opacity-90 md:w-[34px]" />
+            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]" style={{ color: QASR_GOLD }}>Welcome To Our Wedding</p>
+            <img src={`${QASR_BASE}/heart.webp`} alt="" aria-hidden className="h-auto w-[26px] object-contain opacity-90 md:w-[34px]" />
+          </div>
+          <h1 className="relative z-10 mt-4 flex flex-col items-center leading-none" style={{ color: QASR_GREEN }}>
+            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="my-2 text-[32px] md:text-[40px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</span>
+            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+          </h1>
+          <img src={`${QASR_BASE}/castle.webp`} alt="" aria-hidden className="relative z-0 mt-6 block h-auto w-[520px] max-w-none object-contain md:mt-8 md:w-[860px]" />
+        </header>
+
+        <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
+          {/* CEREMONY INFO */}
+          <section className="flex w-full flex-col items-center gap-8">
+            <QasrHeading>Thông Tin Lễ Cưới</QasrHeading>
+            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+              {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
+            </div>
+            <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
+              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+            </div>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GREEN_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GREEN_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+            </div>
+            {/* illustrated couple */}
+            <img src={`${QASR_BASE}/couple.webp`} alt="" aria-hidden className="h-auto w-[240px] object-contain md:w-[320px]" />
+            {ceremony ? (
+              <div className="flex flex-col items-center gap-1 text-center">
+                {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
+                {couple.ceremonyTime ? <div className="text-[20px] font-semibold md:text-[30px]">{couple.ceremonyTime}</div> : null}
+                <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                  <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
+                </div>
+                <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: QASR_GREEN_MUTED }}>{QASR_LUNAR}</div>
+              </div>
+            ) : null}
+            <img src={`${QASR_BASE}/golden-line.webp`} alt="" aria-hidden className="h-auto w-[300px] object-contain opacity-90 md:w-[460px]" />
+          </section>
+
+          {/* ALBUM */}
+          {albumShown.length > 0 ? (
+            <section className="flex w-full flex-col items-center gap-6">
+              <QasrHeading>Album Ảnh Cưới</QasrHeading>
+              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+                {albumShown.map((src, i) => (
+                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
+                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
+                    {i === albumShown.length - 1 && albumExtra > 0 ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={QASR_GREEN} />
+            </section>
+          ) : null}
+
+          {/* RECEPTION INFO + calendar */}
+          <section className="relative flex w-full flex-col items-center gap-3">
+            <img src={`${QASR_BASE}/side-frame.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-6 right-0 -z-10 h-[520px] w-auto max-w-none object-contain opacity-[0.14] md:-top-16 md:right-[15%] md:h-[720px]" />
+            <QasrHeading>Thông Tin Tiệc Cưới</QasrHeading>
+            <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]">Tiệc cưới sẽ diễn ra vào lúc:</p>
+            <div className="text-[20px] font-semibold md:text-[30px]">{venue.banquetTime || couple.time}</div>
+            {reception ? (
+              <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
+              </div>
+            ) : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: QASR_GREEN_MUTED }}>{QASR_LUNAR}</div>
+
+            {/* food + cake decor */}
+            <div className="mt-4 flex items-end justify-center gap-6">
+              <img src={`${QASR_BASE}/food.webp`} alt="" aria-hidden className="h-auto w-[90px] object-contain md:w-[130px]" />
+              <img src={`${QASR_BASE}/cake.webp`} alt="" aria-hidden className="h-auto w-[90px] object-contain md:w-[130px]" />
+            </div>
+
+            {/* calendar framed by frame-lich */}
+            {calendar ? (
+              <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[340px] md:mt-10 md:max-w-[420px]">
+                <img src={`${QASR_BASE}/frame-lich.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-fill" />
+                <div className="relative flex h-full w-full flex-col items-center justify-center px-8 py-6">
+                  <p className="text-[12px] font-semibold uppercase tracking-wide md:text-[13px]">Tháng {calendar.month} / {calendar.year}</p>
+                  <div className="mt-2 grid w-full grid-cols-7 text-[10px] font-medium opacity-70 md:text-[11px]">
+                    {WEEKDAY_LABELS.map((d) => (<span key={d} className="py-0.5 text-center">{d}</span>))}
+                  </div>
+                  <div className="grid w-full grid-cols-7 gap-y-0.5 text-[11px] md:text-[12px]">
+                    {calendar.cells.map((day, i) => (
+                      <span key={i} className={`flex aspect-square items-center justify-center rounded-full ${day === calendar.highlight ? "font-bold text-white" : ""}`} style={day === calendar.highlight ? { backgroundColor: QASR_GREEN } : undefined}>{day ?? ""}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition" style={{ borderColor: QASR_GOLD, color: QASR_GREEN }}>Thêm vào lịch</a>
+          </section>
+
+          {/* VENUE MAP */}
+          {mapQuery ? (
+            <section className="flex w-full flex-col items-center gap-3 text-center">
+              <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: QASR_GREEN }}>Tiệc cưới sẽ tổ chức tại</h3>
+              <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
+              <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
+                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              </div>
+            </section>
+          ) : null}
+
+          {/* SCHEDULE — with ring decor */}
+          {schedule.length > 0 ? (
+            <section className="relative flex w-full flex-col items-center gap-6">
+              <img src={`${QASR_BASE}/ring.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[80px] left-8 -z-10 h-[80px] w-auto object-contain opacity-90 md:left-12 md:h-[110px]" />
+              <QasrHeading>Lịch Trình Ngày Cưới</QasrHeading>
+              <ol className="mx-auto flex w-full max-w-sm flex-col gap-4">
+                {schedule.map((s, i) => (
+                  <li key={`${s.time}-${i}`} className="flex items-baseline gap-4">
+                    <span className="w-[64px] shrink-0 pt-0.5 text-right text-[16px] tabular-nums tracking-wide md:text-[17px]" style={{ color: QASR_GOLD }}>{s.time}</span>
+                    <span className="text-[16px] font-medium leading-tight md:text-[18px]">{s.label}</span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+
+          {/* WISHES */}
+          <section className="relative w-full">
+            <div className="text-center"><QasrHeading>Sổ Lưu Bút</QasrHeading></div>
+            <SharedWishForm accent={QASR_GREEN} />
+            {wishes.length > 0 ? (
+              <div className="chungdoi-scroll touch-pan-y mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+                {wishes.map((w, i) => (
+                  <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-xs" style={{ borderColor: hexToRgba(QASR_GREEN, 0.2), backgroundColor: "#ffffff" }}>
+                    <div className="flex items-start justify-between">
+                      <span className="font-semibold" style={{ color: QASR_GREEN }}>{w.name}</span>
+                      <span className="text-xs opacity-70">{formatWishTime(w.time)}</span>
+                    </div>
+                    <p className="mt-2 leading-relaxed">{w.text}</p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </section>
+
+          {/* QR GIFT */}
+          {banks.length > 0 ? (
+            <section className="w-full text-center">
+              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: QASR_GREEN }}>QR Mừng Cưới</h2>
+              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
+                {banks.map((q) => {
+                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  return (
+                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
+                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
+                      <div className="size-32 rounded-xl border bg-white p-2 sm:size-40" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
+                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
+                      <p className="text-[13px] font-mono">{q.num}</p>
+                      <p className="text-[13px]">{q.name}</p>
+                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: QASR_GOLD, color: QASR_GREEN }}>Lưu QR</a>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
+        </div>
+
+        {/* FOOTER */}
+        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: QASR_GREEN }}>
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#f1ede0" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        </footer>
+        <div className="relative z-10 flex items-center justify-center py-3">
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: QASR_GREEN }}>♡ thiepmungonline.com</a>
+        </div>
+      </div>
+    </div>
+  );
+}

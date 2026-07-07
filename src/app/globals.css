@@ -89,6 +89,24 @@ html.lenis body {
   font-display: swap;
 }
 
+@font-face {
+  font-family: "1FTV VIP Signora";
+  src: url("/chungdoi/fonts/1FTV-VIP-Signora-Regular.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DFVN New Eddy";
+  src: url("/chungdoi/fonts/DFVN-NewEddy-Regular.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Alex Brush";
+  src: url("/chungdoi/fonts/AlexBrush-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

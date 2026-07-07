@@ -8,6 +8,10 @@ import { getOrCreateUserId } from "@/lib/dal";
 
 const DEFAULT_TEMPLATE_ID = "song-hy-red";
 
+function readName(value: FormDataEntryValue | null | undefined): string {
+  return typeof value === "string" ? value.trim().slice(0, 24) : "";
+}
+
 export async function createInvitation(formData?: FormData): Promise<void> {
   const userId = await getOrCreateUserId();
 
@@ -17,12 +21,15 @@ export async function createInvitation(formData?: FormData): Promise<void> {
       ? requested
       : DEFAULT_TEMPLATE_ID;
 
+  const groomShortName = readName(formData?.get("groomShortName"));
+  const brideShortName = readName(formData?.get("brideShortName"));
+
   const invitation = await prisma.invitation.create({
     data: {
       userId,
       templateId,
       status: "draft",
-      content: { create: {} },
+      content: { create: { groomShortName, brideShortName } },
     },
   });
   redirect(`/editor/${invitation.id}`);
