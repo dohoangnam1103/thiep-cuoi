@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiListing } from "@/components/chungdoi-listing";
-import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { staticAlternates } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site-url";
 
 export async function generateMetadata({
   params,
@@ -13,10 +14,27 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "listing" });
 
+  const title = t("metaTitle");
+  const description = t("metaDescription");
+  const image = absoluteUrl("/chungdoi/icon-v2.png");
+
   return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-    alternates: { canonical: getPathname({ href: "/templates", locale }) },
+    title: { absolute: title },
+    description,
+    alternates: staticAlternates("/templates"),
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      images: [{ url: image }],
+      siteName: "Thiệp Mừng Online",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
   };
 }
 

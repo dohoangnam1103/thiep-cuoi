@@ -17,11 +17,18 @@ const NAV_LINKS = [
   ["help", "/help"],
 ] as const;
 
-export function Logo() {
+export function Logo({ responsive = false }: { responsive?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-muted">
       <LogoMark className="size-8" />
-      <span className="font-pattaya text-2xl text-foreground">Thiệp Mừng Online</span>
+      {responsive ? (
+        <>
+          <span className="font-pattaya text-2xl text-foreground sm:hidden">Thiệp Mừng</span>
+          <span className="hidden font-pattaya text-2xl text-foreground sm:inline">Thiệp Mừng Online</span>
+        </>
+      ) : (
+        <span className="font-pattaya text-2xl text-foreground">Thiệp Mừng Online</span>
+      )}
     </Link>
   );
 }
@@ -32,7 +39,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
+        <Logo responsive />
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
           {NAV_LINKS.map(([key, href]) => (
             <Link key={href} href={href} className="transition hover:text-foreground">

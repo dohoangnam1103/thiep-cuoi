@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Lenis from "lenis";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { type CSSProperties, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
@@ -247,9 +248,13 @@ function HeroSection() {
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="flex flex-col justify-center">
           <div className="hero-enter mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
-            <img
+            <Image
               src="/chungdoi/images/en/banner_hero.webp"
               alt="Beautiful online wedding invitations"
+              width={2987}
+              height={1566}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              fetchPriority="high"
               className="h-full w-full object-cover"
             />
           </div>

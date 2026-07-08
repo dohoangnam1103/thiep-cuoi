@@ -6,6 +6,8 @@ import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { blogPosts } from "@/data/chungdoi-content";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { blogAlternates } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site-url";
 
 type BlogDetailProps = {
   params: Promise<{ locale: Locale; slug: string }>;
@@ -21,12 +23,29 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   const t = await getTranslations({ locale, namespace: "blog" });
 
   if (!post) {
-    return { title: t("metaTitle") };
+    return { title: { absolute: t("metaTitle") } };
   }
 
+  const title = `${post.title} | Thiệp Mừng Online Blog`;
+  const image = absoluteUrl("/chungdoi/icon-v2.png");
+
   return {
-    title: `${post.title} | Thiệp Mừng Online Blog`,
+    title: { absolute: title },
     description: post.excerpt,
+    alternates: blogAlternates(slug),
+    openGraph: {
+      type: "article",
+      title,
+      description: post.excerpt,
+      images: [{ url: image }],
+      siteName: "Thiệp Mừng Online",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: post.excerpt,
+      images: [image],
+    },
   };
 }
 

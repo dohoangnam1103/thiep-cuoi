@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useEffect, useState } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
@@ -33,9 +34,69 @@ function BaroqueHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Carousel ảnh trong khung.webp: tự chạy 4s + mũi tên. Bản gốc có slideshow trong
+// khung ornate, không phải 1 ảnh tĩnh.
+function HeroCarousel({ photos }: { photos: string[] }) {
+  const [i, setI] = useState(0);
+  const count = photos.length;
+  useEffect(() => {
+    if (count <= 1) return;
+    const id = window.setInterval(() => setI((v) => (v + 1) % count), 4000);
+    return () => window.clearInterval(id);
+  }, [count]);
+  if (count === 0) return null;
+  const step = (d: number) => setI((v) => (v + d + count) % count);
+  return (
+    <div className="absolute inset-[10%] z-0 overflow-hidden rounded-[8px]">
+      <div className="flex h-full w-full transition-transform duration-500 ease-out" style={{ transform: `translate3d(${-i * 100}%,0,0)` }}>
+        {photos.map((src, idx) => (
+          <div key={src} className="h-full w-full shrink-0">
+            <img alt={`Ảnh cưới ${idx + 1}`} src={src} className="h-full w-full object-cover" />
+          </div>
+        ))}
+      </div>
+      {count > 1 ? (
+        <>
+          <button type="button" aria-label="Ảnh trước" onClick={() => step(-1)} className="absolute left-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/25 text-2xl text-white transition hover:bg-black/40">‹</button>
+          <button type="button" aria-label="Ảnh sau" onClick={() => step(1)} className="absolute right-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/25 text-2xl text-white transition hover:bg-black/40">›</button>
+          <div className="absolute inset-x-0 bottom-2 z-10 flex justify-center gap-1.5">
+            {photos.map((src, idx) => (
+              <button key={src} type="button" aria-label={`Ảnh ${idx + 1}`} onClick={() => setI(idx)} className="h-1.5 w-1.5 rounded-full transition" style={{ backgroundColor: idx === i ? "#fff" : "rgba(255,255,255,0.5)" }} />
+            ))}
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+function BaroqueCountdown({ target }: { target: string }) {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const tick = () => setNow(Date.now());
+    const raf = requestAnimationFrame(tick);
+    const id = window.setInterval(tick, 1000);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearInterval(id);
+    };
+  }, []);
+  const diff = now === null ? 0 : Math.max(0, new Date(target).getTime() - now);
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+  return (
+    <p className="mt-2 text-center text-[20px] font-semibold md:text-[22px]" style={{ color: GOLD_DARK }}>
+      {days} ngày {hours} giờ {mins} phút {secs} giây
+    </p>
+  );
+}
+
 /** Faithful rebuild of the Baroque Gold (hoang-gia-vang) opened invitation. */
 export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const [giftOpen, setGiftOpen] = useState(false);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -76,14 +137,10 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
             <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
           </h1>
-          {/* ornate frame around hero art */}
+          {/* ornate frame around carousel */}
           <div className="relative mt-6 w-full max-w-[420px] md:mt-10 md:max-w-[560px]">
             <img src={`${BAROQUE_BASE}/khung.webp`} alt="" aria-hidden className="pointer-events-none relative z-10 block h-auto w-full max-w-none object-contain" />
-            {albumShown.length > 0 ? (
-              <div className="absolute inset-[10%] z-0 overflow-hidden rounded-[8px]">
-                <img alt="" aria-hidden src={albumShown[0]} className="h-full w-full object-cover" />
-              </div>
-            ) : null}
+            {albumShown.length > 0 ? <HeroCarousel photos={gallery} /> : null}
           </div>
         </header>
 
@@ -138,7 +195,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             </section>
           ) : null}
 
-          {/* RECEPTION INFO + calendar */}
+          {/* RECEPTION INFO + calendar + countdown */}
           <section className="relative flex w-full flex-col items-center gap-3">
             <img src={`${BAROQUE_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-30 right-0 -z-10 h-[700px] w-auto max-w-none object-contain opacity-[0.17] md:-top-150 md:right-[20%] md:h-[900px]" />
             <BaroqueHeading>Thông Tin Tiệc Cưới</BaroqueHeading>
@@ -151,6 +208,11 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
             <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: INK_MUTED }}>{BAROQUE_LUNAR}</div>
+
+            <div className="mt-4 flex flex-col items-center">
+              <h3 className="text-[18px] uppercase tracking-wide md:text-[20px]" style={{ color: GOLD_DARK }}>Cùng đếm ngược</h3>
+              <BaroqueCountdown target={`${couple.date}T${couple.time || "18:00"}`} />
+            </div>
 
             {/* calendar framed by khung-lich */}
             {calendar ? (
@@ -188,6 +250,17 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             </section>
           ) : null}
 
+          {/* DRESS CODE */}
+          <section className="flex w-full flex-col items-center gap-4">
+            <BaroqueHeading>Dress Code</BaroqueHeading>
+            <p className="text-center text-sm opacity-70 md:text-base" style={{ color: INK_MUTED }}>Trang phục dự tiệc</p>
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+              <div className="h-10 w-10 rounded-full shadow-md md:h-12 md:w-12" style={{ backgroundColor: GOLD }} />
+              <div className="h-10 w-10 rounded-full shadow-md md:h-12 md:w-12" style={{ backgroundColor: GOLD_DARK }} />
+              <div className="h-10 w-10 rounded-full shadow-md md:h-12 md:w-12" style={{ backgroundColor: CREAM, border: `1.5px solid ${hexToRgba(GOLD, 0.4)}` }} />
+            </div>
+          </section>
+
           {/* SCHEDULE */}
           {schedule.length > 0 ? (
             <section className="relative flex w-full flex-col items-center gap-6">
@@ -224,25 +297,39 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* PHONG BAO GIFT */}
           {banks.length > 0 ? (
-            <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GOLD_DARK }}>QR Mừng Cưới</h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold" style={{ color: GOLD_DARK }}>{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: GOLD, color: GOLD_DARK }}>Lưu QR</a>
+            <section className="flex w-full flex-col items-center gap-4">
+              <BaroqueHeading>Phong Bao Mừng Cưới</BaroqueHeading>
+              <button type="button" aria-label="Mở phong bao mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
+                <div className="relative flex h-full w-full items-center justify-center">
+                  {[
+                    { w: 30.8, style: { top: "5%", right: "5%" } },
+                    { w: 25.2, style: { top: "20%", left: "0%" } },
+                    { w: 28, style: { bottom: "20%", right: "0%" } },
+                    { w: 22.4, style: { bottom: "8%", left: "8%" } },
+                    { w: 21, style: { top: "45%", right: "-5%" } },
+                  ].map((c, i) => (
+                    <div key={i} className="absolute rounded-full" style={{ width: c.w, height: c.w, background: GOLD, border: `2px solid ${GOLD_DARK}`, boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
+                      <div className="absolute rounded-full" style={{ inset: 2, border: `2px solid ${hexToRgba(GOLD, 0.6)}` }} />
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                  <span className="absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
+                  <span className="absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
+                  <span className="absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
+                  <div className="relative" style={{ width: 140, height: 196 }}>
+                    <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "#6b1d18" }} />
+                    <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "#7a2620" }} />
+                    <div className="absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
+                      <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: GOLD }} />
+                      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${GOLD} 0%, ${GOLD_DARK} 100%)`, border: "3px solid #fef3c7" }}>
+                        <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: INK_MUTED }}>Nhấn để mở</p>
+              </button>
             </section>
           ) : null}
         </div>
@@ -258,6 +345,39 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GOLD_DARK }}>♡ thiepmungonline.com</a>
         </div>
       </div>
+
+      {/* GIFT MODAL */}
+      {giftOpen ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={() => setGiftOpen(false)}>
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CREAM }} onClick={(e) => e.stopPropagation()}>
+            <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: GOLD_DARK }}>
+              <button type="button" onClick={() => setGiftOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
+              <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]">Phong Bao Mừng Cưới</h2>
+            </div>
+            <div className="p-4 sm:p-6">
+              <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: INK }}>
+                {banks.map((q) => {
+                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  return (
+                    <div key={q.label} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
+                      <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: GOLD_DARK }}>{q.label}</h3>
+                      <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(GOLD, 0.2)}` }}>
+                        <img alt={`QR - ${q.label}`} className="h-full w-full object-contain" src={qr} />
+                      </div>
+                      <div className="mt-2 space-y-0.5 text-center">
+                        <p className="text-[10px]">{q.bank}</p>
+                        <p className="font-mono text-[10px]">{q.num}</p>
+                        <p className="text-[10px] font-semibold">{q.name}</p>
+                      </div>
+                      <a href={qr} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: GOLD_DARK, backgroundColor: hexToRgba(GOLD, 0.1) }}>Lưu QR</a>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

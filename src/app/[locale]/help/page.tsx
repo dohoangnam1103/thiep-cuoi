@@ -7,6 +7,7 @@ import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { helpCategories, helpPopularArticles } from "@/data/chungdoi-content";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { pageSeo, staticAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -16,10 +17,11 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "help" });
 
-  return {
+  return pageSeo({
     title: t("metaTitle"),
     description: t("metaDescription"),
-  };
+    alternates: staticAlternates("/help"),
+  });
 }
 
 const CATEGORY_ICONS: LucideIcon[] = [Sparkles, BookOpen, Users, Share2, CreditCard, LifeBuoy];

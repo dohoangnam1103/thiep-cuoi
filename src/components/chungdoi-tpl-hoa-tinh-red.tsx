@@ -4,7 +4,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, mapEmbedUrl,
-  FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
+  FamilyColumn, SharedCarousel, SharedCountdown, SharedWishForm, WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
 const BASE = "/chungdoi/images/themes/_decor/love-art";
@@ -24,8 +24,6 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"Alex Brush", cursive' };
@@ -61,7 +59,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
           </h1>
 
           {/* portraits inside frames */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <div className="relative z-30 mt-8 flex w-full items-start justify-center gap-4 md:gap-10">
               <div className="relative aspect-[3/4] w-[42%] max-w-[200px]">
                 {gallery[0] ? <img src={gallery[0]} alt="Chú rể" className="h-full w-full rounded-lg object-cover" /> : null}
@@ -104,18 +102,11 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
           </section>
 
           {/* ALBUM */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <HoaTinhHeading>Album Ảnh Cưới</HoaTinhHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(PURPLE, 0.3) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-                    ) : null}
-                  </button>
-                ))}
+              <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(PURPLE, 0.3) }}>
+                <SharedCarousel photos={gallery} arrowColor={PURPLE} />
               </div>
               <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={PURPLE} />
             </section>
@@ -133,6 +124,11 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+
+            <div className="mt-4 flex flex-col items-center">
+              <HoaTinhHeading>Cùng đếm ngược</HoaTinhHeading>
+              <SharedCountdown target={`${couple.date}T${couple.time || "18:00"}`} style={{ color: PURPLE }} />
+            </div>
 
             {calendar ? (
               <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[340px] md:mt-10 md:max-w-[420px]">
@@ -204,7 +200,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
           {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <HoaTinhHeading>QR Mừng Cưới</HoaTinhHeading>
+              <HoaTinhHeading>Phong Bao Mừng Cưới</HoaTinhHeading>
               <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiPolicy } from "@/components/chungdoi-policy";
-import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { pageSeo, staticAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,11 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "policy" });
 
-  return {
+  return pageSeo({
     title: t("privacyMetaTitle"),
     description: t("privacyMetaDescription"),
-    alternates: { canonical: getPathname({ href: "/privacy-policy", locale }) },
-  };
+    alternates: staticAlternates("/privacy-policy"),
+  });
 }
 
 export default async function PrivacyPolicyPage({

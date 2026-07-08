@@ -91,7 +91,7 @@ function GiftSection({ content }: { content: ChungDoiDemoContent }) {
   if (banks.length === 0) return null;
   return (
     <SectionCard className="text-center">
-      <SpringHeading>QR Mừng Cưới</SpringHeading>
+      <SpringHeading>Phong Bao Mừng Cưới</SpringHeading>
       <div className="mt-7 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
         {banks.map((q) => {
           const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;

@@ -207,7 +207,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
           {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>QR Mừng Cưới</h2>
+              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>Hộp Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;

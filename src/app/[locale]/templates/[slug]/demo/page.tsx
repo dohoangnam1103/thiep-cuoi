@@ -10,6 +10,8 @@ import {
 } from "@/data/chungdoi";
 import { routing, type Locale } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
+import { templateAlternates } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site-url";
 import { toDemoContent } from "@/lib/to-demo-content";
 
 function localeSlug(sourceSlug: string, locale: Locale) {
@@ -31,16 +33,28 @@ export async function generateMetadata({
   const template = findTemplateByRouteSlug(slug);
 
   if (!template) {
-    return { title: "Demo | Thiệp Mừng Online" };
+    return { title: { absolute: "Demo | Thiệp Mừng Online" } };
   }
 
+  const title = template.title;
+  const image = absoluteUrl(template.landscape);
+
   return {
-    title: `${template.name} Demo | Thiệp Mừng Online Clone`,
+    title: { absolute: title },
     description: template.description,
+    alternates: templateAlternates(slug) ?? undefined,
     openGraph: {
-      title: `${template.name} Demo`,
+      type: "website",
+      title,
       description: template.description,
-      images: [template.landscape],
+      images: [{ url: image }],
+      siteName: "Thiệp Mừng Online",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: template.description,
+      images: [image],
     },
   };
 }

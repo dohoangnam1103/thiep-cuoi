@@ -1,38 +1,38 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
+import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
-  hexToRgba,
-  formatDate,
   buildCalendar,
-  formatWishTime,
-  useLightbox,
-  Lightbox,
-  googleCalendarUrl,
-  mapEmbedUrl,
   FamilyColumn,
+  formatDate,
+  formatWishTime,
+  googleCalendarUrl,
+  hexToRgba,
+  Lightbox,
+  mapEmbedUrl,
   SharedWishForm,
+  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 
-const GREEN_BASE = "/chungdoi/images/themes/_decor/chateau-green";
-const GREEN = "#1f4034";
-const GREEN_MUTED = "rgba(31, 64, 52, 0.72)";
-const GREEN_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
+const CHATEAU_BASE = "/chungdoi/images/themes/_decor/chateau-blue";
+const CHATEAU_NAVY = "#123467";
+const CHATEAU_NAVY_MUTED = "rgba(18, 52, 103, 0.72)";
+const CHATEAU_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
-const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
-const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
-
-function GreenHeading({ children }: { children: React.ReactNode }) {
+function ChateauHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: GREEN }}>
+    <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: CHATEAU_NAVY }}>
       {children}
     </h2>
   );
 }
 
-/** Faithful rebuild of the Chateau Green (lau-dai-xanh) opened invitation. */
-export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoContent }) {
+/** Faithful rebuild of the Chateau Blue (lau-dai-lam) opened invitation. */
+export function ChateauInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
@@ -41,6 +41,8 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
+  const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
+  const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
@@ -52,46 +54,35 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: GREEN, borderColor: hexToRgba(GREEN, 0.2) }}>
-        {/* faint side tree */}
-        <img src={`${GREEN_BASE}/cay2-1.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.12] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
+      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: CHATEAU_NAVY, borderColor: hexToRgba(CHATEAU_NAVY, 0.2) }}>
+        {/* faint side flower */}
+        <img src={`${CHATEAU_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
 
-        {/* HEADER — castle + clouds + names + foreground scenery */}
+        {/* HEADER — castle + clouds + names */}
         <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
-          <img src={`${GREEN_BASE}/ornament.webp`} alt="" aria-hidden className="relative z-30 mb-3 h-[32px] w-auto object-contain opacity-95 md:mb-4 md:h-[38px]" />
+          <img src={`${CHATEAU_BASE}/asset-2.webp`} alt="" aria-hidden className="relative z-30 mb-3 h-[32px] w-auto object-contain opacity-95 md:mb-4 md:h-[38px]" />
           <div className="relative z-30 flex items-center justify-center gap-3 md:gap-4">
-            <img src={`${GREEN_BASE}/divider-arrow.webp`} alt="" aria-hidden className="h-auto w-[56px] object-contain opacity-90 md:w-[80px]" />
+            <img src={`${CHATEAU_BASE}/asset-1.webp`} alt="" aria-hidden className="h-auto w-[56px] object-contain opacity-90 md:w-[80px]" />
             <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]">Welcome To Our Wedding</p>
-            <img src={`${GREEN_BASE}/divider-arrow.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
+            <img src={`${CHATEAU_BASE}/asset-1.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
           </div>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: GREEN }}>
+          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: CHATEAU_NAVY }}>
             <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
             <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
             <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
           </h1>
-          <div className="relative mt-6 flex w-full shrink-0 items-end justify-center md:mt-10">
-            {/* clouds behind castle */}
-            <img src={`${GREEN_BASE}/cloud-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[10%] right-[-6%] z-0 h-auto w-[70%] max-w-none object-contain opacity-90" />
-            <img src={`${GREEN_BASE}/cloud-3.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[6%] left-[0%] z-0 h-auto w-[60%] max-w-none object-contain opacity-70" />
-            <img src={`${GREEN_BASE}/cloud-2.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[24%] -left-[8%] z-0 h-auto w-[55%] max-w-none object-contain opacity-90" />
-            {/* flanking trees */}
-            <img src={`${GREEN_BASE}/cay1-1.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-[-2%] z-20 h-auto w-[30%] max-w-none object-contain" />
-            <img src={`${GREEN_BASE}/cay2-2.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 right-[-2%] z-20 h-auto w-[28%] max-w-none object-contain" />
-            {/* castle centerpiece */}
-            <img src={`${GREEN_BASE}/chateau.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[420px] max-w-none object-contain md:w-[820px]" />
-          </div>
-          {/* foreground scenery */}
-          <div className="relative -mt-4 flex w-full items-end justify-center md:-mt-8">
-            <img src={`${GREEN_BASE}/fountain.webp`} alt="" aria-hidden className="pointer-events-none relative z-30 h-auto w-[120px] object-contain md:w-[200px]" />
-            <img src={`${GREEN_BASE}/barrier.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-[4%] z-20 h-auto w-[40%] max-w-none object-contain opacity-95" />
-            <img src={`${GREEN_BASE}/brick.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-1 right-[2%] z-10 h-auto w-[42%] max-w-none object-contain opacity-90" />
+          <div className="relative mt-6 shrink-0 md:mt-10">
+            <img src={`${CHATEAU_BASE}/cloud-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[50%] right-[-28%] z-0 h-auto w-[100%] max-w-none object-contain opacity-90" />
+            <img src={`${CHATEAU_BASE}/cloud-3.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[35%] left-[2%] z-0 h-auto w-[100%] max-w-none object-contain opacity-70" />
+            <img src={`${CHATEAU_BASE}/cloud-2.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[5%] -left-[5%] z-0 h-auto w-[90%] max-w-none object-contain opacity-90" />
+            <img src={`${CHATEAU_BASE}/home.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[560px] max-w-none object-contain md:w-[1200px]" />
           </div>
         </header>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
-            <GreenHeading>Thông Tin Lễ Cưới</GreenHeading>
+            <ChateauHeading>Thông Tin Lễ Cưới</ChateauHeading>
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
@@ -100,10 +91,10 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: CHATEAU_NAVY_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
               <div className="text-[24px] md:text-[32px]" style={ampFont}>&amp;</div>
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: CHATEAU_NAVY_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -113,21 +104,21 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GREEN_MUTED }}>{GREEN_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: CHATEAU_NAVY_MUTED }}>{CHATEAU_LUNAR}</div>
               </div>
             ) : null}
             <div className="relative flex justify-center">
-              <img src={`${GREEN_BASE}/ornament.webp`} alt="" aria-hidden className="h-auto w-[280px] object-contain opacity-90 md:w-[420px]" />
+              <img src={`${CHATEAU_BASE}/hoa-ngang.webp`} alt="" aria-hidden className="h-auto w-[380px] object-contain md:w-[680px]" />
             </div>
           </section>
 
           {/* ALBUM */}
           {albumShown.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
-              <GreenHeading>Album Ảnh Cưới</GreenHeading>
+              <ChateauHeading>Album Ảnh Cưới</ChateauHeading>
               <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
                 {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>
+                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(CHATEAU_NAVY, 0.3) }}>
                     <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
                     {i === albumShown.length - 1 && albumExtra > 0 ? (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
@@ -135,14 +126,14 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
                   </button>
                 ))}
               </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GREEN} />
+              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={CHATEAU_NAVY} />
             </section>
           ) : null}
 
           {/* RECEPTION INFO + calendar */}
           <section className="relative flex w-full flex-col items-center gap-3">
-            <img src={`${GREEN_BASE}/cay2-2.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-30 right-0 -z-10 h-[700px] w-auto max-w-none object-contain opacity-[0.12] md:-top-150 md:right-[20%] md:h-[900px]" />
-            <GreenHeading>Thông Tin Tiệc Cưới</GreenHeading>
+            <img src={`${CHATEAU_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-30 right-0 -z-10 h-[700px] w-auto max-w-none object-contain opacity-[0.17] md:-top-150 md:right-[20%] md:h-[900px]" />
+            <ChateauHeading>Thông Tin Tiệc Cưới</ChateauHeading>
             <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]">Tiệc cưới sẽ diễn ra vào lúc:</p>
             <div className="text-[20px] font-semibold md:text-[30px]">{venue.banquetTime || couple.time}</div>
             {reception ? (
@@ -151,12 +142,12 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GREEN_MUTED }}>{GREEN_LUNAR}</div>
+            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: CHATEAU_NAVY_MUTED }}>{CHATEAU_LUNAR}</div>
 
             {/* calendar framed by frame-lich */}
             {calendar ? (
               <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[340px] md:mt-10 md:max-w-[420px]">
-                <img src={`${GREEN_BASE}/frame-lich.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-fill" />
+                <img src={`${CHATEAU_BASE}/frame-lich.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-fill" />
                 <div className="relative flex h-full w-full flex-col items-center justify-center px-8 py-6">
                   <p className="text-[12px] font-semibold uppercase tracking-wide md:text-[13px]">Tháng {calendar.month} / {calendar.year}</p>
                   <div className="mt-2 grid w-full grid-cols-7 text-[10px] font-medium opacity-70 md:text-[11px]">
@@ -164,39 +155,39 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
                   </div>
                   <div className="grid w-full grid-cols-7 gap-y-0.5 text-[11px] md:text-[12px]">
                     {calendar.cells.map((day, i) => (
-                      <span key={i} className={`flex aspect-square items-center justify-center rounded-full ${day === calendar.highlight ? "font-bold text-white" : ""}`} style={day === calendar.highlight ? { backgroundColor: GREEN } : undefined}>{day ?? ""}</span>
+                      <span key={i} className={`flex aspect-square items-center justify-center rounded-full ${day === calendar.highlight ? "font-bold text-white" : ""}`} style={day === calendar.highlight ? { backgroundColor: CHATEAU_NAVY } : undefined}>{day ?? ""}</span>
                     ))}
                   </div>
                 </div>
               </div>
             ) : null}
 
-            <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition" style={{ borderColor: GREEN, color: GREEN }}>Thêm vào lịch</a>
+            <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition" style={{ borderColor: CHATEAU_NAVY, color: CHATEAU_NAVY }}>Thêm vào lịch</a>
 
             <div className="relative flex justify-center pt-6 md:pt-8">
-              <img src={`${GREEN_BASE}/hoanho2-1.webp`} alt="" aria-hidden className="h-auto w-[420px] object-contain md:w-[680px]" />
+              <img src={`${CHATEAU_BASE}/ban-tiec.webp`} alt="" aria-hidden className="h-auto w-[450px] object-contain md:w-[730px]" />
             </div>
           </section>
 
           {/* VENUE MAP */}
           {mapQuery ? (
             <section className="flex w-full flex-col items-center gap-3 text-center">
-              <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>Tiệc cưới sẽ tổ chức tại</h3>
+              <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: CHATEAU_NAVY }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
-              <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>
+              <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(CHATEAU_NAVY, 0.3) }}>
                 <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
 
-          {/* SCHEDULE — with tree decor */}
+          {/* SCHEDULE — with ring + candle decor */}
           {schedule.length > 0 ? (
             <section className="relative flex w-full flex-col items-center gap-6">
-              <div className="pointer-events-none absolute top-[90px] bottom-[20px] left-8 -z-10 flex flex-col items-center justify-between opacity-80 md:left-12">
-                <img src={`${GREEN_BASE}/cay1-1.webp`} alt="" aria-hidden className="h-[120px] w-auto object-contain md:h-[160px]" />
-                <img src={`${GREEN_BASE}/cay2-1.webp`} alt="" aria-hidden className="h-[120px] w-auto object-contain md:h-[160px]" />
+              <div className="pointer-events-none absolute top-[90px] bottom-[20px] left-12 -z-10 flex flex-col items-center justify-between opacity-90 md:left-16">
+                <img src={`${CHATEAU_BASE}/nhan.webp`} alt="" aria-hidden className="h-[60px] w-auto object-contain md:h-[80px]" />
+                <img src={`${CHATEAU_BASE}/nen.webp`} alt="" aria-hidden className="h-[120px] w-auto object-contain md:h-[160px]" />
               </div>
-              <GreenHeading>Lịch Trình Ngày Cưới</GreenHeading>
+              <ChateauHeading>Lịch Trình Ngày Cưới</ChateauHeading>
               <ol className="mx-auto flex w-full max-w-sm flex-col gap-4">
                 {schedule.map((s, i) => (
                   <li key={`${s.time}-${i}`} className="flex items-baseline gap-4">
@@ -208,17 +199,17 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
             </section>
           ) : null}
 
-          {/* WISHES — with faint corner tree */}
+          {/* WISHES — with faint corner flower */}
           <section className="relative w-full">
-            <img src={`${GREEN_BASE}/cay2-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-82 left-0 -z-10 h-[700px] w-auto max-w-none object-contain opacity-[0.12] md:-top-120 md:left-50 md:h-[800px]" />
-            <div className="text-center"><GreenHeading>Sổ Lưu Bút</GreenHeading></div>
-            <SharedWishForm accent={GREEN} />
+            <img src={`${CHATEAU_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-82 left-0 -z-10 h-[700px] w-auto max-w-none object-contain opacity-[0.17] md:-top-120 md:left-50 md:h-[800px]" />
+            <div className="text-center"><ChateauHeading>Sổ Lưu Bút</ChateauHeading></div>
+            <SharedWishForm accent={CHATEAU_NAVY} />
             {wishes.length > 0 ? (
               <div className="chungdoi-scroll touch-pan-y mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
-                  <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-xs" style={{ borderColor: hexToRgba(GREEN, 0.2), backgroundColor: "#ffffff" }}>
+                  <div key={`${w.name}-${i}`} className="rounded-lg border p-3 text-xs" style={{ borderColor: hexToRgba(CHATEAU_NAVY, 0.2), backgroundColor: "#ffffff" }}>
                     <div className="flex items-start justify-between">
-                      <span className="font-semibold" style={{ color: GREEN }}>{w.name}</span>
+                      <span className="font-semibold" style={{ color: CHATEAU_NAVY }}>{w.name}</span>
                       <span className="text-xs opacity-70">{formatWishTime(w.time)}</span>
                     </div>
                     <p className="mt-2 leading-relaxed">{w.text}</p>
@@ -231,7 +222,7 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
           {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>Hộp Mừng Cưới</h2>
+              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: CHATEAU_NAVY }}>QR Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
@@ -242,7 +233,7 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
                       <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
                       <p className="text-[13px] font-mono">{q.num}</p>
                       <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: GREEN, color: GREEN }}>Lưu QR</a>
+                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: CHATEAU_NAVY, color: CHATEAU_NAVY }}>Lưu QR</a>
                     </div>
                   );
                 })}
@@ -251,15 +242,15 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
           ) : null}
         </div>
 
-        {/* FOOTER — celebration scenery */}
+        {/* FOOTER — birds */}
         <div className="relative flex justify-center pb-6 md:pb-10">
-          <img src={`${GREEN_BASE}/hoanho3-1.webp`} alt="" aria-hidden className="h-auto w-[440px] object-contain md:w-[680px]" />
+          <img src={`${CHATEAU_BASE}/chim.webp`} alt="" aria-hidden className="h-auto w-[480px] object-contain md:w-[680px]" />
         </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: GREEN }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#eef6f0" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: CHATEAU_NAVY }}>
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#eef3fb" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
-          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GREEN }}>♡ thiepmungonline.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: CHATEAU_NAVY }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>

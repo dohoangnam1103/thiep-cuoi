@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiTools } from "@/components/chungdoi-tools";
-import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { pageSeo, staticAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,11 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "tools" });
 
-  return {
+  return pageSeo({
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: { canonical: getPathname({ href: "/tools", locale }) },
-  };
+    alternates: staticAlternates("/tools"),
+  });
 }
 
 export default async function ToolsPage({

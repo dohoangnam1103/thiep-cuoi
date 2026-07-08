@@ -6,6 +6,7 @@ import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
 import { prisma } from "@/lib/prisma";
 import { FREE_TRIAL_DAYS } from "@/lib/payment";
+import { SITE_URL } from "@/lib/site-url";
 import { toDemoContent } from "@/lib/to-demo-content";
 import { submitRsvp, submitWish } from "./actions";
 
@@ -38,14 +39,31 @@ export async function generateMetadata({
   const bride = brideShortName || brideFullName;
   const groom = groomShortName || groomFullName;
   const title = bride && groom ? `Đám cưới ${groom} & ${bride}` : "Thiệp cưới";
+  const description = bride && groom
+    ? `Trân trọng kính mời bạn đến chung vui trong ngày cưới của ${groom} & ${bride}.`
+    : "Trân trọng kính mời bạn đến chung vui trong ngày cưới.";
   const firstPhoto = invitation.gallery[0]?.url;
+  const images = firstPhoto ? [firstPhoto] : undefined;
 
   return {
+    metadataBase: new URL(SITE_URL),
     title: `${title} | Thiệp Mừng Online`,
-    description: `Trân trọng kính mời bạn đến chung vui trong ngày cưới của ${groom} & ${bride}.`,
+    description,
+    robots: { index: false, follow: false },
+    alternates: { canonical: `/thiep/${slug}` },
     openGraph: {
       title,
-      images: firstPhoto ? [firstPhoto] : undefined,
+      description,
+      url: `/thiep/${slug}`,
+      siteName: "Thiệp Mừng Online",
+      type: "website",
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images,
     },
   };
 }

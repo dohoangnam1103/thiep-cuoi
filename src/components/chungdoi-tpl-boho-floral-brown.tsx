@@ -206,7 +206,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
           {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <BohoHeading>QR Mừng Cưới</BohoHeading>
+              <BohoHeading>Phong Bao Mừng Cưới</BohoHeading>
               <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;

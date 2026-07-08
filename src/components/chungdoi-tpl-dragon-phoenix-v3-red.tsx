@@ -12,6 +12,9 @@ import {
   googleCalendarUrl,
   mapEmbedUrl,
   FamilyColumn,
+  SharedCarousel,
+  SharedCountdown,
+  DressCode,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
 
@@ -38,8 +41,6 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
@@ -101,18 +102,11 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
           </section>
 
           {/* ALBUM */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <RedHeading>Album Ảnh Cưới</RedHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-                    ) : null}
-                  </button>
-                ))}
+              <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
+                <SharedCarousel photos={gallery} arrowColor={RED} />
               </div>
               <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={RED} />
             </section>
@@ -130,6 +124,11 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
             <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: RED_MUTED }}>{RED_LUNAR}</div>
+
+            <div className="mt-4 flex flex-col items-center">
+              <RedHeading>Cùng đếm ngược</RedHeading>
+              <SharedCountdown target={`${couple.date}T${couple.time || "18:00"}`} style={{ color: RED }} />
+            </div>
 
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border p-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(GOLD, 0.5), backgroundColor: hexToRgba(GOLD, 0.06) }}>
@@ -158,6 +157,8 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             </section>
           ) : null}
+
+          <DressCode headingColor={RED} subColor={RED_MUTED} colors={[{ color: RED }, { color: "#fffdf8", border: RED }, { color: GOLD }]} />
 
           {/* SCHEDULE */}
           {schedule.length > 0 ? (
@@ -196,7 +197,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
           {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: RED }}>QR Mừng Cưới</h2>
+              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: RED }}>Phong Bao Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;

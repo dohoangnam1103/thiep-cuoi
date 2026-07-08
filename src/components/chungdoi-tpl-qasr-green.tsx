@@ -8,6 +8,9 @@ import {
   googleCalendarUrl,
   mapEmbedUrl,
   FamilyColumn,
+  SharedCarousel,
+  SharedCountdown,
+  DressCode,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -39,8 +42,6 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
@@ -108,18 +109,11 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
           </section>
 
           {/* ALBUM */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <QasrHeading>Album Ảnh Cưới</QasrHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-                    ) : null}
-                  </button>
-                ))}
+              <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
+                <SharedCarousel photos={gallery} arrowColor={QASR_GREEN} />
               </div>
               <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={QASR_GREEN} />
             </section>
@@ -138,6 +132,11 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
             <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: QASR_GREEN_MUTED }}>{QASR_LUNAR}</div>
+
+            <div className="mt-4 flex flex-col items-center">
+              <QasrHeading>Cùng đếm ngược</QasrHeading>
+              <SharedCountdown target={`${couple.date}T${couple.time || "18:00"}`} style={{ color: QASR_GREEN }} />
+            </div>
 
             {/* food + cake decor */}
             <div className="mt-4 flex items-end justify-center gap-6">
@@ -177,6 +176,8 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
             </section>
           ) : null}
 
+          <DressCode headingColor={QASR_GREEN} subColor={QASR_GREEN_MUTED} colors={[{ color: QASR_GREEN }, { color: "#f1ede0", border: QASR_GREEN }, { color: QASR_GOLD }]} />
+
           {/* SCHEDULE — with ring decor */}
           {schedule.length > 0 ? (
             <section className="relative flex w-full flex-col items-center gap-6">
@@ -215,7 +216,7 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
           {/* QR GIFT */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: QASR_GREEN }}>QR Mừng Cưới</h2>
+              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: QASR_GREEN }}>Phong Bao Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
                   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
