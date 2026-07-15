@@ -12,6 +12,7 @@ import { templates } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
 import { getCurrentUserId } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
+import { loadPublished } from "@/lib/published-invitation";
 import { FREE_TRIAL_DAYS } from "@/lib/payment";
 import { SITE_URL } from "@/lib/site-url";
 import { toDemoContent } from "@/lib/to-demo-content";
@@ -22,19 +23,6 @@ function isExpired(paid: boolean, publishedAt: Date | null): boolean {
   if (!publishedAt) return false;
   const deadline = publishedAt.getTime() + FREE_TRIAL_DAYS * 24 * 60 * 60 * 1000;
   return Date.now() > deadline;
-}
-
-async function loadPublished(slug: string) {
-  return prisma.invitation.findFirst({
-    where: { slug, status: "published" },
-    include: {
-      content: true,
-      schedule: true,
-      gallery: true,
-      wishes: { orderBy: { createdAt: "desc" } },
-      rsvpQuestions: { orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] },
-    },
-  });
 }
 
 function OwnerManagementLink({ label }: { label: string }) {
