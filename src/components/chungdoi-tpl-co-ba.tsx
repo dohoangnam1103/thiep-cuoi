@@ -6,12 +6,13 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
+  buildVietQrImageUrl,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -293,7 +294,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                   <div className="mx-auto mt-2 max-w-[280px] whitespace-pre-line text-center text-[15px] leading-snug md:mt-3 md:max-w-md md:text-[18px] lg:max-w-lg lg:text-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{venue.address}</div>
                 </div>
                 <div className="relative flex w-full flex-col items-center gap-4 md:gap-5">
-                  <iframe title={mapQuery} className="mt-2 h-[240px] w-full max-w-[338px] overflow-hidden rounded-[15px] md:h-[320px] md:max-w-[560px] lg:h-[340px] lg:max-w-[600px]" src={mapEmbedUrl(mapQuery)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  <InvitationMap query={mapQuery} title={mapQuery} className="mt-2 h-[240px] w-full max-w-[338px] overflow-hidden rounded-[15px] md:h-[320px] md:max-w-[560px] lg:h-[340px] lg:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                 </div>
               </section>
             ) : null}
@@ -345,11 +346,11 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             {bankCards.length > 0 ? (
               <div className="relative flex w-full max-w-[248px] flex-col items-center justify-center px-2 py-[10px] md:max-w-none md:px-10 md:py-[15px] lg:py-[20px]">
                 <h2 className="mb-4 flex flex-col items-center text-[21px] md:text-[25px] lg:text-[32px]" style={{ color: BROWN, fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
-                <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setBankOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-                  <div className="relative flex h-full w-full items-center justify-center">
+                <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setBankOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
+                  <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
                     {/* envelope body */}
-                    <div className="relative" style={{ width: 140, height: 196 }}>
-                      <div className="absolute overflow-hidden rounded-lg" style={{ inset: 0, backgroundColor: "#b91c1c", boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
+                    <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
+                      <div className="nhat-binh-envelope-front absolute overflow-hidden rounded-lg" style={{ inset: 0, backgroundColor: "#b91c1c", boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
                         <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: "#fbbf24" }} />
                         <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: "radial-gradient(circle, #fbbf24 0%, #d97706 100%)", border: "3px solid #fef3c7" }}>
                           <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1, textShadow: "1px 1px 2px rgba(0,0,0,0.2)" }}>囍</span>
@@ -357,7 +358,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                       </div>
                     </div>
                   </div>
-                  <p className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: BROWN }}>Nhấn để mở</p>
+                  <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: BROWN }}>Nhấn để mở</p>
                 </button>
                 {bankOpen ? (
                   <div className="fixed inset-0 z-[95] flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" onClick={() => setBankOpen(false)}>
@@ -369,7 +370,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                       <div className="p-4 sm:p-6">
                         <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: BROWN }}>
                           {bankCards.map((q) => {
-                            const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                            const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                             return (
                               <div key={q.role} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                                 <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: RED }}>{q.role} - {q.name}</h3>
@@ -393,7 +394,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             ) : null}
 
             {/* footer */}
-            <footer className="flex w-full max-w-[329px] flex-col items-center px-4 py-[10px] text-center md:max-w-2xl md:px-10 md:py-[15px] lg:py-[20px]">
+            <footer data-template-footer className="flex w-full max-w-[329px] flex-col items-center px-4 py-[10px] text-center md:max-w-2xl md:px-10 md:py-[15px] lg:py-[20px]">
               <span className="flex flex-col items-center gap-1 whitespace-pre-line text-[14px] leading-normal md:text-base lg:text-lg" style={{ color: BROWN, fontFamily: COBA_HELV }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
             </footer>
           </div>

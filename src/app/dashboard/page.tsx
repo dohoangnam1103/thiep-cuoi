@@ -3,6 +3,7 @@ import Link from "next/link";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { templateLabel } from "@/app/editor/[id]/templates";
+import { LogoMark } from "@/components/logo-mark";
 import { logout } from "../(auth)/actions";
 import { NewInvitationButton } from "./NewInvitationButton";
 
@@ -20,8 +21,17 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
+      <header className="flex items-center justify-between gap-4">
+        <Link
+          href="/"
+          aria-label="Về trang chủ"
+          className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-muted"
+        >
+          <LogoMark className="size-9 shrink-0" />
+          <span className="font-pattaya text-2xl text-foreground sm:text-3xl">
+            Thiệp Mừng Online
+          </span>
+        </Link>
         <form action={logout}>
           <button
             type="submit"
@@ -30,9 +40,10 @@ export default async function DashboardPage() {
             Đăng xuất
           </button>
         </form>
-      </div>
+      </header>
 
-      <div className="mt-6">
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
         <NewInvitationButton />
       </div>
 
@@ -110,6 +121,8 @@ export default async function DashboardPage() {
                   ) : (
                     <Link
                       href={`/dashboard/${inv.id}/thanh-toan`}
+                      data-ga-event="checkout_click"
+                      data-ga-param-source="dashboard"
                       className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground transition hover:bg-primary/90"
                     >
                       Thanh toán

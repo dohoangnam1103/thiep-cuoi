@@ -119,9 +119,9 @@ test.describe("dashboard — create", () => {
       await page.goto("/dashboard");
       await page.getByRole("button", { name: "+ Tạo thiệp mới" }).click();
       await expect(page.getByRole("heading", { name: "Chọn mẫu thiệp" })).toBeVisible();
-      // Each template is its own <form> with a submit button → several submit buttons.
+      // Each completed template is its own <form> with a submit button.
       const submits = page.locator('div.fixed form button[type="submit"]');
-      expect(await submits.count()).toBeGreaterThan(0);
+      await expect(submits).toHaveCount(39);
     } finally {
       cleanupUser(user.id);
     }
@@ -153,6 +153,20 @@ test.describe("dashboard — create", () => {
 });
 
 test.describe("dashboard — navigation", () => {
+  test("clicking the header logo navigates to the home page", async ({ page, context }) => {
+    const user = createUser();
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto("/dashboard");
+
+      await page.getByRole("link", { name: "Về trang chủ" }).click();
+      await page.waitForURL(/\/$/);
+      expect(new URL(page.url()).pathname).toBe("/");
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
   test("'Chỉnh sửa' link navigates to the editor", async ({ page, context }) => {
     const user = createUser();
     const inv = createInvitation(user.id, { templateId: "song-hy-red" });
@@ -190,6 +204,62 @@ test.describe("dashboard — navigation", () => {
       await page.getByRole("link", { name: "Xem xác nhận" }).click();
       await page.waitForURL(`**/dashboard/${inv.id}/rsvp`);
       expect(page.url()).toContain(`/dashboard/${inv.id}/rsvp`);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+});
+
+test.describe("dashboard — guest manager v2", () => {
+  test("owner can add and edit structured guest information", async ({ page, context }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id);
+    publishInvitation(inv.id);
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/guests`);
+      await page.getByRole("button", { name: "Thêm khách" }).first().click();
+      await page.getByLabel("Họ và tên *").fill("Nguyễn Minh Anh");
+      await page.getByLabel("Vai trò / danh xưng").fill("Anh");
+      await page.getByRole("textbox", { name: "Nhóm khách", exact: true }).fill("Bạn đại học");
+      await page.getByLabel("Bàn tiệc").fill("Bàn 05");
+      await page.getByLabel("Số khách tối đa").fill("2");
+      await page.getByRole("button", { name: "Thêm khách" }).last().click();
+
+      await expect(page.getByRole("table").getByText("Nguyễn Minh Anh", { exact: true })).toBeVisible();
+      await page.getByRole("button", { name: "Sửa thông tin Nguyễn Minh Anh" }).click();
+      await page.getByLabel("Bàn tiệc").fill("Bàn 08");
+      await expect(page.getByLabel("Bàn tiệc")).toHaveValue("Bàn 08");
+      await page.getByRole("button", { name: "Lưu thay đổi" }).click();
+
+      await expect.poll(() => getDb().prepare(
+        "SELECT groupName, tableName, maxGuests FROM Guest WHERE invitationId = ? AND name = ?",
+      ).get(inv.id, "Nguyễn Minh Anh")).toEqual({ groupName: "Bạn đại học", tableName: "Bàn 08", maxGuests: 2 });
+      await expect(page.getByRole("table").getByText("Bàn 08", { exact: true })).toBeVisible();
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("owner can import a CSV guest list", async ({ page, context }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id);
+    publishInvitation(inv.id);
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/guests`);
+      await page.getByRole("button", { name: "Nhập CSV" }).click();
+      await page.locator('input[type="file"]').setInputFiles({
+        name: "khach-moi.csv",
+        mimeType: "text/csv",
+        buffer: Buffer.from(
+          "Họ và tên,Vai trò,Nhà,Nhóm khách,Bàn,Số khách tối đa\nTrần Thu Hà,Chị,Nhà gái,Đồng nghiệp,Bàn 02,2\nLê Minh Quân,Anh,Nhà trai,Họ hàng,Bàn 03,1",
+        ),
+      });
+      await expect(page.getByText("Sẵn sàng nhập 2 khách")).toBeVisible();
+      await page.getByRole("button", { name: "Nhập 2 khách" }).click();
+      await expect(page.getByText("Trần Thu Hà", { exact: true })).toBeVisible();
+      await expect(page.getByText("Lê Minh Quân", { exact: true })).toBeVisible();
     } finally {
       cleanupUser(user.id);
     }

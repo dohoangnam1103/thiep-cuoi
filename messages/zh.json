@@ -248,6 +248,22 @@
       "chatWithUs": "联系我们"
     }
   },
+  "templatePreviewModal": {
+    "eyebrow": "在线婚礼请柬",
+    "title": "预览请柬模板",
+    "description": "将鼠标悬停在图片上，即可从头到尾查看完整设计。请柬已针对手机、婚礼相册和在线回执进行优化。",
+    "previewTypeLabel": "预览方式",
+    "previewTypeValue": "完整请柬",
+    "highlightMobile": "适配手机和电脑屏幕",
+    "highlightRsvp": "内置在线出席回执",
+    "highlightGallery": "包含婚礼相册和活动信息",
+    "hoverHint": "悬停查看完整请柬",
+    "imageAlt": "完整婚礼请柬模板预览",
+    "close": "关闭预览"
+  },
+  "demoCta": {
+    "useTemplate": "使用此请柬"
+  },
   "listing": {
     "metaTitle": "婚礼请柬模板 | Thiệp Mừng Online",
     "metaDescription": "浏览 Thiệp Mừng Online 婚礼请柬模板：按风格和颜色筛选，预览并打开带封面动画、相册和 RSVP 的在线演示。",
@@ -396,5 +412,85 @@
     "subtitle": "快速找到答案。用 Thiệp Mừng Online 创建完美的婚礼请柬。",
     "searchPlaceholder": "搜索问题...",
     "popularTitle": "热门文章"
+  },
+  "publicInvitation": {
+    "manage": "管理请柬",
+    "guestFallback": "尊敬的宾客",
+    "rsvp": {
+      "open": "确认出席",
+      "title": "确认出席",
+      "description": "请告诉我们您是否能来参加婚礼。",
+      "close": "关闭",
+      "name": "姓名 *",
+      "attending": "您会出席吗？",
+      "attendingYes": "我会出席",
+      "attendingNo": "无法出席",
+      "guestCount": "出席人数",
+      "side": "亲友方",
+      "sideEmpty": "未选择",
+      "groomSide": "新郎方",
+      "brideSide": "新娘方",
+      "shuttle": "我需要接送",
+      "dietary": "饮食要求或过敏",
+      "songRequest": "点歌",
+      "message": "留言",
+      "answerYes": "是",
+      "answerNo": "否",
+      "selectPlaceholder": "请选择",
+      "submit": "提交回复",
+      "submitting": "正在提交...",
+      "success": "感谢您的回复！"
+    },
+    "media": {
+      "open": "美好瞬间",
+      "title": "宾客分享的美好瞬间",
+      "description": "一起分享婚礼当天的照片和视频。所有宾客都可以查看和下载这些回忆。",
+      "close": "关闭",
+      "contributorName": "您的姓名 *",
+      "contributorPlaceholder": "请输入姓名，让大家知道是谁分享的",
+      "chooseFiles": "选择照片或视频",
+      "fileHint": "最多6个文件 · 照片12MB · 视频80MB",
+      "selected": "已选择",
+      "remove": "移除文件",
+      "upload": "分享美好瞬间",
+      "uploading": "正在上传...",
+      "loading": "正在加载...",
+      "empty": "还没有人分享。快来上传第一张照片或第一个视频吧。",
+      "download": "下载",
+      "success": "分享成功，谢谢！",
+      "errorGeneric": "暂时无法处理，请重试。",
+      "errorInvalidName": "请输入您的姓名。",
+      "errorTooManyFiles": "每次最多选择6个文件。",
+      "errorImageTooLarge": "每张照片必须小于12MB。",
+      "errorVideoTooLarge": "每个视频必须小于80MB。",
+      "errorUnsupported": "文件格式不受支持。请使用 JPG、PNG、WebP、GIF、MP4、MOV 或 WebM。",
+      "errorGalleryFull": "相册存储空间已满，请联系请柬管理员。"
+    }
+  },
+  "editor": {
+    "draft": {
+      "server": "已保存到系统",
+      "saving": "正在保存更改...",
+      "local": "已临时保存到此设备",
+      "restored": "已恢复未保存的内容",
+      "error": "无法临时保存 — 请点击保存草稿"
+    },
+    "music": {
+      "label": "背景音乐",
+      "dialogTitle": "选择背景音乐",
+      "choose": "选择音乐",
+      "change": "更换音乐",
+      "remove": "无音乐",
+      "searchPlaceholder": "按歌曲或歌手搜索...",
+      "loading": "正在加载音乐...",
+      "empty": "未找到匹配的歌曲。",
+      "loadMore": "加载更多",
+      "currentMusic": "当前音乐",
+      "preview": "试听",
+      "stopPreview": "停止试听",
+      "select": "选择",
+      "close": "关闭",
+      "error": "无法加载音乐库，请重试。"
+    }
   }
 }

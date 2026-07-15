@@ -40,6 +40,10 @@ export type ChungDoiDemoContent = {
     banquetTime: string;
   };
   schedule: { time: string; label: string }[];
+  portraits?: {
+    bride: string;
+    groom: string;
+  };
   gallery: string[];
   wishes: { name: string; time: string; text: string }[];
   bank: {
@@ -698,7 +702,13 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
         "label": "Kết thúc tiệc"
       }
     ],
-    "gallery": [],
+    "gallery": [
+      "/chungdoi/images/gallery/dragon-phoenix-red/photo-1.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-red/photo-2.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-red/photo-3.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-red/photo-4.webp",
+      "/chungdoi/images/gallery/dragon-phoenix-red/photo-5.webp"
+    ],
     "wishes": [
       {
         "name": "Ngọc Hồ",
@@ -1145,6 +1155,10 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
         "label": "Kết thúc tiệc"
       }
     ],
+    "portraits": {
+      "bride": "/chungdoi/images/themes/boho-floral-green/hero-bride.webp",
+      "groom": "/chungdoi/images/themes/boho-floral-green/hero-groom.webp"
+    },
     "gallery": [
       "/chungdoi/images/gallery/boho-floral-green/photo-1.webp",
       "/chungdoi/images/gallery/boho-floral-green/photo-2.webp",
@@ -3182,6 +3196,10 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
         "label": "Kết thúc tiệc"
       }
     ],
+    "portraits": {
+      "bride": "/chungdoi/images/themes/boho-floral-brown/hero-bride.webp",
+      "groom": "/chungdoi/images/themes/boho-floral-brown/hero-groom.webp"
+    },
     "gallery": [
       "/chungdoi/images/gallery/boho-floral-brown/photo-1.webp",
       "/chungdoi/images/gallery/boho-floral-brown/photo-2.webp",
@@ -3538,7 +3556,16 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
         "label": "Kết thúc tiệc"
       }
     ],
-    "gallery": [],
+    "gallery": [
+      "/chungdoi/images/gallery/spring-garden-blue/photo-1.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-2.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-3.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-4.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-5.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-6.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-7.webp",
+      "/chungdoi/images/gallery/spring-garden-blue/photo-8.webp"
+    ],
     "wishes": [
       {
         "name": "Khoa NTT",

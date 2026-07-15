@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { trackEvent } from "@/lib/analytics";
 import { BANK, buildVietQrUrl } from "@/lib/payment";
 import { applyVoucherToPayment, type PaymentInfo } from "./actions";
 
@@ -29,6 +30,12 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
   const expiresAtMs = new Date(initial.expiresAt).getTime();
 
   useEffect(() => {
+    if (initial.status !== "paid") {
+      trackEvent("begin_checkout", { currency: "VND", value: initial.amount });
+    }
+  }, [initial.amount, initial.status]);
+
+  useEffect(() => {
     if (paid || expired) return;
     const timeout = setTimeout(() => setExpired(true), Math.max(0, expiresAtMs - Date.now()));
     return () => clearTimeout(timeout);
@@ -42,6 +49,12 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
         if (!res.ok) return;
         const data = (await res.json()) as { status: string };
         if (data.status === "paid") {
+          trackEvent("purchase", {
+            transaction_id: initial.code,
+            currency: "VND",
+            value: amount,
+            coupon: voucherCode || undefined,
+          });
           setPaid(true);
           if (pollRef.current) clearInterval(pollRef.current);
           router.push("/dashboard");
@@ -58,7 +71,7 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [initial.code, expired, paid, router]);
+  }, [amount, initial.code, expired, paid, router, voucherCode]);
 
   async function onApplyVoucher() {
     setApplying(true);
@@ -66,6 +79,10 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
     const result = await applyVoucherToPayment(initial.paymentId, voucherInput);
     setApplying(false);
     if (result.ok) {
+      trackEvent("apply_voucher", {
+        currency: "VND",
+        discount: Math.max(0, amount - result.amount),
+      });
       setAmount(result.amount);
       setVoucherCode(result.voucherCode);
       setVoucherInput("");

@@ -5,9 +5,9 @@
 # ============================================
 
 # IMPORTANT: Node.js Version Maintenance
-# This Dockerfile defaults to Node.js 24.14.1-slim to match the repo's Node 24 baseline.
+# This Dockerfile defaults to the latest tested Node.js 24 LTS patch.
 # To ensure security and compatibility, update the NODE_VERSION ARG when the project's Node baseline changes.
-ARG NODE_VERSION=24.14.1-slim
+ARG NODE_VERSION=24.18.0-slim
 
 FROM node:${NODE_VERSION} AS dependencies
 
@@ -42,6 +42,17 @@ RUN npm rebuild better-sqlite3
 
 FROM node:${NODE_VERSION} AS builder
 
+# Prisma detects OpenSSL while generating the client. Keep it in the build
+# stage only; the SQLite driver adapter does not need the Prisma engine at runtime.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+# Mỗi deployment cần một ID riêng để Next.js thêm ?dpl=... vào static assets.
+# Nếu không, trình duyệt có thể giữ chunk Turbopack cũ vì Cache-Control immutable.
+ARG NEXT_DEPLOYMENT_ID=local
+ARG NEXT_PUBLIC_SITE_URL=https://thiepmungonline.com
+
 # Set working directory
 WORKDIR /app
 
@@ -51,9 +62,15 @@ COPY --from=dependencies /app/node_modules ./node_modules
 # Copy application source code
 COPY . .
 
+# Preserve every public URL while storing byte-identical theme assets only once
+# in the image layer. The source worktree remains untouched.
+RUN node scripts/dedupe-public-assets.mjs --apply
+
 ENV NODE_ENV=production
 ENV DATABASE_URL="file:./dev.db"
 ENV SESSION_SECRET="build-time-placeholder"
+ENV NEXT_DEPLOYMENT_ID=${NEXT_DEPLOYMENT_ID}
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 # QEMU (amd64 emulation on arm64 hosts) lacks io_uring support that Node 24's
 # libuv enables by default, aborting the build at finalize. Disable it.
 ENV UV_USE_IO_URING=0
@@ -65,13 +82,10 @@ RUN npm run prisma:generate
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build Next.js application
-# If you want to speed up Docker rebuilds, you can cache the build artifacts
-# by adding: --mount=type=cache,target=/app/.next/cache
-# This caches the .next/cache directory across builds, but it also prevents
-# .next/cache/fetch-cache from being included in the final image, meaning
-# cached fetch responses from the build won't be available at runtime.
-RUN if [ -f package-lock.json ]; then \
+# Build Next.js application. Keep Turbopack's compiler cache outside the image
+# layer so subsequent production builds reuse it without shipping it at runtime.
+RUN --mount=type=cache,id=thiepmungonline-next-build-cache,target=/app/.next/cache,sharing=locked \
+  if [ -f package-lock.json ]; then \
   npm run build; \
   elif [ -f yarn.lock ]; then \
   corepack enable yarn && yarn build; \

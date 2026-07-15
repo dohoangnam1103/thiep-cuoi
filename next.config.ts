@@ -3,6 +3,12 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  experimental: {
+    // Persist Turbopack's production-build cache between Docker builds. The
+    // cache directory is mounted by Dockerfile, so warm deploys only rebuild
+    // modules affected by the latest source changes.
+    turbopackFileSystemCacheForBuild: true,
+  },
   outputFileTracingIncludes: {
     "/*": [
       "node_modules/better-sqlite3/build/Release/*.node",
@@ -17,6 +23,10 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Content-Type-Options", value: "nosniff" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
           { key: "Referrer-Policy", value: "origin-when-cross-origin" },
           {
             key: "Permissions-Policy",

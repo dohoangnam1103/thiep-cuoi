@@ -58,5 +58,5 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
     revalidatePath(`/${locale}/templates/${slug}/demo`);
   }
 
-  return { ok: true };
+  return { ok: true, persisted: true };
 }

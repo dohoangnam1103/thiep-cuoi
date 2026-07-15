@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
-import { templates } from "@/data/chungdoi";
-import { VALID_TEMPLATE_IDS, TEMPLATE_LABELS } from "@/app/editor/[id]/templates";
+import { completedTemplates } from "@/data/chungdoi";
+import { templateLabel } from "@/app/editor/[id]/templates";
 import { createInvitation } from "./actions";
 
 export function NewInvitationButton() {
@@ -15,6 +15,8 @@ export function NewInvitationButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
+        data-ga-event="open_template_picker"
+        data-ga-param-source="dashboard"
         className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
       >
         + Tạo thiệp mới
@@ -41,30 +43,32 @@ export function NewInvitationButton() {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {VALID_TEMPLATE_IDS.map((id) => {
-                const tpl = templates.find((t) => t.slug === id);
+              {completedTemplates.map((template) => {
                 return (
-                  <form key={id} action={createInvitation}>
-                    <input type="hidden" name="templateId" value={id} />
+                  <form
+                    key={template.slug}
+                    action={createInvitation}
+                    data-ga-event="select_template"
+                    data-ga-param-template-id={template.slug}
+                    data-ga-param-source="dashboard_picker"
+                  >
+                    <input type="hidden" name="templateId" value={template.slug} />
                     <button
                       type="submit"
                       className="group relative w-full overflow-hidden rounded-xl border border-border text-left transition hover:border-primary/40 hover:ring-2 hover:ring-primary/30"
+                      data-template-id={template.slug}
                     >
-                      {tpl?.listing ? (
-                        <span className="block aspect-[3/4] bg-muted">
-                          <Image
-                            src={tpl.listing}
-                            alt={TEMPLATE_LABELS[id]}
-                            width={240}
-                            height={320}
-                            className="h-full w-full object-cover"
-                          />
-                        </span>
-                      ) : (
-                        <span className="block aspect-[3/4] bg-muted" />
-                      )}
+                      <span className="relative block aspect-[3/4] overflow-hidden bg-muted">
+                        <Image
+                          src={template.listing}
+                          alt={templateLabel(template.slug)}
+                          fill
+                          sizes="(min-width: 640px) 200px, 50vw"
+                          className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
+                        />
+                      </span>
                       <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
-                        {TEMPLATE_LABELS[id]}
+                        {templateLabel(template.slug)}
                       </span>
                     </button>
                   </form>

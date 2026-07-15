@@ -248,6 +248,22 @@
       "chatWithUs": "お問い合わせ"
     }
   },
+  "templatePreviewModal": {
+    "eyebrow": "オンライン結婚式招待状",
+    "title": "招待状をプレビュー",
+    "description": "画像にカーソルを合わせると、デザインを最初から最後まで確認できます。モバイル表示、フォトアルバム、オンライン出欠確認に最適化されています。",
+    "previewTypeLabel": "プレビュー形式",
+    "previewTypeValue": "招待状全体",
+    "highlightMobile": "スマートフォンとパソコンに最適化",
+    "highlightRsvp": "オンライン出欠確認を搭載",
+    "highlightGallery": "ウェディングアルバムとイベント情報を収録",
+    "hoverHint": "カーソルを合わせて招待状全体を表示",
+    "imageAlt": "結婚式招待状テンプレート全体のプレビュー",
+    "close": "プレビューを閉じる"
+  },
+  "demoCta": {
+    "useTemplate": "この招待状を使う"
+  },
   "listing": {
     "metaTitle": "結婚式招待状テンプレート | Thiệp Mừng Online",
     "metaDescription": "Thiệp Mừng Onlineの結婚式招待状テンプレートを閲覧：スタイルと色で絞り込み、カバーアニメーション・ギャラリー・RSVP付きのライブデモをプレビューして開けます。",
@@ -396,5 +412,85 @@
     "subtitle": "素早く答えを見つけましょう。Thiệp Mừng Onlineで完璧な結婚式招待状を作成。",
     "searchPlaceholder": "質問を検索...",
     "popularTitle": "人気の記事"
+  },
+  "publicInvitation": {
+    "manage": "招待状を管理",
+    "guestFallback": "ご来賓",
+    "rsvp": {
+      "open": "出欠を回答",
+      "title": "出欠確認",
+      "description": "ご出席いただけるかお知らせください。",
+      "close": "閉じる",
+      "name": "お名前 *",
+      "attending": "ご出席されますか？",
+      "attendingYes": "出席します",
+      "attendingNo": "欠席します",
+      "guestCount": "出席人数",
+      "side": "ご関係",
+      "sideEmpty": "未選択",
+      "groomSide": "新郎側",
+      "brideSide": "新婦側",
+      "shuttle": "送迎が必要です",
+      "dietary": "食事制限・アレルギー",
+      "songRequest": "リクエスト曲",
+      "message": "メッセージ",
+      "answerYes": "はい",
+      "answerNo": "いいえ",
+      "selectPlaceholder": "選択してください",
+      "submit": "回答を送信",
+      "submitting": "送信中...",
+      "success": "ご回答ありがとうございます！"
+    },
+    "media": {
+      "open": "思い出",
+      "title": "ゲストから届いた思い出",
+      "description": "お祝いの写真や動画を共有しましょう。すべてのゲストが閲覧・ダウンロードできます。",
+      "close": "閉じる",
+      "contributorName": "お名前 *",
+      "contributorPlaceholder": "共有者が分かるようにお名前を入力してください",
+      "chooseFiles": "写真・動画を選択",
+      "fileHint": "最大6件 · 写真12MB · 動画80MB",
+      "selected": "選択済み",
+      "remove": "ファイルを削除",
+      "upload": "思い出を共有",
+      "uploading": "アップロード中...",
+      "loading": "思い出を読み込み中...",
+      "empty": "まだ思い出が共有されていません。最初の写真や動画を共有しましょう。",
+      "download": "ダウンロード",
+      "success": "共有しました。ありがとうございます！",
+      "errorGeneric": "処理できませんでした。もう一度お試しください。",
+      "errorInvalidName": "お名前を入力してください。",
+      "errorTooManyFiles": "一度に選択できるのは6件までです。",
+      "errorImageTooLarge": "写真は1件12MB未満にしてください。",
+      "errorVideoTooLarge": "動画は1件80MB未満にしてください。",
+      "errorUnsupported": "未対応のファイルです。JPG、PNG、WebP、GIF、MP4、MOV、WebMをご利用ください。",
+      "errorGalleryFull": "ギャラリーの保存容量が上限に達しました。招待状の管理者にご連絡ください。"
+    }
+  },
+  "editor": {
+    "draft": {
+      "server": "システムに保存済み",
+      "saving": "変更を保存中...",
+      "local": "この端末に一時保存済み",
+      "restored": "未保存の内容を復元しました",
+      "error": "一時保存できません — 下書きを保存してください"
+    },
+    "music": {
+      "label": "BGM",
+      "dialogTitle": "BGMを選択",
+      "choose": "音楽を選択",
+      "change": "音楽を変更",
+      "remove": "音楽なし",
+      "searchPlaceholder": "曲名またはアーティストで検索...",
+      "loading": "音楽を読み込み中...",
+      "empty": "一致する曲が見つかりません。",
+      "loadMore": "さらに読み込む",
+      "currentMusic": "現在の音楽",
+      "preview": "試聴",
+      "stopPreview": "試聴を停止",
+      "select": "選択",
+      "close": "閉じる",
+      "error": "音楽ライブラリを読み込めませんでした。もう一度お試しください。"
+    }
   }
 }

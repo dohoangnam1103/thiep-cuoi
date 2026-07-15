@@ -12,7 +12,9 @@ async function main() {
   rmSync(DATA_DIR, { recursive: true, force: true });
   mkdirSync(DATA_DIR, { recursive: true });
 
-  const env = { ...process.env, DATABASE_URL: TEST_DB_URL };
+  // Prisma 7.8's SQLite schema engine can exit with an empty "Schema engine
+  // error" on macOS unless its Rust log level is initialized.
+  const env = { ...process.env, DATABASE_URL: TEST_DB_URL, RUST_LOG: "info" };
   execSync(`npx prisma db push --url ${TEST_DB_URL} --accept-data-loss`, {
     stdio: "inherit",
     env,

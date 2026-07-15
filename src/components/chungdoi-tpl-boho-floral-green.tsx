@@ -3,20 +3,22 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, mapEmbedUrl,
-  FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
+  useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
+  FamilyColumn, GiftEnvelope, SharedWishForm, WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
 const BASE = "/chungdoi/images/themes/_decor/boho-floral-green";
+const THEME_BASE = "/chungdoi/images/themes/boho-floral-green";
 const GREEN = "#30530F";
 const ACCENT = "#6B8040";
 const GREEN_MUTED = "rgba(48,83,15,0.72)";
 const CARD = "rgba(255, 250, 247, 0.95)";
-const OUTER = "linear-gradient(180deg, #1a3005 0%, #0f2003 55%, #081500 100%)";
+const heroNameFont = { fontFamily: '"Fz Aghita", Baskerville, "Times New Roman", serif' };
+const bodyNameFont = { fontFamily: '"Fz Qellia", Baskerville, "Times New Roman", serif' };
 
 function BohoHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-center text-[22px] font-bold uppercase tracking-wide md:text-[28px]" style={{ color: GREEN }}>
+    <h2 className="text-center font-['Times_New_Roman'] text-[22px] font-bold uppercase tracking-wide text-[#30530f] md:text-[24px]">
       {children}
     </h2>
   );
@@ -42,7 +44,8 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const nameFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
+  const groomPortrait = content.portraits?.groom || gallery[0];
+  const bridePortrait = content.portraits?.bride || gallery[1];
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
@@ -53,38 +56,55 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
   ] as const).filter((q) => q.bank);
 
   return (
-    <div className="flex w-full justify-center overflow-x-clip" style={{ background: OUTER }}>
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border md:shadow-2xl" style={{ color: GREEN, backgroundColor: CARD, borderColor: hexToRgba(ACCENT, 0.25) }}>
-        {/* fixed corner florals */}
-        <img src={`${BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[8%] top-[30%] -z-10 h-[220px] w-auto max-w-none object-contain opacity-[0.16] md:h-[340px]" />
-        <img src={`${BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[8%] top-[62%] -z-10 h-[220px] w-auto max-w-none -scale-x-100 object-contain opacity-[0.16] md:h-[340px]" />
+    <div className="flex w-full justify-center overflow-x-clip bg-white">
+      <div className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fffaf7] font-[Baskerville,'Times_New_Roman',serif] font-light text-[#30530f] md:mx-auto md:max-w-[900px] md:border md:border-[#30530f22]">
+        <img src={`${THEME_BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[42%] top-[500px] -z-10 w-[100%] max-w-none rotate-[-61deg] md:-left-[23%] md:w-[70%]" />
+        <img src={`${THEME_BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[65%] top-[300px] -z-10 w-[135%] max-w-none rotate-[152deg] opacity-[0.15] md:-right-[40%] md:w-[108%]" />
 
-        {/* HEADER */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          <img src={`${BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-2 right-0 -z-10 h-[200px] w-auto max-w-none object-contain opacity-90 md:h-[300px]" />
-          <img src={`${BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-2 left-0 -z-10 h-[200px] w-auto max-w-none -scale-x-100 object-contain opacity-90 md:h-[300px]" />
+        <header data-template-hero="boho-floral-green" className="relative z-10 flex min-h-[840px] flex-col items-center justify-start overflow-visible px-6 pb-4 pt-[210px] text-center md:min-h-[900px] md:px-8 md:pb-8 md:pt-[330px]">
+          <div className="pointer-events-none absolute left-[26%] top-[-327px] -z-10 w-[147%] rotate-[-0.76deg] md:left-[14%] md:top-[-390px] md:w-[85%] lg:left-[19%] lg:top-[-470px] lg:w-full">
+            <img src={`${THEME_BASE}/flower.webp`} alt="" aria-hidden className="h-auto w-full" />
+          </div>
+          <div className="pointer-events-none absolute left-[-83px] top-[5px] -z-10 w-[450px] -scale-x-100 rotate-[142deg] opacity-20 md:left-[-66px] md:top-[18px] md:w-[507px] lg:left-[-44px] lg:top-[24px] lg:w-[608px]">
+            <img src={`${THEME_BASE}/flower.webp`} alt="" aria-hidden className="h-auto w-full" />
+          </div>
 
-          <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: GREEN_MUTED }}>Welcome To Our Wedding</p>
-
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: GREEN }}>
-            <span className="text-[58px] md:text-[76px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-1 text-[34px] md:text-[42px]" style={{ ...nameFont, color: ACCENT }}>&amp;</span>
-            <span className="text-[58px] md:text-[76px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-
-          {albumShown.length > 0 ? (
-            <div className="relative z-30 mt-8 flex w-full items-start justify-center gap-4 md:gap-10">
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px] overflow-hidden rounded-lg border" style={{ borderColor: hexToRgba(ACCENT, 0.35) }}>
-                {gallery[0] ? <img src={gallery[0]} alt="Chú rể" className="h-full w-full object-cover" /> : null}
-              </div>
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px] overflow-hidden rounded-lg border" style={{ borderColor: hexToRgba(ACCENT, 0.35) }}>
-                {gallery[1] ? <img src={gallery[1]} alt="Cô dâu" className="h-full w-full object-cover" /> : null}
-              </div>
+          <div className="relative z-10 mx-auto h-[440px] w-[320px] md:h-[640px] md:w-[500px]">
+            <div className="absolute left-1/2 top-[39%] -z-10 w-screen -translate-x-1/2 -translate-y-1/2 md:top-[44%]">
+              <img src={`${BASE}/decoration_bar.webp`} alt="" aria-hidden className="h-auto w-full md:h-[150px] md:object-cover" />
             </div>
-          ) : null}
+
+            {groomPortrait ? (
+              <div className="absolute -top-[40px] left-[20px] z-20 flex items-center gap-3 md:-top-[60px] md:left-[25px] md:gap-4">
+                <div className="w-[155px] shrink-0 rotate-[-17deg] md:w-[235px]">
+                  <div className="relative aspect-[2/3] overflow-hidden border-[5px] border-[#b28e72]">
+                    <img src={groomPortrait} alt={couple.groomShortName || couple.groomFullName} className="h-full w-full object-cover" />
+                  </div>
+                </div>
+                <div className="text-left">
+                  <div className="text-[12px] tracking-widest text-[#464646] md:text-[14px]">{couple.groomBirthOrder || "Trưởng Nam"}</div>
+                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#30530f] md:text-[32px]" style={heroNameFont}>{couple.groomShortName || couple.groomFullName.split(/\s+/).slice(-2).join(" ")}</div>
+                </div>
+              </div>
+            ) : null}
+
+            {bridePortrait ? (
+              <div className="absolute left-[55px] top-[165px] z-30 flex flex-row-reverse items-center gap-3 md:left-[115px] md:top-[260px] md:gap-4">
+                <div className="w-[155px] shrink-0 rotate-[13deg] md:w-[235px]">
+                  <div className="relative aspect-[2/3] overflow-hidden border-[5px] border-[#b28e72]">
+                    <img src={bridePortrait} alt={couple.brideShortName || couple.brideFullName} className="h-full w-full object-cover" />
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[12px] tracking-widest text-[#464646] md:text-[14px]">{couple.brideBirthOrder || "Út Nữ"}</div>
+                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#30530f] md:text-[32px]" style={heroNameFont}>{couple.brideShortName || couple.brideFullName.split(/\s+/).slice(-2).join(" ")}</div>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </header>
 
-        <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
+        <div className="relative z-10 flex w-full flex-col items-center gap-16 px-4 pb-14 pt-28 md:gap-20 md:px-10 md:pt-32">
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
             <BohoHeading>Thông Tin Lễ Cưới</BohoHeading>
@@ -92,15 +112,17 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.groomFullName}</h3>
+              <p className="mb-3 whitespace-pre-line text-center text-[13px] uppercase leading-relaxed md:text-[16px]">TRÂN TRỌNG BÁO TIN<br />LỄ THÀNH HÔN CỦA CON CHÚNG TÔI</p>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[64px]" style={bodyNameFont}>{couple.groomFullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
-              <div className="text-[24px] md:text-[32px]" style={{ ...nameFont, color: ACCENT }}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.brideFullName}</h3>
+              <div className="text-[24px] md:text-[32px]" style={{ ...heroNameFont, color: ACCENT }}>&amp;</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[64px]" style={bodyNameFont}>{couple.brideFullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
                 {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
+                <span className="mt-2 text-[13px] uppercase md:text-[16px]">Vào lúc</span>
                 {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
                 <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
@@ -117,7 +139,7 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
               <BohoHeading>Album Ảnh Cưới</BohoHeading>
               <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
                 {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(ACCENT, 0.35) }}>
+                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(ACCENT, 0.35) }}>
                     <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
                     {i === albumShown.length - 1 && albumExtra > 0 ? (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
@@ -166,7 +188,7 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
               <BohoHeading>Tiệc cưới sẽ tổ chức tại</BohoHeading>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(ACCENT, 0.35) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -206,35 +228,18 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <BohoHeading>Phong Bao Mừng Cưới</BohoHeading>
-              <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: ACCENT, color: GREEN }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent={ACCENT} dark={GREEN} cardBg={CARD} heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER */}
-        <div className="relative flex justify-center pb-2">
-          <img src={`${BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none h-auto w-[360px] max-w-[90%] object-contain opacity-95 md:w-[520px]" />
-        </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: GREEN }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#f2f6ea" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <img src={`${BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-[80px] -right-[36%] z-0 h-[620px] w-auto max-w-none object-contain opacity-[0.08] md:-right-[10%] md:h-[820px]" />
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: GREEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ backgroundColor: CARD }}>
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GREEN }}>♡ thiepmungonline.com</a>

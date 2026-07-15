@@ -248,6 +248,22 @@
       "chatWithUs": "Chat with us"
     }
   },
+  "templatePreviewModal": {
+    "eyebrow": "Online wedding invitation",
+    "title": "Preview this invitation",
+    "description": "Hover over the image to view the complete design from top to bottom. The invitation is optimized for mobile, photo galleries, and online RSVPs.",
+    "previewTypeLabel": "Preview type",
+    "previewTypeValue": "Full invitation",
+    "highlightMobile": "Designed for phones and desktop screens",
+    "highlightRsvp": "Online RSVP is built in",
+    "highlightGallery": "Wedding gallery and event details included",
+    "hoverHint": "Hover to view the full invitation",
+    "imageAlt": "Full wedding invitation template preview",
+    "close": "Close preview"
+  },
+  "demoCta": {
+    "useTemplate": "Use this invitation"
+  },
   "listing": {
     "metaTitle": "Wedding Invitation Templates | Thiệp Mừng Online",
     "metaDescription": "Browse the Thiệp Mừng Online wedding invitation templates: filter by style and color, preview and open a live demo with cover animation, gallery and RSVP.",
@@ -396,5 +412,85 @@
     "subtitle": "Find answers quickly. Create the perfect wedding invitation with Thiệp Mừng Online.",
     "searchPlaceholder": "Search questions...",
     "popularTitle": "Popular articles"
+  },
+  "publicInvitation": {
+    "manage": "Manage invitation",
+    "guestFallback": "Dear guest",
+    "rsvp": {
+      "open": "RSVP",
+      "title": "RSVP",
+      "description": "Please let us know whether you can celebrate with us.",
+      "close": "Close",
+      "name": "Full name *",
+      "attending": "Will you attend?",
+      "attendingYes": "I will attend",
+      "attendingNo": "Unable to attend",
+      "guestCount": "Number attending",
+      "side": "Family side",
+      "sideEmpty": "Not specified",
+      "groomSide": "Groom's side",
+      "brideSide": "Bride's side",
+      "shuttle": "I need shuttle service",
+      "dietary": "Dietary needs or allergies",
+      "songRequest": "Song request",
+      "message": "Message",
+      "answerYes": "Yes",
+      "answerNo": "No",
+      "selectPlaceholder": "Select an option",
+      "submit": "Send RSVP",
+      "submitting": "Sending...",
+      "success": "Thank you for your response!"
+    },
+    "media": {
+      "open": "Moments",
+      "title": "Moments from our guests",
+      "description": "Share photos and videos from the celebration. Every guest can view and download these memories.",
+      "close": "Close",
+      "contributorName": "Your name *",
+      "contributorPlaceholder": "Enter your name so everyone knows who shared it",
+      "chooseFiles": "Choose photos or videos",
+      "fileHint": "Up to 6 files · 12MB per photo · 80MB per video",
+      "selected": "Selected",
+      "remove": "Remove file",
+      "upload": "Share moments",
+      "uploading": "Uploading...",
+      "loading": "Loading moments...",
+      "empty": "No moments have been shared yet. Be the first to add a photo or video from the celebration.",
+      "download": "Download",
+      "success": "Your moments have been shared. Thank you!",
+      "errorGeneric": "Something went wrong. Please try again.",
+      "errorInvalidName": "Please enter your name.",
+      "errorTooManyFiles": "You can select up to 6 files at a time.",
+      "errorImageTooLarge": "Each photo must be smaller than 12MB.",
+      "errorVideoTooLarge": "Each video must be smaller than 80MB.",
+      "errorUnsupported": "Unsupported file. Use JPG, PNG, WebP, GIF, MP4, MOV, or WebM.",
+      "errorGalleryFull": "This gallery has reached its storage limit. Please contact the invitation owner."
+    }
+  },
+  "editor": {
+    "draft": {
+      "server": "Saved to the system",
+      "saving": "Saving changes...",
+      "local": "Temporarily saved on this device",
+      "restored": "Restored unsaved changes",
+      "error": "Could not save locally — please select Save draft"
+    },
+    "music": {
+      "label": "Background music",
+      "dialogTitle": "Choose background music",
+      "choose": "Choose music",
+      "change": "Change music",
+      "remove": "No music",
+      "searchPlaceholder": "Search by song or artist...",
+      "loading": "Loading music...",
+      "empty": "No matching songs found.",
+      "loadMore": "Load more",
+      "currentMusic": "Current music",
+      "preview": "Preview",
+      "stopPreview": "Stop preview",
+      "select": "Select",
+      "close": "Close",
+      "error": "Could not load music library. Please try again."
+    }
   }
 }

@@ -9,14 +9,15 @@ import {
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
+  GiftEnvelope,
   SharedWishForm,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
 const GREEN_BASE = "/chungdoi/images/themes/_decor/glass-garden-green";
-const GREEN = "#1f4a3a";
+const GREEN = "#47613e";
 const GREEN_MUTED = hexToRgba(GREEN, 0.72);
 const GREEN_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
@@ -51,28 +52,21 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: GREEN, borderColor: hexToRgba(GREEN, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden bg-[url('/chungdoi/images/themes/glass-garden-green/floral-background.webp')] bg-[length:180%] bg-left-top md:mx-auto md:max-w-[900px] md:border" style={{ color: GREEN, borderColor: hexToRgba(GREEN, 0.2) }}>
         {/* faint side flower */}
         <img src={`${GREEN_BASE}/flower3-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[22%] -z-10 h-[820px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[12%] md:h-[1300px] lg:h-[1150px]" />
 
-        {/* HEADER — welcome hero + names */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
-          <div className="relative z-30 flex items-center justify-center gap-3 md:gap-4">
-            <img src={`${GREEN_BASE}/flower1-decoration.webp`} alt="" aria-hidden className="h-auto w-[56px] object-contain opacity-90 md:w-[80px]" />
-            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]">Welcome To Our Wedding</p>
-            <img src={`${GREEN_BASE}/flower1-decoration.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
+        {/* HEADER — source-specific translucent garden capsule */}
+        <section className="relative isolate z-20 flex w-full flex-col items-center pb-[110px] pt-16 md:pb-[150px] md:pt-[88px]">
+          <div className="relative w-[62%] max-w-[250px]">
+            <h1 className="relative z-20 flex aspect-[239/368] w-full flex-col items-center justify-center gap-3 rounded-[500px] border border-white/35 bg-white/40 px-5 text-center shadow-[inset_1.5px_1.5px_2px_rgba(255,255,255,0.45),inset_-1.5px_-1.5px_3px_rgba(120,140,110,0.12),0_18px_50px_-6px_rgba(53,69,47,0.3),0_6px_20px_2px_rgba(53,69,47,0.14)] backdrop-blur-[7px] md:gap-4" style={{ color: GREEN }}>
+              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+              <span className="text-[clamp(22px,6vw,32px)] leading-none opacity-90" style={ampFont}>&amp;</span>
+              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+            </h1>
+            <img src={`${GREEN_BASE}/flower1-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-auto w-[135%] max-w-none -translate-x-1/2 translate-y-[46%] object-contain" />
           </div>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: GREEN }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-          <div className="relative mt-6 shrink-0 md:mt-10">
-            <img src={`${GREEN_BASE}/flower2-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[30%] right-[-14%] z-0 h-auto w-[46%] max-w-none object-contain opacity-80" />
-            <img src={`${GREEN_BASE}/flower4-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[22%] -left-[12%] z-0 h-auto w-[44%] max-w-none object-contain opacity-70" />
-            <img src={`${GREEN_BASE}/welcome.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[520px] max-w-none object-contain md:w-[1100px]" />
-          </div>
-        </header>
+        </section>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
           {/* CEREMONY INFO */}
@@ -164,7 +158,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -204,35 +198,20 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* ANIMATED GIFT BOX */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>Hộp Mừng Cưới</h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: GREEN, color: GREEN }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent="#e7b849" dark={GREEN} cardBg="#eef7f0" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} variant="giftbox" />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER — bottom floral */}
-        <div className="relative flex justify-center pb-6 md:pb-10">
-          <img src={`${GREEN_BASE}/flower5-bottom.webp`} alt="" aria-hidden className="h-auto w-[460px] object-contain md:w-[660px]" />
+        <div className="pointer-events-none relative h-36 overflow-hidden md:h-48">
+          <img src={`${GREEN_BASE}/flower5-bottom.webp`} alt="" aria-hidden className="absolute left-1/2 top-1/2 h-auto w-[520px] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.12] md:w-[720px]" />
         </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: GREEN }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#eef7f0" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: GREEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GREEN }}>♡ thiepmungonline.com</a>

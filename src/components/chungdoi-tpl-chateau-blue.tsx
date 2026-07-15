@@ -6,13 +6,14 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
+  buildVietQrImageUrl,
   FamilyColumn,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
   SharedWishForm,
   useLightbox,
   WEEKDAY_LABELS,
@@ -59,23 +60,23 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
         <img src={`${CHATEAU_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
 
         {/* HEADER — castle + clouds + names */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
+        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[110px] sm:px-5 md:pt-[110px]">
           <img src={`${CHATEAU_BASE}/asset-2.webp`} alt="" aria-hidden className="relative z-30 mb-3 h-[32px] w-auto object-contain opacity-95 md:mb-4 md:h-[38px]" />
           <div className="relative z-30 flex items-center justify-center gap-3 md:gap-4">
             <img src={`${CHATEAU_BASE}/asset-1.webp`} alt="" aria-hidden className="h-auto w-[56px] object-contain opacity-90 md:w-[80px]" />
-            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]">Welcome To Our Wedding</p>
+            <p className="whitespace-nowrap text-center text-[13px] uppercase tracking-[0.12em] md:text-[20px] md:tracking-[0.2em]">Welcome To Our Wedding</p>
             <img src={`${CHATEAU_BASE}/asset-1.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
           </div>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: CHATEAU_NAVY }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+          <h1 className="relative z-30 mt-14 flex flex-col items-center leading-none md:mt-16" style={{ color: CHATEAU_NAVY }}>
+            <span className="text-[42px] md:text-[64px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="my-8 text-[25px] md:my-10 md:text-[34px]" style={ampFont}>&amp;</span>
+            <span className="text-[42px] md:text-[64px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
           </h1>
-          <div className="relative mt-6 shrink-0 md:mt-10">
+          <div data-testid="chateau-blue-hero-scene" className="relative -mt-16 mb-10 flex min-h-[430px] w-full shrink-0 items-end justify-center md:-mt-14 md:mb-0 md:min-h-[680px]">
             <img src={`${CHATEAU_BASE}/cloud-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[50%] right-[-28%] z-0 h-auto w-[100%] max-w-none object-contain opacity-90" />
             <img src={`${CHATEAU_BASE}/cloud-3.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[35%] left-[2%] z-0 h-auto w-[100%] max-w-none object-contain opacity-70" />
             <img src={`${CHATEAU_BASE}/cloud-2.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[5%] -left-[5%] z-0 h-auto w-[90%] max-w-none object-contain opacity-90" />
-            <img src={`${CHATEAU_BASE}/home.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[560px] max-w-none object-contain md:w-[1200px]" />
+            <img src={`${CHATEAU_BASE}/home.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[600px] max-w-none object-contain md:w-[1200px]" />
           </div>
         </header>
 
@@ -175,7 +176,7 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: CHATEAU_NAVY }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(CHATEAU_NAVY, 0.3) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -225,7 +226,7 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
               <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: CHATEAU_NAVY }}>QR Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
                       <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
@@ -246,8 +247,8 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
         <div className="relative flex justify-center pb-6 md:pb-10">
           <img src={`${CHATEAU_BASE}/chim.webp`} alt="" aria-hidden className="h-auto w-[480px] object-contain md:w-[680px]" />
         </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: CHATEAU_NAVY }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#eef3fb" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: CHATEAU_NAVY }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: CHATEAU_NAVY }}>♡ thiepmungonline.com</a>

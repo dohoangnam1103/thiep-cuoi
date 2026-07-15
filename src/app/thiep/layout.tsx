@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 import "../globals.css";
 
@@ -16,7 +17,11 @@ const geistMono = Geist_Mono({
 export default function ThiepLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full"><PetalField />{children}</body>
+      <body className="min-h-full">
+        <PetalField />
+        {children}
+        <GoogleAnalytics />
+      </body>
     </html>
   );
 }

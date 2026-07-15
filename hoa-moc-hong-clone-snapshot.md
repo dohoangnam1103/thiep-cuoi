@@ -1,0 +1,159 @@
+- generic [active] [ref=e1] [box=0,0,1440,4864]:
+  - main [ref=e2] [box=0,0,1440,4864]:
+    - generic [ref=e4] [box=16,16,1408,968]:
+      - generic [box=-99999,0,420,630]:
+        - generic [box=-99999,0,420,630]:
+          - generic [box=-99999,0,420,630]:
+            - generic [box=-99999,0,420,630]:
+              - generic [box=-99999,0,420,630]:
+                - generic [box=-99875,121,171,118]
+                - generic [box=-99846,247,115,20]: ❦
+                - paragraph [box=-99851,279,124,27]: 1 tháng 2, 2026
+                - generic [box=-99921,326,265,111]
+                - button [box=-99858,461,137,48]: Mở thiệp
+      - paragraph [box=16,940,1408,20]: Kéo để xoay · Chụm 2 ngón để zoom
+    - generic [ref=e9] [box=270,0,900,4864]:
+      - generic [ref=e11] [box=515,89,410,555]:
+        - figure "Hoàng Nam" [ref=e12] [box=511,93,271,356]:
+          - img "Trần Thanh Vũ" [ref=e14] [box=517,100,254,307]
+        - figure "Thanh Tú" [ref=e16] [box=684,309,253,334]:
+          - img "Lê Phương Nhã" [ref=e18] [box=694,315,236,285]
+      - generic [ref=e20] [box=271,761,898,3987]:
+        - generic [ref=e21] [box=311,801,818,854]:
+          - heading "Thông Tin Lễ Cưới" [level=2] [ref=e22] [box=586,801,268,39]
+          - generic [ref=e23] [box=311,872,818,159]:
+            - generic [ref=e24] [box=311,872,389,159]:
+              - generic [ref=e25] [box=474,872,63,29]: Ông bà
+              - generic [ref=e26] [box=442,907,127,30]: Trần Văn Tuấn
+              - generic [ref=e27] [box=451,943,109,30]: Trần Thị Mai
+              - generic [ref=e28] [box=356,983,300,48]: 23 Đường Nguyễn Trãi, Phường Bến Thành, Quận 1, Thành phố Hồ Chí Minh
+            - generic [ref=e29] [box=740,872,389,159]:
+              - generic [ref=e30] [box=903,872,63,29]: Ông bà
+              - generic [ref=e31] [box=877,907,115,30]: Lê Văn Hùng
+              - generic [ref=e32] [box=886,943,97,30]: Hồ Thị Lan
+              - generic [ref=e33] [box=785,983,300,48]: 68 Đường Sư Vạn Hạnh, Phường 12, Quận 10, Thành phố Hồ Chí Minh
+          - generic [ref=e34] [box=555,1063,330,357]:
+            - heading "Trần Thanh Vũ" [level=3] [ref=e35] [box=588,1063,264,119]
+            - generic [ref=e36] [box=663,1189,115,20]: Trưởng Nam
+            - generic [ref=e37] [box=710,1217,20,48]: "&"
+            - heading "Lê Phương Nhã" [level=3] [ref=e38] [box=588,1273,264,119]
+            - generic [ref=e39] [box=693,1400,53,20]: Út Nữ
+          - generic [ref=e40] [box=549,1451,341,204]:
+            - generic [ref=e41] [box=549,1451,341,65]: LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI TƯ GIA
+            - generic [ref=e42] [box=682,1520,75,45]: 09:00
+            - generic [ref=e43] [box=587,1573,266,42]:
+              - generic [ref=e44] [box=587,1581,92,27]: Chủ Nhật
+              - generic [ref=e45] [box=691,1581,4,27]: "|"
+              - generic [ref=e46] [box=707,1573,31,42]: "01"
+              - generic [ref=e47] [box=750,1581,4,27]: "|"
+              - generic [ref=e48] [box=766,1581,87,27]: Tháng 02
+            - generic [ref=e49] [box=693,1619,53,36]: "2026"
+        - generic [ref=e50] [box=311,1711,818,804]:
+          - heading "Album Ảnh Cưới" [level=2] [ref=e51] [box=600,1711,240,39]
+          - generic [ref=e52] [box=440,1774,560,741]:
+            - button [ref=e53] [cursor=pointer] [box=440,1774,272,363]:
+              - img "Ảnh cưới 1" [ref=e54] [box=441,1775,270,361]
+            - button [ref=e55] [cursor=pointer] [box=728,1774,272,363]:
+              - img "Ảnh cưới 2" [ref=e56] [box=729,1775,270,361]
+            - button [ref=e57] [cursor=pointer] [box=440,2153,272,363]:
+              - img "Ảnh cưới 3" [ref=e58] [box=441,2154,270,361]
+            - button "Ảnh cưới 4 +1" [ref=e59] [cursor=pointer] [box=728,2153,272,363]:
+              - img "Ảnh cưới 4" [ref=e60] [box=729,2154,270,361]
+              - generic [ref=e61] [box=729,2154,270,361]: "+1"
+        - generic [ref=e63] [box=311,2571,818,722]:
+          - heading "Thông Tin Tiệc Cưới" [level=2] [ref=e64] [box=572,2571,295,39]
+          - paragraph [ref=e65] [box=568,2630,304,30]: "Tiệc cưới sẽ diễn ra vào lúc:"
+          - generic [ref=e66] [box=682,2672,75,45]: 10:30
+          - generic [ref=e67] [box=590,2733,259,27]:
+            - generic [ref=e68] [box=590,2733,92,27]: Chủ Nhật
+            - generic [ref=e69] [box=695,2733,6,27]: /
+            - generic [ref=e70] [box=713,2733,20,27]: "01"
+            - generic [ref=e71] [box=745,2733,6,27]: /
+            - generic [ref=e72] [box=763,2733,87,27]: Tháng 02
+          - generic [ref=e73] [box=693,2772,53,36]: "2026"
+          - generic [ref=e75] [box=543,2885,354,309]:
+            - paragraph [ref=e76] [box=670,2885,100,20]: Tháng 2 / 2026
+            - generic [ref=e77] [box=543,2913,354,21]:
+              - generic [ref=e78] [box=543,2913,51,21]: T2
+              - generic [ref=e79] [box=594,2913,51,21]: T3
+              - generic [ref=e80] [box=644,2913,51,21]: T4
+              - generic [ref=e81] [box=695,2913,51,21]: T5
+              - generic [ref=e82] [box=745,2913,51,21]: T6
+              - generic [ref=e83] [box=796,2913,51,21]: T7
+              - generic [ref=e84] [box=846,2913,51,21]: CN
+            - generic [ref=e85] [box=543,2933,354,261]:
+              - generic [ref=e92] [box=846,2933,51,51]: "1"
+              - generic [ref=e93] [box=543,2986,51,51]: "2"
+              - generic [ref=e94] [box=594,2986,51,51]: "3"
+              - generic [ref=e95] [box=644,2986,51,51]: "4"
+              - generic [ref=e96] [box=695,2986,51,51]: "5"
+              - generic [ref=e97] [box=745,2986,51,51]: "6"
+              - generic [ref=e98] [box=796,2986,51,51]: "7"
+              - generic [ref=e99] [box=846,2986,51,51]: "8"
+              - generic [ref=e100] [box=543,3039,51,51]: "9"
+              - generic [ref=e101] [box=594,3039,51,51]: "10"
+              - generic [ref=e102] [box=644,3039,51,51]: "11"
+              - generic [ref=e103] [box=695,3039,51,51]: "12"
+              - generic [ref=e104] [box=745,3039,51,51]: "13"
+              - generic [ref=e105] [box=796,3039,51,51]: "14"
+              - generic [ref=e106] [box=846,3039,51,51]: "15"
+              - generic [ref=e107] [box=543,3091,51,51]: "16"
+              - generic [ref=e108] [box=594,3091,51,51]: "17"
+              - generic [ref=e109] [box=644,3091,51,51]: "18"
+              - generic [ref=e110] [box=695,3091,51,51]: "19"
+              - generic [ref=e111] [box=745,3091,51,51]: "20"
+              - generic [ref=e112] [box=796,3091,51,51]: "21"
+              - generic [ref=e113] [box=846,3091,51,51]: "22"
+              - generic [ref=e114] [box=543,3144,51,51]: "23"
+              - generic [ref=e115] [box=594,3144,51,51]: "24"
+              - generic [ref=e116] [box=644,3144,51,51]: "25"
+              - generic [ref=e117] [box=695,3144,51,51]: "26"
+              - generic [ref=e118] [box=745,3144,51,51]: "27"
+              - generic [ref=e119] [box=796,3144,51,51]: "28"
+          - link "Thêm vào lịch" [ref=e120] [cursor=pointer] [box=651,3255,137,38]:
+            - /url: https://www.google.com/calendar/render?action=TEMPLATE&text=%C4%90%C3%A1m+c%C6%B0%E1%BB%9Bi+Ho%C3%A0ng+Nam+%26+Thanh+T%C3%BA&dates=20260201T103000%2F20260201T103000&location=Queen+Plaza+K%E1%BB%B3+H%C3%B2a%2C+16A+L%C3%AA+H%E1%BB%93ng+Phong%2C+Ph%C6%B0%E1%BB%9Dng+12%2C+Qu%E1%BA%ADn+10%2C+TP.+H%E1%BB%93+Ch%C3%AD+Minh&details=Queen+Plaza+K%E1%BB%B3+H%C3%B2a%2C+16A+L%C3%AA+H%E1%BB%93ng+Phong%2C+Ph%C6%B0%E1%BB%9Dng+12%2C+Qu%E1%BA%ADn+10%2C+TP.+H%E1%BB%93+Ch%C3%AD+Minh
+        - generic [ref=e121] [box=311,3349,818,365]:
+          - heading "Tiệc cưới sẽ tổ chức tại" [level=2] [ref=e122] [box=536,3349,368,39]
+          - paragraph [ref=e123] [box=471,3404,498,24]: Queen Plaza Kỳ Hòa, 16A Lê Hồng Phong, Phường 12, Quận 10, TP. Hồ Chí Minh
+          - iframe [ref=e125] [box=312,3457,816,256]:
+            - link "Open in Maps (opens in new tab)" [ref=f1e5] [cursor=pointer] [box=20,16,107,16]:
+              - /url: about:invalid#zClosurez
+              - text: Open in Maps
+        - generic [ref=e126] [box=311,3770,818,265]:
+          - heading "Lịch Trình Ngày Cưới" [level=2] [ref=e127] [box=563,3770,314,39]
+          - list [ref=e128] [box=528,3833,384,202]:
+            - listitem [ref=e129] [box=528,3833,384,28]:
+              - generic [ref=e130] [box=528,3833,64,28]: 17:30
+              - generic [ref=e131] [box=608,3836,87,23]: Đón khách
+            - listitem [ref=e132] [box=528,3877,384,28]:
+              - generic [ref=e133] [box=528,3877,64,28]: 18:30
+              - generic [ref=e134] [box=608,3880,70,23]: Khai tiệc
+            - listitem [ref=e135] [box=528,3920,384,28]:
+              - generic [ref=e136] [box=528,3920,64,28]: 18:45
+              - generic [ref=e137] [box=608,3923,155,23]: Rót rượu, cắt bánh
+            - listitem [ref=e138] [box=528,3964,384,28]:
+              - generic [ref=e139] [box=528,3964,64,28]: 19:00
+              - generic [ref=e140] [box=608,3967,155,23]: Phục vụ món chính
+            - listitem [ref=e141] [box=528,4007,384,28]:
+              - generic [ref=e142] [box=528,4007,64,28]: 21:00
+              - generic [ref=e143] [box=608,4010,102,23]: Kết thúc tiệc
+        - generic [ref=e144] [box=311,4091,818,238]:
+          - heading "Sổ Lưu Bút" [level=2] [ref=e146] [box=311,4091,818,39]
+          - generic [ref=e148] [box=420,4154,600,175]:
+            - textbox "Tên của bạn" [ref=e149] [box=420,4154,600,38]
+            - textbox "Lời chúc của bạn" [ref=e150] [box=420,4203,600,77]
+            - button "Gửi lời chúc" [ref=e152] [cursor=pointer] [box=911,4300,109,29]
+        - generic [ref=e154] [box=311,4384,818,308]:
+          - heading "Phong Bao Mừng Cưới" [level=2] [ref=e155] [box=564,4384,311,36]
+          - button "Mở phong bao mừng cưới" [ref=e156] [cursor=pointer] [box=620,4436,200,256]:
+            - generic [ref=e157] [box=620,4436,200,256]:
+              - generic [ref=e168] [box=660,4457,11,21]: ✦
+              - generic [ref=e169] [box=795,4586,9,17]: ✦
+              - generic [ref=e170] [box=626,4539,7,13]: ✦
+              - generic [ref=e171] [box=650,4466,140,196]: 囍
+            - paragraph [ref=e178] [box=686,4684,68,16]: Nhấn để mở
+      - generic [ref=e179] [box=271,4748,898,75]: Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
+      - link "♡ thiepmungonline.com" [ref=e182] [cursor=pointer] [box=657,4835,126,16]:
+        - /url: https://thiepmungonline.com
+  - button "Use this invitation" [ref=e184] [cursor=pointer] [box=1256,25,159,44]
+  - alert [ref=e185] [box=-1,-1,1,1]

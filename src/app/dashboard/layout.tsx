@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../globals.css";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 
 const geistSans = Geist({
@@ -25,6 +26,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <body className="min-h-full bg-background text-foreground">
         <PetalField />
         {children}
+        <GoogleAnalytics />
       </body>
     </html>
   );

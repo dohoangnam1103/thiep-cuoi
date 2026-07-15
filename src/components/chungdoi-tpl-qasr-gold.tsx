@@ -6,11 +6,12 @@ import {
   useLightbox,
   Lightbox,
   googleCalendarUrl,
-  mapEmbedUrl,
+  InvitationMap,
   FamilyColumn,
   SharedCarousel,
   SharedCountdown,
   DressCode,
+  GiftEnvelope,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -49,9 +50,9 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName || "Ngân hàng", num: bank.groomAccountNumber, name: bank.groomAccountName },
+    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName || "Ngân hàng", num: bank.brideAccountNumber, name: bank.brideAccountName },
+  ] as const).filter((q) => q.num || q.name);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -60,17 +61,17 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
         <img src={`${QASR_BASE}/bush5.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-20 h-auto w-[150px] max-w-none object-contain md:w-[240px]" />
         <img src={`${QASR_BASE}/bush5.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-20 h-auto w-[150px] max-w-none -scale-x-100 object-contain md:w-[240px]" />
 
-        {/* HEADER — castle + names */}
-        <header className="relative z-10 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          <div className="relative z-10 flex items-center justify-center gap-3 md:gap-4">
-            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]" style={{ color: QASR_GOLD }}>Welcome To Our Wedding</p>
-          </div>
-          <h1 className="relative z-10 mt-4 flex flex-col items-center leading-none" style={{ color: QASR_GOLD_DARK }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+        {/* HEADER — source-matched names + castle/couple scene */}
+        <header className="relative z-10 flex w-full flex-col items-center px-4 pt-[85px] sm:px-5 md:pt-[100px]">
+          <h1 className="relative z-10 flex w-full items-center justify-center gap-3 whitespace-nowrap leading-none md:gap-6" style={{ color: QASR_GOLD_DARK }}>
+            <span className="text-[34px] md:text-[58px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="text-[24px] md:text-[34px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</span>
+            <span className="text-[34px] md:text-[58px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
           </h1>
-          <img src={`${QASR_BASE}/castle.webp`} alt="" aria-hidden className="relative z-0 mt-6 block h-auto w-[520px] max-w-none object-contain md:mt-8 md:w-[860px]" />
+          <div data-testid="qasr-gold-hero-scene" className="relative mt-4 flex min-h-[440px] w-full items-end justify-center md:mt-8 md:min-h-[620px]">
+            <img src={`${QASR_BASE}/castle.webp`} alt="" aria-hidden className="absolute bottom-[80px] left-1/2 z-0 h-auto w-[720px] max-w-none -translate-x-1/2 object-contain md:bottom-0 md:w-[980px]" />
+            <img data-testid="qasr-gold-hero-couple" src={`${QASR_BASE}/couple.webp`} alt="" aria-hidden className="relative z-10 h-auto w-[235px] object-contain md:w-[370px]" />
+          </div>
         </header>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
@@ -90,8 +91,6 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GOLD_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
             </div>
-            {/* illustrated couple */}
-            <img src={`${QASR_BASE}/couple.webp`} alt="" aria-hidden className="h-auto w-[240px] object-contain md:w-[320px]" />
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
                 {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
@@ -162,7 +161,7 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: QASR_GOLD_DARK }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -203,32 +202,17 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: QASR_GOLD_DARK }}>Phong Bao Mừng Cưới</h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl border bg-white p-2 sm:size-40" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: QASR_GOLD, color: QASR_GOLD_DARK }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent={QASR_GOLD} dark={QASR_GOLD_DARK} cardBg="#fbf5e6" heading="Hộp Quà Mừng" labelColor={QASR_GOLD_MUTED} />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER */}
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: QASR_GOLD_DARK }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#f5efdd" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: QASR_GOLD_DARK }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: QASR_GOLD_DARK }}>♡ thiepmungonline.com</a>

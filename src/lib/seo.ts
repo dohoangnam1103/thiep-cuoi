@@ -12,32 +12,37 @@ type Alternates = {
   languages: Record<string, string>;
 };
 
-function buildAlternates(hrefByLocale: (locale: (typeof routing.locales)[number]) => Href): Alternates {
+type AppLocale = (typeof routing.locales)[number];
+
+function buildAlternates(
+  hrefByLocale: (locale: AppLocale) => Href,
+  currentLocale: AppLocale,
+): Alternates {
   const languages = Object.fromEntries(
     routing.locales.map((locale) => [locale, getPathname({ href: hrefByLocale(locale), locale })]),
   );
-  const canonical = languages[routing.defaultLocale];
+  const canonical = languages[currentLocale];
   return {
     canonical,
-    languages: { ...languages, "x-default": canonical },
+    languages: { ...languages, "x-default": languages[routing.defaultLocale] },
   };
 }
 
-export function staticAlternates(href: Href): Alternates {
-  return buildAlternates(() => href);
+export function staticAlternates(href: Href, locale: AppLocale): Alternates {
+  return buildAlternates(() => href, locale);
 }
 
-export function blogAlternates(slug: string): Alternates {
-  return buildAlternates(() => ({ pathname: "/blog/[slug]", params: { slug } }));
+export function blogAlternates(slug: string, locale: AppLocale): Alternates {
+  return buildAlternates(() => ({ pathname: "/blog/[slug]", params: { slug } }), locale);
 }
 
-export function templateAlternates(routeSlug: string): Alternates | null {
+export function templateAlternates(routeSlug: string, locale: AppLocale): Alternates | null {
   const template = findTemplateByRouteSlug(routeSlug);
   if (!template) return null;
   return buildAlternates((locale) => ({
     pathname: "/templates/[slug]/demo",
     params: { slug: locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug },
-  }));
+  }), locale);
 }
 
 export function pageSeo({

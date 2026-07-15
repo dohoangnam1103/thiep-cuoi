@@ -6,12 +6,13 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
+  buildVietQrImageUrl,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
   SharedCarousel,
   useLightbox,
   WEEKDAY_LABELS,
@@ -333,7 +334,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <SongHyBand palette={palette}>Tiệc cưới sẽ tổ chức tại</SongHyBand>
             <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ backgroundColor: palette.cardBg, color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.address}</div>
             <div className="relative flex w-full flex-col items-center gap-4 md:gap-5">
-              <iframe className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" src={mapEmbedUrl(mapQuery)} title={mapQuery} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" />
+              <InvitationMap query={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" title={mapQuery} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" />
             </div>
           </section>
         </div>
@@ -405,8 +406,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
         <div className="relative z-10 flex flex-col items-center justify-center py-8">
           <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
-          <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-            <div className="relative flex h-full w-full items-center justify-center">
+          <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
+            <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
               {[
                 { w: 30.8, style: { top: "5%", right: "5%" } },
                 { w: 25.2, style: { top: "20%", left: "0%" } },
@@ -414,17 +415,17 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                 { w: 22.4, style: { bottom: "8%", left: "8%" } },
                 { w: 21, style: { top: "45%", right: "-5%" } },
               ].map((c, i) => (
-                <div key={i} className="absolute rounded-full" style={{ width: c.w, height: c.w, background: "rgb(251, 191, 36)", border: "2px solid rgb(245, 158, 11)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
+                <div key={i} className={`nhat-binh-coin-${i + 1} absolute rounded-full`} style={{ width: c.w, height: c.w, background: "rgb(251, 191, 36)", border: "2px solid rgb(245, 158, 11)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
                   <div className="absolute rounded-full" style={{ inset: 2, border: "2px solid rgb(253, 224, 71)" }} />
                 </div>
               ))}
-              <span className="absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
-              <span className="absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
-              <span className="absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
-              <div className="relative" style={{ width: 140, height: 196 }}>
+              <span className="nhat-binh-sparkle absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
+              <span className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
+              <span className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
+              <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
                 <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "rgb(92, 22, 18)" }} />
                 <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "rgb(107, 29, 24)" }} />
-                <div className="absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "rgb(185, 28, 28)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
+                <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "rgb(185, 28, 28)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
                   <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: "rgb(251, 191, 36)" }} />
                   <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: "radial-gradient(circle, rgb(251, 191, 36) 0%, rgb(217, 119, 6) 100%)", border: "3px solid rgb(254, 243, 199)" }}>
                     <span className="font-bold" style={{ fontSize: 30.8, color: "rgb(185, 28, 28)", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
@@ -432,7 +433,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                 </div>
               </div>
             </div>
-            <p className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: "rgb(70, 70, 70)" }}>Nhấn để mở</p>
+            <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: "rgb(70, 70, 70)" }}>Nhấn để mở</p>
           </button>
         </div>
       </div>
@@ -447,7 +448,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <div className="p-4 sm:p-6">
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: "rgb(70, 70, 70)" }}>
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.title} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                       <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: palette.accent }}>{q.title}</h3>
@@ -469,7 +470,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         </div>
       ) : null}
 
-      <div className="relative z-10 mx-auto max-w-4xl px-2 py-8 text-center sm:px-4">
+      <div data-template-footer className="relative z-10 mx-auto max-w-4xl px-2 py-8 text-center sm:px-4">
         <span className="flex flex-col items-center gap-1 whitespace-pre-line text-xl" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
       </div>
       <footer className="flex w-full items-center justify-center py-1.5" style={{ backgroundColor: palette.cardBg }}>

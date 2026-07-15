@@ -654,7 +654,13 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
 
   return (
     <article className="reveal group overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.1)]">
-      <button onClick={onSelect} className="block w-full text-left">
+      <button
+        onClick={onSelect}
+        data-ga-event="preview_template"
+        data-ga-param-template-id={template.slug}
+        data-ga-param-source="home_card"
+        className="block w-full text-left"
+      >
         <div className="relative h-[460px] overflow-hidden bg-muted">
           <img
             src={template.listing}
@@ -676,12 +682,18 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
         <div className="mt-5 grid grid-cols-2 gap-2">
           <button
             onClick={onSelect}
+            data-ga-event="preview_template"
+            data-ga-param-template-id={template.slug}
+            data-ga-param-source="home_card_button"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-muted px-3 py-2.5 text-sm font-black text-foreground transition hover:bg-secondary"
           >
             {t("gallery.preview")}
           </button>
           <a
             href={demoHref}
+            data-ga-event="open_template_demo"
+            data-ga-param-template-id={template.slug}
+            data-ga-param-source="home_card"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
           >
             {t("gallery.viewDemo")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -694,29 +706,38 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
 
 function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onClose: () => void }) {
   const t = useTranslations("home");
+  const modalT = useTranslations("templatePreviewModal");
   const locale = useLocale();
   const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
   const demoHref = `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
 
   return (
-    <div className="fixed inset-0 z-[80] bg-foreground/60 p-4 backdrop-blur-xl" role="dialog" aria-modal="true">
-      <div className="mx-auto flex h-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_16px_50px_rgb(0_0_0/0.15)]">
-        <div className="flex items-center justify-between border-b border-border p-4 sm:p-6">
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/60 p-3 backdrop-blur-xl sm:p-6 lg:p-8"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_16px_50px_rgb(0_0_0/0.15)] lg:h-auto lg:max-h-[calc(100dvh-4rem)] lg:max-w-4xl">
+        <div className="flex items-center justify-between border-b border-border p-4 sm:px-6 sm:py-5">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-accent">{template.category}</p>
-            <h3 className="mt-1 font-heading text-2xl font-black text-foreground">{template.name}</h3>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-accent">{modalT("eyebrow")}</p>
+            <h3 className="mt-1 font-heading text-2xl font-black text-foreground">{modalT("title")}</h3>
           </div>
-          <button onClick={onClose} className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary">
+          <button
+            onClick={onClose}
+            aria-label={modalT("close")}
+            className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary"
+          >
             <X className="size-5" />
           </button>
         </div>
-        <div className="grid min-h-0 flex-1 gap-6 overflow-y-auto p-4 sm:p-6 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="grid min-h-0 flex-1 gap-6 overflow-y-auto p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
           <div>
-            <p className="text-muted-foreground">{template.description}</p>
+            <p className="max-w-xl leading-7 text-muted-foreground">{modalT("description")}</p>
             <div className="mt-6 grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-muted p-4">
-                <p className="text-xs text-muted-foreground">{t("gallery.colorWord")}</p>
-                <p className="mt-1 font-black text-foreground">{template.color}</p>
+                <p className="text-xs text-muted-foreground">{modalT("previewTypeLabel")}</p>
+                <p className="mt-1 font-black text-foreground">{modalT("previewTypeValue")}</p>
               </div>
               <div className="rounded-2xl bg-muted p-4">
                 <p className="text-xs text-muted-foreground">{t("gallery.trialLabel")}</p>
@@ -724,7 +745,7 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
               </div>
             </div>
             <ul className="mt-6 space-y-3">
-              {(template.highlights.length ? template.highlights : [t("gallery.highlightMobile"), t("gallery.highlightRsvp"), t("gallery.highlightGallery")]).map((item) => (
+              {[modalT("highlightMobile"), modalT("highlightRsvp"), modalT("highlightGallery")].map((item) => (
                 <li key={item} className="flex gap-3 text-sm text-muted-foreground">
                   <Star className="mt-0.5 size-4 shrink-0 fill-primary text-primary" />
                   <span>{item}</span>
@@ -734,11 +755,19 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
             <div className="mt-8 flex flex-wrap gap-3">
               <a
                 href={demoHref}
+                data-ga-event="open_template_demo"
+                data-ga-param-template-id={template.slug}
+                data-ga-param-source="home_modal"
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
               >
                 {t("gallery.viewInvitationDemo")} <ArrowRight className="size-4" />
               </a>
-              <form action={createInvitation}>
+              <form
+                action={createInvitation}
+                data-ga-event="select_template"
+                data-ga-param-template-id={template.slug}
+                data-ga-param-source="home_modal"
+              >
                 <input type="hidden" name="templateId" value={template.slug} />
                 <button
                   type="submit"
@@ -749,12 +778,14 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
               </form>
             </div>
           </div>
-          <div className="grid items-start gap-4 lg:grid-cols-[0.65fr_1fr]">
-            <div className="max-h-[70vh] overflow-y-auto rounded-3xl border border-border bg-muted">
-              <img src={template.portrait} alt={`${template.name} portrait preview`} className="block h-auto w-full object-top" />
-            </div>
-            <div className="max-h-[70vh] overflow-y-auto rounded-3xl border border-border bg-card">
-              <img src={template.landscape} alt={`${template.name} landscape preview`} className="block h-auto w-full object-top" />
+          <div className="group relative h-[56vh] min-h-[360px] overflow-hidden rounded-3xl border border-border bg-muted shadow-[0_16px_40px_rgb(0_0_0/0.1)] lg:h-[min(520px,calc(100dvh-12rem))] lg:min-h-[420px] lg:w-[360px]">
+            <img
+              src={template.listing}
+              alt={modalT("imageAlt")}
+              className="h-full w-full object-cover object-top transition-[object-position] duration-[12000ms] ease-in-out group-hover:object-bottom motion-reduce:transition-none"
+            />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-transparent px-5 pb-5 pt-14 transition-opacity duration-300 group-hover:opacity-0">
+              <p className="text-sm font-bold text-background">{modalT("hoverHint")}</p>
             </div>
           </div>
         </div>

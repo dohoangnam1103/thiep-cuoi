@@ -9,11 +9,12 @@ import {
   SharedWishForm,
   WEEKDAY_LABELS,
   buildCalendar,
+  buildVietQrImageUrl,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  mapEmbedUrl,
+  InvitationMap,
   useLightbox,
 } from "@/components/chungdoi-tpl-shared";
 
@@ -57,29 +58,36 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
         className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
         style={{ color: SGR_ACCENT, borderColor: hexToRgba(SGR_TEXT, 0.25) }}
       >
-        <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[40px] -right-[50px] z-0 w-[300px] max-w-none object-contain opacity-60 md:-top-[60px] md:-right-[70px] md:w-[420px]" />
+        <img
+          src={`${SGR_BASE}/top-right.webp`}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute -right-[240px] top-0 z-0 w-[1000px] max-w-none object-contain opacity-65 md:-right-[250px] md:w-[1680px]"
+        />
         <img src={`${SGR_BASE}/button-left.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-[40px] -left-[50px] z-0 w-[300px] max-w-none object-contain opacity-60 md:-bottom-[60px] md:-left-[70px] md:w-[420px]" />
         <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[38%] -left-[10%] -z-10 h-[240px] w-auto max-w-none -scale-x-100 object-contain opacity-[0.14] md:h-[360px]" />
 
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: SGR_MUTED }}>Welcome To Our Wedding</p>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: SGR_TEXT }}>
-            <span className="text-[54px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={nameFont}>&amp;</span>
-            <span className="text-[54px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+        <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
+          <h1 className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ color: SGR_TEXT, ...nameFont }}>
+            <span>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]">&amp;</span>
+            <span>{couple.brideShortName || couple.brideFullName}</span>
           </h1>
-
-          {albumShown.length > 0 ? (
-            <div className="relative z-30 mt-8 flex w-full items-start justify-center gap-4 md:gap-10">
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px] overflow-hidden rounded-lg border" style={{ borderColor: hexToRgba(SGR_TEXT, 0.3) }}>
-                {gallery[0] ? <img src={gallery[0]} alt="Chú rể" className="h-full w-full object-cover" /> : null}
-              </div>
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px] overflow-hidden rounded-lg border" style={{ borderColor: hexToRgba(SGR_TEXT, 0.3) }}>
-                {gallery[1] ? <img src={gallery[1]} alt="Cô dâu" className="h-full w-full object-cover" /> : null}
-              </div>
-            </div>
-          ) : null}
         </header>
+
+        {albumShown.length > 0 ? (
+          <section className="relative z-10 flex w-full flex-col items-center px-6 pb-12 md:mt-8 md:px-10 md:pb-16">
+            <SpringHeading>Album Ảnh Cưới</SpringHeading>
+            <div className="mt-7 grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+              {albumShown.map((src, i) => (
+                <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(SGR_TEXT, 0.35) }}>
+                  <img src={src} alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
+                </button>
+              ))}
+            </div>
+            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={SGR_TEXT} />
+          </section>
+        ) : null}
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
           <section className="flex w-full flex-col items-center gap-8">
@@ -106,7 +114,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             ) : null}
           </section>
 
-          {albumShown.length > 0 ? (
+          {false && albumShown.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <SpringHeading>Album Ảnh Cưới</SpringHeading>
               <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
@@ -158,7 +166,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
               <SpringHeading>Tiệc cưới sẽ tổ chức tại</SpringHeading>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(SGR_TEXT, 0.35) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -202,7 +210,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
               <SpringHeading>QR Mừng Cưới</SpringHeading>
               <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
                       <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
@@ -219,8 +227,8 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
           ) : null}
         </div>
 
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: SGR_TEXT }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#fff5f5" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: SGR_TEXT }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ background: SGR_BG }}>
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: SGR_ACCENT }}>♡ thiepmungonline.com</a>

@@ -24,25 +24,28 @@ model Admin {
 }
 
 model Invitation {
-  id         String   @id @default(cuid())
-  userId     String
-  slug        String?   @unique
-  templateId  String
-  status      String    @default("draft")
-  paid        Boolean   @default(false)
-  isDemo      Boolean   @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  userId            String
+  slug              String?   @unique
+  templateId        String
+  status            String    @default("draft")
+  paid              Boolean   @default(false)
+  isDemo            Boolean   @default(false)
+  guestManagerToken String?   @unique
+  publishedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  content  InvitationContent?
-  schedule ScheduleItem[]
-  gallery  GalleryPhoto[]
-  wishes   Wish[]
-  rsvps    Rsvp[]
-  guests   Guest[]
-  payments Payment[]
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content       InvitationContent?
+  schedule      ScheduleItem[]
+  gallery       GalleryPhoto[]
+  wishes        Wish[]
+  guestMedia    GuestMedia[]
+  rsvps         Rsvp[]
+  guests        Guest[]
+  rsvpQuestions RsvpQuestion[]
+  payments      Payment[]
 
   @@index([userId])
   @@index([isDemo])
@@ -92,18 +95,18 @@ model InvitationContent {
   music        String?
 
   // couple
-  brideFullName  String @default("")
-  groomFullName  String @default("")
-  brideShortName String @default("")
-  groomShortName String @default("")
-  brideBirthOrder String @default("")
-  groomBirthOrder String @default("")
-  brideFirst     Boolean @default(true)
-  date           String  @default("")
-  time           String  @default("")
-  ceremonyDate   String  @default("")
-  ceremonyTime   String  @default("")
-  ceremonyHeader String  @default("")
+  brideFullName   String  @default("")
+  groomFullName   String  @default("")
+  brideShortName  String  @default("")
+  groomShortName  String  @default("")
+  brideBirthOrder String  @default("")
+  groomBirthOrder String  @default("")
+  brideFirst      Boolean @default(true)
+  date            String  @default("")
+  time            String  @default("")
+  ceremonyDate    String  @default("")
+  ceremonyTime    String  @default("")
+  ceremonyHeader  String  @default("")
 
   // families
   brideFather      String @default("")
@@ -116,8 +119,8 @@ model InvitationContent {
   groomParentTitle String @default("")
 
   // venue
-  address    String @default("")
-  mapAddress String @default("")
+  address     String @default("")
+  mapAddress  String @default("")
   banquetTime String @default("")
 
   // bank
@@ -166,6 +169,22 @@ model Wish {
   @@index([invitationId])
 }
 
+model GuestMedia {
+  id              String   @id @default(cuid())
+  invitationId    String
+  contributorName String
+  storageKey      String   @unique
+  originalName    String
+  mimeType        String
+  kind            String
+  size            Int
+  createdAt       DateTime @default(now())
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId, createdAt])
+}
+
 model Rsvp {
   id           String   @id @default(cuid())
   invitationId String
@@ -180,11 +199,61 @@ model Rsvp {
   songRequest  String?
   createdAt    DateTime @default(now())
 
-  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
-  guest      Guest?     @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  invitation Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  guest      Guest?       @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  answers    RsvpAnswer[]
 
   @@index([invitationId])
   @@index([guestId])
+}
+
+model RsvpQuestion {
+  id           String   @id @default(cuid())
+  invitationId String
+  label        String
+  type         String   @default("text")
+  required     Boolean  @default(false)
+  options      String?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  invitation Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  answers    RsvpAnswer[]
+
+  @@index([invitationId])
+}
+
+model RsvpAnswer {
+  id         String @id @default(cuid())
+  rsvpId     String
+  questionId String
+  value      String
+
+  rsvp     Rsvp         @relation(fields: [rsvpId], references: [id], onDelete: Cascade)
+  question RsvpQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([rsvpId, questionId])
+  @@index([questionId])
+}
+
+model Track {
+  id           String    @id
+  title        String
+  artist       String
+  duration     Int
+  url          String
+  tags         String    @default("")
+  status       String    @default("ready")
+  youtubeUrl   String?
+  submittedBy  String?
+  errorMessage String?
+  market       String    @default("all")
+  reviewedAt   DateTime?
+  addedAt      DateTime  @default(now())
+
+  @@index([market])
+  @@index([status])
 }
 
 model Guest {
@@ -194,8 +263,16 @@ model Guest {
   name         String
   side         String?
   role         String?
+  groupName    String?
+  tableName    String?
+  phone        String?
+  email        String?
+  greeting     String?
+  maxGuests    Int      @default(1)
+  giftAmount   Int?
   note         String?
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 
   invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
   rsvps      Rsvp[]

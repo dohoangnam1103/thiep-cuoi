@@ -3,13 +3,13 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, mapEmbedUrl,
-  FamilyColumn, SharedCarousel, SharedCountdown, SharedWishForm, WEEKDAY_LABELS,
+  useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
+  FamilyColumn, GiftEnvelope, SharedCarousel, SharedCountdown, SharedWishForm, WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
 const BASE = "/chungdoi/images/themes/_decor/love-art";
-const PURPLE = "#6b3fa0";
-const PURPLE_MUTED = "rgba(107,63,160,0.72)";
+const PURPLE = "#d70c1b";
+const PURPLE_MUTED = "rgba(215,12,27,0.72)";
 
 function HoaTinhHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -40,39 +40,39 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: PURPLE, borderColor: hexToRgba(PURPLE, 0.2) }}>
         {/* HEADER */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          {/* scattered purple-flower decor */}
-          <img src={`${BASE}/hoa tim.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[15%] top-[40px] -z-10 h-[260px] w-auto max-w-none object-contain opacity-[0.18] md:h-[420px]" />
-          <img src={`${BASE}/3 tim.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[12%] top-[120px] -z-10 h-[240px] w-auto max-w-none object-contain opacity-[0.18] md:h-[380px]" />
-          <img src={`${BASE}/tim.webp`} alt="" aria-hidden className="pointer-events-none absolute right-[4%] top-[10px] -z-10 h-[90px] w-auto object-contain opacity-[0.2] md:h-[140px]" />
-
-          <img src={`${BASE}/title.webp`} alt="" aria-hidden className="relative z-30 mb-4 h-auto w-[280px] max-w-[80%] object-contain md:w-[440px]" />
-
-          <div className="relative z-30 my-2 flex justify-center">
-            <img src={`${BASE}/hy.webp`} alt="" aria-hidden className="h-[70px] w-auto object-contain opacity-90 md:h-[100px]" />
-          </div>
-
-          <h1 className="relative z-30 mt-2 flex flex-col items-center leading-none" style={{ color: PURPLE }}>
-            <span className="text-[58px] md:text-[76px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-1 text-[34px] md:text-[42px]" style={nameFont}>&amp;</span>
-            <span className="text-[58px] md:text-[76px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-
-          {/* portraits inside frames */}
-          {gallery.length > 0 ? (
-            <div className="relative z-30 mt-8 flex w-full items-start justify-center gap-4 md:gap-10">
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px]">
-                {gallery[0] ? <img src={gallery[0]} alt="Chú rể" className="h-full w-full rounded-lg object-cover" /> : null}
-                <img src={`${BASE}/groom frame.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-contain" />
+        <header className="relative z-20 w-full overflow-hidden" aria-label="Đầu thiệp">
+          <div className="absolute left-1/2 top-[44px] z-[5] w-[82%] max-w-[340px] -translate-x-1/2 md:top-[50px] md:w-[90%] md:max-w-[510px]">
+            <div className="relative pb-[115%]">
+              <div className="absolute left-0 top-0 z-[5] w-[57%] -rotate-[4deg]">
+                <div className="relative pb-[133.33%]">
+                  {gallery[0] ? <img src={gallery[0]} alt={couple.brideFullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
+                  <img src={`${BASE}/bride frame.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+                </div>
               </div>
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px]">
-                {gallery[1] ? <img src={gallery[1]} alt="Cô dâu" className="h-full w-full rounded-lg object-cover" /> : null}
-                <img src={`${BASE}/bride frame.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-contain" />
+              <div className="absolute bottom-[-50px] right-0 z-[6] w-[55%] rotate-[3deg]">
+                <div className="relative pb-[133.33%]">
+                  {gallery[1] ? <img src={gallery[1]} alt={couple.groomFullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
+                  <img src={`${BASE}/groom frame.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+                </div>
               </div>
+              <img src={`${BASE}/hy.webp`} alt="" aria-hidden className="pointer-events-none absolute right-[calc(-16%+80px)] top-[2%] z-[4] w-[26%] md:right-[calc(-16%+40px)] lg:right-[calc(-16%+50px)]" />
+              <img src={`${BASE}/hoa tim.webp`} alt="" aria-hidden className="pointer-events-none absolute right-[calc(-16%+80px)] top-[34%] z-[4] w-[18%] md:right-[calc(-16%+90px)] md:top-[31%] lg:right-[calc(-16%+100px)]" />
             </div>
-          ) : null}
-
-          <img src={`${BASE}/love.webp`} alt="" aria-hidden className="relative z-30 mt-8 h-auto w-[200px] object-contain opacity-90 md:w-[300px]" />
+          </div>
+          <div className="absolute bottom-[calc(27%-70px)] left-[5%] z-[7] flex flex-col items-center text-center md:bottom-[calc(27%-125px)] md:left-[calc(5%+150px)]">
+            <p className="text-[13px] md:text-[15px]">{couple.brideBirthOrder || "Thứ Nữ"}</p>
+            <p className="text-[19px] font-bold uppercase md:text-[23px]">{couple.brideShortName || couple.brideFullName}</p>
+            <img src={`${BASE}/dau.webp`} alt="" aria-hidden className="mt-[15px] w-[70px] md:mt-[25px] md:w-[85px]" />
+          </div>
+          <img src={`${BASE}/tim.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-[calc(10%-20px)] left-[calc(42%-100px)] z-[6] w-[11%] max-w-[48px] md:bottom-[calc(10%-50px)] md:max-w-[58px]" />
+          <div className="absolute bottom-[5%] right-[5%] z-[7] flex items-center md:right-[calc(5%+130px)]">
+            <img src={`${BASE}/re.webp`} alt="" aria-hidden className="mr-[15px] w-[113px] md:mr-[25px] md:w-[135px]" />
+            <div className="text-center">
+              <p className="text-[13px] md:text-[15px]">{couple.groomBirthOrder || "Trưởng Nam"}</p>
+              <p className="text-[19px] font-bold uppercase md:text-[23px]">{couple.groomShortName || couple.groomFullName}</p>
+            </div>
+          </div>
+          <div className="h-[600px] w-full md:h-[840px]" />
         </header>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
@@ -156,7 +156,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
               <HoaTinhHeading>Tiệc cưới sẽ tổ chức tại</HoaTinhHeading>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(PURPLE, 0.3) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -197,35 +197,20 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <HoaTinhHeading>Phong Bao Mừng Cưới</HoaTinhHeading>
-              <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: PURPLE, color: PURPLE }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent={PURPLE} dark="#111111" cardBg="#fffaf7" heading="Hộp Quà Mừng" labelColor={PURPLE_MUTED} />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER */}
-        <div className="relative flex justify-center pb-4">
-          <img src={`${BASE}/thanks.webp`} alt="" aria-hidden className="h-auto w-[320px] object-contain opacity-95 md:w-[460px]" />
+        <div className="relative flex justify-center pb-2">
+          <img src={`${BASE}/thanks.webp`} alt="" aria-hidden className="h-auto w-[170px] object-contain opacity-90 md:w-[220px]" />
         </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: PURPLE }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#f4eefb" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#111111" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: PURPLE }}>♡ thiepmungonline.com</a>

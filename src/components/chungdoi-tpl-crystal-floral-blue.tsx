@@ -8,8 +8,9 @@ import {
   useLightbox,
   Lightbox,
   googleCalendarUrl,
-  mapEmbedUrl,
+  InvitationMap,
   FamilyColumn,
+  GiftEnvelope,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -46,9 +47,9 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName || "Ngân hàng", num: bank.groomAccountNumber, name: bank.groomAccountName },
+    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName || "Ngân hàng", num: bank.brideAccountNumber, name: bank.brideAccountName },
+  ] as const).filter((q) => q.num || q.name);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -56,22 +57,19 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
         {/* faint side flower */}
         <img src={`${BLUE_BASE}/flower1.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
 
-        {/* HEADER — floral frame + names */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
-          <div className="relative z-30 flex items-center justify-center gap-3 md:gap-4">
-            <img src={`${BLUE_BASE}/flower2.webp`} alt="" aria-hidden className="h-auto w-[56px] object-contain opacity-90 md:w-[80px]" />
-            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]">Welcome To Our Wedding</p>
-            <img src={`${BLUE_BASE}/flower2.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
-          </div>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: BLUE }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-          <div className="relative mt-6 shrink-0 md:mt-10">
-            <img src={`${BLUE_BASE}/flower-frame.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[560px] max-w-none object-contain md:w-[1200px]" />
-          </div>
-        </header>
+        {/* HEADER — source-specific crystal floral frame */}
+        <section className="relative isolate z-20 mt-[30px] w-full md:mt-[105px]">
+          <header className="relative z-20 flex w-full flex-col items-center px-4 pb-4 pt-[72px] sm:px-5 md:pb-8 md:pt-[100px]">
+            <div className="relative w-[90%] max-w-[340px] md:max-w-[520px] lg:max-w-[580px]">
+              <img src={`${BLUE_BASE}/flower-frame.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-full object-contain" />
+              <h1 className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center uppercase leading-none" style={{ ...nameFont, color: "#215589" }}>
+                <span className="flex w-[48%] justify-center whitespace-nowrap text-[clamp(26px,5vw,42px)] leading-[1.25]">{couple.groomShortName || couple.groomFullName}</span>
+                <span className="my-4 text-[clamp(18px,3vw,21px)] normal-case leading-none md:my-8 lg:my-10" style={ampFont}>&amp;</span>
+                <span className="flex w-[48%] justify-center whitespace-nowrap text-[clamp(26px,5vw,42px)] leading-[1.25]">{couple.brideShortName || couple.brideFullName}</span>
+              </h1>
+            </div>
+          </header>
+        </section>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
           {/* CEREMONY INFO */}
@@ -169,7 +167,7 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: BLUE }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(BLUE, 0.3) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -213,33 +211,17 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="relative w-full text-center">
-              <img src={`${BLUE_BASE}/gift.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-16 right-4 -z-10 h-[120px] w-auto object-contain opacity-90 md:right-12 md:h-[160px]" />
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: BLUE }}>QR Mừng Cưới</h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: BLUE, color: BLUE }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent={BLUE} dark={BLUE} cardBg="#f8fbff" heading="Hộp Quà Mừng" labelColor={BLUE_MUTED} />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER */}
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: BLUE }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#eef3fb" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: BLUE }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: BLUE }}>♡ thiepmungonline.com</a>

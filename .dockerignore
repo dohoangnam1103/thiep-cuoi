@@ -46,7 +46,8 @@ GEMINI.md
 
 # Docs / research (large, not needed at runtime)
 docs
-scripts
+scripts/*
+!scripts/dedupe-public-assets.mjs
 
 # Docker files themselves (no need to copy into image)
 Dockerfile

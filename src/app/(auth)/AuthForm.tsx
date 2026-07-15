@@ -32,6 +32,8 @@ export function AuthForm({ mode, action, copy, oauthError }: AuthFormProps) {
         <button
           type="button"
           onClick={() => signIn("google", { callbackUrl: "/auth/google/complete" })}
+          data-ga-event={isLogin ? "login_attempt" : "sign_up_attempt"}
+          data-ga-param-method="google"
           className="flex w-full items-center justify-center gap-3 rounded-full border border-input bg-background px-4 py-2.5 font-semibold text-foreground shadow-sm transition hover:bg-muted"
         >
           <svg className="size-5" viewBox="0 0 48 48" aria-hidden="true">
@@ -62,7 +64,12 @@ export function AuthForm({ mode, action, copy, oauthError }: AuthFormProps) {
         <div className="h-px flex-1 bg-border" />
       </div>
 
-      <form action={formAction} className="space-y-4">
+      <form
+        action={formAction}
+        data-ga-event={isLogin ? "login_attempt" : "sign_up_attempt"}
+        data-ga-param-method="email"
+        className="space-y-4"
+      >
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium text-foreground">
             {copy.email}

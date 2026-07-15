@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   return {
     title: { absolute: title },
     description: post.excerpt,
-    alternates: blogAlternates(slug),
+    alternates: blogAlternates(slug, locale),
     openGraph: {
       type: "article",
       title,

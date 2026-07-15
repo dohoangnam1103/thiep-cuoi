@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -11,7 +9,9 @@ import {
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
+  GiftEnvelope,
+  GiftQrGrid,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -29,6 +29,7 @@ interface DdPalette {
   groomLabel: string;
   brideLabel: string;
   giftHeading: string;
+  giftMode: "envelope" | "qr";
   avatars: { groom: string; bride: string };
 }
 
@@ -40,6 +41,7 @@ const DD_RED_PALETTE: DdPalette = {
   groomLabel: "Trưởng Nam",
   brideLabel: "Út Nữ",
   giftHeading: "Phong Bao Mừng Cưới",
+  giftMode: "envelope",
   avatars: {
     groom: "/chungdoi/uploads/double-dragon-red/800e73ae-d21f-4bbd-8546-cd7bb9399e45.jpg",
     bride: "/chungdoi/uploads/double-dragon-red/bf33d754-3356-434c-ab17-4e0d07257698.jpg",
@@ -54,6 +56,7 @@ const DD_BLUE_PALETTE: DdPalette = {
   groomLabel: "Út Nam",
   brideLabel: "Thứ Nữ",
   giftHeading: "QR Mừng Cưới",
+  giftMode: "qr",
   avatars: {
     groom: "/chungdoi/uploads/double-dragon-blue/ff30b091-fbe1-4f66-8163-be41d70554d6.jpg",
     bride: "/chungdoi/uploads/double-dragon-blue/26477c03-eb5a-4486-b06b-74ea917b48e1.jpg",
@@ -292,7 +295,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
               <DdTexture posY="70%" />
               <div className="relative z-10 flex w-full flex-col items-center">
                 <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ backgroundColor: DD_LINEN, color: DD_GRAY, fontFamily: DD_SERIF }}>{venue.address}</div>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </div>
           </>
@@ -347,31 +350,19 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
               <div className="absolute inset-0 opacity-40" style={{ backgroundImage: `url("${DD_TEX}")`, backgroundSize: "clamp(300px, 50vw, 500px)" }} />
             </div>
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: DD_LINEN }}>
-              <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: DD_RED, fontFamily: DD_SERIF }}>{palette.giftHeading}</h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {bankCards.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: DD_RED }}>{q.label}</h3>
-                      <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40">
-                        <img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" />
-                      </div>
-                      <p className="mt-2 text-[13px] font-semibold" style={{ color: DD_GRAY }}>{q.bank}</p>
-                      <p className="text-[13px]" style={{ color: DD_GRAY }}>{q.num}</p>
-                      <p className="text-[13px]" style={{ color: DD_GRAY }}>{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: DD_RED, color: DD_RED }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              {palette.giftMode === "envelope" ? (
+                <GiftEnvelope banks={bankCards} accent="#f4c76a" dark={DD_RED} cardBg={DD_LINEN} heading={palette.giftHeading} labelColor={DD_GRAY} />
+              ) : (
+                <GiftQrGrid banks={bankCards} heading={palette.giftHeading} accent={DD_RED} />
+              )}
             </div>
           </>
         ) : null}
 
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: DD_RED }}>
-          <span className="whitespace-pre-line text-[12px] md:text-[15px] lg:text-[18px]" style={{ fontFamily: DD_SERIF, color: DD_LINEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-7 text-center" style={{ backgroundColor: DD_LINEN }}>
+          <span className="whitespace-pre-line text-[12px] md:text-[15px] lg:text-[18px]" style={{ fontFamily: DD_SERIF, color: DD_RED }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
+        <div className="relative z-10 h-12 w-full overflow-hidden" style={{ backgroundColor: DD_RED }}><DdTexture posY="bottom" opacity={0.32} /></div>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ backgroundColor: DD_LINEN }}>
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: DD_RED }}>♡ thiepmungonline.com</a>
         </div>

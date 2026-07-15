@@ -5,9 +5,9 @@ import type { CSSProperties, ReactNode } from "react";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, mapEmbedUrl,
+  useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
   FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
-  GiftEnvelope,
+  GiftEnvelope, GiftQrGrid,
 } from "@/components/chungdoi-tpl-shared";
 
 export type FloralDecor = { src: string; className: string; flip?: boolean };
@@ -15,6 +15,7 @@ export type FloralDecor = { src: string; className: string; flip?: boolean };
 export type FloralPalette = {
   outerBg: string;
   cardBg: string;
+  surfaceBg?: string;
   text: string;
   accent: string;
   headingUpper?: boolean;
@@ -22,14 +23,21 @@ export type FloralPalette = {
   ampFont?: CSSProperties;
   welcome?: string;
   giftHeading?: string;
+  giftMode?: "envelope" | "qr";
+  giftColor?: string;
+  footerBg?: string;
+  footerText?: string;
 };
 
 type Props = {
   content: ChungDoiDemoContent;
   palette: FloralPalette;
+  hero?: ReactNode;
+  albumFirst?: boolean;
   backdrop?: FloralDecor[];
   headerDecor?: FloralDecor[];
   albumDecor?: FloralDecor[];
+  lowerDecor?: FloralDecor;
   footerDecor?: FloralDecor;
   dividerSrc?: string;
 };
@@ -40,7 +48,7 @@ function FloralHeading({ accent, upper, children }: { accent: string; upper: boo
   );
 }
 
-export function FloralInvitation({ content, palette, backdrop = [], headerDecor = [], albumDecor = [], footerDecor, dividerSrc }: Props) {
+export function FloralInvitation({ content, palette, hero, albumFirst = false, backdrop = [], headerDecor = [], albumDecor = [], lowerDecor, footerDecor, dividerSrc }: Props) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const P = palette;
   const muted = hexToRgba(P.accent, 0.72);
@@ -61,26 +69,52 @@ export function FloralInvitation({ content, palette, backdrop = [], headerDecor 
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
   ] as const).filter((q) => q.bank);
 
+  const albumSection = albumShown.length > 0 ? (
+    <section className="relative flex w-full flex-col items-center gap-6">
+      {albumDecor.map((d, i) => (
+        <img key={`ad-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
+      ))}
+      <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Album Ảnh Cưới</FloralHeading>
+      <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+        {albumShown.map((src, i) => (
+          <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(P.accent, 0.3) }}>
+            <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
+            {i === albumShown.length - 1 && albumExtra > 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
+            ) : null}
+          </button>
+        ))}
+      </div>
+      <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={P.accent} />
+    </section>
+  ) : null;
+
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ background: P.outerBg }}>
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: P.text, borderColor: hexToRgba(P.accent, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: P.text, borderColor: hexToRgba(P.accent, 0.2), backgroundColor: P.surfaceBg }}>
         {backdrop.map((d, i) => (
           <img key={`bd-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
         ))}
+        {lowerDecor ? (
+          <img data-template-lower-decor src={lowerDecor.src} alt="" aria-hidden className={`pointer-events-none absolute z-0 h-auto w-auto max-w-none object-contain ${lowerDecor.flip ? "-scale-x-100" : ""} ${lowerDecor.className}`} />
+        ) : null}
 
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          {headerDecor.map((d, i) => (
-            <img key={`hd-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
-          ))}
-          <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: muted }}>{P.welcome || "Welcome To Our Wedding"}</p>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: P.text }}>
-            <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-1 text-[34px] md:text-[42px]" style={amp}>&amp;</span>
-            <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-        </header>
+        {hero ?? (
+          <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
+            {headerDecor.map((d, i) => (
+              <img key={`hd-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
+            ))}
+            <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: muted }}>{P.welcome || "Welcome To Our Wedding"}</p>
+            <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: P.text }}>
+              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+              <span className="my-1 text-[34px] md:text-[42px]" style={amp}>&amp;</span>
+              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+            </h1>
+          </header>
+        )}
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
+          {albumFirst ? albumSection : null}
           <section className="flex w-full flex-col items-center gap-8">
             <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Thông Tin Lễ Cưới</FloralHeading>
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
@@ -105,25 +139,7 @@ export function FloralInvitation({ content, palette, backdrop = [], headerDecor 
             ) : null}
           </section>
 
-          {albumShown.length > 0 ? (
-            <section className="relative flex w-full flex-col items-center gap-6">
-              {albumDecor.map((d, i) => (
-                <img key={`ad-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
-              ))}
-              <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Album Ảnh Cưới</FloralHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(P.accent, 0.3) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={P.accent} />
-            </section>
-          ) : null}
+          {!albumFirst ? albumSection : null}
 
           <section className="relative flex w-full flex-col items-center gap-3">
             <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Thông Tin Tiệc Cưới</FloralHeading>
@@ -158,7 +174,7 @@ export function FloralInvitation({ content, palette, backdrop = [], headerDecor 
               <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Tiệc cưới sẽ tổ chức tại</FloralHeading>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(P.accent, 0.3) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -199,7 +215,11 @@ export function FloralInvitation({ content, palette, backdrop = [], headerDecor 
 
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={P.accent} dark={P.accent} cardBg={P.cardBg} heading={P.giftHeading || "Phong Bao Mừng Cưới"} labelColor={muted} />
+              {P.giftMode === "qr" ? (
+                <GiftQrGrid banks={banks} accent={P.giftColor ?? P.accent} heading={P.giftHeading || "Hộp Quà Mừng"} />
+              ) : (
+                <GiftEnvelope banks={banks} accent={P.accent} dark={P.giftColor ?? P.accent} cardBg={P.cardBg} heading={P.giftHeading || "Phong Bao Mừng Cưới"} labelColor={muted} />
+              )}
             </section>
           ) : null}
         </div>
@@ -209,8 +229,8 @@ export function FloralInvitation({ content, palette, backdrop = [], headerDecor 
             <img src={footerDecor.src} alt="" aria-hidden className={`pointer-events-none h-auto w-[360px] max-w-[90%] object-contain opacity-95 md:w-[520px] ${footerDecor.className}`} />
           </div>
         ) : null}
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: P.accent }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#ffffff" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: P.footerBg ?? P.accent }}>
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: P.footerText ?? "#ffffff" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: P.accent }}>♡ thiepmungonline.com</a>

@@ -11,7 +11,7 @@ let db: Database.Database | undefined;
 
 export function getDb(): Database.Database {
   if (!db) {
-    db = new Database(DB_PATH);
+    db = new Database(DB_PATH, { timeout: 5_000 });
     db.pragma("journal_mode = WAL");
   }
   return db;

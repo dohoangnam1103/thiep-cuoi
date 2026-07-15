@@ -16,7 +16,7 @@ export async function generateMetadata({
   return pageSeo({
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: staticAlternates("/tools"),
+    alternates: staticAlternates("/tools", locale),
   });
 }
 

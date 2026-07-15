@@ -107,6 +107,12 @@ html.lenis body {
   font-display: swap;
 }
 
+@font-face {
+  font-family: "The Nautigal";
+  src: url("/chungdoi/fonts/TheNautigal-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -992,6 +998,181 @@ html.lenis body {
     opacity: 1;
   }
 }
+
+.igb-wrapper {
+  transition: transform 300ms ease;
+}
+
+.igb-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.igb-bob {
+  animation: igb-gift-bob 2.4s ease-in-out infinite;
+}
+
+.igb-shadow {
+  animation: igb-shadow-pulse 2.4s ease-in-out infinite;
+}
+
+.igb-sparkle {
+  animation: igb-sparkle 1.8s ease-in-out infinite;
+}
+
+.igb-sparkle-2 {
+  animation-delay: 0.35s;
+}
+
+.igb-sparkle-3 {
+  animation-delay: 0.7s;
+}
+
+.igb-sparkle-4 {
+  animation-delay: 1.05s;
+}
+
+.igb-present {
+  display: block;
+  border: 2px solid #d97706;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #ffd34e 0%, #f59e0b 55%, #ea7b0b 100%);
+  filter: drop-shadow(0 4px 5px rgb(0 0 0 / 22%));
+  animation: igb-present-float 2.8s ease-in-out infinite;
+}
+
+.igb-present::before,
+.igb-present::after {
+  position: absolute;
+  z-index: 1;
+  content: "";
+  background: linear-gradient(90deg, #c91f2d, #ef3340 55%, #b91625);
+}
+
+.igb-present::before {
+  inset-block: 0;
+  left: 42%;
+  width: 18%;
+}
+
+.igb-present::after {
+  inset-inline: 0;
+  top: 42%;
+  height: 18%;
+}
+
+.igb-present > i,
+.igb-present > i::before,
+.igb-present > i::after {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  content: "";
+}
+
+.igb-present > i {
+  left: 50%;
+  top: -8px;
+  width: 4px;
+  height: 12px;
+  transform: translateX(-50%);
+  background: #d61f30;
+}
+
+.igb-present > i::before,
+.igb-present > i::after {
+  top: 0;
+  width: 18px;
+  height: 12px;
+  border: 3px solid #d61f30;
+  background: #ef3340;
+}
+
+.igb-present > i::before {
+  right: 1px;
+  border-radius: 14px 4px 10px 4px;
+  transform: rotate(18deg);
+}
+
+.igb-present > i::after {
+  left: 1px;
+  border-radius: 4px 14px 4px 10px;
+  transform: rotate(-18deg);
+}
+
+.igb-present-2,
+.igb-present-4 {
+  animation-delay: -0.8s;
+}
+
+.igb-present-3 {
+  animation-delay: -1.4s;
+}
+
+.igb-present-5 {
+  animation-delay: -2s;
+}
+
+.igb-confetti {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: igb-confetti-burst 2.8s ease-out infinite;
+}
+
+.igb-confetti-1 { background: #ec4899; transform: rotate(15deg); }
+.igb-confetti-2 { background: #22c55e; animation-delay: 0.2s; }
+.igb-confetti-3 { background: #3b82f6; animation-delay: 0.4s; }
+.igb-confetti-4 { background: #a855f7; animation-delay: 0.6s; }
+.igb-confetti-5 { background: #facc15; animation-delay: 0.8s; }
+.igb-confetti-6 { background: #f97316; animation-delay: 1s; }
+.igb-confetti-7 { background: #14b8a6; animation-delay: 1.2s; }
+.igb-confetti-8 { background: #ef4444; animation-delay: 1.4s; }
+
+.igb-hint {
+  animation: nhat-binh-hint-pulse 2s ease-in-out infinite;
+}
+
+@keyframes igb-gift-bob {
+  0%,
+  100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+@keyframes igb-shadow-pulse {
+  0%,
+  100% { opacity: 0.42; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: 0.25; transform: translateX(-50%) scaleX(0.82); }
+}
+
+@keyframes igb-sparkle {
+  0%,
+  100% { opacity: 0.2; transform: scale(0.7) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.25) rotate(25deg); }
+}
+
+@keyframes igb-present-float {
+  0%,
+  100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-7px) rotate(4deg); }
+}
+
+@keyframes igb-confetti-burst {
+  0%,
+  45% { opacity: 0; transform: translate(0, 24px) rotate(0deg); }
+  60% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--igb-x, 90px), -95px) rotate(320deg); }
+}
+
+.igb-confetti-1 { --igb-x: -90px; }
+.igb-confetti-2 { --igb-x: -58px; }
+.igb-confetti-3 { --igb-x: -32px; }
+.igb-confetti-4 { --igb-x: -12px; }
+.igb-confetti-5 { --igb-x: 14px; }
+.igb-confetti-6 { --igb-x: 36px; }
+.igb-confetti-7 { --igb-x: 64px; }
+.igb-confetti-8 { --igb-x: 90px; }
 
 @media (prefers-reduced-motion: reduce) {
   *,

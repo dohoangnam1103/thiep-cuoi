@@ -9,45 +9,54 @@ Quy trình deploy web app lên Mini PC (chạy sau Cloudflare Tunnel). Xem thêm
 ./scripts/deploy-minipc.sh
 ```
 
-Script tự làm: rsync source → build image `linux/amd64` trên Mac → stream image
-sang Mini PC → restart container web + tunnel → healthcheck LAN + public.
+Script tự làm: xác minh đúng Mini PC → rsync source → backup DB/uploads → build
+image native trên Mini PC → chạy các Prisma migration còn thiếu → gắn
+version/rollback tag → restart riêng web → kiểm tra LAN, canonical, database và
+URL public.
 
-## Vì sao build trên Mac?
+## Vì sao build native trên Mini PC?
 
-- Mac (Apple Silicon, arm64) build nhanh hơn Mini PC nhiều.
-- Nhưng Mini PC là **x86_64**, nên bắt buộc build với `--platform linux/amd64`
-  (buildx / QEMU) rồi mới stream sang, tránh lỗi kiến trúc.
-- Mini PC **không build lại** (`--no-build`), chỉ nạp image đã có → deploy nhanh,
-  không ngốn tài nguyên Mini PC.
+- Mini PC là **x86_64**, nên build native tránh QEMU và lỗi native module khác
+  kiến trúc từ Mac Apple Silicon.
+- BuildKit và Turbopack cache được giữ trên Mini PC, nên các lần deploy sau chỉ
+  biên dịch phần thay đổi.
+- Mỗi image có tag theo `DEPLOYMENT_ID`; image đang chạy được giữ thêm một tag
+  rollback trước khi promote bản mới.
 
 ## Yêu cầu
 
-- Docker Desktop trên Mac (script tự mở nếu chưa chạy).
 - SSH tới Mini PC qua alias `minipc` (đã cấu hình trong `~/.ssh/config` →
   `ssh.hoangnam.cloud`).
-- `zstd` ở cả 2 máy (có sẵn; script tự fallback sang `gzip` nếu thiếu).
+- Docker Buildx trên Mini PC.
+- Python 3 trên Mini PC để tạo SQLite online backup và chạy `quick_check`.
 
 ## Các bước script thực hiện
 
 1. **Rsync source** lên `~/apps/thiepmungonline/releases/current/` trên Mini PC.
    Loại trừ `node_modules`, `.next`, `.git`, `.env*`, DB, uploads. **Không đụng**
    `.env` và `data/` trên Mini PC.
-2. **Build** `thiepmungonline-web:latest` cho `linux/amd64` trên Mac.
-3. **Stream** image qua SSH: `docker save | zstd | ssh 'zstd -d | docker load'`.
-4. **Restart** trên Mini PC: `docker compose up -d --no-build --no-deps web`, chờ
-   `127.0.0.1:3211` trả 200, rồi `up -d tunnel`.
-5. **Verify** `https://thiepmungonline.com` trả 200.
+2. **Backup** SQLite bằng online-backup API, archive uploads của editor và thư viện
+   ảnh/video do khách đóng góp trước deploy.
+3. **Build native** image versioned trên Mini PC với `NEXT_DEPLOYMENT_ID` và
+   `NEXT_PUBLIC_SITE_URL` được đóng vào build.
+4. **Migrate database** bằng chính builder image của revision vừa build. Migration
+   chạy sau backup và trước khi thay container; lỗi migration sẽ dừng deploy.
+5. **Promote + restart** riêng service web; tự rollback nếu container không
+   healthy, chạy sai image, canonical sai domain hoặc database `quick_check` lỗi.
+6. **Verify** trang chủ và một demo trên URL public đều trả 200.
 
 ## Biến môi trường ghi đè
 
 | Biến | Mặc định | Ý nghĩa |
 |------|----------|---------|
 | `REMOTE_HOST` | `minipc` | SSH host/alias |
+| `EXPECTED_REMOTE_IP` | `192.168.0.57` | Chặn deploy nhầm host |
 | `REMOTE_APP_DIR` | `/home/namdo/apps/thiepmungonline` | Thư mục app trên Mini PC |
 | `WEB_IMAGE` | `thiepmungonline-web:latest` | Tên image |
 | `WEB_PLATFORM` | `linux/amd64` | Kiến trúc build |
 | `PUBLIC_URL` | `https://thiepmungonline.com` | URL healthcheck cuối |
 | `WEB_PORT` | `3211` | Cổng LAN app trên Mini PC |
+| `DEPLOYMENT_ID` | UTC timestamp | Tag image và cache-bust Next.js |
 
 Ví dụ deploy sang host khác:
 
@@ -75,6 +84,7 @@ Google OAuth callback URLs phải gồm:
 ├── docker-compose.yml          # web (build từ releases/current) + tunnel
 ├── .env                        # secrets runtime (KHÔNG bị rsync ghi đè)
 ├── data/                       # SQLite prod.db (KHÔNG bị rsync ghi đè)
+│   └── guest-media/            # Ảnh/video khách đóng góp, dùng chung volume /app/data
 └── releases/current/           # source đã rsync từ Mac
 ```
 
@@ -83,15 +93,15 @@ Google OAuth callback URLs phải gồm:
 
 ## Rollback nhanh
 
-Image cũ vẫn nằm trong Docker Mini PC cho tới khi bị dọn. Xem tag:
+Ngay trước khi promote, script gắn image cũ thành
+`thiepmungonline-web:rollback-<DEPLOYMENT_ID>`. Xem tag:
 
 ```bash
 ssh minipc 'docker images thiepmungonline-web'
 ```
 
-Nếu cần, retag image cũ thành `:latest` rồi `docker compose up -d --no-build web`.
-Cách chắc ăn hơn: `git checkout` commit tốt trước đó trên Mac rồi chạy lại
-`./scripts/deploy-minipc.sh`.
+Nếu cần, retag image rollback thành `:latest` rồi chạy
+`docker compose up -d --no-build --no-deps --force-recreate web`.
 
 ## Sự cố thường gặp
 

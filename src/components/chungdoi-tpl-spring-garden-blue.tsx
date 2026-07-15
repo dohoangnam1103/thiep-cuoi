@@ -9,8 +9,9 @@ import {
   useLightbox,
   Lightbox,
   googleCalendarUrl,
-  mapEmbedUrl,
+  InvitationMap,
   FamilyColumn,
+  GiftEnvelope,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -21,7 +22,7 @@ const ACCENT = "#3a5666";
 const MUTED = "rgba(72, 108, 125, 0.7)";
 const CARD = "rgba(255, 255, 255, 0.68)";
 
-const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", serif' };
+const nameFont = { fontFamily: '"UNI Chu truyen thong", Baskerville, "Times New Roman", serif' };
 const scriptFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
 
 function SpringHeading({ children }: { children: React.ReactNode }) {
@@ -91,22 +92,7 @@ function GiftSection({ content }: { content: ChungDoiDemoContent }) {
   if (banks.length === 0) return null;
   return (
     <SectionCard className="text-center">
-      <SpringHeading>Phong Bao Mừng Cưới</SpringHeading>
-      <div className="mt-7 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-        {banks.map((q) => {
-          const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-          return (
-            <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-              <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-              <div className="size-32 rounded-2xl bg-white p-2 shadow-sm sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-              <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-              <p className="font-mono text-[13px]">{q.num}</p>
-              <p className="text-[13px]">{q.name}</p>
-              <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: ACCENT, color: ACCENT }}>Lưu QR</a>
-            </div>
-          );
-        })}
-      </div>
+      <GiftEnvelope banks={banks} accent={TEXT} dark={ACCENT} cardBg="#eef7fa" heading="Phong Bao Mừng Cưới" labelColor={MUTED} />
     </SectionCard>
   );
 }
@@ -124,37 +110,32 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   return (
-    <div className="flex w-full justify-center overflow-x-clip bg-[#e8f2f6]">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: TEXT, borderColor: hexToRgba(ACCENT, 0.2), background: "linear-gradient(180deg, #f0f7fa 0%, #e8f2f6 48%, #dfedf2 100%)" }}>
-        <DecorButton className="pointer-events-none absolute left-1/2 top-[110px] -z-0 h-auto w-[520px] max-w-none -translate-x-1/2 object-contain opacity-[0.09] md:w-[820px]" />
-        <DecorButton className="pointer-events-none absolute -left-[220px] top-[760px] h-auto w-[520px] max-w-none -rotate-12 object-contain opacity-[0.1] md:w-[760px]" />
-        <DecorButton className="pointer-events-none absolute -right-[240px] top-[1680px] h-auto w-[560px] max-w-none rotate-12 object-contain opacity-[0.1] md:w-[820px]" />
+    <div className="flex w-full justify-center overflow-x-clip bg-white">
+      <div className="relative w-full max-w-[480px] overflow-hidden bg-white md:mx-auto md:max-w-[900px] md:border" style={{ color: TEXT, borderColor: hexToRgba(ACCENT, 0.2) }}>
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 z-[1] h-[1550px] w-[1680px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/vuon-xuan-blue/top.webp')] bg-contain bg-top bg-no-repeat md:h-[2800px] md:w-[3000px]" />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-[1850px] z-[1] h-[1500px] w-[1650px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/vuon-xuan-blue/mid.webp')] bg-contain bg-center bg-no-repeat opacity-80 md:h-[2700px] md:w-[2950px]" />
 
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[74px] text-center sm:px-5 md:pt-[108px]">
-          <div className="relative flex min-h-[126px] w-full items-center justify-center md:min-h-[168px]">
-            <DecorButton className="pointer-events-none absolute left-1/2 top-1/2 h-auto w-[300px] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-45 md:w-[430px]" />
-            <p className="relative z-10 text-[13px] uppercase tracking-[0.32em] md:text-[16px]" style={{ color: MUTED }}>Welcome To Our Wedding</p>
-          </div>
-          <h1 className="relative z-30 -mt-2 flex flex-col items-center leading-none" style={{ color: ACCENT }}>
-            <span className="text-[58px] md:text-[82px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-1 text-[34px] md:text-[44px]" style={scriptFont}>&amp;</span>
-            <span className="text-[58px] md:text-[82px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+        <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
+          <h1 className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ ...nameFont, color: TEXT }}>
+            <span>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]" style={nameFont}>&amp;</span>
+            <span>{couple.brideShortName || couple.brideFullName}</span>
           </h1>
-          {reception ? (
-            <div className="mt-5 rounded-full border px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.2em] backdrop-blur-sm md:text-[15px]" style={{ borderColor: hexToRgba(ACCENT, 0.22), backgroundColor: CARD }}>
-              {reception.weekday} · {reception.day}.{reception.month}.{reception.yearNumber}
-            </div>
-          ) : null}
-          {albumShown.length > 0 ? (
-            <div className="relative z-30 mt-9 grid w-full max-w-[420px] grid-cols-2 gap-3 md:max-w-[620px] md:gap-5">
-              {albumShown.slice(0, 2).map((src, i) => (
-                <div key={src} className="relative aspect-[3/4] overflow-hidden rounded-[28px] border bg-white/60 p-1 shadow-[0_20px_45px_rgba(58,86,102,0.14)]" style={{ borderColor: hexToRgba(ACCENT, 0.2) }}>
-                  <img src={src} alt={i === 0 ? "Chú rể" : "Cô dâu"} className="h-full w-full rounded-[22px] object-cover" />
-                </div>
+        </header>
+
+        {albumShown.length > 0 ? (
+          <section className="relative z-10 flex w-full flex-col items-center px-6 pb-12 md:mt-8 md:px-10 md:pb-16">
+            <h2 className="text-[20px] font-normal uppercase md:text-[26px]" style={{ fontFamily: 'Baskerville, "Times New Roman", serif' }}>Album Ảnh Cưới</h2>
+            <div className="mt-7 grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+              {albumShown.map((src, i) => (
+                <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(ACCENT, 0.22) }}>
+                  <img src={src} alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
+                </button>
               ))}
             </div>
-          ) : null}
-        </header>
+            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={ACCENT} />
+          </section>
+        ) : null}
 
         <div className="relative z-10 flex w-full flex-col items-center gap-12 px-4 pb-14 pt-12 md:px-10">
           <SectionCard className="flex flex-col items-center gap-8 text-center">
@@ -182,7 +163,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
             ) : null}
           </SectionCard>
 
-          {albumShown.length > 0 ? (
+          {false && albumShown.length > 0 ? (
             <SectionCard className="flex flex-col items-center gap-6">
               <DecorButton className="pointer-events-none absolute -left-20 top-2 h-[180px] w-auto -rotate-12 object-contain opacity-[0.14] md:h-[260px]" />
               <SpringHeading>Album Ảnh Cưới</SpringHeading>
@@ -213,7 +194,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
               <SpringHeading>Tiệc cưới sẽ tổ chức tại</SpringHeading>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-[24px] border bg-white/70 p-1" style={{ borderColor: hexToRgba(ACCENT, 0.22) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full rounded-[20px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full rounded-[20px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </SectionCard>
           ) : null}
@@ -242,11 +223,11 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
           <GiftSection content={content} />
         </div>
 
-        <div className="relative z-10 flex justify-center pb-2">
-          <DecorButton className="pointer-events-none h-auto w-[320px] max-w-[80%] object-contain opacity-45 md:w-[440px]" />
+        <div className="pointer-events-none relative z-0 flex h-32 justify-center overflow-hidden pb-2 md:h-44">
+          <DecorButton className="absolute top-1/2 h-auto w-[360px] max-w-[85%] -translate-y-1/2 object-contain opacity-[0.1] md:w-[500px]" />
         </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: ACCENT }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#eef7fa" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: ACCENT }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: ACCENT }}>♡ thiepmungonline.com</a>

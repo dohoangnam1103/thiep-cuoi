@@ -11,7 +11,7 @@ const routes = [
   ["vuonkinh-xanh", "glass-garden-green", 9],
   ["hoang-gia-vang", "baroque-gold", 6],
   ["hoa-moc-nau", "boho-floral-brown", 6],
-  ["long-phung-v2-do", "longphung-v2-red", 5],
+  ["long-phung-v2-do", "longphung-v2-red", 4],
   ["long-phung-v3-do", "longphung-v3-red", 4],
   ["thanh-diep-xanh", "thanhdiep-green", 4],
   ["anh-dao-hong", "anhdao-pink", 3],
@@ -49,12 +49,19 @@ for (const [route, folder, expected] of routes) {
       window.scrollTo(0, 0);
     });
     await page.waitForTimeout(600);
-    const data = await page.evaluate((folder) => {
+    const data = await page.evaluate(({ folder, route }) => {
       const imgs = [...document.querySelectorAll("img")].map((img) => img.currentSrc || img.src || "");
       const decor = imgs.filter((src) => src.includes(`/chungdoi/images/themes/_decor/${folder}/`));
       const visibleText = document.body.innerText;
-      return { decor: [...new Set(decor)].length, imgs: imgs.length, height: document.body.scrollHeight, hasCeremony: visibleText.includes("Thông Tin Lễ Cưới"), hasQr: visibleText.includes("QR Mừng Cưới") };
-    }, folder);
+      return {
+        decor: [...new Set(decor)].length,
+        imgs: imgs.length,
+        height: document.body.scrollHeight,
+        hasCeremony: visibleText.includes("Thông Tin Lễ Cưới"),
+        hasQr: /(?:QR|Phong Bao) Mừng Cưới/.test(visibleText),
+        hasForbiddenCombinedDragonPhoenix: route === "long-phung-v2-do" && imgs.some((src) => src.endsWith("/rong-phuong.webp")),
+      };
+    }, { folder, route });
     await page.screenshot({ path: `/tmp/chungdoi-verify/${route}.jpg`, fullPage: true, type: "jpeg", quality: 70 });
     results.push({ route, folder, expected, ...data, errors: [...new Set(errors)].slice(0, 5), failed: [...new Set(failed)].slice(0, 5), screenshot: `/tmp/chungdoi-verify/${route}.jpg` });
     console.log(`${route} ${data.decor}/${expected} decor, imgs=${data.imgs}, h=${data.height}, errors=${errors.length}, failed=${failed.length}`);
@@ -67,7 +74,7 @@ for (const [route, folder, expected] of routes) {
 await browser.close();
 writeFileSync("/tmp/chungdoi-verify/results.json", JSON.stringify(results, null, 2));
 
-const bad = results.filter((r) => r.error || r.decor < r.expected || r.errors.length || r.failed.length || !r.hasCeremony || !r.hasQr);
+const bad = results.filter((r) => r.error || r.decor < r.expected || r.errors.length || r.failed.length || !r.hasCeremony || !r.hasQr || r.hasForbiddenCombinedDragonPhoenix);
 console.log("\nSUMMARY");
 console.table(results.map((r) => ({ route: r.route, decor: `${r.decor ?? 0}/${r.expected}`, imgs: r.imgs ?? 0, height: r.height ?? 0, hasCeremony: !!r.hasCeremony, hasQr: !!r.hasQr, errors: r.errors?.length ?? 0, failed: r.failed?.length ?? 0, error: r.error ? "YES" : "" })));
 console.log(`bad=${bad.length}`);

@@ -42,6 +42,7 @@ export default defineConfig({
       AUTH_SECRET: "e2e-auth-secret-do-not-use-in-prod",
       CASSO_WEBHOOK_TOKEN: "e2e-casso-token",
       NEXT_PUBLIC_SITE_URL: BASE_URL,
+      GUEST_MEDIA_ROOT: `${process.cwd()}/tests/e2e/.data/guest-media`,
       NODE_ENV: "test",
     },
   },

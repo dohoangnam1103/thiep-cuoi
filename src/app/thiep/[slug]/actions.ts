@@ -27,7 +27,13 @@ export type PublicState = { error?: string; ok?: boolean } | undefined;
 async function findPublished(slug: string) {
   return prisma.invitation.findFirst({
     where: { slug, status: "published" },
-    select: { id: true },
+    select: {
+      id: true,
+      rsvpQuestions: {
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+        select: { id: true, type: true, required: true, options: true },
+      },
+    },
   });
 }
 
@@ -74,11 +80,39 @@ export async function submitRsvp(slug: string, _prev: PublicState, formData: For
   if (parsed.data.guestId) {
     const guest = await prisma.guest.findUnique({
       where: { token: parsed.data.guestId },
-      select: { id: true, invitationId: true },
+      select: { id: true, invitationId: true, maxGuests: true },
     });
     if (guest && guest.invitationId === invitation.id) {
+      if (parsed.data.guests > guest.maxGuests) {
+        return { error: `Lời mời này cho phép tối đa ${guest.maxGuests} người tham dự` };
+      }
       guestId = guest.id;
     }
+  }
+
+  const answers: Array<{ questionId: string; value: string }> = [];
+  for (const question of invitation.rsvpQuestions) {
+    const rawValue = formData.get(`question:${question.id}`);
+    const value = typeof rawValue === "string" ? rawValue.trim() : "";
+    if (question.required && !value) return { error: "Vui lòng trả lời đầy đủ các câu hỏi bắt buộc" };
+    if (!value) continue;
+    if (value.length > 500) return { error: "Câu trả lời quá dài" };
+    if (question.type === "boolean" && value !== "yes" && value !== "no") {
+      return { error: "Câu trả lời chưa hợp lệ" };
+    }
+    if (question.type === "select") {
+      let options: string[] = [];
+      try {
+        const parsedOptions: unknown = question.options ? JSON.parse(question.options) : [];
+        if (Array.isArray(parsedOptions) && parsedOptions.every((option) => typeof option === "string")) {
+          options = parsedOptions;
+        }
+      } catch {
+        options = [];
+      }
+      if (!options.includes(value)) return { error: "Phương án đã chọn chưa hợp lệ" };
+    }
+    answers.push({ questionId: question.id, value });
   }
 
   await prisma.rsvp.create({
@@ -93,6 +127,7 @@ export async function submitRsvp(slug: string, _prev: PublicState, formData: For
       shuttle: parsed.data.shuttle === "yes",
       dietary: parsed.data.dietary || null,
       songRequest: parsed.data.songRequest || null,
+      answers: answers.length > 0 ? { create: answers } : undefined,
     },
   });
 

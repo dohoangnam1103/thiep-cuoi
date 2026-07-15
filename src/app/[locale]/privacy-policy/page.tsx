@@ -16,7 +16,7 @@ export async function generateMetadata({
   return pageSeo({
     title: t("privacyMetaTitle"),
     description: t("privacyMetaDescription"),
-    alternates: staticAlternates("/privacy-policy"),
+    alternates: staticAlternates("/privacy-policy", locale),
   });
 }
 

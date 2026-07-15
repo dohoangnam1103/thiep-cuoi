@@ -66,7 +66,7 @@ export async function saveDraft(id: string, _prev: EditorState, formData: FormDa
   if ("error" in result) return { error: result.error };
 
   revalidatePath(`/editor/${id}`);
-  return { ok: true };
+  return { ok: true, persisted: true };
 }
 
 export async function checkSlug(slug: string, invitationId: string): Promise<{ available: boolean; reason?: string }> {
@@ -94,16 +94,22 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
   const draft = await persistDraft(id, formData);
   if ("error" in draft) return { error: draft.error };
 
+  // persistDraft đã ghi nội dung mới nhất; giữ Server Component đồng bộ kể cả khi
+  // các điều kiện xuất bản bên dưới chưa đạt.
+  revalidatePath(`/editor/${id}`);
+
   if (!draft.data.brideFullName.trim() || !draft.data.groomFullName.trim()) {
-    return { error: "Cần tên cô dâu và chú rể trước khi xuất bản" };
+    return { error: "Cần tên cô dâu và chú rể trước khi xuất bản", persisted: true };
   }
   if (!draft.data.date.trim()) {
-    return { error: "Cần ngày cưới trước khi xuất bản" };
+    return { error: "Cần ngày cưới trước khi xuất bản", persisted: true };
   }
 
   const formSlug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const baseSlug = formSlug || slugFromFormFields(draft.data);
-  if (!baseSlug) return { error: "Chưa có tên cô dâu/chú rể để tạo đường dẫn" };
+  if (!baseSlug) {
+    return { error: "Chưa có tên cô dâu/chú rể để tạo đường dẫn", persisted: true };
+  }
 
   let rawSlug = baseSlug;
   let slugCheck = await checkSlug(rawSlug, id);
@@ -112,7 +118,7 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
     slugCheck = await checkSlug(rawSlug, id);
   }
   if (!slugCheck.available) {
-    return { error: slugCheck.reason ?? "Đường dẫn không hợp lệ" };
+    return { error: slugCheck.reason ?? "Đường dẫn không hợp lệ", persisted: true };
   }
 
   await prisma.invitation.update({
@@ -126,5 +132,5 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
 
   revalidatePath(`/editor/${id}`);
   revalidatePath(`/thiep/${rawSlug}`);
-  redirect(`/thiep/${rawSlug}`);
+  redirect(`/thiep/${rawSlug}?published=1`);
 }

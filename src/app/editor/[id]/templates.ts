@@ -1,25 +1,6 @@
-export const VALID_TEMPLATE_IDS = [
-  "double-phoenix-red",
-  "double-phoenix-green",
-  "song-hy-red",
-  "song-hy-green",
-  "nhat-binh-red",
-  "co-ba-red",
-  "dragon-phoenix-red",
-  "dragon-phoenix-green",
-  "dragon-phoenix-blue",
-  "dragon-phoenix-black",
-  "double-dragon-red",
-  "double-dragon-blue",
-  "double-dragon-green",
-  "royal-red",
-  "royal-blue",
-  "royal-green",
-] as const;
+import { completedTemplates } from "@/data/chungdoi";
 
-export type ValidTemplateId = (typeof VALID_TEMPLATE_IDS)[number];
-
-export const TEMPLATE_LABELS: Record<ValidTemplateId, string> = {
+const TEMPLATE_LABEL_OVERRIDES: Record<string, string> = {
   "double-phoenix-red": "Song Phụng Đỏ",
   "double-phoenix-green": "Song Phụng Xanh",
   "song-hy-red": "Song Hỷ Đỏ",
@@ -38,6 +19,13 @@ export const TEMPLATE_LABELS: Record<ValidTemplateId, string> = {
   "royal-green": "Hoàng Gia Xanh Lá",
 };
 
+export const TEMPLATE_LABELS: Record<string, string> = Object.fromEntries(
+  completedTemplates.map((template) => [
+    template.slug,
+    TEMPLATE_LABEL_OVERRIDES[template.slug] ?? template.name,
+  ]),
+);
+
 export function templateLabel(templateId: string): string {
-  return TEMPLATE_LABELS[templateId as ValidTemplateId] ?? templateId;
+  return TEMPLATE_LABELS[templateId] ?? templateId;
 }

@@ -10,11 +10,12 @@ import {
   SharedWishForm,
   WEEKDAY_LABELS,
   buildCalendar,
+  buildVietQrImageUrl,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  mapEmbedUrl,
+  InvitationMap,
   useLightbox,
 } from "@/components/chungdoi-tpl-shared";
 
@@ -61,30 +62,29 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
         className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
         style={{ color: BFR_DARK, borderColor: hexToRgba(BFR_DARK, 0.4), backgroundColor: BFR_CREAM }}
       >
-        {/* brocade tile background */}
-        <img src={`${BFR_BASE}/main-pattern.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-[0.08]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 bg-[url('/chungdoi/images/themes/brocade-flower-red/tile-background.webp')] bg-[length:140%] bg-top opacity-[0.12]" />
 
-        {/* corner floral flourishes */}
-        <img src={`${BFR_BASE}/corner-floral.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-2 -left-2 z-0 h-[120px] w-auto object-contain opacity-90 md:h-[180px]" />
-        <img src={`${BFR_BASE}/corner-floral.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-2 -right-2 z-0 h-[120px] w-auto scale-x-[-1] object-contain opacity-90 md:h-[180px]" />
-
-        {/* HEADER — seal + names + big floral */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
-          <img src={`${BFR_BASE}/seal.webp`} alt="" aria-hidden className="relative z-30 mb-3 h-[60px] w-auto object-contain opacity-95 md:mb-4 md:h-[76px]" />
-          <div className="relative z-30 flex items-center justify-center gap-3 md:gap-4">
-            <img src={`${BFR_BASE}/hoa-hong.webp`} alt="" aria-hidden className="h-auto w-[48px] object-contain opacity-90 md:w-[64px]" />
-            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]" style={{ color: BFR_RED }}>Welcome To Our Wedding</p>
-            <img src={`${BFR_BASE}/hoa-hong.webp`} alt="" aria-hidden className="h-auto w-[48px] scale-x-[-1] object-contain opacity-90 md:w-[64px]" />
+        {/* HEADER — source-specific brocade arch */}
+        <section className="relative isolate z-20 w-full overflow-visible">
+          <div className="relative mx-auto w-full pt-[18%]">
+            <img src={`${BFR_BASE}/flower-corner.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[2%] -top-[2%] z-20 h-auto w-[48%] max-w-none object-contain" />
+            <img src={`${BFR_BASE}/flower-corner.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[2%] -top-[2%] z-20 h-auto w-[48%] max-w-none scale-x-[-1] object-contain" />
+            <div className="relative">
+              <img src={`${BFR_BASE}/main-pattern.webp`} alt="" aria-hidden className="pointer-events-none relative z-0 block h-auto w-full max-w-none select-none" />
+              <div className="absolute inset-0 z-10">
+                <img src={`${BFR_BASE}/seal.webp`} alt="" aria-hidden className="absolute left-1/2 top-[19%] h-auto w-[24%] max-w-[106px] -translate-x-1/2 object-contain md:max-w-[200px]" />
+                <p className="absolute left-1/2 top-[43%] w-[72%] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(7px,1.9vw,15px)] uppercase tracking-[0.12em]" style={{ fontFamily: '"Cormorant Garamond", "Times New Roman", serif', color: BFR_DARK }}>The wedding of</p>
+                <div className="absolute left-1/2 top-[52%] flex w-[55%] -translate-x-1/2 -translate-y-1/2 justify-center">
+                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{couple.groomShortName || couple.groomFullName}</span>
+                </div>
+                <span className="absolute left-1/2 top-[61%] -translate-x-1/2 -translate-y-1/2 text-[clamp(20px,6.5vw,50px)] leading-none" style={{ ...ampFont, color: BFR_DARK }}>&amp;</span>
+                <div className="absolute left-1/2 top-[69%] flex w-[55%] -translate-x-1/2 -translate-y-1/2 justify-center">
+                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{couple.brideShortName || couple.brideFullName}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: BFR_RED }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={{ ...ampFont, color: BFR_GOLD }}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-          <div className="relative mt-6 flex justify-center md:mt-10">
-            <img src={`${BFR_BASE}/floral-big.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-[420px] max-w-none object-contain md:w-[720px]" />
-          </div>
-        </header>
+        </section>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
           {/* CEREMONY INFO */}
@@ -182,7 +182,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: BFR_RED }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(BFR_RED, 0.4) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -234,7 +234,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: BFR_RED }}>QR Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
                       <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
@@ -252,8 +252,8 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
         </div>
 
         {/* FOOTER */}
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: BFR_RED }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: BFR_CREAM }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: BFR_RED }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ backgroundColor: BFR_CREAM }}>
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: BFR_RED }}>♡ thiepmungonline.com</a>

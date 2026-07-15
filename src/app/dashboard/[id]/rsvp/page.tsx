@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 
 import { verifySession, ownInvitation } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
+import viMessages from "../../../../../messages/vi.json";
+import { guestMediaPublicUrl } from "@/lib/guest-media";
+import { ModerationPanel } from "./ModerationPanel";
 
 export default async function RsvpListPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -10,13 +13,20 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
   const invitation = await ownInvitation(id, userId);
   if (!invitation) notFound();
 
-  const [rsvps, wishes] = await Promise.all([
+  const [rsvps, wishes, guestMedia] = await Promise.all([
     prisma.rsvp.findMany({
       where: { invitationId: id },
       orderBy: { createdAt: "desc" },
-      include: { guest: { select: { name: true } } },
+      include: {
+        guest: { select: { name: true } },
+        answers: {
+          include: { question: { select: { label: true, type: true } } },
+          orderBy: { question: { sortOrder: "asc" } },
+        },
+      },
     }),
     prisma.wish.findMany({ where: { invitationId: id }, orderBy: { createdAt: "desc" } }),
+    prisma.guestMedia.findMany({ where: { invitationId: id }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const attending = rsvps.filter((r) => r.attending);
@@ -28,6 +38,8 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
   const brideGuests = attending
     .filter((r) => r.side === "Nhà gái")
     .reduce((sum, r) => sum + r.guests, 0);
+  const answerLabels = viMessages.guestManager.rsvpAnswers;
+  const moderationLabels = viMessages.guestManager.moderation;
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -88,6 +100,7 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
                 <th className="px-4 py-3 font-medium">Ăn kiêng</th>
                 <th className="px-4 py-3 font-medium">Bài hát</th>
                 <th className="px-4 py-3 font-medium">Lời nhắn</th>
+                <th className="px-4 py-3 font-medium">{answerLabels.column}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border text-foreground">
@@ -108,6 +121,22 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
                   <td className="px-4 py-3">{r.dietary ?? "—"}</td>
                   <td className="px-4 py-3">{r.songRequest ?? "—"}</td>
                   <td className="px-4 py-3">{r.message ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    {r.answers.length > 0 ? (
+                      <ul className="min-w-48 space-y-1.5">
+                        {r.answers.map((answer) => (
+                          <li key={answer.id} className="text-xs">
+                            <span className="font-medium text-foreground">{answer.question.label}:</span>{" "}
+                            <span className="text-muted-foreground">
+                              {answer.question.type === "boolean"
+                                ? answer.value === "yes" ? answerLabels.yes : answerLabels.no
+                                : answer.value}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -115,19 +144,19 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
         </div>
       )}
 
-      <h2 className="mt-10 font-heading text-lg font-semibold text-foreground">Lời chúc</h2>
-      {wishes.length === 0 ? (
-        <p className="mt-4 text-muted-foreground">Chưa có lời chúc nào.</p>
-      ) : (
-        <ul className="mt-4 space-y-3">
-          {wishes.map((w) => (
-            <li key={w.id} className="rounded-2xl border border-border bg-card p-4">
-              <p className="font-semibold text-foreground">{w.name}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{w.text}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ModerationPanel
+        invitationId={id}
+        initialWishes={wishes.map((wish) => ({ ...wish, createdAt: wish.createdAt.toISOString() }))}
+        initialMedia={guestMedia.map((item) => ({
+          id: item.id,
+          contributorName: item.contributorName,
+          originalName: item.originalName,
+          kind: item.kind,
+          size: item.size,
+          url: invitation.slug ? guestMediaPublicUrl(invitation.slug, item.id) : "",
+        }))}
+        labels={moderationLabels}
+      />
     </main>
   );
 }

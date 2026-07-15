@@ -1,9 +1,12 @@
 "use client";
 
-import { type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, type TouchEvent, useEffect, useRef, useState } from "react";
+import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, type TouchEvent, useEffect, useRef, useState } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
+import { buildVietQrImageUrl } from "@/lib/vietqr";
+
+export { buildVietQrImageUrl } from "@/lib/vietqr";
 
 export const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 export const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -204,6 +207,20 @@ export function mapEmbedUrl(query: string) {
   return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
 }
 
+type InvitationMapProps = Omit<ComponentPropsWithoutRef<"iframe">, "src"> & {
+  query: string;
+};
+
+export function InvitationMap({ query, title, ...iframeProps }: InvitationMapProps) {
+  return (
+    <iframe
+      {...iframeProps}
+      src={mapEmbedUrl(query)}
+      title={title ?? query}
+    />
+  );
+}
+
 export function FamilyColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
   return (
     <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
@@ -369,6 +386,50 @@ export function DressCode({
 
 export type GiftBank = { label: string; bank: string; num: string; name: string };
 
+export function GiftQrGrid({
+  banks,
+  heading = "Hộp Quà Mừng",
+  accent,
+}: {
+  banks: GiftBank[];
+  heading?: string;
+  accent: string;
+}) {
+  if (banks.length === 0) return null;
+
+  return (
+    <div data-testid="gift-qr-grid" className="flex w-full flex-col items-center gap-6 text-center">
+      <h2 className="text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: accent }}>{heading}</h2>
+      <div className="flex w-full flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
+        {banks.map((gift) => {
+          const qr = buildVietQrImageUrl({ bank: gift.bank, accountNumber: gift.num, accountName: gift.name });
+          return (
+            <div key={gift.label} className="flex max-w-[200px] flex-1 flex-col items-center">
+              <h3 className="mb-2 flex min-h-8 items-start justify-center text-xs font-semibold" style={{ color: accent }}>{gift.label}</h3>
+              <div className="size-32 rounded-xl bg-white p-2 shadow-lg sm:size-40">
+                <img src={qr} alt={`QR - ${gift.label}`} className="h-full w-full object-contain" />
+              </div>
+              <p className="mt-2 text-[13px] font-semibold" style={{ color: accent }}>{gift.bank}</p>
+              <p className="font-mono text-[13px]" style={{ color: accent }}>{gift.num}</p>
+              <p className="text-[13px]" style={{ color: accent }}>{gift.name}</p>
+              <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>Lưu QR</a>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function GiftEnvelopeCorner({ className, rotation }: { className: string; rotation: number }) {
+  return (
+    <svg className={`absolute ${className}`} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" style={{ transform: `rotate(${rotation}deg)` }} aria-hidden>
+      <path d="M2 2 L2 16 L6 16 L6 6 L16 6 L16 2 Z" opacity="0.85" strokeLinecap="square" strokeLinejoin="miter" />
+      <path d="M6 10 L10 10 L10 6" opacity="0.85" strokeLinecap="square" />
+    </svg>
+  );
+}
+
 /** Nút phong bì mừng cưới (囍) + modal QR chuyển khoản. Tự quản state đóng/mở. */
 export function GiftEnvelope({
   banks,
@@ -377,6 +438,7 @@ export function GiftEnvelope({
   cardBg,
   heading = "Phong Bao Mừng Cưới",
   labelColor,
+  variant = "envelope",
 }: {
   banks: GiftBank[];
   accent: string;
@@ -384,6 +446,7 @@ export function GiftEnvelope({
   cardBg: string;
   heading?: string;
   labelColor?: string;
+  variant?: "envelope" | "giftbox";
 }) {
   const [open, setOpen] = useState(false);
   if (banks.length === 0) return null;
@@ -391,8 +454,27 @@ export function GiftEnvelope({
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: dark }}>{heading}</h2>
-      <button type="button" aria-label={`Mở ${heading.toLowerCase()}`} onClick={() => setOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-        <div className="relative flex h-full w-full items-center justify-center">
+      <button data-testid="gift-envelope" type="button" aria-label={`Mở ${heading.toLowerCase()}`} onClick={() => setOpen(true)} className={`group relative cursor-pointer border-none bg-transparent outline-none ${variant === "giftbox" ? "h-[280px] w-[260px]" : "h-64 w-[200px]"}`}>
+        {variant === "giftbox" ? (
+          <div data-testid="gift-envelope-animation" className="igb-wrapper relative flex h-full w-full items-end justify-center pb-8">
+            <span className="igb-sparkle absolute left-[14%] top-[8%] z-20 text-[22px]" style={{ color: dark }}>✦</span>
+            <span className="igb-sparkle igb-sparkle-2 absolute right-[10%] top-[18%] z-20 text-base" style={{ color: dark }}>✦</span>
+            <span className="igb-sparkle igb-sparkle-3 absolute left-[5%] top-[32%] z-20 text-sm" style={{ color: dark }}>✦</span>
+            <span className="igb-sparkle igb-sparkle-4 absolute right-[5%] top-[26%] z-20 text-sm" style={{ color: dark }}>✦</span>
+            <div className="igb-confetti-field absolute left-1/2 top-[28%] z-0" aria-hidden>
+              {Array.from({ length: 8 }, (_, index) => <i key={index} className={`igb-confetti igb-confetti-${index + 1}`} />)}
+            </div>
+            <div className="igb-bob relative h-[220px] w-[200px]" aria-hidden>
+              <div className="igb-shadow absolute -bottom-2 left-1/2 h-3 w-36 -translate-x-1/2 rounded-full bg-black/40 blur-sm" />
+              <span className="igb-present igb-present-1 absolute left-2 top-10 h-14 w-14"><i /></span>
+              <span className="igb-present igb-present-2 absolute right-0 top-4 h-12 w-12"><i /></span>
+              <span className="igb-present igb-present-3 absolute bottom-3 left-1/2 -ml-12 h-24 w-24"><i /></span>
+              <span className="igb-present igb-present-4 absolute bottom-8 left-0 h-12 w-12"><i /></span>
+              <span className="igb-present igb-present-5 absolute bottom-5 right-0 h-16 w-16"><i /></span>
+            </div>
+          </div>
+        ) : (
+        <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
           {[
             { w: 30.8, style: { top: "5%", right: "5%" } },
             { w: 25.2, style: { top: "20%", left: "0%" } },
@@ -400,29 +482,36 @@ export function GiftEnvelope({
             { w: 22.4, style: { bottom: "8%", left: "8%" } },
             { w: 21, style: { top: "45%", right: "-5%" } },
           ].map((c, i) => (
-            <div key={i} className="absolute rounded-full" style={{ width: c.w, height: c.w, background: accent, border: `2px solid ${dark}`, boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
-              <div className="absolute rounded-full" style={{ inset: 2, border: `2px solid ${hexToRgba(accent, 0.6)}` }} />
+            <div key={i} className={`nhat-binh-coin-${i + 1} absolute rounded-full`} style={{ width: c.w, height: c.w, background: "#fbbf24", border: "2px solid #f59e0b", boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
+              <div className="absolute rounded-full" style={{ inset: 2, border: "2px solid #fde047" }} />
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ width: c.w * 0.28, height: c.w * 0.28, border: "2px solid #d97706", boxShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px inset" }} />
             </div>
           ))}
-          <span className="absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
-          <span className="absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
-          <span className="absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
-          <div className="relative" style={{ width: 140, height: 196 }}>
-            <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "#6b1d18" }} />
-            <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "#7a2620" }} />
-            <div className="absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
-              <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: accent }} />
-              <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${accent} 0%, ${dark} 100%)`, border: "3px solid #fef3c7" }}>
+          <span className="nhat-binh-sparkle absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
+          <span className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
+          <span className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
+          <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
+            <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "#5c1612" }} />
+            <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "#6b1d18" }} />
+            <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-radial-gradient(circle at 0 0, transparent 0, transparent 11.2px, #7f1d1d 11.2px, #7f1d1d 11.9px)", backgroundSize: "21px 21px", backgroundPosition: "10.5px 10.5px" }} />
+              <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: "#fbbf24" }} />
+              <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: "radial-gradient(circle, #fbbf24 0%, #d97706 100%)", border: "3px solid #fef3c7" }}>
                 <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
               </div>
+              <GiftEnvelopeCorner className="left-2 top-2" rotation={0} />
+              <GiftEnvelopeCorner className="right-2 top-2" rotation={90} />
+              <GiftEnvelopeCorner className="bottom-2 left-2" rotation={-90} />
+              <GiftEnvelopeCorner className="bottom-2 right-2" rotation={180} />
             </div>
           </div>
         </div>
-        <p className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: muted }}>Nhấn để mở</p>
+        )}
+        <p className={`${variant === "giftbox" ? "igb-hint bottom-0" : "nhat-binh-hint-text -bottom-2"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
       </button>
       {open ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={() => setOpen(false)}>
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: cardBg }} onClick={(e) => e.stopPropagation()}>
+        <div className="gift-modal-backdrop fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={() => setOpen(false)}>
+          <div className="gift-modal-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-2xl sm:max-w-xl sm:rounded-2xl" style={{ backgroundColor: cardBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: dark }}>
               <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]">{heading}</h2>
@@ -430,7 +519,7 @@ export function GiftEnvelope({
             <div className="p-4 sm:p-6">
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center">
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.label} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                       <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: dark }}>{q.label}</h3>

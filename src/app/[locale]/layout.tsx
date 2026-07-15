@@ -7,6 +7,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
 import "../globals.css";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 
 const geistSans = Geist({
@@ -118,6 +119,7 @@ export default async function LocaleLayout({
         />
         <PetalField />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

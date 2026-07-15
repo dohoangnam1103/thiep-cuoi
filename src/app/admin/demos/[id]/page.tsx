@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { verifyAdmin } from "@/lib/admin-dal";
+import { getEditorDraftMessages } from "@/lib/editor-draft-messages";
+import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
 import { EditorForm } from "@/app/editor/[id]/EditorForm";
 import { saveDemo } from "../actions";
@@ -10,6 +12,10 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
   await verifyAdmin();
   const { id } = await params;
 
+  const [musicMessages, draftMessages] = await Promise.all([
+    getMusicPickerMessages("vi"),
+    getEditorDraftMessages("vi"),
+  ]);
   const invitation = await prisma.invitation.findFirst({
     where: { id, isDemo: true },
     include: {
@@ -19,6 +25,12 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
     },
   });
   if (!invitation) notFound();
+  const initialTrack = invitation.content?.music
+    ? await prisma.track.findFirst({
+        where: { url: invitation.content.music },
+        select: { url: true, title: true, artist: true },
+      })
+    : null;
 
   return (
     <div className="space-y-4">
@@ -36,6 +48,10 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
         content={invitation.content}
         schedule={invitation.schedule.map((s) => ({ time: s.time, label: s.label }))}
         gallery={invitation.gallery.map((g) => g.url)}
+        locale="vi"
+        musicMessages={musicMessages}
+        draftMessages={draftMessages}
+        initialTrack={initialTrack}
       />
     </div>
   );

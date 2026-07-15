@@ -9,11 +9,12 @@ import {
   hexToRgba,
   formatDate,
   buildCalendar,
+  buildVietQrImageUrl,
   formatWishTime,
   useLightbox,
   Lightbox,
   googleCalendarUrl,
-  mapEmbedUrl,
+  InvitationMap,
   FamilyColumn,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
@@ -31,42 +32,6 @@ function BaroqueHeading({ children }: { children: React.ReactNode }) {
     <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: GOLD_DARK }}>
       {children}
     </h2>
-  );
-}
-
-// Carousel ảnh trong khung.webp: tự chạy 4s + mũi tên. Bản gốc có slideshow trong
-// khung ornate, không phải 1 ảnh tĩnh.
-function HeroCarousel({ photos }: { photos: string[] }) {
-  const [i, setI] = useState(0);
-  const count = photos.length;
-  useEffect(() => {
-    if (count <= 1) return;
-    const id = window.setInterval(() => setI((v) => (v + 1) % count), 4000);
-    return () => window.clearInterval(id);
-  }, [count]);
-  if (count === 0) return null;
-  const step = (d: number) => setI((v) => (v + d + count) % count);
-  return (
-    <div className="absolute inset-[10%] z-0 overflow-hidden rounded-[8px]">
-      <div className="flex h-full w-full transition-transform duration-500 ease-out" style={{ transform: `translate3d(${-i * 100}%,0,0)` }}>
-        {photos.map((src, idx) => (
-          <div key={src} className="h-full w-full shrink-0">
-            <img alt={`Ảnh cưới ${idx + 1}`} src={src} className="h-full w-full object-cover" />
-          </div>
-        ))}
-      </div>
-      {count > 1 ? (
-        <>
-          <button type="button" aria-label="Ảnh trước" onClick={() => step(-1)} className="absolute left-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/25 text-2xl text-white transition hover:bg-black/40">‹</button>
-          <button type="button" aria-label="Ảnh sau" onClick={() => step(1)} className="absolute right-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/25 text-2xl text-white transition hover:bg-black/40">›</button>
-          <div className="absolute inset-x-0 bottom-2 z-10 flex justify-center gap-1.5">
-            {photos.map((src, idx) => (
-              <button key={src} type="button" aria-label={`Ảnh ${idx + 1}`} onClick={() => setI(idx)} className="h-1.5 w-1.5 rounded-full transition" style={{ backgroundColor: idx === i ? "#fff" : "rgba(255,255,255,0.5)" }} />
-            ))}
-          </div>
-        </>
-      ) : null}
-    </div>
   );
 }
 
@@ -121,28 +86,21 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
         {/* faint side flower */}
         <img src={`${BAROQUE_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
 
-        {/* HEADER — ornate frame + columns + names */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
-          {/* flanking columns */}
-          <img src={`${BAROQUE_BASE}/tru.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[60px] left-0 -z-10 h-[560px] w-auto max-w-none object-contain opacity-70 md:h-[820px]" />
-          <img src={`${BAROQUE_BASE}/tru.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[60px] right-0 -z-10 h-[560px] w-auto max-w-none scale-x-[-1] object-contain opacity-70 md:h-[820px]" />
-
-          <div className="relative z-30 flex items-center justify-center gap-3 md:gap-4">
-            <img src={`${BAROQUE_BASE}/hoa-tiet-1.webp`} alt="" aria-hidden className="h-auto w-[56px] object-contain opacity-90 md:w-[80px]" />
-            <p className="text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]" style={{ color: GOLD_DARK }}>Welcome To Our Wedding</p>
-            <img src={`${BAROQUE_BASE}/hoa-tiet-1.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
-          </div>
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: GOLD_DARK }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-          {/* ornate frame around carousel */}
-          <div className="relative mt-6 w-full max-w-[420px] md:mt-10 md:max-w-[560px]">
-            <img src={`${BAROQUE_BASE}/khung.webp`} alt="" aria-hidden className="pointer-events-none relative z-10 block h-auto w-full max-w-none object-contain" />
-            {albumShown.length > 0 ? <HeroCarousel photos={gallery} /> : null}
-          </div>
-        </header>
+        {/* HEADER — source-specific baroque name frame */}
+        <section className="relative isolate z-20 w-full">
+          <img src={`${BAROQUE_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute right-0 top-0 z-0 h-auto w-[63%] max-w-none translate-x-[42%] -translate-y-[42%] rotate-45 object-contain opacity-20 md:w-[51%]" />
+          <header className="relative z-20 flex w-full flex-col items-center px-4 pb-4 pt-16 sm:px-5 md:pb-8 md:pt-24">
+            <p className="relative z-30 whitespace-pre text-center text-[15px] font-bold uppercase tracking-[0.18em] md:text-[20px]" style={{ fontFamily: '"Cormorant Garamond", "Times New Roman", serif', color: GOLD_DARK }}>Welcome To Our Wedding</p>
+            <div className="relative mt-6 w-[92%] max-w-[360px] md:mt-9 md:max-w-[520px]">
+              <img src={`${BAROQUE_BASE}/khung.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-full object-contain" />
+              <h1 className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center uppercase leading-none" style={{ ...nameFont, color: GOLD_DARK }}>
+                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{couple.groomShortName || couple.groomFullName}</span>
+                <span className="my-2 text-[clamp(18px,3vw,24px)] normal-case leading-none md:my-3" style={ampFont}>&amp;</span>
+                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{couple.brideShortName || couple.brideFullName}</span>
+              </h1>
+            </div>
+          </header>
+        </section>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
           {/* CEREMONY INFO */}
@@ -245,7 +203,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GOLD_DARK }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GOLD, 0.4) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -301,8 +259,8 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
           {banks.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-4">
               <BaroqueHeading>Phong Bao Mừng Cưới</BaroqueHeading>
-              <button type="button" aria-label="Mở phong bao mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-                <div className="relative flex h-full w-full items-center justify-center">
+              <button data-testid="gift-envelope" type="button" aria-label="Mở phong bao mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
+                <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
                   {[
                     { w: 30.8, style: { top: "5%", right: "5%" } },
                     { w: 25.2, style: { top: "20%", left: "0%" } },
@@ -310,17 +268,17 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
                     { w: 22.4, style: { bottom: "8%", left: "8%" } },
                     { w: 21, style: { top: "45%", right: "-5%" } },
                   ].map((c, i) => (
-                    <div key={i} className="absolute rounded-full" style={{ width: c.w, height: c.w, background: GOLD, border: `2px solid ${GOLD_DARK}`, boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
+                    <div key={i} className={`nhat-binh-coin-${i + 1} absolute rounded-full`} style={{ width: c.w, height: c.w, background: GOLD, border: `2px solid ${GOLD_DARK}`, boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
                       <div className="absolute rounded-full" style={{ inset: 2, border: `2px solid ${hexToRgba(GOLD, 0.6)}` }} />
                     </div>
                   ))}
-                  <span className="absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
-                  <span className="absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
-                  <span className="absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
-                  <div className="relative" style={{ width: 140, height: 196 }}>
+                  <span className="nhat-binh-sparkle absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
+                  <span className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
+                  <span className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
+                  <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
                     <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "#6b1d18" }} />
                     <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "#7a2620" }} />
-                    <div className="absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
+                    <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
                       <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: GOLD }} />
                       <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${GOLD} 0%, ${GOLD_DARK} 100%)`, border: "3px solid #fef3c7" }}>
                         <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
@@ -328,18 +286,18 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
                     </div>
                   </div>
                 </div>
-                <p className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: INK_MUTED }}>Nhấn để mở</p>
+                <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: INK_MUTED }}>Nhấn để mở</p>
               </button>
             </section>
           ) : null}
         </div>
 
         {/* FOOTER */}
-        <div className="relative flex justify-center pb-6 md:pb-10">
-          <img src={`${BAROQUE_BASE}/hoa-tiet-2.webp`} alt="" aria-hidden className="h-auto w-[480px] object-contain md:w-[680px]" />
+        <div className="pointer-events-none relative h-28 overflow-hidden md:h-40">
+          <img src={`${BAROQUE_BASE}/hoa-tiet-2.webp`} alt="" aria-hidden className="absolute left-1/2 top-1/2 h-auto w-[520px] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.1] md:w-[720px]" />
         </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: GOLD_DARK }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: CREAM }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: GOLD_DARK }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GOLD_DARK }}>♡ thiepmungonline.com</a>
@@ -357,7 +315,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             <div className="p-4 sm:p-6">
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: INK }}>
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.label} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                       <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: GOLD_DARK }}>{q.label}</h3>

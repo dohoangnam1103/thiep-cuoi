@@ -3,8 +3,8 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, mapEmbedUrl,
-  FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
+  useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
+  FamilyColumn, GiftEnvelope, SharedWishForm, WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
 const BASE = "/chungdoi/images/themes/_decor/anhdao-pink";
@@ -29,7 +29,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const nameFont = { fontFamily: '"Alex Brush", cursive' };
+  const nameFont = { fontFamily: '"The Nautigal", cursive' };
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
@@ -41,31 +41,40 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BLUSH }}>
-      <div className="relative w-full max-w-[480px] overflow-hidden bg-white md:mx-auto md:max-w-[900px] md:border" style={{ color: PINK, borderColor: hexToRgba(PINK, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden rounded bg-[url('/chungdoi/images/themes/_decor/anhdao-pink/bg-full.jpg')] bg-cover bg-center md:mx-auto md:max-w-[900px] md:border" style={{ color: PINK, borderColor: hexToRgba(PINK, 0.2) }}>
         {/* HEADER */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          <img src={`${BASE}/1.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[12%] top-[10px] -z-10 h-[200px] w-auto max-w-none object-contain opacity-90 md:h-[320px]" />
-          <img src={`${BASE}/2.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[12%] top-[60px] -z-10 h-[200px] w-auto max-w-none object-contain opacity-90 md:h-[320px]" />
-
-          <p className="relative z-30 text-center text-[15px] uppercase tracking-[0.3em] md:text-[18px]" style={{ color: PINK_MUTED }}>Welcome To Our Wedding</p>
-
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: PINK }}>
-            <span className="text-[58px] md:text-[76px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-1 text-[34px] md:text-[42px]" style={nameFont}>&amp;</span>
-            <span className="text-[58px] md:text-[76px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
-
-          {albumShown.length > 0 ? (
-            <div className="relative z-30 mt-8 flex w-full items-start justify-center gap-4 md:gap-10">
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px] overflow-hidden rounded-lg border-4" style={{ borderColor: hexToRgba(PINK, 0.35) }}>
-                {gallery[0] ? <img src={gallery[0]} alt="Chú rể" className="h-full w-full object-cover" /> : null}
-              </div>
-              <div className="relative aspect-[3/4] w-[42%] max-w-[200px] overflow-hidden rounded-lg border-4" style={{ borderColor: hexToRgba(PINK, 0.35) }}>
-                {gallery[1] ? <img src={gallery[1]} alt="Cô dâu" className="h-full w-full object-cover" /> : null}
+        <div className="relative z-10 w-full">
+          <img src={`${BASE}/1.webp`} alt="" aria-hidden className="block h-auto w-full" />
+        </div>
+        <header className="relative z-20 flex flex-col items-center justify-center px-6 pb-12 pt-0 text-center md:-mt-[200px] md:px-10 md:pb-16 lg:-mt-[200px]">
+          {gallery[0] ? (
+            <div className="absolute right-[8.5vw] top-[-400px] z-20 rotate-[11.447deg] md:right-[5vw] md:top-[-896px] lg:right-8 lg:top-[-896px]">
+              <div className="h-[88vw] w-[66vw] overflow-hidden border-[2.8vw] border-white bg-white shadow-2xl md:h-[62vw] md:w-[47vw] md:border-[2vw] lg:h-[448px] lg:w-[340px] lg:border-[14px]">
+                <img src={gallery[0]} alt="Wedding photo" className="h-full w-full object-cover" />
               </div>
             </div>
           ) : null}
+          <h1 className="relative z-10 flex flex-col items-center gap-0 text-[65px] leading-[98px] md:text-[91px] md:leading-[137px]" style={{ color: "#ba4a59", ...nameFont }}>
+            <span>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="mt-1 text-[48px] leading-[72px] md:text-[65px] md:leading-[98px]">&amp;</span>
+            <span>{couple.brideShortName || couple.brideFullName}</span>
+          </h1>
         </header>
+
+        {albumShown.length > 0 ? (
+          <section className="relative z-10 flex flex-col items-center px-6 pb-12 md:px-10 md:pb-16">
+            <h2 className="text-[20px] font-normal uppercase tracking-[0.05em]" style={{ fontFamily: 'Baskerville, "Times New Roman", serif', color: "#ae4c51" }}>Album Ảnh Cưới</h2>
+            <div className="mt-6 grid w-full max-w-[432px] grid-cols-2 gap-3 md:max-w-[600px] md:gap-4">
+              {albumShown.map((src, i) => (
+                <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-white/20 bg-white/5">
+                  <img src={src} alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
+                  {i === albumShown.length - 1 && albumExtra > 0 ? <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div> : null}
+                </button>
+              ))}
+            </div>
+            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={PINK} />
+          </section>
+        ) : null}
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
           {/* CEREMONY INFO */}
@@ -95,7 +104,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
           </section>
 
           {/* ALBUM */}
-          {albumShown.length > 0 ? (
+          {false && albumShown.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <CherryHeading>Album Ảnh Cưới</CherryHeading>
               <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
@@ -150,7 +159,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
               <CherryHeading>Tiệc cưới sẽ tổ chức tại</CherryHeading>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(PINK, 0.3) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -191,36 +200,19 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <CherryHeading>Phong Bao Mừng Cưới</CherryHeading>
-              <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: PINK, color: PINK }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent={PINK} dark={PINK} cardBg={BLUSH} heading="Hộp Quà Mừng" labelColor={PINK_MUTED} />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER */}
-        <div className="relative flex items-end justify-between px-2 pb-2">
-          <img src={`${BASE}/1.webp`} alt="" aria-hidden className="pointer-events-none h-[100px] w-auto object-contain opacity-90 md:h-[150px]" />
-          <img src={`${BASE}/2.webp`} alt="" aria-hidden className="pointer-events-none h-[100px] w-auto object-contain opacity-90 md:h-[150px]" />
-        </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: PINK }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: BLUSH }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <img src={`${BASE}/1.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-4 left-0 z-0 h-[360px] w-auto max-w-none object-contain opacity-[0.11] md:h-[520px]" />
+        <img src={`${BASE}/2.webp`} alt="" aria-hidden className="pointer-events-none absolute -bottom-4 right-0 z-0 h-[360px] w-auto max-w-none object-contain opacity-[0.11] md:h-[520px]" />
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: PINK }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: PINK }}>♡ thiepmungonline.com</a>

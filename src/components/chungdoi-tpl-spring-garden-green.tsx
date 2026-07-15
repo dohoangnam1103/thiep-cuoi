@@ -3,30 +3,48 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { FloralInvitation } from "@/components/chungdoi-tpl-floral-base";
 
-const BASE = "/chungdoi/images/themes/_decor/nature";
+const compactName = (value: string) => value.trim().split(/\s+/).slice(-2).join(" ");
+
+function SpringGardenGreenHero({ content }: { content: ChungDoiDemoContent }) {
+  const { couple } = content;
+  const nameFont = { fontFamily: '"UNI Chu truyen thong", "Baskerville", serif' };
+
+  return (
+    <header data-template-hero="spring-garden-green" className="relative z-20 flex h-[472px] flex-col items-center justify-center text-center text-[#5d6a57] md:h-[650px]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[-49px] z-0 h-[1560px] w-[1680px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/nature/flower_top.webp')] bg-contain bg-top bg-no-repeat opacity-70 md:h-[2800px] md:w-[3000px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[-130px] z-[1] h-[1650px] w-[1730px] -translate-x-[31%] bg-[url('/chungdoi/images/themes/_decor/nature/flower_paralax.webp')] bg-contain bg-center bg-no-repeat opacity-20 md:h-[2946px] md:w-[3092px]"
+      />
+      <h1 className="relative z-10 flex w-full flex-col items-center gap-6 px-6 text-[50px] leading-[75px] md:px-10 md:text-[70px] md:leading-[105px]" style={nameFont}>
+        <span>{compactName(couple.groomShortName || couple.groomFullName)}</span>
+        <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]">&amp;</span>
+        <span>{compactName(couple.brideShortName || couple.brideFullName)}</span>
+      </h1>
+    </header>
+  );
+}
 
 export function SpringGardenGreenInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
       content={content}
+      hero={<SpringGardenGreenHero content={content} />}
+      albumFirst
       palette={{
-        outerBg: "linear-gradient(180deg,#f0f4ef 0%,#e8ede6 55%,#dfe5dd 100%)",
+        outerBg: "#ffffff",
+        surfaceBg: "rgba(255,255,255,0.82)",
         cardBg: "rgba(255,255,255,0.62)",
         text: "#5d6a57",
         accent: "#697a62",
         nameFont: { fontFamily: '"Playfair Display", "Cormorant Garamond", serif' },
         ampFont: { fontFamily: '"Alex Brush", "The Nautigal", cursive' },
+        footerBg: "transparent",
+        footerText: "#5d6a57",
       }}
-      backdrop={[
-        { src: `${BASE}/flower_paralax.webp`, className: "top-[620px] -right-[24%] h-[820px] opacity-[0.16] md:top-[760px] md:-right-[12%] md:h-[1240px]" },
-        { src: `${BASE}/flower_paralax.webp`, className: "top-[1500px] -left-[24%] h-[820px] opacity-[0.14] md:top-[1700px] md:-left-[12%] md:h-[1240px]", flip: true },
-      ]}
-      headerDecor={[
-        { src: `${BASE}/flower_top.webp`, className: "-top-2 right-0 h-[210px] opacity-95 md:h-[320px]" },
-        { src: `${BASE}/flower_top.webp`, className: "-top-2 left-0 h-[210px] opacity-95 md:h-[320px]", flip: true },
-      ]}
-      albumDecor={[{ src: `${BASE}/flower_paralax.webp`, className: "-right-[34%] top-10 h-[520px] rotate-12 opacity-[0.12] md:-right-[16%] md:h-[780px]" }]}
-      footerDecor={{ src: `${BASE}/flower_paralax.webp`, className: "opacity-20" }}
     />
   );
 }

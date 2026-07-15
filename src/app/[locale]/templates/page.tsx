@@ -21,7 +21,7 @@ export async function generateMetadata({
   return {
     title: { absolute: title },
     description,
-    alternates: staticAlternates("/templates"),
+    alternates: staticAlternates("/templates", locale),
     openGraph: {
       type: "website",
       title,

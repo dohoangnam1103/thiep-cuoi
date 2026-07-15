@@ -65,6 +65,7 @@ export function LanguageSwitcher() {
         className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-2 text-sm font-bold text-foreground transition hover:border-primary/60 hover:text-primary"
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={LOCALE_LABELS[locale]}
       >
         <Globe2 className="size-4" />
         <span className="hidden sm:inline">{LOCALE_LABELS[locale]}</span>

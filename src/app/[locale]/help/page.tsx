@@ -20,7 +20,7 @@ export async function generateMetadata({
   return pageSeo({
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: staticAlternates("/help"),
+    alternates: staticAlternates("/help", locale),
   });
 }
 

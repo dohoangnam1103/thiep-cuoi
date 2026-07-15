@@ -51,7 +51,7 @@ export const contentSchema = z.object({
   groomAccountName: z.string().max(120).optional().default(""),
 });
 
-export type EditorState = { error?: string; ok?: boolean } | undefined;
+export type EditorState = { error?: string; ok?: boolean; persisted?: boolean } | undefined;
 
 export function parseSchedule(formData: FormData) {
   const times = formData.getAll("scheduleTime").map(String);

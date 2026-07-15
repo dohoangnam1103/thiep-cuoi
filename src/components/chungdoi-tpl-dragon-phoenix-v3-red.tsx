@@ -10,26 +10,28 @@ import {
   useLightbox,
   Lightbox,
   googleCalendarUrl,
-  mapEmbedUrl,
+  InvitationMap,
   FamilyColumn,
   SharedCarousel,
   SharedCountdown,
   DressCode,
+  GiftEnvelope,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
 
 const RED_BASE = "/chungdoi/images/themes/_decor/longphung-v3-red";
-const RED = "#8f1d1d";
-const GOLD = "#c9a227";
-const RED_MUTED = "rgba(143,29,29,0.72)";
+const RED = "#8f0018";
+const RED_DEEP = "#710013";
+const GOLD = "#ffbe89";
+const GOLD_MUTED = "rgba(255, 190, 137, 0.78)";
 const RED_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
-const nameFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
+const nameFont = { fontFamily: '"Fz Qellia", "Baskerville", "Times New Roman", serif' };
 const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
 
 function RedHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: RED }}>
+    <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: GOLD }}>
       {children}
     </h2>
   );
@@ -43,6 +45,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
   const calendar = buildCalendar(couple.date);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
+  const heroPhoto = gallery[1] ?? gallery[0];
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
@@ -54,29 +57,53 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: RED, borderColor: hexToRgba(RED, 0.2), backgroundColor: "#fffdf8" }}>
-        {/* HEADER — dragon + phoenix flanking, chu-hy emblem, names */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[80px] sm:px-5 md:pt-[110px]">
-          {/* dragon (left) + phoenix (right) flanking decor */}
-          <img src={`${RED_BASE}/rong.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[60px] -left-[6%] -z-10 h-auto w-[46%] max-w-none object-contain opacity-90 md:top-[80px] md:-left-[2%] md:w-[38%]" />
-          <img src={`${RED_BASE}/phung.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[60px] -right-[6%] -z-10 h-auto w-[46%] max-w-none object-contain opacity-90 md:top-[80px] md:-right-[2%] md:w-[38%]" />
+      <div
+        data-template-visual="dragon-phoenix-v3-red"
+        className="relative w-full max-w-[480px] overflow-hidden bg-[radial-gradient(circle_at_50%_10%,#a60022_0%,#8f0018_38%,#710013_100%)] text-[#ffbe89] md:mx-auto md:max-w-[900px] md:border md:border-[#ffbe89]/25"
+      >
+        <img src={`${RED_BASE}/phung.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[32%] top-0 h-auto w-[90%] max-w-none opacity-[0.08] md:-left-[18%] md:w-[65%]" />
+        <img src={`${RED_BASE}/rong.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[30%] top-[620px] h-auto w-[90%] max-w-none opacity-[0.08] md:-right-[15%] md:top-[760px] md:w-[65%]" />
 
-          {/* chu-hy 囍 emblem */}
-          <img src={`${RED_BASE}/chu-hy.webp`} alt="" aria-hidden className="pointer-events-none relative z-30 mb-3 h-[80px] w-auto object-contain md:mb-4 md:h-[110px]" />
+        {/* Original V3 hero: compact name lockup, swallow ornaments and an arched portrait. */}
+        <header data-testid="dragon-phoenix-v3-hero" className="relative z-20 flex w-full flex-col items-center px-4 pb-16 pt-14 sm:px-5 md:pb-20 md:pt-20">
+          <div className="relative z-20 flex w-full items-center justify-center gap-4 md:gap-7">
+            <span className="min-w-0 flex-1 text-right font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
+              {couple.groomShortName || couple.groomFullName}
+            </span>
+            <img src={`${RED_BASE}/chu-hy.webp`} alt="" aria-hidden className="h-14 w-14 shrink-0 object-contain md:h-20 md:w-20" />
+            <span className="min-w-0 flex-1 font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
+              {couple.brideShortName || couple.brideFullName}
+            </span>
+          </div>
 
-          <p className="relative z-30 text-center text-[15px] uppercase tracking-[0.2em] md:text-[20px]">Welcome To Our Wedding</p>
+          <div className="relative mt-8 flex w-full max-w-[620px] justify-center md:mt-10">
+            <img src={`${RED_BASE}/chim-en.webp`} alt="" aria-hidden className="absolute left-[3%] top-4 z-20 w-[76px] -rotate-[12deg] object-contain md:left-[5%] md:w-[120px]" />
+            <img src={`${RED_BASE}/chim-en.webp`} alt="" aria-hidden className="absolute right-[3%] top-4 z-20 w-[76px] -scale-x-100 rotate-[12deg] object-contain md:right-[5%] md:w-[120px]" />
 
-          <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: RED }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={{ ...ampFont, color: GOLD }}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
-          </h1>
+            <div className="absolute left-[9%] top-[12%] h-[72%] w-[34%] rounded-t-[28%] border border-[#ffbe89]/45 bg-[#dcb889]/35 md:left-[12%]" />
+            <div className="absolute right-[9%] top-[12%] h-[72%] w-[34%] rounded-t-[28%] border border-[#ffbe89]/45 bg-[#f5dfbd]/35 md:right-[12%]" />
+
+            {heroPhoto ? (
+              <div
+                data-testid="dragon-phoenix-v3-hero-photo"
+                className="relative z-10 aspect-[3/4.65] w-[58%] overflow-hidden rounded-[18%_18%_12%_12%/10%_10%_8%_8%] border-[3px] border-[#ffbe89] bg-[#5f0011] shadow-[0_24px_60px_rgba(53,0,10,0.45)] md:w-[52%] md:border-4"
+              >
+                <img
+                  src={heroPhoto}
+                  alt={`${couple.groomFullName} và ${couple.brideFullName}`}
+                  className="h-full w-full object-cover object-[50%_34%]"
+                />
+              </div>
+            ) : null}
+          </div>
         </header>
 
-        <div className="relative z-10 mt-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:mt-14 md:px-10">
+        <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
-            <RedHeading>Thông Tin Lễ Cưới</RedHeading>
+            <div className="rounded-[14px] border-2 border-[#ffbe89] px-5 py-2 md:px-7 md:py-3">
+              <RedHeading>Thông Tin Lễ Cưới</RedHeading>
+            </div>
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
@@ -85,10 +112,10 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: RED_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: GOLD }}>&amp;</div>
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: RED_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -96,7 +123,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
                   <span>{ceremony.weekday}</span><span style={{ color: GOLD }}>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span style={{ color: GOLD }}>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: RED_MUTED }}>{RED_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{RED_LUNAR}</div>
               </div>
             ) : null}
           </section>
@@ -106,9 +133,9 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             <section className="flex w-full flex-col items-center gap-6">
               <RedHeading>Album Ảnh Cưới</RedHeading>
               <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
-                <SharedCarousel photos={gallery} arrowColor={RED} />
+                <SharedCarousel photos={gallery} arrowColor={GOLD} />
               </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={RED} />
+              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GOLD} />
             </section>
           ) : null}
 
@@ -123,11 +150,11 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: RED_MUTED }}>{RED_LUNAR}</div>
+            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GOLD_MUTED }}>{RED_LUNAR}</div>
 
             <div className="mt-4 flex flex-col items-center">
               <RedHeading>Cùng đếm ngược</RedHeading>
-              <SharedCountdown target={`${couple.date}T${couple.time || "18:00"}`} style={{ color: RED }} />
+              <SharedCountdown target={`${couple.date}T${couple.time || "18:00"}`} style={{ color: GOLD }} />
             </div>
 
             {calendar ? (
@@ -144,21 +171,21 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
 
-            <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition" style={{ borderColor: GOLD, color: RED }}>Thêm vào lịch</a>
+            <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition hover:bg-[#ffbe89]/10 active:scale-[0.98]" style={{ borderColor: GOLD, color: GOLD }}>Thêm vào lịch</a>
           </section>
 
           {/* VENUE MAP */}
           {mapQuery ? (
             <section className="flex w-full flex-col items-center gap-3 text-center">
-              <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: RED }}>Tiệc cưới sẽ tổ chức tại</h3>
+              <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GOLD }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
 
-          <DressCode headingColor={RED} subColor={RED_MUTED} colors={[{ color: RED }, { color: "#fffdf8", border: RED }, { color: GOLD }]} />
+          <DressCode headingColor={GOLD} subColor={GOLD_MUTED} colors={[{ color: RED_DEEP, border: GOLD }, { color: "#fff4e3", border: GOLD }, { color: GOLD }]} />
 
           {/* SCHEDULE */}
           {schedule.length > 0 ? (
@@ -178,7 +205,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
           {/* WISHES */}
           <section className="relative w-full">
             <div className="text-center"><RedHeading>Sổ Lưu Bút</RedHeading></div>
-            <SharedWishForm accent={RED} />
+            <SharedWishForm accent={GOLD} />
             {wishes.length > 0 ? (
               <div className="chungdoi-scroll touch-pan-y mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
@@ -194,38 +221,20 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             ) : null}
           </section>
 
-          {/* QR GIFT */}
+          {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: RED }}>Phong Bao Mừng Cưới</h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl border bg-white p-2 sm:size-40" style={{ borderColor: hexToRgba(GOLD, 0.5) }}><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: GOLD, color: RED }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={banks} accent={GOLD} dark={GOLD} cardBg={RED_DEEP} heading="Hộp Quà Mừng" labelColor={GOLD} />
             </section>
           ) : null}
         </div>
 
         {/* FOOTER — swallow birds decor + deep-red closing */}
-        <div className="relative flex justify-center pb-2">
-          <img src={`${RED_BASE}/chim-en.webp`} alt="" aria-hidden className="pointer-events-none h-auto w-[220px] object-contain opacity-90 md:w-[320px]" />
-        </div>
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: RED }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#fdf3e3" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: GOLD }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
-          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: RED }}>♡ thiepmungonline.com</a>
+          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GOLD }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>

@@ -21,15 +21,26 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
-import { templates } from "@/data/chungdoi";
+import { BankCombobox } from "@/components/ui/bank-combobox";
+import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, MUSIC_OPTIONS, type SelectOption } from "@/data/editor-options";
+import { MusicPicker } from "@/components/music-picker";
+import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
+import type { MusicPickerMessages } from "@/lib/music-picker";
+import { trackEvent } from "@/lib/analytics";
 import { saveDraft, publish, checkSlug } from "./actions";
 import { type EditorState } from "./content-schema";
-import { readDraft, useFormDraft, type Draft } from "@/hooks/use-form-draft";
+import {
+  draftsEqual,
+  readDraft,
+  useFormDraft,
+  type Draft,
+  type DraftStatus,
+  type DraftStatusMessages,
+} from "@/hooks/use-form-draft";
 import { slugify, slugifyInput, slugFromFormFields } from "./slug";
-import { VALID_TEMPLATE_IDS, TEMPLATE_LABELS } from "./templates";
+import { templateLabel } from "./templates";
 
 type EditorFormProps = {
   invitationId: string;
@@ -40,6 +51,10 @@ type EditorFormProps = {
   content: InvitationContent | null;
   schedule: { time: string; label: string }[];
   gallery: string[];
+  locale: string;
+  musicMessages: MusicPickerMessages;
+  draftMessages: DraftStatusMessages;
+  initialTrack: { url: string; title: string; artist: string } | null;
   saveAction?: (id: string, prev: EditorState, formData: FormData) => Promise<EditorState>;
   adminMode?: boolean;
 };
@@ -190,6 +205,7 @@ function Text({
   hint,
   type = "text",
   full,
+  required,
 }: {
   name: string;
   label: string;
@@ -198,6 +214,7 @@ function Text({
   hint?: string;
   type?: string;
   full?: boolean;
+  required?: boolean;
 }) {
   return (
     <div className={full ? "sm:col-span-2" : undefined}>
@@ -210,6 +227,7 @@ function Text({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
+        required={required}
         className={inputClass}
       />
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
@@ -326,102 +344,51 @@ function BirthOrderField({
   );
 }
 
-/** Chọn nhạc nền từ danh sách + nghe thử. */
-function MusicField({ defaultValue = "" }: { defaultValue?: string }) {
-  const [value, setValue] = useState(defaultValue);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [playing, setPlaying] = useState(false);
-
-  function togglePlay() {
-    const el = audioRef.current;
-    if (!el || !value) return;
-    if (playing) {
-      el.pause();
-      setPlaying(false);
-    } else {
-      void el.play();
-      setPlaying(true);
-    }
-  }
-
-  return (
-    <div>
-      <label htmlFor="music" className={labelClass}>
-        Nhạc nền
-      </label>
-      <div className="flex items-center gap-2">
-        <select
-          id="music"
-          name="music"
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            setPlaying(false);
-            audioRef.current?.pause();
-          }}
-          className={inputClass}
-        >
-          {MUSIC_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value} className={optionClass}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-        <button
-          type="button"
-          onClick={togglePlay}
-          disabled={!value}
-          className="shrink-0 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground hover:bg-muted disabled:opacity-40"
-          aria-label={playing ? "Dừng" : "Nghe thử"}
-        >
-          {playing ? "⏸" : "▶"}
-        </button>
-      </div>
-      {value ? (
-        <audio ref={audioRef} src={value} onEnded={() => setPlaying(false)} preload="none" />
-      ) : null}
-    </div>
-  );
-}
-
 /** Chọn mẫu thiệp bằng lưới thumbnail thay cho <select>. */
 function TemplatePicker({ defaultValue }: { defaultValue: string }) {
   const [selected, setSelected] = useState(defaultValue);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+    inputRef.current?.dispatchEvent(new Event("input", { bubbles: true }));
+  }, [selected]);
+
   return (
     <div className="sm:col-span-2">
       <span className={labelClass}>Mẫu thiệp</span>
-      <input type="hidden" name="templateId" value={selected} />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {VALID_TEMPLATE_IDS.map((id) => {
-          const tpl = templates.find((t) => t.slug === id);
-          const active = selected === id;
+      <input ref={inputRef} type="hidden" name="templateId" value={selected} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3" data-testid="editor-template-picker">
+        {completedTemplates.map((template) => {
+          const active = selected === template.slug;
           return (
             <button
-              key={id}
+              key={template.slug}
               type="button"
-              onClick={() => setSelected(id)}
+              onClick={() => setSelected(template.slug)}
               className={`group relative overflow-hidden rounded-xl border text-left transition ${
                 active
                   ? "border-primary ring-2 ring-primary/40"
                   : "border-border hover:border-primary/40"
               }`}
               aria-pressed={active}
+              data-template-id={template.slug}
             >
-              {tpl?.listing ? (
-                <span className="block aspect-[3/4] bg-muted">
-                  <Image
-                    src={tpl.listing}
-                    alt={TEMPLATE_LABELS[id]}
-                    width={240}
-                    height={320}
-                    className="h-full w-full object-cover"
-                  />
-                </span>
-              ) : (
-                <span className="block aspect-[3/4] bg-muted" />
-              )}
+              <span className="relative block aspect-[3/4] overflow-hidden bg-muted">
+                <Image
+                  src={template.listing}
+                  alt={templateLabel(template.slug)}
+                  fill
+                  sizes="(min-width: 640px) 200px, 50vw"
+                  className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
+                />
+              </span>
               <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
-                {TEMPLATE_LABELS[id]}
+                {templateLabel(template.slug)}
               </span>
               {active ? (
                 <span className="absolute right-2 top-2 rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
@@ -639,6 +606,10 @@ export function EditorForm({
   content,
   schedule,
   gallery,
+  locale,
+  musicMessages,
+  draftMessages,
+  initialTrack,
   saveAction: saveActionProp,
   adminMode = false,
 }: EditorFormProps) {
@@ -654,10 +625,13 @@ export function EditorForm({
     () => readDraft(invitationId),
     [invitationId],
   );
+  const [submittedDraft, setSubmittedDraft] = useState<Draft | null>(null);
+  const submittedDraftRef = useRef<Draft | null>(null);
+  const activeDraft = submittedDraft ?? draft;
   const seed = (key: string, fallback: string) =>
-    typeof draft?.[key] === "string" ? (draft[key] as string) : fallback;
+    typeof activeDraft?.[key] === "string" ? (activeDraft[key] as string) : fallback;
   const seedBool = (key: string, fallback: boolean) =>
-    typeof draft?.[key] === "boolean" ? (draft[key] as boolean) : fallback;
+    typeof activeDraft?.[key] === "boolean" ? (activeDraft[key] as boolean) : fallback;
 
   const [scheduleRows, setScheduleRows] = useState(() => {
     const dTime = Array.isArray(draft?.scheduleTime) ? (draft!.scheduleTime as string[]) : null;
@@ -687,28 +661,62 @@ export function EditorForm({
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   const [previewContent, setPreviewContent] = useState<ChungDoiDemoContent | null>(null);
-
-  useEffect(() => {
-    if (saveState?.ok) toast.success("Đã lưu bản nháp");
-    else if (saveState?.error) toast.error(saveState.error);
-  }, [saveState]);
-
-  useEffect(() => {
-    if (publishState?.error) toast.error(publishState.error);
-  }, [publishState]);
-
-  useFormDraft({
+  const [draftStatus, setDraftStatus] = useState<DraftStatus>(draft ? "restored" : "server");
+  const {
+    capture: captureDraft,
+    clear: clearDraft,
+    getLatest: getLatestDraft,
+    persist: persistDraft,
+  } = useFormDraft({
     formId: "editor-form",
     invitationId,
     enabled: true,
-    cleared: saveState?.ok === true,
+    onStatusChange: setDraftStatus,
   });
+
+  function reconcilePersistedDraft() {
+    const submitted = submittedDraftRef.current;
+    if (!submitted) return;
+
+    const latest = getLatestDraft() ?? readDraft(invitationId) ?? submitted;
+    setSubmittedDraft(latest);
+    if (draftsEqual(latest, submitted)) {
+      clearDraft();
+    } else {
+      // Người dùng đã gõ thêm trong lúc request đang chạy: giữ snapshot mới hơn.
+      persistDraft(latest);
+    }
+  }
+
+  useEffect(() => {
+    if (saveState?.ok) {
+      toast.success("Đã lưu bản nháp");
+      trackEvent("save_draft", { template_id: templateId });
+    }
+    else if (saveState?.error) toast.error(saveState.error);
+    if (saveState?.persisted) reconcilePersistedDraft();
+    // Mỗi object saveState tương ứng với đúng một lần Server Action hoàn tất.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveState]);
+
+  useEffect(() => {
+    if (publishState?.error) {
+      toast.error(publishState.error);
+      trackEvent("publish_invitation_error", {
+        template_id: templateId,
+        validation_message: publishState.error,
+      });
+    }
+    if (publishState?.persisted) reconcilePersistedDraft();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publishState]);
 
   function onShowPreview() {
     const form = document.getElementById("editor-form") as HTMLFormElement | null;
     if (!form) return;
     setPreviewContent(buildPreviewContent(form, invitationId));
     setTab("preview");
+    trackEvent("preview_invitation", { template_id: templateId });
   }
 
   function nextSlugFromForm() {
@@ -736,7 +744,7 @@ export function EditorForm({
 
   function onEditorInput(event: React.FormEvent<HTMLFormElement>) {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    if (target?.name === "slug" || slugEdited) return;
+    if (!target?.name || target.name === "slug" || slugEdited) return;
     const next = nextSlugFromForm();
     setSlug(next);
     setSlugStatus(null);
@@ -751,7 +759,10 @@ export function EditorForm({
       {tab === "preview" && previewContent ? (
         <ChungDoiDemo
           key={JSON.stringify(previewContent)}
-          template={templates.find((t) => t.slug === previewContent.slug) ?? templates[0]}
+          template={
+            completedTemplates.find((template) => template.slug === previewContent.slug) ??
+            completedTemplates[0]
+          }
           content={previewContent}
         />
       ) : null}
@@ -768,9 +779,53 @@ export function EditorForm({
           <p className="text-sm text-muted-foreground">
             Trạng thái: {status === "published" ? "Đã xuất bản" : "Bản nháp"}
           </p>
+          <p
+            aria-live="polite"
+            data-testid="draft-status"
+            className={`mt-1 flex items-center gap-1.5 text-xs ${
+              draftStatus === "error" ? "text-destructive" : "text-muted-foreground"
+            }`}
+          >
+            <span
+              className={`size-1.5 rounded-full ${
+                draftStatus === "error"
+                  ? "bg-destructive"
+                  : draftStatus === "saving"
+                    ? "animate-pulse bg-amber-500"
+                    : draftStatus === "server"
+                      ? "bg-emerald-500"
+                      : "bg-primary"
+              }`}
+              aria-hidden
+            />
+            {draftMessages[draftStatus]}
+          </p>
         </div>
 
-        <form action={saveFormAction} onInput={onEditorInput} className="space-y-4" id="editor-form">
+        <form
+          action={saveFormAction}
+          onInput={onEditorInput}
+          onReset={(event) => event.preventDefault()}
+          onSubmitCapture={() => {
+            const snapshot = captureDraft();
+            if (!snapshot) return;
+            submittedDraftRef.current = snapshot;
+            setSubmittedDraft(snapshot);
+
+            const times = Array.isArray(snapshot.scheduleTime) ? snapshot.scheduleTime : [];
+            const labels = Array.isArray(snapshot.scheduleLabel) ? snapshot.scheduleLabel : [];
+            if (times.length || labels.length) {
+              setScheduleRows(
+                Array.from({ length: Math.max(times.length, labels.length) }, (_, index) => ({
+                  time: times[index] ?? "",
+                  label: labels[index] ?? "",
+                })),
+              );
+            }
+          }}
+          className="space-y-4"
+          id="editor-form"
+        >
         <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
           <TemplatePicker defaultValue={seed("templateId", templateId)} />
         </Accordion>
@@ -783,6 +838,7 @@ export function EditorForm({
               defaultValue={seed("brideFullName", field(content, "brideFullName"))}
               placeholder="VD: Nguyễn Quỳnh Anh"
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
+              required
             />
             <Text
               name="groomFullName"
@@ -790,6 +846,7 @@ export function EditorForm({
               defaultValue={seed("groomFullName", field(content, "groomFullName"))}
               placeholder="VD: Trần Gia Khánh"
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
+              required
             />
             <Text
               name="brideShortName"
@@ -830,7 +887,7 @@ export function EditorForm({
                 Hiển thị cô dâu trước
               </label>
             </div>
-            <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." />
+            <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." required />
             <Text name="time" label="Giờ cưới" type="time" defaultValue={seed("time", field(content, "time"))} />
             <Text name="ceremonyDate" label="Ngày lễ" type="date" defaultValue={seed("ceremonyDate", field(content, "ceremonyDate"))} hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới." />
             <Text name="ceremonyTime" label="Giờ lễ" type="time" defaultValue={seed("ceremonyTime", field(content, "ceremonyTime"))} />
@@ -949,19 +1006,32 @@ export function EditorForm({
               options={FONT_OPTIONS}
               hint="Font hiển thị tên cô dâu chú rể trên thiệp."
             />
-            <MusicField defaultValue={seed("music", field(content, "music"))} />
+            <MusicPicker
+              defaultValue={seed("music", field(content, "music"))}
+              initialTrack={initialTrack}
+              locale={locale}
+              messages={musicMessages}
+            />
           </Grid>
         </Accordion>
 
         <Accordion title="Thông tin chuyển khoản" icon="✉" defaultOpen={false}>
           <Grid>
             <SubHeader>Nhà trai</SubHeader>
-            <Text name="groomBankName" label="Ngân hàng chú rể" defaultValue={seed("groomBankName", field(content, "groomBankName"))} />
+            <BankCombobox
+              name="groomBankName"
+              label="Ngân hàng chú rể"
+              defaultValue={seed("groomBankName", field(content, "groomBankName"))}
+            />
             <Text name="groomAccountNumber" label="Số tài khoản chú rể" defaultValue={seed("groomAccountNumber", field(content, "groomAccountNumber"))} />
             <Text name="groomAccountName" label="Chủ tài khoản chú rể" defaultValue={seed("groomAccountName", field(content, "groomAccountName"))} full />
 
             <SubHeader>Nhà gái</SubHeader>
-            <Text name="brideBankName" label="Ngân hàng cô dâu" defaultValue={seed("brideBankName", field(content, "brideBankName"))} />
+            <BankCombobox
+              name="brideBankName"
+              label="Ngân hàng cô dâu"
+              defaultValue={seed("brideBankName", field(content, "brideBankName"))}
+            />
             <Text name="brideAccountNumber" label="Số tài khoản cô dâu" defaultValue={seed("brideAccountNumber", field(content, "brideAccountNumber"))} />
             <Text name="brideAccountName" label="Chủ tài khoản cô dâu" defaultValue={seed("brideAccountName", field(content, "brideAccountName"))} full />
           </Grid>
@@ -970,7 +1040,8 @@ export function EditorForm({
         <div className="sticky bottom-0 -mx-4 mt-2 flex items-center gap-3 border-t border-border bg-background/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
           <button
             type="submit"
-            disabled={saving}
+            formNoValidate
+            disabled={saving || publishing}
             className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
           >
             {saving ? "Đang lưu..." : "Lưu bản nháp"}
@@ -1008,7 +1079,7 @@ export function EditorForm({
             <button
               type="button"
               onClick={onCheckSlug}
-              disabled={checking}
+              disabled={checking || saving || publishing}
               className="shrink-0 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground hover:bg-muted disabled:opacity-60"
             >
               {checking ? "..." : "Kiểm tra"}
@@ -1026,7 +1097,9 @@ export function EditorForm({
           <button
             type="submit"
             formAction={publishFormAction}
-            disabled={publishing}
+            data-ga-event="publish_invitation_attempt"
+            data-ga-param-template-id={templateId}
+            disabled={saving || publishing}
             className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90 disabled:opacity-60"
           >
             {publishing ? "Đang lưu và xuất bản..." : "Xuất bản thiệp"}
@@ -1045,6 +1118,8 @@ export function EditorForm({
             </p>
             <Link
               href={`/dashboard/${invitationId}/thanh-toan`}
+              data-ga-event="checkout_click"
+              data-ga-param-source="editor"
               className="mt-3 inline-block rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
             >
               Thanh toán để kích hoạt vĩnh viễn

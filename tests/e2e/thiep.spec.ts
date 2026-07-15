@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
+import sharp from "sharp";
 
+import { loginAsUser } from "./helpers/auth";
 import { getDb } from "./helpers/db";
 import {
   createGuest,
@@ -18,18 +20,54 @@ import {
 // is present in the DOM behind the 3D WebGL envelope overlay. Tests wait for
 // hydration, fill through the overlay, then submit the form programmatically.
 //
-// NOTE (dead code): src/app/thiep/[slug]/Interactions.tsx exports an RsvpForm,
-// but page.tsx never imports/renders it and ChungDoiDemo only consumes the
-// wishAction (useWishFormBinding). There is no RSVP <form> on the rendered page,
-// so an end-to-end RSVP-submit test through the UI is not possible; submitRsvp
-// is a server action, not an HTTP endpoint. Covered indirectly only.
+// Guest Manager v2 renders a global RSVP dialog after the envelope opens. The
+// form is shared by every template and supports invitation-specific questions.
 
 // Wish form copy is verbatim from SongHyWishForm in chungdoi-demo.tsx (line ~1614).
 const WISH_NAME_PLACEHOLDER = "Nhập tên của bạn*";
 const WISH_TEXT_PLACEHOLDER = "Nhập lời chúc của bạn*";
-const WISH_SUBMIT = "GỬI LỜI CHÚC";
-
 test.describe("published invitation /thiep/[slug]", () => {
+  test("owner sees the manage invitation shortcut and can open the dashboard", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id);
+      const slug = publishInvitation(inv.id);
+      await loginAsUser(context, user.id);
+
+      await page.goto(`/thiep/${slug}`);
+      const manageLink = page.getByRole("link", { name: "Quản lý thiệp" });
+      await expect(manageLink).toBeVisible();
+      await expect(manageLink).toHaveAttribute("href", "/dashboard");
+
+      await manageLink.click();
+      await expect(page).toHaveURL(/\/dashboard$/);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("manage invitation shortcut is hidden from guests and other users", async ({
+    page,
+    context,
+  }) => {
+    const owner = createUser();
+    const other = createUser();
+    try {
+      const inv = createInvitation(owner.id);
+      const slug = publishInvitation(inv.id);
+      await loginAsUser(context, other.id);
+
+      await page.goto(`/thiep/${slug}`);
+      await expect(page.getByRole("link", { name: "Quản lý thiệp" })).toHaveCount(0);
+    } finally {
+      cleanupUser(owner.id);
+      cleanupUser(other.id);
+    }
+  });
+
   test("published slug renders the couple's full names", async ({ page }) => {
     const user = createUser();
     try {
@@ -110,7 +148,78 @@ test.describe("published invitation /thiep/[slug]", () => {
     }
   });
 
-  test("guest-token link (?g=) still renders the published page", async ({ page }) => {
+  test("a wish appears immediately and its owner can remove it", async ({ page, context }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id);
+      const slug = publishInvitation(inv.id);
+      const wishName = `Khách kiểm duyệt ${Date.now()}`;
+      const wishText = "Chúc mừng hạnh phúc — lời chúc kiểm thử";
+
+      await page.goto(`/thiep/${slug}`);
+      const wishForm = page.locator("form", { has: page.getByPlaceholder(WISH_NAME_PLACEHOLDER) });
+      await page.getByPlaceholder(WISH_NAME_PLACEHOLDER).fill(wishName, { force: true });
+      await page.getByPlaceholder(WISH_TEXT_PLACEHOLDER).fill(wishText, { force: true });
+      await wishForm.evaluate((form) => (form as HTMLFormElement).requestSubmit());
+      await expect(page.getByText(wishText, { exact: true })).toBeVisible();
+
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/rsvp`);
+      await expect(page.getByText(wishText, { exact: true })).toBeVisible();
+      await page.getByRole("button", { name: `Xóa: ${wishName}` }).click();
+      await page.getByRole("button", { name: "Xóa", exact: true }).click();
+      await expect(page.getByText(wishText, { exact: true })).toHaveCount(0);
+      expect(getDb().prepare("SELECT COUNT(*) AS n FROM Wish WHERE invitationId = ?").get(inv.id)).toEqual({ n: 0 });
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("guests can share and download a photo, then the owner can remove it", async ({ page, context }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id);
+      const slug = publishInvitation(inv.id);
+      const fileName = `party-${Date.now()}.png`;
+      const png = await sharp({
+        create: { width: 8, height: 8, channels: 3, background: { r: 210, g: 80, b: 90 } },
+      }).png().toBuffer();
+
+      await page.goto(`/thiep/${slug}`);
+      await page.locator("[data-open-invitation-control]").evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
+      await page.getByRole("button", { name: "Khoảnh khắc" }).click();
+      await page.getByLabel("Tên của bạn *").fill("Khách chụp ảnh");
+      await page.locator('input[type="file"][name="files"]').setInputFiles({
+        name: fileName,
+        mimeType: "image/png",
+        buffer: png,
+      });
+      await page.getByRole("button", { name: "Đóng góp khoảnh khắc" }).click();
+
+      await expect(page.getByText("Đã chia sẻ thành công. Cảm ơn bạn!")).toBeVisible();
+      await expect(page.getByAltText(fileName)).toBeVisible();
+      const row = getDb().prepare(
+        "SELECT id FROM GuestMedia WHERE invitationId = ? AND originalName = ?",
+      ).get(inv.id, fileName) as { id: string };
+      const download = await page.request.get(`/api/invitations/${slug}/contributions/${row.id}/file?download=1`);
+      expect(download.ok()).toBeTruthy();
+      expect(download.headers()["content-disposition"]).toContain("attachment");
+
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/rsvp`);
+      await page.getByRole("button", { name: `Xóa: ${fileName}` }).click();
+      await page.getByRole("button", { name: "Xóa", exact: true }).click();
+      await expect.poll(() => getDb().prepare(
+        "SELECT COUNT(*) AS n FROM GuestMedia WHERE invitationId = ?",
+      ).get(inv.id)).toEqual({ n: 0 });
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("guest-token link (?g=) displays the intended guest on the envelope", async ({ page }) => {
     const user = createUser();
     try {
       const inv = createInvitation(user.id);
@@ -118,14 +227,60 @@ test.describe("published invitation /thiep/[slug]", () => {
         brideFullName: "Đỗ Thị Mai",
         groomFullName: "Vũ Văn Cường",
       });
-      const guest = createGuest(inv.id, "Ông Bà Nội");
+      const guest = createGuest(inv.id, "Gia đình anh Hưng");
 
-      // page.tsx resolves the guest via searchParams `g`; a valid token for this
-      // invitation must not break rendering (guest prefill only feeds the unused
-      // RsvpForm, so there is no visible guest UI on this template).
       const res = await page.goto(`/thiep/${slug}?g=${guest.token}`);
       expect(res?.status()).toBe(200);
-      await expect(page.getByText("Vũ Văn Cường")).toBeVisible();
+      // Envelope3D snapshots this off-screen DOM node into the visible WebGL texture.
+      await expect(page.getByText("Gia đình anh Hưng", { exact: true })).toHaveCount(1);
+      await expect(page.getByText("Gia đình Anh Mạnh", { exact: true })).toHaveCount(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("public link without a guest token uses a generic recipient", async ({ page }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id);
+      const slug = publishInvitation(inv.id);
+
+      await page.goto(`/thiep/${slug}`);
+
+      await expect(page.getByText("Quý khách", { exact: true })).toHaveCount(1);
+      await expect(page.getByText("Gia đình Anh Mạnh", { exact: true })).toHaveCount(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("guest can submit RSVP with an invitation-specific question", async ({ page }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id);
+      const slug = publishInvitation(inv.id);
+      const guest = createGuest(inv.id, "Gia đình chị Thu");
+      const questionId = `rq${Date.now()}`;
+      const now = new Date().toISOString().replace("Z", "+00:00");
+      getDb().prepare(
+        `INSERT INTO RsvpQuestion (id, invitationId, label, type, required, sortOrder, createdAt, updatedAt)
+         VALUES (?, ?, ?, 'boolean', 1, 0, ?, ?)`,
+      ).run(questionId, inv.id, "Bạn có cần ghế trẻ em không?", now, now);
+
+      await page.goto(`/thiep/${slug}?g=${guest.token}`);
+      await page.locator("[data-open-invitation-control]").evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
+      await page.getByRole("button", { name: "Xác nhận tham dự" }).click();
+      await page.getByRole("radio", { name: "Có", exact: true }).check();
+      await page.getByRole("button", { name: "Gửi xác nhận" }).click();
+
+      await expect(page.getByText("Cảm ơn bạn đã xác nhận!")).toBeVisible();
+      await expect.poll(() => {
+        return getDb().prepare(
+          `SELECT COUNT(*) AS n FROM RsvpAnswer WHERE questionId = ? AND value = 'yes'`,
+        ).get(questionId) as { n: number };
+      }).toEqual({ n: 1 });
     } finally {
       cleanupUser(user.id);
     }

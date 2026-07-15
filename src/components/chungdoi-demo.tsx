@@ -3,13 +3,17 @@
 import Lenis from "lenis";
 import { Pause, Play } from "lucide-react";
 import dynamic from "next/dynamic";
-import { type Dispatch, type MouseEvent, type SetStateAction, type TouchEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentType, type Dispatch, type MouseEvent, type SetStateAction, type TouchEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
-import { LiveFormsProvider, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
+import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
+import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
+import { PublicGuestMediaDialog } from "@/components/public-guest-media-dialog";
 import { TARGET_PX } from "@/components/chungdoi-envelope-3d";
+import { InvitationMap } from "@/components/chungdoi-tpl-shared";
+import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
@@ -50,6 +54,25 @@ const RoyalBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-roya
 const RoyalGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-royal").then((m) => m.RoyalGreenInvitation));
 const ChateauBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-chateau-blue").then((m) => m.ChateauInvitation));
 
+const AUDITED_TEMPLATE_RENDERERS = {
+  "boho-floral-green": BohoFloralGreenInvitation,
+  "boho-floral-pink": BohoFloralPinkInvitation,
+  "boho-floral-brown": BohoFloralInvitation,
+  "spring-garden-red": SpringGardenRedInvitation,
+  "spring-garden-green": SpringGardenGreenInvitation,
+  "spring-garden-blue": SpringGardenBlueInvitation,
+  "elegant-leaf-green": ElegantLeafInvitation,
+  "jasmine-white": JasmineWhiteInvitation,
+  "silk-flora-brown": SilkFloraBrownInvitation,
+  "hoa-tinh-red": HoaTinhInvitation,
+  "minimalism-red": MinimalismRedInvitation,
+  "brocade-flower-red": BrocadeFlowerRedInvitation,
+  "crystal-floral-blue": CrystalFloralInvitation,
+  "baroque-gold": BaroqueGoldInvitation,
+  "glass-garden-green": GlassGardenInvitation,
+  "chibi-red": ChibiRedInvitation,
+  "cherry-blossom-pink": CherryBlossomInvitation,
+} satisfies Record<AuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
 const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
@@ -233,25 +256,6 @@ function googleCalendarUrl(content: ChungDoiDemoContent) {
     details: content.venue.address,
   });
   return `https://www.google.com/calendar/render?${params.toString()}`;
-}
-
-/** Tọa độ marker trong link Google Maps: ưu tiên !3d..!4d.. (điểm ghim), sau đó @lat,lng. */
-function coordsFromMapsUrl(value: string): string | null {
-  const place = value.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-  if (place) return `${place[1]},${place[2]}`;
-  const at = value.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (at) return `${at[1]},${at[2]}`;
-  return null;
-}
-
-function mapEmbedUrl(query: string) {
-  const trimmed = query.trim();
-  // Link Google Maps dán vào không nhúng iframe trực tiếp được; rút tọa độ marker ra.
-  if (/^https?:\/\/\S*google\.[^/]*\/maps/i.test(trimmed)) {
-    const coords = coordsFromMapsUrl(trimmed);
-    if (coords) return `https://www.google.com/maps?q=${coords}&output=embed`;
-  }
-  return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
 }
 
 /** Resolved visual tokens for one template (from the reverse-engineered config, with fallbacks). */
@@ -483,6 +487,7 @@ function CoverCard({
   onOpen: () => void;
   opening?: boolean;
 }) {
+  const liveForms = useLiveForms();
   const date = formatDate(content.couple.date);
   const names = content.couple.brideFirst
     ? [content.couple.brideShortName, content.couple.groomShortName]
@@ -494,10 +499,10 @@ function CoverCard({
       className="relative rounded-lg"
       style={{ aspectRatio: "3 / 4.5", boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
     >
-      {/* base cream layer + corner decorations (behind the text) */}
+      {/* composited theme layer + corner decorations (behind the text) */}
       <div
         className="absolute inset-0 overflow-hidden rounded-lg"
-        style={{ background: tokens.cardBg, border: `1px solid ${tokens.guestBoxBorder}` }}
+        style={{ background: coverCardBackground(tokens), border: `1px solid ${tokens.guestBoxBorder}` }}
       >
         {tokens.cardImages.map((img, i) => (
           <img
@@ -565,7 +570,7 @@ function CoverCard({
           </p>
           <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: tokens.guestBoxBg }}>
             <span className="block text-lg font-semibold sm:text-xl" style={{ color: tokens.textPrimary }}>
-              Gia đình Anh Mạnh
+              {liveForms?.recipientLabel ?? "Quý khách"}
             </span>
           </div>
           <p className="mx-auto max-w-xs text-[15px] font-light" style={{ color: tokens.textSecondary }}>
@@ -593,6 +598,78 @@ function toSolidColor(value: string, fallback: string) {
   // cardBg thường là linear-gradient(...) → rút hex đầu tiên làm màu đặc.
   const hex = value.match(/#[0-9a-fA-F]{3,8}/);
   return hex ? hex[0] : fallback;
+}
+
+type RgbaColor = { r: number; g: number; b: number; a: number };
+
+function parseCssColor(value: string): RgbaColor | null {
+  const normalized = value.trim();
+  const hex = normalized.match(/^#([0-9a-fA-F]{3,8})$/);
+  if (hex) {
+    const raw = hex[1];
+    const expanded = raw.length === 3 || raw.length === 4
+      ? raw.split("").map((part) => part + part).join("")
+      : raw;
+    if (expanded.length !== 6 && expanded.length !== 8) return null;
+    return {
+      r: Number.parseInt(expanded.slice(0, 2), 16),
+      g: Number.parseInt(expanded.slice(2, 4), 16),
+      b: Number.parseInt(expanded.slice(4, 6), 16),
+      a: expanded.length === 8 ? Number.parseInt(expanded.slice(6, 8), 16) / 255 : 1,
+    };
+  }
+
+  const rgb = normalized.match(
+    /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
+  );
+  if (!rgb) return null;
+  return {
+    r: Number(rgb[1]),
+    g: Number(rgb[2]),
+    b: Number(rgb[3]),
+    a: rgb[4] === undefined ? 1 : Number(rgb[4]),
+  };
+}
+
+function representativeColor(value: string): RgbaColor | null {
+  const matches = value.match(/#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)/gi) ?? [];
+  const colors = matches.map(parseCssColor).filter((color): color is RgbaColor => color !== null);
+  return colors[Math.floor(colors.length / 2)] ?? null;
+}
+
+function compositeColor(foreground: RgbaColor, background: RgbaColor): RgbaColor {
+  const alpha = Math.min(1, Math.max(0, foreground.a));
+  return {
+    r: foreground.r * alpha + background.r * (1 - alpha),
+    g: foreground.g * alpha + background.g * (1 - alpha),
+    b: foreground.b * alpha + background.b * (1 - alpha),
+    a: 1,
+  };
+}
+
+function colorToHex(color: RgbaColor) {
+  const channel = (value: number) => Math.round(Math.min(255, Math.max(0, value))).toString(16).padStart(2, "0");
+  return `#${channel(color.r)}${channel(color.g)}${channel(color.b)}`;
+}
+
+/**
+ * Card nền rgba trước đây phụ thuộc vào nền phía sau: DOM 2D pha trên nền theme,
+ * còn node chụp texture 3D pha trên fallback màu kem. Ghép hai lớp ngay trong
+ * card để cả hai đường render luôn nhận đúng cùng một kết quả.
+ */
+function coverCardBackground(tokens: Tokens) {
+  const cardBg = tokens.cardBg.trim();
+  if (!/^rgba?\(/i.test(cardBg)) return cardBg;
+  return `linear-gradient(${cardBg}, ${cardBg}), ${tokens.background}`;
+}
+
+/** Màu đại diện cho cạnh/lưng WebGL, sau khi đã pha cardBg lên nền theme. */
+function coverPaperColor(tokens: Tokens) {
+  const fallback: RgbaColor = { r: 255, g: 240, b: 231, a: 1 };
+  const background = representativeColor(tokens.background) ?? fallback;
+  const opaqueBackground = background.a < 1 ? compositeColor(background, fallback) : background;
+  const card = representativeColor(tokens.cardBg) ?? fallback;
+  return colorToHex(compositeColor(card, opaqueBackground));
 }
 
 /** Cover phong bì 3D: render CoverCard DOM thật áp phẳng lên mặt phong bì R3F qua drei <Html transform>. */
@@ -637,12 +714,20 @@ function EnvelopeCover({
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
       style={{ background: tokens.background }}
     >
+      <button
+        type="button"
+        data-open-invitation-control
+        onClick={onOpen}
+        className="sr-only focus:fixed focus:bottom-6 focus:left-1/2 focus:z-[100] focus:block focus:h-auto focus:w-auto focus:-translate-x-1/2 focus:overflow-visible focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-neutral-900 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2"
+      >
+        Mở thiệp
+      </button>
       <ParticleField tokens={tokens} />
 
       <div className="relative z-10 h-full w-full">
         <Envelope3D
           onOpen={onOpen}
-          paperColor={toSolidColor(tokens.cardBg, "#FFF0E7")}
+          paperColor={coverPaperColor(tokens)}
           accentColor={toSolidColor(tokens.accent, "#8C1C13")}
           renderCard={(handleOpen) => (
             <div className="relative">
@@ -839,7 +924,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
           <h3 className="text-lg font-semibold" style={{ fontFamily: '"Times New Roman", serif' }}>Tiệc cưới sẽ tổ chức tại</h3>
           <p className="mx-auto mt-3 max-w-xs whitespace-pre-line text-sm leading-6">{venue.address}</p>
           <div className="mt-5 overflow-hidden rounded-2xl border" style={{ borderColor: tokens.guestBoxBorder }}>
-            <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
           </div>
         </section>
       ) : null}
@@ -918,14 +1003,16 @@ export function ChungDoiDemo({
   template,
   content: contentProp,
   liveForms = null,
+  captureMode = false,
 }: {
   template: ChungDoiTemplate;
   content?: ChungDoiDemoContent;
   liveForms?: LiveForms;
+  captureMode?: boolean;
 }) {
   const content = contentProp ?? chungdoiDemoContent[template.slug];
 
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(captureMode);
   const [opening, setOpening] = useState(false);
   const [playing, setPlaying] = useState(false);
   const openTimerRef = useRef<number | null>(null);
@@ -952,7 +1039,7 @@ export function ChungDoiDemo({
   }, [opened, content]);
 
   useEffect(() => {
-    if (!opened) return;
+    if (!opened || captureMode) return;
 
     const lenis = new Lenis({ syncTouch: false, allowNestedScroll: true });
     lenisRef.current = lenis;
@@ -978,10 +1065,10 @@ export function ChungDoiDemo({
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [opened]);
+  }, [captureMode, opened]);
 
   useEffect(() => {
-    if (!opened || !autoScrolling) return;
+    if (!opened || !autoScrolling || captureMode) return;
     const lenis = lenisRef.current;
     if (!lenis) return;
 
@@ -1008,7 +1095,7 @@ export function ChungDoiDemo({
       // Dừng animation scrollTo bằng cách neo về vị trí hiện tại.
       lenis.scrollTo(lenis.scroll, { immediate: true });
     };
-  }, [opened, autoScrolling]);
+  }, [autoScrolling, captureMode, opened]);
 
   useEffect(() => {
     return () => {
@@ -1048,6 +1135,10 @@ export function ChungDoiDemo({
       </main>
     );
   }
+
+  const AuditedTemplateRenderer = isAuditedTemplateSlug(content.slug)
+    ? AUDITED_TEMPLATE_RENDERERS[content.slug]
+    : null;
 
   function openInvitation() {
     const root = document.documentElement;
@@ -1090,14 +1181,23 @@ export function ChungDoiDemo({
 
   return (
     <LiveFormsProvider value={liveForms}>
-    <main id="top" className="relative min-h-screen bg-white" onClick={toggleAutoScroll}>
-      <audio ref={audioRef} src={content.music ?? DEFAULT_MUSIC} loop preload="auto" />
+    <main
+      id="top"
+      data-capture-mode={captureMode ? "true" : undefined}
+      className="relative min-h-screen bg-white"
+      onClick={toggleAutoScroll}
+    >
+      {!captureMode ? <audio ref={audioRef} src={content.music ?? DEFAULT_MUSIC} loop preload="auto" /> : null}
 
-      {!opened ? (
+      {!opened && !captureMode ? (
         <EnvelopeCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
       ) : null}
 
-      {content.slug === "double-phoenix-red" || content.slug === "double-phoenix-green" ? (
+      {AuditedTemplateRenderer ? (
+        <div className="contents" data-template-renderer={content.slug}>
+          <AuditedTemplateRenderer content={content} />
+        </div>
+      ) : content.slug === "double-phoenix-red" || content.slug === "double-phoenix-green" ? (
         <PhoenixInvitation content={content} />
       ) : content.slug === "song-hy-green" ? (
         <SongHyGreenInvitation content={content} />
@@ -1131,64 +1231,34 @@ export function ChungDoiDemo({
         <ChateauBlueInvitation content={content} />
       ) : content.slug === "chateau-green" ? (
         <ChateauGreenInvitation content={content} />
-      ) : content.slug === "hoa-tinh-red" ? (
-        <HoaTinhInvitation content={content} />
       ) : content.slug === "qasr-green" ? (
         <QasrGreenInvitation content={content} />
       ) : content.slug === "qasr-gold" ? (
         <QasrGoldInvitation content={content} />
-      ) : content.slug === "brocade-flower-red" ? (
-        <BrocadeFlowerRedInvitation content={content} />
-      ) : content.slug === "crystal-floral-blue" ? (
-        <CrystalFloralInvitation content={content} />
-      ) : content.slug === "glass-garden-green" ? (
-        <GlassGardenInvitation content={content} />
-      ) : content.slug === "baroque-gold" ? (
-        <BaroqueGoldInvitation content={content} />
-      ) : content.slug === "boho-floral-brown" ? (
-        <BohoFloralInvitation content={content} />
       ) : content.slug === "dragon-phoenix-v2-red" ? (
         <DragonPhoenixV2Invitation content={content} />
       ) : content.slug === "dragon-phoenix-v3-red" ? (
         <DragonPhoenixV3Invitation content={content} />
-      ) : content.slug === "elegant-leaf-green" ? (
-        <ElegantLeafInvitation content={content} />
-      ) : content.slug === "cherry-blossom-pink" ? (
-        <CherryBlossomInvitation content={content} />
-      ) : content.slug === "spring-garden-green" ? (
-        <SpringGardenGreenInvitation content={content} />
-      ) : content.slug === "spring-garden-red" ? (
-        <SpringGardenRedInvitation content={content} />
-      ) : content.slug === "spring-garden-blue" ? (
-        <SpringGardenBlueInvitation content={content} />
-      ) : content.slug === "boho-floral-green" ? (
-        <BohoFloralGreenInvitation content={content} />
-      ) : content.slug === "boho-floral-pink" ? (
-        <BohoFloralPinkInvitation content={content} />
-      ) : content.slug === "jasmine-white" ? (
-        <JasmineWhiteInvitation content={content} />
-      ) : content.slug === "silk-flora-brown" ? (
-        <SilkFloraBrownInvitation content={content} />
-      ) : content.slug === "chibi-red" ? (
-        <ChibiRedInvitation content={content} />
-      ) : content.slug === "minimalism-red" ? (
-        <MinimalismRedInvitation content={content} />
       ) : (
         <div className="mx-auto max-w-[520px]" style={{ background: tokens.cardBg, minHeight: "100vh" }}>
           <InvitationBody content={content} tokens={tokens} />
         </div>
       )}
 
-      {opened ? (
-        <button
-          type="button"
-          onClick={toggleMusic}
-          aria-label={playing ? "Tạm dừng nhạc" : "Phát nhạc"}
-          className="fixed bottom-5 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 sm:right-6"
-          style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
-        >
-          {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
-        </button>
+      {opened && !captureMode ? (
+        <>
+          <PublicRsvpDialog />
+          <PublicGuestMediaDialog />
+          <button
+            type="button"
+            onClick={toggleMusic}
+            aria-label={playing ? "Tạm dừng nhạc" : "Phát nhạc"}
+            className="fixed bottom-5 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 sm:right-6"
+            style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
+          >
+            {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
+          </button>
+        </>
       ) : null}
     </main>
     </LiveFormsProvider>

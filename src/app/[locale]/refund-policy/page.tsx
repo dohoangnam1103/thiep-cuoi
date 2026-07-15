@@ -16,7 +16,7 @@ export async function generateMetadata({
   return pageSeo({
     title: t("refundMetaTitle"),
     description: t("refundMetaDescription"),
-    alternates: staticAlternates("/refund-policy"),
+    alternates: staticAlternates("/refund-policy", locale),
   });
 }
 

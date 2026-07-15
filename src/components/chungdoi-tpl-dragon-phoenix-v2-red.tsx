@@ -3,13 +3,14 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   buildCalendar,
+  buildVietQrImageUrl,
   FamilyColumn,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
   SharedWishForm,
   useLightbox,
   WEEKDAY_LABELS,
@@ -18,7 +19,7 @@ import {
 const DPV2_BASE = "/chungdoi/images/themes/_decor/longphung-v2-red";
 const RED = "#8c1c1c";
 const RED_DEEP = "#6a1010";
-const GOLD = "#c9a227";
+const GOLD = "#f2d09b";
 const GOLD_MUTED = "#a3231f";
 const DPV2_LUNAR = "( Tức ngày _LUNAR âm lịch )";
 
@@ -58,34 +59,34 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
-        className="relative isolate w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
-        style={{ backgroundColor: "#fbf3e6", color: RED, borderColor: hexToRgba(GOLD, 0.4) }}
+        data-template-visual="dragon-phoenix-v2-red"
+        className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fbf3e6] text-[#8c1c1c] md:mx-auto md:max-w-[900px] md:border md:border-[#8c1c1c]/20"
+        style={{ backgroundImage: "url('/chungdoi/images/themes/dragon-phoenix-v2-red/bg-frame.jpg')", backgroundSize: "100% auto" }}
       >
-        {/* faint cloud backdrop across the whole card */}
-        <img src={`${DPV2_BASE}/cloud.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[4%] left-1/2 -z-10 h-auto w-[130%] max-w-none -translate-x-1/2 object-contain opacity-[0.12]" />
+        {/* Original V2 cover: deep-red field, cream happiness band and balanced gold long/phung. */}
+        <header
+          data-testid="dragon-phoenix-v2-hero"
+          className="relative z-20 flex min-h-[560px] w-full flex-col items-center overflow-hidden bg-[radial-gradient(circle_at_50%_42%,#981b1c_0%,#761011_52%,#62090b_100%)] pt-12 text-[#f2d09b] md:min-h-[660px] md:pt-16"
+        >
+          <img src={`${DPV2_BASE}/cloud.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-x-0 top-20 h-auto w-full object-cover opacity-[0.08] mix-blend-screen" />
 
-        {/* HEADER — dragon+phoenix hero, double-happiness glyph, couple names, rong/phuong flanking */}
-        <header className="relative z-20 flex w-full flex-col items-center px-4 pt-[70px] sm:px-5 md:pt-[100px]">
-          {/* flanking dragon + phoenix */}
-          <img src={`${DPV2_BASE}/rong.webp`} alt="" aria-hidden className="pointer-events-none absolute left-0 top-[60px] -z-10 h-auto w-[150px] max-w-none object-contain opacity-[0.85] md:top-[90px] md:w-[240px]" />
-          <img src={`${DPV2_BASE}/phuong.webp`} alt="" aria-hidden className="pointer-events-none absolute right-0 top-[60px] -z-10 h-auto w-[150px] max-w-none object-contain opacity-[0.85] md:top-[90px] md:w-[240px]" />
+          <div className="relative z-20 flex h-16 w-full items-center justify-center border-y border-[#f2d09b]/60 bg-[#f8dca9] md:h-20">
+            <img src={`${DPV2_BASE}/chu-hy.webp`} alt="" aria-hidden className="h-12 w-12 object-contain md:h-14 md:w-14" />
+          </div>
 
-          {/* dragon+phoenix pair centerpiece */}
-          <img src={`${DPV2_BASE}/rong-phuong.webp`} alt="" aria-hidden className="relative z-10 h-auto w-[300px] max-w-none object-contain md:w-[480px]" />
-
-          {/* double-happiness glyph */}
-          <img src={`${DPV2_BASE}/chu-hy.webp`} alt="" aria-hidden className="relative z-20 -mt-2 h-[54px] w-auto object-contain md:h-[72px]" />
-
-          <p className="relative z-20 mt-3 text-center text-[13px] uppercase tracking-[0.25em] md:text-[16px]" style={{ color: GOLD_MUTED }}>Save The Date</p>
-
-          <h1 className="relative z-20 mt-3 flex flex-col items-center leading-none" style={{ color: RED }}>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{headerNames[0]}</span>
-            <span className="my-2 text-[32px] md:text-[40px]" style={ampFont}>&amp;</span>
-            <span className="text-[56px] md:text-[72px]" style={nameFont}>{headerNames[1]}</span>
+          <h1 className="relative z-20 mt-7 flex flex-col items-center leading-none md:mt-9">
+            <span className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[0]}</span>
+            <span className="my-1 text-[26px] md:text-[34px]" style={ampFont}>&amp;</span>
+            <span className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[1]}</span>
           </h1>
+
+          <div className="relative z-10 mt-5 flex h-[245px] w-full max-w-[660px] items-center justify-center md:mt-7 md:h-[310px]">
+            <img src={`${DPV2_BASE}/phuong.webp`} alt="" aria-hidden className="h-[220px] w-[44%] object-contain object-right md:h-[290px]" />
+            <img src={`${DPV2_BASE}/rong.webp`} alt="" aria-hidden className="h-[220px] w-[44%] object-contain object-left md:h-[290px]" />
+          </div>
         </header>
 
-        <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10">
+        <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 pt-10 md:px-10 md:pt-12">
           {/* CEREMONY INFO */}
           <section className="relative flex w-full flex-col items-center gap-8">
             <img src={`${DPV2_BASE}/cloud.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-16 right-0 -z-10 h-auto w-[80%] max-w-none object-contain opacity-[0.1]" />
@@ -178,7 +179,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: RED }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
-                <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
             </section>
           ) : null}
@@ -224,7 +225,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
               <h2 className="mb-6 text-[20px] font-bold uppercase md:text-[24px]" style={{ color: RED }}>QR Mừng Cưới</h2>
               <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
                 {banks.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
                       <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
@@ -242,8 +243,8 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
         </div>
 
         {/* FOOTER */}
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: RED_DEEP }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: "#f7e6c4" }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: "#ffe3b1" }}>
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: RED }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="relative z-10 flex items-center justify-center py-3">
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: RED }}>♡ thiepmungonline.com</a>

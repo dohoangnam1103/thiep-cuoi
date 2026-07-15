@@ -6,6 +6,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
+  buildVietQrImageUrl,
   FamilyColumn,
   FitText,
   formatDate,
@@ -13,7 +14,7 @@ import {
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -330,7 +331,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
               </h3>
               <div className="mx-auto mt-2 max-w-[280px] whitespace-pre-line text-center text-[15px] leading-snug md:mt-3 md:max-w-md md:text-[18px] lg:max-w-lg lg:text-[20px]" style={{ color: BROWN, fontFamily: NB_HELV }}>{venue.address}</div>
             </div>
-            <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="mx-auto mt-2 h-[240px] w-full max-w-[338px] overflow-hidden rounded-[15px] md:h-[320px] md:max-w-[560px] lg:h-[340px] lg:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            <InvitationMap query={mapQuery} title={mapQuery} className="mx-auto mt-2 h-[240px] w-full max-w-[338px] overflow-hidden rounded-[15px] md:h-[320px] md:max-w-[560px] lg:h-[340px] lg:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
           </section>
         ) : null}
 
@@ -441,7 +442,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
               <div className="p-4 sm:p-6">
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: BROWN }}>
                   {banks.map((q) => {
-                    const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                    const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                     return (
                       <div key={q.title} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                         <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: RED }}>{q.title}</h3>

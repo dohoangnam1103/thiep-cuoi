@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -11,7 +9,8 @@ import {
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
+  GiftEnvelope,
   parseISODate,
   useLightbox,
   WEEKDAY_LABELS,
@@ -27,6 +26,7 @@ const SLX_AVATARS = {
   groom: "/chungdoi/uploads/double-dragon-green/1de8aeab-1ffe-46a1-8cd6-a0752ba57b99.jpg",
   bride: "/chungdoi/uploads/double-dragon-green/d05db7ea-4eb0-4c23-96fc-89e96b693078.jpg",
 };
+const SLX_TEX = "/images/double-dragon.webp";
 const KR_DAYS = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 const KR_SCHEDULE: Record<string, string> = {
   "Đón khách": "하객 맞이",
@@ -275,7 +275,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
             <SlxBand vi="Tiệc cưới sẽ tổ chức tại" ko="피로연 장소" />
             <div className="relative flex w-full flex-col items-center pb-10" style={{ backgroundColor: SLX_LINEN }}>
               <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{venue.address}</div>
-              <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              <InvitationMap query={mapQuery} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             </div>
           </>
         ) : null}
@@ -331,35 +331,17 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
           <>
             <div className="relative z-10 h-[80px] w-full" style={{ backgroundColor: SLX_GREEN }} />
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: SLX_LINEN }}>
-              <h2 className="mb-4 flex flex-col items-center gap-0.5 text-center uppercase tracking-wide" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
-                <span className="text-[20px] font-bold md:text-[24px]">Phong Bao Mừng Cưới</span>
-                <span className="text-[12px] font-normal normal-case opacity-80 md:text-[13px]">축의금</span>
-              </h2>
-              <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {bankCards.map((q) => {
-                  const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: SLX_GREEN }}>{q.label}</h3>
-                      <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40">
-                        <img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" />
-                      </div>
-                      <p className="mt-2 text-[13px] font-semibold" style={{ color: SLX_GRAY }}>{q.bank}</p>
-                      <p className="text-[13px]" style={{ color: SLX_GRAY }}>{q.num}</p>
-                      <p className="text-[13px]" style={{ color: SLX_GRAY }}>{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: SLX_GREEN, color: SLX_GREEN }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope banks={bankCards} accent="#f4c76a" dark={SLX_GREEN} cardBg={SLX_LINEN} heading="Phong Bao Mừng Cưới" labelColor={SLX_GRAY} />
+              <span className="mt-1 text-[12px] opacity-80 md:text-[13px]" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>축의금</span>
             </div>
           </>
         ) : null}
 
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center gap-1 px-4 py-6 text-center" style={{ backgroundColor: SLX_GREEN }}>
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ fontFamily: SLX_SERIF, color: SLX_LINEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
-          <span className="text-[11px] opacity-80 md:text-[13px]" style={{ fontFamily: SLX_SERIF, color: SLX_LINEN }}>여러분의 참석은 저희 가족의 큰 영광입니다!</span>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center gap-1 px-4 py-7 text-center" style={{ backgroundColor: SLX_LINEN }}>
+          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ fontFamily: SLX_SERIF, color: SLX_GREEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+          <span className="text-[11px] opacity-80 md:text-[13px]" style={{ fontFamily: SLX_SERIF, color: SLX_GREEN }}>여러분의 참석은 저희 가족의 큰 영광입니다!</span>
         </footer>
+        <div className="relative z-10 h-12 w-full overflow-hidden" style={{ backgroundColor: SLX_GREEN }}><div className="absolute inset-0 opacity-30" style={{ backgroundImage: `url(${SLX_TEX})`, backgroundSize: "clamp(300px, 50vw, 500px)", mixBlendMode: "color-dodge" }} /></div>
         <div className="relative z-10 flex items-center justify-center py-3" style={{ backgroundColor: SLX_LINEN }}>
           <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: SLX_GREEN }}>♡ thiepmungonline.com</a>
         </div>

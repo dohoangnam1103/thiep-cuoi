@@ -1,5 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
+import { buildVietQrImageUrl } from "@/lib/vietqr";
+
 export const DEFAULT_PRODUCT_PRICE = 150000;
 
 export const DEFAULT_REPEAT_CUSTOMER_PRICE = 99000;
@@ -30,12 +32,13 @@ export function genOrderCode(): string {
 }
 
 export function buildVietQrUrl({ amount, code }: { amount: number; code: string }): string {
-  const params = new URLSearchParams({
-    amount: String(amount),
-    addInfo: code,
+  return buildVietQrImageUrl({
+    bank: BANK.bin,
+    accountNumber: BANK.account,
     accountName: BANK.name,
+    amount,
+    addInfo: code,
   });
-  return `https://img.vietqr.io/image/${BANK.bin}-${BANK.account}-compact2.png?${params.toString()}`;
 }
 
 export function applyVoucher(base: number, amountOff: number): number {

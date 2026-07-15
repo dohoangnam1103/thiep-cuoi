@@ -1,0 +1,28 @@
+- generic [active] [box=0,0,1512,0]:
+  - generic [ref=e2] [box=0,0,1512,716]:
+    - generic [box=0,0,1512,716]:
+      - generic [box=1410,333,20,26]: 🌸
+      - generic [box=550,-73,26,35]: 🌸
+      - generic [box=541,314,15,23]: 🌸
+      - generic [box=709,-24,35,39]: 🌸
+      - generic [box=807,479,30,24]: 🌸
+      - generic [box=170,689,25,31]: 🌸
+      - generic [box=1245,712,13,17]: 🌸
+      - generic [box=1453,391,23,24]: 🌸
+      - generic [box=1041,-78,12,16]: 🌸
+      - generic [box=753,37,23,21]: 🌸
+      - generic [box=569,364,25,29]: 🌸
+      - generic [box=168,370,26,29]: 🌸
+    - generic [ref=e10] [box=456,148,600,420]:
+      - heading "Hoàng Nam & Thanh Tú" [level=1] [ref=e11] [box=480,244,552,110]:
+        - generic [ref=e12] [box=480,244,552,45]: Hoàng Nam
+        - generic [ref=e13] [box=480,289,552,20]: "&"
+        - generic [ref=e14] [box=480,309,552,45]: Thanh Tú
+      - generic [ref=e15] [box=480,362,552,20]: ❦
+      - generic [ref=e19] [box=480,390,552,27]: 1 tháng 2, 2026
+      - paragraph [ref=e22] [box=480,437,552,27]: Thân Mời
+      - button "Mở thiệp" [ref=e23] [cursor=pointer] [box=686,488,140,48]
+  - link [ref=e27] [cursor=pointer] [box=1424,556,64,64]:
+    - /url: https://m.me/1118193241377093
+    - button "Hide chat widget" [ref=e32] [box=1472,552,20,20]
+  - alert [ref=e25] [box=-1,-1,1,1]

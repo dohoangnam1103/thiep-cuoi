@@ -4,10 +4,15 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createSession, getSession } from "@/lib/session";
 
-export const getCurrentUser = cache(async () => {
+export const getCurrentUserId = cache(async () => {
   const session = await getSession();
-  if (!session) return null;
-  return prisma.user.findUnique({ where: { id: session.userId } });
+  return session?.userId ?? null;
+});
+
+export const getCurrentUser = cache(async () => {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+  return prisma.user.findUnique({ where: { id: userId } });
 });
 
 export async function verifySession(): Promise<{ userId: string }> {

@@ -248,6 +248,22 @@
       "chatWithUs": "Chat với chúng tôi"
     }
   },
+  "templatePreviewModal": {
+    "eyebrow": "Thiệp cưới trực tuyến",
+    "title": "Xem trước mẫu thiệp",
+    "description": "Di chuột lên ảnh để xem toàn bộ thiết kế từ đầu đến cuối. Mẫu thiệp đã được tối ưu cho điện thoại, album ảnh và xác nhận tham dự.",
+    "previewTypeLabel": "Kiểu xem",
+    "previewTypeValue": "Toàn bộ thiệp",
+    "highlightMobile": "Hiển thị đẹp trên điện thoại và máy tính",
+    "highlightRsvp": "Tích hợp xác nhận tham dự trực tuyến",
+    "highlightGallery": "Có sẵn album ảnh cưới và nội dung sự kiện",
+    "hoverHint": "Di chuột để xem hết thiệp",
+    "imageAlt": "Ảnh xem trước toàn bộ mẫu thiệp cưới",
+    "close": "Đóng cửa sổ xem trước"
+  },
+  "demoCta": {
+    "useTemplate": "Sử dụng thiệp này"
+  },
   "listing": {
     "metaTitle": "Mẫu thiệp cưới online | Thiệp Mừng Online",
     "metaDescription": "Kho mẫu thiệp cưới online của Thiệp Mừng Online: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
@@ -264,7 +280,184 @@
     "colorWord": "Màu",
     "demoCta": "Xem demo thiệp",
     "useStyle": "Dùng mẫu này",
-    "new": "Mới"
+    "new": "Mới",
+    "categories": {
+      "All": "Tất cả",
+      "Traditional": "Truyền thống",
+      "Floral": "Hoa lá",
+      "Signature": "Thanh lịch",
+      "Royal": "Hoàng gia",
+      "Modern": "Hiện đại"
+    },
+    "colors": {
+      "All": "Tất cả",
+      "Red": "Đỏ",
+      "Green": "Xanh",
+      "Pink": "Hồng",
+      "White": "Trắng",
+      "Brown": "Nâu",
+      "Blue": "Lam",
+      "Gold": "Vàng",
+      "Black": "Đen"
+    },
+    "templates": {
+      "song-hy-red": {
+        "name": "Song Hỷ Đỏ",
+        "description": "Thiệp cưới Song Hỷ Đỏ với nền tia đỏ, biểu tượng song hỷ, khung ảnh vòm và phong bao đồng bộ. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "song-hy-green": {
+        "name": "Song Hỷ Xanh",
+        "description": "Thiệp cưới Song Hỷ Xanh với sắc xanh rừng, biểu tượng song hỷ, khung ảnh vòm và phong bao đồng bộ. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "double-dragon-red": {
+        "name": "Song Long Đỏ",
+        "description": "Thiệp cưới Song Long Đỏ nổi bật với cặp rồng truyền thống và sắc đỏ trang trọng. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "double-phoenix-red": {
+        "name": "Song Phụng Đỏ",
+        "description": "Thiệp cưới Song Phụng Đỏ sử dụng họa tiết đôi phượng thanh nhã trên bảng màu đỏ cổ điển. Miễn phí tạo thiệp."
+      },
+      "elegant-leaf-green": {
+        "name": "Thanh Diệp Xanh",
+        "description": "Thiệp cưới Thanh Diệp Xanh có bố cục tối giản, thoáng đãng và sắc xanh thanh lịch. Miễn phí tạo thiệp."
+      },
+      "dragon-phoenix-red": {
+        "name": "Long Phụng Đỏ",
+        "description": "Thiệp cưới Long Phụng Đỏ kết hợp họa tiết rồng phượng cổ điển với sắc đỏ trang trọng. Miễn phí tạo thiệp."
+      },
+      "dragon-phoenix-v3-red": {
+        "name": "Long Phụng V3 Đỏ",
+        "description": "Thiệp cưới Long Phụng V3 Đỏ có khung ảnh vòm rồng phượng, sắc đỏ trầm và họa tiết chim én. Miễn phí tạo thiệp."
+      },
+      "dragon-phoenix-v2-red": {
+        "name": "Long Phụng V2 Đỏ",
+        "description": "Thiệp cưới Long Phụng V2 Đỏ có họa tiết rồng phượng tinh chỉnh và bố cục hiện đại. Miễn phí tạo thiệp."
+      },
+      "double-dragon-green": {
+        "name": "Song Long Xanh",
+        "description": "Thiệp cưới Song Long Xanh kết hợp cặp rồng truyền thống với sắc xanh tươi mát. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "boho-floral-green": {
+        "name": "Hoa Mộc Xanh",
+        "description": "Thiệp cưới Hoa Mộc Xanh với hoa màu nước tươi mát trên nền kem ấm. Miễn phí tạo thiệp."
+      },
+      "boho-floral-pink": {
+        "name": "Hoa Mộc Hồng",
+        "description": "Thiệp cưới Hoa Mộc Hồng với hoa màu nước lãng mạn trên nền kem ấm. Miễn phí tạo thiệp."
+      },
+      "jasmine-white": {
+        "name": "Mai Lan Trắng",
+        "description": "Thiệp cưới Mai Lan Trắng sử dụng nền kem ấm, sắc xanh ô-liu đậm và phong cách tối giản thanh lịch. Xem demo miễn phí."
+      },
+      "silk-flora-brown": {
+        "name": "Hoa Lụa Nâu",
+        "description": "Thiệp cưới Hoa Lụa Nâu mang phong cách tối giản ấm áp, kiểu chữ gọn gàng và bố cục nhẹ nhàng. Xem demo miễn phí."
+      },
+      "chateau-blue": {
+        "name": "Lâu Đài Lam",
+        "description": "Thiệp cưới Lâu Đài Lam có dinh thự châu Âu vẽ tay, hàng bách Ý và lịch nhỏ đóng khung trên nền kem. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "brocade-flower-red": {
+        "name": "Gấm Hoa Đỏ",
+        "description": "Thiệp cưới Gấm Hoa Đỏ kết hợp hoa văn gấm, hoa hồng đỏ, cột vàng và khung lịch hoa trên nền kem ấm. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "crystal-floral-blue": {
+        "name": "Hoa Thủy Tinh Lam",
+        "description": "Thiệp cưới Hoa Thủy Tinh Lam có khung hoa xanh sứ, nền kem ấm và lịch cưới riêng biệt. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "chateau-green": {
+        "name": "Lâu Đài Xanh",
+        "description": "Thiệp cưới Lâu Đài Xanh tái hiện lâu đài màu nước giữa vườn hoa, cây xanh và đài phun nước. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "baroque-gold": {
+        "name": "Hoàng Gia Vàng",
+        "description": "Thiệp cưới Hoàng Gia Vàng có khung mạ vàng, cột La Mã, nền gấm ngà và lịch viền vàng. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "qasr-green": {
+        "name": "Thành Cung Xanh",
+        "description": "Thiệp cưới Thành Cung Xanh có cung điện mái vòm, đôi uyên ương trong trang phục xanh và hoa hồng trắng trên nền kem ấm. Miễn phí tạo thiệp."
+      },
+      "qasr-gold": {
+        "name": "Thành Cung Vàng",
+        "description": "Thiệp cưới Thành Cung Vàng có cung điện giữa ốc đảo, hàng cọ và đôi uyên ương trong trang phục vùng Vịnh. Miễn phí tạo thiệp."
+      },
+      "glass-garden-green": {
+        "name": "Vườn Kính Xanh",
+        "description": "Thiệp cưới Vườn Kính Xanh đặt tên đôi uyên ương trong khung kính bầu dục giữa nền hoa mềm mại. Miễn phí tạo thiệp."
+      },
+      "royal-red": {
+        "name": "Hoàng Kim Đỏ",
+        "description": "Thiệp cưới Hoàng Kim Đỏ kết hợp nền đỏ trầm với điểm nhấn vàng sang trọng. Miễn phí tạo thiệp."
+      },
+      "nhat-binh-red": {
+        "name": "Nhật Bình Đỏ",
+        "description": "Thiệp cưới Nhật Bình Đỏ sử dụng nền giấy kem, chữ nâu đỏ son cùng mây và hoa chuyển động. Xem demo miễn phí."
+      },
+      "hoa-tinh-red": {
+        "name": "Họa Tình Đỏ",
+        "description": "Thiệp cưới Họa Tình Đỏ mang phong cách truyện tranh, hoa trái tim đỏ, chữ viết tay và khung ảnh nghiêng độc đáo. Miễn phí tạo thiệp."
+      },
+      "co-ba-red": {
+        "name": "Cô Ba Đỏ",
+        "description": "Thiệp cưới Cô Ba Đỏ sử dụng nền giấy cổ, minh họa chợ Bến Thành và phong bao nâu đồng bộ. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "royal-blue": {
+        "name": "Hoàng Kim Lam",
+        "description": "Thiệp cưới Hoàng Kim Lam kết hợp nền xanh navy với điểm nhấn vàng sang trọng. Miễn phí tạo thiệp."
+      },
+      "royal-green": {
+        "name": "Hoàng Kim Xanh",
+        "description": "Thiệp cưới Hoàng Kim Xanh kết hợp nền xanh rừng với điểm nhấn vàng sang trọng. Miễn phí tạo thiệp."
+      },
+      "spring-garden-green": {
+        "name": "Vườn Xuân Xanh",
+        "description": "Thiệp cưới Vườn Xuân Xanh kết hợp họa tiết hoa lá vẽ tay với sắc xanh tươi mát. Miễn phí tạo thiệp."
+      },
+      "chibi-red": {
+        "name": "Chibi Đỏ",
+        "description": "Thiệp cưới Chibi Đỏ có minh họa đôi uyên ương đáng yêu và bố cục vui tươi. Miễn phí tạo thiệp."
+      },
+      "boho-floral-brown": {
+        "name": "Hoa Mộc Nâu",
+        "description": "Thiệp cưới Hoa Mộc Nâu với hoa màu nước mộc mạc trên nền kem ấm. Miễn phí tạo thiệp."
+      },
+      "spring-garden-red": {
+        "name": "Vườn Xuân Đỏ",
+        "description": "Thiệp cưới Vườn Xuân Đỏ kết hợp họa tiết hoa lá vẽ tay với sắc đỏ ấm. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "dragon-phoenix-green": {
+        "name": "Long Phụng Xanh",
+        "description": "Thiệp cưới Long Phụng Xanh kết hợp họa tiết rồng phượng với sắc xanh thanh lịch. Miễn phí tạo thiệp."
+      },
+      "spring-garden-blue": {
+        "name": "Vườn Xuân Lam",
+        "description": "Thiệp cưới Vườn Xuân Lam kết hợp họa tiết hoa lá vẽ tay với sắc xanh lam dịu. Miễn phí tạo thiệp."
+      },
+      "minimalism-red": {
+        "name": "Tối Giản Đỏ",
+        "description": "Thiệp cưới Tối Giản Đỏ có nền trắng sạch, điểm nhấn đỏ thanh lịch và bố cục hiện đại. Miễn phí tạo thiệp."
+      },
+      "cherry-blossom-pink": {
+        "name": "Anh Đào Hồng",
+        "description": "Thiệp cưới Anh Đào Hồng sử dụng cánh hoa sakura hồng dịu và phong cách lãng mạn hiện đại. Miễn phí tạo thiệp."
+      },
+      "double-phoenix-green": {
+        "name": "Song Phụng Xanh",
+        "description": "Thiệp cưới Song Phụng Xanh kết hợp đôi phượng truyền thống với sắc xanh tươi mát. Miễn phí tạo thiệp."
+      },
+      "double-dragon-blue": {
+        "name": "Song Long Lam",
+        "description": "Thiệp cưới Song Long Lam kết hợp đôi rồng truyền thống với sắc lam dịu. Miễn phí tạo thiệp, dùng thử 3 ngày."
+      },
+      "dragon-phoenix-blue": {
+        "name": "Long Phụng Lam",
+        "description": "Thiệp cưới Long Phụng Lam kết hợp họa tiết rồng phượng với sắc lam trang nhã. Miễn phí tạo thiệp."
+      },
+      "dragon-phoenix-black": {
+        "name": "Long Phụng Đen",
+        "description": "Thiệp cưới Long Phụng Đen kết hợp họa tiết rồng phượng vàng với nền đen sâu và sang trọng. Miễn phí tạo thiệp."
+      }
+    }
   },
   "pricing": {
     "metaTitle": "Bảng giá | Thiệp Mừng Online",
@@ -396,5 +589,296 @@
     "subtitle": "Tìm câu trả lời nhanh chóng. Tạo thiệp cưới hoàn hảo cùng Thiệp Mừng Online.",
     "searchPlaceholder": "Tìm kiếm câu hỏi...",
     "popularTitle": "Bài viết phổ biến"
+  },
+  "guestManager": {
+    "back": "Về xác nhận tham dự",
+    "title": "Quản lý khách mời",
+    "subtitle": "Quản lý danh sách khách, link mời riêng, nhóm khách, bàn tiệc và trạng thái xác nhận ở cùng một nơi.",
+    "listTitle": "Danh sách khách",
+    "count": "Hiển thị {shown}/{total} khách",
+    "stats": {
+      "total": "Tổng khách mời",
+      "responded": "Đã phản hồi",
+      "attending": "Sẽ tham dự",
+      "expected": "Số khách dự kiến"
+    },
+    "actions": {
+      "add": "Thêm khách",
+      "import": "Nhập CSV",
+      "export": "Xuất CSV",
+      "edit": "Sửa",
+      "share": "Chia sẻ",
+      "delete": "Xóa",
+      "save": "Lưu thay đổi",
+      "saving": "Đang lưu...",
+      "deleting": "Đang xóa...",
+      "cancel": "Hủy",
+      "close": "Đóng",
+      "shareGuest": "Chia sẻ thiệp cho {name}",
+      "qrGuest": "Tạo QR cho {name}",
+      "editGuest": "Sửa thông tin {name}",
+      "deleteGuest": "Xóa {name}"
+    },
+    "fields": {
+      "name": "Họ và tên *",
+      "role": "Vai trò / danh xưng",
+      "side": "Phía gia đình",
+      "sideEmpty": "Chưa phân loại",
+      "groupName": "Nhóm khách",
+      "tableName": "Bàn tiệc",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "greeting": "Lời chào riêng",
+      "greetingHint": "Hiển thị trên phong bao thay cho danh xưng và tên mặc định.",
+      "maxGuests": "Số khách tối đa",
+      "maxGuestsHint": "Bao gồm khách chính và người đi cùng.",
+      "giftAmount": "Tiền mừng",
+      "giftAmountHint": "Thông tin riêng tư, chỉ chủ thiệp nhìn thấy.",
+      "note": "Ghi chú nội bộ"
+    },
+    "sides": {
+      "groom": "Nhà trai",
+      "bride": "Nhà gái"
+    },
+    "filters": {
+      "search": "Tìm tên, nhóm, số điện thoại...",
+      "side": "Lọc theo phía gia đình",
+      "group": "Lọc theo nhóm khách",
+      "response": "Lọc theo phản hồi",
+      "allSides": "Tất cả gia đình",
+      "allGroups": "Tất cả nhóm",
+      "allResponses": "Tất cả phản hồi"
+    },
+    "columns": {
+      "guest": "Khách mời",
+      "group": "Nhóm khách",
+      "table": "Bàn",
+      "rsvp": "Xác nhận",
+      "private": "Thông tin riêng",
+      "actions": "Thao tác"
+    },
+    "status": {
+      "pending": "Chưa phản hồi",
+      "attending": "Sẽ tham dự",
+      "declined": "Không tham dự",
+      "guestCount": "{count} người tham dự",
+      "maxGuests": "Tối đa {count} người"
+    },
+    "rsvpAnswers": {
+      "column": "Câu hỏi thêm",
+      "yes": "Có",
+      "no": "Không"
+    },
+    "moderation": {
+      "sectionTitle": "Nội dung do khách đóng góp",
+      "sectionDescription": "Lời chúc được đăng ngay trên thiệp. Bạn có thể xóa lời chúc, ảnh hoặc video không phù hợp tại đây.",
+      "wishesTitle": "Lời chúc",
+      "mediaTitle": "Ảnh và video",
+      "noWishes": "Chưa có lời chúc nào.",
+      "noMedia": "Chưa có ảnh hoặc video nào do khách đóng góp.",
+      "delete": "Xóa",
+      "download": "Tải xuống",
+      "deleteWishTitle": "Xóa lời chúc này?",
+      "deleteMediaTitle": "Xóa ảnh hoặc video này?",
+      "deleteDescription": "Nội dung sẽ biến mất khỏi thiệp ngay lập tức và không thể khôi phục.",
+      "cancel": "Hủy",
+      "deleting": "Đang xóa...",
+      "error": "Không thể xóa nội dung. Vui lòng thử lại."
+    },
+    "selection": {
+      "all": "Chọn tất cả khách đang hiển thị",
+      "guest": "Chọn {name}",
+      "count": "Đã chọn {count} khách",
+      "clear": "Bỏ chọn",
+      "delete": "Xóa đã chọn"
+    },
+    "add": {
+      "title": "Thêm khách mời",
+      "description": "Tạo link riêng và chuẩn bị thông tin đón tiếp cho khách."
+    },
+    "edit": {
+      "title": "Sửa thông tin khách",
+      "description": "Cập nhật thông tin của {name}. Link mời hiện tại vẫn được giữ nguyên."
+    },
+    "delete": {
+      "title": "Xóa khách mời?",
+      "description": "Bạn sắp xóa {count} khách. Link mời của họ sẽ ngừng hoạt động và thao tác này không thể hoàn tác."
+    },
+    "import": {
+      "title": "Nhập danh sách khách từ CSV",
+      "description": "Tải tệp CSV có dòng tiêu đề. Có thể nhập tối đa 500 khách mỗi lần.",
+      "chooseFile": "Chọn tệp CSV",
+      "limit": "Tối đa 500 dòng, dung lượng khuyến nghị dưới 2 MB",
+      "templateHint": "Chưa có tệp đúng định dạng? Tải tệp mẫu rồi điền danh sách của bạn.",
+      "downloadTemplate": "Tải tệp mẫu",
+      "preview": "Sẵn sàng nhập {count} khách",
+      "previewLimit": "Xem trước 5 dòng đầu",
+      "confirm": "Nhập {count} khách",
+      "importing": "Đang nhập...",
+      "errors": {
+        "title": "Cần kiểm tra lại tệp CSV",
+        "emptyImport": "Tệp chưa có dữ liệu khách mời.",
+        "missingNameColumn": "Không tìm thấy cột Họ và tên.",
+        "missingName": "Dòng {row} chưa có tên khách."
+      }
+    },
+    "share": {
+      "title": "Gửi thiệp riêng",
+      "description": "Link này chỉ dành cho {name} và sẽ hiển thị lời chào riêng trên phong bao.",
+      "invitationTitle": "Thiệp mời cưới",
+      "text": "Thiệp mời gửi {name}",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "system": "Chia sẻ"
+    },
+    "qr": {
+      "title": "Mã QR thiệp mời",
+      "description": "Quét mã để mở link thiệp riêng của {name}.",
+      "alt": "Mã QR thiệp mời của {name}",
+      "download": "Tải PNG"
+    },
+    "empty": {
+      "title": "Chưa có khách mời",
+      "description": "Thêm từng khách hoặc nhập danh sách CSV để tạo link mời riêng và theo dõi RSVP.",
+      "filtered": "Không có khách nào khớp với bộ lọc hiện tại."
+    },
+    "unpublished": {
+      "title": "Thiệp chưa được xuất bản",
+      "description": "Hãy xuất bản thiệp trước để tạo và gửi link riêng cho khách mời."
+    },
+    "questions": {
+      "title": "Câu hỏi RSVP tùy chỉnh",
+      "description": "Thu thập thêm thông tin như xe đưa đón, thực đơn hoặc nhu cầu đặc biệt.",
+      "count": "{count}/10 câu",
+      "empty": "Chưa có câu hỏi tùy chỉnh. Các trường RSVP mặc định vẫn hoạt động bình thường.",
+      "addTitle": "Thêm câu hỏi",
+      "editTitle": "Sửa câu hỏi",
+      "label": "Nội dung câu hỏi",
+      "type": "Loại câu trả lời",
+      "types": {
+        "text": "Văn bản ngắn",
+        "boolean": "Có / Không",
+        "select": "Chọn một phương án"
+      },
+      "required": "Bắt buộc trả lời",
+      "options": "Các phương án",
+      "optionsHint": "Mỗi phương án một dòng. Cần ít nhất 2 phương án.",
+      "add": "Thêm câu hỏi",
+      "save": "Lưu câu hỏi",
+      "saving": "Đang lưu...",
+      "edit": "Sửa câu hỏi",
+      "delete": "Xóa câu hỏi",
+      "cancelEdit": "Hủy sửa",
+      "errors": {
+        "notFound": "Không tìm thấy câu hỏi hoặc thiệp.",
+        "invalidData": "Nội dung câu hỏi chưa hợp lệ.",
+        "invalidOptions": "Câu hỏi lựa chọn cần ít nhất 2 phương án.",
+        "limitReached": "Mỗi thiệp có tối đa 10 câu hỏi tùy chỉnh."
+      }
+    },
+    "cohost": {
+      "title": "Cùng gia đình quản lý khách",
+      "description": "Tạo link riêng để bố mẹ hoặc người thân thêm, sửa và theo dõi khách mời mà không cần đăng nhập.",
+      "unpublished": "Cần xuất bản thiệp trước khi tạo link đồng quản lý.",
+      "create": "Tạo link đồng quản lý",
+      "copy": "Sao chép link",
+      "copied": "Đã sao chép",
+      "regenerate": "Tạo lại link",
+      "revoke": "Thu hồi link",
+      "pageTitle": "Cùng quản lý khách mời",
+      "pageDescription": "Bạn đang hỗ trợ {couple} quản lý danh sách khách mời.",
+      "coupleFallback": "cặp đôi",
+      "errors": {
+        "notFound": "Không tìm thấy thiệp.",
+        "unpublished": "Thiệp chưa được xuất bản."
+      }
+    },
+    "errors": {
+      "notFound": "Không tìm thấy thiệp hoặc khách mời.",
+      "invalidData": "Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.",
+      "invalidEmail": "Địa chỉ email chưa đúng định dạng.",
+      "emptyImport": "Danh sách nhập đang trống.",
+      "tooManyGuests": "Mỗi lần chỉ có thể nhập tối đa 500 khách."
+    }
+  },
+  "publicInvitation": {
+    "manage": "Quản lý thiệp",
+    "guestFallback": "Quý khách",
+    "rsvp": {
+      "open": "Xác nhận tham dự",
+      "title": "Xác nhận tham dự",
+      "description": "Vui lòng cho chúng tôi biết bạn có thể đến chung vui hay không.",
+      "close": "Đóng",
+      "name": "Họ và tên *",
+      "attending": "Bạn sẽ tham dự chứ?",
+      "attendingYes": "Sẽ tham dự",
+      "attendingNo": "Không thể đến",
+      "guestCount": "Số người tham dự",
+      "side": "Phía gia đình",
+      "sideEmpty": "Chưa phân loại",
+      "groomSide": "Nhà trai",
+      "brideSide": "Nhà gái",
+      "shuttle": "Tôi cần xe đưa đón",
+      "dietary": "Ăn kiêng hoặc dị ứng",
+      "songRequest": "Bài hát yêu cầu",
+      "message": "Lời nhắn",
+      "answerYes": "Có",
+      "answerNo": "Không",
+      "selectPlaceholder": "Chọn một phương án",
+      "submit": "Gửi xác nhận",
+      "submitting": "Đang gửi...",
+      "success": "Cảm ơn bạn đã xác nhận!"
+    },
+    "media": {
+      "open": "Khoảnh khắc",
+      "title": "Khoảnh khắc từ khách mời",
+      "description": "Cùng chia sẻ ảnh và video trong ngày vui. Mọi khách mời đều có thể xem và tải những kỷ niệm này.",
+      "close": "Đóng",
+      "contributorName": "Tên của bạn *",
+      "contributorPlaceholder": "Nhập tên để mọi người biết ai đã chia sẻ",
+      "chooseFiles": "Chọn ảnh hoặc video",
+      "fileHint": "Tối đa 6 tệp/lần · ảnh 12MB · video 80MB",
+      "selected": "Đã chọn",
+      "remove": "Bỏ tệp",
+      "upload": "Đóng góp khoảnh khắc",
+      "uploading": "Đang tải lên...",
+      "loading": "Đang tải khoảnh khắc...",
+      "empty": "Chưa có khoảnh khắc nào. Hãy là người đầu tiên chia sẻ ảnh hoặc video của bữa tiệc.",
+      "download": "Tải xuống",
+      "success": "Đã chia sẻ thành công. Cảm ơn bạn!",
+      "errorGeneric": "Không thể tải dữ liệu lúc này. Vui lòng thử lại.",
+      "errorInvalidName": "Vui lòng nhập tên của bạn.",
+      "errorTooManyFiles": "Mỗi lần chỉ được chọn tối đa 6 tệp.",
+      "errorImageTooLarge": "Mỗi ảnh phải nhỏ hơn 12MB.",
+      "errorVideoTooLarge": "Mỗi video phải nhỏ hơn 80MB.",
+      "errorUnsupported": "Tệp không hợp lệ. Hỗ trợ JPG, PNG, WebP, GIF, MP4, MOV và WebM.",
+      "errorGalleryFull": "Thư viện này đã đạt giới hạn lưu trữ. Vui lòng liên hệ chủ thiệp."
+    }
+  },
+  "editor": {
+    "draft": {
+      "server": "Đã lưu vào hệ thống",
+      "saving": "Đang lưu thay đổi...",
+      "local": "Đã lưu tạm trên thiết bị",
+      "restored": "Đã khôi phục nội dung chưa lưu",
+      "error": "Không thể lưu tạm — hãy bấm Lưu bản nháp"
+    },
+    "music": {
+      "label": "Nhạc nền",
+      "dialogTitle": "Chọn nhạc nền",
+      "choose": "Chọn nhạc",
+      "change": "Đổi nhạc",
+      "remove": "Không nhạc",
+      "searchPlaceholder": "Tìm theo tên bài hát hoặc nghệ sĩ...",
+      "loading": "Đang tải nhạc...",
+      "empty": "Không tìm thấy bài hát phù hợp.",
+      "loadMore": "Tải thêm",
+      "currentMusic": "Nhạc hiện tại",
+      "preview": "Nghe thử",
+      "stopPreview": "Dừng nghe thử",
+      "select": "Chọn",
+      "close": "Đóng",
+      "error": "Không thể tải thư viện nhạc. Vui lòng thử lại."
+    }
   }
 }

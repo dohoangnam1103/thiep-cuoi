@@ -16,7 +16,7 @@ export async function generateMetadata({
   return pageSeo({
     title: t("title"),
     description: t("description"),
-    alternates: staticAlternates("/"),
+    alternates: staticAlternates("/", locale),
     image: "/chungdoi/images/en/banner_hero.webp",
   });
 }

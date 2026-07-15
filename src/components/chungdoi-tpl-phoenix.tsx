@@ -6,13 +6,14 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
+  buildVietQrImageUrl,
   FamilyColumn,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
   Lightbox,
-  mapEmbedUrl,
+  InvitationMap,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -201,7 +202,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
             <h3 className="text-[20px] font-bold uppercase tracking-[0.05em] md:text-[24px]">Tiệc cưới sẽ tổ chức tại</h3>
             <p className="mx-auto max-w-sm whitespace-pre-line border-b pb-3 text-[14px] leading-relaxed md:max-w-[600px] md:text-base" style={{ borderColor: "#8B000022" }}>{venue.address}</p>
             <div className="flex w-full flex-col items-center gap-4 md:gap-5">
-              <iframe src={mapEmbedUrl(mapQuery)} title={mapQuery} className="h-[260px] w-full max-w-[340px] overflow-hidden rounded-2xl md:h-[360px] md:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              <InvitationMap query={mapQuery} title={mapQuery} className="h-[260px] w-full max-w-[340px] overflow-hidden rounded-2xl md:h-[360px] md:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             </div>
           </section>
         ) : null}
@@ -253,7 +254,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
                 { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
                 { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
               ] as const).filter((q) => q.bank).map((q) => {
-                const qr = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${q.bank} ${q.num} ${q.name}`)}`;
+                const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                 return (
                   <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
                     <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
