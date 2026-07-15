@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { resolveCoupleNames, resolveOgDate, resolveOgFont } from "@/lib/og-image";
+import {
+  resolveCoupleNames,
+  resolveOgDate,
+  resolveOgFont,
+  resolveOgTheme,
+} from "@/lib/og-image";
 
 test("resolveCoupleNames dùng shortName, thứ tự theo brideFirst", () => {
   assert.equal(
@@ -61,4 +66,25 @@ test("resolveOgFont fallback Lora khi template không tồn tại", () => {
   const f = resolveOgFont("khong-co-template-nay");
   assert.equal(f.family, "Lora");
   assert.equal(f.file, "Lora-Regular.ttf");
+});
+
+test("resolveOgTheme lấy token từ config (double-phoenix-red)", () => {
+  const t = resolveOgTheme("double-phoenix-red", "#c8102e");
+  assert.equal(t.textPrimary, "#710001");
+  assert.equal(t.cardBg, "rgba(255, 240, 231, 0.95)");
+  assert.ok(t.background.startsWith("linear-gradient"));
+  assert.ok(Array.isArray(t.decor));
+});
+
+test("resolveOgTheme fallback theo primaryColor khi không có config", () => {
+  const t = resolveOgTheme("khong-co", "#123456");
+  assert.equal(t.background, "linear-gradient(to bottom right, #123456, #123456)");
+  assert.equal(t.cardBg, "rgba(255, 250, 244, 0.96)");
+  assert.equal(t.textPrimary, "#123456");
+  assert.deepEqual(t.decor, []);
+});
+
+test("resolveOgTheme fallback primaryColor trống → màu mặc định", () => {
+  const t = resolveOgTheme("khong-co", "");
+  assert.equal(t.textPrimary, "#710001");
 });

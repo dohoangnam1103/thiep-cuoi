@@ -44,3 +44,40 @@ export function resolveOgFont(templateId: string): { family: string; file: strin
   }
   return { ...FALLBACK_FONT };
 }
+
+export type OgDecor = { src: string; className: string };
+
+export type OgTheme = {
+  background: string;
+  cardBg: string;
+  textPrimary: string;
+  textSecondary: string;
+  accent: string;
+  decor: OgDecor[];
+};
+
+export function resolveOgTheme(templateId: string, primaryColor: string): OgTheme {
+  const cfg = chungdoiThemeConfig[templateId];
+  if (cfg) {
+    return {
+      background: cfg.theme.background,
+      cardBg: cfg.theme.cardBg,
+      textPrimary: cfg.theme.textPrimary,
+      textSecondary: cfg.theme.textSecondary,
+      accent: cfg.theme.accent,
+      decor: cfg.decorations.cardImages.map((img) => ({
+        src: img.src,
+        className: img.className,
+      })),
+    };
+  }
+  const accent = primaryColor || "#710001";
+  return {
+    background: `linear-gradient(to bottom right, ${accent}, ${accent})`,
+    cardBg: "rgba(255, 250, 244, 0.96)",
+    textPrimary: accent,
+    textSecondary: accent,
+    accent,
+    decor: [],
+  };
+}
