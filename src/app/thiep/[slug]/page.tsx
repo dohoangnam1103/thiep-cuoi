@@ -60,8 +60,6 @@ export async function generateMetadata({
   const description = bride && groom
     ? `Trân trọng kính mời bạn đến chung vui trong ngày cưới của ${groom} & ${bride}.`
     : "Trân trọng kính mời bạn đến chung vui trong ngày cưới.";
-  const firstPhoto = invitation.gallery[0]?.url;
-  const images = firstPhoto ? [firstPhoto] : undefined;
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -75,13 +73,11 @@ export async function generateMetadata({
       url: `/thiep/${slug}`,
       siteName: "Thiệp Mừng Online",
       type: "website",
-      images,
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images,
     },
   };
 }
