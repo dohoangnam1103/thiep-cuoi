@@ -52,18 +52,27 @@ model Invitation {
 }
 
 model Payment {
-  id           String    @id @default(cuid())
-  invitationId String
-  code         String    @unique
-  amount       Int
-  voucherCode  String?
-  status       String    @default("pending")
-  createdAt    DateTime  @default(now())
-  paidAt       DateTime?
+  id                      String    @id @default(cuid())
+  invitationId            String
+  code                    String    @unique
+  amount                  Int
+  voucherCode             String?
+  status                  String    @default("pending")
+  provider                String    @default("casso")
+  providerOrderCode       String?   @unique
+  providerPaymentLinkId   String?   @unique
+  providerCheckoutUrl     String?
+  providerQrCode          String?
+  providerBankBin         String?
+  providerBankAccount     String?
+  providerBankAccountName String?
+  createdAt               DateTime  @default(now())
+  paidAt                  DateTime?
 
   invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
 
   @@index([invitationId])
+  @@index([provider, status])
 }
 
 model Voucher {

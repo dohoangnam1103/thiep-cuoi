@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
@@ -93,6 +94,14 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
   const LUNAR = "(Tức ngày 25/03 năm Bính Ngọ)";
 
   const [bankOpen, setBankOpen] = useState(false);
+  useEffect(() => {
+    if (!bankOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [bankOpen]);
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = parallaxRef.current;
@@ -189,10 +198,10 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             </div>
 
             <div className="relative flex flex-col items-center gap-1 py-[10px] text-center md:gap-2 md:py-[15px] lg:py-[20px]">
-              <h3 className="flex w-[90%] items-center justify-center whitespace-nowrap leading-tight md:w-[95%] md:leading-snug" style={{ fontSize: 70, fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.groomFullName}</h3>
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.groomFullName}</h3>
               <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
               <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: COBA_HAYDON, color: RED }}>&amp;</div>
-              <h3 className="flex w-[90%] items-center justify-center whitespace-nowrap leading-tight md:w-[95%] md:leading-snug" style={{ fontSize: 70, fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.brideFullName}</h3>
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.brideFullName}</h3>
               <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{couple.brideBirthOrder || "Út Nữ"}</div>
             </div>
 
@@ -360,21 +369,21 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                   </div>
                   <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: BROWN }}>Nhấn để mở</p>
                 </button>
-                {bankOpen ? (
-                  <div className="fixed inset-0 z-[95] flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" onClick={() => setBankOpen(false)}>
+                {bankOpen ? createPortal((
+                  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4" onClick={() => setBankOpen(false)}>
                     <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CREAM }} onClick={(e) => e.stopPropagation()}>
                       <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: RED }}>
                         <button type="button" aria-label="Đóng" onClick={() => setBankOpen(false)} className="absolute right-3 top-3 text-white/80 hover:text-white">✕</button>
                         <h2 className="text-[21px] text-white md:text-[25px] lg:text-[32px]" style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.2)", fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
                       </div>
                       <div className="p-4 sm:p-6">
-                        <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: BROWN }}>
+                        <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4" style={{ color: BROWN }}>
                           {bankCards.map((q) => {
                             const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                             return (
-                              <div key={q.role} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
+                              <div key={q.role} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                                 <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: RED }}>{q.role} - {q.name}</h3>
-                                <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(RED, 0.125)}` }}>
+                                <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(RED, 0.125)}` }}>
                                   <img alt={`QR - ${q.role} - ${q.name}`} className="h-full w-full object-contain" src={qr} />
                                 </div>
                                 <div className="mt-2 space-y-0.5 text-center">
@@ -389,7 +398,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                       </div>
                     </div>
                   </div>
-                ) : null}
+                ), document.body) : null}
               </div>
             ) : null}
 

@@ -946,7 +946,7 @@ export function EditorForm({
               label="Địa chỉ bản đồ"
               defaultValue={seed("mapAddress", field(content, "mapAddress"))}
               placeholder="Dán link Google Maps (có ghim vị trí) hoặc địa chỉ nơi tổ chức"
-              hint="Mở Google Maps trên máy tính, tìm nhà hàng rồi copy link trên thanh địa chỉ trình duyệt (có @toạ-độ) và dán vào đây để bản đồ hiện đúng ghim. Hoặc dán địa chỉ/tên nơi tổ chức để tìm gần đúng."
+              hint="Mở Google Maps, tìm nhà hàng rồi lấy link: trên điện thoại bấm Chia sẻ > Sao chép liên kết; trên máy tính copy link ở thanh địa chỉ (có @toạ-độ). Dán vào đây để bản đồ hiện đúng ghim. Hoặc dán địa chỉ/tên nơi tổ chức để tìm gần đúng."
               full
             />
             <Text

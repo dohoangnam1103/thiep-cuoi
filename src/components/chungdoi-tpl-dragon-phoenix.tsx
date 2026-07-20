@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
@@ -148,6 +149,14 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const RECEPTION_LUNAR = "(Tức ngày 14/04 năm Bính Ngọ / 農曆 14/04 丙午)";
 
   const [bankOpen, setBankOpen] = useState(false);
+  useEffect(() => {
+    if (!bankOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [bankOpen]);
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = parallaxRef.current;
@@ -253,10 +262,10 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
 
             {/* couple full names */}
             <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap leading-[50px]" style={{ fontSize: 64, fontFamily: LPD_UNI, color: GOLD }}>{couple.groomFullName}</h3>
+              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
               <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>ÚT NAM <span className="opacity-70">/ 幼子</span></div>
               <div className="text-[35px] md:text-[48px]" style={{ fontFamily: LPD_UNI, color: GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap leading-[50px]" style={{ fontSize: 64, fontFamily: LPD_UNI, color: GOLD }}>{couple.brideFullName}</h3>
+              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
               <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>ÚT NỮ <span className="opacity-70">/ 幼女</span></div>
             </div>
 
@@ -407,21 +416,21 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                     <span className="opacity-70">點擊開啟</span>
                   </p>
                 </button>
-                {bankOpen ? (
-                  <div className="fixed inset-0 z-[95] flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-4" onClick={() => setBankOpen(false)}>
+                {bankOpen ? createPortal((
+                  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-3 sm:p-4" onClick={() => setBankOpen(false)}>
                     <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: CARD_BG }} onClick={(e) => e.stopPropagation()}>
                       <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: ENVELOPE }}>
                         <button type="button" aria-label="Đóng" onClick={() => setBankOpen(false)} className="absolute right-3 top-3 text-white/80 hover:text-white">✕</button>
                         <h2 className="text-[21px] md:text-[26px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới / 結婚紅包</h2>
                       </div>
                       <div className="p-4 sm:p-6">
-                        <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: GOLD }}>
+                        <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4" style={{ color: GOLD }}>
                           {bankCards.map((q) => {
                             const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                             return (
-                              <div key={q.role} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
+                              <div key={q.role} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                                 <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: GOLD }}>{q.role} - {q.name}</h3>
-                                <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(GOLD, 0.3)}` }}>
+                                <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(GOLD, 0.3)}` }}>
                                   <img alt={`QR - ${q.role} - ${q.name}`} className="h-full w-full object-contain" src={qr} />
                                 </div>
                                 <div className="mt-2 space-y-0.5 text-center">
@@ -436,7 +445,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                       </div>
                     </div>
                   </div>
-                ) : null}
+                ), document.body) : null}
               </div>
             ) : null}
 

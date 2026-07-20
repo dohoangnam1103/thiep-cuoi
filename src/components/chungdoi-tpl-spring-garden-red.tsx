@@ -218,7 +218,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
                       <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
                       <p className="text-[13px] font-mono">{q.num}</p>
                       <p className="text-[13px]">{q.name}</p>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: SGR_TEXT, color: SGR_TEXT }}>Lưu QR</a>
+                      <a href={`${qr}&download=1`} download className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: SGR_TEXT, color: SGR_TEXT }}>Lưu QR</a>
                     </div>
                   );
                 })}

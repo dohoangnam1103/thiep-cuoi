@@ -327,7 +327,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
                         <p className="font-mono text-[10px]">{q.num}</p>
                         <p className="text-[10px] font-semibold">{q.name}</p>
                       </div>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: GOLD_DARK, backgroundColor: hexToRgba(GOLD, 0.1) }}>Lưu QR</a>
+                      <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: GOLD_DARK, backgroundColor: hexToRgba(GOLD, 0.1) }}>Lưu QR</a>
                     </div>
                   );
                 })}

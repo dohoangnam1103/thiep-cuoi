@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
@@ -149,6 +150,14 @@ function SongHyCountdown({ palette, target }: { palette: SongHyPalette; target: 
 function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; palette: SongHyPalette }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const [giftOpen, setGiftOpen] = useState(false);
+  useEffect(() => {
+    if (!giftOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [giftOpen]);
   const groomGiven = givenName(couple.groomFullName);
   const brideGiven = givenName(couple.brideFullName);
   const wedding = formatDate(couple.date);
@@ -229,10 +238,10 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
           </div>
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-            <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: palette.accent }}>{couple.groomFullName}</h3>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
-            <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: palette.accent }}>{couple.brideFullName}</h3>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{couple.brideBirthOrder || "Út Nữ"}</div>
           </div>
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
@@ -438,21 +447,21 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         </div>
       </div>
 
-      {giftOpen ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={() => setGiftOpen(false)}>
+      {giftOpen ? createPortal((
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setGiftOpen(false)}>
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: palette.modalBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: palette.accent }}>
               <button type="button" onClick={() => setGiftOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
             </div>
             <div className="p-4 sm:p-6">
-              <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: "rgb(70, 70, 70)" }}>
+              <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4" style={{ color: "rgb(70, 70, 70)" }}>
                 {banks.map((q) => {
                   const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
-                    <div key={q.title} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
+                    <div key={q.title} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                       <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: palette.accent }}>{q.title}</h3>
-                      <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(palette.accent, 0.125)}` }}>
+                      <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(palette.accent, 0.125)}` }}>
                         <img alt={`QR - ${q.title}`} className="h-full w-full object-contain" src={qr} />
                       </div>
                       <div className="mt-2 space-y-0.5 text-center">
@@ -460,7 +469,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                         <p className="font-mono text-[10px]" style={{ color: "rgb(70, 70, 70)" }}>{q.num}</p>
                         <p className="text-[10px] font-semibold" style={{ color: "rgb(70, 70, 70)" }}>{q.name}</p>
                       </div>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: palette.accent, backgroundColor: hexToRgba(palette.accent, 0.082) }}>Lưu QR</a>
+                      <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: palette.accent, backgroundColor: hexToRgba(palette.accent, 0.082) }}>Lưu QR</a>
                     </div>
                   );
                 })}
@@ -468,7 +477,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             </div>
           </div>
         </div>
-      ) : null}
+      ), document.body) : null}
 
       <div data-template-footer className="relative z-10 mx-auto max-w-4xl px-2 py-8 text-center sm:px-4">
         <span className="flex flex-col items-center gap-1 whitespace-pre-line text-xl" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>

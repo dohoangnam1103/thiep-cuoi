@@ -75,6 +75,7 @@
     "carousel": {
       "title": "最受欢迎的请柬模板",
       "subtitle": "探索精心设计的婚礼请柬模板。",
+      "dragHint": "滑动或拖动查看更多模板",
       "new": "新"
     },
     "stats": {

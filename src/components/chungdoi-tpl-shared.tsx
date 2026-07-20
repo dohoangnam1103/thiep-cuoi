@@ -1,6 +1,7 @@
 "use client";
 
 import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, type TouchEvent, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
@@ -412,7 +413,7 @@ export function GiftQrGrid({
               <p className="mt-2 text-[13px] font-semibold" style={{ color: accent }}>{gift.bank}</p>
               <p className="font-mono text-[13px]" style={{ color: accent }}>{gift.num}</p>
               <p className="text-[13px]" style={{ color: accent }}>{gift.name}</p>
-              <a href={qr} target="_blank" rel="noreferrer" className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>Lưu QR</a>
+              <a href={`${qr}&download=1`} download className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>Lưu QR</a>
             </div>
           );
         })}
@@ -449,6 +450,14 @@ export function GiftEnvelope({
   variant?: "envelope" | "giftbox";
 }) {
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [open]);
   if (banks.length === 0) return null;
   const muted = labelColor ?? hexToRgba(dark, 0.72);
   return (
@@ -509,21 +518,21 @@ export function GiftEnvelope({
         )}
         <p className={`${variant === "giftbox" ? "igb-hint bottom-0" : "nhat-binh-hint-text -bottom-2"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
       </button>
-      {open ? (
-        <div className="gift-modal-backdrop fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center" onClick={() => setOpen(false)}>
-          <div className="gift-modal-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-2xl sm:max-w-xl sm:rounded-2xl" style={{ backgroundColor: cardBg }} onClick={(e) => e.stopPropagation()}>
+      {open ? createPortal((
+        <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>
+          <div className="gift-modal-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl sm:max-w-xl" style={{ backgroundColor: cardBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: dark }}>
               <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]">{heading}</h2>
             </div>
             <div className="p-4 sm:p-6">
-              <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center">
+              <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4">
                 {banks.map((q) => {
                   const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
-                    <div key={q.label} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
+                    <div key={q.label} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                       <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: dark }}>{q.label}</h3>
-                      <div className="flex h-32 w-32 items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(accent, 0.2)}` }}>
+                      <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(accent, 0.2)}` }}>
                         <img alt={`QR - ${q.label}`} className="h-full w-full object-contain" src={qr} />
                       </div>
                       <div className="mt-2 space-y-0.5 text-center" style={{ color: muted }}>
@@ -531,7 +540,7 @@ export function GiftEnvelope({
                         <p className="font-mono text-[10px]">{q.num}</p>
                         <p className="text-[10px] font-semibold">{q.name}</p>
                       </div>
-                      <a href={qr} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: dark, backgroundColor: hexToRgba(accent, 0.1) }}>Lưu QR</a>
+                      <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: dark, backgroundColor: hexToRgba(accent, 0.1) }}>Lưu QR</a>
                     </div>
                   );
                 })}
@@ -539,7 +548,7 @@ export function GiftEnvelope({
             </div>
           </div>
         </div>
-      ) : null}
+      ), document.body) : null}
     </div>
   );
 }

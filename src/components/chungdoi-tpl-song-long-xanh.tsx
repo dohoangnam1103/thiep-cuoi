@@ -144,10 +144,10 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
           </div>
 
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-            <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: SLX_GREEN }}>{couple.groomFullName}</h3>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{couple.groomBirthOrder || "Trưởng Nam"} / 신랑</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: SLX_GRAY }}>&amp;</div>
-            <h3 className="font-qellia flex w-[80%] items-center justify-center whitespace-nowrap leading-[50px] md:leading-[100px]" style={{ fontSize: 64, color: SLX_GREEN }}>{couple.brideFullName}</h3>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{couple.brideBirthOrder || "Thứ Nữ"} / 신부</div>
           </div>
 

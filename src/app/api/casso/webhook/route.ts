@@ -43,6 +43,7 @@ export async function POST(req: Request) {
       const payment = await prisma.payment.findUnique({ where: { code } });
       if (
         payment &&
+        payment.provider === "casso" &&
         payment.status === "pending" &&
         !isPendingPaymentExpired(payment.createdAt) &&
         received >= payment.amount

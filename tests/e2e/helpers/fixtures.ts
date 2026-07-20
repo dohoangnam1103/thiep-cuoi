@@ -89,14 +89,33 @@ export function createGuest(invitationId: string, name = "Nguyễn Văn A"): { i
 
 export function createPayment(
   invitationId: string,
-  overrides?: Partial<{ code: string; amount: number; status: string }>,
+  overrides?: Partial<{
+    code: string;
+    amount: number;
+    status: string;
+    provider: string;
+    providerOrderCode: string;
+    voucherCode: string;
+  }>,
 ): { id: string; code: string } {
   const db = getDb();
   const payId = id("p");
   const code = overrides?.code ?? `PAY${randomUUID().slice(0, 8).toUpperCase()}`;
   db.prepare(
-    `INSERT INTO Payment (id, invitationId, code, amount, status, createdAt) VALUES (?, ?, ?, ?, ?, ?)`,
-  ).run(payId, invitationId, code, overrides?.amount ?? 150000, overrides?.status ?? "pending", prismaNow());
+    `INSERT INTO Payment (
+      id, invitationId, code, amount, voucherCode, status, provider, providerOrderCode, createdAt
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    payId,
+    invitationId,
+    code,
+    overrides?.amount ?? 150000,
+    overrides?.voucherCode ?? null,
+    overrides?.status ?? "pending",
+    overrides?.provider ?? "casso",
+    overrides?.providerOrderCode ?? null,
+    prismaNow(),
+  );
   return { id: payId, code };
 }
 

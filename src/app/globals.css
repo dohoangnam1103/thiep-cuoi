@@ -486,21 +486,15 @@ html.lenis body {
   }
 }
 
-.template-marquee {
-  animation: template-marquee 62s linear infinite;
+.template-carousel-viewport {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  touch-action: auto;
 }
 
-.template-marquee:hover {
-  animation-play-state: paused;
-}
-
-@keyframes template-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.template-carousel-viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .animate-float {

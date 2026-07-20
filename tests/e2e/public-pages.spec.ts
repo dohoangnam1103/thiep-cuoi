@@ -17,6 +17,28 @@ test.describe("public pages — navigation & content", () => {
     await expect(page.getByRole("navigation")).toBeVisible();
   });
 
+  test("popular templates can be dragged without opening a template", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const carousel = page.getByTestId("template-carousel");
+    await carousel.scrollIntoViewIfNeeded();
+    const box = await carousel.boundingBox();
+    expect(box).not.toBeNull();
+    if (!box) return;
+
+    const initialScroll = await carousel.evaluate((element) => element.scrollLeft);
+    await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.5);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.5, { steps: 8 });
+    await page.mouse.up();
+
+    const finalScroll = await carousel.evaluate((element) => element.scrollLeft);
+    expect(finalScroll - initialScroll).toBeGreaterThan(200);
+    await expect(carousel).toHaveAttribute("data-dragging", "false");
+    expect(new URL(page.url()).pathname).toBe("/");
+  });
+
   test("pricing (/vi/pricing) shows title and price", async ({ page }) => {
     const res = await page.goto("/vi/pricing");
     expect(res?.ok()).toBeTruthy();

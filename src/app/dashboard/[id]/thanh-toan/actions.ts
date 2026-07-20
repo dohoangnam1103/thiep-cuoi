@@ -1,9 +1,17 @@
 "use server";
 
+import type { Payment } from "@/generated/prisma/client";
 import { verifySession, ownInvitation } from "@/lib/dal";
+import { BANK } from "@/lib/payment";
+import {
+  cancelPayosPayment,
+  ensurePayosPaymentRequest,
+  markPaymentPaid,
+} from "@/lib/payment-service";
 import { prisma } from "@/lib/prisma";
 import { getPriceForUser } from "@/lib/payment-config";
 import { applyVoucher, genOrderCode, isPendingPaymentExpired, PAYMENT_PENDING_EXPIRES_MS } from "@/lib/payment";
+import { genPayosOrderCode, getPaymentProvider } from "@/lib/payos";
 
 export type PaymentInfo = {
   paymentId: string;
@@ -12,10 +20,37 @@ export type PaymentInfo = {
   voucherCode: string | null;
   status: string;
   expiresAt: string;
+  provider: "casso" | "payos";
+  checkoutUrl: string | null;
+  bankBin: string;
+  bankAccount: string;
+  bankAccountName: string;
 };
 
 function paymentExpiresAt(createdAt: Date): string {
   return new Date(createdAt.getTime() + PAYMENT_PENDING_EXPIRES_MS).toISOString();
+}
+
+function paymentInfo(payment: Payment): PaymentInfo {
+  return {
+    paymentId: payment.id,
+    code: payment.code,
+    amount: payment.amount,
+    voucherCode: payment.voucherCode,
+    status: payment.status,
+    expiresAt: paymentExpiresAt(payment.createdAt),
+    provider: payment.provider === "payos" ? "payos" : "casso",
+    checkoutUrl: payment.providerCheckoutUrl,
+    bankBin: payment.providerBankBin ?? BANK.bin,
+    bankAccount: payment.providerBankAccount ?? BANK.account,
+    bankAccountName: payment.providerBankAccountName ?? BANK.name,
+  };
+}
+
+async function preparePayment(payment: Payment): Promise<Payment> {
+  return payment.provider === "payos"
+    ? ensurePayosPaymentRequest(payment)
+    : payment;
 }
 
 export async function createOrGetPayment(invitationId: string): Promise<PaymentInfo> {
@@ -23,19 +58,13 @@ export async function createOrGetPayment(invitationId: string): Promise<PaymentI
   const invitation = await ownInvitation(invitationId, userId);
   if (!invitation) throw new Error("Không tìm thấy thiệp");
 
+  const provider = getPaymentProvider();
   const existing = await prisma.payment.findFirst({
-    where: { invitationId, status: "pending" },
+    where: { invitationId, status: "pending", provider },
     orderBy: { createdAt: "desc" },
   });
   if (existing && !isPendingPaymentExpired(existing.createdAt)) {
-    return {
-      paymentId: existing.id,
-      code: existing.code,
-      amount: existing.amount,
-      voucherCode: existing.voucherCode,
-      status: existing.status,
-      expiresAt: paymentExpiresAt(existing.createdAt),
-    };
+    return paymentInfo(await preparePayment(existing));
   }
 
   const price = await getPriceForUser(userId, invitationId);
@@ -44,20 +73,15 @@ export async function createOrGetPayment(invitationId: string): Promise<PaymentI
       invitationId,
       code: genOrderCode(),
       amount: price,
+      provider,
+      providerOrderCode: provider === "payos" ? genPayosOrderCode() : null,
     },
   });
-  return {
-    paymentId: payment.id,
-    code: payment.code,
-    amount: payment.amount,
-    voucherCode: payment.voucherCode,
-    status: payment.status,
-    expiresAt: paymentExpiresAt(payment.createdAt),
-  };
+  return paymentInfo(await preparePayment(payment));
 }
 
 export type VoucherResult =
-  | { ok: true; amount: number; voucherCode: string }
+  | { ok: true; payment: PaymentInfo }
   | { ok: false; error: string };
 
 export async function applyVoucherToPayment(
@@ -87,10 +111,57 @@ export async function applyVoucherToPayment(
   }
 
   const amount = applyVoucher(payment.amount, voucher.amountOff);
-  await prisma.payment.update({
-    where: { id: paymentId },
-    data: { amount, voucherCode: code },
+  if (payment.provider !== "payos") {
+    const updated = await prisma.payment.update({
+      where: { id: paymentId },
+      data: { amount, voucherCode: code },
+    });
+    if (amount === 0) {
+      await markPaymentPaid(updated.id, 0);
+      const paid = await prisma.payment.findUniqueOrThrow({ where: { id: updated.id } });
+      return { ok: true, payment: paymentInfo(paid) };
+    }
+    return { ok: true, payment: paymentInfo(updated) };
+  }
+
+  let replacement = await prisma.payment.create({
+    data: {
+      invitationId: payment.invitationId,
+      code: genOrderCode(),
+      amount,
+      voucherCode: code,
+      provider: "payos",
+      providerOrderCode: genPayosOrderCode(),
+    },
   });
 
-  return { ok: true, amount, voucherCode: code };
+  try {
+    if (amount === 0) {
+      await markPaymentPaid(replacement.id, 0);
+      replacement = await prisma.payment.findUniqueOrThrow({
+        where: { id: replacement.id },
+      });
+    } else {
+      replacement = await ensurePayosPaymentRequest(replacement);
+    }
+  } catch (error) {
+    await prisma.payment.update({
+      where: { id: replacement.id },
+      data: { status: "failed" },
+    });
+    await cancelPayosPayment(replacement);
+    console.error("Không thể tạo link payOS sau khi áp voucher", {
+      paymentId: replacement.id,
+      error: error instanceof Error ? error.message : "unknown",
+    });
+    return { ok: false, error: "Không thể tạo mã thanh toán mới, vui lòng thử lại" };
+  }
+
+  await prisma.payment.update({
+    where: { id: payment.id },
+    data: { status: "cancelled" },
+  });
+  await cancelPayosPayment(payment);
+
+  return { ok: true, payment: paymentInfo(replacement) };
 }

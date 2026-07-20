@@ -1,87 +1,86 @@
-# Deploy cổng thanh toán (VietQR + Casso Webhook V2)
+# Deploy cổng thanh toán payOS
 
-Checklist bật cổng thanh toán trên production (minipc). Code app đã sẵn sàng;
-các bước dưới là cấu hình host + bên thứ ba, phải làm tay.
+Luồng thanh toán production dùng payOS để tạo VietQR động, nhận webhook và đối
+soát trạng thái đơn. Các Payment cũ của Casso vẫn được giữ nguyên trong database.
 
 ## Tổng quan luồng
 
-1. Khách vào `/dashboard/[id]/thanh-toan` → thấy QR VietQR (MB Bank) + mã đơn `CDxxxxxx`.
-2. Khách chuyển khoản đúng số tiền, nội dung CK chứa mã đơn.
-3. Casso đọc biến động số dư MB → POST **Webhook V2** tới `/api/casso/webhook`.
-4. App verify chữ ký HMAC-SHA512 → match mã đơn → set `Invitation.paid = true`.
-5. Thiệp published miễn phí 7 ngày; quá hạn chưa trả → chặn, hiện trang gia hạn.
+1. Khách vào `/dashboard/[id]/thanh-toan`.
+2. App tạo `Payment` nội bộ và gọi API payOS tạo Payment Link.
+3. payOS trả tài khoản nhận tiền, QR động, `paymentLinkId` và `orderCode`.
+4. Khách quét QR, tiền về trực tiếp tài khoản MB đã liên kết trên payOS.
+5. payOS POST webhook tới `/api/payos/webhook`.
+6. App verify chữ ký HMAC-SHA256, đánh dấu `Payment.status = paid` và
+   `Invitation.paid = true`.
+7. Trang thanh toán poll mỗi 4 giây. Nếu webhook bị trễ, status API gọi payOS để
+   đối soát trực tiếp và tự sửa trạng thái.
 
-Cấu hình ngân hàng nằm trong `src/lib/payment.ts`: MB Bank, BIN `970422`,
-STK `0357596289`, tên `DO HOANG NAM`, giá `BASE_PRICE = 150000`, `FREE_TRIAL_DAYS = 7`.
+## 1. Tạo kênh thanh toán payOS
 
-## 1. Env production trên minipc
+Trong `my.payos.vn`:
 
-`.env` trên minipc KHÔNG bị rsync ghi đè (xem [deploy-minipc.md](./deploy-minipc.md)).
-SSH vào minipc, sửa `/home/namdo/apps/thiepmungonline/.env`, thêm:
+1. Xác thực tài khoản/tổ chức.
+2. Liên kết tài khoản ngân hàng nhận tiền.
+3. Tạo kênh Website tên `Thiệp Mừng Online`.
+4. Lưu ba khóa `Client ID`, `API Key`, `Checksum Key`.
 
-```
-CASSO_WEBHOOK_TOKEN="<Key bảo mật copy từ Casso Webhook V2>"
+Không commit hoặc gửi ba khóa này vào source control.
+
+## 2. Env production trên Mini PC
+
+Thêm vào `/home/namdo/apps/thiepmungonline/.env`:
+
+```dotenv
+PAYMENT_PROVIDER=payos
+PAYOS_CLIENT_ID="<Client ID>"
+PAYOS_API_KEY="<API Key>"
+PAYOS_CHECKSUM_KEY="<Checksum Key>"
 NEXT_PUBLIC_SITE_URL="https://thiepmungonline.com"
 ```
 
-- `CASSO_WEBHOOK_TOKEN` = "Key bảo mật" (checksum key) trong màn cấu hình Webhook V2
-  của Casso — KHÔNG phải Webhook URL. App dùng key này để verify chữ ký; sai key →
-  mọi webhook bị từ chối 401 (tiền vào nhưng thiệp không tự kích hoạt).
-- Restart container web sau khi sửa env: `docker compose up -d --no-deps web`.
+`PAYMENT_PROVIDER` mặc định là `casso` để các môi trường cũ/test không tự gọi
+payOS. Production bắt buộc đặt thành `payos`.
 
-## 2. Migrate DB production
+## 3. Webhook
 
-Migration `20260704031005_add_payment_voucher` thêm bảng `Payment`, `Voucher` và
-cột `Invitation.paid` / `publishedAt`. Runner image KHÔNG có prisma CLI, nên chạy
-qua image `builder` (xem [prod-db-ops](../CLAUDE.md) / memory):
+Cấu hình URL:
 
-```bash
-# trên minipc, sau khi deploy image mới
-cd /home/namdo/apps/thiepmungonline
-cp data/prod.db data/prod.db.bak            # backup trước khi migrate
-
-docker build --target builder -t thiepmungonline-migrate .
-docker run --rm -v "$PWD/data:/app/data" \
-  -e DATABASE_URL=file:/app/data/prod.db \
-  thiepmungonline-migrate npx prisma migrate deploy
+```text
+https://thiepmungonline.com/api/payos/webhook
 ```
 
-Dùng `migrate deploy` (chỉ apply pending, an toàn production) — KHÔNG `migrate dev`.
+payOS sẽ gửi một webhook mẫu để xác nhận URL. Route phải trả HTTP 2xx cho mẫu có
+chữ ký hợp lệ kể cả khi `orderCode` mẫu không tồn tại trong database.
 
-Sau migrate, kiểm owner file db là uid 1000 (`namdo`), nếu là `root:root` thì
-server action ghi DB sẽ 500 (`SQLITE_READONLY`). Fix không cần sudo:
+## 4. Database migration
+
+Migration `20260720180000_add_payos_provider` thêm thông tin provider và Payment
+Link nhưng không sửa/xóa Payment Casso cũ.
+
+Production phải chạy:
 
 ```bash
-cp data/prod.db data/prod.db.tmp && rm data/prod.db && mv data/prod.db.tmp data/prod.db
+npx prisma migrate deploy
 ```
 
-Lưu ý: trang đọc (SSG) vẫn 200 dù schema lệch — lỗi chỉ lộ khi bấm nút ghi, nên
-đừng chỉ dựa vào healthcheck load trang.
+Script deploy Mini PC chạy migration sau khi backup SQLite và trước khi restart
+container.
 
-## 3. Hoàn tất cấu hình Casso Webhook V2
+## 5. Kiểm thử production
 
-Trong màn Webhook V2 của Casso (flow.casso.vn):
-- **Webhook URL**: `https://thiepmungonline.com/api/casso/webhook`
-- **Key bảo mật**: dùng đúng giá trị đã đặt vào `CASSO_WEBHOOK_TOKEN` ở bước 1.
-- Bấm **Tiếp tục** / lưu để kích hoạt.
+1. Mở một thiệp chưa trả và áp voucher test để số tiền còn 2.000đ.
+2. Xác nhận QR hiển thị đúng MB Bank, số tiền và mã `CDxxxxxx`.
+3. Chuyển đúng 2.000đ.
+4. Trang phải tự chuyển về dashboard trong vài giây.
+5. Kiểm tra database: Payment mới có `provider = payos`, `status = paid`, và
+   Invitation tương ứng có `paid = 1`.
+6. Kiểm tra log webhook không có lỗi chữ ký hoặc lỗi đối soát payOS.
 
-## 4. Test 1 giao dịch thật
+## Ghi chú kỹ thuật
 
-1. Vào `/dashboard/[id]/thanh-toan` của 1 thiệp chưa trả → quét QR, chuyển đúng số tiền.
-2. Chờ vài giây, trang tự poll `/api/payment/[code]/status` → chuyển "Thanh toán thành công" rồi redirect.
-3. Kiểm `Invitation.paid = 1` trong DB, và mở `/thiep/[slug]` thấy thiệp hiển thị bình thường.
-
-Nếu webhook không bắn: xem log `docker logs --tail 200 thiepmungonline-web`, kiểm
-Casso có gọi tới không, và `CASSO_WEBHOOK_TOKEN` có khớp Key bảo mật không.
-
-## Ghi chú kỹ thuật (đã verify local)
-
-- Mã đơn theo regex `CD[A-Z2-7]{6}` (đúng 6 ký tự base32 sau `CD`). `genOrderCode()`
-  sinh đúng dạng; webhook bỏ qua giao dịch không chứa mã hợp lệ (vẫn trả 200 để
-  Casso không retry).
-- Chữ ký V2: header `X-Casso-Signature` = `t=<timestamp>,v1=<hmac>`; HMAC-SHA512 của
-  `timestamp + "." + JSON.stringify(<body sort key đệ quy>)` với checksum key.
-  Implement tại `verifyCassoSignature()` trong `src/lib/payment.ts`.
-- Webhook V2 gửi `data` là **object đơn** (không phải array như V1); field dùng:
-  `description`, `amount`, `id`.
-- Voucher: giảm số tiền cố định (`amountOff`), tăng `usedCount` khi thanh toán thành công.
+- `orderCode` của payOS là số nguyên an toàn; mã `CDxxxxxx` vẫn dùng làm mô tả
+  chuyển khoản và mã hiển thị cho khách.
+- Chữ ký tạo link và webhook dùng HMAC-SHA256 với `PAYOS_CHECKSUM_KEY`.
+- Khi áp voucher sau khi QR đã được tạo, app tạo Payment Link mới rồi hủy link
+  cũ để số tiền trên payOS luôn khớp database.
+- Voucher chỉ tăng `usedCount` sau khi giao dịch được xác nhận trả tiền.

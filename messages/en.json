@@ -75,6 +75,7 @@
     "carousel": {
       "title": "Most Popular Invitation Templates",
       "subtitle": "Discover beautifully designed wedding invitation templates.",
+      "dragHint": "Swipe or drag to explore more templates",
       "new": "New"
     },
     "stats": {

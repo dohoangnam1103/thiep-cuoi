@@ -75,6 +75,7 @@
     "carousel": {
       "title": "Mẫu thiệp cưới phổ biến nhất",
       "subtitle": "Khám phá những mẫu thiệp cưới được thiết kế tinh tế.",
+      "dragHint": "Vuốt hoặc kéo để xem thêm mẫu",
       "new": "Mới"
     },
     "stats": {

@@ -22,7 +22,16 @@ import Lenis from "lenis";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { type CSSProperties, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { getVietnameseTemplateSlug, templates, type ChungDoiTemplate } from "@/data/chungdoi";
@@ -294,10 +303,101 @@ function HeroSection() {
 function TemplateCarousel() {
   const t = useTranslations("home");
   const locale = useLocale();
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
+  const interactingRef = useRef(false);
+  const resumeTimeoutRef = useRef<number | null>(null);
+  const dragRef = useRef({ pointerId: -1, startX: 0, startScrollLeft: 0, moved: false });
+  const [isDragging, setIsDragging] = useState(false);
 
   const hrefFor = (slug: string) => {
     const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(slug) : slug;
     return `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
+  };
+
+  const pauseAutoScroll = () => {
+    pausedRef.current = true;
+    if (resumeTimeoutRef.current !== null) {
+      window.clearTimeout(resumeTimeoutRef.current);
+      resumeTimeoutRef.current = null;
+    }
+  };
+
+  const resumeAutoScrollSoon = () => {
+    if (resumeTimeoutRef.current !== null) window.clearTimeout(resumeTimeoutRef.current);
+    resumeTimeoutRef.current = window.setTimeout(() => {
+      pausedRef.current = false;
+      resumeTimeoutRef.current = null;
+    }, 1800);
+  };
+
+  const normalizeScrollPosition = () => {
+    const viewport = viewportRef.current;
+    const firstSegment = trackRef.current?.firstElementChild;
+    if (!viewport || !(firstSegment instanceof HTMLElement)) return;
+
+    const segmentWidth = firstSegment.offsetWidth;
+    if (segmentWidth === 0) return;
+    if (viewport.scrollLeft < segmentWidth * 0.5) viewport.scrollLeft += segmentWidth;
+    if (viewport.scrollLeft > segmentWidth * 1.5) viewport.scrollLeft -= segmentWidth;
+  };
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const firstSegment = trackRef.current?.firstElementChild;
+    if (!viewport || !(firstSegment instanceof HTMLElement)) return;
+
+    viewport.scrollLeft = firstSegment.offsetWidth;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frameId = 0;
+    let previousTime = performance.now();
+
+    const animate = (time: number) => {
+      const elapsed = Math.min(time - previousTime, 50);
+      previousTime = time;
+
+      if (!interactingRef.current) normalizeScrollPosition();
+      if (!pausedRef.current && !reducedMotion.matches) {
+        viewport.scrollLeft += elapsed * 0.098;
+        normalizeScrollPosition();
+      }
+
+      frameId = requestAnimationFrame(animate);
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(frameId);
+      if (resumeTimeoutRef.current !== null) window.clearTimeout(resumeTimeoutRef.current);
+    };
+  }, []);
+
+  const finishMouseDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerId !== dragRef.current.pointerId) return;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    dragRef.current.pointerId = -1;
+    interactingRef.current = false;
+    setIsDragging(false);
+    normalizeScrollPosition();
+    resumeAutoScrollSoon();
+    window.setTimeout(() => {
+      dragRef.current.moved = false;
+    }, 0);
+  };
+
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    pauseAutoScroll();
+    viewportRef.current?.scrollBy({
+      left: event.key === "ArrowLeft" ? -306 : 306,
+      behavior: "smooth",
+    });
+    resumeAutoScrollSoon();
   };
 
   return (
@@ -306,29 +406,106 @@ function TemplateCarousel() {
         <div className="reveal">
           <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("carousel.title")}</h2>
           <p className="mt-4 text-muted-foreground">{t("carousel.subtitle")}</p>
+          <p className="mt-2 text-sm font-medium text-primary/80">{t("carousel.dragHint")}</p>
         </div>
       </div>
-      <div className="reveal mt-12 overflow-hidden">
-        <div className="template-marquee flex w-max gap-5">
-          {[...featuredTemplates, ...featuredTemplates].map((template, index) => (
-            <a
-              key={`${template.slug}-${index}`}
-              href={hrefFor(template.slug)}
-              className="group relative block h-[520px] w-[286px] shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
+      <div
+        ref={viewportRef}
+        role="region"
+        aria-label={t("carousel.title")}
+        tabIndex={0}
+        data-testid="template-carousel"
+        data-dragging={isDragging}
+        className={`template-carousel-viewport reveal mt-12 overflow-x-auto ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+        onClickCapture={(event) => {
+          if (!dragRef.current.moved) return;
+          event.preventDefault();
+          event.stopPropagation();
+          dragRef.current.moved = false;
+        }}
+        onFocus={pauseAutoScroll}
+        onBlur={resumeAutoScrollSoon}
+        onMouseEnter={pauseAutoScroll}
+        onMouseLeave={() => {
+          if (dragRef.current.pointerId === -1) resumeAutoScrollSoon();
+        }}
+        onTouchStart={() => {
+          interactingRef.current = true;
+          pauseAutoScroll();
+        }}
+        onTouchEnd={() => {
+          interactingRef.current = false;
+          normalizeScrollPosition();
+          resumeAutoScrollSoon();
+        }}
+        onTouchCancel={() => {
+          interactingRef.current = false;
+          normalizeScrollPosition();
+          resumeAutoScrollSoon();
+        }}
+        onWheel={() => {
+          pauseAutoScroll();
+          resumeAutoScrollSoon();
+        }}
+        onKeyDown={handleKeyDown}
+        onPointerDown={(event) => {
+          if (event.pointerType !== "mouse" || event.button !== 0) return;
+          event.preventDefault();
+          pauseAutoScroll();
+          interactingRef.current = true;
+          dragRef.current = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startScrollLeft: event.currentTarget.scrollLeft,
+            moved: false,
+          };
+          setIsDragging(true);
+        }}
+        onPointerMove={(event) => {
+          if (event.pointerId !== dragRef.current.pointerId) return;
+          const delta = event.clientX - dragRef.current.startX;
+          if (Math.abs(delta) > 5) dragRef.current.moved = true;
+          if (!dragRef.current.moved) return;
+          if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }
+          event.preventDefault();
+          event.currentTarget.scrollLeft = dragRef.current.startScrollLeft - delta;
+        }}
+        onPointerUp={finishMouseDrag}
+        onPointerCancel={finishMouseDrag}
+      >
+        <div ref={trackRef} className="flex w-max select-none">
+          {[0, 1, 2].map((copyIndex) => (
+            <div
+              key={copyIndex}
+              className="flex shrink-0 gap-5 pr-5"
+              aria-hidden={copyIndex === 1 ? undefined : true}
             >
-              <img
-                src={template.listing}
-                alt={template.name}
-                className="h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
-                {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
-                <h3 className="mt-2 font-heading text-lg font-black text-background">{template.name}</h3>
-                <p className="text-sm text-background/80">
-                  {template.category} - {template.color}
-                </p>
-              </div>
-            </a>
+              {featuredTemplates.map((template) => (
+                <a
+                  key={`${template.slug}-${copyIndex}`}
+                  href={hrefFor(template.slug)}
+                  draggable={false}
+                  tabIndex={copyIndex === 1 ? undefined : -1}
+                  className="group relative block h-[520px] w-[286px] shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
+                >
+                  <img
+                    src={template.listing}
+                    alt={template.name}
+                    draggable={false}
+                    className="pointer-events-none h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105"
+                  />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
+                    {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
+                    <h3 className="mt-2 font-heading text-lg font-black text-background">{template.name}</h3>
+                    <p className="text-sm text-background/80">
+                      {template.category} - {template.color}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
           ))}
         </div>
       </div>

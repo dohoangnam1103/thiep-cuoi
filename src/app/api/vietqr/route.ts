@@ -32,6 +32,26 @@ export async function GET(request: NextRequest) {
     amount: amountParam ? Number(amountParam) : undefined,
     addInfo,
   });
+  const wantsDownload = request.nextUrl.searchParams.get("download") === "1";
+
+  if (wantsDownload) {
+    const png = await QRCode.toBuffer(payload, {
+      type: "png",
+      width: 720,
+      margin: 2,
+      errorCorrectionLevel: "M",
+      color: { dark: "#000000", light: "#ffffff" },
+    });
+    return new Response(new Uint8Array(png), {
+      headers: {
+        "cache-control": "public, max-age=86400, s-maxage=86400",
+        "content-disposition": 'attachment; filename="vietqr-mung-cuoi.png"',
+        "content-type": "image/png",
+        "x-content-type-options": "nosniff",
+      },
+    });
+  }
+
   const svg = await QRCode.toString(payload, {
     type: "svg",
     width: 480,
