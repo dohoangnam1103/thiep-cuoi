@@ -113,9 +113,34 @@ fi
 REMOTE_BACKUP
 log_step "backup dữ liệu"
 
+echo "🔎 Migration preflight (read-only)"
+set +e
+ssh "${REMOTE_HOST}" bash -s -- "${REMOTE_APP_DIR}" <<'REMOTE_PREFLIGHT'
+set -euo pipefail
+app_dir="$1"
+cd "$app_dir"
+python3 releases/current/scripts/migration-preflight.py \
+  releases/current/prisma/migrations \
+  data/prod.db
+REMOTE_PREFLIGHT
+preflight_status=$?
+set -e
+
+if [[ $preflight_status -eq 0 ]]; then
+  NEEDS_MIGRATION=0
+  echo "   Không có migration pending → bỏ qua migration image."
+elif [[ $preflight_status -eq 10 ]]; then
+  NEEDS_MIGRATION=1
+  echo "   Có migration pending → sẽ build migration image và migrate."
+else
+  echo "❌ Migration preflight fail-closed (exit ${preflight_status}). Dừng deploy, giữ container cũ."
+  exit 1
+fi
+log_step "migration preflight"
+
 echo "🏗️  Build native ${VERSION_IMAGE} trên production"
 ssh "${REMOTE_HOST}" bash -s -- \
-  "${REMOTE_APP_DIR}" "${VERSION_IMAGE}" "${MIGRATE_IMAGE}" "${WEB_PLATFORM}" "${DEPLOYMENT_ID}" "${PUBLIC_URL}" <<'REMOTE_BUILD'
+  "${REMOTE_APP_DIR}" "${VERSION_IMAGE}" "${MIGRATE_IMAGE}" "${WEB_PLATFORM}" "${DEPLOYMENT_ID}" "${PUBLIC_URL}" "${NEEDS_MIGRATION}" <<'REMOTE_BUILD'
 set -euo pipefail
 app_dir="$1"
 version_image="$2"
@@ -123,6 +148,7 @@ migrate_image="$3"
 platform="$4"
 deployment_id="$5"
 public_url="$6"
+needs_migration="$7"
 cd "$app_dir"
 
 docker buildx build \
@@ -138,29 +164,33 @@ docker buildx build \
 
 docker image inspect "$version_image" --format 'built_image={{.Id}} created={{.Created}}'
 
-# Tag the already cached builder stage as a short-lived migration image. Migrations
-# run before the web container changes, against the same source revision as the
-# image that is about to be promoted.
-docker buildx build \
-  --builder default \
-  --platform "$platform" \
-  --provenance=false \
-  --target builder \
-  --build-arg "NEXT_DEPLOYMENT_ID=$deployment_id" \
-  --build-arg "NEXT_PUBLIC_SITE_URL=$public_url" \
-  --load \
-  -t "$migrate_image" \
-  -f releases/current/Dockerfile \
-  releases/current
+if [ "$needs_migration" = 1 ]; then
+  # Tag the already cached builder stage as a short-lived migration image. Migrations
+  # run before the web container changes, against the same source revision as the
+  # image that is about to be promoted.
+  docker buildx build \
+    --builder default \
+    --platform "$platform" \
+    --provenance=false \
+    --target builder \
+    --build-arg "NEXT_DEPLOYMENT_ID=$deployment_id" \
+    --build-arg "NEXT_PUBLIC_SITE_URL=$public_url" \
+    --load \
+    -t "$migrate_image" \
+    -f releases/current/Dockerfile \
+    releases/current
 
-docker run --rm \
-  --user "$(id -u):$(id -g)" \
-  -v "$app_dir/data:/app/data" \
-  -e DATABASE_URL=file:/app/data/prod.db \
-  "$migrate_image" \
-  npx prisma migrate deploy
+  docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    -v "$app_dir/data:/app/data" \
+    -e DATABASE_URL=file:/app/data/prod.db \
+    "$migrate_image" \
+    npx prisma migrate deploy
 
-docker image rm "$migrate_image" >/dev/null 2>&1 || true
+  docker image rm "$migrate_image" >/dev/null 2>&1 || true
+else
+  echo "migration_skipped=1"
+fi
 REMOTE_BUILD
 log_step "build + migrate database"
 
@@ -253,5 +283,19 @@ for path in "/" "/mau-thiep/long-phung-v3-do/demo"; do
   fi
 done
 log_step "verify public"
+
+echo "🧹 Đảm bảo cron dọn Docker storage đã được cài (không prune đồng bộ)"
+ssh "${REMOTE_HOST}" bash -s -- "${REMOTE_APP_DIR}" <<'REMOTE_CLEANUP'
+set -euo pipefail
+app_dir="$1"
+
+marker='# thiepmungonline Docker storage maintenance'
+cron_job="17 4 * * 0 $app_dir/releases/current/scripts/docker-storage-maintenance.sh >> $app_dir/docker-storage-maintenance.log 2>&1 $marker"
+(
+  crontab -l 2>/dev/null | grep -Fv "$marker" || true
+  printf '%s\n' "$cron_job"
+) | crontab -
+REMOTE_CLEANUP
+log_step "cleanup Docker storage"
 
 echo "✅ Deploy ${DEPLOYMENT_ID} hoàn tất trong ${SECONDS}s."
