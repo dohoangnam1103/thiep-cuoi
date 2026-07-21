@@ -230,6 +230,7 @@ function Text({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
+        aria-required={requiredMark || undefined}
         className={inputClass}
       />
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
