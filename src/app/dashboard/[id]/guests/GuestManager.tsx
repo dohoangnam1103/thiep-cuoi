@@ -36,6 +36,7 @@ import {
 } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import { guestsToCsv, guestCsvTemplate, parseGuestCsv } from "@/lib/guest-csv";
 import type { GuestImportRow, GuestRow } from "@/lib/guest-manager";
 import { trackEvent } from "@/lib/analytics";
@@ -167,11 +168,16 @@ function GuestFields({ guest }: { guest?: GuestRow }) {
         <input name="role" maxLength={60} defaultValue={guest?.role} className={FIELD_CLASS} />
       </Field>
       <Field label={t("fields.side")}>
-        <select name="side" defaultValue={guest?.side ?? ""} className={FIELD_CLASS}>
-          <option value="">{t("fields.sideEmpty")}</option>
-          <option value="Nhà trai">{t("sides.groom")}</option>
-          <option value="Nhà gái">{t("sides.bride")}</option>
-        </select>
+        <Combobox
+          inputId="guest-side"
+          name="side"
+          defaultValue={guest?.side ?? ""}
+          options={[
+            { value: "", label: t("fields.sideEmpty") },
+            { value: "Nhà trai", label: t("sides.groom") },
+            { value: "Nhà gái", label: t("sides.bride") },
+          ]}
+        />
       </Field>
       <Field label={t("fields.groupName")}>
         <input
@@ -855,21 +861,37 @@ export function GuestManager({ invitationId, slug, guests: serverGuests, accessT
             className={`${FIELD_CLASS} pl-10`}
           />
         </label>
-        <select value={sideFilter} onChange={(event) => setSideFilter(event.target.value)} className={FIELD_CLASS} aria-label={t("filters.side")}>
-          <option value="">{t("filters.allSides")}</option>
-          <option value="Nhà trai">{t("sides.groom")}</option>
-          <option value="Nhà gái">{t("sides.bride")}</option>
-        </select>
-        <select value={groupFilter} onChange={(event) => setGroupFilter(event.target.value)} className={FIELD_CLASS} aria-label={t("filters.group")}>
-          <option value="">{t("filters.allGroups")}</option>
-          {groups.map((group) => <option key={group} value={group}>{group}</option>)}
-        </select>
-        <select value={responseFilter} onChange={(event) => setResponseFilter(event.target.value)} className={FIELD_CLASS} aria-label={t("filters.response")}>
-          <option value="">{t("filters.allResponses")}</option>
-          <option value="attending">{t("status.attending")}</option>
-          <option value="declined">{t("status.declined")}</option>
-          <option value="pending">{t("status.pending")}</option>
-        </select>
+        <Combobox
+          aria-label={t("filters.side")}
+          value={sideFilter}
+          onChange={setSideFilter}
+          options={[
+            { value: "", label: t("filters.allSides") },
+            { value: "Nhà trai", label: t("sides.groom") },
+            { value: "Nhà gái", label: t("sides.bride") },
+          ]}
+        />
+        <Combobox
+          aria-label={t("filters.group")}
+          value={groupFilter}
+          onChange={setGroupFilter}
+          isSearchable
+          options={[
+            { value: "", label: t("filters.allGroups") },
+            ...groups.map((group) => ({ value: group, label: group })),
+          ]}
+        />
+        <Combobox
+          aria-label={t("filters.response")}
+          value={responseFilter}
+          onChange={setResponseFilter}
+          options={[
+            { value: "", label: t("filters.allResponses") },
+            { value: "attending", label: t("status.attending") },
+            { value: "declined", label: t("status.declined") },
+            { value: "pending", label: t("status.pending") },
+          ]}
+        />
       </div>
 
       {selectedIds.size > 0 ? (
