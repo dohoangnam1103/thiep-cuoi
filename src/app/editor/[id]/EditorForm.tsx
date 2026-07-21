@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useActionState, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Toaster, toast } from "sonner";
 import {
   DndContext,
@@ -26,7 +26,7 @@ import { Combobox } from "@/components/ui/combobox";
 import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { MusicPicker } from "@/components/music-picker";
-import { BIRTH_ORDER_OPTIONS, FONT_OPTIONS, type SelectOption } from "@/data/editor-options";
+import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
 import type { MusicPickerMessages } from "@/lib/music-picker";
 import { trackEvent } from "@/lib/analytics";
@@ -274,20 +274,31 @@ function BirthOrderField({
   label,
   defaultValue = "",
   hint,
+  birthOrderOptions,
 }: {
   name: string;
   label: string;
   defaultValue?: string;
   hint?: string;
+  birthOrderOptions: SelectOption[];
 }) {
-  const known = BIRTH_ORDER_OPTIONS.some((o) => o.value === defaultValue);
+  const known = birthOrderOptions.some((o) => o.value === defaultValue);
   const [custom, setCustom] = useState(!!defaultValue && !known);
   const [value, setValue] = useState(defaultValue);
   const hiddenRef = useRef<HTMLInputElement | null>(null);
+  const customInputRef = useRef<HTMLInputElement | null>(null);
   const mountedRef = useRef(false);
 
+  // react-select giữ focus ở dummy input của nó sau khi chọn option. Focus đồng bộ
+  // ngay lúc mount (trước paint) để input text nhận ký tự đầu, tránh mất chữ khi
+  // vừa bật chế độ "Khác…".
+  useLayoutEffect(() => {
+    if (!custom) return;
+    customInputRef.current?.focus();
+  }, [custom]);
+
   const options = [
-    ...BIRTH_ORDER_OPTIONS,
+    ...birthOrderOptions,
     { value: "__custom__", label: "Khác…" },
   ];
 
@@ -306,13 +317,13 @@ function BirthOrderField({
       </label>
       {custom ? (
         <input
+          ref={customInputRef}
           id={name}
           name={name}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="VD: Trưởng Nữ"
           className={inputClass}
-          autoFocus
         />
       ) : (
         <>
@@ -875,12 +886,14 @@ export function EditorForm({
               label="Thứ bậc cô dâu"
               defaultValue={seed("brideBirthOrder", field(content, "brideBirthOrder"))}
               hint="Hiển thị dưới ảnh cô dâu."
+              birthOrderOptions={BRIDE_BIRTH_ORDER_OPTIONS}
             />
             <BirthOrderField
               name="groomBirthOrder"
               label="Thứ bậc chú rể"
               defaultValue={seed("groomBirthOrder", field(content, "groomBirthOrder"))}
               hint="Hiển thị dưới ảnh chú rể."
+              birthOrderOptions={GROOM_BIRTH_ORDER_OPTIONS}
             />
             <div className="sm:col-span-2 flex items-center gap-2">
               <input
