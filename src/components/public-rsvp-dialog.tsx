@@ -6,6 +6,7 @@ import { useActionState, useEffect, useState } from "react";
 
 import { trackEvent } from "@/lib/analytics";
 import { useLiveForms } from "@/components/chungdoi-live-forms";
+import { Combobox } from "@/components/ui/combobox";
 
 const FIELD_CLASS =
   "min-h-11 w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-500 focus:border-neutral-700 focus:ring-2 focus:ring-neutral-900/10";
@@ -82,11 +83,17 @@ export function PublicRsvpDialog() {
                   </label>
                   <label className="grid gap-2 text-sm font-medium">
                     {label.side}
-                    <select name="side" defaultValue={guest?.side ?? ""} className={FIELD_CLASS}>
-                      <option value="">{label.sideEmpty}</option>
-                      <option value="Nhà trai">{label.groomSide}</option>
-                      <option value="Nhà gái">{label.brideSide}</option>
-                    </select>
+                    <Combobox
+                      variant="neutral"
+                      aria-label={label.side}
+                      name="side"
+                      defaultValue={guest?.side ?? ""}
+                      options={[
+                        { value: "", label: label.sideEmpty },
+                        { value: "Nhà trai", label: label.groomSide },
+                        { value: "Nhà gái", label: label.brideSide },
+                      ]}
+                    />
                   </label>
                 </div>
 
@@ -122,10 +129,17 @@ export function PublicRsvpDialog() {
                         </label>
                       </div>
                     ) : (
-                      <select name={`question:${question.id}`} required={question.required} defaultValue="" className={FIELD_CLASS}>
-                        <option value="">{label.selectPlaceholder}</option>
-                        {question.options.map((option) => <option key={option} value={option}>{option}</option>)}
-                      </select>
+                      <Combobox
+                        variant="neutral"
+                        aria-label={question.label}
+                        name={`question:${question.id}`}
+                        defaultValue=""
+                        placeholder={label.selectPlaceholder}
+                        options={question.options.map((option) => ({
+                          value: option,
+                          label: option,
+                        }))}
+                      />
                     )}
                   </fieldset>
                 ))}
