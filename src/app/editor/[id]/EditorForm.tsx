@@ -592,6 +592,34 @@ function SubHeader({ children }: { children: React.ReactNode }) {
   return <p className="sm:col-span-2 -mb-1 text-sm font-semibold text-foreground">{children}</p>;
 }
 
+function RequiredProgress({ bride, groom, date }: { bride: boolean; groom: boolean; date: boolean }) {
+  const items = [
+    { label: "Tên cô dâu", done: bride },
+    { label: "Tên chú rể", done: groom },
+    { label: "Ngày cưới", done: date },
+  ];
+  const filled = items.filter((i) => i.done).length;
+  const ready = filled === items.length;
+  return (
+    <div className="mb-4 rounded-2xl border border-border bg-card px-5 py-4">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        {items.map((item) => (
+          <span key={item.label} className="flex items-center gap-1.5 text-sm">
+            <span
+              className={`size-2.5 rounded-full ${item.done ? "bg-emerald-500" : "border border-muted-foreground/40"}`}
+              aria-hidden
+            />
+            <span className={item.done ? "text-foreground" : "text-muted-foreground"}>{item.label}</span>
+          </span>
+        ))}
+      </div>
+      <p className={`mt-2 text-xs font-semibold ${ready ? "text-emerald-600" : "text-muted-foreground"}`}>
+        {ready ? "Sẵn sàng xuất bản" : `Đã điền ${filled}/${items.length} mục cần thiết để xuất bản`}
+      </p>
+    </div>
+  );
+}
+
 function TabBar({ tab, onEdit, onPreview }: { tab: "edit" | "preview"; onEdit: () => void; onPreview: () => void }) {
   const base = "rounded-full px-4 py-2 text-sm font-semibold transition";
   const active = "bg-primary text-primary-foreground shadow-lg shadow-primary/25";
@@ -671,6 +699,11 @@ export function EditorForm({
   const [checking, startCheck] = useTransition();
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [coreFilled, setCoreFilled] = useState(() => ({
+    bride: Boolean(seed("brideFullName", field(content, "brideFullName")).trim()),
+    groom: Boolean(seed("groomFullName", field(content, "groomFullName")).trim()),
+    date: Boolean(seed("date", field(content, "date")).trim()),
+  }));
   const [previewContent, setPreviewContent] = useState<ChungDoiDemoContent | null>(null);
   const [draftStatus, setDraftStatus] = useState<DraftStatus>(draft ? "restored" : "server");
   const {
@@ -755,7 +788,12 @@ export function EditorForm({
 
   function onEditorInput(event: React.FormEvent<HTMLFormElement>) {
     const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    if (!target?.name || target.name === "slug" || slugEdited) return;
+    if (!target?.name) return;
+    if (target.name === "brideFullName" || target.name === "groomFullName" || target.name === "date") {
+      const key = target.name === "brideFullName" ? "bride" : target.name === "groomFullName" ? "groom" : "date";
+      setCoreFilled((prev) => ({ ...prev, [key]: Boolean(target.value.trim()) }));
+    }
+    if (target.name === "slug" || slugEdited) return;
     const next = nextSlugFromForm();
     setSlug(next);
     setSlugStatus(null);
@@ -837,6 +875,7 @@ export function EditorForm({
           className="space-y-4"
           id="editor-form"
         >
+        <RequiredProgress bride={coreFilled.bride} groom={coreFilled.groom} date={coreFilled.date} />
         <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
           <TemplatePicker defaultValue={seed("templateId", templateId)} />
         </Accordion>
