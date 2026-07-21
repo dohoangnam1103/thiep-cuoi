@@ -25,6 +25,8 @@
   "chrome": {
     "nav": {
       "templates": "Mẫu thiệp",
+      "myInvitations": "Thiệp của tôi",
+      "guests": "Khách mời",
       "pricing": "Bảng giá",
       "tools": "Công cụ",
       "blog": "Blog",
@@ -96,11 +98,11 @@
       "step3Copy": "Chia sẻ tức thì qua LINE, Messenger hay bất kỳ ứng dụng nào"
     },
     "support": {
-      "title": "Khi bạn cần, chúng tôi luôn ở đây",
-      "subtitle": "Đội ngũ Thiệp Mừng Online trực tuyến 24/7. Nhắn tin bất cứ khi nào bạn cần hỗ trợ chỉnh sửa, chia sẻ, khách mời hay thanh toán.",
-      "startCreating": "Bắt đầu tạo thiệp",
+      "title": "Khi bạn cần,",
+      "titleAccent": "tụi mình luôn có mặt",
+      "subtitle": "Thiệp Mừng Online luôn sẵn sàng hỗ trợ 24/7. <hl>Nhắn tụi mình bất cứ khi nào bạn cần.</hl>",
       "replyTimeLabel": "Thời gian phản hồi",
-      "replyTimeValue": "Thường dưới 1 phút",
+      "replyTimeValue": "Dưới 1 phút",
       "helpEditsLabel": "Hỗ trợ chỉnh sửa",
       "helpEditsValue": "Đến khi bạn hài lòng"
     },
@@ -169,25 +171,28 @@
       "highlightRsvp": "Sẵn sàng RSVP",
       "highlightGallery": "Có sẵn album ảnh"
     },
-    "pricing": {
-      "title": "Giá đơn giản, không phí ẩn",
-      "subtitle": "Tạo miễn phí. Dùng thử thiệp trực tiếp 3 ngày. Chỉ trả một lần khi bạn hài lòng.",
-      "popular": "Phổ biến",
-      "price": "199.000đ",
-      "priceNote": "Một tấm thiệp, tồn tại mãi mãi sau dùng thử.",
-      "perk1": "Lượt xem không giới hạn",
-      "perk2": "Quản lý khách mời và RSVP",
-      "perk3": "Bản đồ, album, nhạc, QR nhận quà",
-      "perk4": "Chỉnh sửa được sau khi xuất bản",
-      "faqTitle": "Câu hỏi thường gặp",
-      "faq1Q": "Thiệp cưới online là gì?",
-      "faq1A": "Một trang thiệp điện tử thay thế thiệp giấy, gồm bản đồ, ảnh, lời chúc của khách, quà tặng và RSVP.",
-      "faq2Q": "Tôi tạo thiệp như thế nào?",
-      "faq2A": "Chọn mẫu, thêm tên/ảnh/ngày/địa điểm, xuất bản và chia sẻ link riêng của bạn.",
-      "faq3Q": "Chi phí bao nhiêu?",
-      "faq3A": "Tạo và tùy chỉnh miễn phí. Xuất bản gồm 3 ngày dùng thử miễn phí, sau đó thanh toán một lần để thiệp tồn tại.",
-      "faq4Q": "Có chỉnh sửa được sau khi xuất bản không?",
-      "faq4A": "Có. Chỉnh sửa cập nhật tức thì trên cùng một link chia sẻ."
+    "faq": {
+      "heading": "Giải đáp nhanh về thiệp cưới online",
+      "q1Q": "Thiệp cưới online là gì?",
+      "q1A": "Một trang thiệp điện tử thay thế thiệp giấy, gồm ảnh, nhạc, bản đồ, lời chúc và RSVP, chia sẻ qua một đường link riêng.",
+      "q2Q": "Tạo thiệp cưới online có mất nhiều thời gian không?",
+      "q2A": "Không. Chọn mẫu và điền thông tin, bạn có thể hoàn thành một tấm thiệp trong khoảng 10 phút.",
+      "q3Q": "Tôi có cần biết thiết kế hoặc lập trình không?",
+      "q3A": "Không cần. Mọi thao tác đều trực quan, chỉ cần nhập nội dung là thiệp tự hoàn thiện.",
+      "q4Q": "Cần chuẩn bị những thông tin gì trước khi tạo thiệp?",
+      "q4A": "Tên cô dâu chú rể, ngày giờ lễ, địa điểm và một vài tấm ảnh cưới là đủ để bắt đầu.",
+      "q5Q": "Thiệp có thể thêm ảnh, nhạc, bản đồ và RSVP không?",
+      "q5A": "Có. Bạn có thể thêm album ảnh, nhạc nền, bản đồ chỉ đường và form xác nhận tham dự RSVP.",
+      "q6Q": "Sau khi xuất bản, tôi có thể chỉnh sửa nội dung không?",
+      "q6A": "Có. Nội dung cập nhật tức thì trên cùng một đường link, không cần gửi lại cho khách.",
+      "q7Q": "Tôi có thể gửi thiệp cho bao nhiêu khách mời?",
+      "q7A": "Không giới hạn số khách mời. Bạn có thể tạo link riêng cho từng khách hoặc chia sẻ chung.",
+      "q8Q": "Khách mời sẽ nhận và xem thiệp như thế nào?",
+      "q8A": "Khách chỉ cần mở đường link bạn gửi trên điện thoại hoặc máy tính, không cần cài đặt hay đăng nhập.",
+      "q9Q": "Thiệp có hiển thị tốt trên điện thoại và máy tính không?",
+      "q9A": "Có. Thiệp tự tối ưu để hiển thị đẹp trên mọi kích thước màn hình.",
+      "q10Q": "Chi phí tạo thiệp cưới online là bao nhiêu?",
+      "q10A": "Bạn tạo và dùng thử miễn phí, chỉ thanh toán một lần khi đã hài lòng và muốn xuất bản chính thức."
     },
     "instant": {
       "eyebrow": "Thử ngay lập tức",
@@ -203,7 +208,7 @@
     "testimonials": {
       "eyebrow": "Cặp đôi nói gì",
       "title": "Được hàng nghìn cặp đôi tin chọn",
-      "subtitle": "Những lời chia sẻ thật từ các cặp đôi đã tạo thiệp cưới cùng Thiệp Mừng Online.",
+      "subtitle": "Những chia sẻ chân thành từ các cặp đôi đã chọn Thiệp Mừng Online đồng hành trong ngày trọng đại.",
       "t1Quote": "Làm thiệp chưa tới 10 phút mà đẹp hơn cả thiệp giấy. Khách khen suốt!",
       "t1Author": "Minh & Hà",
       "t1Role": "Cưới tháng 3, Hà Nội",

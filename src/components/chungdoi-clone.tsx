@@ -4,18 +4,14 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  CheckCircle2,
   ChevronDown,
-  Gift,
-  Heart,
   ImageIcon,
   Languages,
   Mail,
-  MapPin,
-  MessageCircle,
   Play,
-  Sparkles,
   Star,
-  X,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -26,44 +22,17 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
 } from "react";
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
-import { getVietnameseTemplateSlug, templates, type ChungDoiTemplate } from "@/data/chungdoi";
-import { createInvitation } from "@/app/dashboard/actions";
+import { getVietnameseTemplateSlug, templates } from "@/data/chungdoi";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
-const categories = ["All", ...Array.from(new Set(templates.map((template) => template.category)))];
-const colors = ["All", ...Array.from(new Set(templates.map((template) => template.color)))];
 const featuredTemplates = templates.slice(0, 20);
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en-US").format(value);
-}
-
-function useCountUp(target: number, duration = 1600) {
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    let frame = 0;
-    const totalFrames = Math.round(duration / 16);
-    const tick = () => {
-      frame += 1;
-      const progress = 1 - Math.pow(1 - frame / totalFrames, 3);
-      setValue(Math.round(target * Math.min(progress, 1)));
-      if (frame < totalFrames) requestAnimationFrame(tick);
-    };
-    const id = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(id);
-  }, [duration, target]);
-
-  return value;
-}
 
 function useScrollProgress() {
   useEffect(() => {
@@ -499,31 +468,6 @@ function TemplateCarousel() {
   );
 }
 
-function StatsSection() {
-  const t = useTranslations("home");
-  const registered = useCountUp(65000);
-  const invitations = useCountUp(73000);
-  const views = useCountUp(3100000);
-
-  return (
-    <section className="bg-primary py-10 text-primary-foreground">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 text-center sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8 lg:text-left">
-        <h2 className="font-heading text-2xl font-black leading-tight sm:text-3xl lg:max-w-lg">{t("stats.title")}</h2>
-        {[
-          [registered, t("stats.registered")],
-          [invitations, t("stats.invitationsCreated")],
-          [views, t("stats.totalViews")],
-        ].map(([value, label]) => (
-          <div key={label as string} className="rounded-3xl bg-background/15 p-5 text-center backdrop-blur">
-            <p className="text-3xl font-black sm:text-4xl">{formatNumber(value as number)}+</p>
-            <p className="mt-2 text-sm font-semibold text-primary-foreground/80">{label}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function HowItWorks() {
   const t = useTranslations("home");
   const steps: Array<[string, string, LucideIcon]> = [
@@ -560,28 +504,35 @@ function HowItWorks() {
 
 function SupportSection() {
   const t = useTranslations("home");
+  const cards: Array<[LucideIcon, string, string]> = [
+    [Zap, t("support.replyTimeLabel"), t("support.replyTimeValue")],
+    [CheckCircle2, t("support.helpEditsLabel"), t("support.helpEditsValue")],
+  ];
 
   return (
-    <section className="bg-secondary py-16">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_0.8fr] lg:px-8">
-        <div className="reveal">
-          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("support.title")}</h2>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{t("support.subtitle")}</p>
-          <a
-            href="#templates"
-            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
-          >
-            {t("support.startCreating")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-          </a>
-        </div>
-        <div className="reveal grid gap-4 sm:grid-cols-2">
-          {[
-            [t("support.replyTimeLabel"), t("support.replyTimeValue")],
-            [t("support.helpEditsLabel"), t("support.helpEditsValue")],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.08)]">
-              <p className="text-sm text-muted-foreground">{label}</p>
-              <p className="mt-4 text-3xl font-black text-foreground">{value}</p>
+    <section className="bg-secondary py-16 sm:py-20">
+      <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <h2 className="reveal font-heading text-3xl font-black text-foreground sm:text-5xl">
+          {t("support.title")} <span className="font-pattaya font-normal italic text-primary">{t("support.titleAccent")}</span>
+        </h2>
+        <p className="reveal mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+          {t.rich("support.subtitle", {
+            hl: (chunks) => <span className="font-semibold text-primary">{chunks}</span>,
+          })}
+        </p>
+        <div className="reveal mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+          {cards.map(([Icon, label, value]) => (
+            <div
+              key={label}
+              className="flex items-center gap-4 rounded-3xl border border-border bg-card p-6 text-left transition hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.08)]"
+            >
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
+                <Icon className="size-6" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">{label}</p>
+                <p className="mt-1 text-xl font-black text-foreground">{value}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -662,423 +613,62 @@ function GuestsSection() {
   );
 }
 
-function LanguageAndFeatures() {
+function LanguageSection() {
   const t = useTranslations("home");
-  const features: Array<[string, string, LucideIcon]> = [
-    [t("features.mobileTitle"), t("features.mobileCopy"), Heart],
-    [t("features.templatesTitle"), t("features.templatesCopy"), Sparkles],
-    [t("features.mapsTitle"), t("features.mapsCopy"), MapPin],
-    [t("features.albumTitle"), t("features.albumCopy"), ImageIcon],
-    [t("features.guestBookTitle"), t("features.guestBookCopy"), MessageCircle],
-    [t("features.giftTitle"), t("features.giftCopy"), Gift],
-  ];
 
   return (
-    <>
-      <section className="bg-background py-20">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div className="reveal rounded-[2rem] border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                [t("languages.groomLabel"), "신랑"],
-                [t("languages.brideLabel"), "신부"],
-                [t("languages.invitedLabel"), "초대합니다"],
-              ].map(([a, b]) => (
-                <div key={a} className="rounded-2xl bg-muted p-4">
-                  <p className="text-sm text-muted-foreground">{a}</p>
-                  <p className="mt-2 text-xl font-black text-foreground">{b}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="reveal">
-            <Languages className="size-10 text-primary" />
-            <h2 className="mt-5 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("languages.title")}</h2>
-            <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("languages.subtitle")}</p>
-            <div className="mt-7 flex flex-wrap gap-2">
-              {["English", "Tiếng Việt", "한국어", "日本語", "Français", "Español", "繁體中文"].map((label) => (
-                <span key={label} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="bg-secondary py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="reveal text-center">
-            <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("features.title")}</h2>
-            <p className="mt-4 text-muted-foreground">{t("features.subtitle")}</p>
-          </div>
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(([title, copy, Icon]) => (
-              <div key={title as string} className="reveal rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50">
-                <Icon className="size-8 text-primary" />
-                <h3 className="mt-5 font-heading text-xl font-black text-foreground">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy}</p>
+    <section className="bg-background py-20">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div className="reveal rounded-[2rem] border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              [t("languages.groomLabel"), "신랑"],
+              [t("languages.brideLabel"), "신부"],
+              [t("languages.invitedLabel"), "초대합니다"],
+            ].map(([a, b]) => (
+              <div key={a} className="rounded-2xl bg-muted p-4">
+                <p className="text-sm text-muted-foreground">{a}</p>
+                <p className="mt-2 text-xl font-black text-foreground">{b}</p>
               </div>
             ))}
           </div>
         </div>
-      </section>
-    </>
-  );
-}
-
-function TemplateGallery() {
-  const t = useTranslations("home");
-  const [category, setCategory] = useState("All");
-  const [color, setColor] = useState("All");
-  const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
-
-  const filtered = useMemo(
-    () =>
-      templates.filter(
-        (template) =>
-          (category === "All" || template.category === category) && (color === "All" || template.color === color),
-      ),
-    [category, color],
-  );
-
-  useEffect(() => {
-    if (!selected) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, [selected]);
-
-  return (
-    <section id="templates" className="bg-background py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("gallery.title")}</h2>
-            <p className="mt-4 max-w-2xl text-muted-foreground">{t("gallery.subtitle", { count: templates.length })}</p>
+        <div className="reveal">
+          <Languages className="size-10 text-primary" />
+          <h2 className="mt-5 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("languages.title")}</h2>
+          <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("languages.subtitle")}</p>
+          <div className="mt-7 flex flex-wrap gap-2">
+            {["English", "Tiếng Việt", "한국어", "日本語", "Français", "Español", "繁體中文"].map((label) => (
+              <span key={label} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
+                {label}
+              </span>
+            ))}
           </div>
-          <div className="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold text-foreground">
-            {t("gallery.countLabel", { shown: filtered.length, total: templates.length })}
-          </div>
-        </div>
-
-        <div className="reveal mt-8 flex flex-col gap-4 rounded-[2rem] border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
-          <FilterPills label={t("gallery.styleLabel")} options={categories} value={category} onChange={setCategory} />
-          <FilterPills label={t("gallery.colorLabel")} options={colors} value={color} onChange={setColor} />
-        </div>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((template) => (
-            <TemplateCard key={template.slug} template={template} onSelect={() => setSelected(template)} />
-          ))}
         </div>
       </div>
-
-      {selected ? <TemplateModal template={selected} onClose={() => setSelected(null)} /> : null}
     </section>
   );
 }
 
-function FilterPills({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: string[];
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
-      {options.map((option) => (
-        <button
-          key={option}
-          onClick={() => onChange(option)}
-          className={`rounded-full px-3 py-1.5 text-sm font-bold transition ${
-            value === option ? "bg-primary text-primary-foreground shadow-lg" : "bg-muted text-muted-foreground hover:bg-secondary"
-          }`}
-        >
-          {option}
-        </button>
-      ))}
-    </div>
-  );
-}
+const faqKeys = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"] as const;
 
-function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSelect: () => void }) {
+function FaqSection() {
   const t = useTranslations("home");
-  const locale = useLocale();
-  const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
-  const demoHref = `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
-
-  return (
-    <article className="reveal group overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-2 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.1)]">
-      <button
-        onClick={onSelect}
-        data-ga-event="preview_template"
-        data-ga-param-template-id={template.slug}
-        data-ga-param-source="home_card"
-        className="block w-full text-left"
-      >
-        <div className="relative h-[460px] overflow-hidden bg-muted">
-          <img
-            src={template.listing}
-            alt={template.name}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover object-top transition-[object-position,transform] duration-[10000ms] ease-in-out group-hover:object-bottom group-hover:scale-[1.03]"
-          />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-4">
-            <div className="flex items-center gap-2">
-              {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-black text-primary-foreground">{t("gallery.new")}</span> : null}
-              <span className="rounded-full bg-background/20 px-2.5 py-1 text-xs font-bold text-background">{template.color}</span>
-            </div>
-          </div>
-        </div>
-      </button>
-      <div className="p-5">
-        <h3 className="font-heading text-xl font-black text-foreground">{template.name}</h3>
-        <p className="mt-2 text-sm text-muted-foreground">{template.category}</p>
-        <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted-foreground">{template.description}</p>
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <button
-            onClick={onSelect}
-            data-ga-event="preview_template"
-            data-ga-param-template-id={template.slug}
-            data-ga-param-source="home_card_button"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-muted px-3 py-2.5 text-sm font-black text-foreground transition hover:bg-secondary"
-          >
-            {t("gallery.preview")}
-          </button>
-          <a
-            href={demoHref}
-            data-ga-event="open_template_demo"
-            data-ga-param-template-id={template.slug}
-            data-ga-param-source="home_card"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
-          >
-            {t("gallery.viewDemo")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-          </a>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onClose: () => void }) {
-  const t = useTranslations("home");
-  const modalT = useTranslations("templatePreviewModal");
-  const locale = useLocale();
-  const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
-  const demoHref = `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
-
-  return (
-    <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/60 p-3 backdrop-blur-xl sm:p-6 lg:p-8"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_16px_50px_rgb(0_0_0/0.15)] lg:h-auto lg:max-h-[calc(100dvh-4rem)] lg:max-w-4xl">
-        <div className="flex items-center justify-between border-b border-border p-4 sm:px-6 sm:py-5">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-accent">{modalT("eyebrow")}</p>
-            <h3 className="mt-1 font-heading text-2xl font-black text-foreground">{modalT("title")}</h3>
-          </div>
-          <button
-            onClick={onClose}
-            aria-label={modalT("close")}
-            className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
-        <div className="grid min-h-0 flex-1 gap-6 overflow-y-auto p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-          <div>
-            <p className="max-w-xl leading-7 text-muted-foreground">{modalT("description")}</p>
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-muted p-4">
-                <p className="text-xs text-muted-foreground">{modalT("previewTypeLabel")}</p>
-                <p className="mt-1 font-black text-foreground">{modalT("previewTypeValue")}</p>
-              </div>
-              <div className="rounded-2xl bg-muted p-4">
-                <p className="text-xs text-muted-foreground">{t("gallery.trialLabel")}</p>
-                <p className="mt-1 font-black text-foreground">{t("gallery.trialValue")}</p>
-              </div>
-            </div>
-            <ul className="mt-6 space-y-3">
-              {[modalT("highlightMobile"), modalT("highlightRsvp"), modalT("highlightGallery")].map((item) => (
-                <li key={item} className="flex gap-3 text-sm text-muted-foreground">
-                  <Star className="mt-0.5 size-4 shrink-0 fill-primary text-primary" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href={demoHref}
-                data-ga-event="open_template_demo"
-                data-ga-param-template-id={template.slug}
-                data-ga-param-source="home_modal"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition hover:bg-primary/90"
-              >
-                {t("gallery.viewInvitationDemo")} <ArrowRight className="size-4" />
-              </a>
-              <form
-                action={createInvitation}
-                data-ga-event="select_template"
-                data-ga-param-template-id={template.slug}
-                data-ga-param-source="home_modal"
-              >
-                <input type="hidden" name="templateId" value={template.slug} />
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-6 py-3 text-sm font-black text-foreground transition hover:bg-secondary"
-                >
-                  {t("gallery.useStyle")}
-                </button>
-              </form>
-            </div>
-          </div>
-          <div className="group relative h-[56vh] min-h-[360px] overflow-hidden rounded-3xl border border-border bg-muted shadow-[0_16px_40px_rgb(0_0_0/0.1)] lg:h-[min(520px,calc(100dvh-12rem))] lg:min-h-[420px] lg:w-[360px]">
-            <img
-              src={template.listing}
-              alt={modalT("imageAlt")}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover object-top transition-[object-position] duration-[12000ms] ease-in-out group-hover:object-bottom motion-reduce:transition-none"
-            />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-transparent px-5 pb-5 pt-14 transition-opacity duration-300 group-hover:opacity-0">
-              <p className="text-sm font-bold text-background">{modalT("hoverHint")}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PricingFaq() {
-  const t = useTranslations("home");
-  const faqs: Array<[string, string]> = [
-    [t("pricing.faq1Q"), t("pricing.faq1A")],
-    [t("pricing.faq2Q"), t("pricing.faq2A")],
-    [t("pricing.faq3Q"), t("pricing.faq3A")],
-    [t("pricing.faq4Q"), t("pricing.faq4A")],
-  ];
-  const perks = [t("pricing.perk1"), t("pricing.perk2"), t("pricing.perk3"), t("pricing.perk4")];
 
   return (
     <section id="pricing" className="bg-secondary py-20">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.75fr_1fr] lg:px-8">
-        <div className="reveal">
-          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("pricing.title")}</h2>
-          <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("pricing.subtitle")}</p>
-          <div className="mt-8 rounded-[2rem] border border-primary/35 bg-primary/10 p-6">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-accent">{t("pricing.popular")}</p>
-            <p className="mt-4 text-5xl font-black text-foreground">{t("pricing.price")}</p>
-            <p className="mt-2 text-muted-foreground">{t("pricing.priceNote")}</p>
-            <ul className="mt-6 space-y-3 text-sm text-foreground">
-              {perks.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <Check className="size-4 text-primary" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="reveal">
-          <h2 className="font-heading text-3xl font-black text-foreground">{t("pricing.faqTitle")}</h2>
-          <div className="mt-6 divide-y divide-border overflow-hidden rounded-[2rem] border border-border bg-card">
-            {faqs.map(([question, answer]) => (
-              <details key={question} className="group p-5" open={question === faqs[0][0]}>
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 font-black text-foreground">
-                  {question}
-                  <ChevronDown className="size-4 transition group-open:rotate-180" />
-                </summary>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function InstantDemo() {
-  const t = useTranslations("home");
-  const defaultGroom = t("instant.defaultGroom");
-  const defaultBride = t("instant.defaultBride");
-  const [groom, setGroom] = useState("");
-  const [bride, setBride] = useState("");
-
-  const groomName = groom.trim() || defaultGroom;
-  const brideName = bride.trim() || defaultBride;
-
-  return (
-    <section className="bg-secondary py-20">
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8">
-        <div className="reveal-left">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("instant.eyebrow")}</p>
-          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("instant.title")}</h2>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">{t("instant.subtitle")}</p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-bold text-muted-foreground">{t("languages.groomLabel")}</span>
-              <input
-                value={groom}
-                onChange={(e) => setGroom(e.target.value)}
-                placeholder={t("instant.groomPlaceholder")}
-                maxLength={24}
-                className="mt-2 w-full rounded-2xl border border-border bg-card px-4 py-3 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
-              />
-            </label>
-            <label className="block">
-              <span className="text-sm font-bold text-muted-foreground">{t("languages.brideLabel")}</span>
-              <input
-                value={bride}
-                onChange={(e) => setBride(e.target.value)}
-                placeholder={t("instant.bridePlaceholder")}
-                maxLength={24}
-                className="mt-2 w-full rounded-2xl border border-border bg-card px-4 py-3 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
-              />
-            </label>
-          </div>
-          <form action={createInvitation} className="mt-6">
-            <input type="hidden" name="groomShortName" value={groom.trim()} />
-            <input type="hidden" name="brideShortName" value={bride.trim()} />
-            <button
-              type="submit"
-              className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-black text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
-            >
-              {t("instant.cta")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </button>
-          </form>
-        </div>
-        <div className="reveal-right">
-          <div className="relative mx-auto aspect-[3/4] w-full max-w-[380px] overflow-hidden rounded-[2rem] border border-border shadow-[0_24px_60px_rgb(0_0_0/0.18)]">
-            <img
-              src={heroPreviewTemplates[0].portrait}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-foreground/25 via-foreground/10 to-foreground/55" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-              <p className="font-heading text-xs font-black uppercase tracking-[0.35em] text-background/90">{t("instant.previewInvited")}</p>
-              <p className="mt-6 font-pattaya text-4xl text-background drop-shadow-lg sm:text-5xl">{groomName}</p>
-              <p className="my-2 text-2xl text-background/90">&</p>
-              <p className="font-pattaya text-4xl text-background drop-shadow-lg sm:text-5xl">{brideName}</p>
-              <span className="mt-8 rounded-full bg-background/20 px-4 py-1.5 text-xs font-bold text-background backdrop-blur">{t("hero.rsvpOpen")}</span>
-            </div>
-          </div>
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <h2 className="reveal text-center font-heading text-3xl font-black text-foreground sm:text-5xl">{t("faq.heading")}</h2>
+        <div className="reveal mt-10 divide-y divide-border overflow-hidden rounded-[2rem] border border-border bg-card">
+          {faqKeys.map((key, index) => (
+            <details key={key} className="group p-6" open={index === 0}>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-black text-foreground">
+                {t(`faq.${key}Q`)}
+                <ChevronDown className="size-5 shrink-0 text-primary transition group-open:rotate-180" />
+              </summary>
+              <p className="mt-4 leading-7 text-muted-foreground">{t(`faq.${key}A`)}</p>
+            </details>
+          ))}
         </div>
       </div>
     </section>
@@ -1137,15 +727,12 @@ export function ChungDoiClone() {
       <SiteHeader />
       <HeroSection />
       <TemplateCarousel />
-      <StatsSection />
-      <InstantDemo />
       <HowItWorks />
       <SupportSection />
-      <GuestsSection />
       <TestimonialsSection />
-      <LanguageAndFeatures />
-      <TemplateGallery />
-      <PricingFaq />
+      <GuestsSection />
+      <LanguageSection />
+      <FaqSection />
       <SiteFooter />
     </main>
   );

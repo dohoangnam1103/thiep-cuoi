@@ -25,6 +25,8 @@
   "chrome": {
     "nav": {
       "templates": "Templates",
+      "myInvitations": "My Invitations",
+      "guests": "Guests",
       "pricing": "Pricing",
       "tools": "Tools",
       "blog": "Blog",
@@ -96,11 +98,11 @@
       "step3Copy": "Share instantly via LINE, Messenger, or any app"
     },
     "support": {
-      "title": "When you need us, we're here",
-      "subtitle": "The Thiệp Mừng Online team is online 24/7. Chat whenever you need help with edits, sharing, guests, or payments.",
-      "startCreating": "Start Creating",
+      "title": "When you need us,",
+      "titleAccent": "we're always here",
+      "subtitle": "Thiệp Mừng Online is ready to help 24/7. <hl>Message us whenever you need a hand.</hl>",
       "replyTimeLabel": "Reply time",
-      "replyTimeValue": "Usually under 1 minute",
+      "replyTimeValue": "Under 1 minute",
       "helpEditsLabel": "Help with edits",
       "helpEditsValue": "Until it feels right"
     },
@@ -169,25 +171,28 @@
       "highlightRsvp": "RSVP ready",
       "highlightGallery": "Photo gallery included"
     },
-    "pricing": {
-      "title": "Simple pricing, no hidden fees",
-      "subtitle": "Free to create. Try the live invitation for 3 days. Pay once only if you love it.",
-      "popular": "Popular",
-      "price": "$19.99",
-      "priceNote": "One invitation, live forever after trial.",
-      "perk1": "Unlimited views",
-      "perk2": "Guest manager and RSVP",
-      "perk3": "Maps, gallery, music, gift QR",
-      "perk4": "Editable after publishing",
-      "faqTitle": "Frequently Asked Questions",
-      "faq1Q": "What is an online wedding invitation?",
-      "faq1A": "A digital invitation page that replaces paper invites and includes maps, photos, guest wishes, gifts and RSVP.",
-      "faq2Q": "How do I create one?",
-      "faq2A": "Choose a template, add names/photos/date/venue, publish and share your unique link.",
-      "faq3Q": "How much does it cost?",
-      "faq3A": "Creating and customizing is free. Publishing includes a free 3-day trial, then a one-time payment keeps it live.",
-      "faq4Q": "Can I edit after publishing?",
-      "faq4A": "Yes. Edits update instantly on the same shared link."
+    "faq": {
+      "heading": "Quick answers about online wedding invitations",
+      "q1Q": "What is an online wedding invitation?",
+      "q1A": "A digital invitation page that replaces paper invites, with photos, music, a map, guest wishes and RSVP, shared through one personal link.",
+      "q2Q": "Does creating an online invitation take a lot of time?",
+      "q2A": "No. Pick a template and fill in your details, and you can finish an invitation in about 10 minutes.",
+      "q3Q": "Do I need design or coding skills?",
+      "q3A": "Not at all. Everything is visual, just enter your content and the invitation comes together on its own.",
+      "q4Q": "What should I prepare before creating an invitation?",
+      "q4A": "The couple's names, the ceremony date and time, the venue and a few wedding photos are enough to get started.",
+      "q5Q": "Can the invitation include photos, music, a map and RSVP?",
+      "q5A": "Yes. You can add a photo album, background music, a navigation map and an RSVP form.",
+      "q6Q": "Can I edit the content after publishing?",
+      "q6A": "Yes. Content updates instantly on the same link, with no need to resend it to guests.",
+      "q7Q": "How many guests can I send the invitation to?",
+      "q7A": "There is no limit on guests. You can create a personal link for each guest or share one link.",
+      "q8Q": "How do guests receive and view the invitation?",
+      "q8A": "Guests just open the link you send on their phone or computer, with no install or login required.",
+      "q9Q": "Does the invitation display well on phones and computers?",
+      "q9A": "Yes. The invitation adapts automatically to look great on any screen size.",
+      "q10Q": "How much does an online wedding invitation cost?",
+      "q10A": "You create and try it for free, and pay just once when you're happy and ready to publish."
     },
     "instant": {
       "eyebrow": "Try it instantly",
@@ -203,7 +208,7 @@
     "testimonials": {
       "eyebrow": "What couples say",
       "title": "Trusted by thousands of couples",
-      "subtitle": "Real words from couples who made their wedding invitations with Thiệp Mừng Online.",
+      "subtitle": "Heartfelt words from couples who chose Thiệp Mừng Online to be part of their big day.",
       "t1Quote": "Made our invitation in under 10 minutes and it looked better than paper. Guests kept complimenting it!",
       "t1Author": "Minh & Ha",
       "t1Role": "Married in March, Hanoi",

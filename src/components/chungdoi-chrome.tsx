@@ -2,6 +2,7 @@
 
 import { ImageIcon, MessageCircle, Play, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 import NextLink from "next/link";
 
@@ -9,13 +10,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { LogoMark } from "@/components/logo-mark";
 import { Link } from "@/i18n/navigation";
 
-const NAV_LINKS = [
-  ["templates", "/templates"],
-  ["pricing", "/pricing"],
-  ["tools", "/tools"],
-  ["blog", "/blog"],
-  ["help", "/help"],
-] as const;
+type SessionState = { loggedIn: boolean; firstInvitationId: string | null };
 
 export function Logo({ responsive = false }: { responsive?: boolean }) {
   return (
@@ -35,25 +30,58 @@ export function Logo({ responsive = false }: { responsive?: boolean }) {
 
 export function SiteHeader() {
   const t = useTranslations("chrome");
+  const [session, setSession] = useState<SessionState | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: SessionState | null) => {
+        if (active && data) setSession(data);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const loggedIn = session?.loggedIn ?? false;
+  const guestsHref = session?.firstInvitationId
+    ? `/dashboard/${session.firstInvitationId}/guests`
+    : "/dashboard";
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo responsive />
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
-          {NAV_LINKS.map(([key, href]) => (
-            <Link key={href} href={href} className="transition hover:text-foreground">
-              {t(`nav.${key}`)}
-            </Link>
-          ))}
+          <Link href="/templates" className="transition hover:text-foreground">
+            {t("nav.templates")}
+          </Link>
+          {loggedIn ? (
+            <>
+              <NextLink href="/dashboard" className="transition hover:text-foreground">
+                {t("nav.myInvitations")}
+              </NextLink>
+              <NextLink href={guestsHref} className="transition hover:text-foreground">
+                {t("nav.guests")}
+              </NextLink>
+            </>
+          ) : null}
+          <Link href="/pricing" className="transition hover:text-foreground">
+            {t("nav.pricing")}
+          </Link>
+          <Link href="/blog" className="transition hover:text-foreground">
+            {t("nav.blog")}
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <NextLink
-            href="/login"
+            href={loggedIn ? "/dashboard" : "/login"}
             className="hidden rounded-full border border-border px-4 py-2 text-sm font-bold text-foreground transition hover:border-primary/60 hover:text-primary sm:inline-block"
           >
-            {t("login")}
+            {loggedIn ? t("nav.myInvitations") : t("login")}
           </NextLink>
           <Link
             href="/templates"
