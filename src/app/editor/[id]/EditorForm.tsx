@@ -207,7 +207,7 @@ function Text({
   hint,
   type = "text",
   full,
-  required,
+  requiredMark,
 }: {
   name: string;
   label: string;
@@ -216,12 +216,13 @@ function Text({
   hint?: string;
   type?: string;
   full?: boolean;
-  required?: boolean;
+  requiredMark?: boolean;
 }) {
   return (
     <div className={full ? "sm:col-span-2" : undefined}>
       <label htmlFor={name} className={labelClass}>
         {label}
+        {requiredMark ? <span className="ml-0.5 text-destructive" aria-hidden> *</span> : null}
       </label>
       <input
         id={name}
@@ -229,7 +230,6 @@ function Text({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        required={required}
         className={inputClass}
       />
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
@@ -896,7 +896,7 @@ export function EditorForm({
               defaultValue={seed("brideFullName", field(content, "brideFullName"))}
               placeholder="VD: Nguyễn Quỳnh Anh"
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
-              required
+              requiredMark
             />
             <Text
               name="groomFullName"
@@ -904,7 +904,7 @@ export function EditorForm({
               defaultValue={seed("groomFullName", field(content, "groomFullName"))}
               placeholder="VD: Trần Gia Khánh"
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
-              required
+              requiredMark
             />
             <BirthOrderField
               name="brideBirthOrder"
@@ -935,7 +935,7 @@ export function EditorForm({
                 Hiển thị cô dâu trước
               </label>
             </div>
-            <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." required />
+            <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." requiredMark />
             <Text name="time" label="Giờ cưới" type="time" defaultValue={seed("time", field(content, "time"))} />
           </Grid>
         </Accordion>
