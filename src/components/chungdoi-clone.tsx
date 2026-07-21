@@ -213,6 +213,8 @@ function StackFan() {
                 src={template.listing}
                 alt={template.name}
                 draggable={false}
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full rounded-2xl object-cover object-top shadow-[0_18px_44px_rgb(0_0_0/0.22)]"
               />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent p-4 opacity-0 transition-opacity group-hover:opacity-100">
@@ -494,6 +496,8 @@ function TemplateCarousel() {
                     src={template.listing}
                     alt={template.name}
                     draggable={false}
+                    loading="lazy"
+                    decoding="async"
                     className="pointer-events-none h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105"
                   />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
@@ -842,6 +846,8 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
           <img
             src={template.listing}
             alt={template.name}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover object-top transition-[object-position,transform] duration-[10000ms] ease-in-out group-hover:object-bottom group-hover:scale-[1.03]"
           />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-4">
@@ -959,6 +965,8 @@ function TemplateModal({ template, onClose }: { template: ChungDoiTemplate; onCl
             <img
               src={template.listing}
               alt={modalT("imageAlt")}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover object-top transition-[object-position] duration-[12000ms] ease-in-out group-hover:object-bottom motion-reduce:transition-none"
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-transparent px-5 pb-5 pt-14 transition-opacity duration-300 group-hover:opacity-0">
@@ -1076,6 +1084,8 @@ function InstantDemo() {
               src={heroPreviewTemplates[0].portrait}
               alt=""
               aria-hidden
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-foreground/25 via-foreground/10 to-foreground/55" />
