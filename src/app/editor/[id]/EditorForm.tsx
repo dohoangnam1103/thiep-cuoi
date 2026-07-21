@@ -712,13 +712,17 @@ export function EditorForm({
   const [checking, startCheck] = useTransition();
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+  // Khởi tạo chỉ từ content (server-deterministic) để lần render đầu client khớp server;
+  // draft localStorage được reconcile trong useEffect bên dưới, tránh hydration mismatch.
   const [coreFilled, setCoreFilled] = useState(() => ({
-    bride: Boolean(seed("brideFullName", field(content, "brideFullName")).trim()),
-    groom: Boolean(seed("groomFullName", field(content, "groomFullName")).trim()),
-    date: Boolean(seed("date", field(content, "date")).trim()),
+    bride: Boolean(field(content, "brideFullName").trim()),
+    groom: Boolean(field(content, "groomFullName").trim()),
+    date: Boolean(field(content, "date").trim()),
   }));
   const [previewContent, setPreviewContent] = useState<ChungDoiDemoContent | null>(null);
-  const [draftStatus, setDraftStatus] = useState<DraftStatus>(draft ? "restored" : "server");
+  // Khởi tạo "server" (server-deterministic) để render đầu client khớp server;
+  // nếu có draft localStorage thì chuyển "restored" trong useEffect bên dưới.
+  const [draftStatus, setDraftStatus] = useState<DraftStatus>("server");
   const {
     capture: captureDraft,
     clear: clearDraft,
@@ -767,6 +771,17 @@ export function EditorForm({
     if (publishState?.persisted) reconcilePersistedDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publishState]);
+
+  useEffect(() => {
+    // Sau mount, nếu có draft localStorage thì đồng bộ lại thanh tiến độ + trạng thái theo draft.
+    if (draft) setDraftStatus("restored");
+    setCoreFilled({
+      bride: Boolean(seed("brideFullName", field(content, "brideFullName")).trim()),
+      groom: Boolean(seed("groomFullName", field(content, "groomFullName")).trim()),
+      date: Boolean(seed("date", field(content, "date")).trim()),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft]);
 
   function onShowPreview() {
     const form = document.getElementById("editor-form") as HTMLFormElement | null;
