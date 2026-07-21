@@ -19,7 +19,7 @@ export default async function AdminPaymentsPage() {
       include: {
         invitation: {
           include: {
-            content: { select: { brideShortName: true, groomShortName: true } },
+            content: { select: { brideFullName: true, groomFullName: true } },
             user: { select: { email: true } },
           },
         },
@@ -62,8 +62,8 @@ export default async function AdminPaymentsPage() {
             ) : (
               payments.map((payment) => {
                 const c = payment.invitation.content;
-                const couple = c && (c.brideShortName || c.groomShortName)
-                  ? `${c.groomShortName} & ${c.brideShortName}`.trim()
+                const couple = c && (c.brideFullName || c.groomFullName)
+                  ? `${c.groomFullName} & ${c.brideFullName}`.trim()
                   : "—";
                 const paid = payment.status === "paid";
                 const expired = payment.status === "pending" && isPendingPaymentExpired(payment.createdAt);

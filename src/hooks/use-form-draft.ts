@@ -188,12 +188,14 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     if (!form) return;
 
     const scheduleWrite = () => {
-      latestRef.current = serializeForm(form);
-      statusCallbackRef.current?.("saving");
-      if (timerRef.current) clearTimeout(timerRef.current);
+      // Chỉ báo "saving" một lần khi bắt đầu một đợt gõ, KHÔNG serialize/setState
+      // trên mỗi keystroke — nếu không cả form re-render theo từng phím, làm giật
+      // và mất ký tự ở input vừa mount. Chỉ serialize + ghi khi người dùng ngừng gõ.
+      if (!timerRef.current) statusCallbackRef.current?.("saving");
+      else clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
-        const latest = latestRef.current;
-        if (latest) persist(latest);
+        latestRef.current = serializeForm(form);
+        persist(latestRef.current);
         timerRef.current = null;
       }, SAVE_DELAY_MS);
     };
@@ -218,6 +220,20 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
       if (latest) persist(latest);
     };
 
+    const onFieldBlur = (event: FocusEvent) => {
+      const target = event.target;
+      if (
+        !(target instanceof HTMLInputElement) &&
+        !(target instanceof HTMLSelectElement) &&
+        !(target instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+      if (!target.name || target.closest("[data-form-draft-ignore]")) return;
+      // Rời field: chốt giá trị ngay thay vì chờ hết debounce.
+      latestRef.current = serializeForm(form);
+      flush();
+    };
     const onVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
         latestRef.current = serializeForm(form);
@@ -234,6 +250,7 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
 
     form.addEventListener("input", onFormFieldChange);
     form.addEventListener("change", onFormFieldChange);
+    form.addEventListener("focusout", onFieldBlur);
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pagehide", onPageHide);
     observer.observe(form, {
@@ -244,6 +261,7 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     return () => {
       form.removeEventListener("input", onFormFieldChange);
       form.removeEventListener("change", onFormFieldChange);
+      form.removeEventListener("focusout", onFieldBlur);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", onPageHide);
       observer.disconnect();

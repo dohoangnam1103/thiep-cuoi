@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { flushSync } from "react-dom";
 import { Toaster, toast } from "sonner";
 import {
   DndContext,
@@ -89,8 +90,9 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
   const templateId = read("templateId");
   const brideFullName = read("brideFullName");
   const groomFullName = read("groomFullName");
-  const brideShortName = read("brideShortName") || brideFullName;
-  const groomShortName = read("groomShortName") || groomFullName;
+  // Tên gọi ngắn đã bỏ khỏi form: hiển thị dùng họ tên đầy đủ.
+  const brideShortName = brideFullName;
+  const groomShortName = groomFullName;
   const times = readAll("scheduleTime");
   const labels = readAll("scheduleLabel");
   const schedule: { time: string; label: string }[] = [];
@@ -275,12 +277,14 @@ function BirthOrderField({
   defaultValue = "",
   hint,
   birthOrderOptions,
+  customPlaceholder,
 }: {
   name: string;
   label: string;
   defaultValue?: string;
   hint?: string;
   birthOrderOptions: SelectOption[];
+  customPlaceholder: string;
 }) {
   const known = birthOrderOptions.some((o) => o.value === defaultValue);
   const [custom, setCustom] = useState(!!defaultValue && !known);
@@ -288,14 +292,6 @@ function BirthOrderField({
   const hiddenRef = useRef<HTMLInputElement | null>(null);
   const customInputRef = useRef<HTMLInputElement | null>(null);
   const mountedRef = useRef(false);
-
-  // react-select giữ focus ở dummy input của nó sau khi chọn option. Focus đồng bộ
-  // ngay lúc mount (trước paint) để input text nhận ký tự đầu, tránh mất chữ khi
-  // vừa bật chế độ "Khác…".
-  useLayoutEffect(() => {
-    if (!custom) return;
-    customInputRef.current?.focus();
-  }, [custom]);
 
   const options = [
     ...birthOrderOptions,
@@ -315,47 +311,43 @@ function BirthOrderField({
       <label htmlFor={name} className={labelClass}>
         {label}
       </label>
+      {/* Khi không custom: hidden input mang name (giá trị từ state combobox).
+          Khi custom: ô input bên dưới mang name — chỉ 1 phần tử name tồn tại mỗi lúc. */}
+      {!custom && <input ref={hiddenRef} type="hidden" name={name} value={value} readOnly />}
+      <Combobox
+        inputId={custom ? undefined : name}
+        value={custom ? "__custom__" : value}
+        onChange={(next) => {
+          if (next === "__custom__") {
+            // Xoá value để ô input mount rỗng (không kế thừa preset vừa chọn).
+            // flushSync để ô input mount đồng bộ ngay trong handler, rồi focus liền —
+            // react-select bị unmount khỏi focus trước khi kịp giành lại, tránh mất ký tự đầu.
+            flushSync(() => {
+              setCustom(true);
+              setValue("");
+            });
+            customInputRef.current?.focus();
+          } else {
+            setCustom(false);
+            setValue(next);
+          }
+        }}
+        options={options}
+        placeholder="— Chọn thứ bậc —"
+        aria-label={label}
+      />
       {custom ? (
+        // Ô này mang name → serializeForm đọc value trực tiếp từ DOM, không qua state
+        // (tránh lệch khi IME/paste). Uncontrolled nên re-render lúc gõ không xoá ký tự.
         <input
           ref={customInputRef}
           id={name}
           name={name}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="VD: Trưởng Nữ"
-          className={inputClass}
+          defaultValue={value}
+          placeholder={customPlaceholder}
+          className={`${inputClass} mt-2`}
+          aria-label={`${label} (tự nhập)`}
         />
-      ) : (
-        <>
-          <input ref={hiddenRef} type="hidden" name={name} value={value} readOnly />
-          <Combobox
-            inputId={name}
-            value={value}
-            onChange={(next) => {
-              if (next === "__custom__") {
-                setCustom(true);
-                setValue("");
-              } else {
-                setValue(next);
-              }
-            }}
-            options={options}
-            placeholder="— Chọn thứ bậc —"
-            aria-label={label}
-          />
-        </>
-      )}
-      {custom ? (
-        <button
-          type="button"
-          onClick={() => {
-            setCustom(false);
-            setValue("");
-          }}
-          className="mt-1 text-xs text-primary hover:underline"
-        >
-          Chọn từ danh sách
-        </button>
       ) : hint ? (
         <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
       ) : null}
@@ -867,26 +859,13 @@ export function EditorForm({
               hint="Họ tên đầy đủ, hiển thị ở phần giới thiệu."
               required
             />
-            <Text
-              name="brideShortName"
-              label="Tên gọi cô dâu"
-              defaultValue={seed("brideShortName", field(content, "brideShortName"))}
-              placeholder="VD: Quỳnh Anh"
-              hint="Tên ngắn để in to trên thiệp (VD: Quỳnh Anh & Gia Khánh)."
-            />
-            <Text
-              name="groomShortName"
-              label="Tên gọi chú rể"
-              defaultValue={seed("groomShortName", field(content, "groomShortName"))}
-              placeholder="VD: Gia Khánh"
-              hint="Tên ngắn để in to trên thiệp."
-            />
             <BirthOrderField
               name="brideBirthOrder"
               label="Thứ bậc cô dâu"
               defaultValue={seed("brideBirthOrder", field(content, "brideBirthOrder"))}
               hint="Hiển thị dưới ảnh cô dâu."
               birthOrderOptions={BRIDE_BIRTH_ORDER_OPTIONS}
+              customPlaceholder="VD: Con gái thứ tư"
             />
             <BirthOrderField
               name="groomBirthOrder"
@@ -894,6 +873,7 @@ export function EditorForm({
               defaultValue={seed("groomBirthOrder", field(content, "groomBirthOrder"))}
               hint="Hiển thị dưới ảnh chú rể."
               birthOrderOptions={GROOM_BIRTH_ORDER_OPTIONS}
+              customPlaceholder="VD: Con trai thứ tư"
             />
             <div className="sm:col-span-2 flex items-center gap-2">
               <input
@@ -932,7 +912,7 @@ export function EditorForm({
             <Text
               name="groomParentTitle"
               label="Danh xưng nhà trai"
-              defaultValue={seed("groomParentTitle", field(content, "groomParentTitle"))}
+              defaultValue={seed("groomParentTitle", field(content, "groomParentTitle")) || "Ông bà"}
               placeholder="VD: Ông Bà"
               hint="Cách gọi cha mẹ trên thiệp (VD: Ông Bà, Gia đình)."
             />
@@ -944,7 +924,7 @@ export function EditorForm({
             <Text
               name="brideParentTitle"
               label="Danh xưng nhà gái"
-              defaultValue={seed("brideParentTitle", field(content, "brideParentTitle"))}
+              defaultValue={seed("brideParentTitle", field(content, "brideParentTitle")) || "Ông bà"}
               placeholder="VD: Ông Bà"
               hint="Cách gọi cha mẹ trên thiệp (VD: Ông Bà, Gia đình)."
             />

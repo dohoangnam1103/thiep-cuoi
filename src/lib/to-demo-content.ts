@@ -52,8 +52,9 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
     couple: {
       brideFullName: c?.brideFullName ?? "",
       groomFullName: c?.groomFullName ?? "",
-      brideShortName: c?.brideShortName ?? "",
-      groomShortName: c?.groomShortName ?? "",
+      // Tên gọi ngắn đã bỏ khỏi form: mọi nơi hiển thị dùng họ tên đầy đủ.
+      brideShortName: c?.brideFullName ?? "",
+      groomShortName: c?.groomFullName ?? "",
       brideBirthOrder: normalizeBirthOrder(c?.brideBirthOrder),
       groomBirthOrder: normalizeBirthOrder(c?.groomBirthOrder),
       brideFirst: c?.brideFirst ?? true,

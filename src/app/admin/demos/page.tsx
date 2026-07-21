@@ -9,7 +9,7 @@ export default async function AdminDemosPage() {
   const demos = await prisma.invitation.findMany({
     where: { isDemo: true },
     orderBy: { templateId: "asc" },
-    include: { content: { select: { brideShortName: true, groomShortName: true } } },
+    include: { content: { select: { brideFullName: true, groomFullName: true } } },
   });
 
   return (
@@ -35,8 +35,8 @@ export default async function AdminDemosPage() {
               demos.map((demo) => {
                 const c = demo.content;
                 const couple =
-                  c && (c.brideShortName || c.groomShortName)
-                    ? `${c.groomShortName} & ${c.brideShortName}`.trim()
+                  c && (c.brideFullName || c.groomFullName)
+                    ? `${c.groomFullName} & ${c.brideFullName}`.trim()
                     : "—";
                 return (
                   <tr key={demo.id} className="border-b border-border last:border-0">
