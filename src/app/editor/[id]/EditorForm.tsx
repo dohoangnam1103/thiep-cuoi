@@ -22,6 +22,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { BankCombobox } from "@/components/ui/bank-combobox";
+import { Combobox } from "@/components/ui/combobox";
 import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { MusicPicker } from "@/components/music-picker";
@@ -159,7 +160,6 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-ring";
 const labelClass = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground";
-const optionClass = "bg-card text-foreground";
 
 function Accordion({
   title,
@@ -255,13 +255,14 @@ function Select({
       <label htmlFor={name} className={labelClass}>
         {label}
       </label>
-      <select id={name} name={name} defaultValue={defaultValue} className={inputClass}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value} className={optionClass}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      <Combobox
+        inputId={name}
+        name={name}
+        defaultValue={defaultValue}
+        options={options}
+        isSearchable
+        placeholder="Chọn…"
+      />
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
@@ -283,6 +284,11 @@ function BirthOrderField({
   const [custom, setCustom] = useState(!!defaultValue && !known);
   const [value, setValue] = useState(defaultValue);
 
+  const options = [
+    ...BIRTH_ORDER_OPTIONS,
+    { value: "__custom__", label: "Khác…" },
+  ];
+
   return (
     <div>
       <label htmlFor={name} className={labelClass}>
@@ -299,32 +305,24 @@ function BirthOrderField({
           autoFocus
         />
       ) : (
-        <select
-          id={name}
-          name={name}
-          value={value}
-          onChange={(e) => {
-            if (e.target.value === "__custom__") {
-              setCustom(true);
-              setValue("");
-            } else {
-              setValue(e.target.value);
-            }
-          }}
-          className={inputClass}
-        >
-          <option value="" className={optionClass}>
-            — Chọn thứ bậc —
-          </option>
-          {BIRTH_ORDER_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value} className={optionClass}>
-              {o.label}
-            </option>
-          ))}
-          <option value="__custom__" className={optionClass}>
-            Khác…
-          </option>
-        </select>
+        <>
+          <input type="hidden" name={name} value={value} readOnly />
+          <Combobox
+            inputId={name}
+            value={value}
+            onChange={(next) => {
+              if (next === "__custom__") {
+                setCustom(true);
+                setValue("");
+              } else {
+                setValue(next);
+              }
+            }}
+            options={options}
+            placeholder="— Chọn thứ bậc —"
+            aria-label={label}
+          />
+        </>
       )}
       {custom ? (
         <button
