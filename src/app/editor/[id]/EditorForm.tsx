@@ -283,11 +283,21 @@ function BirthOrderField({
   const known = BIRTH_ORDER_OPTIONS.some((o) => o.value === defaultValue);
   const [custom, setCustom] = useState(!!defaultValue && !known);
   const [value, setValue] = useState(defaultValue);
+  const hiddenRef = useRef<HTMLInputElement | null>(null);
+  const mountedRef = useRef(false);
 
   const options = [
     ...BIRTH_ORDER_OPTIONS,
     { value: "__custom__", label: "Khác…" },
   ];
+
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+    hiddenRef.current?.dispatchEvent(new Event("input", { bubbles: true }));
+  }, [value]);
 
   return (
     <div>
@@ -306,7 +316,7 @@ function BirthOrderField({
         />
       ) : (
         <>
-          <input type="hidden" name={name} value={value} readOnly />
+          <input ref={hiddenRef} type="hidden" name={name} value={value} readOnly />
           <Combobox
             inputId={name}
             value={value}
