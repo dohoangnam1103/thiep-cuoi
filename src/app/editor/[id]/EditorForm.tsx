@@ -238,6 +238,54 @@ function Text({
   );
 }
 
+/** Gộp ngày + giờ thành 1 nhóm inline, label chung. Vẫn dùng native input để mobile bật picker của OS. */
+function DateTimeField({
+  dateName,
+  timeName,
+  label,
+  dateDefault,
+  timeDefault,
+  hint,
+  requiredMark,
+}: {
+  dateName: string;
+  timeName: string;
+  label: string;
+  dateDefault?: string;
+  timeDefault?: string;
+  hint?: string;
+  requiredMark?: boolean;
+}) {
+  return (
+    <div className="sm:col-span-2">
+      <span className={labelClass}>
+        {label}
+        {requiredMark ? <span className="ml-0.5 text-destructive" aria-hidden> *</span> : null}
+      </span>
+      <div className="flex gap-2">
+        <input
+          id={dateName}
+          name={dateName}
+          type="date"
+          defaultValue={dateDefault}
+          aria-label={`${label} - ngày`}
+          aria-required={requiredMark || undefined}
+          className={`${inputClass} flex-1`}
+        />
+        <input
+          id={timeName}
+          name={timeName}
+          type="time"
+          defaultValue={timeDefault}
+          aria-label={`${label} - giờ`}
+          className={`${inputClass} w-32 shrink-0`}
+        />
+      </div>
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
+    </div>
+  );
+}
+
 function Select({
   name,
   label,
@@ -951,8 +999,15 @@ export function EditorForm({
                 Hiển thị cô dâu trước
               </label>
             </div>
-            <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." requiredMark />
-            <Text name="time" label="Giờ cưới" type="time" defaultValue={seed("time", field(content, "time"))} />
+            <DateTimeField
+              dateName="date"
+              timeName="time"
+              label="Ngày giờ cưới"
+              dateDefault={seed("date", field(content, "date"))}
+              timeDefault={seed("time", field(content, "time"))}
+              hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp."
+              requiredMark
+            />
           </Grid>
         </Accordion>
 
@@ -1058,8 +1113,14 @@ export function EditorForm({
 
         <Accordion title="Lễ riêng" icon="🕊" defaultOpen={false}>
           <Grid>
-            <Text name="ceremonyDate" label="Ngày lễ" type="date" defaultValue={seed("ceremonyDate", field(content, "ceremonyDate"))} hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới." />
-            <Text name="ceremonyTime" label="Giờ lễ" type="time" defaultValue={seed("ceremonyTime", field(content, "ceremonyTime"))} />
+            <DateTimeField
+              dateName="ceremonyDate"
+              timeName="ceremonyTime"
+              label="Thời gian lễ"
+              dateDefault={seed("ceremonyDate", field(content, "ceremonyDate"))}
+              timeDefault={seed("ceremonyTime", field(content, "ceremonyTime"))}
+              hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới."
+            />
             <Text
               name="ceremonyHeader"
               label="Tiêu đề lễ"
