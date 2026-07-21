@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import type { RsvpQuestionRow } from "@/lib/guest-manager";
 import {
   deleteRsvpQuestion,
@@ -152,11 +153,16 @@ export function RsvpQuestionBuilder({
               </label>
               <label className="grid gap-2 text-sm font-medium text-foreground">
                 {t("type")}
-                <select value={type} onChange={(event) => setType(event.target.value as QuestionType)} className={FIELD_CLASS}>
-                  <option value="text">{t("types.text")}</option>
-                  <option value="boolean">{t("types.boolean")}</option>
-                  <option value="select">{t("types.select")}</option>
-                </select>
+                <Combobox
+                  aria-label={t("type")}
+                  value={type}
+                  onChange={(next) => setType(next as QuestionType)}
+                  options={[
+                    { value: "text", label: t("types.text") },
+                    { value: "boolean", label: t("types.boolean") },
+                    { value: "select", label: t("types.select") },
+                  ]}
+                />
               </label>
               <label className="flex min-h-11 items-center gap-3 self-end rounded-xl border border-border bg-background px-3.5 text-sm font-medium text-foreground">
                 <input type="checkbox" checked={required} onChange={(event) => setRequired(event.target.checked)} className="size-4 accent-primary" />
