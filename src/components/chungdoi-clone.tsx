@@ -18,7 +18,6 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import Lenis from "lenis";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
@@ -64,23 +63,6 @@ function useCountUp(target: number, duration = 1600) {
   }, [duration, target]);
 
   return value;
-}
-
-function useSmoothScroll() {
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const lenis = new Lenis({ syncTouch: false });
-    let rafId = requestAnimationFrame(function raf(time) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    });
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-    };
-  }, []);
 }
 
 function useScrollProgress() {
@@ -273,7 +255,7 @@ function HeroSection() {
             <span className="font-pattaya text-4xl text-primary">thiepmungonline</span>
             <span className="text-muted-foreground">{t("hero.domainSuffix")}</span>
           </p>
-          <h1 className="hero-enter font-heading max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
+          <h1 className="hero-enter font-heading max-w-3xl text-4xl font-black leading-[1.15] tracking-tight text-foreground sm:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
             <span className="shiny-text">{t("hero.title")}</span>
           </h1>
           <p className="hero-enter mt-6 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
@@ -1146,7 +1128,6 @@ function TestimonialsSection() {
 }
 
 export function ChungDoiClone() {
-  useSmoothScroll();
   useRevealOnScroll();
   useScrollProgress();
 

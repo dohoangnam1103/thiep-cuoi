@@ -130,15 +130,46 @@ export default function AuroraBackground({
     ctn.appendChild(gl.canvas);
 
     let rafId = 0;
+    let visible = true;
     const update = (t: number) => {
       rafId = requestAnimationFrame(update);
       program.uniforms.uTime.value = t * 0.001;
       renderer.render({ scene: mesh });
     };
-    rafId = requestAnimationFrame(update);
+    const start = () => {
+      if (!rafId) rafId = requestAnimationFrame(update);
+    };
+    const stop = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    };
+
+    // Dừng render khi khuất màn hình để không tốn GPU lúc scroll qua.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && document.visibilityState === "visible") start();
+        else stop();
+      },
+      { threshold: 0 },
+    );
+    io.observe(ctn);
+
+    // Dừng render khi tab ẩn.
+    const onVisibility = () => {
+      if (document.visibilityState === "visible" && visible) start();
+      else stop();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    start();
 
     return () => {
-      cancelAnimationFrame(rafId);
+      stop();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", resize);
       if (gl.canvas.parentNode === ctn) {
         ctn.removeChild(gl.canvas);
