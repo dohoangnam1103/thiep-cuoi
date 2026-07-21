@@ -1015,7 +1015,7 @@ export function EditorForm({
           <GalleryUploader initial={Array.isArray(draft?.galleryUrl) ? (draft!.galleryUrl as string[]) : gallery} />
         </Accordion>
 
-        <Accordion title="Mẫu thiệp" icon="✧">
+        <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
           <TemplatePicker defaultValue={seed("templateId", templateId)} />
         </Accordion>
 
