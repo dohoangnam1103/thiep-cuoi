@@ -95,7 +95,7 @@ Mode tự nhận theo prop: có `onChange` → controlled mode; ngược lại �
 | GuestManager 3 filter | `Combobox` controlled mode (`value`/`onChange`), `aria-label` giữ nguyên. Filter group có thể nhiều mục → `isSearchable`. |
 | RsvpQuestionBuilder `type` | `Combobox` controlled mode. Đổi `type` vẫn trigger render lại phần options như cũ. |
 | Interactions `side` (public) | `Combobox` form mode, `variant="neutral"`. |
-| public-rsvp-dialog `side` + câu hỏi type=select | `Combobox` form mode, `variant="default"` (dialog dùng token). Câu hỏi động: options build từ `question.options`. |
+| public-rsvp-dialog `side` + câu hỏi type=select | `Combobox` form mode, `variant="neutral"` (dialog dùng palette trắng/neutral: `border-neutral-300 bg-white text-neutral-900`). Câu hỏi động: options build từ `question.options`. Bỏ `required` client-side — server action `submitRsvp` đã enforce câu hỏi bắt buộc. |
 
 ### Dọn dẹp
 
