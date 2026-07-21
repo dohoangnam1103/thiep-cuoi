@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import NextLink from "next/link";
 
-import { LanguageSwitcher } from "@/components/language-switcher";
+// import { LanguageSwitcher } from "@/components/language-switcher"; // tạm ẩn: web chỉ dùng tiếng Việt
 import { LogoMark } from "@/components/logo-mark";
 import { Link } from "@/i18n/navigation";
 
@@ -76,13 +76,16 @@ export function SiteHeader() {
           </Link>
         </nav>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
-          <NextLink
-            href={loggedIn ? "/dashboard" : "/login"}
-            className="hidden rounded-full border border-border px-4 py-2 text-sm font-bold text-foreground transition hover:border-primary/60 hover:text-primary sm:inline-block"
-          >
-            {loggedIn ? t("nav.myInvitations") : t("login")}
-          </NextLink>
+          {/* Tạm ẩn: web hiện chỉ dùng tiếng Việt */}
+          {/* <LanguageSwitcher /> */}
+          {loggedIn ? null : (
+            <NextLink
+              href="/login"
+              className="hidden rounded-full border border-border px-4 py-2 text-sm font-bold text-foreground transition hover:border-primary/60 hover:text-primary sm:inline-block"
+            >
+              {t("login")}
+            </NextLink>
+          )}
           <Link
             href="/templates"
             className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"

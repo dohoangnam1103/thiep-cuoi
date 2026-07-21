@@ -64,10 +64,14 @@
     "createNow": "Create Now",
     "hero": {
       "domainSuffix": ".com",
-      "title": "Create wedding invitations online, free in 10 minutes",
-      "subtitle": "Online wedding invitations with handcrafted templates, guest names, RSVP, maps, gallery, music and a QR gift box.",
+      "title": "Create wedding invitations online free in 15 minutes",
+      "subtitle": "One little invitation to carry your heartfelt invite.",
+      "subtitle2": "Easily design, share, collect RSVPs and keep every beautiful moment.",
       "trialNote": "Free to create - 3-day trial - Pay only if you love it",
       "watchGuide": "Watch guide",
+      "showcaseTitle": "The most beautiful online wedding",
+      "showcaseAccent": "invitations",
+      "showcaseSubtitle": "Discover elegant, modern wedding invitation designs",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "RSVP open",
       "statGuests": "guests",
@@ -77,8 +81,12 @@
     "carousel": {
       "title": "Most Popular Invitation Templates",
       "subtitle": "Discover beautifully designed wedding invitation templates.",
-      "dragHint": "Swipe or drag to explore more templates",
-      "new": "New"
+      "viewAll": "View all templates",
+      "viewAllHint": "Unique invitation designs are waiting for you",
+      "new": "New",
+      "prev": "Previous template",
+      "next": "Next template",
+      "goTo": "Go to template {number}"
     },
     "stats": {
       "title": "Over 65,000 couples have created their online wedding invitations with Thiệp Mừng Online",
@@ -90,6 +98,8 @@
       "title": "Create your online wedding invitation in just 10 minutes",
       "subtitle": "Keep the tradition - enjoy the convenience.",
       "step": "Step {number}",
+      "ctaStart": "Start creating your invitation",
+      "ctaHint": "Watch the detailed guide video",
       "step1Title": "Choose a Template",
       "step1Copy": "Pick your favorite template",
       "step2Title": "Fill in Your Details",
@@ -131,11 +141,13 @@
       "declinedStat": "Declined"
     },
     "languages": {
-      "groomLabel": "Groom",
-      "brideLabel": "Bride",
-      "invitedLabel": "You are cordially invited",
-      "title": "Supports multiple languages",
-      "subtitle": "Display your wedding invitation in multiple languages at once, so every guest reads it in their own language."
+      "eyebrow": "MULTILINGUAL SUPPORT",
+      "title": "One invitation, complete for every guest",
+      "subtitle": "Easily display multiple languages on the same invitation, so guests at home and abroad can follow the details clearly and naturally.",
+      "point1": "Add a language with just one tap",
+      "point2": "Side-by-side display, easy to read and convenient",
+      "point3": "Reference translations ready to use",
+      "point4": "Edit translations quickly to your liking"
     },
     "features": {
       "title": "Everything You Need",

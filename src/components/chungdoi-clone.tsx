@@ -6,21 +6,22 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ImageIcon,
-  Languages,
   Mail,
   Play,
   Star,
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import {
   type CSSProperties,
-  type KeyboardEvent as ReactKeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -209,17 +210,6 @@ function HeroSection() {
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="flex flex-col justify-center">
-          <div className="hero-enter mb-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
-            <Image
-              src="/chungdoi/images/en/banner_hero.webp"
-              alt="Beautiful online wedding invitations"
-              width={2987}
-              height={1566}
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              fetchPriority="high"
-              className="h-full w-full object-cover"
-            />
-          </div>
           <p className="hero-enter mb-4 text-2xl font-semibold text-foreground" style={{ "--hero-delay": "80ms" } as CSSProperties}>
             <span className="font-pattaya text-4xl text-primary">thiepmungonline</span>
             <span className="text-muted-foreground">{t("hero.domainSuffix")}</span>
@@ -228,7 +218,8 @@ function HeroSection() {
             <span className="shiny-text">{t("hero.title")}</span>
           </h1>
           <p className="hero-enter mt-6 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
-          <p className="hero-enter mt-4 text-sm font-semibold text-primary" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
+          <p className="hero-enter mt-2 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
+          <p className="hero-enter mt-5 max-w-2xl text-sm leading-6 text-muted-foreground" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
           <div className="hero-enter mt-8 flex flex-wrap gap-3" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href="#templates"
@@ -249,109 +240,81 @@ function HeroSection() {
           <StackFan />
         </div>
       </div>
+      <div className="relative mx-auto max-w-7xl px-4 pb-16 text-center sm:px-6 lg:px-8">
+        <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">
+          {t("hero.showcaseTitle")} <span className="font-pattaya font-normal italic text-primary">{t("hero.showcaseAccent")}</span>
+        </h2>
+        <p className="mt-4 text-muted-foreground">{t("hero.showcaseSubtitle")}</p>
+      </div>
     </section>
   );
 }
 
+const TWEEN_FACTOR = 2.3;
+
 function TemplateCarousel() {
   const t = useTranslations("home");
   const locale = useLocale();
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const interactingRef = useRef(false);
-  const resumeTimeoutRef = useRef<number | null>(null);
-  const dragRef = useRef({ pointerId: -1, startX: 0, startScrollLeft: 0, moved: false });
-  const [isDragging, setIsDragging] = useState(false);
+  const autoplay = useRef(
+    Autoplay({ delay: 4200, stopOnInteraction: false, stopOnMouseEnter: true }),
+  );
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: "center", skipSnaps: false },
+    [autoplay.current],
+  );
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
   const hrefFor = (slug: string) => {
     const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(slug) : slug;
     return `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
   };
 
-  const pauseAutoScroll = () => {
-    pausedRef.current = true;
-    if (resumeTimeoutRef.current !== null) {
-      window.clearTimeout(resumeTimeoutRef.current);
-      resumeTimeoutRef.current = null;
-    }
-  };
+  const applyTween = useCallback((api: NonNullable<typeof emblaApi>) => {
+    const engine = api.internalEngine();
+    const scrollProgress = api.scrollProgress();
+    const slidesInView = api.slidesInView();
 
-  const resumeAutoScrollSoon = () => {
-    if (resumeTimeoutRef.current !== null) window.clearTimeout(resumeTimeoutRef.current);
-    resumeTimeoutRef.current = window.setTimeout(() => {
-      pausedRef.current = false;
-      resumeTimeoutRef.current = null;
-    }, 1800);
-  };
+    api.scrollSnapList().forEach((snap, snapIndex) => {
+      let diffToTarget = snap - scrollProgress;
 
-  const normalizeScrollPosition = () => {
-    const viewport = viewportRef.current;
-    const firstSegment = trackRef.current?.firstElementChild;
-    if (!viewport || !(firstSegment instanceof HTMLElement)) return;
-
-    const segmentWidth = firstSegment.offsetWidth;
-    if (segmentWidth === 0) return;
-    if (viewport.scrollLeft < segmentWidth * 0.5) viewport.scrollLeft += segmentWidth;
-    if (viewport.scrollLeft > segmentWidth * 1.5) viewport.scrollLeft -= segmentWidth;
-  };
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    const firstSegment = trackRef.current?.firstElementChild;
-    if (!viewport || !(firstSegment instanceof HTMLElement)) return;
-
-    viewport.scrollLeft = firstSegment.offsetWidth;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let frameId = 0;
-    let previousTime = performance.now();
-
-    const animate = (time: number) => {
-      const elapsed = Math.min(time - previousTime, 50);
-      previousTime = time;
-
-      if (!interactingRef.current) normalizeScrollPosition();
-      if (!pausedRef.current && !reducedMotion.matches) {
-        viewport.scrollLeft += elapsed * 0.098;
-        normalizeScrollPosition();
+      if (engine.options.loop) {
+        engine.slideLooper.loopPoints.forEach((loopItem) => {
+          const target = loopItem.target();
+          if (snapIndex === loopItem.index && target !== 0) {
+            const sign = Math.sign(target);
+            if (sign === -1) diffToTarget = snap - (1 + scrollProgress);
+            if (sign === 1) diffToTarget = snap + (1 - scrollProgress);
+          }
+        });
       }
 
-      frameId = requestAnimationFrame(animate);
-    };
-
-    frameId = requestAnimationFrame(animate);
-    return () => {
-      cancelAnimationFrame(frameId);
-      if (resumeTimeoutRef.current !== null) window.clearTimeout(resumeTimeoutRef.current);
-    };
+      const tween = 1 - Math.abs(diffToTarget * TWEEN_FACTOR);
+      const scale = Math.min(Math.max(tween, 0.4), 1);
+      const node = api.slideNodes()[snapIndex];
+      const inner = node?.firstElementChild as HTMLElement | null;
+      if (!node || !inner) return;
+      inner.style.transform = `scale(${scale.toFixed(3)})`;
+      node.style.zIndex = slidesInView.includes(snapIndex) ? "1" : "0";
+    });
   }, []);
 
-  const finishMouseDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerId !== dragRef.current.pointerId) return;
+  useEffect(() => {
+    if (!emblaApi) return;
 
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    dragRef.current.pointerId = -1;
-    interactingRef.current = false;
-    setIsDragging(false);
-    normalizeScrollPosition();
-    resumeAutoScrollSoon();
-    window.setTimeout(() => {
-      dragRef.current.moved = false;
-    }, 0);
-  };
+    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    setScrollSnaps(emblaApi.scrollSnapList());
+    onSelect();
+    applyTween(emblaApi);
 
-  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    event.preventDefault();
-    pauseAutoScroll();
-    viewportRef.current?.scrollBy({
-      left: event.key === "ArrowLeft" ? -306 : 306,
-      behavior: "smooth",
+    emblaApi.on("select", onSelect);
+    emblaApi.on("scroll", () => applyTween(emblaApi));
+    emblaApi.on("reInit", () => {
+      setScrollSnaps(emblaApi.scrollSnapList());
+      onSelect();
+      applyTween(emblaApi);
     });
-    resumeAutoScrollSoon();
-  };
+  }, [emblaApi, applyTween]);
 
   return (
     <section className="overflow-hidden bg-background py-16">
@@ -359,89 +322,21 @@ function TemplateCarousel() {
         <div className="reveal">
           <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("carousel.title")}</h2>
           <p className="mt-4 text-muted-foreground">{t("carousel.subtitle")}</p>
-          <p className="mt-2 text-sm font-medium text-primary/80">{t("carousel.dragHint")}</p>
         </div>
       </div>
-      <div
-        ref={viewportRef}
-        role="region"
-        aria-label={t("carousel.title")}
-        tabIndex={0}
-        data-testid="template-carousel"
-        data-dragging={isDragging}
-        className={`template-carousel-viewport reveal mt-12 overflow-x-auto ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-        onClickCapture={(event) => {
-          if (!dragRef.current.moved) return;
-          event.preventDefault();
-          event.stopPropagation();
-          dragRef.current.moved = false;
-        }}
-        onFocus={pauseAutoScroll}
-        onBlur={resumeAutoScrollSoon}
-        onMouseEnter={pauseAutoScroll}
-        onMouseLeave={() => {
-          if (dragRef.current.pointerId === -1) resumeAutoScrollSoon();
-        }}
-        onTouchStart={() => {
-          interactingRef.current = true;
-          pauseAutoScroll();
-        }}
-        onTouchEnd={() => {
-          interactingRef.current = false;
-          normalizeScrollPosition();
-          resumeAutoScrollSoon();
-        }}
-        onTouchCancel={() => {
-          interactingRef.current = false;
-          normalizeScrollPosition();
-          resumeAutoScrollSoon();
-        }}
-        onWheel={() => {
-          pauseAutoScroll();
-          resumeAutoScrollSoon();
-        }}
-        onKeyDown={handleKeyDown}
-        onPointerDown={(event) => {
-          if (event.pointerType !== "mouse" || event.button !== 0) return;
-          event.preventDefault();
-          pauseAutoScroll();
-          interactingRef.current = true;
-          dragRef.current = {
-            pointerId: event.pointerId,
-            startX: event.clientX,
-            startScrollLeft: event.currentTarget.scrollLeft,
-            moved: false,
-          };
-          setIsDragging(true);
-        }}
-        onPointerMove={(event) => {
-          if (event.pointerId !== dragRef.current.pointerId) return;
-          const delta = event.clientX - dragRef.current.startX;
-          if (Math.abs(delta) > 5) dragRef.current.moved = true;
-          if (!dragRef.current.moved) return;
-          if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.setPointerCapture(event.pointerId);
-          }
-          event.preventDefault();
-          event.currentTarget.scrollLeft = dragRef.current.startScrollLeft - delta;
-        }}
-        onPointerUp={finishMouseDrag}
-        onPointerCancel={finishMouseDrag}
-      >
-        <div ref={trackRef} className="flex w-max select-none">
-          {[0, 1, 2].map((copyIndex) => (
-            <div
-              key={copyIndex}
-              className="flex shrink-0 gap-5 pr-5"
-              aria-hidden={copyIndex === 1 ? undefined : true}
-            >
-              {featuredTemplates.map((template) => (
+
+      <div className="reveal relative mt-12 w-full">
+        <div className="overflow-hidden py-4" ref={emblaRef}>
+          <div className="flex touch-pan-y">
+            {featuredTemplates.map((template) => (
+              <div
+                key={template.slug}
+                className="min-w-0 shrink-0 grow-0 basis-[286px] px-2.5 transition-[opacity] duration-300 [will-change:transform,opacity]"
+              >
                 <a
-                  key={`${template.slug}-${copyIndex}`}
                   href={hrefFor(template.slug)}
                   draggable={false}
-                  tabIndex={copyIndex === 1 ? undefined : -1}
-                  className="group relative block h-[520px] w-[286px] shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
+                  className="group relative block h-[520px] overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.08)]"
                 >
                   <img
                     src={template.listing}
@@ -459,10 +354,52 @@ function TemplateCarousel() {
                     </p>
                   </div>
                 </a>
-              ))}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
+
+        <button
+          type="button"
+          aria-label={t("carousel.prev")}
+          onClick={() => emblaApi?.scrollPrev()}
+          className="absolute left-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-lg backdrop-blur transition-all hover:bg-background hover:shadow-xl sm:left-4"
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+        <button
+          type="button"
+          aria-label={t("carousel.next")}
+          onClick={() => emblaApi?.scrollNext()}
+          className="absolute right-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-lg backdrop-blur transition-all hover:bg-background hover:shadow-xl sm:right-4"
+        >
+          <ChevronRight className="size-5" />
+        </button>
+      </div>
+
+      <div className="mt-8 flex justify-center gap-2">
+        {scrollSnaps.map((_, index) => (
+          <button
+            key={index}
+            type="button"
+            aria-label={t("carousel.goTo", { number: index + 1 })}
+            aria-current={index === selectedIndex}
+            onClick={() => emblaApi?.scrollTo(index)}
+            className={`h-2 rounded-full transition-all ${
+              index === selectedIndex ? "w-6 bg-primary" : "w-2 bg-border hover:bg-muted-foreground/40"
+            }`}
+          />
+        ))}
+      </div>
+
+      <div className="reveal mt-12 flex flex-col items-center gap-3 px-4">
+        <a
+          href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
+          className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+        >
+          {t("carousel.viewAll")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+        </a>
+        <p className="text-sm text-muted-foreground">{t("carousel.viewAllHint")}</p>
       </div>
     </section>
   );
@@ -470,6 +407,7 @@ function TemplateCarousel() {
 
 function HowItWorks() {
   const t = useTranslations("home");
+  const locale = useLocale();
   const steps: Array<[string, string, LucideIcon]> = [
     [t("howItWorks.step1Title"), t("howItWorks.step1Copy"), CalendarDays],
     [t("howItWorks.step2Title"), t("howItWorks.step2Copy"), ImageIcon],
@@ -483,19 +421,38 @@ function HowItWorks() {
           <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("howItWorks.title")}</h2>
           <p className="mt-4 text-muted-foreground">{t("howItWorks.subtitle")}</p>
         </div>
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {steps.map(([title, copy, Icon], index) => (
-            <div key={title as string} className="reveal group rounded-3xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)] transition hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_16px_40px_rgb(0_0_0/0.1)]">
-              <div className="flex items-center gap-4">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-secondary text-primary transition-transform group-hover:scale-110">
+        <div className="mx-auto mt-12 grid max-w-5xl items-center gap-12 lg:grid-cols-2">
+          <ol className="reveal relative flex w-full max-w-md flex-col lg:justify-self-end">
+            {steps.map(([title, copy, Icon], index) => (
+              <li key={title as string} className="group relative flex gap-5 pb-10 last:pb-0">
+                {index < steps.length - 1 ? (
+                  <span aria-hidden className="absolute left-6 top-14 h-[calc(100%-3.5rem)] w-px bg-border" />
+                ) : null}
+                <div className="relative z-10 flex size-12 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary transition-transform group-hover:scale-110">
                   <Icon className="size-5" />
                 </div>
-                <p className="text-sm font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
-              </div>
-              <h3 className="mt-6 font-heading text-2xl font-black text-foreground">{title}</h3>
-              <p className="mt-3 text-muted-foreground">{copy}</p>
+                <div className="pt-1">
+                  <p className="text-sm font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
+                  <h3 className="mt-2 font-heading text-2xl font-black text-foreground">{title}</h3>
+                  <p className="mt-2 text-muted-foreground">{copy}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="reveal w-full max-w-xs overflow-hidden rounded-3xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] max-lg:mx-auto lg:justify-self-start">
+            <div className="flex aspect-[9/16] items-center justify-center bg-secondary text-muted-foreground">
+              <Play className="size-12 opacity-40" />
             </div>
-          ))}
+          </div>
+        </div>
+        <div className="reveal mt-14 flex flex-col items-center gap-3">
+          <a
+            href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
+            className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+          >
+            {t("howItWorks.ctaStart")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
+          </a>
+          <p className="text-sm text-muted-foreground">{t("howItWorks.ctaHint")}</p>
         </div>
       </div>
     </section>
@@ -567,46 +524,14 @@ function GuestsSection() {
             ))}
           </ul>
         </div>
-        <div className="reveal grid gap-5 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-border bg-card p-5 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
-            <p className="text-sm text-muted-foreground">{t("guests.personalLink")}</p>
-            <h3 className="mt-3 font-heading text-2xl font-black text-foreground">{t("guests.invitePrompt")}</h3>
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="rounded-2xl bg-emerald-400 px-4 py-3 text-sm font-black text-emerald-950">{t("guests.attend")}</button>
-              <button className="rounded-2xl bg-muted px-4 py-3 text-sm font-black text-foreground">{t("guests.declined")}</button>
-            </div>
-            {[t("guests.plusOnes"), t("guests.needShuttle"), t("guests.mealNotes"), t("guests.songRequest")].map((label) => (
-              <div key={label} className="mt-3 rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-muted-foreground">
-                {label}
-              </div>
-            ))}
-          </div>
-          <div className="rounded-[2rem] border border-border bg-primary p-5 text-primary-foreground shadow-[0_8px_30px_rgb(0_0_0/0.08)]">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary-foreground/75">{t("guests.guestManager")}</p>
-            <h3 className="mt-4 font-heading text-2xl font-black">{t("guests.rsvpGathered")}</h3>
-            <div className="mt-7 grid grid-cols-2 gap-3">
-              {[
-                ["58", t("guests.guestsTracked")],
-                ["84%", t("guests.replied")],
-                ["24", t("guests.attending")],
-                ["3", t("guests.declinedStat")],
-              ].map(([value, label]) => (
-                <div key={label} className="rounded-2xl bg-background/15 p-4">
-                  <p className="text-3xl font-black">{value}</p>
-                  <p className="text-xs text-primary-foreground/75">{label}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 rounded-2xl bg-background/10 p-4">
-              <div className="flex justify-between text-sm">
-                <span>{t("guests.needShuttle")}</span>
-                <span>18/24</span>
-              </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-background/25">
-                <div className="h-full w-3/4 rounded-full bg-primary-foreground" />
-              </div>
-            </div>
-          </div>
+        <div className="reveal">
+          <img
+            src="/chungdoi/images/rsvp-showcase.png"
+            alt={t("guests.title")}
+            loading="lazy"
+            decoding="async"
+            className="w-full"
+          />
         </div>
       </div>
     </section>
@@ -619,31 +544,32 @@ function LanguageSection() {
   return (
     <section className="bg-background py-20">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-        <div className="reveal rounded-[2rem] border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              [t("languages.groomLabel"), "신랑"],
-              [t("languages.brideLabel"), "신부"],
-              [t("languages.invitedLabel"), "초대합니다"],
-            ].map(([a, b]) => (
-              <div key={a} className="rounded-2xl bg-muted p-4">
-                <p className="text-sm text-muted-foreground">{a}</p>
-                <p className="mt-2 text-xl font-black text-foreground">{b}</p>
-              </div>
-            ))}
-          </div>
+        <div className="reveal">
+          <img
+            src="/chungdoi/images/language-showcase.png"
+            alt={t("languages.title")}
+            loading="lazy"
+            decoding="async"
+            className="w-full"
+          />
         </div>
         <div className="reveal">
-          <Languages className="size-10 text-primary" />
-          <h2 className="mt-5 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("languages.title")}</h2>
-          <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("languages.subtitle")}</p>
-          <div className="mt-7 flex flex-wrap gap-2">
-            {["English", "Tiếng Việt", "한국어", "日本語", "Français", "Español", "繁體中文"].map((label) => (
-              <span key={label} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground">
-                {label}
-              </span>
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("languages.eyebrow")}</p>
+          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("languages.title")}</h2>
+          <p className="mt-6 text-lg leading-8 text-muted-foreground">{t("languages.subtitle")}</p>
+          <ul className="mt-8 space-y-4 text-foreground">
+            {[
+              t("languages.point1"),
+              t("languages.point2"),
+              t("languages.point3"),
+              t("languages.point4"),
+            ].map((item) => (
+              <li key={item} className="flex gap-3">
+                <Check className="mt-1 size-5 shrink-0 text-primary" />
+                <span>{item}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </section>
@@ -660,8 +586,8 @@ function FaqSection() {
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <h2 className="reveal text-center font-heading text-3xl font-black text-foreground sm:text-5xl">{t("faq.heading")}</h2>
         <div className="reveal mt-10 divide-y divide-border overflow-hidden rounded-[2rem] border border-border bg-card">
-          {faqKeys.map((key, index) => (
-            <details key={key} className="group p-6" open={index === 0}>
+          {faqKeys.map((key) => (
+            <details key={key} className="group p-6">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-black text-foreground">
                 {t(`faq.${key}Q`)}
                 <ChevronDown className="size-5 shrink-0 text-primary transition group-open:rotate-180" />
