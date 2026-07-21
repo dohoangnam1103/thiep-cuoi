@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 
+import { Combobox } from "@/components/ui/combobox";
+
 import type { PublicState } from "./actions";
 
 type ActionFn = (prev: PublicState, formData: FormData) => Promise<PublicState>;
@@ -47,16 +49,18 @@ export function RsvpForm({ action, guest }: { action: ActionFn; guest?: GuestPre
           className="w-24 rounded-lg border border-black/15 bg-white/80 px-4 py-2.5 text-sm text-neutral-800 outline-none focus:border-neutral-500"
           aria-label="Số khách"
         />
-        <select
-          name="side"
-          className="flex-1 rounded-lg border border-black/15 bg-white/80 px-4 py-2.5 text-sm text-neutral-800 outline-none focus:border-neutral-500"
+        <Combobox
+          className="flex-1"
+          variant="neutral"
           aria-label="Nhà"
+          name="side"
           defaultValue={guest?.side ?? ""}
-        >
-          <option value="">Chọn nhà</option>
-          <option value="Nhà trai">Nhà trai</option>
-          <option value="Nhà gái">Nhà gái</option>
-        </select>
+          options={[
+            { value: "", label: "Chọn nhà" },
+            { value: "Nhà trai", label: "Nhà trai" },
+            { value: "Nhà gái", label: "Nhà gái" },
+          ]}
+        />
       </div>
       <label className="flex items-center gap-2 text-sm text-neutral-700">
         <input type="checkbox" name="shuttle" value="yes" /> Cần xe đưa đón
