@@ -592,6 +592,18 @@ function SubHeader({ children }: { children: React.ReactNode }) {
   return <p className="sm:col-span-2 -mb-1 text-sm font-semibold text-foreground">{children}</p>;
 }
 
+function TierDivider() {
+  return (
+    <div className="flex items-center gap-3 pt-2">
+      <span className="h-px flex-1 bg-border" />
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Tùy chỉnh thêm — không bắt buộc
+      </span>
+      <span className="h-px flex-1 bg-border" />
+    </div>
+  );
+}
+
 function RequiredProgress({ bride, groom, date }: { bride: boolean; groom: boolean; date: boolean }) {
   const items = [
     { label: "Tên cô dâu", done: bride },
@@ -876,11 +888,7 @@ export function EditorForm({
           id="editor-form"
         >
         <RequiredProgress bride={coreFilled.bride} groom={coreFilled.groom} date={coreFilled.date} />
-        <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
-          <TemplatePicker defaultValue={seed("templateId", templateId)} />
-        </Accordion>
-
-        <Accordion title="Thông tin cơ bản" icon="♡">
+        <Accordion title="Thông tin chính" icon="♡">
           <Grid>
             <Text
               name="brideFullName"
@@ -929,17 +937,6 @@ export function EditorForm({
             </div>
             <Text name="date" label="Ngày cưới" type="date" defaultValue={seed("date", field(content, "date"))} hint="Ngày tổ chức chính, hiển thị nổi bật trên thiệp." required />
             <Text name="time" label="Giờ cưới" type="time" defaultValue={seed("time", field(content, "time"))} />
-            <Text name="ceremonyDate" label="Ngày lễ" type="date" defaultValue={seed("ceremonyDate", field(content, "ceremonyDate"))} hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới." />
-            <Text name="ceremonyTime" label="Giờ lễ" type="time" defaultValue={seed("ceremonyTime", field(content, "ceremonyTime"))} />
-            <Text
-              name="ceremonyHeader"
-              label="Tiêu đề lễ"
-              defaultValue={seed("ceremonyHeader", field(content, "ceremonyHeader"))}
-              placeholder="VD: Lễ Thành Hôn"
-              hint="Dòng chữ đặt trên phần thông tin lễ (VD: Lễ Vu Quy, Lễ Thành Hôn)."
-              full
-            />
-            <ColorField name="primaryColor" label="Màu chủ đạo" defaultValue={seed("primaryColor", field(content, "primaryColor"))} />
           </Grid>
         </Accordion>
 
@@ -971,7 +968,7 @@ export function EditorForm({
           </Grid>
         </Accordion>
 
-        <Accordion title="Tiệc cưới" icon="✦">
+        <Accordion title="Nơi tổ chức" icon="✦">
           <Grid>
             <Text
               name="address"
@@ -998,7 +995,17 @@ export function EditorForm({
           </Grid>
         </Accordion>
 
-        <Accordion title="Chương trình" icon="✿">
+        <Accordion title="Album ảnh" icon="◱">
+          <GalleryUploader initial={Array.isArray(draft?.galleryUrl) ? (draft!.galleryUrl as string[]) : gallery} />
+        </Accordion>
+
+        <Accordion title="Mẫu thiệp" icon="✧">
+          <TemplatePicker defaultValue={seed("templateId", templateId)} />
+        </Accordion>
+
+        <TierDivider />
+
+        <Accordion title="Chương trình" icon="✿" defaultOpen={false}>
           <p className="mb-3 text-xs text-muted-foreground">
             Các mốc thời gian trong ngày cưới, ví dụ: 09:00 Lễ Vu Quy, 11:00 Đón khách, 18:00 Khai tiệc.
           </p>
@@ -1033,8 +1040,19 @@ export function EditorForm({
           </div>
         </Accordion>
 
-        <Accordion title="Album ảnh" icon="◱">
-          <GalleryUploader initial={Array.isArray(draft?.galleryUrl) ? (draft!.galleryUrl as string[]) : gallery} />
+        <Accordion title="Lễ riêng" icon="🕊" defaultOpen={false}>
+          <Grid>
+            <Text name="ceremonyDate" label="Ngày lễ" type="date" defaultValue={seed("ceremonyDate", field(content, "ceremonyDate"))} hint="Ngày lễ vu quy/thành hôn nếu khác ngày cưới." />
+            <Text name="ceremonyTime" label="Giờ lễ" type="time" defaultValue={seed("ceremonyTime", field(content, "ceremonyTime"))} />
+            <Text
+              name="ceremonyHeader"
+              label="Tiêu đề lễ"
+              defaultValue={seed("ceremonyHeader", field(content, "ceremonyHeader"))}
+              placeholder="VD: Lễ Thành Hôn"
+              hint="Dòng chữ đặt trên phần thông tin lễ (VD: Lễ Vu Quy, Lễ Thành Hôn)."
+              full
+            />
+          </Grid>
         </Accordion>
 
         <Accordion title="Font & Nhạc" icon="♪" defaultOpen={false}>
@@ -1052,6 +1070,12 @@ export function EditorForm({
               locale={locale}
               messages={musicMessages}
             />
+          </Grid>
+        </Accordion>
+
+        <Accordion title="Màu chủ đạo" icon="🎨" defaultOpen={false}>
+          <Grid>
+            <ColorField name="primaryColor" label="Màu chủ đạo" defaultValue={seed("primaryColor", field(content, "primaryColor"))} />
           </Grid>
         </Accordion>
 
