@@ -34,6 +34,13 @@ export const routing = defineRouting({
       ja: "/pricing",
       zh: "/pricing",
     },
+    "/create-wedding-invitation-online": {
+      vi: "/tao-thiep-cuoi-online",
+      en: "/create-wedding-invitation-online",
+      ko: "/create-wedding-invitation-online",
+      ja: "/create-wedding-invitation-online",
+      zh: "/create-wedding-invitation-online",
+    },
     "/tools": {
       vi: "/cong-cu",
       en: "/tools",

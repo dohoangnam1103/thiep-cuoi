@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: Array<{ href: Href; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
     { href: "/", priority: 1, changeFrequency: "weekly" },
     { href: "/templates", priority: 0.9, changeFrequency: "weekly" },
+    { href: "/create-wedding-invitation-online", priority: 0.9, changeFrequency: "monthly" },
     { href: "/pricing", priority: 0.8, changeFrequency: "monthly" },
     { href: "/tools", priority: 0.6, changeFrequency: "monthly" },
     { href: "/blog", priority: 0.6, changeFrequency: "weekly" },

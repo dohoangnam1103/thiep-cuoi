@@ -30,6 +30,7 @@ import {
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { getVietnameseTemplateSlug, templates } from "@/data/chungdoi";
+import { Link } from "@/i18n/navigation";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
@@ -452,7 +453,12 @@ function HowItWorks() {
           >
             {t("howItWorks.ctaStart")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </a>
-          <p className="text-sm text-muted-foreground">{t("howItWorks.ctaHint")}</p>
+          <Link
+            href="/create-wedding-invitation-online"
+            className="text-sm font-medium text-muted-foreground underline-offset-4 transition hover:text-primary hover:underline"
+          >
+            {t("howItWorks.ctaHint")}
+          </Link>
         </div>
       </div>
     </section>

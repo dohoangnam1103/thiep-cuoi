@@ -282,6 +282,223 @@
   "demoCta": {
     "useTemplate": "Use this invitation"
   },
+  "weddingGuide": {
+    "metadata": {
+      "title": "How to create an online wedding invitation in 7 steps | Thiệp Mừng Online",
+      "description": "A step-by-step guide with screenshots: choose a template, add details, personalize guest names, enable RSVP, and publish in 10 minutes."
+    },
+    "breadcrumbLabel": "Breadcrumb",
+    "breadcrumbHome": "Home",
+    "breadcrumbCurrent": "Create an online wedding invitation",
+    "hero": {
+      "title": "How to Create an Online Wedding Invitation in 7 Steps",
+      "description": "Follow the illustrated steps to choose a template, enter your details, personalize guest names, enable RSVP, and pay only when you are happy. Finish in 10 minutes.",
+      "badge1": "Free to create",
+      "badge2": "No sign-up required",
+      "badge3": "10 minutes",
+      "badge4": "15+ templates",
+      "cta": "Choose a template",
+      "videoTitle": "Online wedding invitation video guide",
+      "videoComingSoon": "Video guide coming soon",
+      "videoHint": "The complete walkthrough will be added here when it is ready.",
+      "brand": "Thiệp Mừng Online"
+    },
+    "steps": {
+      "title": "Create your online wedding invitation",
+      "description": "Seven simple steps, with no design skills required.",
+      "step1": {
+        "title": "Choose a template",
+        "description": "Pick your favorite from professionally designed traditional, modern, and minimalist wedding invitation templates.",
+        "alt": "Online wedding invitation template gallery"
+      },
+      "step2": {
+        "title": "Enter your details",
+        "description": "Add the couple, family, ceremony, and reception information in an intuitive editor with an instant preview.",
+        "alt": "Online wedding invitation editor"
+      },
+      "step3": {
+        "title": "Customize the content",
+        "description": "Add wedding photos, background music, Google Maps, bank details, and a thank-you message in one invitation.",
+        "alt": "Customize wedding invitation photos, music, and map"
+      },
+      "step4": {
+        "title": "Preview the invitation",
+        "description": "Switch between editing and preview to check the invitation before sharing. Every change appears immediately.",
+        "alt": "Preview and share an online wedding invitation"
+      },
+      "step5": {
+        "title": "Personalize guest names",
+        "description": "Share one general link or create a personal link that displays each guest's name for a thoughtful welcome.",
+        "alt": "Personalize guest names on a wedding invitation"
+      },
+      "step6": {
+        "title": "Manage RSVPs",
+        "description": "Track responses and headcount, then add custom questions for transport, dietary needs, and other guest requests.",
+        "alt": "Manage wedding guests and RSVP responses"
+      },
+      "step7": {
+        "title": "Pay when you are happy",
+        "description": "After the three-day trial, open your dashboard and pay by bank QR or transfer. Your invitation is activated automatically.",
+        "alt": "Pay for an online wedding invitation by bank transfer"
+      }
+    },
+    "templates": {
+      "title": "Featured wedding invitations",
+      "description": "Professional designs for every wedding style.",
+      "template1": "Double Dragon Red",
+      "template2": "Spring Garden Green",
+      "template3": "Cherry Blossom",
+      "template4": "Dragon Phoenix Red",
+      "cta": "View all templates"
+    },
+    "features": {
+      "title": "What can your online invitation include?",
+      "description": "Everything guests need, from the couple's information to RSVP and wedding gifts, in one elegant invitation.",
+      "couple": {
+        "title": "Couple information",
+        "description": "Enter the bride and groom's full names. Short names are generated for the envelope and compact sections.",
+        "tag1": "Groom's full name",
+        "tag2": "Bride's full name",
+        "tag3": "Family order"
+      },
+      "family": {
+        "title": "Family information",
+        "description": "Add both families' parent names and addresses for a complete formal wedding invitation.",
+        "tag1": "Groom's parents",
+        "tag2": "Bride's parents",
+        "tag3": "Family addresses"
+      },
+      "ceremony": {
+        "title": "Wedding ceremony",
+        "description": "Add one or more ceremony types, including the engagement, bridal procession, and wedding ceremony.",
+        "tag1": "Date and time",
+        "tag2": "Venue",
+        "tag3": "Ceremony type",
+        "tag4": "Announcement"
+      },
+      "reception": {
+        "title": "Wedding reception",
+        "description": "Share the reception date, welcome time, meal time, venue address, and Google Maps directions.",
+        "tag1": "Reception date",
+        "tag2": "Welcome time",
+        "tag3": "Reception time",
+        "tag4": "Venue address",
+        "tag5": "Google Maps"
+      },
+      "timeline": {
+        "title": "Wedding-day timeline",
+        "description": "Display the day's milestones in a clear vertical timeline so guests know what happens and when.",
+        "tag1": "Show or hide",
+        "tag2": "Custom title",
+        "tag3": "Edit activities",
+        "tag4": "Automatic translations"
+      },
+      "calendar": {
+        "title": "Countdown and calendar",
+        "description": "Build anticipation with a countdown and let guests save the wedding date in one tap.",
+        "tag1": "Wedding countdown",
+        "tag2": "Google Calendar",
+        "tag3": "Apple Calendar"
+      },
+      "album": {
+        "title": "Wedding album",
+        "description": "Upload your favorite photos to a responsive gallery with a full-screen lightbox.",
+        "tag1": "Unlimited wedding photos"
+      },
+      "rsvp": {
+        "title": "RSVP",
+        "description": "Guests respond directly on the invitation, while you manage responses and custom questions in one dashboard.",
+        "tag1": "Enable or disable RSVP",
+        "tag2": "Custom questions"
+      },
+      "guestbook": {
+        "title": "Guestbook",
+        "description": "Guests leave wishes directly on the invitation, and you stay in control of what is displayed.",
+        "tag1": "Enable or disable guestbook"
+      },
+      "gift": {
+        "title": "Wedding gift box",
+        "description": "Display bank details for both sides and automatically generate QR codes for wedding gifts.",
+        "tag1": "Groom's bank",
+        "tag2": "Groom's account",
+        "tag3": "Bride's bank",
+        "tag4": "Bride's account"
+      },
+      "thanks": {
+        "title": "Thank-you message",
+        "description": "Close the invitation with a personalized note of appreciation for your guests.",
+        "tag1": "Custom thank-you copy"
+      },
+      "envelope": {
+        "title": "Invitation envelope",
+        "description": "Create a memorable first impression with a personal greeting, guest name, and invitation line.",
+        "tag1": "Greeting",
+        "tag2": "Guest name",
+        "tag3": "Invitation line"
+      },
+      "music": {
+        "title": "Background music",
+        "description": "Choose a romantic soundtrack from the built-in music library for guests to enjoy.",
+        "tag1": "Music library"
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "faq1": {
+        "question": "Can I create a beautiful invitation without design skills?",
+        "answer": "Absolutely. Every template is professionally designed. Choose your favorite and enter your information without adjusting layouts, fonts, or colors."
+      },
+      "faq2": {
+        "question": "What if I do not have much time?",
+        "answer": "Ten minutes is enough to choose a template, add names and dates, and upload a few photos. You can also save a draft and return later."
+      },
+      "faq3": {
+        "question": "Is creating an invitation really free?",
+        "answer": "Yes. Creating, editing, and previewing are free and require no sign-up. Try every feature for three days and only pay when you are happy."
+      },
+      "faq4": {
+        "question": "What should I prepare first?",
+        "answer": "Prepare the couple and family names, ceremony and reception details, five to ten favorite photos, and bank details if you want to receive gifts by QR."
+      },
+      "faq5": {
+        "question": "How do I share the invitation?",
+        "answer": "Send one general link or a personal guest link through Messenger, SMS, email, or any chat app. Guests can open it on phones and computers."
+      },
+      "faq6": {
+        "question": "Can guests RSVP on the invitation?",
+        "answer": "Yes. Guests respond directly on the invitation, and you can follow every response from your guest dashboard."
+      },
+      "faq7": {
+        "question": "How do I pay?",
+        "answer": "Open your dashboard and choose payment. Scan the bank QR code or make a manual transfer, and the invitation is activated automatically."
+      },
+      "faq8": {
+        "question": "Can I keep editing after payment?",
+        "answer": "Yes. Change the template, photos, names, schedule, or music at any time. The original shared link updates automatically."
+      }
+    },
+    "next": {
+      "eyebrow": "Next step",
+      "title": "Invite guests online",
+      "description": "Add guest names, send personal links, and track every RSVP from one place."
+    },
+    "resources": {
+      "title": "Helpful guides and tools",
+      "item1Title": "Five wedding-day milestones guests need",
+      "item1Description": "Write a short, useful guest timeline without mixing in your internal run sheet.",
+      "item2Title": "Write a wedding invitation message",
+      "item2Description": "Create a thoughtful invitation message for every guest relationship and language.",
+      "item3Title": "Online Save the Date",
+      "item3Description": "Plan ahead for destination weddings and guests who need to book travel."
+    },
+    "finalCta": {
+      "title": "Ready to create your invitation?",
+      "description": "Choose a design you love and start creating your online wedding invitation today.",
+      "primary": "Choose a template",
+      "secondary": "View pricing",
+      "note": "Create for free and only pay when you are happy"
+    }
+  },
   "listing": {
     "metaTitle": "Wedding Invitation Templates | Thiệp Mừng Online",
     "metaDescription": "Browse the Thiệp Mừng Online wedding invitation templates: filter by style and color, preview and open a live demo with cover animation, gallery and RSVP.",

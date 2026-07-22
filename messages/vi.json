@@ -282,6 +282,223 @@
   "demoCta": {
     "useTemplate": "Sử dụng thiệp này"
   },
+  "weddingGuide": {
+    "metadata": {
+      "title": "Cách tạo thiệp cưới online chỉ với 7 bước | Thiệp Mừng Online",
+      "description": "Hướng dẫn từng bước có ảnh minh họa: chọn mẫu, điền thông tin, ghi tên khách, bật RSVP và thanh toán. Hoàn thành thiệp cưới online trong 10 phút."
+    },
+    "breadcrumbLabel": "Đường dẫn trang",
+    "breadcrumbHome": "Trang chủ",
+    "breadcrumbCurrent": "Tạo thiệp cưới online",
+    "hero": {
+      "title": "Cách Tạo Thiệp Cưới Online: Hướng Dẫn 7 Bước",
+      "description": "Hướng dẫn từng bước có ảnh minh họa: chọn mẫu, điền thông tin, ghi tên khách, bật RSVP, thanh toán. Hoàn thành trong 10 phút.",
+      "badge1": "Miễn phí",
+      "badge2": "Không cần đăng ký",
+      "badge3": "10 phút",
+      "badge4": "15+ mẫu thiệp",
+      "cta": "Chọn mẫu thiệp",
+      "videoTitle": "Video hướng dẫn tạo thiệp cưới online",
+      "videoComingSoon": "Video hướng dẫn sắp cập nhật",
+      "videoHint": "Video chi tiết sẽ được bổ sung tại đây sau khi hoàn thiện.",
+      "brand": "Thiệp Mừng Online"
+    },
+    "steps": {
+      "title": "Cách tạo thiệp cưới online",
+      "description": "Chỉ 7 bước đơn giản, không cần kỹ năng thiết kế.",
+      "step1": {
+        "title": "Chọn mẫu thiệp",
+        "description": "Chọn mẫu thiệp cưới yêu thích từ nhiều mẫu thiết kế chuyên nghiệp. Mỗi mẫu có phong cách riêng: truyền thống, hiện đại, tối giản.",
+        "alt": "Danh sách mẫu thiệp cưới online trên Thiệp Mừng Online"
+      },
+      "step2": {
+        "title": "Điền thông tin",
+        "description": "Nhập thông tin cặp đôi, gia đình, ngày giờ tiệc cưới. Giao diện chỉnh sửa trực quan, xem trước ngay khi nhập.",
+        "alt": "Giao diện chỉnh sửa thiệp cưới online"
+      },
+      "step3": {
+        "title": "Tùy chỉnh nội dung",
+        "description": "Thêm ảnh cưới, nhạc nền, bản đồ Google Maps, thông tin ngân hàng, lời cảm ơn. Tất cả trong một thiệp.",
+        "alt": "Tùy chỉnh nội dung thiệp cưới gồm ảnh, nhạc và bản đồ"
+      },
+      "step4": {
+        "title": "Xem trước thiệp",
+        "description": "Chuyển đổi qua lại giữa chế độ chỉnh sửa và xem trước để kiểm tra thiệp trước khi gửi. Thấy ngay kết quả sau mỗi thay đổi.",
+        "alt": "Xem trước và chia sẻ thiệp cưới online"
+      },
+      "step5": {
+        "title": "Ghi tên khách mời",
+        "description": "Chia sẻ link chung cho tất cả hoặc tạo link riêng ghi tên từng khách mời lên thiệp. Khách nhận được thiệp có tên mình, cảm thấy được trân trọng.",
+        "alt": "Ghi tên khách mời lên thiệp cưới online"
+      },
+      "step6": {
+        "title": "Quản lý RSVP",
+        "description": "Theo dõi khách mời đã xác nhận tham dự, xem số lượng khách đến. Thêm câu hỏi tùy chỉnh như đặt xe đưa đón, ăn chay để nắm nhu cầu khách mời.",
+        "alt": "Quản lý khách mời và xác nhận tham dự RSVP"
+      },
+      "step7": {
+        "title": "Thanh toán khi hài lòng",
+        "description": "Sau 3 ngày dùng thử, vào trang quản lý và nhấn nút thanh toán. Quét mã QR bằng app ngân hàng hoặc chuyển khoản thủ công. Thiệp được kích hoạt tự động trong vài giây sau khi nhận được tiền.",
+        "alt": "Thanh toán thiệp cưới online qua chuyển khoản ngân hàng"
+      }
+    },
+    "templates": {
+      "title": "Mẫu thiệp cưới nổi bật",
+      "description": "Nhiều mẫu thiệp cưới thiết kế chuyên nghiệp, phù hợp mọi phong cách.",
+      "template1": "Song Long Đỏ",
+      "template2": "Vườn Xuân Xanh",
+      "template3": "Hoa Anh Đào",
+      "template4": "Long Phượng Đỏ",
+      "cta": "Xem tất cả mẫu thiệp"
+    },
+    "features": {
+      "title": "Thiệp cưới online bao gồm những gì?",
+      "description": "Một thiệp cưới trên Thiệp Mừng Online có đầy đủ các phần thông tin cần thiết, từ thông tin cặp đôi đến hộp mừng cưới.",
+      "couple": {
+        "title": "Thông tin cặp đôi",
+        "description": "Điền họ tên đầy đủ của cô dâu và chú rể. Tên ngắn sẽ tự động trích xuất từ tên đầy đủ để hiển thị trên phong bì và các mục nhỏ.",
+        "tag1": "Họ tên chú rể",
+        "tag2": "Họ tên cô dâu",
+        "tag3": "Thứ tự trong gia đình"
+      },
+      "family": {
+        "title": "Thông tin gia đình",
+        "description": "Thông tin bố mẹ hai bên để in trên thiệp mời chính thức. Đây là phần không thể thiếu trong thiệp cưới truyền thống Việt Nam.",
+        "tag1": "Họ tên cha mẹ chú rể",
+        "tag2": "Họ tên cha mẹ cô dâu",
+        "tag3": "Địa chỉ nhà trai và nhà gái"
+      },
+      "ceremony": {
+        "title": "Lễ cưới",
+        "description": "Thông tin lễ thành hôn hoặc lễ nạp tài. Hỗ trợ nhiều nghi lễ khác nhau trên cùng một thiệp.",
+        "tag1": "Ngày giờ",
+        "tag2": "Địa điểm",
+        "tag3": "Loại nghi lễ",
+        "tag4": "Lời thông báo"
+      },
+      "reception": {
+        "title": "Tiệc cưới",
+        "description": "Chi tiết buổi tiệc, giờ đón khách, giờ khai tiệc, địa chỉ nhà hàng và bản đồ Google Maps để khách dễ dàng tìm đường.",
+        "tag1": "Ngày tiệc",
+        "tag2": "Giờ đón khách",
+        "tag3": "Giờ khai tiệc",
+        "tag4": "Địa chỉ nhà hàng",
+        "tag5": "Bản đồ Google Maps"
+      },
+      "timeline": {
+        "title": "Lịch trình ngày cưới",
+        "description": "Hiển thị các mốc thời gian trong ngày cưới dưới dạng timeline dọc để khách biết khi nào nên có mặt và các nghi thức diễn ra khi nào.",
+        "tag1": "Bật/tắt lịch trình",
+        "tag2": "Tiêu đề tùy chỉnh",
+        "tag3": "Thêm, sửa, xóa hoạt động",
+        "tag4": "Đa ngôn ngữ tự động"
+      },
+      "calendar": {
+        "title": "Đếm ngược & thêm vào lịch",
+        "description": "Đồng hồ đếm ngược tự động tới ngày cưới. Nút thêm vào lịch giúp khách lưu ngày cưới chỉ với một lần bấm.",
+        "tag1": "Đếm ngược tới ngày cưới",
+        "tag2": "Thêm vào Google Calendar",
+        "tag3": "Thêm vào Apple Calendar"
+      },
+      "album": {
+        "title": "Album ảnh cưới",
+        "description": "Tải lên những bức ảnh đẹp nhất của hai bạn. Album hiển thị dạng lưới với hiệu ứng lightbox khi khách xem chi tiết.",
+        "tag1": "Ảnh cưới không giới hạn"
+      },
+      "rsvp": {
+        "title": "Xác nhận tham dự (RSVP)",
+        "description": "Khách mời xác nhận tham dự trực tiếp trên thiệp. Bạn có thể tùy chỉnh câu hỏi và xem danh sách khách đã xác nhận.",
+        "tag1": "Bật/tắt RSVP",
+        "tag2": "Câu hỏi tùy chỉnh"
+      },
+      "guestbook": {
+        "title": "Sổ lưu bút",
+        "description": "Khách mời gửi lời chúc trực tiếp trên thiệp. Bạn có thể quản lý và xóa những lời chúc không phù hợp.",
+        "tag1": "Bật/tắt sổ lưu bút"
+      },
+      "gift": {
+        "title": "Hộp mừng cưới",
+        "description": "Hiển thị tài khoản ngân hàng của cả hai bên để khách chuyển khoản mừng cưới. Tự động tạo mã QR từ số tài khoản.",
+        "tag1": "Ngân hàng chú rể",
+        "tag2": "Số tài khoản chú rể",
+        "tag3": "Ngân hàng cô dâu",
+        "tag4": "Số tài khoản cô dâu"
+      },
+      "thanks": {
+        "title": "Lời cảm ơn",
+        "description": "Lời cảm ơn hiển thị ở cuối thiệp. Có thể tùy chỉnh nội dung để gửi lời tri ân đến khách mời.",
+        "tag1": "Nội dung lời cảm ơn"
+      },
+      "envelope": {
+        "title": "Phong bì",
+        "description": "Màn hình phong bì là trang đầu tiên khách mời nhìn thấy. Tùy chỉnh lời chào và tên khách mời để tạo ấn tượng đầu tiên.",
+        "tag1": "Lời chào",
+        "tag2": "Tên khách mời",
+        "tag3": "Lời mời"
+      },
+      "music": {
+        "title": "Nhạc nền",
+        "description": "Chọn nhạc nền cho thiệp cưới từ thư viện có sẵn để tạo không khí lãng mạn khi khách mở thiệp.",
+        "tag1": "Bài hát từ thư viện"
+      }
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "faq1": {
+        "question": "Mình không biết thiết kế, có tạo được thiệp đẹp không?",
+        "answer": "Hoàn toàn được. Tất cả mẫu thiệp đều được thiết kế sẵn bởi đội ngũ chuyên nghiệp. Bạn chỉ cần chọn mẫu yêu thích rồi điền thông tin vào — không cần chỉnh bố cục, chọn font chữ hay phối màu."
+      },
+      "faq2": {
+        "question": "Mình rất bận, không có thời gian làm thiệp thì sao?",
+        "answer": "Chỉ cần 10 phút là xong. Chọn mẫu, điền tên và ngày cưới, thêm vài tấm ảnh là đã có thiệp hoàn chỉnh. Bạn có thể làm ngay trên điện thoại lúc rảnh, lưu nháp rồi quay lại chỉnh sửa sau nếu muốn."
+      },
+      "faq3": {
+        "question": "Tạo thiệp cưới online có thực sự miễn phí không?",
+        "answer": "Có. Bạn tạo thiệp, điền thông tin, xem trước hoàn toàn miễn phí và không cần đăng ký. Thiệp được dùng thử 3 ngày đầy đủ tính năng. Chỉ thanh toán khi bạn thực sự hài lòng và muốn sử dụng lâu dài."
+      },
+      "faq4": {
+        "question": "Cần chuẩn bị gì trước khi tạo thiệp?",
+        "answer": "Bạn nên chuẩn bị họ tên cô dâu chú rể, thông tin cha mẹ hai bên, ngày giờ và địa điểm tổ chức, 5-10 ảnh cưới đẹp nhất và tài khoản ngân hàng nếu muốn nhận mừng cưới qua mã QR."
+      },
+      "faq5": {
+        "question": "Thiệp cưới online chia sẻ cho khách mời bằng cách nào?",
+        "answer": "Bạn nhận được một đường link riêng. Gửi link chung cho tất cả hoặc tạo link riêng ghi tên từng khách mời. Chia sẻ qua Zalo, Messenger hoặc SMS; khách mở trên điện thoại hay máy tính đều được."
+      },
+      "faq6": {
+        "question": "Khách mời có thể xác nhận tham dự trên thiệp không?",
+        "answer": "Có. Thiệp có tính năng RSVP để khách xác nhận tham dự trực tiếp. Bạn theo dõi danh sách khách đã xác nhận trong trang quản lý, rất tiện cho việc chuẩn bị bàn tiệc."
+      },
+      "faq7": {
+        "question": "Thanh toán bằng cách nào?",
+        "answer": "Vào trang quản lý và nhấn nút thanh toán. Hệ thống tạo mã QR chuyển khoản để bạn quét bằng app ngân hàng hoặc chuyển khoản thủ công. Thiệp được kích hoạt tự động sau khi nhận được tiền."
+      },
+      "faq8": {
+        "question": "Sau khi thanh toán còn chỉnh sửa được không?",
+        "answer": "Được. Bạn vẫn có thể đổi mẫu, thay ảnh, sửa tên, cập nhật ngày giờ và thêm nhạc. Mọi thay đổi cập nhật ngay trên đường link đã gửi, không cần gửi lại link mới."
+      }
+    },
+    "next": {
+      "eyebrow": "Bước tiếp theo",
+      "title": "Mời cưới online",
+      "description": "Thêm tên khách mời, gửi thiệp riêng qua Zalo hoặc Messenger và theo dõi xác nhận tham dự."
+    },
+    "resources": {
+      "title": "Cẩm nang & công cụ hữu ích",
+      "item1Title": "Lịch trình ngày cưới: 5 mốc khách mời cần biết",
+      "item1Description": "Viết lịch trình trên thiệp ngắn gọn cho khách, không trộn lịch điều phối nội bộ.",
+      "item2Title": "Soạn tin nhắn mời cưới",
+      "item2Description": "Công cụ giúp soạn tin mời cưới chuẩn vai vế và ngôn ngữ.",
+      "item3Title": "Save the Date online",
+      "item3Description": "Gợi ý cho đám cưới có khách Việt Kiều cần mua vé bay hoặc cưới destination."
+    },
+    "finalCta": {
+      "title": "Sẵn sàng tạo thiệp cưới?",
+      "description": "Chọn mẫu thiệp yêu thích và bắt đầu tạo thiệp cưới ngay hôm nay.",
+      "primary": "Chọn mẫu thiệp",
+      "secondary": "Xem bảng giá",
+      "note": "Tạo miễn phí, chỉ thanh toán khi bạn hài lòng"
+    }
+  },
   "listing": {
     "metaTitle": "Mẫu thiệp cưới online | Thiệp Mừng Online",
     "metaDescription": "Kho mẫu thiệp cưới online của Thiệp Mừng Online: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
