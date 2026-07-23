@@ -57,7 +57,7 @@ export function DashboardInvitationCard({
 
       <div
         className={`relative z-10 ${
-          theme ? "rounded-xl bg-white/85 p-4 backdrop-blur-sm sm:p-5" : ""
+          theme ? "rounded-xl bg-white/45 p-4 backdrop-blur-sm sm:p-5" : ""
         }`}
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
