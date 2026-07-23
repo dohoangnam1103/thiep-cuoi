@@ -51,3 +51,18 @@ test("relativeLuminance parses rgb and hex consistently", () => {
   assert.ok(Math.abs(hex - rgb) < 1e-9);
   assert.ok(hex > 0.99);
 });
+
+test("relativeLuminance composites fully transparent rgba over white", () => {
+  const luminance = relativeLuminance("rgba(0,0,0,0)");
+  if (luminance === null) throw new Error("expected a parseable color");
+  assert.ok(luminance > 0.99);
+});
+
+test("relativeLuminance lightens translucent rgba over white", () => {
+  const translucent = relativeLuminance("rgba(210, 95, 101, 0.7)");
+  const opaque = relativeLuminance("rgb(210, 95, 101)");
+  if (translucent === null || opaque === null) {
+    throw new Error("expected parseable colors");
+  }
+  assert.ok(translucent > opaque);
+});

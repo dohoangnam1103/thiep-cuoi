@@ -12,7 +12,7 @@ const NEUTRAL_MUTED = "#4b5563";
 const READABLE_LUMINANCE_MAX = 0.6;
 const MAX_DECORATIONS = 2;
 
-function parseColorChannels(color: string): [number, number, number] | null {
+function parseColorChannels(color: string): [number, number, number, number] | null {
   const value = color.trim();
   const hexMatch = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.exec(value);
   if (hexMatch) {
@@ -27,11 +27,20 @@ function parseColorChannels(color: string): [number, number, number] | null {
       parseInt(hex.slice(0, 2), 16),
       parseInt(hex.slice(2, 4), 16),
       parseInt(hex.slice(4, 6), 16),
+      1,
     ];
   }
-  const rgbMatch = /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/.exec(value);
+  const rgbMatch =
+    /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/.exec(
+      value,
+    );
   if (rgbMatch) {
-    return [Number(rgbMatch[1]), Number(rgbMatch[2]), Number(rgbMatch[3])];
+    return [
+      Number(rgbMatch[1]),
+      Number(rgbMatch[2]),
+      Number(rgbMatch[3]),
+      rgbMatch[4] === undefined ? 1 : Number(rgbMatch[4]),
+    ];
   }
   return null;
 }
@@ -44,8 +53,13 @@ function linearize(channel: number): number {
 export function relativeLuminance(color: string): number | null {
   const channels = parseColorChannels(color);
   if (!channels) return null;
-  const [r, g, b] = channels;
-  return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
+  const [r, g, b, alpha] = channels;
+  const composite = (channel: number) => alpha * channel + (1 - alpha) * 255;
+  return (
+    0.2126 * linearize(composite(r)) +
+    0.7152 * linearize(composite(g)) +
+    0.0722 * linearize(composite(b))
+  );
 }
 
 export function pickReadableColor(color: string, fallback: string): string {
