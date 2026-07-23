@@ -8,6 +8,7 @@ import {
   DressCode,
   FamilyColumn,
   Lightbox,
+  MapDirectionsButton,
   SharedWishForm,
   WEEKDAY_LABELS,
   buildCalendar,
@@ -39,7 +40,7 @@ function BrocadeHeading({ children }: { children: React.ReactNode }) {
 export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const albumShown = gallery.slice(0, 4);
@@ -186,6 +187,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(BFR_RED, 0.4) }}>
                 <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
+              <MapDirectionsButton query={mapQuery} style={{ color: BFR_RED }} />
             </section>
           ) : null}
 

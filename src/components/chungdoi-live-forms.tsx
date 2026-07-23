@@ -62,6 +62,7 @@ export type PublicMediaLabels = {
   selected: string;
   remove: string;
   upload: string;
+  uploadCta: string;
   uploading: string;
   loading: string;
   empty: string;
@@ -88,6 +89,10 @@ export type LiveForms = {
   rsvpAction: ActionFn;
   guest: GuestPrefill;
   recipientLabel: string;
+  personalizationLabels: {
+    salutationDefault: string;
+    messageDefault: string;
+  };
   questions: PublicRsvpQuestion[];
   rsvpLabels: PublicRsvpLabels;
   slug: string;

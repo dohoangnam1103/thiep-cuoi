@@ -17,6 +17,7 @@ export async function generateMetadata({
     title: t("privacyMetaTitle"),
     description: t("privacyMetaDescription"),
     alternates: staticAlternates("/privacy-policy", locale),
+    locale,
   });
 }
 

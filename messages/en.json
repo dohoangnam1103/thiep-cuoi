@@ -1,7 +1,12 @@
 {
   "metadata": {
     "title": "Thiệp Mừng Online - Personalized Online Wedding Invitations",
-    "description": "Create personalized online wedding invitations with templates, RSVP, guest management, maps, galleries, music, and gift QR."
+    "description": "Create personalized online wedding invitations with templates, RSVP, guest management, maps, galleries, music, and gift QR.",
+    "openGraphTitle": "Create a Beautiful Online Wedding Invitation in 15 Minutes",
+    "openGraphDescription": "Choose a template, add your details, and create a beautiful online wedding invitation without design skills.",
+    "twitterTitle": "Create an Online Wedding Invitation in 15 Minutes",
+    "twitterDescription": "Choose a template and add your details. No design skills required.",
+    "socialImageAlt": "Create an online wedding invitation with Thiệp Mừng Online"
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -64,7 +69,6 @@
     },
     "createNow": "Create Invitation Now",
     "hero": {
-      "domainSuffix": ".com",
       "title": "Create wedding invitations online free in 15 minutes",
       "subtitle": "One little invitation to carry your heartfelt invite.",
       "subtitle2": "Easily design, share, collect RSVPs and keep every beautiful moment.",
@@ -688,6 +692,10 @@
   "publicInvitation": {
     "manage": "Manage invitation",
     "guestFallback": "Dear guest",
+    "personalization": {
+      "salutationDefault": "You are invited",
+      "messageDefault": "To celebrate this joyful occasion with our family"
+    },
     "rsvp": {
       "open": "RSVP",
       "title": "RSVP",
@@ -725,6 +733,7 @@
       "selected": "Selected",
       "remove": "Remove file",
       "upload": "Share moments",
+      "uploadCta": "Upload photos",
       "uploading": "Uploading...",
       "loading": "Loading moments...",
       "empty": "No moments have been shared yet. Be the first to add a photo or video from the celebration.",
@@ -746,7 +755,91 @@
       "errorGalleryFull": "This gallery has reached its storage limit. Please contact the invitation owner."
     }
   },
+  "trialCountdown": {
+    "regionLabel": "Free trial time",
+    "calculating": "Calculating trial time...",
+    "daysHours": "{days} days {hours} hours left in your trial!",
+    "hoursMinutes": "{hours} hours {minutes} minutes left in your trial!",
+    "minutes": "{minutes} minutes left in your trial!",
+    "lessMinute": "Less than 1 minute left in your trial!",
+    "expired": "Your free trial has ended",
+    "activeDescription": "Pay now to keep your invitation active",
+    "expiredDescription": "Pay to reactivate your invitation",
+    "payNow": "Pay now"
+  },
   "editor": {
+    "venue": {
+      "title": "Venue",
+      "addressLabel": "Venue address",
+      "addressPlaceholder": "E.g. ABC Wedding Center, 123 Main Street",
+      "addressHint": "This address appears on the invitation and is used to place the map pin automatically.",
+      "previewTitle": "Map preview",
+      "usingAddress": "Pinning automatically from the address above",
+      "usingOverride": "Using the pin from your Google Maps link",
+      "openMaps": "Open Google Maps",
+      "previewIframeTitle": "Venue location preview",
+      "emptyPreview": "Enter an address to create the map automatically.",
+      "overrideTitle": "Is the map pin in the wrong place?",
+      "overrideDescription": "Paste a Google Maps link to use the exact pin you selected.",
+      "mapLinkLabel": "Google Maps link",
+      "mapLinkPlaceholder": "https://maps.app.goo.gl/...",
+      "mapLinkHint": "Open the venue in Google Maps, select Share → Copy link, then paste it here.",
+      "resolving": "Checking the location from this link...",
+      "linkError": "We could not read this link. Paste a Google Maps share link or a link from the address bar.",
+      "useAddressAgain": "Remove link and use the address"
+    },
+    "ceremonies": {
+      "sectionTitle": "Ceremonies",
+      "itemLabel": "Ceremony {number}",
+      "titleLabel": "Ceremony details",
+      "titlePlaceholder": "E.g. The wedding ceremony will be held at the family home",
+      "dateLabel": "Date",
+      "timeLabel": "Time",
+      "dateHint": "The weekday and lunar date are calculated automatically from the selected date.",
+      "add": "Add ceremony",
+      "empty": "No ceremonies yet. Select “Add ceremony” to create one.",
+      "deleteLabel": "Delete ceremony {number}",
+      "deleteTitle": "Delete this ceremony?",
+      "deleteDescription": "Ceremony {number} and all of its date and time information will be removed from the invitation.",
+      "cancel": "Cancel",
+      "confirmDelete": "Delete ceremony"
+    },
+    "shareDialog": {
+      "title": "Share invitation",
+      "description": "Copy the link or download the QR code to send to your guests.",
+      "urlLabel": "Invitation URL",
+      "copyUrl": "Copy URL",
+      "copied": "Copied",
+      "copyError": "Could not copy the URL. Please try again.",
+      "qrLabel": "QR code",
+      "qrDescription": "Guests can scan this code to open the invitation.",
+      "qrAlt": "QR code for the wedding invitation",
+      "loadingQr": "Generating QR code",
+      "qrError": "Could not generate the QR code. Close this dialog and try again.",
+      "downloadQr": "Download QR",
+      "close": "Close"
+    },
+    "publishSuccess": {
+      "title": "Invitation published!",
+      "bonus": "20 guests + 3-day free trial included",
+      "description": "Share this link so guests can view your invitation",
+      "commonLink": "General link — for group chats, social media, and printed cards",
+      "share": "Share link",
+      "headerShare": "Share",
+      "copied": "Copied",
+      "copyError": "Could not copy the link. Please try again.",
+      "shareTitle": "Wedding invitation",
+      "shareText": "We would be delighted for you to view our wedding invitation.",
+      "qr": "QR code",
+      "qrAlt": "QR code for the wedding invitation",
+      "downloadQr": "Download QR",
+      "nextSteps": "Next steps",
+      "view": "View invitation",
+      "payment": "Payment",
+      "inviteGuests": "Invite guests",
+      "inviteGuestsDescription": "Add names and create a personal link for each guest",
+      "close": "Close"
+    },
     "draft": {
       "server": "Saved to the system",
       "saving": "Saving changes...",

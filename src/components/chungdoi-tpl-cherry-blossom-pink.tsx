@@ -4,7 +4,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
+  useLightbox, Lightbox, googleCalendarUrl, InvitationMap, MapDirectionsButton,
   FamilyColumn, GiftEnvelope, SharedWishForm, WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
@@ -24,7 +24,7 @@ function CherryHeading({ children }: { children: React.ReactNode }) {
 export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const heroImage = invitationHeroImage(content);
@@ -167,6 +167,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(PINK, 0.3) }}>
                 <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
+              <MapDirectionsButton query={mapQuery} style={{ color: PINK }} />
             </section>
           ) : null}
 

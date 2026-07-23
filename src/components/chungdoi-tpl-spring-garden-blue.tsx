@@ -11,6 +11,7 @@ import {
   Lightbox,
   googleCalendarUrl,
   InvitationMap,
+  MapDirectionsButton,
   FamilyColumn,
   GiftEnvelope,
   SharedWishForm,
@@ -102,7 +103,7 @@ function GiftSection({ content }: { content: ChungDoiDemoContent }) {
 export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const albumShown = gallery.slice(0, 4);
@@ -201,6 +202,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
               <div className="mt-4 w-full overflow-hidden rounded-[24px] border bg-white/70 p-1" style={{ borderColor: hexToRgba(ACCENT, 0.22) }}>
                 <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full rounded-[20px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
+              <MapDirectionsButton query={mapQuery} style={{ color: ACCENT }} />
             </SectionCard>
           ) : null}
 

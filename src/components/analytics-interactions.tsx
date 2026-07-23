@@ -15,6 +15,7 @@ export function AnalyticsEventOnView({
     <span
       hidden
       aria-hidden="true"
+      suppressHydrationWarning
       data-ga-view-event={eventName}
       data-ga-view-params={JSON.stringify(params)}
       data-ga-additional-event={additionalEventName}

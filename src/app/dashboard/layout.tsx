@@ -19,7 +19,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
       <body className="min-h-full bg-background text-foreground">
         <PetalField />
-        <NextIntlClientProvider locale="vi" messages={{ chrome: viMessages.chrome }}>
+        <NextIntlClientProvider
+          locale="vi"
+          messages={{
+            chrome: viMessages.chrome,
+            trialCountdown: viMessages.trialCountdown,
+          }}
+        >
           <SiteHeader initialLoggedIn hideCreateButton />
           {children}
         </NextIntlClientProvider>

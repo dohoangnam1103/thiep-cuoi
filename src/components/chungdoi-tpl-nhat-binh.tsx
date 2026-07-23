@@ -15,6 +15,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -108,7 +109,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
   const RED = content.theme.primaryColor || "#c32a29";
   const BROWN = "#542E08";
   const CREAM = "#F8F3E0";
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
@@ -338,6 +339,9 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
               <div className="mx-auto mt-2 max-w-[280px] whitespace-pre-line text-center text-[15px] leading-snug md:mt-3 md:max-w-md md:text-[18px] lg:max-w-lg lg:text-[20px]" style={{ color: BROWN, fontFamily: NB_HELV }}>{venue.address}</div>
             </div>
             <InvitationMap query={mapQuery} title={mapQuery} className="mx-auto mt-2 h-[240px] w-full max-w-[338px] overflow-hidden rounded-[15px] md:h-[320px] md:max-w-[560px] lg:h-[340px] lg:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            <div className="mt-4 flex justify-center">
+              <MapDirectionsButton query={mapQuery} style={{ color: RED }} />
+            </div>
           </section>
         ) : null}
 

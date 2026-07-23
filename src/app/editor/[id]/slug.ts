@@ -4,6 +4,7 @@ export type SlugSource = {
   brideShortName?: string | null;
   groomShortName?: string | null;
   brideFirst?: boolean | null;
+  date?: string | null;
 };
 
 export function slugify(value: string): string {
@@ -31,9 +32,15 @@ export function slugFromFormFields(source: SlugSource): string {
   const groom = (source.groomShortName || source.groomFullName || "").trim();
   if (!bride && !groom) return "";
   const order = source.brideFirst ?? true ? [bride, groom] : [groom, bride];
-  return slugify(order.filter(Boolean).join(" "));
+  const parts = order.filter(Boolean);
+  const dateSlug = dateToSlug(source.date);
+  if (dateSlug) parts.push(dateSlug);
+  return slugify(parts.join(" "));
 }
 
-export function slugSuffix(): string {
-  return Math.random().toString(36).slice(2, 8);
+function dateToSlug(date?: string | null): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec((date ?? "").trim());
+  if (!match) return "";
+  const [, year, month, day] = match;
+  return `${day}${month}${year}`;
 }

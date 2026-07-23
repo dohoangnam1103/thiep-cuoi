@@ -14,7 +14,7 @@ export default async function EditorPreviewPage({ params }: { params: Promise<{ 
 
   const invitation = await prisma.invitation.findUnique({
     where: { id },
-    include: { content: true, schedule: true, gallery: true, wishes: true },
+    include: { content: true, ceremonies: true, schedule: true, gallery: true, wishes: true },
   });
   if (!invitation) notFound();
 

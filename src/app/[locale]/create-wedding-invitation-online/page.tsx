@@ -17,6 +17,7 @@ export async function generateMetadata({
     title: t("title"),
     description: t("description"),
     alternates: staticAlternates("/create-wedding-invitation-online", locale),
+    locale,
     image: "/thiepmungonline/wedding-guide/chon-mau-thiep-tmo.webp",
   });
 }

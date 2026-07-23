@@ -19,7 +19,12 @@ export async function generateMetadata({
     title: t("title"),
     description: t("description"),
     alternates: staticAlternates("/", locale),
-    image: "/chungdoi/images/en/banner_hero.webp",
+    locale,
+    imageAlt: t("socialImageAlt"),
+    openGraphTitle: t("openGraphTitle"),
+    openGraphDescription: t("openGraphDescription"),
+    twitterTitle: t("twitterTitle"),
+    twitterDescription: t("twitterDescription"),
   });
 }
 

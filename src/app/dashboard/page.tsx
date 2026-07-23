@@ -16,7 +16,6 @@ export default async function DashboardPage() {
       _count: { select: { rsvps: true, wishes: true } },
     },
   });
-
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -56,6 +55,7 @@ export default async function DashboardPage() {
                 status={inv.status}
                 slug={inv.slug}
                 paid={inv.paid}
+                publishedAt={inv.publishedAt?.toISOString() ?? null}
                 rsvpCount={inv._count.rsvps}
                 wishCount={inv._count.wishes}
               />

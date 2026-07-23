@@ -14,6 +14,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -138,7 +139,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const ENVELOPE = palette.envelope;
   const people = orderedCouple(content);
   const headerNames = people.map((person) => person.shortName);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
@@ -278,7 +279,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
               {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
               {ceremony ? (
                 <>
-                  <LpdDateRow vnWeekday={ceremony.weekday} cnWeekday={LPD_CN_WEEKDAY[(ceremony.dayNumber + new Date(`${couple.ceremonyDate || couple.date}T00:00:00`).getDay() - ceremony.dayNumber + 7) % 7]} day={ceremony.day} month={ceremony.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
+                  <LpdDateRow vnWeekday={ceremony.weekday} cnWeekday={LPD_CN_WEEKDAY[(ceremony.dayNumber + new Date(`${couple.ceremonyDate}T00:00:00`).getDay() - ceremony.dayNumber + 7) % 7]} day={ceremony.day} month={ceremony.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
                   <div className="text-[22px] font-semibold md:text-[26px]">{ceremony.yearNumber}</div>
                   <div className="text-[14px] opacity-80 md:text-[16px]">{ceremony.lunar}</div>
                 </>
@@ -341,6 +342,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                 </div>
                 <div className="flex w-full flex-col items-center">
                   <InvitationMap query={mapQuery} title={mapQuery} className="mt-4 h-[280px] w-full max-w-[340px] overflow-hidden rounded-2xl md:h-[380px] md:max-w-[560px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  <MapDirectionsButton query={mapQuery} style={{ color: GOLD }} />
                 </div>
               </section>
             ) : null}

@@ -6,11 +6,16 @@ const KEY = (id: string) => `chungdoi:draft:${id}`;
 const STORAGE_VERSION = 1;
 const MAX_DRAFT_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
-const ARRAY_FIELDS = ["scheduleTime", "scheduleLabel", "galleryUrl"] as const;
+const ARRAY_FIELDS = [
+  "ceremonyItemTitle",
+  "ceremonyItemDate",
+  "ceremonyItemTime",
+  "scheduleTime",
+  "scheduleLabel",
+  "galleryUrl",
+] as const;
 
 export type Draft = Record<string, string | boolean | string[]>;
-export type DraftStatus = "server" | "saving" | "local" | "restored" | "error";
-export type DraftStatusMessages = Record<DraftStatus, string>;
 
 type StoredDraft = {
   version: typeof STORAGE_VERSION;
@@ -22,7 +27,10 @@ type UseFormDraftOptions = {
   formId: string;
   invitationId: string;
   enabled: boolean;
-  onStatusChange?: (status: DraftStatus) => void;
+  /** Draft thay đổi (blur/chọn mẫu/nhạc/ảnh) — dùng để debounce autosave lên server. */
+  onChange?: (draft: Draft) => void;
+  /** Rời trang/ẩn tab/unmount — cần lưu ngay, không chờ debounce. */
+  onFlush?: (draft: Draft) => void;
 };
 
 type FormDraftController = {
@@ -46,6 +54,21 @@ export function serializeForm(form: HTMLFormElement): Draft {
   draft.brideFirst = String(fd.get("brideFirst") ?? "true") !== "false";
   draft.showHeroImage = String(fd.get("showHeroImage") ?? "true") !== "false";
   return draft;
+}
+
+/** Nghịch của serializeForm: dựng FormData từ draft để gửi thẳng cho server action. */
+export function draftToFormData(draft: Draft): FormData {
+  const fd = new FormData();
+  for (const [name, value] of Object.entries(draft)) {
+    if (Array.isArray(value)) {
+      for (const item of value) fd.append(name, item);
+    } else if (typeof value === "boolean") {
+      fd.set(name, value ? "true" : "false");
+    } else {
+      fd.set(name, value);
+    }
+  }
+  return fd;
 }
 
 function writeDraft(invitationId: string, draft: Draft): boolean {
@@ -143,20 +166,20 @@ function mutationChangesFormData(record: MutationRecord): boolean {
  * - flush đồng bộ khi tab ẩn, reload, điều hướng hoặc component unmount.
  */
 export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
-  const { formId, invitationId, enabled, onStatusChange } = opts;
+  const { formId, invitationId, enabled, onChange, onFlush } = opts;
   const latestRef = useRef<Draft | null>(null);
-  const statusCallbackRef = useRef(onStatusChange);
+  const onChangeRef = useRef(onChange);
+  const onFlushRef = useRef(onFlush);
 
   useEffect(() => {
-    statusCallbackRef.current = onStatusChange;
-  }, [onStatusChange]);
+    onChangeRef.current = onChange;
+    onFlushRef.current = onFlush;
+  }, [onChange, onFlush]);
 
   const persist = useCallback(
     (draft: Draft) => {
       latestRef.current = draft;
-      const written = writeDraft(invitationId, draft);
-      statusCallbackRef.current?.(written ? "local" : "error");
-      return written;
+      return writeDraft(invitationId, draft);
     },
     [invitationId],
   );
@@ -172,7 +195,6 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
   const clear = useCallback(() => {
     latestRef.current = null;
     clearFormDraft(invitationId);
-    statusCallbackRef.current?.("server");
   }, [invitationId]);
 
   const getLatest = useCallback(() => latestRef.current, []);
@@ -183,8 +205,9 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     if (!form) return;
 
     const persistCurrentForm = () => {
-      statusCallbackRef.current?.("saving");
-      persist(serializeForm(form));
+      const draft = serializeForm(form);
+      persist(draft);
+      onChangeRef.current?.(draft);
     };
     const isDraftControl = (target: EventTarget | null) => {
       if (
@@ -207,7 +230,9 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
 
     const flush = () => {
       const latest = latestRef.current;
-      if (latest) persist(latest);
+      if (!latest) return;
+      persist(latest);
+      onFlushRef.current?.(latest);
     };
 
     const onFieldBlur = (event: FocusEvent) => {

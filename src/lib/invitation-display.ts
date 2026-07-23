@@ -9,14 +9,37 @@ export function ceremonyTypeLabel(type: string | null | undefined): "THÀNH HÔN
 }
 
 export function defaultCeremonyMessage(type: string | null | undefined): string {
-  return `LỄ ${ceremonyTypeLabel(type)} SẼ ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA`;
+  return `LỄ ${ceremonyTypeLabel(type)} SẼ ĐƯỢC CỬ HÀNH TẠI TƯ GIA`;
 }
 
 export function invitationOpeningMessage(content: ChungDoiDemoContent): string {
   return content.couple.openingMessage?.trim() || DEFAULT_OPENING_MESSAGE;
 }
 
+export function invitationCeremonies(content: ChungDoiDemoContent) {
+  if (content.ceremonies) {
+    return content.ceremonies
+      .map((ceremony) => ({
+        title: ceremony.title.trim(),
+        date: ceremony.date.trim(),
+        time: ceremony.time.trim(),
+      }))
+      .filter((ceremony) => ceremony.title || ceremony.date || ceremony.time);
+  }
+
+  const legacy = {
+    title: content.couple.ceremonyHeader?.trim()
+      || defaultCeremonyMessage(content.couple.ceremonyType),
+    date: content.couple.ceremonyDate.trim(),
+    time: content.couple.ceremonyTime.trim(),
+  };
+  return legacy.title || legacy.date || legacy.time ? [legacy] : [];
+}
+
 export function invitationCeremonyMessage(content: ChungDoiDemoContent): string {
+  if (content.ceremonies) {
+    return invitationCeremonies(content)[0]?.title ?? "";
+  }
   return content.couple.ceremonyHeader?.trim() || defaultCeremonyMessage(content.couple.ceremonyType);
 }
 

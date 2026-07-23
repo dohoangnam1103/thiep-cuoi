@@ -41,6 +41,7 @@ export type ChungDoiDemoContent = {
     mapAddress: string;
     banquetTime: string;
   };
+  ceremonies?: { title: string; date: string; time: string }[];
   schedule: { time: string; label: string }[];
   portraits?: {
     bride: string;
@@ -48,6 +49,7 @@ export type ChungDoiDemoContent = {
   };
   gallery: string[];
   heroImage?: string;
+  heroImage2?: string;
   showHeroImage?: boolean;
   wishes: { name: string; time: string; text: string }[];
   bank: {

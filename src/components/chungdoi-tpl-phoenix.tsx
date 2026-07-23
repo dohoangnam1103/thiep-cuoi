@@ -14,6 +14,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -45,7 +46,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
   const M = content.theme.primaryColor || "#710001";
   const CREAM = "#ffffff";
   const headerNames = people.map((person) => person.shortName);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
@@ -219,6 +220,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
             <p className="mx-auto max-w-sm whitespace-pre-line border-b pb-3 text-[14px] leading-relaxed md:max-w-[600px] md:text-base" style={{ borderColor: "#8B000022" }}>{venue.address}</p>
             <div className="flex w-full flex-col items-center gap-4 md:gap-5">
               <InvitationMap query={mapQuery} title={mapQuery} className="h-[260px] w-full max-w-[340px] overflow-hidden rounded-2xl md:h-[360px] md:max-w-[600px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              <MapDirectionsButton query={mapQuery} style={{ color: M }} />
             </div>
           </section>
         ) : null}

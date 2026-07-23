@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Download, Film, Play, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Film, ImagePlus, Play, X } from "lucide-react";
 import Image from "next/image";
 import {
   createContext,
@@ -30,6 +30,8 @@ type GuestMediaGalleryContextValue = {
   media: PublicGuestMedia[];
   prependMedia: (items: PublicGuestMedia[]) => void;
   refresh: () => Promise<void>;
+  uploadOpen: boolean;
+  setUploadOpen: (open: boolean) => void;
 };
 
 const GuestMediaGalleryContext = createContext<GuestMediaGalleryContextValue | null>(null);
@@ -39,6 +41,7 @@ export function GuestMediaGalleryProvider({ children }: { children: ReactNode })
   const [media, setMedia] = useState<PublicGuestMedia[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!live) {
@@ -85,6 +88,8 @@ export function GuestMediaGalleryProvider({ children }: { children: ReactNode })
         media,
         prependMedia,
         refresh,
+        uploadOpen,
+        setUploadOpen,
       }}
     >
       {children}
@@ -647,7 +652,7 @@ function GuestMediaLightbox({
 
 function PublicGuestMomentsSection({ templateSlug }: { templateSlug: string }) {
   const live = useLiveForms();
-  const { media } = useGuestMediaGallery();
+  const { media, setUploadOpen } = useGuestMediaGallery();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const { items, extraCount } = guestMediaPreview(media);
   const style = MOMENTS_STYLES[templateSlug] ?? DEFAULT_STYLE;
@@ -719,6 +724,16 @@ function PublicGuestMomentsSection({ templateSlug }: { templateSlug: string }) {
                 </button>
               );
             })}
+          </div>
+          <div className="mt-6 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setUploadOpen(true)}
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border-2 border-current px-6 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current"
+            >
+              <ImagePlus className="size-4" aria-hidden />
+              {labels.uploadCta}
+            </button>
           </div>
         </div>
       </section>

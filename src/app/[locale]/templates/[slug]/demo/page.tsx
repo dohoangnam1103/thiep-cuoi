@@ -79,7 +79,7 @@ export default async function DemoPage({
 
   const invitation = await prisma.invitation.findFirst({
     where: { isDemo: true, templateId: template.slug },
-    include: { content: true, schedule: true, gallery: true, wishes: true },
+    include: { content: true, ceremonies: true, schedule: true, gallery: true, wishes: true },
   });
   const storedContent = invitation ? toDemoContent(invitation) : undefined;
   const fallbackContent = chungdoiDemoContent[template.slug];

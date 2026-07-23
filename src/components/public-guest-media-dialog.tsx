@@ -1,8 +1,7 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { Download, Film, ImagePlus, Images, Loader2, Trash2, Upload, X } from "lucide-react";
-import Image from "next/image";
+import { Film, ImagePlus, Images, Loader2, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 
 import { useLiveForms, type PublicMediaLabels } from "@/components/chungdoi-live-forms";
@@ -29,12 +28,12 @@ export function PublicGuestMediaDialog() {
   const live = useLiveForms();
   const {
     loadError,
-    loading,
     media,
     prependMedia,
     refresh,
+    uploadOpen: open,
+    setUploadOpen: setOpen,
   } = useGuestMediaGallery();
-  const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -97,16 +96,17 @@ export function PublicGuestMediaDialog() {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger className="fixed bottom-20 left-4 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-neutral-900 shadow-lg shadow-black/20 ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 sm:left-6">
-        <Images className="size-4" aria-hidden />
-        {label.open}
-        {media.length > 0 ? <span className="rounded-full bg-neutral-900 px-2 py-0.5 text-xs text-white">{media.length}</span> : null}
-      </Dialog.Trigger>
+      {media.length === 0 ? (
+        <Dialog.Trigger className="fixed bottom-20 left-4 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-neutral-900 shadow-lg shadow-black/20 ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 sm:left-6">
+          <Images className="size-4" aria-hidden />
+          {label.uploadCta}
+        </Dialog.Trigger>
+      ) : null}
 
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-[130] bg-black/65 backdrop-blur-[2px] transition-opacity data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <Dialog.Viewport className="fixed inset-0 z-[130] flex items-end justify-center overflow-y-auto sm:items-center sm:p-4">
-          <Dialog.Popup className="max-h-[96dvh] w-full max-w-6xl overflow-y-auto rounded-t-3xl bg-[#f8f7f4] text-neutral-900 shadow-2xl outline-none transition data-[ending-style]:translate-y-4 data-[ending-style]:opacity-0 data-[starting-style]:translate-y-4 data-[starting-style]:opacity-0 sm:rounded-3xl">
+          <Dialog.Popup className="max-h-[96dvh] w-full max-w-xl overflow-y-auto rounded-t-3xl bg-[#f8f7f4] text-neutral-900 shadow-2xl outline-none transition data-[ending-style]:translate-y-4 data-[ending-style]:opacity-0 data-[starting-style]:translate-y-4 data-[starting-style]:opacity-0 sm:rounded-3xl">
             <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-neutral-200 bg-[#f8f7f4]/95 px-5 py-5 backdrop-blur sm:px-7">
               <div>
                 <Dialog.Title className="text-2xl font-bold tracking-tight">{label.title}</Dialog.Title>
@@ -119,8 +119,8 @@ export function PublicGuestMediaDialog() {
               </Dialog.Close>
             </header>
 
-            <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[320px_1fr]">
-              <form onSubmit={submit} className="h-fit rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm lg:sticky lg:top-28">
+            <div className="p-5 sm:p-7">
+              <form onSubmit={submit} className="mx-auto h-fit max-w-lg rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-2">
                   <ImagePlus className="size-5" aria-hidden />
                   <h3 className="font-semibold">{label.chooseFiles}</h3>
@@ -179,43 +179,6 @@ export function PublicGuestMediaDialog() {
                   {uploading ? label.uploading : label.upload}
                 </button>
               </form>
-
-              <section aria-live="polite" aria-busy={loading}>
-                {loading ? (
-                  <div className="flex min-h-64 items-center justify-center text-sm text-neutral-500">
-                    <Loader2 className="mr-2 size-5 animate-spin" aria-hidden />
-                    {label.loading}
-                  </div>
-                ) : media.length === 0 ? (
-                  <div className="flex min-h-64 flex-col items-center justify-center rounded-3xl border border-dashed border-neutral-300 bg-white px-6 text-center">
-                    <Images className="size-10 text-neutral-400" aria-hidden />
-                    <p className="mt-4 max-w-sm text-sm leading-6 text-neutral-600">{label.empty}</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
-                    {media.map((item) => (
-                      <article key={item.id} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
-                        <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100">
-                          {item.kind === "image" ? (
-                            <Image src={item.url} alt={item.originalName} fill unoptimized sizes="(max-width: 640px) 50vw, 280px" className="object-cover transition duration-300 group-hover:scale-[1.02]" />
-                          ) : (
-                            <video src={item.url} controls preload="metadata" playsInline className="size-full object-cover" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3 p-3">
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold">{item.contributorName}</p>
-                            <p className="mt-0.5 truncate text-xs text-neutral-500">{item.originalName} · {formatSize(item.size)}</p>
-                          </div>
-                          <a href={`${item.url}?download=1`} download aria-label={`${label.download}: ${item.originalName}`} className="grid size-10 shrink-0 place-items-center rounded-full bg-neutral-100 text-neutral-700 transition hover:bg-neutral-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900">
-                            <Download className="size-4" aria-hidden />
-                          </a>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                )}
-              </section>
             </div>
           </Dialog.Popup>
         </Dialog.Viewport>

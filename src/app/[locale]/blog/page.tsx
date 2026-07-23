@@ -5,8 +5,7 @@ import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { blogPosts } from "@/data/chungdoi-content";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { staticAlternates } from "@/lib/seo";
-import { absoluteUrl } from "@/lib/site-url";
+import { pageSeo, staticAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -17,26 +16,15 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "blog" });
   const title = t("metaTitle");
   const description = t("metaDescription");
-  const image = absoluteUrl("/chungdoi/icon-v2.png");
 
   return {
-    title: { absolute: title },
-    description,
+    ...pageSeo({
+      title,
+      description,
+      alternates: staticAlternates("/blog", locale),
+      locale,
+    }),
     robots: { index: false, follow: true },
-    alternates: staticAlternates("/blog", locale),
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      images: [{ url: image }],
-      siteName: "Thiệp Mừng Online",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [image],
-    },
   };
 }
 

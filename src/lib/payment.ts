@@ -2,11 +2,11 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 
+export { FREE_TRIAL_DAYS } from "@/lib/trial";
+
 export const DEFAULT_PRODUCT_PRICE = 150000;
 
 export const DEFAULT_REPEAT_CUSTOMER_PRICE = 99000;
-
-export const FREE_TRIAL_DAYS = 7;
 
 export const PAYMENT_PENDING_EXPIRES_HOURS = 24;
 

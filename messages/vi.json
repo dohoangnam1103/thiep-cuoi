@@ -1,7 +1,12 @@
 {
   "metadata": {
-    "title": "Thiệp Mừng Online - Thiệp cưới online cá nhân hóa",
-    "description": "Tạo thiệp cưới online cá nhân hóa với mẫu thiệp, RSVP, quản lý khách mời, bản đồ, album ảnh, nhạc và mã QR nhận quà."
+    "title": "Tạo Thiệp Cưới Online Đơn Giản, Miễn Phí Chỉ Trong 15 Phút | Thiệp Mừng Online",
+    "description": "Tự tạo thiệp cưới online đơn giản nhất. Chọn mẫu, điền thông tin, không cần biết thiết kế. Tất cả chỉ tốn 15 phút. Bắt đầu miễn phí ngay hôm nay!",
+    "openGraphTitle": "Tạo Thiệp Cưới Online Đơn Giản, Miễn Phí Chỉ Trong 15 Phút",
+    "openGraphDescription": "Chọn mẫu, điền thông tin và tạo thiệp cưới online đẹp chỉ trong 15 phút. Không cần kỹ năng thiết kế. Bắt đầu miễn phí ngay hôm nay!",
+    "twitterTitle": "Tạo Thiệp Cưới Online Đơn Giản Trong 15 Phút",
+    "twitterDescription": "Tự tạo thiệp cưới online miễn phí, không cần biết thiết kế. Chỉ cần chọn mẫu và điền thông tin.",
+    "socialImageAlt": "Tạo thiệp cưới online tại Thiệp Mừng Online"
   },
   "auth": {
     "loginTitle": "Đăng nhập",
@@ -64,8 +69,7 @@
     },
     "createNow": "TẠO THIỆP NGAY",
     "hero": {
-      "domainSuffix": ".com",
-      "title": "Tạo thiệp cưới online miễn phí trong 15 phút",
+      "title": "Tạo thiệp cưới online đơn giản, miễn phí chỉ trong 15 phút",
       "subtitle": "Một tấm thiệp nhỏ, thay bạn gửi lời mời chân thành",
       "subtitle2": "Dễ dàng thiết kế, chia sẻ, nhận RSVP và lưu giữ những khoảnh khắc đẹp.",
       "trialNote": "Tạo miễn phí - Dùng thử 3 ngày - Chỉ trả khi bạn hài lòng",
@@ -892,16 +896,22 @@
       "deleteGuest": "Xóa {name}"
     },
     "fields": {
-      "name": "Họ và tên *",
-      "role": "Vai trò / danh xưng",
+      "name": "Tên khách *",
+      "namePlaceholder": "Gia đình anh Phát",
+      "role": "Lời mời",
+      "roleHint": "Để trống sẽ dùng lời mời mặc định.",
+      "rolePlaceholder": "Thân Mời",
       "side": "Phía gia đình",
       "sideEmpty": "Chưa phân loại",
       "groupName": "Nhóm khách",
       "tableName": "Bàn tiệc",
       "phone": "Số điện thoại",
       "email": "Email",
-      "greeting": "Lời chào riêng",
-      "greetingHint": "Hiển thị trên phong bao thay cho danh xưng và tên mặc định.",
+      "greeting": "Lời nhắn",
+      "greetingHint": "Để trống sẽ dùng lời nhắn mặc định.",
+      "greetingPlaceholder": "Đến dự buổi tiệc chung vui cùng gia đình",
+      "classification": "Phân loại khách",
+      "classificationHint": "Phía gia đình, nhóm khách và bàn tiệc",
       "maxGuests": "Số khách tối đa",
       "maxGuestsHint": "Bao gồm khách chính và người đi cùng.",
       "giftAmount": "Tiền mừng",
@@ -1076,6 +1086,10 @@
   "publicInvitation": {
     "manage": "Quản lý thiệp",
     "guestFallback": "Quý khách",
+    "personalization": {
+      "salutationDefault": "Thân Mời",
+      "messageDefault": "Đến dự buổi tiệc chung vui cùng gia đình"
+    },
     "rsvp": {
       "open": "Xác nhận tham dự",
       "title": "Xác nhận tham dự",
@@ -1113,6 +1127,7 @@
       "selected": "Đã chọn",
       "remove": "Bỏ tệp",
       "upload": "Đóng góp khoảnh khắc",
+      "uploadCta": "Tải ảnh lên",
       "uploading": "Đang tải lên...",
       "loading": "Đang tải khoảnh khắc...",
       "empty": "Chưa có khoảnh khắc nào. Hãy là người đầu tiên chia sẻ ảnh hoặc video của bữa tiệc.",
@@ -1134,7 +1149,91 @@
       "errorGalleryFull": "Thư viện này đã đạt giới hạn lưu trữ. Vui lòng liên hệ chủ thiệp."
     }
   },
+  "trialCountdown": {
+    "regionLabel": "Thời gian dùng thử",
+    "calculating": "Đang tính thời gian dùng thử...",
+    "daysHours": "Còn {days} ngày {hours} giờ dùng thử!",
+    "hoursMinutes": "Còn {hours} giờ {minutes} phút dùng thử!",
+    "minutes": "Còn {minutes} phút dùng thử!",
+    "lessMinute": "Còn chưa đầy 1 phút dùng thử!",
+    "expired": "Đã hết thời gian dùng thử",
+    "activeDescription": "Thanh toán để không bị gián đoạn",
+    "expiredDescription": "Thanh toán để kích hoạt lại thiệp",
+    "payNow": "Thanh toán ngay"
+  },
   "editor": {
+    "venue": {
+      "title": "Nơi tổ chức",
+      "addressLabel": "Địa chỉ nơi tổ chức",
+      "addressPlaceholder": "VD: Trung tâm tiệc cưới ABC, 123 Lê Lợi, Q.1, TP.HCM",
+      "addressHint": "Địa chỉ này hiển thị trên thiệp và được dùng để tự ghim bản đồ.",
+      "previewTitle": "Xem trước bản đồ",
+      "usingAddress": "Đang tự ghim theo địa chỉ phía trên",
+      "usingOverride": "Đang dùng ghim từ link Google Maps",
+      "openMaps": "Mở Google Maps",
+      "previewIframeTitle": "Xem trước vị trí nơi tổ chức",
+      "emptyPreview": "Nhập địa chỉ để tạo bản đồ tự động.",
+      "overrideTitle": "Vị trí trên bản đồ chưa đúng?",
+      "overrideDescription": "Dán link Google Maps để dùng đúng ghim bạn đã chọn.",
+      "mapLinkLabel": "Link Google Maps",
+      "mapLinkPlaceholder": "https://maps.app.goo.gl/...",
+      "mapLinkHint": "Mở địa điểm trên Google Maps, chọn Chia sẻ → Sao chép liên kết rồi dán vào đây.",
+      "resolving": "Đang kiểm tra vị trí từ link...",
+      "linkError": "Không đọc được link này. Hãy dán link Chia sẻ từ Google Maps hoặc link trên thanh địa chỉ.",
+      "useAddressAgain": "Bỏ link và dùng lại địa chỉ"
+    },
+    "ceremonies": {
+      "sectionTitle": "Phần Lễ",
+      "itemLabel": "Lễ {number}",
+      "titleLabel": "Nội dung lễ",
+      "titlePlaceholder": "VD: Lễ thành hôn được cử hành tại tư gia",
+      "dateLabel": "Ngày",
+      "timeLabel": "Giờ",
+      "dateHint": "Thứ và ngày âm lịch được hệ thống tự tính từ ngày dương lịch.",
+      "add": "Thêm lễ",
+      "empty": "Chưa có lễ nào. Nhấn “Thêm lễ” để tạo lễ mới.",
+      "deleteLabel": "Xoá lễ {number}",
+      "deleteTitle": "Xoá lễ này?",
+      "deleteDescription": "Lễ {number} và toàn bộ thông tin ngày giờ sẽ bị xoá khỏi thiệp.",
+      "cancel": "Huỷ",
+      "confirmDelete": "Xoá lễ"
+    },
+    "shareDialog": {
+      "title": "Chia sẻ thiệp",
+      "description": "Sao chép đường dẫn hoặc tải mã QR để gửi cho khách mời.",
+      "urlLabel": "Đường dẫn thiệp",
+      "copyUrl": "Sao chép URL",
+      "copied": "Đã sao chép",
+      "copyError": "Không thể sao chép URL. Vui lòng thử lại.",
+      "qrLabel": "Mã QR",
+      "qrDescription": "Khách mời quét mã này để mở thiệp.",
+      "qrAlt": "Mã QR mở thiệp cưới",
+      "loadingQr": "Đang tạo mã QR",
+      "qrError": "Không thể tạo mã QR. Vui lòng đóng modal và thử lại.",
+      "downloadQr": "Tải mã QR",
+      "close": "Đóng"
+    },
+    "publishSuccess": {
+      "title": "Thiệp đã xuất bản!",
+      "bonus": "Tặng 20 khách mời + 3 ngày dùng thử miễn phí",
+      "description": "Chia sẻ link để khách mời xem thiệp của bạn",
+      "commonLink": "Link chung — dùng cho nhóm chat, mạng xã hội, in thiệp giấy",
+      "share": "Chia sẻ link",
+      "headerShare": "Chia sẻ",
+      "copied": "Đã sao chép",
+      "copyError": "Không thể sao chép link. Vui lòng thử lại.",
+      "shareTitle": "Thiệp mời cưới",
+      "shareText": "Trân trọng mời bạn xem thiệp cưới của chúng tôi.",
+      "qr": "Mã QR",
+      "qrAlt": "Mã QR mở thiệp cưới",
+      "downloadQr": "Tải mã QR",
+      "nextSteps": "Các bước tiếp theo",
+      "view": "Xem thiệp",
+      "payment": "Thanh toán",
+      "inviteGuests": "Mời khách",
+      "inviteGuestsDescription": "Ghi tên và tạo link riêng cho từng khách",
+      "close": "Đóng"
+    },
     "draft": {
       "server": "Đã lưu vào hệ thống",
       "saving": "Đang lưu thay đổi...",

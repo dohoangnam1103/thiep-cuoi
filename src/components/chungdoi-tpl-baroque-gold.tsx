@@ -15,6 +15,7 @@ import {
   Lightbox,
   googleCalendarUrl,
   InvitationMap,
+  MapDirectionsButton,
   FamilyColumn,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
@@ -62,7 +63,7 @@ function BaroqueCountdown({ target }: { target: string }) {
 export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const [giftOpen, setGiftOpen] = useState(false);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const albumShown = gallery.slice(0, 4);
@@ -207,6 +208,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GOLD, 0.4) }}>
                 <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
+              <MapDirectionsButton query={mapQuery} style={{ color: GOLD_DARK }} />
             </section>
           ) : null}
 

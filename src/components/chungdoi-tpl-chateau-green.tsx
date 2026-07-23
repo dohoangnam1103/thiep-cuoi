@@ -9,6 +9,7 @@ import {
   Lightbox,
   googleCalendarUrl,
   InvitationMap,
+  MapDirectionsButton,
   FamilyColumn,
   GiftEnvelope,
   SharedWishForm,
@@ -36,7 +37,7 @@ function GreenHeading({ children }: { children: React.ReactNode }) {
 export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const albumShown = gallery.slice(0, 4);
@@ -180,6 +181,7 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>
                 <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
+              <MapDirectionsButton query={mapQuery} style={{ color: GREEN }} />
             </section>
           ) : null}
 

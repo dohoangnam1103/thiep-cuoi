@@ -1,11 +1,12 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { Prisma } from "@/generated/prisma/client";
-import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage } from "@/lib/invitation-display";
+import { DEFAULT_OPENING_MESSAGE } from "@/lib/invitation-display";
 import { shortNameFromFullName } from "@/lib/short-name";
 
 export type InvitationWithRelations = Prisma.InvitationGetPayload<{
   include: {
     content: true;
+    ceremonies: true;
     schedule: true;
     gallery: true;
     wishes: true;
@@ -41,6 +42,14 @@ const normalizeBirthOrder = (value: string | null | undefined): string => {
 
 export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemoContent {
   const c = invitation.content;
+  const ceremonies = [...invitation.ceremonies]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((ceremony) => ({
+      title: ceremony.title,
+      date: ceremony.date,
+      time: ceremony.time,
+    }));
+  const firstCeremony = ceremonies[0];
 
   return {
     slug: invitation.templateId,
@@ -61,9 +70,9 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       brideFirst: c?.brideFirst ?? true,
       date: c?.date ?? "",
       time: c?.time ?? "",
-      ceremonyDate: c?.ceremonyDate ?? "",
-      ceremonyTime: c?.ceremonyTime ?? "",
-      ceremonyHeader: clean(c?.ceremonyHeader) ?? defaultCeremonyMessage(c?.ceremonyType),
+      ceremonyDate: firstCeremony?.date ?? "",
+      ceremonyTime: firstCeremony?.time ?? "",
+      ceremonyHeader: firstCeremony?.title ?? "",
       ceremonyType: c?.ceremonyType === "vu-quy" ? "vu-quy" : "thanh-hon",
       openingMessage: clean(c?.openingMessage) ?? DEFAULT_OPENING_MESSAGE,
     },
@@ -82,6 +91,7 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       mapAddress: c?.mapAddress ?? "",
       banquetTime: clean(c?.time) ?? c?.banquetTime ?? "",
     },
+    ceremonies,
     schedule: [...invitation.schedule]
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((s) => ({ time: s.time, label: s.label })),
@@ -89,6 +99,7 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((g) => g.url),
     heroImage: c?.heroImage ?? "",
+    heroImage2: c?.heroImage2 ?? "",
     showHeroImage: c?.showHeroImage ?? true,
     wishes: invitation.wishes.map((w) => ({
       name: w.name,

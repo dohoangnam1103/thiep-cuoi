@@ -3,7 +3,12 @@ import type { Metadata } from "next";
 import { getPathname } from "@/i18n/navigation";
 import { indexableLocales, routing } from "@/i18n/routing";
 import { findTemplateByRouteSlug, getVietnameseTemplateSlug } from "@/data/chungdoi";
-import { absoluteUrl } from "@/lib/site-url";
+import {
+  SITE_SOCIAL_IMAGE_HEIGHT,
+  SITE_SOCIAL_IMAGE_PATH,
+  SITE_SOCIAL_IMAGE_WIDTH,
+  absoluteUrl,
+} from "@/lib/site-url";
 
 type Href = Parameters<typeof getPathname>[0]["href"];
 
@@ -13,6 +18,18 @@ type Alternates = {
 };
 
 type AppLocale = (typeof routing.locales)[number];
+
+const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
+  vi: "vi_VN",
+  en: "en_US",
+  ko: "ko_KR",
+  ja: "ja_JP",
+  zh: "zh_CN",
+};
+
+export function openGraphLocale(locale: AppLocale): string {
+  return OPEN_GRAPH_LOCALES[locale];
+}
 
 function buildAlternates(
   hrefByLocale: (locale: AppLocale) => Href,
@@ -55,32 +72,56 @@ export function pageSeo({
   title,
   description,
   alternates,
-  image = "/chungdoi/icon-v2.png",
+  locale,
+  image = SITE_SOCIAL_IMAGE_PATH,
+  imageAlt = title,
+  openGraphTitle = title,
+  openGraphDescription = description,
+  twitterTitle = openGraphTitle,
+  twitterDescription = openGraphDescription,
   type = "website",
 }: {
   title: string;
   description: string;
   alternates: Alternates;
+  locale?: AppLocale;
   image?: string;
+  imageAlt?: string;
+  openGraphTitle?: string;
+  openGraphDescription?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
   type?: "website" | "article";
 }): Metadata {
   const imageUrl = absoluteUrl(image);
+  const socialImage = image === SITE_SOCIAL_IMAGE_PATH
+    ? {
+        url: imageUrl,
+        width: SITE_SOCIAL_IMAGE_WIDTH,
+        height: SITE_SOCIAL_IMAGE_HEIGHT,
+        alt: imageAlt,
+        type: "image/jpeg",
+      }
+    : { url: imageUrl, alt: imageAlt };
+
   return {
     title: { absolute: title },
     description,
     alternates,
     openGraph: {
       type,
-      title,
-      description,
+      title: openGraphTitle,
+      description: openGraphDescription,
       siteName: "Thiệp Mừng Online",
-      images: [{ url: imageUrl }],
+      url: alternates.canonical,
+      locale: locale ? openGraphLocale(locale) : undefined,
+      images: [socialImage],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
-      images: [imageUrl],
+      title: twitterTitle,
+      description: twitterDescription,
+      images: [{ url: imageUrl, alt: imageAlt }],
     },
   };
 }

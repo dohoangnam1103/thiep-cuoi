@@ -5,6 +5,7 @@ export async function loadPublished(slug: string) {
     where: { slug, status: "published" },
     include: {
       content: true,
+      ceremonies: true,
       schedule: true,
       gallery: true,
       wishes: { orderBy: { createdAt: "desc" } },

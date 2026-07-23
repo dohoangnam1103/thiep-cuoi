@@ -10,6 +10,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   GiftEnvelope,
   GiftQrGrid,
   useLightbox,
@@ -110,7 +111,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const DD_GRAY = palette.gray;
   const DD_AVATARS = palette.avatars;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
@@ -123,11 +124,16 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
     { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
     couple.brideFirst,
   ).filter((q) => q.bank);
+  const heroOn = content.showHeroImage !== false;
+  const heroSlots = [content.heroImage, content.heroImage2];
   const avatarCards = orderByBrideFirst(
     { src: DD_AVATARS.bride, person: people.find((person) => person.side === "bride")!, label: couple.brideBirthOrder || palette.brideLabel },
     { src: DD_AVATARS.groom, person: people.find((person) => person.side === "groom")!, label: couple.groomBirthOrder || palette.groomLabel },
     couple.brideFirst,
-  );
+  ).map((card, i) => ({
+    ...card,
+    src: (heroOn && heroSlots[i]?.trim()) || card.src,
+  }));
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
     { title: families.groomParentTitle || "Ông bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
@@ -306,6 +312,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
               <div className="relative z-10 flex w-full flex-col items-center">
                 <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ backgroundColor: DD_LINEN, color: DD_GRAY, fontFamily: DD_SERIF }}>{venue.address}</div>
                 <InvitationMap query={mapQuery} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <MapDirectionsButton query={mapQuery} style={{ color: DD_RED, fontFamily: DD_SERIF }} />
               </div>
             </div>
           </>

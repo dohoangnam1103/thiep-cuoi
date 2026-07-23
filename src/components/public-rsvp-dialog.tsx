@@ -38,7 +38,7 @@ export function PublicRsvpDialog() {
               <div>
                 <Dialog.Title className="text-2xl font-bold">{label.title}</Dialog.Title>
                 <Dialog.Description className="mt-1.5 text-sm leading-6 text-neutral-600">
-                  {guest?.greeting || live.recipientLabel || label.description}
+                  {live.recipientLabel || label.description}
                 </Dialog.Description>
               </div>
               <Dialog.Close aria-label={label.close} className="grid size-10 shrink-0 place-items-center rounded-full text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900">

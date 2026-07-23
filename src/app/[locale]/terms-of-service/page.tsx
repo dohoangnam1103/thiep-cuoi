@@ -17,6 +17,7 @@ export async function generateMetadata({
     title: t("termsMetaTitle"),
     description: t("termsMetaDescription"),
     alternates: staticAlternates("/terms-of-service", locale),
+    locale,
   });
 }
 

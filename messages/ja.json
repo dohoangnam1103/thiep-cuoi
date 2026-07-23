@@ -1,7 +1,12 @@
 {
   "metadata": {
     "title": "Thiệp Mừng Online - パーソナライズされたオンライン結婚式招待状",
-    "description": "テンプレート、RSVP、ゲスト管理、地図、ギャラリー、音楽、ご祝儀QRでパーソナライズされたオンライン結婚式招待状を作成。"
+    "description": "テンプレート、RSVP、ゲスト管理、地図、ギャラリー、音楽、ご祝儀QRでパーソナライズされたオンライン結婚式招待状を作成。",
+    "openGraphTitle": "15分で簡単に作れるオンライン結婚式招待状",
+    "openGraphDescription": "テンプレートを選んで情報を入力するだけ。デザインスキルなしで美しいオンライン招待状を作成できます。",
+    "twitterTitle": "15分でオンライン結婚式招待状を作成",
+    "twitterDescription": "テンプレートを選んで情報を入力。デザインスキルは不要です。",
+    "socialImageAlt": "Thiệp Mừng Onlineでオンライン結婚式招待状を作成"
   },
   "auth": {
     "loginTitle": "ログイン",
@@ -64,7 +69,6 @@
     },
     "createNow": "今すぐ招待状を作成",
     "hero": {
-      "domainSuffix": ".com",
       "title": "オンライン結婚式招待状を15分で無料作成",
       "subtitle": "小さな一枚の招待状が、あなたの心からのお誘いを届けます。",
       "subtitle2": "デザイン、共有、RSVPの受付、そして素敵な瞬間の記録まで簡単に。",
@@ -471,6 +475,10 @@
   "publicInvitation": {
     "manage": "招待状を管理",
     "guestFallback": "ご来賓",
+    "personalization": {
+      "salutationDefault": "ご招待申し上げます",
+      "messageDefault": "私たち家族の喜びの日をともにお祝いください"
+    },
     "rsvp": {
       "open": "出欠を回答",
       "title": "出欠確認",
@@ -508,6 +516,7 @@
       "selected": "選択済み",
       "remove": "ファイルを削除",
       "upload": "思い出を共有",
+      "uploadCta": "写真をアップロード",
       "uploading": "アップロード中...",
       "loading": "思い出を読み込み中...",
       "empty": "まだ思い出が共有されていません。最初の写真や動画を共有しましょう。",
@@ -529,7 +538,91 @@
       "errorGalleryFull": "ギャラリーの保存容量が上限に達しました。招待状の管理者にご連絡ください。"
     }
   },
+  "trialCountdown": {
+    "regionLabel": "無料体験期間",
+    "calculating": "無料体験の残り時間を計算しています...",
+    "daysHours": "無料体験はあと{days}日{hours}時間です！",
+    "hoursMinutes": "無料体験はあと{hours}時間{minutes}分です！",
+    "minutes": "無料体験はあと{minutes}分です！",
+    "lessMinute": "無料体験は残り1分未満です！",
+    "expired": "無料体験期間が終了しました",
+    "activeDescription": "中断を避けるためお支払いください",
+    "expiredDescription": "招待状を再開するにはお支払いください",
+    "payNow": "今すぐ支払う"
+  },
   "editor": {
+    "venue": {
+      "title": "開催場所",
+      "addressLabel": "会場の住所",
+      "addressPlaceholder": "例：ABCウェディングセンター、東京都中央区1-2-3",
+      "addressHint": "この住所は招待状に表示され、地図のピンを自動設定するために使われます。",
+      "previewTitle": "地図プレビュー",
+      "usingAddress": "上の住所から自動でピンを設定しています",
+      "usingOverride": "Googleマップのリンクにあるピンを使用しています",
+      "openMaps": "Googleマップを開く",
+      "previewIframeTitle": "会場位置のプレビュー",
+      "emptyPreview": "住所を入力すると地図が自動で作成されます。",
+      "overrideTitle": "地図のピンが正しくありませんか？",
+      "overrideDescription": "選択した正確なピンを使うにはGoogleマップのリンクを貼り付けてください。",
+      "mapLinkLabel": "Googleマップのリンク",
+      "mapLinkPlaceholder": "https://maps.app.goo.gl/...",
+      "mapLinkHint": "Googleマップで会場を開き、共有 → リンクをコピーを選んで、ここに貼り付けてください。",
+      "resolving": "リンクから位置を確認しています...",
+      "linkError": "このリンクを読み取れません。Googleマップの共有リンクまたはアドレスバーのリンクを貼り付けてください。",
+      "useAddressAgain": "リンクを削除して住所を使用"
+    },
+    "ceremonies": {
+      "sectionTitle": "挙式",
+      "itemLabel": "挙式 {number}",
+      "titleLabel": "挙式の案内",
+      "titlePlaceholder": "例：結婚式はご自宅にて執り行います",
+      "dateLabel": "日付",
+      "timeLabel": "時間",
+      "dateHint": "曜日と旧暦の日付は、選択した日付から自動計算されます。",
+      "add": "挙式を追加",
+      "empty": "挙式がまだありません。「挙式を追加」を押して作成してください。",
+      "deleteLabel": "挙式 {number} を削除",
+      "deleteTitle": "この挙式を削除しますか？",
+      "deleteDescription": "挙式 {number} とその日付・時間の情報が招待状から削除されます。",
+      "cancel": "キャンセル",
+      "confirmDelete": "挙式を削除"
+    },
+    "shareDialog": {
+      "title": "招待状を共有",
+      "description": "リンクをコピーするかQRコードをダウンロードしてゲストに送りましょう。",
+      "urlLabel": "招待状のURL",
+      "copyUrl": "URLをコピー",
+      "copied": "コピー済み",
+      "copyError": "URLをコピーできませんでした。もう一度お試しください。",
+      "qrLabel": "QRコード",
+      "qrDescription": "ゲストはこのコードを読み取って招待状を開けます。",
+      "qrAlt": "結婚式の招待状のQRコード",
+      "loadingQr": "QRコードを作成中",
+      "qrError": "QRコードを作成できませんでした。閉じてもう一度お試しください。",
+      "downloadQr": "QRをダウンロード",
+      "close": "閉じる"
+    },
+    "publishSuccess": {
+      "title": "招待状を公開しました！",
+      "bonus": "ゲスト20名分 + 3日間の無料体験付き",
+      "description": "ゲストが招待状を見られるようリンクを共有しましょう",
+      "commonLink": "共通リンク — グループチャット、SNS、紙の招待状用",
+      "share": "リンクを共有",
+      "headerShare": "共有",
+      "copied": "コピー済み",
+      "copyError": "リンクをコピーできませんでした。もう一度お試しください。",
+      "shareTitle": "結婚式の招待状",
+      "shareText": "私たちの結婚式の招待状をぜひご覧ください。",
+      "qr": "QRコード",
+      "qrAlt": "結婚式の招待状のQRコード",
+      "downloadQr": "QRをダウンロード",
+      "nextSteps": "次のステップ",
+      "view": "招待状を見る",
+      "payment": "お支払い",
+      "inviteGuests": "ゲストを招待",
+      "inviteGuestsDescription": "ゲストごとに名前と専用リンクを作成します",
+      "close": "閉じる"
+    },
     "draft": {
       "server": "システムに保存済み",
       "saving": "変更を保存中...",

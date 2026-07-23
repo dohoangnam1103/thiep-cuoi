@@ -10,6 +10,10 @@ import {
   useLightboxZoom,
   VI_LIGHTBOX_ZOOM_LABELS,
 } from "@/components/lightbox-zoom";
+import {
+  coordinatesFromGoogleMapsUrl,
+  isGoogleMapsUrl,
+} from "@/lib/google-maps";
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { orderedCouple } from "@/lib/invitation-display";
@@ -212,21 +216,23 @@ export function googleCalendarUrl(content: ChungDoiDemoContent) {
   return `https://www.google.com/calendar/render?${params.toString()}`;
 }
 
-function coordsFromMapsUrl(value: string): string | null {
-  const place = value.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-  if (place) return `${place[1]},${place[2]}`;
-  const at = value.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (at) return `${at[1]},${at[2]}`;
-  return null;
-}
-
 export function mapEmbedUrl(query: string) {
   const trimmed = query.trim();
-  if (/^https?:\/\/\S*google\.[^/]*\/maps/i.test(trimmed)) {
-    const coords = coordsFromMapsUrl(trimmed);
+  if (isGoogleMapsUrl(trimmed)) {
+    const coords = coordinatesFromGoogleMapsUrl(trimmed);
     if (coords) return `https://www.google.com/maps?q=${coords}&output=embed`;
   }
   return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
+}
+
+export function directionsUrl(query: string) {
+  const trimmed = query.trim();
+  let destination = trimmed;
+  if (isGoogleMapsUrl(trimmed)) {
+    const coords = coordinatesFromGoogleMapsUrl(trimmed);
+    if (coords) destination = coords;
+  }
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
 }
 
 type InvitationMapProps = Omit<ComponentPropsWithoutRef<"iframe">, "src"> & {
@@ -240,6 +246,34 @@ export function InvitationMap({ query, title, ...iframeProps }: InvitationMapPro
       src={mapEmbedUrl(query)}
       title={title ?? query}
     />
+  );
+}
+
+type MapDirectionsButtonProps = {
+  query: string;
+  label?: string;
+  className?: string;
+  style?: CSSProperties;
+};
+
+export function MapDirectionsButton({ query, label = "Chỉ đường", className, style }: MapDirectionsButtonProps) {
+  return (
+    <a
+      href={directionsUrl(query)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={
+        className ??
+        "mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-current px-5 py-2 text-sm font-medium tracking-wide transition-opacity hover:opacity-70"
+      }
+      style={style}
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+      {label}
+    </a>
   );
 }
 

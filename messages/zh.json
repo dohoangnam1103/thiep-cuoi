@@ -1,7 +1,12 @@
 {
   "metadata": {
     "title": "Thiệp Mừng Online - 个性化在线婚礼请柬",
-    "description": "使用模板、RSVP、宾客管理、地图、相册、音乐和礼金二维码，创建个性化的在线婚礼请柬。"
+    "description": "使用模板、RSVP、宾客管理、地图、相册、音乐和礼金二维码，创建个性化的在线婚礼请柬。",
+    "openGraphTitle": "15分钟轻松制作免费在线婚礼请柬",
+    "openGraphDescription": "选择模板并填写信息，无需设计技能即可制作精美的在线婚礼请柬。",
+    "twitterTitle": "15分钟制作在线婚礼请柬",
+    "twitterDescription": "选择模板并填写信息，无需设计技能。",
+    "socialImageAlt": "在Thiệp Mừng Online制作在线婚礼请柬"
   },
   "auth": {
     "loginTitle": "登录",
@@ -64,7 +69,6 @@
     },
     "createNow": "立即创建请柬",
     "hero": {
-      "domainSuffix": ".com",
       "title": "在线婚礼请柬，15分钟免费创建",
       "subtitle": "一张小小的请柬，替你送上真诚的邀请。",
       "subtitle2": "轻松设计、分享、收集 RSVP，留住每一个美好瞬间。",
@@ -471,6 +475,10 @@
   "publicInvitation": {
     "manage": "管理请柬",
     "guestFallback": "尊敬的宾客",
+    "personalization": {
+      "salutationDefault": "诚挚邀请",
+      "messageDefault": "与我们的家人共同见证并分享这份喜悦"
+    },
     "rsvp": {
       "open": "确认出席",
       "title": "确认出席",
@@ -508,6 +516,7 @@
       "selected": "已选择",
       "remove": "移除文件",
       "upload": "分享美好瞬间",
+      "uploadCta": "上传照片",
       "uploading": "正在上传...",
       "loading": "正在加载...",
       "empty": "还没有人分享。快来上传第一张照片或第一个视频吧。",
@@ -529,7 +538,91 @@
       "errorGalleryFull": "相册存储空间已满，请联系请柬管理员。"
     }
   },
+  "trialCountdown": {
+    "regionLabel": "免费试用时间",
+    "calculating": "正在计算免费试用时间...",
+    "daysHours": "免费试用还剩{days}天{hours}小时！",
+    "hoursMinutes": "免费试用还剩{hours}小时{minutes}分钟！",
+    "minutes": "免费试用还剩{minutes}分钟！",
+    "lessMinute": "免费试用剩余不足1分钟！",
+    "expired": "免费试用已结束",
+    "activeDescription": "立即付款，避免服务中断",
+    "expiredDescription": "付款后可重新启用请柬",
+    "payNow": "立即付款"
+  },
   "editor": {
+    "venue": {
+      "title": "举办地点",
+      "addressLabel": "场地地址",
+      "addressPlaceholder": "例如：ABC婚宴中心，市中心路123号",
+      "addressHint": "此地址会显示在请柬上，并用于自动生成地图定位。",
+      "previewTitle": "地图预览",
+      "usingAddress": "正在根据上方地址自动定位",
+      "usingOverride": "正在使用Google地图链接中的定位点",
+      "openMaps": "打开Google地图",
+      "previewIframeTitle": "举办地点位置预览",
+      "emptyPreview": "输入地址后将自动生成地图。",
+      "overrideTitle": "地图定位不准确？",
+      "overrideDescription": "粘贴Google地图链接，以使用你选择的准确定位点。",
+      "mapLinkLabel": "Google地图链接",
+      "mapLinkPlaceholder": "https://maps.app.goo.gl/...",
+      "mapLinkHint": "在Google地图中打开地点，选择分享 → 复制链接，然后粘贴到这里。",
+      "resolving": "正在从链接确认位置...",
+      "linkError": "无法读取此链接。请粘贴Google地图分享链接或地址栏中的链接。",
+      "useAddressAgain": "删除链接并重新使用地址"
+    },
+    "ceremonies": {
+      "sectionTitle": "婚礼仪式",
+      "itemLabel": "仪式 {number}",
+      "titleLabel": "仪式内容",
+      "titlePlaceholder": "例如：结婚仪式将在家中举行",
+      "dateLabel": "日期",
+      "timeLabel": "时间",
+      "dateHint": "星期和农历日期会根据所选日期自动计算。",
+      "add": "添加仪式",
+      "empty": "暂未添加仪式。点击“添加仪式”创建新仪式。",
+      "deleteLabel": "删除仪式 {number}",
+      "deleteTitle": "删除这个仪式？",
+      "deleteDescription": "仪式 {number} 及其日期和时间信息将从请柬中删除。",
+      "cancel": "取消",
+      "confirmDelete": "删除仪式"
+    },
+    "shareDialog": {
+      "title": "分享请柬",
+      "description": "复制链接或下载二维码并发送给宾客。",
+      "urlLabel": "请柬网址",
+      "copyUrl": "复制网址",
+      "copied": "已复制",
+      "copyError": "无法复制网址，请重试。",
+      "qrLabel": "二维码",
+      "qrDescription": "宾客扫描此二维码即可打开请柬。",
+      "qrAlt": "婚礼请柬二维码",
+      "loadingQr": "正在生成二维码",
+      "qrError": "无法生成二维码，请关闭窗口后重试。",
+      "downloadQr": "下载二维码",
+      "close": "关闭"
+    },
+    "publishSuccess": {
+      "title": "请柬已发布！",
+      "bonus": "赠送20位宾客名额 + 3天免费试用",
+      "description": "分享链接，让宾客查看您的请柬",
+      "commonLink": "通用链接 — 适用于群聊、社交媒体和纸质请柬",
+      "share": "分享链接",
+      "headerShare": "分享",
+      "copied": "已复制",
+      "copyError": "无法复制链接，请重试。",
+      "shareTitle": "婚礼请柬",
+      "shareText": "诚挚邀请您查看我们的婚礼请柬。",
+      "qr": "二维码",
+      "qrAlt": "婚礼请柬二维码",
+      "downloadQr": "下载二维码",
+      "nextSteps": "后续步骤",
+      "view": "查看请柬",
+      "payment": "付款",
+      "inviteGuests": "邀请宾客",
+      "inviteGuestsDescription": "为每位宾客填写姓名并创建专属链接",
+      "close": "关闭"
+    },
     "draft": {
       "server": "已保存到系统",
       "saving": "正在保存更改...",

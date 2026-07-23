@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
 
+import viMessages from "../../../messages/vi.json";
 import "../globals.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
@@ -16,7 +18,15 @@ export default function EditorLayout({ children }: { children: React.ReactNode }
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
       <body className="min-h-full bg-background text-foreground">
         <PetalField />
-        {children}
+        <NextIntlClientProvider
+          locale="vi"
+          messages={{
+            editor: viMessages.editor,
+            trialCountdown: viMessages.trialCountdown,
+          }}
+        >
+          {children}
+        </NextIntlClientProvider>
         <GoogleAnalytics />
       </body>
     </html>

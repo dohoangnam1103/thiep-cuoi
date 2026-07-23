@@ -39,6 +39,7 @@ model Invitation {
 
   user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   content       InvitationContent?
+  ceremonies    CeremonyItem[]
   schedule      ScheduleItem[]
   gallery       GalleryPhoto[]
   wishes        Wish[]
@@ -139,6 +140,7 @@ model InvitationContent {
 
   // opening photo (only used by templates with a dedicated hero-photo area)
   heroImage     String  @default("")
+  heroImage2    String  @default("")
   showHeroImage Boolean @default(true)
 
   // families
@@ -172,6 +174,19 @@ model ScheduleItem {
   invitationId String
   time         String
   label        String
+  sortOrder    Int    @default(0)
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model CeremonyItem {
+  id           String @id @default(cuid())
+  invitationId String
+  title        String
+  date         String
+  time         String
   sortOrder    Int    @default(0)
 
   invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)

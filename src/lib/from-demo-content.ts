@@ -21,6 +21,7 @@ export type DemoContentFields = {
   ceremonyType: string;
   openingMessage: string;
   heroImage: string;
+  heroImage2: string;
   showHeroImage: boolean;
 
   brideFather: string;
@@ -76,6 +77,7 @@ export function fromDemoContent(demo: ChungDoiDemoContent): DemoSeed {
       ceremonyType: couple.ceremonyType === "vu-quy" ? "vu-quy" : "thanh-hon",
       openingMessage: couple.openingMessage ?? "",
       heroImage: demo.heroImage ?? "",
+      heroImage2: demo.heroImage2 ?? "",
       showHeroImage: demo.showHeroImage ?? true,
 
       brideFather: families.brideFather ?? "",

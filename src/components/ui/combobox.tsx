@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useMemo, useRef, useState } from "react";
 import Select, { type ClassNamesConfig } from "react-select";
 
 import { cn } from "@/lib/utils";
@@ -18,6 +18,8 @@ type ComboboxBaseProps = {
   "aria-label"?: string;
   variant?: Variant;
   className?: string;
+  portal?: boolean;
+  formatOptionLabel?: (option: ComboboxOption) => ReactNode;
 };
 
 type ComboboxFormProps = ComboboxBaseProps & {
@@ -97,6 +99,8 @@ export function Combobox(props: ComboboxProps) {
     inputId,
     variant = "default",
     className,
+    portal = true,
+    formatOptionLabel,
   } = props;
   const ariaLabel = props["aria-label"];
   const controlled = isControlled(props);
@@ -124,7 +128,7 @@ export function Combobox(props: ComboboxProps) {
     [options, currentValue],
   );
 
-  const portalTarget = typeof document === "undefined" ? null : document.body;
+  const portalTarget = !portal || typeof document === "undefined" ? null : document.body;
 
   return (
     <div className={className}>
@@ -144,6 +148,7 @@ export function Combobox(props: ComboboxProps) {
           else setInternal(next);
         }}
         classNames={classNamesFor(variant)}
+        formatOptionLabel={formatOptionLabel}
         placeholder={placeholder ?? ""}
         isSearchable={isSearchable}
         isClearable={isClearable}

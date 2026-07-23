@@ -14,7 +14,7 @@ import { getCurrentUserId } from "@/lib/dal";
 import { resolveCoupleNames } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { loadPublished } from "@/lib/published-invitation";
-import { FREE_TRIAL_DAYS } from "@/lib/payment";
+import { FREE_TRIAL_DAYS, trialExpiresAt } from "@/lib/trial";
 import { SITE_URL } from "@/lib/site-url";
 import { toDemoContent } from "@/lib/to-demo-content";
 import { submitRsvp, submitWish } from "./actions";
@@ -22,8 +22,7 @@ import { submitRsvp, submitWish } from "./actions";
 function isExpired(paid: boolean, publishedAt: Date | null): boolean {
   if (paid) return false;
   if (!publishedAt) return false;
-  const deadline = publishedAt.getTime() + FREE_TRIAL_DAYS * 24 * 60 * 60 * 1000;
-  return Date.now() > deadline;
+  return Date.now() >= trialExpiresAt(publishedAt).getTime();
 }
 
 function OwnerManagementLink({ label }: { label: string }) {
@@ -167,8 +166,12 @@ export default async function PublicInvitationPage({
         }
       : null;
   const recipientLabel = guest
-    ? guest.greeting || [guest.role?.trim(), guest.name.trim()].filter(Boolean).join(" ")
+    ? guest.name.trim()
     : invitationTranslations("guestFallback");
+  const personalizationLabels = {
+    salutationDefault: invitationTranslations("personalization.salutationDefault"),
+    messageDefault: invitationTranslations("personalization.messageDefault"),
+  };
 
   const questions = invitation.rsvpQuestions.map((question) => {
     let options: string[] = [];
@@ -226,6 +229,7 @@ export default async function PublicInvitationPage({
     selected: invitationTranslations("media.selected"),
     remove: invitationTranslations("media.remove"),
     upload: invitationTranslations("media.upload"),
+    uploadCta: invitationTranslations("media.uploadCta"),
     uploading: invitationTranslations("media.uploading"),
     loading: invitationTranslations("media.loading"),
     empty: invitationTranslations("media.empty"),
@@ -272,6 +276,7 @@ export default async function PublicInvitationPage({
           rsvpAction: submitRsvpForSlug,
           guest,
           recipientLabel,
+          personalizationLabels,
           questions,
           rsvpLabels,
           slug,

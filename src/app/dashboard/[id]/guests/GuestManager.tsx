@@ -3,6 +3,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import {
   CheckCircle2,
+  ChevronDown,
   Clipboard,
   Download,
   FileDown,
@@ -153,114 +154,89 @@ function ModalFrame({
 function GuestFields({ guest }: { guest?: GuestRow }) {
   const t = useTranslations("guestManager");
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4">
+      <Field label={t("fields.role")}>
+        <input
+          name="role"
+          maxLength={60}
+          defaultValue={guest?.role ?? t("fields.rolePlaceholder")}
+          className={FIELD_CLASS}
+        />
+      </Field>
       <Field label={t("fields.name")}>
         <input
           name="name"
           required
           maxLength={120}
           defaultValue={guest?.name}
+          placeholder={t("fields.namePlaceholder")}
           className={FIELD_CLASS}
           autoComplete="name"
         />
       </Field>
-      <Field label={t("fields.role")}>
-        <input name="role" maxLength={60} defaultValue={guest?.role} className={FIELD_CLASS} />
-      </Field>
-      <Field label={t("fields.side")}>
-        <Combobox
-          inputId="guest-side"
-          name="side"
-          defaultValue={guest?.side ?? ""}
-          options={[
-            { value: "", label: t("fields.sideEmpty") },
-            { value: "Nhà trai", label: t("sides.groom") },
-            { value: "Nhà gái", label: t("sides.bride") },
-          ]}
-        />
-      </Field>
-      <Field label={t("fields.groupName")}>
-        <input
-          name="groupName"
-          maxLength={100}
-          defaultValue={guest?.groupName}
-          className={FIELD_CLASS}
-        />
-      </Field>
-      <Field label={t("fields.tableName")}>
-        <input
-          name="tableName"
-          maxLength={60}
-          defaultValue={guest?.tableName}
-          className={FIELD_CLASS}
-        />
-      </Field>
-      <Field label={t("fields.maxGuests")} hint={t("fields.maxGuestsHint")}>
-        <input
-          name="maxGuests"
-          type="number"
-          min={1}
-          max={20}
-          defaultValue={guest?.maxGuests ?? 1}
-          className={FIELD_CLASS}
-        />
-      </Field>
-      <Field label={t("fields.phone")}>
-        <input
-          name="phone"
-          type="tel"
-          maxLength={30}
-          defaultValue={guest?.phone}
-          className={FIELD_CLASS}
-          autoComplete="tel"
-        />
-      </Field>
-      <Field label={t("fields.email")}>
-        <input
-          name="email"
-          type="email"
-          maxLength={160}
-          defaultValue={guest?.email}
-          className={FIELD_CLASS}
-          autoComplete="email"
-        />
-      </Field>
-      <Field label={t("fields.greeting")} hint={t("fields.greetingHint")}>
-        <input
+      <Field label={t("fields.greeting")}>
+        <textarea
           name="greeting"
+          rows={2}
           maxLength={160}
-          defaultValue={guest?.greeting}
+          defaultValue={guest?.greeting ?? t("fields.greetingPlaceholder")}
           className={FIELD_CLASS}
         />
       </Field>
-      <Field label={t("fields.giftAmount")} hint={t("fields.giftAmountHint")}>
-        <input
-          name="giftAmount"
-          type="number"
-          min={0}
-          step={1000}
-          defaultValue={guest?.giftAmount ?? ""}
-          className={FIELD_CLASS}
-        />
-      </Field>
-      <div className="sm:col-span-2">
-        <Field label={t("fields.note")}>
-          <textarea
-            name="note"
-            rows={3}
-            maxLength={500}
-            defaultValue={guest?.note}
-            className={FIELD_CLASS}
+
+      <details className="group overflow-hidden rounded-2xl border border-border bg-muted/20">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3.5 transition hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary [&::-webkit-details-marker]:hidden">
+          <span>
+            <span className="block text-sm font-semibold text-foreground">
+              {t("fields.classification")}
+            </span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">
+              {t("fields.classificationHint")}
+            </span>
+          </span>
+          <ChevronDown
+            className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+            aria-hidden
           />
-        </Field>
-      </div>
+        </summary>
+        <div className="grid gap-4 border-t border-border p-4 sm:grid-cols-2">
+          <Field label={t("fields.side")}>
+            <Combobox
+              inputId="guest-side"
+              name="side"
+              portal={false}
+              defaultValue={guest?.side ?? ""}
+              options={[
+                { value: "", label: t("fields.sideEmpty") },
+                { value: "Nhà trai", label: t("sides.groom") },
+                { value: "Nhà gái", label: t("sides.bride") },
+              ]}
+            />
+          </Field>
+          <Field label={t("fields.groupName")}>
+            <input
+              name="groupName"
+              maxLength={100}
+              defaultValue={guest?.groupName}
+              className={FIELD_CLASS}
+            />
+          </Field>
+          <Field label={t("fields.tableName")}>
+            <input
+              name="tableName"
+              maxLength={60}
+              defaultValue={guest?.tableName}
+              className={FIELD_CLASS}
+            />
+          </Field>
+        </div>
+      </details>
     </div>
   );
 }
 
 function guestWithFormData(guest: GuestRow, formData: FormData): GuestRow {
   const text = (name: string) => String(formData.get(name) ?? "").trim();
-  const giftAmount = text("giftAmount");
 
   return {
     ...guest,
@@ -269,12 +245,7 @@ function guestWithFormData(guest: GuestRow, formData: FormData): GuestRow {
     role: text("role"),
     groupName: text("groupName"),
     tableName: text("tableName"),
-    phone: text("phone"),
-    email: text("email"),
     greeting: text("greeting"),
-    maxGuests: Number(text("maxGuests")),
-    giftAmount: giftAmount ? Number(giftAmount) : null,
-    note: text("note"),
   };
 }
 

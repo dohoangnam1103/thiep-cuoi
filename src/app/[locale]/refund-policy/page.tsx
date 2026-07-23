@@ -17,6 +17,7 @@ export async function generateMetadata({
     title: t("refundMetaTitle"),
     description: t("refundMetaDescription"),
     alternates: staticAlternates("/refund-policy", locale),
+    locale,
   });
 }
 

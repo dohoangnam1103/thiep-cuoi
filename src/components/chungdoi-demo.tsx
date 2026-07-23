@@ -22,10 +22,16 @@ import {
   VI_LIGHTBOX_ZOOM_LABELS,
 } from "@/components/lightbox-zoom";
 import { TARGET_PX } from "@/components/chungdoi-envelope-3d";
-import { InvitationMap } from "@/components/chungdoi-tpl-shared";
+import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
-import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import {
+  invitationCeremonies,
+  invitationCeremonyMessage,
+  invitationOpeningMessage,
+  orderedCouple,
+  orderByBrideFirst,
+} from "@/lib/invitation-display";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
@@ -89,7 +95,7 @@ const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { 
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-const DEFAULT_MUSIC = "/chungdoi/music/perfect-ed-sheeran.mp3";
+const DEFAULT_MUSIC = "/chungdoi/music/a-thousand-years.mp3";
 
 function hexToRgba(hex: string, alpha: number) {
   const clean = hex.replace("#", "");
@@ -149,6 +155,63 @@ function formatWishTime(raw: string) {
   if (Number.isNaN(d.getTime())) return raw;
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}/${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
+function AdditionalCeremonies({
+  content,
+  tokens,
+}: {
+  content: ChungDoiDemoContent;
+  tokens: Tokens;
+}) {
+  const ceremonies = invitationCeremonies(content).slice(1);
+  if (!ceremonies.length) return null;
+
+  return (
+    <section
+      data-additional-ceremonies
+      className="px-4 py-12 sm:px-6"
+      style={{ background: tokens.cardBg, color: tokens.textPrimary }}
+    >
+      <div className="mx-auto grid max-w-[760px] gap-5">
+        {ceremonies.map((ceremony, index) => {
+          const date = formatDate(ceremony.date);
+          return (
+            <article
+              key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
+              className="rounded-[2rem] border px-5 py-8 text-center shadow-sm sm:px-8"
+              style={{
+                background: tokens.guestBoxBg,
+                borderColor: tokens.guestBoxBorder,
+              }}
+            >
+              {ceremony.title ? (
+                <h2 className="whitespace-pre-line text-xl font-semibold uppercase leading-relaxed sm:text-2xl">
+                  {ceremony.title}
+                </h2>
+              ) : null}
+              {ceremony.time || date ? (
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm sm:text-base">
+                  {ceremony.time ? <span className="font-semibold">{ceremony.time}</span> : null}
+                  {ceremony.time && date ? <span aria-hidden>·</span> : null}
+                  {date ? (
+                    <span>
+                      {date.weekday}, {date.day}/{date.month}/{date.yearNumber}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+              {date?.lunar ? (
+                <p className="mt-2 text-sm" style={{ color: tokens.textSecondary }}>
+                  {date.lunar}
+                </p>
+              ) : null}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 function useLightbox(count: number) {
@@ -519,6 +582,15 @@ function CoverCard({
     ? [content.couple.brideShortName, content.couple.groomShortName]
     : [content.couple.groomShortName, content.couple.brideShortName];
   const nameStyle = tokens.coupleFont ? { fontFamily: tokens.coupleFont } : undefined;
+  const guestSalutation =
+    liveForms?.guest?.role?.trim() ||
+    liveForms?.personalizationLabels.salutationDefault ||
+    "Thân Mời";
+  const guestName = liveForms?.guest?.name.trim() || liveForms?.recipientLabel || "Quý khách";
+  const guestMessage =
+    liveForms?.guest?.greeting?.trim() ||
+    liveForms?.personalizationLabels.messageDefault ||
+    "Đến dự buổi tiệc chung vui cùng gia đình";
 
   return (
     <div
@@ -592,15 +664,15 @@ function CoverCard({
 
         <div className="mb-6">
           <p className="mb-2 text-[16px] font-light" style={{ color: tokens.textSecondary }}>
-            Thân Mời
+            {guestSalutation}
           </p>
           <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: tokens.guestBoxBg }}>
             <span className="block text-lg font-semibold sm:text-xl" style={{ color: tokens.textPrimary }}>
-              {liveForms?.recipientLabel ?? "Quý khách"}
+              {guestName}
             </span>
           </div>
           <p className="mx-auto max-w-xs text-[15px] font-light" style={{ color: tokens.textSecondary }}>
-            đến dự buổi tiệc chung vui cùng gia đình
+            {guestMessage}
           </p>
         </div>
 
@@ -823,7 +895,7 @@ function GenericWishForm({ tokens }: { tokens: Tokens }) {
 
 function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tokens: Tokens }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const nameStyle = tokens.coupleFont ? { fontFamily: tokens.coupleFont } : undefined;
@@ -961,6 +1033,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
           <div className="mt-5 overflow-hidden rounded-2xl border" style={{ borderColor: tokens.guestBoxBorder }}>
             <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
           </div>
+          <MapDirectionsButton query={mapQuery} style={{ color: tokens.accent }} />
         </section>
       ) : null}
 
@@ -1275,6 +1348,7 @@ export function ChungDoiDemo({
         </div>
       )}
 
+      <AdditionalCeremonies content={content} tokens={tokens} />
       <PublicGuestMomentsPortal templateSlug={content.slug} />
 
       {opened && !captureMode ? (

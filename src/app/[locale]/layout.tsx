@@ -5,7 +5,15 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { indexableLocales, routing } from "@/i18n/routing";
 import { appFontVariables } from "@/lib/fonts";
-import { SITE_URL, absoluteUrl } from "@/lib/site-url";
+import { openGraphLocale } from "@/lib/seo";
+import {
+  SITE_LOGO_PATH,
+  SITE_SOCIAL_IMAGE_HEIGHT,
+  SITE_SOCIAL_IMAGE_PATH,
+  SITE_SOCIAL_IMAGE_WIDTH,
+  SITE_URL,
+  absoluteUrl,
+} from "@/lib/site-url";
 import "../globals.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
@@ -26,7 +34,8 @@ export async function generateMetadata({
     indexableLocales.map((l) => [l, l === routing.defaultLocale ? "/" : `/${l}`]),
   );
 
-  const ogImage = absoluteUrl("/chungdoi/images/en/banner_hero.webp");
+  const isIndexable = indexableLocales.includes(locale as (typeof indexableLocales)[number]);
+  const ogImage = absoluteUrl(SITE_SOCIAL_IMAGE_PATH);
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -35,9 +44,16 @@ export async function generateMetadata({
       template: "%s | Thiệp Mừng Online",
     },
     description: t("description"),
+    authors: [{ name: "Thiệp Mừng Online", url: SITE_URL }],
+    creator: "Thiệp Mừng Online",
+    publisher: "Thiệp Mừng Online",
     robots: {
-      index: indexableLocales.includes(locale as (typeof indexableLocales)[number]),
+      index: isIndexable,
       follow: true,
+      googleBot: {
+        index: isIndexable,
+        follow: true,
+      },
     },
     icons: {
       icon: "/chungdoi/icon-v2.png",
@@ -55,14 +71,20 @@ export async function generateMetadata({
       title: t("title"),
       description: t("description"),
       url: locale === routing.defaultLocale ? "/" : `/${locale}`,
-      locale,
-      images: [{ url: ogImage, width: 2987, height: 1566 }],
+      locale: openGraphLocale(locale as (typeof routing.locales)[number]),
+      images: [{
+        url: ogImage,
+        width: SITE_SOCIAL_IMAGE_WIDTH,
+        height: SITE_SOCIAL_IMAGE_HEIGHT,
+        alt: t("socialImageAlt"),
+        type: "image/jpeg",
+      }],
     },
     twitter: {
       card: "summary_large_image",
-      title: t("title"),
-      description: t("description"),
-      images: [ogImage],
+      title: t("twitterTitle"),
+      description: t("twitterDescription"),
+      images: [{ url: ogImage, alt: t("socialImageAlt") }],
     },
   };
 }
@@ -90,7 +112,7 @@ export default async function LocaleLayout({
         "@id": `${SITE_URL}/#organization`,
         name: "Thiệp Mừng Online",
         url: SITE_URL,
-        logo: `${SITE_URL}/chungdoi/icon-v2.png`,
+        logo: absoluteUrl(SITE_LOGO_PATH),
       },
       {
         "@type": "WebSite",

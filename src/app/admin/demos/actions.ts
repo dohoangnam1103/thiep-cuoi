@@ -8,6 +8,7 @@ import { getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
 import {
   contentSchema,
+  parseCeremonies,
   parseSchedule,
   parseGallery,
   type EditorState,
@@ -23,7 +24,14 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
   }
-  const { templateId, ...contentData } = parsed.data;
+  const ceremonies = parseCeremonies(formData);
+  const firstCeremony = ceremonies[0];
+  const { templateId, ...contentData } = {
+    ...parsed.data,
+    ceremonyHeader: firstCeremony?.title ?? "",
+    ceremonyDate: firstCeremony?.date ?? "",
+    ceremonyTime: firstCeremony?.time ?? "",
+  };
   const schedule = parseSchedule(formData);
   const gallery = parseGallery(formData);
 
@@ -34,8 +42,22 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
       create: { invitationId: id, ...contentData },
       update: contentData,
     }),
+    prisma.ceremonyItem.deleteMany({ where: { invitationId: id } }),
     prisma.scheduleItem.deleteMany({ where: { invitationId: id } }),
     prisma.galleryPhoto.deleteMany({ where: { invitationId: id } }),
+    ...(ceremonies.length
+      ? [
+          prisma.ceremonyItem.createMany({
+            data: ceremonies.map((ceremony, i) => ({
+              invitationId: id,
+              title: ceremony.title,
+              date: ceremony.date,
+              time: ceremony.time,
+              sortOrder: i,
+            })),
+          }),
+        ]
+      : []),
     ...(schedule.length
       ? [
           prisma.scheduleItem.createMany({

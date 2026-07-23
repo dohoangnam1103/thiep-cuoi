@@ -17,17 +17,15 @@ const guestSchema = z.object({
   role: optionalText(60),
   groupName: optionalText(100),
   tableName: optionalText(60),
-  phone: optionalText(30),
-  email: z.union([z.literal(""), z.email().max(160)]).optional().default(""),
   greeting: optionalText(160),
-  maxGuests: z.coerce.number().int().min(1).max(20).default(1),
-  giftAmount: z.union([z.literal(""), z.coerce.number().int().min(0).max(1_000_000_000)]).optional().default(""),
-  note: optionalText(500),
 });
 
 const importedGuestSchema = guestSchema.extend({
+  phone: optionalText(30),
+  email: z.union([z.literal(""), z.email().max(160)]).optional().default(""),
   maxGuests: z.number().int().min(1).max(20).default(1),
   giftAmount: z.number().int().min(0).max(1_000_000_000).nullable().default(null),
+  note: optionalText(500),
 });
 
 export type GuestActionError =
@@ -58,12 +56,7 @@ function guestDataFromForm(formData: FormData) {
     role: formData.get("role"),
     groupName: formData.get("groupName"),
     tableName: formData.get("tableName"),
-    phone: formData.get("phone"),
-    email: formData.get("email"),
     greeting: formData.get("greeting"),
-    maxGuests: formData.get("maxGuests") || 1,
-    giftAmount: formData.get("giftAmount") ?? "",
-    note: formData.get("note"),
   };
 }
 
@@ -108,12 +101,7 @@ export async function addGuest(
       role: nullable(parsed.data.role),
       groupName: nullable(parsed.data.groupName),
       tableName: nullable(parsed.data.tableName),
-      phone: nullable(parsed.data.phone),
-      email: nullable(parsed.data.email),
       greeting: nullable(parsed.data.greeting),
-      maxGuests: parsed.data.maxGuests,
-      giftAmount: parsed.data.giftAmount === "" ? null : parsed.data.giftAmount,
-      note: nullable(parsed.data.note),
     }],
   });
 
@@ -142,12 +130,7 @@ export async function updateGuest(
       role: nullable(parsed.data.role),
       groupName: nullable(parsed.data.groupName),
       tableName: nullable(parsed.data.tableName),
-      phone: nullable(parsed.data.phone),
-      email: nullable(parsed.data.email),
       greeting: nullable(parsed.data.greeting),
-      maxGuests: parsed.data.maxGuests,
-      giftAmount: parsed.data.giftAmount === "" ? null : parsed.data.giftAmount,
-      note: nullable(parsed.data.note),
     },
   });
 

@@ -27,16 +27,15 @@ function desktopNavClassName(active: boolean) {
 
 export function Logo({ responsive = false }: { responsive?: boolean }) {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-2 py-1 transition hover:bg-muted">
-      <LogoMark className="size-8" />
-      {responsive ? (
-        <>
-          <span className="font-pattaya text-2xl text-foreground sm:hidden">Thiệp Mừng</span>
-          <span className="hidden font-pattaya text-2xl text-foreground sm:inline">Thiệp Mừng Online</span>
-        </>
-      ) : (
-        <span className="font-pattaya text-2xl text-foreground">Thiệp Mừng Online</span>
-      )}
+    <Link
+      href="/"
+      aria-label="Thiệp Mừng Online"
+      className="flex shrink-0 items-center rounded-xl px-1 py-1 transition hover:bg-muted"
+    >
+      <LogoMark
+        eager={responsive}
+        className={responsive ? "h-9 w-auto sm:h-11" : "h-12 w-auto max-w-full"}
+      />
     </Link>
   );
 }

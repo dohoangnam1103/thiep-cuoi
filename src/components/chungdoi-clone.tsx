@@ -215,20 +215,16 @@ function HeroSection({ createHref }: { createHref: string }) {
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="flex flex-col justify-center">
-          <p className="hero-enter mb-4 text-2xl font-semibold text-foreground" style={{ "--hero-delay": "80ms" } as CSSProperties}>
-            <span className="font-pattaya text-4xl text-primary">thiepmungonline</span>
-            <span className="text-muted-foreground">{t("hero.domainSuffix")}</span>
-          </p>
           <h1 className="hero-enter font-heading max-w-3xl text-4xl font-black leading-[1.15] tracking-tight text-foreground sm:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
             <span className="shiny-text">{t("hero.title")}</span>
           </h1>
           <p className="hero-enter mt-6 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
           <p className="hero-enter mt-2 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
           <p className="hero-enter mt-5 max-w-2xl text-sm leading-6 text-muted-foreground" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
-          <div className="hero-enter mt-8 flex flex-col items-start gap-4" style={{ "--hero-delay": "400ms" } as CSSProperties}>
+          <div className="hero-enter mt-8 flex flex-col items-center gap-4 sm:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href={createHref}
-              className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-lg font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+              className="group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)] sm:px-8 sm:py-4 sm:text-lg"
             >
               {t("createNow")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
             </a>

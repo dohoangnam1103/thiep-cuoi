@@ -1,6 +1,8 @@
 import Link from "next/link";
 
+import { TrialCountdownBanner } from "@/components/trial-countdown-banner";
 import { resolveDashboardCardTheme } from "@/lib/dashboard-card-theme";
+import { trialExpiresAt } from "@/lib/trial";
 
 export type DashboardInvitationCardProps = {
   id: string;
@@ -11,6 +13,7 @@ export type DashboardInvitationCardProps = {
   status: string;
   slug: string | null;
   paid: boolean;
+  publishedAt: string | null;
   rsvpCount: number;
   wishCount: number;
 };
@@ -24,6 +27,7 @@ export function DashboardInvitationCard({
   status,
   slug,
   paid,
+  publishedAt,
   rsvpCount,
   wishCount,
 }: DashboardInvitationCardProps) {
@@ -143,6 +147,14 @@ export function DashboardInvitationCard({
             )}
           </div>
         </div>
+        {published && !paid && publishedAt ? (
+          <TrialCountdownBanner
+            invitationId={id}
+            expiresAt={trialExpiresAt(new Date(publishedAt)).getTime()}
+            source="dashboard_list"
+            className="mt-5"
+          />
+        ) : null}
       </div>
     </li>
   );

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { contentSchema } from "./content-schema";
+import { contentSchema, parseCeremonies } from "./content-schema";
 
 test("contentSchema preserves false values from hidden form fields", () => {
   const result = contentSchema.parse({
@@ -21,4 +21,22 @@ test("contentSchema keeps the selected ceremony type", () => {
   });
 
   assert.equal(result.ceremonyType, "vu-quy");
+});
+
+test("parseCeremonies keeps aligned ceremony rows and skips fully empty rows", () => {
+  const formData = new FormData();
+  formData.append("ceremonyItemTitle", " Lễ vu quy ");
+  formData.append("ceremonyItemDate", "2026-08-28");
+  formData.append("ceremonyItemTime", "09:00");
+  formData.append("ceremonyItemTitle", "");
+  formData.append("ceremonyItemDate", "");
+  formData.append("ceremonyItemTime", "");
+  formData.append("ceremonyItemTitle", "Lễ thành hôn");
+  formData.append("ceremonyItemDate", "2026-08-29");
+  formData.append("ceremonyItemTime", "10:30");
+
+  assert.deepEqual(parseCeremonies(formData), [
+    { title: "Lễ vu quy", date: "2026-08-28", time: "09:00" },
+    { title: "Lễ thành hôn", date: "2026-08-29", time: "10:30" },
+  ]);
 });

@@ -1,7 +1,12 @@
 {
   "metadata": {
     "title": "Thiệp Mừng Online - 맞춤형 온라인 청첩장",
-    "description": "템플릿, RSVP, 하객 관리, 지도, 갤러리, 음악, 축의금 QR로 맞춤형 온라인 청첩장을 만드세요."
+    "description": "템플릿, RSVP, 하객 관리, 지도, 갤러리, 음악, 축의금 QR로 맞춤형 온라인 청첩장을 만드세요.",
+    "openGraphTitle": "15분 만에 만드는 간편한 온라인 청첩장",
+    "openGraphDescription": "템플릿을 고르고 정보를 입력해 디자인 기술 없이 아름다운 온라인 청첩장을 만드세요.",
+    "twitterTitle": "15분 만에 온라인 청첩장 만들기",
+    "twitterDescription": "템플릿을 고르고 정보를 입력하세요. 디자인 기술이 필요하지 않습니다.",
+    "socialImageAlt": "Thiệp Mừng Online에서 온라인 청첩장 만들기"
   },
   "auth": {
     "loginTitle": "로그인",
@@ -64,7 +69,6 @@
     },
     "createNow": "지금 청첩장 만들기",
     "hero": {
-      "domainSuffix": ".com",
       "title": "온라인 청첩장, 15분 만에 무료로 만들기",
       "subtitle": "작은 청첩장 한 장이 당신의 진심 어린 초대를 대신 전합니다.",
       "subtitle2": "손쉽게 디자인하고 공유하며, RSVP를 받고 소중한 순간을 간직하세요.",
@@ -471,6 +475,10 @@
   "publicInvitation": {
     "manage": "청첩장 관리",
     "guestFallback": "귀빈",
+    "personalization": {
+      "salutationDefault": "정중히 초대합니다",
+      "messageDefault": "저희 가족의 기쁜 자리를 함께 축하해 주세요"
+    },
     "rsvp": {
       "open": "참석 여부 확인",
       "title": "참석 여부 확인",
@@ -508,6 +516,7 @@
       "selected": "선택됨",
       "remove": "파일 제거",
       "upload": "추억 공유하기",
+      "uploadCta": "사진 업로드",
       "uploading": "업로드 중...",
       "loading": "추억을 불러오는 중...",
       "empty": "아직 공유된 추억이 없습니다. 첫 번째 사진이나 영상을 올려 주세요.",
@@ -529,7 +538,91 @@
       "errorGalleryFull": "갤러리 저장 공간이 가득 찼습니다. 청첩장 소유자에게 문의해 주세요."
     }
   },
+  "trialCountdown": {
+    "regionLabel": "무료 체험 시간",
+    "calculating": "무료 체험 시간을 계산하는 중...",
+    "daysHours": "무료 체험이 {days}일 {hours}시간 남았습니다!",
+    "hoursMinutes": "무료 체험이 {hours}시간 {minutes}분 남았습니다!",
+    "minutes": "무료 체험이 {minutes}분 남았습니다!",
+    "lessMinute": "무료 체험이 1분 미만 남았습니다!",
+    "expired": "무료 체험이 종료되었습니다",
+    "activeDescription": "중단 없이 사용하려면 결제해 주세요",
+    "expiredDescription": "청첩장을 다시 활성화하려면 결제해 주세요",
+    "payNow": "지금 결제"
+  },
   "editor": {
+    "venue": {
+      "title": "예식 장소",
+      "addressLabel": "장소 주소",
+      "addressPlaceholder": "예: ABC 웨딩홀, 서울시 중구 123",
+      "addressHint": "이 주소는 청첩장에 표시되며 지도 핀을 자동으로 설정하는 데 사용됩니다.",
+      "previewTitle": "지도 미리보기",
+      "usingAddress": "위 주소를 기준으로 핀을 자동 설정 중",
+      "usingOverride": "Google 지도 링크의 핀을 사용 중",
+      "openMaps": "Google 지도 열기",
+      "previewIframeTitle": "예식 장소 위치 미리보기",
+      "emptyPreview": "주소를 입력하면 지도가 자동으로 생성됩니다.",
+      "overrideTitle": "지도 핀 위치가 정확하지 않나요?",
+      "overrideDescription": "선택한 정확한 핀을 사용하려면 Google 지도 링크를 붙여넣으세요.",
+      "mapLinkLabel": "Google 지도 링크",
+      "mapLinkPlaceholder": "https://maps.app.goo.gl/...",
+      "mapLinkHint": "Google 지도에서 장소를 열고 공유 → 링크 복사를 선택한 뒤 여기에 붙여넣으세요.",
+      "resolving": "링크에서 위치를 확인하는 중...",
+      "linkError": "이 링크를 읽을 수 없습니다. Google 지도 공유 링크나 주소창 링크를 붙여넣으세요.",
+      "useAddressAgain": "링크를 삭제하고 주소 사용"
+    },
+    "ceremonies": {
+      "sectionTitle": "예식",
+      "itemLabel": "예식 {number}",
+      "titleLabel": "예식 안내",
+      "titlePlaceholder": "예: 결혼식은 가족 자택에서 진행됩니다",
+      "dateLabel": "날짜",
+      "timeLabel": "시간",
+      "dateHint": "요일과 음력 날짜는 선택한 양력 날짜에서 자동으로 계산됩니다.",
+      "add": "예식 추가",
+      "empty": "등록된 예식이 없습니다. “예식 추가”를 눌러 새 예식을 만드세요.",
+      "deleteLabel": "예식 {number} 삭제",
+      "deleteTitle": "이 예식을 삭제할까요?",
+      "deleteDescription": "예식 {number}과 날짜 및 시간 정보가 청첩장에서 삭제됩니다.",
+      "cancel": "취소",
+      "confirmDelete": "예식 삭제"
+    },
+    "shareDialog": {
+      "title": "청첩장 공유",
+      "description": "링크를 복사하거나 QR 코드를 다운로드해 하객에게 보내세요.",
+      "urlLabel": "청첩장 URL",
+      "copyUrl": "URL 복사",
+      "copied": "복사됨",
+      "copyError": "URL을 복사할 수 없습니다. 다시 시도해 주세요.",
+      "qrLabel": "QR 코드",
+      "qrDescription": "하객이 이 코드를 스캔해 청첩장을 열 수 있습니다.",
+      "qrAlt": "결혼식 청첩장 QR 코드",
+      "loadingQr": "QR 코드 생성 중",
+      "qrError": "QR 코드를 생성할 수 없습니다. 창을 닫고 다시 시도해 주세요.",
+      "downloadQr": "QR 다운로드",
+      "close": "닫기"
+    },
+    "publishSuccess": {
+      "title": "청첩장이 게시되었습니다!",
+      "bonus": "하객 20명 + 3일 무료 체험 제공",
+      "description": "하객이 청첩장을 볼 수 있도록 링크를 공유하세요",
+      "commonLink": "공용 링크 — 단체 채팅, 소셜 미디어, 종이 청첩장용",
+      "share": "링크 공유",
+      "headerShare": "공유",
+      "copied": "복사됨",
+      "copyError": "링크를 복사할 수 없습니다. 다시 시도해 주세요.",
+      "shareTitle": "결혼식 청첩장",
+      "shareText": "저희 결혼식 청첩장을 확인해 주세요.",
+      "qr": "QR 코드",
+      "qrAlt": "결혼식 청첩장 QR 코드",
+      "downloadQr": "QR 다운로드",
+      "nextSteps": "다음 단계",
+      "view": "청첩장 보기",
+      "payment": "결제",
+      "inviteGuests": "하객 초대",
+      "inviteGuestsDescription": "하객별 이름과 전용 링크를 만드세요",
+      "close": "닫기"
+    },
     "draft": {
       "server": "시스템에 저장됨",
       "saving": "변경 사항 저장 중...",

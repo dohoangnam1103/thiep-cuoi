@@ -10,6 +10,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   GiftEnvelope,
   parseISODate,
   useLightbox,
@@ -77,12 +78,12 @@ function SongLongXanhWishForm() {
 export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const recDate = parseISODate(couple.date);
   const krWeekday = recDate ? KR_DAYS[recDate.getDay()] : "";
-  const ceremonyDate = parseISODate(couple.ceremonyDate || couple.date);
+  const ceremonyDate = parseISODate(couple.ceremonyDate);
   const ceremonyKrWeekday = ceremonyDate ? KR_DAYS[ceremonyDate.getDay()] : "";
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
@@ -288,6 +289,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
             <div className="relative flex w-full flex-col items-center pb-10" style={{ backgroundColor: SLX_LINEN }}>
               <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{venue.address}</div>
               <InvitationMap query={mapQuery} title={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              <MapDirectionsButton query={mapQuery} style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }} />
             </div>
           </>
         ) : null}

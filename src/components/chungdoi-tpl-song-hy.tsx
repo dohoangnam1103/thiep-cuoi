@@ -15,6 +15,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   SharedCarousel,
   useLightbox,
   WEEKDAY_LABELS,
@@ -348,6 +349,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ backgroundColor: palette.cardBg, color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.address}</div>
             <div className="relative flex w-full flex-col items-center gap-4 md:gap-5">
               <InvitationMap query={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" title={mapQuery} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" />
+              <MapDirectionsButton query={mapQuery} style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }} />
             </div>
           </section>
         </div>

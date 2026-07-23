@@ -3,8 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiListing } from "@/components/chungdoi-listing";
 import type { Locale } from "@/i18n/routing";
-import { staticAlternates } from "@/lib/seo";
-import { absoluteUrl } from "@/lib/site-url";
+import { pageSeo, staticAlternates } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -14,28 +13,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "listing" });
 
-  const title = t("metaTitle");
-  const description = t("metaDescription");
-  const image = absoluteUrl("/chungdoi/icon-v2.png");
-
-  return {
-    title: { absolute: title },
-    description,
+  return pageSeo({
+    title: t("metaTitle"),
+    description: t("metaDescription"),
     alternates: staticAlternates("/templates", locale),
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      images: [{ url: image }],
-      siteName: "Thiệp Mừng Online",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [image],
-    },
-  };
+    locale,
+  });
 }
 
 export default async function TemplatesPage({

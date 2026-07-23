@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
+  useLightbox, Lightbox, googleCalendarUrl, InvitationMap, MapDirectionsButton,
   FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
   GiftEnvelope, GiftQrGrid,
 } from "@/components/chungdoi-tpl-shared";
@@ -57,7 +57,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
   const P = palette;
   const muted = hexToRgba(P.accent, 0.72);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const albumShown = gallery.slice(0, 4);
@@ -197,6 +197,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(P.accent, 0.3) }}>
                 <InvitationMap query={mapQuery} title={mapQuery} className="h-64 w-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
+              <MapDirectionsButton query={mapQuery} style={{ color: P.accent }} />
             </section>
           ) : null}
 

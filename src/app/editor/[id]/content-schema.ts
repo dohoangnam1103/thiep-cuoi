@@ -17,6 +17,12 @@ export const scheduleItemSchema = z.object({
   label: z.string().max(120),
 });
 
+export const ceremonyItemSchema = z.object({
+  title: z.string().max(300),
+  date: z.string().max(20),
+  time: z.string().max(20),
+});
+
 export const contentSchema = z.object({
   templateId: z.string().refine((v) => ALL_TEMPLATE_SLUGS.has(v), {
     message: "Mẫu thiệp không hợp lệ",
@@ -40,6 +46,7 @@ export const contentSchema = z.object({
   ceremonyType: z.enum(["thanh-hon", "vu-quy"]).optional().default("thanh-hon"),
   openingMessage: z.string().max(300).optional().default(""),
   heroImage: z.string().max(300).optional().default(""),
+  heroImage2: z.string().max(300).optional().default(""),
   showHeroImage: formBoolean(true),
 
   brideFather: z.string().max(120).optional().default(""),
@@ -52,7 +59,7 @@ export const contentSchema = z.object({
   groomParentTitle: z.string().max(60).optional().default(""),
 
   address: z.string().max(200).optional().default(""),
-  mapAddress: z.string().max(300).optional().default(""),
+  mapAddress: z.string().max(1_200).optional().default(""),
   banquetTime: z.string().max(60).optional().default(""),
 
   brideBankName: z.string().max(120).optional().default(""),
@@ -63,7 +70,14 @@ export const contentSchema = z.object({
   groomAccountName: z.string().max(120).optional().default(""),
 });
 
-export type EditorState = { error?: string; ok?: boolean; persisted?: boolean } | undefined;
+export type EditorState = {
+  error?: string;
+  focusField?: string;
+  ok?: boolean;
+  persisted?: boolean;
+  publishedSlug?: string;
+  publishedAt?: string;
+} | undefined;
 
 export function parseSchedule(formData: FormData) {
   const times = formData.getAll("scheduleTime").map(String);
@@ -77,6 +91,24 @@ export function parseSchedule(formData: FormData) {
     if (parsed.success) items.push(parsed.data);
   }
   return items;
+}
+
+export function parseCeremonies(formData: FormData) {
+  const titles = formData.getAll("ceremonyItemTitle").map(String);
+  const dates = formData.getAll("ceremonyItemDate").map(String);
+  const times = formData.getAll("ceremonyItemTime").map(String);
+  const items: { title: string; date: string; time: string }[] = [];
+
+  for (let i = 0; i < Math.max(titles.length, dates.length, times.length); i++) {
+    const title = (titles[i] ?? "").trim();
+    const date = (dates[i] ?? "").trim();
+    const time = (times[i] ?? "").trim();
+    if (!title && !date && !time) continue;
+    const parsed = ceremonyItemSchema.safeParse({ title, date, time });
+    if (parsed.success) items.push(parsed.data);
+  }
+
+  return items.slice(0, 20);
 }
 
 export function parseGallery(formData: FormData) {

@@ -13,6 +13,7 @@ import {
   hexToRgba,
   Lightbox,
   InvitationMap,
+  MapDirectionsButton,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -109,7 +110,7 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
   const RYL = palette.assetPath;
   const BASE_GRADIENT = `linear-gradient(to bottom right, ${palette.baseFrom}, ${palette.baseTo}, ${palette.baseFrom})`;
   const wedding = formatDate(couple.date);
-  const ceremony = formatDate(couple.ceremonyDate || couple.date);
+  const ceremony = formatDate(couple.ceremonyDate);
   const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
   const ceremonyWeekdayUpper = ceremony ? ceremony.weekday.toUpperCase() : "";
   const calendar = buildCalendar(couple.date);
@@ -243,6 +244,7 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
               <RoyalHeading>Tiệc cưới sẽ tổ chức tại</RoyalHeading>
               <div className="mx-auto max-w-[320px] whitespace-pre-line text-center text-[15px] leading-snug opacity-90 md:max-w-md md:text-[18px]" style={{ color: ROYAL_GOLD }}>{venue.address}</div>
               <InvitationMap query={mapQuery} title={mapQuery} className="mt-2 h-[300px] w-full max-w-[340px] overflow-hidden rounded-2xl md:h-[400px] md:max-w-[560px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+              <MapDirectionsButton query={mapQuery} style={{ color: ROYAL_GOLD, fontFamily: ROYAL_SERIF }} />
             </div>
           ) : null}
 
