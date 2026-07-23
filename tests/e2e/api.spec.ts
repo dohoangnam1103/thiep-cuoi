@@ -1,12 +1,15 @@
-import { unlink } from "node:fs/promises";
+import { readFile, unlink } from "node:fs/promises";
 import path from "node:path";
 
 import { test, expect } from "@playwright/test";
 
 import { loginAsUser } from "./helpers/auth";
+import { getDb } from "./helpers/db";
 import { createUser, cleanupUser } from "./helpers/fixtures";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const UPLOAD_DIR = path.join(process.cwd(), "tests", "e2e", ".data", "editor-uploads");
+const VALID_PNG_PATH = path.join(process.cwd(), "public", "chungdoi", "icon.png");
+const VALID_HEIC_PATH = path.join(process.cwd(), "tests", "fixtures", "sample.heic");
 
 // 1x1 transparent PNG.
 const PNG_BYTES = Buffer.from(
@@ -25,20 +28,52 @@ test.describe("POST /api/upload", () => {
     expect((await res.json()).error).toBeTruthy();
   });
 
-  test("authed valid png → 200 + returns /uploads url", async ({ context, page }) => {
+  test("authed valid png → 200 + returns a directly readable /uploads url", async ({ context, page }) => {
     const user = createUser();
     await loginAsUser(context, user.id);
     let savedName: string | undefined;
     try {
       const res = await page.request.post("/api/upload", {
         multipart: {
-          file: { name: "x.png", mimeType: "image/png", buffer: PNG_BYTES },
+          file: { name: "x.png", mimeType: "image/png", buffer: await readFile(VALID_PNG_PATH) },
         },
       });
       expect(res.status()).toBe(200);
       const body = (await res.json()) as { url: string };
-      expect(body.url).toMatch(/^\/uploads\/[\w-]+\.png$/);
+      expect(body.url).toMatch(/^\/uploads\/[\w-]+\.webp$/);
       savedName = body.url.replace("/uploads/", "");
+
+      const uploaded = await page.request.get(body.url);
+      expect(uploaded.status()).toBe(200);
+      expect(uploaded.headers()["content-type"]).toBe("image/webp");
+      expect(Number(uploaded.headers()["content-length"])).toBeGreaterThan(0);
+    } finally {
+      if (savedName) {
+        await unlink(path.join(UPLOAD_DIR, savedName)).catch(() => {});
+      }
+      cleanupUser(user.id);
+    }
+  });
+
+  test("authed valid HEIC → 200 + stores a readable WebP", async ({ context, page }) => {
+    const user = createUser();
+    await loginAsUser(context, user.id);
+    let savedName: string | undefined;
+    try {
+      const res = await page.request.post("/api/upload", {
+        multipart: {
+          file: { name: "iphone-photo.HEIC", mimeType: "image/heic", buffer: await readFile(VALID_HEIC_PATH) },
+        },
+      });
+      expect(res.status()).toBe(200);
+      const body = (await res.json()) as { url: string };
+      expect(body.url).toMatch(/^\/uploads\/[\w-]+\.webp$/);
+      savedName = body.url.replace("/uploads/", "");
+
+      const uploaded = await page.request.get(body.url);
+      expect(uploaded.status()).toBe(200);
+      expect(uploaded.headers()["content-type"]).toBe("image/webp");
+      expect(Number(uploaded.headers()["content-length"])).toBeGreaterThan(0);
     } finally {
       if (savedName) {
         await unlink(path.join(UPLOAD_DIR, savedName)).catch(() => {});
@@ -91,6 +126,41 @@ test.describe("POST /api/upload", () => {
       expect(res.status()).toBe(413);
       expect((await res.json()).error).toBeTruthy();
     } finally {
+      cleanupUser(user.id);
+    }
+  });
+});
+
+test.describe("POST /api/template-suggestions", () => {
+  test("accepts a HEIF reference image and stores it as WebP", async ({ context, page }) => {
+    const user = createUser();
+    await loginAsUser(context, user.id);
+    let savedPath: string | undefined;
+    try {
+      const res = await page.request.post("/api/template-suggestions", {
+        multipart: {
+          description: "Mẫu thiệp dùng ảnh tham khảo từ iPhone",
+          notifyWhenAvailable: "false",
+          referenceImage: {
+            name: "reference-image.heif",
+            mimeType: "image/heif",
+            buffer: await readFile(VALID_HEIC_PATH),
+          },
+        },
+      });
+      expect(res.status()).toBe(201);
+      const body = (await res.json()) as { suggestion: { id: string } };
+      const row = getDb()
+        .prepare("SELECT referenceImageUrl FROM TemplateSuggestion WHERE id = ?")
+        .get(body.suggestion.id) as { referenceImageUrl: string };
+      expect(row.referenceImageUrl).toMatch(/^\/uploads\/[\w-]+\.webp$/);
+      savedPath = path.join(UPLOAD_DIR, row.referenceImageUrl.replace("/uploads/", ""));
+
+      const uploaded = await page.request.get(row.referenceImageUrl);
+      expect(uploaded.status()).toBe(200);
+      expect(uploaded.headers()["content-type"]).toBe("image/webp");
+    } finally {
+      if (savedPath) await unlink(savedPath).catch(() => {});
       cleanupUser(user.id);
     }
   });

@@ -1,20 +1,26 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
 
 import type { NextRequest } from "next/server";
-import sharp from "sharp";
 import { z } from "zod";
 
+import {
+  editorUploadPath,
+  editorUploadPublicUrl,
+  editorUploadRoot,
+} from "@/lib/editor-uploads";
 import { prisma } from "@/lib/prisma";
+import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
 import { getSession } from "@/lib/session";
+import {
+  isAcceptedImageUpload,
+  TEMPLATE_SUGGESTION_IMAGE_FORMATS,
+} from "@/lib/upload-image-formats";
 
 export const runtime = "nodejs";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_REQUEST_BYTES = 6 * 1024 * 1024;
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const ALLOWED_FORMATS = new Set(["jpeg", "png", "webp"]);
 
 const suggestionSchema = z.object({
   description: z.string().trim().min(1).max(800),
@@ -53,7 +59,7 @@ export async function POST(request: NextRequest) {
 
   const imageValue = formData.get("referenceImage");
   const image = imageValue instanceof File && imageValue.size > 0 ? imageValue : null;
-  if (image && !ALLOWED_TYPES.has(image.type)) {
+  if (image && !isAcceptedImageUpload(image, TEMPLATE_SUGGESTION_IMAGE_FORMATS)) {
     return Response.json({ error: "unsupportedImage" }, { status: 415 });
   }
   if (image && image.size > MAX_IMAGE_BYTES) {
@@ -66,24 +72,26 @@ export async function POST(request: NextRequest) {
   try {
     if (image) {
       const bytes = Buffer.from(await image.arrayBuffer());
-      const processor = sharp(bytes, { failOn: "error" });
-      const metadata = await processor.metadata();
-      if (!metadata.format || !ALLOWED_FORMATS.has(metadata.format)) {
+      let output: Buffer;
+      try {
+        output = await processUploadedImageToWebp({
+          bytes,
+          allowedFormats: TEMPLATE_SUGGESTION_IMAGE_FORMATS,
+          maxWidth: 1800,
+          maxHeight: 1800,
+          quality: 84,
+        });
+      } catch {
         return Response.json({ error: "unsupportedImage" }, { status: 415 });
       }
 
-      const output = await processor
-        .rotate()
-        .resize({ width: 1800, height: 1800, fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 84 })
-        .toBuffer();
-
-      const uploadDir = path.join(process.cwd(), "public", "uploads", "template-suggestions");
+      const uploadDir = editorUploadRoot();
       await mkdir(/* turbopackIgnore: true */ uploadDir, { recursive: true });
       const filename = `${randomUUID()}.webp`;
-      absoluteImagePath = path.join(uploadDir, filename);
+      absoluteImagePath = editorUploadPath(filename);
+      if (!absoluteImagePath) throw new Error("Unable to create template suggestion image path");
       await writeFile(/* turbopackIgnore: true */ absoluteImagePath, output, { flag: "wx" });
-      referenceImageUrl = `/uploads/template-suggestions/${filename}`;
+      referenceImageUrl = editorUploadPublicUrl(filename);
     }
 
     const suggestion = await prisma.templateSuggestion.create({

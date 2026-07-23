@@ -7,7 +7,6 @@ export const MAX_GUEST_MEDIA_REQUEST_BYTES = 90 * 1024 * 1024;
 export const MAX_GUEST_MEDIA_ITEMS_PER_INVITATION = 500;
 export const MAX_GUEST_MEDIA_BYTES_PER_INVITATION = 5 * 1024 * 1024 * 1024;
 
-export const GUEST_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 export const GUEST_VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
 const STORAGE_KEY_PATTERN = /^[0-9a-f-]{36}\.(?:webp|mp4|mov|webm)$/;

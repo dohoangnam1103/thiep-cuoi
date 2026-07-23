@@ -35,15 +35,18 @@ URL public.
 1. **Rsync source** lên `~/apps/thiepmungonline/releases/current/` trên Mini PC.
    Loại trừ `node_modules`, `.next`, `.git`, `.env*`, DB, uploads. **Không đụng**
    `.env` và `data/` trên Mini PC.
-2. **Backup** SQLite bằng online-backup API, archive uploads của editor và thư viện
-   ảnh/video do khách đóng góp trước deploy.
+2. **Backup** SQLite bằng online-backup API, chuyển ảnh editor legacy khỏi writable
+   layer vào `data/editor-uploads`, rồi archive ảnh editor và thư viện ảnh/video
+   do khách đóng góp trước deploy.
 3. **Build native** image versioned trên Mini PC với `NEXT_DEPLOYMENT_ID` và
    `NEXT_PUBLIC_SITE_URL` được đóng vào build.
 4. **Migrate database** bằng chính builder image của revision vừa build. Migration
    chạy sau backup và trước khi thay container; lỗi migration sẽ dừng deploy.
-5. **Promote + restart** riêng service web; tự rollback nếu container không
+5. **Seed danh sách nhạc** từ `prisma/tracks.json` nếu bảng `Track` đang trống.
+   Bước này tự bỏ qua khi production đã có nhạc nên không ghi đè dữ liệu đang dùng.
+6. **Promote + restart** riêng service web; tự rollback nếu container không
    healthy, chạy sai image, canonical sai domain hoặc database `quick_check` lỗi.
-6. **Verify** trang chủ và một demo trên URL public đều trả 200.
+7. **Verify** trang chủ và một demo trên URL public đều trả 200.
 
 ## Biến môi trường ghi đè
 
@@ -84,7 +87,8 @@ Google OAuth callback URLs phải gồm:
 ├── docker-compose.yml          # web (build từ releases/current) + tunnel
 ├── .env                        # secrets runtime (KHÔNG bị rsync ghi đè)
 ├── data/                       # SQLite prod.db (KHÔNG bị rsync ghi đè)
-│   └── guest-media/            # Ảnh/video khách đóng góp, dùng chung volume /app/data
+│   ├── guest-media/            # Ảnh/video khách đóng góp, dùng chung volume /app/data
+│   └── editor-uploads/          # Ảnh do chủ thiệp tải trong editor
 └── releases/current/           # source đã rsync từ Mac
 ```
 

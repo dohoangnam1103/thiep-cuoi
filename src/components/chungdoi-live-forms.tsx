@@ -66,6 +66,13 @@ export type PublicMediaLabels = {
   loading: string;
   empty: string;
   download: string;
+  zoomIn: string;
+  zoomOut: string;
+  resetZoom: string;
+  previous: string;
+  next: string;
+  imageAlt: string;
+  videoAlt: string;
   success: string;
   errorGeneric: string;
   errorInvalidName: string;

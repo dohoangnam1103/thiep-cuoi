@@ -2,11 +2,9 @@ import { randomUUID } from "node:crypto";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 
 import type { NextRequest } from "next/server";
-import sharp from "sharp";
 
 import {
   extensionForVideo,
-  GUEST_IMAGE_TYPES,
   guestMediaPath,
   guestMediaPublicUrl,
   guestMediaRoot,
@@ -21,6 +19,11 @@ import {
   type GuestMediaKind,
 } from "@/lib/guest-media";
 import { prisma } from "@/lib/prisma";
+import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
+import {
+  EDITOR_UPLOAD_IMAGE_FORMATS,
+  isAcceptedImageUpload,
+} from "@/lib/upload-image-formats";
 
 export const runtime = "nodejs";
 
@@ -131,7 +134,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const originalName = file.name.slice(0, 240) || "wedding-memory";
       const bytes = Buffer.from(await file.arrayBuffer());
 
-      if (GUEST_IMAGE_TYPES.has(file.type)) {
+      if (isAcceptedImageUpload(file, EDITOR_UPLOAD_IMAGE_FORMATS)) {
         if (file.size > MAX_GUEST_IMAGE_BYTES) {
           await removeStoredFiles(storedUploads);
           return Response.json({ error: "imageTooLarge" }, { status: 413 });
@@ -139,16 +142,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
         let output: Buffer;
         try {
-          const image = sharp(bytes, { failOn: "error" });
-          const metadata = await image.metadata();
-          if (!metadata.format || !new Set(["jpeg", "png", "webp", "gif"]).has(metadata.format)) {
-            throw new Error("Unsupported image format");
-          }
-          output = await image
-            .rotate()
-            .resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true })
-            .webp({ quality: 84 })
-            .toBuffer();
+          output = await processUploadedImageToWebp({
+            bytes,
+            allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS,
+            maxWidth: 2400,
+            maxHeight: 2400,
+            quality: 84,
+          });
         } catch {
           await removeStoredFiles(storedUploads);
           return Response.json({ error: "invalidFile" }, { status: 415 });

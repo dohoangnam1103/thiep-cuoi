@@ -6,8 +6,14 @@ import { useTranslations } from "next-intl";
 import { type DragEvent, type FormEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  isAcceptedImageUpload,
+  isHeifUpload,
+  TEMPLATE_SUGGESTION_IMAGE_ACCEPT,
+  TEMPLATE_SUGGESTION_IMAGE_FORMATS,
+} from "@/lib/upload-image-formats";
+
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 type SessionResponse = {
   loggedIn: boolean;
@@ -27,7 +33,7 @@ export function TemplateSuggestionCta() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (!file) {
+    if (!file || isHeifUpload(file)) {
       setPreviewUrl(null);
       return;
     }
@@ -75,7 +81,7 @@ export function TemplateSuggestionCta() {
 
   function selectFile(nextFile: File | null) {
     if (!nextFile) return;
-    if (!ALLOWED_IMAGE_TYPES.has(nextFile.type)) {
+    if (!isAcceptedImageUpload(nextFile, TEMPLATE_SUGGESTION_IMAGE_FORMATS)) {
       setError(t("invalidImage"));
       return;
     }
@@ -193,15 +199,21 @@ export function TemplateSuggestionCta() {
                 <input
                   id="template-suggestion-image"
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept={TEMPLATE_SUGGESTION_IMAGE_ACCEPT}
                   className="sr-only"
                   onChange={(event) => selectFile(event.target.files?.[0] ?? null)}
                 />
-                {previewUrl ? (
+                {file ? (
                   <div className="overflow-hidden rounded-2xl border border-border bg-muted/40">
-                    <div className="relative h-28 sm:h-32">
-                      <Image src={previewUrl} alt={t("referenceImage")} fill unoptimized className="object-contain" />
-                    </div>
+                    {previewUrl ? (
+                      <div className="relative h-28 sm:h-32">
+                        <Image src={previewUrl} alt={t("referenceImage")} fill unoptimized className="object-contain" />
+                      </div>
+                    ) : (
+                      <div className="grid h-28 place-items-center text-primary sm:h-32">
+                        <ImagePlus className="size-10" aria-hidden />
+                      </div>
+                    )}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-3 py-2">
                       <p className="min-w-0 truncate text-sm text-muted-foreground">{file?.name}</p>
                       <div className="flex gap-3 text-sm font-bold">

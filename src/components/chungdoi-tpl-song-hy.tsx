@@ -459,12 +459,11 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
             </div>
             <div className="p-4 sm:p-6">
-              <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4" style={{ color: "rgb(70, 70, 70)" }}>
+              <div className="flex flex-row flex-wrap items-start justify-center gap-x-10 gap-y-6 sm:gap-x-20" style={{ color: "rgb(70, 70, 70)" }}>
                 {banks.map((q) => {
                   const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
                     <div key={q.title} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
-                      <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: palette.accent }}>{q.title}</h3>
                       <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(palette.accent, 0.125)}` }}>
                         <img alt={`QR - ${q.title}`} className="h-full w-full object-contain" src={qr} />
                       </div>
@@ -473,7 +472,10 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                         <p className="font-mono text-[10px]" style={{ color: "rgb(70, 70, 70)" }}>{q.num}</p>
                         <p className="text-[10px] font-semibold" style={{ color: "rgb(70, 70, 70)" }}>{q.name}</p>
                       </div>
-                      <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: palette.accent, backgroundColor: hexToRgba(palette.accent, 0.082) }}>Lưu QR</a>
+                      <a href={`${qr}&download=1`} download className="mt-2.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold text-white shadow-md transition hover:opacity-90" style={{ backgroundColor: palette.accent }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                        Lưu QR
+                      </a>
                     </div>
                   );
                 })}

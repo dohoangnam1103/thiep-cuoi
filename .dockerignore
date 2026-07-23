@@ -32,6 +32,8 @@ Thumbs.db
 .codex
 .cursor
 .windsurf
+.claude-flow
+.codegraph
 .gemini
 .continue
 .amazonq
@@ -46,6 +48,9 @@ GEMINI.md
 
 # Docs / research (large, not needed at runtime)
 docs
+tests
+**/*.test.ts
+**/*.test.tsx
 scripts/*
 !scripts/dedupe-public-assets.mjs
 

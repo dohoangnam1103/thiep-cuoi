@@ -5,6 +5,7 @@ import { canonicalHostRedirects } from "./src/lib/seo-redirects";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  serverExternalPackages: ["heic-decode", "libheif-js"],
   experimental: {
     // Persist Turbopack's production-build cache between Docker builds. The
     // cache directory is mounted by Dockerfile, so warm deploys only rebuild
@@ -15,6 +16,8 @@ const nextConfig: NextConfig = {
     "/*": [
       "node_modules/better-sqlite3/build/Release/*.node",
       "node_modules/@img/**/*",
+      "node_modules/heic-decode/**/*",
+      "node_modules/libheif-js/**/*",
       "node_modules/sharp/**/*",
     ],
   },

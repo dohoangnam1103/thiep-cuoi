@@ -3,22 +3,12 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { Download, Film, ImagePlus, Images, Loader2, Trash2, Upload, X } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 
 import { useLiveForms, type PublicMediaLabels } from "@/components/chungdoi-live-forms";
-
-type GuestMedia = {
-  id: string;
-  contributorName: string;
-  originalName: string;
-  mimeType: string;
-  kind: "image" | "video";
-  size: number;
-  createdAt: string;
-  url: string;
-};
-
-type ApiPayload = { media?: GuestMedia[]; error?: string };
+import { useGuestMediaGallery } from "@/components/public-guest-moments";
+import type { GuestMediaApiPayload } from "@/lib/public-guest-media";
+import { GUEST_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
 
 function errorMessage(error: string | undefined, labels: PublicMediaLabels): string {
   if (error === "invalidName") return labels.errorInvalidName;
@@ -37,36 +27,23 @@ function formatSize(bytes: number): string {
 
 export function PublicGuestMediaDialog() {
   const live = useLiveForms();
+  const {
+    loadError,
+    loading,
+    media,
+    prependMedia,
+    refresh,
+  } = useGuestMediaGallery();
   const [open, setOpen] = useState(false);
-  const [media, setMedia] = useState<GuestMedia[]>([]);
   const [files, setFiles] = useState<File[]>([]);
-  const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const loadMedia = useCallback(async () => {
-    if (!live) return;
-    setLoading(true);
-    setError("");
-    try {
-      const response = await fetch(`/api/invitations/${encodeURIComponent(live.slug)}/contributions`, {
-        cache: "no-store",
-      });
-      const payload = await response.json() as ApiPayload;
-      if (!response.ok || !payload.media) throw new Error(payload.error);
-      setMedia(payload.media);
-    } catch {
-      setError(live.mediaLabels.errorGeneric);
-    } finally {
-      setLoading(false);
-    }
-  }, [live]);
-
   useEffect(() => {
-    if (open) void loadMedia();
-  }, [loadMedia, open]);
+    if (open) void refresh();
+  }, [open, refresh]);
 
   if (!live) return null;
   const label = live.mediaLabels;
@@ -102,12 +79,12 @@ export function PublicGuestMediaDialog() {
         method: "POST",
         body: form,
       });
-      const payload = await response.json() as ApiPayload;
+      const payload = await response.json() as GuestMediaApiPayload;
       if (!response.ok || !payload.media) {
         setError(errorMessage(payload.error, label));
         return;
       }
-      setMedia((current) => [...payload.media!, ...current]);
+      prependMedia(payload.media);
       setFiles([]);
       if (inputRef.current) inputRef.current.value = "";
       setSuccess(true);
@@ -165,7 +142,7 @@ export function PublicGuestMediaDialog() {
                   type="file"
                   name="files"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm"
+                  accept={`${GUEST_IMAGE_ACCEPT},video/mp4,video/quicktime,video/webm`}
                   onChange={selectFiles}
                   className="sr-only"
                 />
@@ -195,7 +172,7 @@ export function PublicGuestMediaDialog() {
                   </div>
                 ) : null}
 
-                {error ? <p role="alert" className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
+                {error || loadError ? <p role="alert" className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error || loadError}</p> : null}
                 {success ? <p role="status" className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{label.success}</p> : null}
                 <button type="submit" disabled={uploading} className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60">
                   {uploading ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Upload className="size-4" aria-hidden />}

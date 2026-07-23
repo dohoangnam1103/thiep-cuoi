@@ -285,7 +285,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
           </section>
         ) : null}
 
-        <footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: M }}>
+        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center" style={{ backgroundColor: M }}>
           <span className="flex flex-col items-center gap-1 whitespace-pre-line text-[12px] md:text-[15px] lg:text-[18px]" style={{ fontFamily: 'Baskerville, "Times New Roman", serif', color: "#fff0e7" }}>
             <span dir="auto">Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
           </span>

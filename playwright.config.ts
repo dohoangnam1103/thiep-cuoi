@@ -46,6 +46,7 @@ export default defineConfig({
       PAYOS_CHECKSUM_KEY: "e2e-payos-checksum",
       NEXT_PUBLIC_SITE_URL: BASE_URL,
       GUEST_MEDIA_ROOT: `${process.cwd()}/tests/e2e/.data/guest-media`,
+      EDITOR_UPLOAD_ROOT: `${process.cwd()}/tests/e2e/.data/editor-uploads`,
       NODE_ENV: "test",
     },
   },

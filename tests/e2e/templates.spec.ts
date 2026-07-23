@@ -270,6 +270,39 @@ test.describe("templates — demo pages", () => {
     await expect(page.getByRole("heading", { name: "Phong Bao Mừng Cưới" }).last()).toBeVisible();
   });
 
+  test("gift modal hides bank labels and separates adjacent QR codes", async ({ page, context }) => {
+    const user = createUser();
+    await loginAsUser(context, user.id);
+
+    try {
+      await page.goto("/mau-thiep/hoa-moc-hong/demo?capture=1", { timeout: 60_000 });
+      await page.getByTestId("gift-envelope").click();
+
+      const panel = page.locator(".gift-modal-panel");
+      await expect(panel).toBeVisible();
+      await expect(panel.getByRole("heading", { level: 3 })).toHaveCount(0);
+
+      const cards = panel.getByTestId("gift-bank-card");
+      await expect(cards).toHaveCount(2);
+      const first = await cards.nth(0).boundingBox();
+      const second = await cards.nth(1).boundingBox();
+
+      expect(first).not.toBeNull();
+      expect(second).not.toBeNull();
+      expect(second!.x - (first!.x + first!.width)).toBeGreaterThanOrEqual(90);
+
+      await page.setViewportSize({ width: 375, height: 812 });
+      const mobileFirst = await cards.nth(0).boundingBox();
+      const mobileSecond = await cards.nth(1).boundingBox();
+
+      expect(mobileFirst).not.toBeNull();
+      expect(mobileSecond).not.toBeNull();
+      expect(mobileSecond!.y).toBeGreaterThanOrEqual(mobileFirst!.y + mobileFirst!.height);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
   test("every source-animated gift envelope keeps moving", async ({ page }) => {
     test.setTimeout(300_000);
 

@@ -3,12 +3,13 @@
 import { ImageIcon, MessageCircle, Play, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 import NextLink from "next/link";
 
 // import { LanguageSwitcher } from "@/components/language-switcher"; // tạm ẩn: web chỉ dùng tiếng Việt
 import { LogoMark } from "@/components/logo-mark";
+import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { Link, usePathname } from "@/i18n/navigation";
 import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 
@@ -137,7 +138,7 @@ export function SiteHeader({
           )}
         </div>
       </div>
-      <Toaster position="top-center" theme="light" richColors />
+      <AdaptiveToaster />
     </header>
   );
 }

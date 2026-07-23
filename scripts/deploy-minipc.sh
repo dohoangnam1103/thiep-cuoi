@@ -6,8 +6,9 @@
 #   1. Rsync source (không đụng .env, database, uploads).
 #   2. Backup SQLite bằng online-backup API và archive uploads.
 #   3. Build native amd64 ngay trên production, tái dùng BuildKit/Turbopack cache.
-#   4. Gắn version tag + rollback tag, recreate riêng web, chờ healthy.
-#   5. Xác minh deployment ID, public URL và database integrity.
+#   4. Migrate rồi seed danh sách nhạc nếu bảng Track đang trống.
+#   5. Gắn version tag + rollback tag, recreate riêng web, chờ healthy.
+#   6. Xác minh deployment ID, public URL và database integrity.
 #
 # Biến môi trường ghi đè được:
 #   REMOTE_HOST       SSH host/alias production          (minipc)
@@ -70,6 +71,13 @@ rsync -az --delete \
   --exclude 'public/uploads' \
   --exclude '.playwright-mcp' \
   --exclude '.capture' \
+  --exclude '/.claude-flow' \
+  --exclude '/.codegraph' \
+  --exclude '*.tsbuildinfo' \
+  --exclude '*.test.ts' \
+  --exclude '*.test.tsx' \
+  --exclude '/tests' \
+  --exclude '/docs/superpowers' \
   --exclude 'temp' \
   ./ "${REMOTE_HOST}:${REMOTE_APP_DIR}/releases/current/"
 log_step "rsync source"
@@ -82,7 +90,7 @@ deployment_id="$2"
 cd "$app_dir"
 mkdir -p data/backups
 db_backup="data/backups/prod-predeploy-${deployment_id}.db"
-uploads_backup="data/backups/uploads-predeploy-${deployment_id}.tar.gz"
+uploads_backup="data/backups/editor-uploads-predeploy-${deployment_id}.tar.gz"
 guest_media_backup="data/backups/guest-media-predeploy-${deployment_id}.tar.gz"
 
 python3 - "$db_backup" <<'PY'
@@ -101,8 +109,18 @@ if result != "ok":
 print(f"database_backup={destination}")
 PY
 
+# Các bản cũ ghi ảnh editor vào writable layer của container. Di chuyển chúng
+# sang volume /app/data trước khi thay container để không làm mất ảnh đã tải.
+mkdir -p data/editor-uploads
+if docker inspect thiepmungonline-web >/dev/null 2>&1 &&
+   docker exec thiepmungonline-web test -d /app/public/uploads; then
+  docker cp thiepmungonline-web:/app/public/uploads/. data/editor-uploads/
+fi
 if [ -d releases/current/public/uploads ]; then
-  tar -czf "$uploads_backup" -C releases/current/public uploads
+  cp -a releases/current/public/uploads/. data/editor-uploads/
+fi
+if [ -d data/editor-uploads ]; then
+  tar -czf "$uploads_backup" -C data editor-uploads
   echo "uploads_backup=$uploads_backup"
 fi
 
@@ -193,6 +211,17 @@ else
 fi
 REMOTE_BUILD
 log_step "build + migrate database"
+
+echo "🎵 Seed danh sách nhạc nếu Track đang trống"
+ssh "${REMOTE_HOST}" bash -s -- "${REMOTE_APP_DIR}" <<'REMOTE_TRACK_SEED'
+set -euo pipefail
+app_dir="$1"
+cd "$app_dir"
+python3 releases/current/scripts/seed-tracks-if-empty.py \
+  data/prod.db \
+  releases/current/prisma/tracks.json
+REMOTE_TRACK_SEED
+log_step "seed danh sách nhạc"
 
 echo "🔄 Promote image và recreate riêng web"
 ssh "${REMOTE_HOST}" bash -s -- \

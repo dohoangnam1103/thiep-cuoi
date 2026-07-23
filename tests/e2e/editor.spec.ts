@@ -1,10 +1,15 @@
 import { randomUUID } from "node:crypto";
+import { readFile, unlink } from "node:fs/promises";
+import path from "node:path";
 
 import { test, expect } from "@playwright/test";
 
 import { loginAsUser } from "./helpers/auth";
 import { getDb, prismaNow } from "./helpers/db";
 import { createUser, createInvitation, cleanupUser } from "./helpers/fixtures";
+
+const EDITOR_UPLOAD_DIR = path.join(process.cwd(), "tests", "e2e", ".data", "editor-uploads");
+const VALID_PNG_PATH = path.join(process.cwd(), "public", "chungdoi", "icon.png");
 
 // Track every user a test creates so afterEach can tear them down (FK cascade
 // removes their invitations + content rows).
@@ -262,10 +267,17 @@ test.describe("invitation editor", () => {
     await expect(page.locator("#groomFullName")).toHaveValue(groomName);
   });
 
-  test("an edit survives an immediate reload before the debounce finishes", async ({ page, context }) => {
+  test("an edit survives an immediate reload while the field is still focused", async ({ page, context }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
     const brideName = `Reload ngay ${randomUUID().slice(0, 8)}`;
+    const hydrationErrors: string[] = [];
+    page.on("console", (message) => {
+      const text = message.text();
+      if (message.type() === "error" && (text.includes("React error #418") || text.includes("hydration"))) {
+        hydrationErrors.push(text);
+      }
+    });
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
@@ -274,6 +286,76 @@ test.describe("invitation editor", () => {
 
     await expect(page.locator("#brideFullName")).toHaveValue(brideName);
     await expect(page.getByTestId("draft-status")).toContainText("Đã khôi phục nội dung chưa lưu");
+    expect(hydrationErrors).toEqual([]);
+  });
+
+  test("local autosave waits until the user leaves the text field", async ({ page, context }) => {
+    const user = newUser();
+    const inv = createInvitation(user.id);
+    const brideName = `Chỉ lưu khi blur ${randomUUID().slice(0, 8)}`;
+    await loginAsUser(context, user.id);
+    await page.goto(`/editor/${inv.id}`);
+
+    const brideInput = page.locator("#brideFullName");
+    await brideInput.fill(brideName);
+    await page.waitForTimeout(500);
+    await expect(page.getByTestId("draft-status")).toContainText("Đã lưu vào hệ thống");
+
+    await brideInput.press("Tab");
+    await expect(page.getByTestId("draft-status")).toContainText("Đã lưu tạm trên thiết bị");
+  });
+
+  test("a newly uploaded gallery image is rendered immediately", async ({ page, context }) => {
+    const user = newUser();
+    const inv = createInvitation(user.id);
+    await loginAsUser(context, user.id);
+    await page.goto(`/editor/${inv.id}`);
+
+    let savedName: string | undefined;
+    try {
+      await page.locator('#editor-form input[type="file"][multiple]').setInputFiles({
+        name: "wedding-photo.png",
+        mimeType: "image/png",
+        buffer: await readFile(VALID_PNG_PATH),
+      });
+
+      const storedUrl = page.locator('input[name="galleryUrl"]');
+      await expect(storedUrl).toHaveCount(1);
+      const url = await storedUrl.inputValue();
+      expect(url).toMatch(/^\/uploads\/[\w-]+\.webp$/);
+      savedName = url.replace("/uploads/", "");
+
+      const image = page.locator('img[alt="Ảnh album"]');
+      await expect(image).toBeVisible();
+      await expect
+        .poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth))
+        .toBeGreaterThan(0);
+    } finally {
+      if (savedName) {
+        await unlink(path.join(EDITOR_UPLOAD_DIR, savedName)).catch(() => {});
+      }
+    }
+  });
+
+  test("a short upload error toast fits its content and stays centered", async ({ page, context }) => {
+    const user = newUser();
+    const inv = createInvitation(user.id);
+    await loginAsUser(context, user.id);
+    await page.goto(`/editor/${inv.id}`);
+
+    await page.locator('#editor-form input[type="file"][multiple]').setInputFiles({
+      name: "too-large.jpg",
+      mimeType: "image/jpeg",
+      buffer: Buffer.alloc(5 * 1024 * 1024 + 1),
+    });
+
+    const toast = page.locator("[data-sonner-toast]").filter({ hasText: "Ảnh vượt quá 5MB" });
+    await expect(toast).toBeVisible();
+
+    const bounds = await toast.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds!.width).toBeLessThan(260);
+    expect(Math.abs(bounds!.x + bounds!.width / 2 - (await page.evaluate(() => innerWidth)) / 2)).toBeLessThan(2);
   });
 
   test("a template-only change is restored after reload", async ({ page, context }) => {
@@ -311,7 +393,9 @@ test.describe("invitation editor", () => {
     await page.goto(`/editor/${inv.id}`);
 
     for (const name of [firstName, secondName]) {
-      await page.locator("#brideFullName").fill(name);
+      const brideInput = page.locator("#brideFullName");
+      await brideInput.fill(name);
+      await brideInput.press("Tab");
       await expect(page.getByTestId("draft-status")).toContainText("Đã lưu tạm trên thiết bị");
       await page.getByRole("button", { name: "Lưu bản nháp" }).click();
       await expect.poll(() => readContent(inv.id, "brideFullName")).toBe(name);

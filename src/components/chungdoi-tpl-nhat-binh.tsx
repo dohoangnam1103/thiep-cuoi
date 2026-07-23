@@ -470,7 +470,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
           </div>
         ) : null}
 
-        <footer className="relative z-[2] mx-auto flex w-full max-w-[329px] flex-col items-center px-4 py-[10px] text-center md:max-w-2xl md:px-10 md:py-[15px] lg:py-[20px]">
+        <footer data-template-footer className="relative z-[2] mx-auto flex w-full max-w-[329px] flex-col items-center px-4 py-[10px] text-center md:max-w-2xl md:px-10 md:py-[15px] lg:py-[20px]">
           <span className="flex flex-col items-center gap-1 whitespace-pre-line text-[14px] leading-normal md:text-base lg:text-lg" style={{ color: BROWN, fontFamily: NB_HELV }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
         <div className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center" style={{ color: BROWN, fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif' }}>

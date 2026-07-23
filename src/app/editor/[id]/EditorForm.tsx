@@ -2,9 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import {
+  useActionState,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  useTransition,
+} from "react";
 import { flushSync } from "react-dom";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import {
   DndContext,
   PointerSensor,
@@ -22,6 +30,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
+import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { BankCombobox } from "@/components/ui/bank-combobox";
 import { Combobox } from "@/components/ui/combobox";
 import { completedTemplates } from "@/data/chungdoi";
@@ -34,6 +43,7 @@ import type { MusicPickerMessages } from "@/lib/music-picker";
 import { trackEvent } from "@/lib/analytics";
 import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage, type CeremonyType } from "@/lib/invitation-display";
 import { shortNameFromFullName } from "@/lib/short-name";
+import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { saveDraft, publish, checkSlug } from "./actions";
 import { type EditorState } from "./content-schema";
@@ -64,6 +74,10 @@ type EditorFormProps = {
   saveAction?: (id: string, prev: EditorState, formData: FormData) => Promise<EditorState>;
   adminMode?: boolean;
 };
+
+const subscribeHydration = () => () => undefined;
+const getClientHydrationSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
 
 function field(content: InvitationContent | null, key: keyof InvitationContent): string {
   const v = content?.[key];
@@ -639,7 +653,7 @@ function GalleryUploader({ initial }: { initial: string[] }) {
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept={EDITOR_IMAGE_ACCEPT}
           multiple
           className="hidden"
           onChange={(e) => {
@@ -773,7 +787,7 @@ function HeroImageUploader({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept={EDITOR_IMAGE_ACCEPT}
         className="hidden"
         onChange={(event) => {
           const file = event.target.files?.[0];
@@ -846,7 +860,7 @@ function TabBar({ tab, onEdit, onPreview }: { tab: "edit" | "preview"; onEdit: (
   );
 }
 
-export function EditorForm({
+function EditorFormContent({
   invitationId,
   status,
   paid,
@@ -861,7 +875,8 @@ export function EditorForm({
   initialTrack,
   saveAction: saveActionProp,
   adminMode = false,
-}: EditorFormProps) {
+  restoredDraft,
+}: EditorFormProps & { restoredDraft: Draft | null }) {
   const saveAction = (saveActionProp ?? saveDraft).bind(null, invitationId);
   const publishAction = publish.bind(null, invitationId);
   const [saveState, saveFormAction, saving] = useActionState<EditorState, FormData>(saveAction, undefined);
@@ -870,10 +885,7 @@ export function EditorForm({
     undefined,
   );
 
-  const draft = useMemo<Draft | null>(
-    () => readDraft(invitationId),
-    [invitationId],
-  );
+  const draft = restoredDraft;
   const [submittedDraft, setSubmittedDraft] = useState<Draft | null>(null);
   const submittedDraftRef = useRef<Draft | null>(null);
   const activeDraft = submittedDraft ?? draft;
@@ -1029,7 +1041,7 @@ export function EditorForm({
 
   return (
     <>
-      <Toaster position="top-center" theme="light" richColors />
+      <AdaptiveToaster />
       <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
         <TabBar tab={tab} onEdit={() => setTab("edit")} onPreview={onShowPreview} />
       </div>
@@ -1525,4 +1537,34 @@ export function EditorForm({
       </div>
     </>
   );
+}
+
+/**
+ * localStorage không tồn tại ở SSR. Chờ client mount rồi mới dựng form với draft
+ * đã khôi phục để markup hydrate luôn giống server và không remount khi user gõ.
+ */
+export function EditorForm(props: EditorFormProps) {
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    getClientHydrationSnapshot,
+    getServerHydrationSnapshot,
+  );
+  const restoredDraft = useMemo(
+    () => (hydrated ? readDraft(props.invitationId) : null),
+    [hydrated, props.invitationId],
+  );
+
+  if (!hydrated) {
+    return (
+      <div
+        aria-busy="true"
+        className="mx-auto min-h-screen max-w-4xl animate-pulse px-4 pb-8 pt-24 sm:px-6"
+      >
+        <div className="h-8 w-48 rounded-lg bg-muted" />
+        <div className="mt-6 h-64 rounded-2xl bg-muted/70" />
+      </div>
+    );
+  }
+
+  return <EditorFormContent {...props} restoredDraft={restoredDraft} />;
 }

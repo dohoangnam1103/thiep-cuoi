@@ -1,10 +1,15 @@
 "use client";
 
-import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, type TouchEvent, useEffect, useRef, useState } from "react";
+import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
+import {
+  LightboxZoomControls,
+  useLightboxZoom,
+  VI_LIGHTBOX_ZOOM_LABELS,
+} from "@/components/lightbox-zoom";
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { orderedCouple } from "@/lib/invitation-display";
@@ -77,18 +82,7 @@ export function formatWishTime(raw: string) {
 export function useLightbox(count: number) {
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (lightbox === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightbox(null);
-      else if (e.key === "ArrowLeft") setLightbox((v) => (v === null ? v : (v - 1 + count) % count));
-      else if (e.key === "ArrowRight") setLightbox((v) => (v === null ? v : (v + 1) % count));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [lightbox, count]);
-
-  return { lightbox, setLightbox };
+  return { lightbox: count > 0 ? lightbox : null, setLightbox };
 }
 
 export function Lightbox({
@@ -103,82 +97,104 @@ export function Lightbox({
   accent?: string;
 }) {
   const count = gallery.length;
-  const [drag, setDrag] = useState(0);
-  const [animate, setAnimate] = useState(true);
-  const startRef = useRef<{ x: number; y: number; dragging: boolean } | null>(null);
+  const step = useCallback((dir: number) => {
+    setIndex((v) => (v === null ? v : (v + dir + count) % count));
+  }, [count, setIndex]);
+  const zoom = useLightboxZoom({
+    enabled: index !== null,
+    onSwipe: step,
+    swipeThreshold: typeof window !== "undefined" ? Math.min(80, window.innerWidth * 0.2) : 60,
+  });
+  const resetZoom = zoom.resetZoom;
+
+  const navigate = useCallback((direction: number) => {
+    resetZoom(false);
+    step(direction);
+  }, [resetZoom, step]);
+  const close = useCallback(() => {
+    resetZoom(false);
+    setIndex(null);
+  }, [resetZoom, setIndex]);
+
+  useEffect(() => {
+    if (index === null) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+      if (event.key === "ArrowLeft") navigate(-1);
+      if (event.key === "ArrowRight") navigate(1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [close, index, navigate]);
 
   if (index === null) return null;
 
-  const step = (dir: number) => setIndex((v) => (v === null ? v : (v + dir + count) % count));
-
-  const onTouchStart = (e: TouchEvent) => {
-    const t = e.touches[0];
-    if (!t) return;
-    startRef.current = { x: t.clientX, y: t.clientY, dragging: false };
-    setAnimate(false);
-  };
-  const onTouchMove = (e: TouchEvent) => {
-    const s = startRef.current;
-    const t = e.touches[0];
-    if (!s || !t) return;
-    const dx = t.clientX - s.x;
-    const dy = t.clientY - s.y;
-    if (!s.dragging && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) s.dragging = true;
-    if (s.dragging) setDrag(dx);
-  };
-  const onTouchEnd = () => {
-    const s = startRef.current;
-    startRef.current = null;
-    const dx = drag;
-    setAnimate(true);
-    setDrag(0);
-    if (!s || !s.dragging) return;
-    const width = typeof window !== "undefined" ? window.innerWidth : 320;
-    if (Math.abs(dx) > Math.min(80, width * 0.2)) step(dx < 0 ? 1 : -1);
-  };
-
-  return (
+  return createPortal((
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black/90 touch-pan-y"
-      onClick={() => setIndex(null)}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
+      data-testid="wedding-lightbox"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black/90"
+      onClick={close}
     >
-      <button type="button" aria-label="Đóng" onClick={(e) => { e.stopPropagation(); setIndex(null); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
+      <button type="button" aria-label="Đóng" onClick={(e) => { e.stopPropagation(); close(); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
       <div className="absolute top-5 z-10 text-sm text-white/80">{index + 1} / {count}</div>
-      <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); step(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
-      <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); step(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
+      <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); navigate(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
+      <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); navigate(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
 
       <div
+        data-testid="wedding-lightbox-track"
         className="flex h-full w-full"
+        onPointerCancel={zoom.onPointerCancel}
+        onPointerDown={zoom.onPointerDown}
+        onPointerMove={zoom.onPointerMove}
+        onPointerUp={zoom.onPointerUp}
+        onWheel={zoom.onWheel}
         style={{
-          transform: `translate3d(calc(${-index * 100}% + ${drag}px), 0, 0)`,
-          transition: animate ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
+          touchAction: "none",
+          transform: `translate3d(calc(${-index * 100}% + ${zoom.trackDrag}px), 0, 0)`,
+          transition: zoom.trackAnimating ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
         }}
       >
         {gallery.map((src, i) => (
-          <div key={src} className="flex h-full w-full shrink-0 items-center justify-center px-4">
+          <div
+            key={src}
+            ref={i === index ? zoom.viewportRef : undefined}
+            className="flex h-full w-full shrink-0 items-center justify-center px-4"
+          >
             <img
+              ref={i === index ? zoom.imageRef : undefined}
               src={src}
               alt={`Wedding photo ${i + 1}`}
+              data-testid={i === index ? "wedding-lightbox-image" : undefined}
+              data-zoom-scale={i === index ? zoom.scale.toFixed(2) : undefined}
               draggable={false}
               onClick={(e) => e.stopPropagation()}
+              onDoubleClick={i === index ? zoom.onDoubleClick : undefined}
+              style={i === index ? zoom.imageStyle : undefined}
               className="max-h-[78vh] max-w-[92vw] select-none rounded-lg object-contain"
             />
           </div>
         ))}
       </div>
 
+      <LightboxZoomControls
+        className="absolute bottom-20 left-1/2 z-20 -translate-x-1/2"
+        labels={VI_LIGHTBOX_ZOOM_LABELS}
+        resetZoom={zoom.resetZoom}
+        scale={zoom.scale}
+        testIdPrefix="wedding-lightbox"
+        zoomIn={zoom.zoomIn}
+        zoomOut={zoom.zoomOut}
+      />
+
       <div className="absolute bottom-4 z-10 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
         {gallery.map((src, i) => (
-          <button key={src} type="button" onClick={() => { setAnimate(true); setIndex(i); }} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === index ? accent : "transparent", opacity: i === index ? 1 : 0.6 }}>
+          <button key={src} type="button" onClick={() => { zoom.resetZoom(false); setIndex(i); }} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === index ? accent : "transparent", opacity: i === index ? 1 : 0.6 }}>
             <img src={src} alt={`Thumbnail ${i + 1}`} draggable={false} className="h-full w-full object-cover" />
           </button>
         ))}
       </div>
     </div>
-  );
+  ), document.body);
 }
 
 export function googleCalendarUrl(content: ChungDoiDemoContent) {
@@ -531,13 +547,12 @@ export function GiftEnvelope({
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]">{heading}</h2>
             </div>
             <div className="p-4 sm:p-6">
-              <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4">
+              <div data-testid="gift-bank-list" className="flex flex-row flex-wrap items-start justify-center gap-x-16 gap-y-8 sm:gap-x-24">
                 {banks.map((q) => {
                   const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                   return (
-                    <div key={q.label} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
-                      <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: dark }}>{q.label}</h3>
-                      <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(accent, 0.2)}` }}>
+                    <div data-testid="gift-bank-card" key={q.label} className="flex w-[42%] max-w-40 flex-col items-center">
+                      <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg" style={{ border: `2px solid ${hexToRgba(accent, 0.2)}` }}>
                         <img alt={`QR - ${q.label}`} className="h-full w-full object-contain" src={qr} />
                       </div>
                       <div className="mt-2 space-y-0.5 text-center" style={{ color: muted }}>

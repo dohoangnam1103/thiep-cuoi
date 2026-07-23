@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef } from "react";
 const KEY = (id: string) => `chungdoi:draft:${id}`;
 const STORAGE_VERSION = 1;
 const MAX_DRAFT_AGE_MS = 30 * 24 * 60 * 60 * 1000;
-const SAVE_DELAY_MS = 300;
 
 const ARRAY_FIELDS = ["scheduleTime", "scheduleLabel", "galleryUrl"] as const;
 
@@ -139,14 +138,12 @@ function mutationChangesFormData(record: MutationRecord): boolean {
 
 /**
  * Lưới an toàn cho editor:
- * - giữ snapshot mới nhất trong bộ nhớ ngay khi form thay đổi;
- * - debounce ghi localStorage để không chặn lúc gõ;
+ * - chỉ ghi localStorage sau khi người dùng rời field, không re-render khi đang gõ;
  * - nhận cả hidden input được React thêm/xoá/đổi (mẫu, nhạc, lịch, album);
  * - flush đồng bộ khi tab ẩn, reload, điều hướng hoặc component unmount.
  */
 export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
   const { formId, invitationId, enabled, onStatusChange } = opts;
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestRef = useRef<Draft | null>(null);
   const statusCallbackRef = useRef(onStatusChange);
 
@@ -173,8 +170,6 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
   }, [formId, persist]);
 
   const clear = useCallback(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = null;
     latestRef.current = null;
     clearFormDraft(invitationId);
     statusCallbackRef.current?.("server");
@@ -187,52 +182,37 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     const form = document.getElementById(formId) as HTMLFormElement | null;
     if (!form) return;
 
-    const scheduleWrite = () => {
-      // Chỉ báo "saving" một lần khi bắt đầu một đợt gõ, KHÔNG serialize/setState
-      // trên mỗi keystroke — nếu không cả form re-render theo từng phím, làm giật
-      // và mất ký tự ở input vừa mount. Chỉ serialize + ghi khi người dùng ngừng gõ.
-      if (!timerRef.current) statusCallbackRef.current?.("saving");
-      else clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        latestRef.current = serializeForm(form);
-        persist(latestRef.current);
-        timerRef.current = null;
-      }, SAVE_DELAY_MS);
+    const persistCurrentForm = () => {
+      statusCallbackRef.current?.("saving");
+      persist(serializeForm(form));
     };
-    const onFormFieldChange = (event: Event) => {
-      const target = event.target;
+    const isDraftControl = (target: EventTarget | null) => {
       if (
         !(target instanceof HTMLInputElement) &&
         !(target instanceof HTMLSelectElement) &&
         !(target instanceof HTMLTextAreaElement)
       ) {
-        return;
+        return false;
       }
-      // Chỉ field có name mới được submit. Bỏ qua search/filter nội bộ trong dialog.
-      if (!target.name || target.closest("[data-form-draft-ignore]")) return;
-      scheduleWrite();
+      return Boolean(target.name && !target.closest("[data-form-draft-ignore]"));
+    };
+    const onProgrammaticInput = (event: Event) => {
+      const target = event.target;
+      // React bắn input trên hidden field khi user chọn template/nhạc/ảnh. Các
+      // input gõ chữ bị bỏ qua hoàn toàn cho tới focusout.
+      if (!(target instanceof HTMLInputElement) || target.type !== "hidden") return;
+      if (!isDraftControl(target)) return;
+      persistCurrentForm();
     };
 
     const flush = () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = null;
       const latest = latestRef.current;
       if (latest) persist(latest);
     };
 
     const onFieldBlur = (event: FocusEvent) => {
-      const target = event.target;
-      if (
-        !(target instanceof HTMLInputElement) &&
-        !(target instanceof HTMLSelectElement) &&
-        !(target instanceof HTMLTextAreaElement)
-      ) {
-        return;
-      }
-      if (!target.name || target.closest("[data-form-draft-ignore]")) return;
-      // Rời field: chốt giá trị ngay thay vì chờ hết debounce.
-      latestRef.current = serializeForm(form);
-      flush();
+      if (!isDraftControl(event.target)) return;
+      persistCurrentForm();
     };
     const onVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
@@ -245,11 +225,10 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
       flush();
     };
     const observer = new MutationObserver((records) => {
-      if (records.some(mutationChangesFormData)) scheduleWrite();
+      if (records.some(mutationChangesFormData)) persistCurrentForm();
     });
 
-    form.addEventListener("input", onFormFieldChange);
-    form.addEventListener("change", onFormFieldChange);
+    form.addEventListener("input", onProgrammaticInput);
     form.addEventListener("focusout", onFieldBlur);
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pagehide", onPageHide);
@@ -259,12 +238,12 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     });
 
     return () => {
-      form.removeEventListener("input", onFormFieldChange);
-      form.removeEventListener("change", onFormFieldChange);
+      form.removeEventListener("input", onProgrammaticInput);
       form.removeEventListener("focusout", onFieldBlur);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", onPageHide);
       observer.disconnect();
+      latestRef.current = serializeForm(form);
       flush();
     };
   }, [enabled, formId, persist]);

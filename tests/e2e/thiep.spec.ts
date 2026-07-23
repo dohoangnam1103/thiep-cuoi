@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { test, expect } from "@playwright/test";
 import sharp from "sharp";
 
@@ -175,12 +178,95 @@ test.describe("published invitation /thiep/[slug]", () => {
     }
   });
 
-  test("guests can share and download a photo, then the owner can remove it", async ({ page, context }) => {
+  test("wedding album lightbox supports desktop zoom and two-finger pinch", async ({ page }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id, { templateId: "song-hy-green" });
+      const insertPhoto = getDb().prepare(
+        "INSERT INTO GalleryPhoto (id, invitationId, url, sortOrder) VALUES (?, ?, ?, ?)",
+      );
+      insertPhoto.run(
+        `gp-${Date.now()}-1`,
+        inv.id,
+        "/chungdoi/images/gallery/song-hy-red/photo-1.jpg",
+        0,
+      );
+      insertPhoto.run(
+        `gp-${Date.now()}-2`,
+        inv.id,
+        "/chungdoi/images/gallery/song-hy-red/photo-2.jpg",
+        1,
+      );
+      const slug = publishInvitation(inv.id);
+
+      await page.goto(`/thiep/${slug}`);
+      await page.locator("[data-open-invitation-control]").evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
+      await expect(page.locator("[data-open-invitation-control]")).toHaveCount(0);
+      const albumButton = page.getByRole("button", { name: "Wedding photo 1" });
+      await albumButton.evaluate((button) => button.scrollIntoView({ block: "center" }));
+      await albumButton.click();
+
+      const lightbox = page.getByTestId("wedding-lightbox");
+      const image = lightbox.getByTestId("wedding-lightbox-image");
+      const track = lightbox.getByTestId("wedding-lightbox-track");
+      await expect(lightbox).toBeVisible();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+
+      await lightbox.getByTestId("wedding-lightbox-zoom-in").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.50");
+      await lightbox.getByTestId("wedding-lightbox-zoom-out").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+
+      await track.dispatchEvent("wheel", {
+        clientX: 640,
+        clientY: 360,
+        deltaY: -100,
+      });
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.18");
+      await lightbox.getByTestId("wedding-lightbox-zoom-reset").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+
+      await track.evaluate((element) => {
+        const pointer = (type: string, pointerId: number, x: number, y: number) => {
+          element.dispatchEvent(new PointerEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            clientX: x,
+            clientY: y,
+            pointerId,
+            pointerType: "touch",
+          }));
+        };
+        pointer("pointerdown", 11, 140, 360);
+        pointer("pointerdown", 12, 240, 360);
+        pointer("pointermove", 11, 100, 360);
+        pointer("pointermove", 12, 280, 360);
+        pointer("pointerup", 11, 100, 360);
+        pointer("pointerup", 12, 280, 360);
+      });
+      await expect.poll(async () => Number(await image.getAttribute("data-zoom-scale"))).toBeGreaterThan(1.5);
+
+      await page.keyboard.press("0");
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+      await page.keyboard.press("Escape");
+      await expect(lightbox).toHaveCount(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("six guest photos render as four previews with +2, open in a downloadable lightbox, and can be moderated", async ({ page, context }) => {
     const user = createUser();
     try {
       const inv = createInvitation(user.id);
       const slug = publishInvitation(inv.id);
-      const fileName = `party-${Date.now()}.png`;
+      const fileNames = Array.from(
+        { length: 6 },
+        (_, index) => `party-${Date.now()}-${index + 1}.${index === 0 ? "heic" : "png"}`,
+      );
+      const heic = await readFile(path.join(process.cwd(), "tests", "fixtures", "sample.heic"));
       const png = await sharp({
         create: { width: 8, height: 8, channels: 3, background: { r: 210, g: 80, b: 90 } },
       }).png().toBuffer();
@@ -191,29 +277,110 @@ test.describe("published invitation /thiep/[slug]", () => {
       });
       await page.getByRole("button", { name: "Khoảnh khắc" }).click();
       await page.getByLabel("Tên của bạn *").fill("Khách chụp ảnh");
-      await page.locator('input[type="file"][name="files"]').setInputFiles({
-        name: fileName,
-        mimeType: "image/png",
-        buffer: png,
-      });
+      await page.locator('input[type="file"][name="files"]').setInputFiles(
+        fileNames.map((name, index) => (
+          index === 0
+            ? { name, mimeType: "image/heic", buffer: heic }
+            : { name, mimeType: "image/png", buffer: png }
+        )),
+      );
       await page.getByRole("button", { name: "Đóng góp khoảnh khắc" }).click();
 
       await expect(page.getByText("Đã chia sẻ thành công. Cảm ơn bạn!")).toBeVisible();
-      await expect(page.getByAltText(fileName)).toBeVisible();
+      await expect(page.getByAltText(fileNames[0], { exact: true })).toBeVisible();
+      await page.getByRole("button", { name: "Đóng", exact: true }).click();
+
+      const moments = page.getByTestId("guest-moments-section");
+      await expect(moments).toBeVisible();
+      const previews = moments.locator("[data-guest-moment-index]");
+      await expect(previews).toHaveCount(4);
+      await expect(moments.getByTestId("guest-moments-extra")).toHaveText("+2");
+
+      await previews.nth(3).click();
+      const lightbox = page.getByTestId("guest-moments-lightbox");
+      await expect(lightbox).toBeVisible();
+      await expect(lightbox.getByTestId("guest-moments-download")).toHaveAttribute("href", /\?download=1$/);
+      await expect(lightbox.getByText("4 / 6", { exact: true })).toBeVisible();
+
+      const track = lightbox.getByTestId("guest-moments-track");
+      const image = lightbox.getByTestId("guest-moments-image");
+      await expect(track.locator("img")).toHaveCount(6);
+      await expect(track).toHaveCSS("transition-property", "transform");
+      await expect(track).toHaveCSS("transition-duration", "0.32s");
+      await expect(track).toHaveAttribute("style", /translate3d\(calc\(-300% \+ 0px\)/);
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+
+      await lightbox.getByTestId("guest-moments-zoom-in").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.50");
+      await lightbox.getByTestId("guest-moments-zoom-out").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+      await lightbox.getByTestId("guest-moments-zoom-in").click();
+      await lightbox.getByTestId("guest-moments-zoom-reset").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+
+      await track.evaluate((element) => {
+        const pointer = (type: string, pointerId: number, x: number, y: number) => {
+          element.dispatchEvent(new PointerEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            clientX: x,
+            clientY: y,
+            pointerId,
+            pointerType: "touch",
+          }));
+        };
+        pointer("pointerdown", 21, 140, 360);
+        pointer("pointerdown", 22, 240, 360);
+        pointer("pointermove", 21, 100, 360);
+        pointer("pointermove", 22, 280, 360);
+        pointer("pointerup", 21, 100, 360);
+        pointer("pointerup", 22, 280, 360);
+      });
+      await expect.poll(async () => Number(await image.getAttribute("data-zoom-scale"))).toBeGreaterThan(1.5);
+      await expect(lightbox.getByText("4 / 6", { exact: true })).toBeVisible();
+      await lightbox.getByTestId("guest-moments-zoom-reset").click();
+      await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+
+      const readTrackX = () => track.evaluate((element) => {
+        const transform = getComputedStyle(element).transform;
+        const values = transform
+          .slice(transform.indexOf("(") + 1, -1)
+          .split(",")
+          .map(Number);
+        return transform.startsWith("matrix3d") ? values[12] : values[4];
+      });
+      const startX = await readTrackX();
+      const trackWidth = await track.evaluate((element) => element.clientWidth);
+      const targetX = startX - trackWidth;
+      await lightbox.getByRole("button", { name: "Khoảnh khắc tiếp theo" }).click();
+      await expect.poll(async () => {
+        const currentX = await readTrackX();
+        return currentX < startX && currentX > targetX;
+      }, {
+        intervals: [16, 16, 16, 16, 16, 16, 16, 16],
+        timeout: 240,
+      }).toBe(true);
+      await page.waitForTimeout(360);
+      const endX = await readTrackX();
+
+      expect(endX).toBeCloseTo(targetX, 0);
+      await expect(lightbox.getByText("5 / 6", { exact: true })).toBeVisible();
+      await expect(track).toHaveAttribute("style", /translate3d\(calc\(-400% \+ 0px\)/);
+
       const row = getDb().prepare(
         "SELECT id FROM GuestMedia WHERE invitationId = ? AND originalName = ?",
-      ).get(inv.id, fileName) as { id: string };
+      ).get(inv.id, fileNames[0]) as { id: string };
       const download = await page.request.get(`/api/invitations/${slug}/contributions/${row.id}/file?download=1`);
       expect(download.ok()).toBeTruthy();
       expect(download.headers()["content-disposition"]).toContain("attachment");
 
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/rsvp`);
-      await page.getByRole("button", { name: `Xóa: ${fileName}` }).click();
+      await page.getByRole("button", { name: `Xóa: ${fileNames[0]}` }).click();
       await page.getByRole("button", { name: "Xóa", exact: true }).click();
       await expect.poll(() => getDb().prepare(
         "SELECT COUNT(*) AS n FROM GuestMedia WHERE invitationId = ?",
-      ).get(inv.id)).toEqual({ n: 0 });
+      ).get(inv.id)).toEqual({ n: 5 });
     } finally {
       cleanupUser(user.id);
     }

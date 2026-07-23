@@ -3,13 +3,16 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { NextRequest } from "next/server";
-import sharp from "sharp";
 
+import { editorUploadPublicUrl, editorUploadRoot } from "@/lib/editor-uploads";
+import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
 import { getSession } from "@/lib/session";
+import {
+  EDITOR_UPLOAD_IMAGE_FORMATS,
+  isAcceptedImageUpload,
+} from "@/lib/upload-image-formats";
 
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const ALLOWED_FORMATS = new Set(["jpeg", "png", "webp", "gif"]);
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
@@ -23,7 +26,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Thiếu tệp" }, { status: 400 });
   }
 
-  if (file.type && !ALLOWED_TYPES.has(file.type)) {
+  if (!isAcceptedImageUpload(file, EDITOR_UPLOAD_IMAGE_FORMATS)) {
     return Response.json({ error: "Định dạng ảnh không hỗ trợ" }, { status: 415 });
   }
   if (file.size > MAX_BYTES) {
@@ -34,26 +37,23 @@ export async function POST(request: NextRequest) {
 
   let output: Buffer;
   try {
-    const img = sharp(bytes, { failOn: "error" });
-    const meta = await img.metadata();
-    if (!meta.format || !ALLOWED_FORMATS.has(meta.format)) {
-      return Response.json({ error: "Định dạng ảnh không hợp lệ" }, { status: 415 });
-    }
     // Animated GIFs flatten to the first frame when re-encoded as static WebP — acceptable for invites.
-    output = await img
-      .rotate()
-      .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 82 })
-      .toBuffer();
+    output = await processUploadedImageToWebp({
+      bytes,
+      allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS,
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 82,
+    });
   } catch {
     return Response.json({ error: "Định dạng ảnh không hợp lệ" }, { status: 400 });
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
+  const uploadDir = editorUploadRoot();
   await mkdir(uploadDir, { recursive: true });
 
   const filename = `${randomUUID()}.webp`;
   await writeFile(path.join(uploadDir, filename), output);
 
-  return Response.json({ url: `/uploads/${filename}` });
+  return Response.json({ url: editorUploadPublicUrl(filename) });
 }
