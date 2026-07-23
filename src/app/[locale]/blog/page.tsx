@@ -22,6 +22,7 @@ export async function generateMetadata({
   return {
     title: { absolute: title },
     description,
+    robots: { index: false, follow: true },
     alternates: staticAlternates("/blog", locale),
     openGraph: {
       type: "website",

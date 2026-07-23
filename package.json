@@ -87,6 +87,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@next/env": "^16.2.10",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/better-sqlite3": "^7.6.13",

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   WEEKDAY_LABELS,
   hexToRgba,
@@ -24,7 +25,6 @@ const RED = "#8f0018";
 const RED_DEEP = "#710013";
 const GOLD = "#ffbe89";
 const GOLD_MUTED = "rgba(255, 190, 137, 0.78)";
-const RED_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
 const nameFont = { fontFamily: '"Fz Qellia", "Baskerville", "Times New Roman", serif' };
 const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
@@ -40,20 +40,22 @@ function RedHeading({ children }: { children: React.ReactNode }) {
 /** Faithful rebuild of the Dragon-Phoenix v3 Red (long-phung-v3-do) opened invitation. */
 export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const heroPhoto = gallery[1] ?? gallery[0];
+  const heroPhoto = invitationHeroImage(content);
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -68,11 +70,11 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
         <header data-testid="dragon-phoenix-v3-hero" className="relative z-20 flex w-full flex-col items-center px-4 pb-16 pt-14 sm:px-5 md:pb-20 md:pt-20">
           <div className="relative z-20 flex w-full items-center justify-center gap-4 md:gap-7">
             <span className="min-w-0 flex-1 text-right font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
-              {couple.groomShortName || couple.groomFullName}
+              {people[0].shortName}
             </span>
             <img src={`${RED_BASE}/chu-hy.webp`} alt="" aria-hidden className="h-14 w-14 shrink-0 object-contain md:h-20 md:w-20" />
             <span className="min-w-0 flex-1 font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
-              {couple.brideShortName || couple.brideFullName}
+              {people[1].shortName}
             </span>
           </div>
 
@@ -90,7 +92,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               >
                 <img
                   src={heroPhoto}
-                  alt={`${couple.groomFullName} và ${couple.brideFullName}`}
+                  alt={`${people[0].fullName} và ${people[1].fullName}`}
                   className="h-full w-full object-cover object-[50%_34%]"
                 />
               </div>
@@ -108,14 +110,14 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -123,7 +125,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
                   <span>{ceremony.weekday}</span><span style={{ color: GOLD }}>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span style={{ color: GOLD }}>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{RED_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -150,7 +152,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GOLD_MUTED }}>{RED_LUNAR}</div>
+            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <RedHeading>Cùng đếm ngược</RedHeading>

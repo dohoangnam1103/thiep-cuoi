@@ -6,6 +6,8 @@ import { createPortal } from "react-dom";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import { buildVietQrImageUrl } from "@/lib/vietqr";
+import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
+import { orderedCouple } from "@/lib/invitation-display";
 
 export { buildVietQrImageUrl } from "@/lib/vietqr";
 
@@ -34,6 +36,7 @@ export type FormattedDate = {
   monthNumber: number;
   dayNumber: number;
   yearNumber: number;
+  lunar: string;
 };
 
 export function formatDate(iso: string): FormattedDate | null {
@@ -46,6 +49,7 @@ export function formatDate(iso: string): FormattedDate | null {
     monthNumber: d.getMonth() + 1,
     dayNumber: d.getDate(),
     yearNumber: d.getFullYear(),
+    lunar: formatVietnameseLunarDate(iso),
   };
 }
 
@@ -178,8 +182,9 @@ export function Lightbox({
 }
 
 export function googleCalendarUrl(content: ChungDoiDemoContent) {
-  const { groomShortName, brideShortName, date, time } = content.couple;
-  const title = `Đám cưới ${groomShortName} & ${brideShortName}`;
+  const { date, time } = content.couple;
+  const people = orderedCouple(content);
+  const title = `Đám cưới ${people[0].shortName} & ${people[1].shortName}`;
   const start = `${date.replace(/-/g, "")}T${(time || "18:00").replace(":", "")}00`;
   const params = new URLSearchParams({
     action: "TEMPLATE",

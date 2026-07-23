@@ -18,6 +18,7 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const NB_PACIFICO = '"SVN-HC Pacifico", cursive';
 const NB_TITLING = '"SVN-HC Built Titling", "Times New Roman", serif';
@@ -102,12 +103,11 @@ function NhatBinhCloudBackground({ nb }: { nb: string }) {
 
 export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
+  const people = orderedCouple(content);
   const NB = `/chungdoi/images/themes/${content.theme.assetFolder || "nhat-binh-red"}`;
   const RED = content.theme.primaryColor || "#c32a29";
   const BROWN = "#542E08";
   const CREAM = "#F8F3E0";
-  const groomShort = couple.groomShortName || "Thế Bảo";
-  const brideShort = couple.brideShortName || "Ngọc Ánh";
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -115,12 +115,17 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
   const galleryExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const LUNAR = "(Tức ngày 17/03 năm Bính Ngọ)";
   const [giftOpen, setGiftOpen] = useState(false);
-  const banks = ([
-    { title: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { title: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { title: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
+    { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
+    couple.brideFirst,
+  );
 
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -157,7 +162,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
             className="relative z-20 max-w-[95%] text-center uppercase"
             style={{ fontFamily: NB_PACIFICO, color: RED, fontSize: "clamp(20px, 5.5vw, 40px)", lineHeight: 1.2, letterSpacing: "0.03em", WebkitTextStroke: "1px #f8c88b", paintOrder: "stroke" }}
           >
-            {groomShort} &amp; {brideShort}
+            {people[0].shortName} &amp; {people[1].shortName}
           </p>
           <div className="relative z-10 mt-2 h-[min(92vw,420px)] w-full max-w-[480px] md:h-[480px] md:max-w-[769px]">
             {/* 囍 double-happiness */}
@@ -210,23 +215,24 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
           <NhatBinhSectionCorners nb={NB} />
           <NhatBinhHeading red={RED}>Thông Tin Lễ Cưới</NhatBinhHeading>
           <div className="relative mx-auto mt-8 grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] items-start gap-3 text-center md:max-w-[520px] md:gap-6 lg:max-w-[600px]">
-            <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />
+            <FamilyColumn {...familyColumns[0]} />
             <div className="flex h-[50px] w-0 shrink-0 items-center justify-center self-stretch px-0 md:h-[64px]">
               <div className="h-full w-px" style={{ backgroundColor: BROWN }} />
             </div>
-            <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />
+            <FamilyColumn {...familyColumns[1]} />
           </div>
           <div className="mt-10 flex w-full flex-col items-center gap-1 text-center md:gap-2">
-            <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{couple.groomFullName}</FitText>
-            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+            <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[17px]" style={{ color: BROWN }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
+            <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{people[0].fullName}</FitText>
+            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>{people[0].birthOrder}</div>
             <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: NB_CAROSELLO, color: RED }}>&amp;</div>
-            <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{couple.brideFullName}</FitText>
-            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+            <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{people[1].fullName}</FitText>
+            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{people[1].birthOrder}</div>
           </div>
           {ceremony ? (
             <div className="mt-10 flex flex-col items-center gap-4 text-center md:gap-5" style={{ fontFamily: NB_HELV, color: BROWN }}>
               <div className="flex flex-col items-center gap-2">
-                <span className="whitespace-pre-line text-center font-bold text-[15px] md:text-[19px] lg:text-[20px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+                <span className="whitespace-pre-line text-center font-bold text-[15px] md:text-[19px] lg:text-[20px]">{invitationCeremonyMessage(content)}</span>
                 <p className="text-center font-bold uppercase text-[15px] md:text-[19px] lg:text-[20px]">VÀO LÚC</p>
               </div>
               <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime || "09:00"}</div>
@@ -238,7 +244,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
                 <span className="text-left font-bold text-[15px] uppercase md:text-[18px] lg:text-[19px]">Tháng {ceremony.month}</span>
               </div>
               <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.yearNumber}</div>
-              <div className="font-bold text-[15px] md:text-[18px] lg:text-[19px]">{LUNAR}</div>
+              <div className="font-bold text-[15px] md:text-[18px] lg:text-[19px]">{ceremony.lunar}</div>
             </div>
           ) : null}
         </section>
@@ -285,7 +291,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
                 <span className="text-left text-[15px] uppercase tracking-wide md:text-[20px]">Tháng {reception.month}</span>
               </div>
               <div className="text-[23px] font-bold md:text-[31px]">{reception.yearNumber}</div>
-              <div className="text-[15px] uppercase tracking-[0.2em] md:text-[18px]">{LUNAR}</div>
+              <div className="text-[15px] uppercase tracking-[0.2em] md:text-[18px]">{reception.lunar}</div>
               <div className="mt-4 flex items-center justify-center gap-8">
                 <div className="flex flex-col items-center">
                   <span className="text-sm uppercase tracking-wider md:text-[15px]">Đón khách</span>

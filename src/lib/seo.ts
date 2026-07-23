@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { getPathname } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { indexableLocales, routing } from "@/i18n/routing";
 import { findTemplateByRouteSlug, getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { absoluteUrl } from "@/lib/site-url";
 
@@ -19,9 +19,15 @@ function buildAlternates(
   currentLocale: AppLocale,
 ): Alternates {
   const languages = Object.fromEntries(
-    routing.locales.map((locale) => [locale, getPathname({ href: hrefByLocale(locale), locale })]),
+    indexableLocales.map((locale) => [
+      locale,
+      getPathname({ href: hrefByLocale(locale), locale }),
+    ]),
   );
-  const canonical = languages[currentLocale];
+  const canonical = getPathname({
+    href: hrefByLocale(currentLocale),
+    locale: currentLocale,
+  });
   return {
     canonical,
     languages: { ...languages, "x-default": languages[routing.defaultLocale] },

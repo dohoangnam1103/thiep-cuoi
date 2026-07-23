@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toCanvas } from "html-to-image";
@@ -13,7 +13,6 @@ import {
   Shape,
   ShapeGeometry,
   SRGBColorSpace,
-  type Group,
   type Texture,
 } from "three";
 
@@ -187,7 +186,6 @@ function Envelope({
   ratio: number;
   btnUV: BtnUV | null;
 }) {
-  const groupRef = useRef<Group>(null);
   const cardH = CARD_W * ratio;
 
   // Scale box sao cho chiều ngang CARD_W (world) chiếu ra đúng TARGET_PX trên màn,
@@ -234,19 +232,6 @@ function Envelope({
     return geo;
   }, [cardH]);
 
-  const reducedMotion = useMemo(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    [],
-  );
-
-  useFrame((_, delta) => {
-    if (groupRef.current && !reducedMotion) {
-      groupRef.current.rotation.y += delta * 0.15;
-    }
-  });
-
   // Drag xoay (OrbitControls) kết thúc bằng pointerup → trình duyệt tính là click,
   // làm mở thiệp ngoài ý muốn. Lưu điểm pointerdown, chỉ mở nếu con trỏ gần như
   // đứng yên (< 6px) → phân biệt tap thật với kéo xoay.
@@ -272,7 +257,7 @@ function Envelope({
   };
 
   return (
-    <group ref={groupRef} scale={scale} onPointerDown={handlePointerDown}>
+    <group scale={scale} onPointerDown={handlePointerDown}>
       <mesh geometry={geometry}>
         {/* emissive = màu paper ở cường độ thấp → nền tông giấy không phụ thuộc
             đèn, directional chỉ thêm khối nhẹ, hết bị xám khi xoay ra sau. */}
@@ -398,6 +383,8 @@ export default function Envelope3D({
           btnUV={btnUV}
         />
         <OrbitControls
+          autoRotate={false}
+          enableRotate
           enablePan={false}
           enableDamping
           dampingFactor={0.08}

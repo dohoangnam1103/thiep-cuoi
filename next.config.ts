@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+import { canonicalHostRedirects } from "./src/lib/seo-redirects";
+
 const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
@@ -15,6 +17,9 @@ const nextConfig: NextConfig = {
       "node_modules/@img/**/*",
       "node_modules/sharp/**/*",
     ],
+  },
+  async redirects() {
+    return canonicalHostRedirects(process.env.NEXT_PUBLIC_SITE_URL);
   },
   async headers() {
     return [
@@ -33,6 +38,18 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
           },
           { key: "X-DNS-Prefetch-Control", value: "on" },
+        ],
+      },
+      {
+        // User uploads are supporting assets, never standalone search results.
+        // Keeping them out of the index also reduces the chance that a benign
+        // screenshot is mistaken for a deceptive page when crawled by itself.
+        source: "/uploads/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, nosnippet, noarchive",
+          },
         ],
       },
     ];

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
@@ -21,9 +22,12 @@ function LeafHeading({ children }: { children: React.ReactNode }) {
 
 export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
+  const firstPhoto = invitationHeroImage(content);
+  const secondPhoto = content.heroImage ? gallery[0] : gallery[1];
   const albumShown = gallery.slice(0, 4);
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
@@ -33,10 +37,11 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -53,27 +58,27 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
           <p className="relative z-10 mb-8 mt-8 text-[14px] uppercase tracking-[0.3em] md:mb-[42px] md:mt-[42px] md:text-[18px] lg:mb-12 lg:mt-12 lg:text-[21px]" style={{ color: "#4e6439", fontFamily: 'Baskerville, "Times New Roman", serif' }}>The story of love</p>
 
           <div className="relative z-10 h-[420px] w-full max-w-[540px] md:h-[546px] md:max-w-[702px] lg:h-[630px] lg:max-w-[810px]">
-            {gallery[0] ? (
+            {firstPhoto ? (
               <figure className="absolute left-[5%] top-[5%] w-[42%] -rotate-[8deg]">
                 <div className="aspect-[4/5] overflow-hidden border-[7px] border-white shadow-[0_18px_45px_rgba(31,55,33,0.22)]">
-                  <img src={gallery[0]} alt={couple.groomFullName} className="h-full w-full object-cover" />
+                  <img src={firstPhoto} alt={people[0].fullName} className="h-full w-full object-cover" />
                 </div>
               </figure>
             ) : null}
-            {gallery[1] ? (
+            {secondPhoto ? (
               <figure className="absolute bottom-[2%] right-[5%] w-[42%] rotate-[8deg]">
                 <div className="aspect-[4/5] overflow-hidden border-[7px] border-white shadow-[0_18px_45px_rgba(31,55,33,0.22)]">
-                  <img src={gallery[1]} alt={couple.brideFullName} className="h-full w-full object-cover" />
+                  <img src={secondPhoto} alt={people[1].fullName} className="h-full w-full object-cover" />
                 </div>
               </figure>
             ) : null}
             <div className="absolute right-[2%] top-[18%] z-20 w-[45%] text-center">
-              <span className="block text-[11px] uppercase tracking-[0.2em]">{couple.groomBirthOrder || "Trưởng Nam"}</span>
-              <span className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+              <span className="block text-[11px] uppercase tracking-[0.2em]">{people[0].birthOrder}</span>
+              <span className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{people[0].shortName}</span>
             </div>
             <div className="absolute bottom-[14%] left-[2%] z-20 w-[45%] text-center">
-              <span className="block text-[11px] uppercase tracking-[0.2em]">{couple.brideBirthOrder || "Út Nữ"}</span>
-              <span className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+              <span className="block text-[11px] uppercase tracking-[0.2em]">{people[1].birthOrder}</span>
+              <span className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{people[1].shortName}</span>
             </div>
           </div>
         </header>
@@ -85,12 +90,13 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
+            <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -100,6 +106,7 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -134,6 +141,7 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
 
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border bg-white/70 px-8 py-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>

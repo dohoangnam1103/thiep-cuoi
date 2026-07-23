@@ -3,6 +3,7 @@
 import type React from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   FamilyColumn,
   Lightbox,
@@ -35,6 +36,7 @@ function SpringHeading({ children }: { children: React.ReactNode }) {
 
 export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -47,10 +49,11 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ background: SGR_BG }}>
@@ -69,9 +72,9 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
 
         <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
           <h1 className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ color: SGR_TEXT, ...nameFont }}>
-            <span>{couple.groomShortName || couple.groomFullName}</span>
+            <span>{people[0].shortName}</span>
             <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]">&amp;</span>
-            <span>{couple.brideShortName || couple.brideFullName}</span>
+            <span>{people[1].shortName}</span>
           </h1>
         </header>
 
@@ -95,12 +98,13 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
+            <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[56px]" style={{ ...nameFont, color: SGR_TEXT }}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SGR_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[56px]" style={{ ...nameFont, color: SGR_TEXT }}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SGR_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...nameFont, color: SGR_TEXT }}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[56px]" style={{ ...nameFont, color: SGR_TEXT }}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SGR_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[56px]" style={{ ...nameFont, color: SGR_TEXT }}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SGR_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -110,6 +114,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold" style={{ color: SGR_TEXT }}>{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -141,6 +146,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
 
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border px-8 py-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(SGR_TEXT, 0.3), backgroundColor: SGR_CARD }}>

@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 
 import {
@@ -6,7 +6,7 @@ import {
   getVietnameseTemplateSlug,
   templates,
 } from "@/data/chungdoi";
-import { redirect } from "@/i18n/navigation";
+import { getPathname } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 
 function localeSlug(sourceSlug: string, locale: Locale) {
@@ -30,11 +30,13 @@ export default async function TemplatePage({
   const template = findTemplateByRouteSlug(slug);
   if (!template) notFound();
 
-  redirect({
-    href: {
-      pathname: "/templates/[slug]/demo",
-      params: { slug: localeSlug(template.slug, locale) },
-    },
-    locale,
-  });
+  permanentRedirect(
+    getPathname({
+      href: {
+        pathname: "/templates/[slug]/demo",
+        params: { slug: localeSlug(template.slug, locale) },
+      },
+      locale,
+    }),
+  );
 }

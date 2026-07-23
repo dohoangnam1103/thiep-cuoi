@@ -33,7 +33,7 @@ type FormDraftController = {
   persist: (draft: Draft) => boolean;
 };
 
-/** Đọc form thành object; field lặp → mảng, brideFirst → boolean. */
+/** Đọc form thành object; field lặp → mảng, các cờ ẩn → boolean. */
 export function serializeForm(form: HTMLFormElement): Draft {
   const fd = new FormData(form);
   const draft: Draft = {};
@@ -44,8 +44,8 @@ export function serializeForm(form: HTMLFormElement): Draft {
     if ((ARRAY_FIELDS as readonly string[]).includes(name)) continue;
     draft[name] = String(value);
   }
-  // brideFirst: checkbox không nằm trong FormData khi bỏ chọn
-  draft.brideFirst = fd.get("brideFirst") != null;
+  draft.brideFirst = String(fd.get("brideFirst") ?? "true") !== "false";
+  draft.showHeroImage = String(fd.get("showHeroImage") ?? "true") !== "false";
   return draft;
 }
 

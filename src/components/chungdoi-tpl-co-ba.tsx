@@ -17,6 +17,7 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const COBA_MARVIN = '"SVN-HC Marvin Visions", sans-serif';
 const COBA_HAYDON = '"SVN-HC Haydon Brush", cursive';
@@ -77,21 +78,19 @@ function CoBaWishForm({ BROWN, CREAM }: { BROWN: string; CREAM: string }) {
 /** Faithful rebuild of the Cô Ba Đỏ (co-ba-red) opened invitation. */
 export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
+  const people = orderedCouple(content);
   const COBA = "/chungdoi/images/themes/co-ba-red";
   const RED = "#C32A29";
   const BROWN = "#542E08";
   const CREAM = "#F8F3E0";
-  const groomShort = couple.groomShortName || "Văn Toàn";
-  const brideShort = couple.brideShortName || "Thanh Diệp";
-  const names = couple.brideFirst ? [brideShort, groomShort] : [groomShort, brideShort];
-  const ceremony = formatDate(couple.date);
+  const names = people.map((person) => person.shortName);
+  const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const LUNAR = "(Tức ngày 25/03 năm Bính Ngọ)";
 
   const [bankOpen, setBankOpen] = useState(false);
   useEffect(() => {
@@ -122,10 +121,16 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  const bankCards = ([
-    { role: "Chú Rể", bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const bankCards = orderByBrideFirst(
     { role: "Cô Dâu", bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { role: "Chú Rể", bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông Bà", father: families.brideFather, mother: families.brideMother, address: families.brideAddress },
+    { title: families.groomParentTitle || "Ông Bà", father: families.groomFather, mother: families.groomMother, address: families.groomAddress },
+    couple.brideFirst,
+  );
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white" style={{ color: BROWN }}>
@@ -177,38 +182,38 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
 
             <div className="relative grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] items-start gap-3 py-[10px] text-center md:max-w-[520px] md:gap-6 md:py-[15px] lg:max-w-[600px] lg:py-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>
               <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
-                <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{families.groomParentTitle || "Ông Bà"}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{families.groomFather}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{families.groomMother}</span>
-                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{families.groomAddress}</div>
+                <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[0].title}</span>
+                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[0].father}</span>
+                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[0].mother}</span>
+                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[0].address}</div>
               </div>
               <div className="flex h-[50px] w-0 shrink-0 items-center justify-center self-stretch px-0 md:h-[64px]">
                 <div className="h-full w-px bg-[#542e08]" />
               </div>
               <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
-                <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{families.brideParentTitle || "Ông Bà"}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{families.brideFather}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{families.brideMother}</span>
-                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{families.brideAddress}</div>
+                <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[1].title}</span>
+                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[1].father}</span>
+                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[1].mother}</span>
+                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[1].address}</div>
               </div>
             </div>
 
             <div className="flex max-w-[320px] flex-col gap-1 py-[10px] text-center text-[16px] leading-snug md:max-w-[460px] md:py-[15px] md:text-[22px] lg:max-w-[560px] lg:py-[20px] lg:text-[23px]" style={{ whiteSpace: "pre-line", fontFamily: COBA_HELV, color: BROWN, fontWeight: 700 }}>
-              TRÂN TRỌNG BÁO TIN{"\n"}LỄ THÀNH HÔN CỦA CON CHÚNG TÔI
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
 
             <div className="relative flex flex-col items-center gap-1 py-[10px] text-center md:gap-2 md:py-[15px] lg:py-[20px]">
-              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.groomFullName}</h3>
-              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[0].fullName}</h3>
+              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{people[0].birthOrder}</div>
               <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: COBA_HAYDON, color: RED }}>&amp;</div>
-              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{couple.brideFullName}</h3>
-              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[1].fullName}</h3>
+              <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{people[1].birthOrder}</div>
             </div>
 
             {/* ceremony */}
             <div className="relative flex flex-col items-center gap-4 py-[10px] text-center md:gap-5 md:py-[15px] lg:py-[20px]" style={{ fontFamily: COBA_HELV }}>
               <div className="flex flex-col items-center gap-2" style={{ color: BROWN }}>
-                <span className="text-center text-[15px] font-bold md:text-[19px] lg:text-[20px]" style={{ whiteSpace: "pre-line" }}>{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+                <span className="text-center text-[15px] font-bold md:text-[19px] lg:text-[20px]" style={{ whiteSpace: "pre-line" }}>{invitationCeremonyMessage(content)}</span>
                 <p className="text-center text-[15px] font-bold uppercase md:text-[19px] lg:text-[20px]">Vào lúc</p>
               </div>
               {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
@@ -216,7 +221,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                 <>
                   <CoBaDateRow weekday={ceremony.weekday} day={ceremony.day} month={ceremony.month} dayFontClass="text-[36px] md:text-[42px] lg:text-[46px]" gap="gap-2 md:gap-3" dividerLen={30} />
                   <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.yearNumber}</div>
-                  <div className="text-[15px] font-bold md:text-[18px] lg:text-[19px]">{LUNAR}</div>
+                  <div className="text-[15px] font-bold md:text-[18px] lg:text-[19px]">{ceremony.lunar}</div>
                 </>
               ) : null}
             </div>
@@ -252,7 +257,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                   <div className="text-center text-[26px] md:text-[38px]">{venue.banquetTime || couple.time}</div>
                   <CoBaDateRow weekday={reception.weekday} day={reception.day} month={reception.month} dayFontClass="text-[38px] md:text-[50px]" gap="gap-6" dividerLen={34} />
                   <div className="text-[23px] font-bold md:text-[31px]">{reception.yearNumber}</div>
-                  <div className="text-[15px] uppercase tracking-[0.2em] md:text-[18px]">{LUNAR}</div>
+                  <div className="text-[15px] uppercase tracking-[0.2em] md:text-[18px]">{reception.lunar}</div>
                   <div className="mt-4 flex items-center justify-center gap-8">
                     <div className="flex flex-col items-center">
                       <span className="text-sm uppercase tracking-wider md:text-[15px]">Đón khách</span>

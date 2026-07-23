@@ -5,7 +5,6 @@ import {
   CalendarDays,
   Check,
   CheckCircle2,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ImageIcon,
@@ -18,6 +17,7 @@ import {
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import {
   type CSSProperties,
@@ -29,6 +29,7 @@ import {
 } from "react";
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
+import { WeddingFaqSection } from "@/components/chungdoi-faq";
 import { getVietnameseTemplateSlug, templates } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
 
@@ -162,11 +163,14 @@ function StackFan() {
                 }
               }}
             >
-              <img
-                src={template.listing}
+              <Image
+                src={template.portrait}
                 alt={template.name}
+                fill
+                sizes="230px"
                 draggable={false}
-                loading="lazy"
+                loading={isCenter ? "eager" : "lazy"}
+                fetchPriority={isCenter ? "high" : "auto"}
                 decoding="async"
                 className="h-full w-full rounded-2xl object-cover object-top shadow-[0_18px_44px_rgb(0_0_0/0.22)]"
               />
@@ -199,7 +203,7 @@ function StackFan() {
   );
 }
 
-function HeroSection() {
+function HeroSection({ createHref }: { createHref: string }) {
   const t = useTranslations("home");
   const auroraEnabled = useAuroraEnabled();
   return (
@@ -221,12 +225,12 @@ function HeroSection() {
           <p className="hero-enter mt-6 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
           <p className="hero-enter mt-2 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
           <p className="hero-enter mt-5 max-w-2xl text-sm leading-6 text-muted-foreground" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
-          <div className="hero-enter mt-8 flex flex-wrap gap-3" style={{ "--hero-delay": "400ms" } as CSSProperties}>
+          <div className="hero-enter mt-8 flex flex-col items-start gap-4" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
-              href="#templates"
-              className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+              href={createHref}
+              className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-lg font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
             >
-              {t("createNow")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              {t("createNow")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#how-it-works"
@@ -252,6 +256,7 @@ function HeroSection() {
 }
 
 const TWEEN_FACTOR = 2.3;
+const EMPHASIS_TWEEN_FACTOR = 9;
 
 function TemplateCarousel() {
   const t = useTranslations("home");
@@ -291,12 +296,35 @@ function TemplateCarousel() {
       }
 
       const tween = 1 - Math.abs(diffToTarget * TWEEN_FACTOR);
+      const rawProminence = Math.min(
+        Math.max(1 - Math.abs(diffToTarget * EMPHASIS_TWEEN_FACTOR), 0),
+        1,
+      );
+      const prominence = rawProminence ** 1.35;
       const scale = Math.min(Math.max(tween, 0.4), 1);
+      const lift = 16 - prominence * 30;
+      const opacity = 0.42 + prominence * 0.58;
+      const saturation = 0.35 + prominence * 0.75;
+      const brightness = 0.88 + prominence * 0.12;
+      const contrast = 0.82 + prominence * 0.24;
+      const shadowOpacity = 0.03 + prominence * 0.24;
+      const shadowY = 10 + prominence * 24;
+      const shadowBlur = 22 + prominence * 56;
       const node = api.slideNodes()[snapIndex];
       const inner = node?.firstElementChild as HTMLElement | null;
       if (!node || !inner) return;
-      inner.style.transform = `scale(${scale.toFixed(3)})`;
-      node.style.zIndex = slidesInView.includes(snapIndex) ? "1" : "0";
+      const image = inner.querySelector("img");
+
+      inner.style.transform = `translate3d(0, ${lift.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+      inner.style.boxShadow = `0 ${shadowY.toFixed(0)}px ${shadowBlur.toFixed(0)}px rgb(95 49 47 / ${shadowOpacity.toFixed(3)}), 0 5px 18px rgb(95 49 47 / ${(shadowOpacity * 0.45).toFixed(3)})`;
+      node.style.opacity = opacity.toFixed(3);
+      node.style.transition = "opacity 240ms ease";
+      node.style.zIndex = prominence > 0.85 ? "2" : slidesInView.includes(snapIndex) ? "1" : "0";
+
+      if (image) {
+        image.style.filter = `saturate(${saturation.toFixed(3)}) brightness(${brightness.toFixed(3)}) contrast(${contrast.toFixed(3)})`;
+        image.style.transition = "filter 240ms ease, object-position 9000ms ease-in-out";
+      }
     });
   }, []);
 
@@ -327,36 +355,55 @@ function TemplateCarousel() {
       </div>
 
       <div className="reveal relative mt-12 w-full">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-10 left-1/2 w-[min(42rem,80vw)] -translate-x-1/2 rounded-full bg-primary/[0.11] blur-3xl"
+        />
         <div className="overflow-hidden py-4" ref={emblaRef}>
-          <div className="flex touch-pan-y">
-            {featuredTemplates.map((template) => (
-              <div
-                key={template.slug}
-                className="min-w-0 shrink-0 grow-0 basis-[286px] px-2.5 transition-[opacity] duration-300 [will-change:transform,opacity]"
-              >
-                <a
-                  href={hrefFor(template.slug)}
-                  draggable={false}
-                  className="group relative block h-[520px] overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.08)]"
+          <div className="relative flex touch-pan-y">
+            {featuredTemplates.map((template, index) => {
+              const isActive = index === selectedIndex;
+
+              return (
+                <div
+                  key={template.slug}
+                  className="min-w-0 shrink-0 grow-0 basis-[286px] px-2.5 [will-change:opacity]"
+                  onMouseEnter={(event) => {
+                    const image = event.currentTarget.querySelector("img");
+                    event.currentTarget.style.opacity = "1";
+                    if (image) image.style.filter = "saturate(1.1) brightness(1) contrast(1.06)";
+                  }}
+                  onMouseLeave={() => {
+                    if (emblaApi) applyTween(emblaApi);
+                  }}
                 >
-                  <img
-                    src={template.listing}
-                    alt={template.name}
+                  <a
+                    href={hrefFor(template.slug)}
                     draggable={false}
-                    loading="lazy"
-                    decoding="async"
-                    className="pointer-events-none h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105"
-                  />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
-                    {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
-                    <h3 className="mt-2 font-heading text-lg font-black text-background">{template.name}</h3>
-                    <p className="text-sm text-background/80">
-                      {template.category} - {template.color}
-                    </p>
-                  </div>
-                </a>
-              </div>
-            ))}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`group relative block h-[520px] overflow-hidden rounded-2xl border bg-card transition-[border-color] duration-300 [will-change:transform] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
+                      isActive ? "border-primary/85" : "border-border/40"
+                    }`}
+                  >
+                    <img
+                      src={template.listing}
+                      alt={template.name}
+                      draggable={false}
+                      loading="lazy"
+                      decoding="async"
+                      className="pointer-events-none h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom"
+                    />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
+                      {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
+                      <h3 className="mt-2 font-heading text-lg font-black text-background">{template.name}</h3>
+                      <p className="text-sm text-background/80">
+                        {template.category} - {template.color}
+                      </p>
+                    </div>
+                  </a>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -582,31 +629,6 @@ function LanguageSection() {
   );
 }
 
-const faqKeys = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"] as const;
-
-function FaqSection() {
-  const t = useTranslations("home");
-
-  return (
-    <section id="pricing" className="bg-secondary py-20">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <h2 className="reveal text-center font-heading text-3xl font-black text-foreground sm:text-5xl">{t("faq.heading")}</h2>
-        <div className="reveal mt-10 divide-y divide-border overflow-hidden rounded-[2rem] border border-border bg-card">
-          {faqKeys.map((key) => (
-            <details key={key} className="group p-6">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-black text-foreground">
-                {t(`faq.${key}Q`)}
-                <ChevronDown className="size-5 shrink-0 text-primary transition group-open:rotate-180" />
-              </summary>
-              <p className="mt-4 leading-7 text-muted-foreground">{t(`faq.${key}A`)}</p>
-            </details>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 const testimonialKeys = ["t1", "t2", "t3", "t4", "t5", "t6"] as const;
 
 function TestimonialsSection() {
@@ -649,22 +671,28 @@ function TestimonialsSection() {
   );
 }
 
-export function ChungDoiClone() {
+export function ChungDoiClone({
+  createHref,
+  isAuthenticated,
+}: {
+  createHref: string;
+  isAuthenticated: boolean;
+}) {
   useRevealOnScroll();
   useScrollProgress();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div id="scroll-progress" className="scroll-progress" aria-hidden />
-      <SiteHeader />
-      <HeroSection />
+      <SiteHeader initialLoggedIn={isAuthenticated} />
+      <HeroSection createHref={createHref} />
       <TemplateCarousel />
       <HowItWorks />
       <SupportSection />
       <TestimonialsSection />
       <GuestsSection />
       <LanguageSection />
-      <FaqSection />
+      <WeddingFaqSection animated id="pricing" />
       <SiteFooter />
     </main>
   );

@@ -16,12 +16,12 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const QASR_BASE = "/chungdoi/images/themes/_decor/qasr-gold";
 const QASR_GOLD = "#a8842c";
 const QASR_GOLD_DARK = "#7a5a1e";
 const QASR_GOLD_MUTED = "rgba(122, 90, 30, 0.72)";
-const QASR_LUNAR = "( Tức ngày 20/06 năm Bính Ngọ )";
 
 const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
 const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
@@ -40,6 +40,7 @@ function QasrHeading({ children }: { children: React.ReactNode }) {
 /** Faithful rebuild of the Qasr Gold (thanh cung vang) opened invitation. */
 export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -49,10 +50,11 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName || "Ngân hàng", num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName || "Ngân hàng", num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.num || q.name);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName || "Ngân hàng", num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.num || q.name);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -64,9 +66,9 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
         {/* HEADER — source-matched names + castle/couple scene */}
         <header className="relative z-10 flex w-full flex-col items-center px-4 pt-[85px] sm:px-5 md:pt-[100px]">
           <h1 className="relative z-10 flex w-full items-center justify-center gap-3 whitespace-nowrap leading-none md:gap-6" style={{ color: QASR_GOLD_DARK }}>
-            <span className="text-[34px] md:text-[58px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="text-[34px] md:text-[58px]" style={nameFont}>{people[0].shortName}</span>
             <span className="text-[24px] md:text-[34px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</span>
-            <span className="text-[34px] md:text-[58px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+            <span className="text-[34px] md:text-[58px]" style={nameFont}>{people[1].shortName}</span>
           </h1>
           <div data-testid="qasr-gold-hero-scene" className="relative mt-4 flex min-h-[440px] w-full items-end justify-center md:mt-8 md:min-h-[620px]">
             <img src={`${QASR_BASE}/castle.webp`} alt="" aria-hidden className="absolute bottom-[80px] left-1/2 z-0 h-auto w-[720px] max-w-none -translate-x-1/2 object-contain md:bottom-0 md:w-[980px]" />
@@ -82,14 +84,14 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GOLD_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GOLD_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GOLD_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: QASR_GOLD_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -99,7 +101,7 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: QASR_GOLD_MUTED }}>{QASR_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: QASR_GOLD_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
             <img src={`${QASR_BASE}/golden-line.webp`} alt="" aria-hidden className="h-auto w-[300px] object-contain opacity-90 md:w-[460px]" />
@@ -127,7 +129,7 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: QASR_GOLD_MUTED }}>{QASR_LUNAR}</div>
+            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: QASR_GOLD_MUTED }}>{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <QasrHeading>Cùng đếm ngược</QasrHeading>

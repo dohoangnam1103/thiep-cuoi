@@ -3,6 +3,7 @@
 import type React from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   DressCode,
   FamilyColumn,
@@ -25,7 +26,6 @@ const BFR_GOLD = "#c9a227";
 const BFR_DARK = "#6a2104";
 const BFR_CREAM = "#f8ecdb";
 const BFR_DARK_MUTED = "rgba(106, 33, 4, 0.72)";
-const BFR_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
 function BrocadeHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -38,6 +38,7 @@ function BrocadeHeading({ children }: { children: React.ReactNode }) {
 /** Faithful rebuild of the Brocade Flower Red (gấm hoa đỏ) opened invitation. */
 export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -51,10 +52,11 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BFR_CREAM }}>
@@ -75,11 +77,11 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
                 <img src={`${BFR_BASE}/seal.webp`} alt="" aria-hidden className="absolute left-1/2 top-[19%] h-auto w-[24%] max-w-[106px] -translate-x-1/2 object-contain md:max-w-[200px]" />
                 <p className="absolute left-1/2 top-[43%] w-[72%] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(7px,1.9vw,15px)] uppercase tracking-[0.12em]" style={{ fontFamily: '"Cormorant Garamond", "Times New Roman", serif', color: BFR_DARK }}>The wedding of</p>
                 <div className="absolute left-1/2 top-[52%] flex w-[55%] -translate-x-1/2 -translate-y-1/2 justify-center">
-                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{couple.groomShortName || couple.groomFullName}</span>
+                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{people[0].shortName}</span>
                 </div>
                 <span className="absolute left-1/2 top-[61%] -translate-x-1/2 -translate-y-1/2 text-[clamp(20px,6.5vw,50px)] leading-none" style={{ ...ampFont, color: BFR_DARK }}>&amp;</span>
                 <div className="absolute left-1/2 top-[69%] flex w-[55%] -translate-x-1/2 -translate-y-1/2 justify-center">
-                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{couple.brideShortName || couple.brideFullName}</span>
+                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{people[1].shortName}</span>
                 </div>
               </div>
             </div>
@@ -94,14 +96,14 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: BFR_GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -111,7 +113,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold" style={{ color: BFR_RED }}>{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: BFR_DARK_MUTED }}>{BFR_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: BFR_DARK_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
             <div className="relative flex justify-center">
@@ -149,7 +151,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: BFR_DARK_MUTED }}>{BFR_LUNAR}</div>
+            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: BFR_DARK_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar framed by calendar-floral */}
             {calendar ? (

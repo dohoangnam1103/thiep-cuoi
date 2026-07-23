@@ -1,25 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import "../globals.css";
 import { PetalField } from "@/components/petal-field";
 import { getCurrentAdmin } from "@/lib/admin-dal";
+import { appFontVariables } from "@/lib/fonts";
 import { adminLogout } from "./actions";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Quản trị | Thiệp Mừng Online",
+  robots: { index: false, follow: false },
   icons: { icon: "/chungdoi/icon-v2.png" },
 };
 
@@ -27,6 +18,7 @@ const NAV = [
   { href: "/admin", label: "Tổng quan" },
   { href: "/admin/users", label: "Người dùng" },
   { href: "/admin/demos", label: "Thiệp demo" },
+  { href: "/admin/template-suggestions", label: "Gợi ý mẫu thiệp" },
   { href: "/admin/payments", label: "Giao dịch" },
   { href: "/admin/vouchers", label: "Voucher" },
 ];
@@ -38,7 +30,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const nav = admin?.isSuperAdmin ? [...NAV, SUPER_ADMIN_NAV] : NAV;
 
   return (
-    <html lang="vi" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
       <body className="min-h-full bg-muted/20 text-foreground">
         <PetalField />
         {admin ? (

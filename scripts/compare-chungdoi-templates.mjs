@@ -2,9 +2,10 @@ import { chromium } from "playwright-core";
 import { mkdirSync, writeFileSync, readFileSync } from "fs";
 
 const source = readFileSync("src/data/chungdoi.ts", "utf8");
+const routeSource = readFileSync("src/data/template-route-slugs.ts", "utf8");
 const completedBlock = source.match(/completedTemplateSlugs = new Set<string>\(\[([\s\S]*?)\]\)/)?.[1] ?? "";
 const completed = [...completedBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
-const viBlock = source.match(/vietnameseTemplateSlugs = \[([\s\S]*?)\] as const/)?.[1] ?? "";
+const viBlock = routeSource.match(/vietnameseTemplateSlugs = \[([\s\S]*?)\] as const/)?.[1] ?? "";
 const routeBySlug = new Map([...viBlock.matchAll(/\["([^"]+)",\s*"([^"]+)"\]/g)].map((match) => [match[1], match[2]]));
 
 const routes = completed.map((slug) => ({ slug, route: routeBySlug.get(slug) ?? slug }));

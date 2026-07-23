@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  email        String?      @unique
-  passwordHash String?
-  createdAt    DateTime     @default(now())
-  invitations  Invitation[]
+  id                  String               @id @default(cuid())
+  email               String?              @unique
+  passwordHash        String?
+  createdAt           DateTime             @default(now())
+  invitations         Invitation[]
+  templateSuggestions TemplateSuggestion[]
 }
 
 model Admin {
@@ -93,6 +94,23 @@ model AppConfig {
   updatedAt           DateTime @updatedAt
 }
 
+model TemplateSuggestion {
+  id                  String   @id @default(cuid())
+  userId              String
+  contactEmail        String
+  description         String
+  referenceImageUrl   String?
+  notifyWhenAvailable Boolean  @default(true)
+  status              String   @default("pending")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
 model InvitationContent {
   id           String @id @default(cuid())
   invitationId String @unique
@@ -116,6 +134,12 @@ model InvitationContent {
   ceremonyDate    String  @default("")
   ceremonyTime    String  @default("")
   ceremonyHeader  String  @default("")
+  ceremonyType    String  @default("thanh-hon")
+  openingMessage  String  @default("")
+
+  // opening photo (only used by templates with a dedicated hero-photo area)
+  heroImage     String  @default("")
+  showHeroImage Boolean @default(true)
 
   // families
   brideFather      String @default("")

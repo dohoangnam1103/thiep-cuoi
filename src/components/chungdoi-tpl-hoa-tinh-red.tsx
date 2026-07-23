@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
@@ -21,9 +22,12 @@ function HoaTinhHeading({ children }: { children: React.ReactNode }) {
 
 export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
+  const firstPhoto = invitationHeroImage(content);
+  const secondPhoto = content.heroImage ? gallery[0] : gallery[1];
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"Alex Brush", cursive' };
@@ -31,10 +35,11 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -45,13 +50,13 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             <div className="relative pb-[115%]">
               <div className="absolute left-0 top-0 z-[5] w-[57%] -rotate-[4deg]">
                 <div className="relative pb-[133.33%]">
-                  {gallery[0] ? <img src={gallery[0]} alt={couple.brideFullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
+                  {firstPhoto ? <img src={firstPhoto} alt={people[0].fullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
                   <img src={`${BASE}/bride frame.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
                 </div>
               </div>
               <div className="absolute bottom-[-50px] right-0 z-[6] w-[55%] rotate-[3deg]">
                 <div className="relative pb-[133.33%]">
-                  {gallery[1] ? <img src={gallery[1]} alt={couple.groomFullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
+                  {secondPhoto ? <img src={secondPhoto} alt={people[1].fullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
                   <img src={`${BASE}/groom frame.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
                 </div>
               </div>
@@ -60,16 +65,16 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             </div>
           </div>
           <div className="absolute bottom-[calc(27%-70px)] left-[5%] z-[7] flex flex-col items-center text-center md:bottom-[calc(27%-125px)] md:left-[calc(5%+150px)]">
-            <p className="text-[13px] md:text-[15px]">{couple.brideBirthOrder || "Thứ Nữ"}</p>
-            <p className="text-[19px] font-bold uppercase md:text-[23px]">{couple.brideShortName || couple.brideFullName}</p>
+            <p className="text-[13px] md:text-[15px]">{people[0].birthOrder}</p>
+            <p className="text-[19px] font-bold uppercase md:text-[23px]">{people[0].shortName}</p>
             <img src={`${BASE}/dau.webp`} alt="" aria-hidden className="mt-[15px] w-[70px] md:mt-[25px] md:w-[85px]" />
           </div>
           <img src={`${BASE}/tim.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-[calc(10%-20px)] left-[calc(42%-100px)] z-[6] w-[11%] max-w-[48px] md:bottom-[calc(10%-50px)] md:max-w-[58px]" />
           <div className="absolute bottom-[5%] right-[5%] z-[7] flex items-center md:right-[calc(5%+130px)]">
             <img src={`${BASE}/re.webp`} alt="" aria-hidden className="mr-[15px] w-[113px] md:mr-[25px] md:w-[135px]" />
             <div className="text-center">
-              <p className="text-[13px] md:text-[15px]">{couple.groomBirthOrder || "Trưởng Nam"}</p>
-              <p className="text-[19px] font-bold uppercase md:text-[23px]">{couple.groomShortName || couple.groomFullName}</p>
+              <p className="text-[13px] md:text-[15px]">{people[1].birthOrder}</p>
+              <p className="text-[19px] font-bold uppercase md:text-[23px]">{people[1].shortName}</p>
             </div>
           </div>
           <div className="h-[600px] w-full md:h-[840px]" />
@@ -82,12 +87,13 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
+            <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PURPLE_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PURPLE_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PURPLE_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PURPLE_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -97,6 +103,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -124,6 +131,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <HoaTinhHeading>Cùng đếm ngược</HoaTinhHeading>

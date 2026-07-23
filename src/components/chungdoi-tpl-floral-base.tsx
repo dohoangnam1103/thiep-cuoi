@@ -9,6 +9,11 @@ import {
   FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
   GiftEnvelope, GiftQrGrid,
 } from "@/components/chungdoi-tpl-shared";
+import {
+  invitationCeremonyMessage,
+  invitationOpeningMessage,
+  orderByBrideFirst,
+} from "@/lib/invitation-display";
 
 export type FloralDecor = { src: string; className: string; flip?: boolean };
 
@@ -64,10 +69,21 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const orderedPeople = orderByBrideFirst(
+    { fullName: couple.brideFullName, birthOrder: couple.brideBirthOrder || "Út Nữ" },
+    { fullName: couple.groomFullName, birthOrder: couple.groomBirthOrder || "Trưởng Nam" },
+    couple.brideFirst,
+  );
+  const orderedShortNames = orderByBrideFirst(
+    couple.brideShortName || couple.brideFullName,
+    couple.groomShortName || couple.groomFullName,
+    couple.brideFirst,
+  );
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   const albumSection = albumShown.length > 0 ? (
     <section className="relative flex w-full flex-col items-center gap-6">
@@ -106,9 +122,9 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
             ))}
             <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: muted }}>{P.welcome || "Welcome To Our Wedding"}</p>
             <h1 className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: P.text }}>
-              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{orderedShortNames[0]}</span>
               <span className="my-1 text-[34px] md:text-[42px]" style={amp}>&amp;</span>
-              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{orderedShortNames[1]}</span>
             </h1>
           </header>
         )}
@@ -120,21 +136,25 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
+            <p className="max-w-xl whitespace-pre-line text-center text-[14px] font-semibold uppercase leading-relaxed tracking-wide md:text-[17px]">
+              {invitationOpeningMessage(content)}
+            </p>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[54px]" style={P.nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[54px]" style={P.nameFont}>{orderedPeople[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{orderedPeople[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={amp}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[54px]" style={P.nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[54px]" style={P.nameFont}>{orderedPeople[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{orderedPeople[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
-                {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
+                <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
                 {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
                 <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs leading-relaxed opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -144,13 +164,14 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
           <section className="relative flex w-full flex-col items-center gap-3">
             <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Thông Tin Tiệc Cưới</FloralHeading>
             <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]">Tiệc cưới sẽ diễn ra vào lúc:</p>
-            <div className="text-[20px] font-semibold md:text-[30px]">{venue.banquetTime || couple.time}</div>
+            <div className="text-[20px] font-semibold md:text-[30px]">{couple.time || venue.banquetTime}</div>
             {reception ? (
               <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                 <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs leading-relaxed opacity-75 md:text-sm">{reception.lunar}</div> : null}
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border px-8 py-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(P.accent, 0.3), backgroundColor: P.cardBg }}>
                 <div className="relative flex h-full w-full flex-col items-center justify-center">

@@ -18,6 +18,10 @@ export type DemoContentFields = {
   ceremonyDate: string;
   ceremonyTime: string;
   ceremonyHeader: string;
+  ceremonyType: string;
+  openingMessage: string;
+  heroImage: string;
+  showHeroImage: boolean;
 
   brideFather: string;
   brideMother: string;
@@ -69,6 +73,10 @@ export function fromDemoContent(demo: ChungDoiDemoContent): DemoSeed {
       ceremonyDate: couple.ceremonyDate ?? "",
       ceremonyTime: couple.ceremonyTime ?? "",
       ceremonyHeader: couple.ceremonyHeader ?? "",
+      ceremonyType: couple.ceremonyType === "vu-quy" ? "vu-quy" : "thanh-hon",
+      openingMessage: couple.openingMessage ?? "",
+      heroImage: demo.heroImage ?? "",
+      showHeroImage: demo.showHeroImage ?? true,
 
       brideFather: families.brideFather ?? "",
       brideMother: families.brideMother ?? "",

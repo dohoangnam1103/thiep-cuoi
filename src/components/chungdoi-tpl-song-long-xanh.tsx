@@ -15,13 +15,13 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const SLX_GREEN = "#1F3A25";
 const SLX_LINEN = "#ECE8D6";
 const SLX_GRAY = "#464646";
 const SLX_SERIF = 'Baskerville, "Times New Roman", serif';
 const SLX_TNR = '"Times New Roman", serif';
-const SLX_LUNAR = "(Tức ngày 02/03 năm Bính Ngọ / 음력 02/03 丙午)";
 const SLX_AVATARS = {
   groom: "/chungdoi/uploads/double-dragon-green/1de8aeab-1ffe-46a1-8cd6-a0752ba57b99.jpg",
   bride: "/chungdoi/uploads/double-dragon-green/d05db7ea-4eb0-4c23-96fc-89e96b693078.jpg",
@@ -76,20 +76,35 @@ function SongLongXanhWishForm() {
 
 export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
+  const people = orderedCouple(content);
+  const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const recDate = parseISODate(couple.date);
   const krWeekday = recDate ? KR_DAYS[recDate.getDay()] : "";
+  const ceremonyDate = parseISODate(couple.ceremonyDate || couple.date);
+  const ceremonyKrWeekday = ceremonyDate ? KR_DAYS[ceremonyDate.getDay()] : "";
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time || "11:00";
 
-  const bankCards = ([
-    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const bankCards = orderByBrideFirst(
     { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const familyColumns = orderByBrideFirst(
+    { a: families.brideFather, b: families.brideMother, addr: families.brideAddress, title: families.brideParentTitle || "Ông bà" },
+    { a: families.groomFather, b: families.groomMother, addr: families.groomAddress, title: families.groomParentTitle || "Ông bà" },
+    couple.brideFirst,
+  );
+  const avatarCards = people.map((person) => ({
+    person,
+    src: person.side === "bride" ? SLX_AVATARS.bride : SLX_AVATARS.groom,
+    sideLabel: person.side === "bride" ? "신부" : "신랑",
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -104,15 +119,15 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
           </div>
           <div className="pointer-events-none relative z-20 flex items-start justify-center gap-2 sm:gap-4">
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
-              <img src={SLX_AVATARS.groom} alt={couple.groomShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{couple.groomBirthOrder || "Trưởng Nam"} / 신랑</div>
-              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{couple.groomShortName}</div>
+              <img src={avatarCards[0].src} alt={avatarCards[0].person.shortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
+              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{avatarCards[0].person.birthOrder} / {avatarCards[0].sideLabel}</div>
+              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[0].person.shortName}</div>
             </div>
             <div className="w-[52px] shrink-0 sm:w-[70px] md:w-[96px]" />
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
-              <img src={SLX_AVATARS.bride} alt={couple.brideShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{couple.brideBirthOrder || "Thứ Nữ"} / 신부</div>
-              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{couple.brideShortName}</div>
+              <img src={avatarCards[1].src} alt={avatarCards[1].person.shortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
+              <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{avatarCards[1].person.birthOrder} / {avatarCards[1].sideLabel}</div>
+              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[1].person.shortName}</div>
             </div>
           </div>
         </div>
@@ -122,10 +137,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
         {/* family + báo tin + ceremony */}
         <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
           <div className="mt-6 flex w-full items-start justify-center gap-3 px-2 sm:px-4 md:gap-8" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
-            {[
-              { a: families.groomFather, b: families.groomMother, addr: families.groomAddress, title: families.groomParentTitle || "Ông bà" },
-              { a: families.brideFather, b: families.brideMother, addr: families.brideAddress, title: families.brideParentTitle || "Ông bà" },
-            ].map((f, i) => (
+            {familyColumns.map((f, i) => (
               <div key={i} className="contents">
                 {i === 1 ? <div className="h-[60px] w-px self-center" style={{ backgroundColor: SLX_GREEN }} /> : null}
                 <div className="flex min-w-0 max-w-[160px] flex-1 flex-col items-center gap-1 text-center md:max-w-[280px]">
@@ -139,41 +151,41 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
           </div>
 
           <div className="mt-8 flex flex-col gap-1 px-4 text-center" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
-            <span className="text-[16px] uppercase tracking-wider md:text-[20px]">Trân Trọng Báo Tin{"\n"}Lễ Thành Hôn Của Con Chúng Tôi</span>
+            <span className="whitespace-pre-line text-[16px] uppercase tracking-wider md:text-[20px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</span>
             <span className="text-[13px] opacity-80 md:text-[14px]">저희 자녀의 결혼을 알려드립니다</span>
           </div>
 
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{couple.groomBirthOrder || "Trưởng Nam"} / 신랑</div>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{people[0].birthOrder}</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: SLX_GRAY }}>&amp;</div>
-            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{couple.brideBirthOrder || "Thứ Nữ"} / 신부</div>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{people[1].birthOrder}</div>
           </div>
 
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>
             <div className="flex flex-col items-center gap-1" style={{ color: SLX_GREEN }}>
-              <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+              <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
               <span className="text-[13px] opacity-80 md:text-[14px]">결혼식 장소 자택</span>
             </div>
             {couple.ceremonyTime ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: SLX_GRAY }}>Vào lúc / 시간 {couple.ceremonyTime}</p> : null}
-            {reception ? (
+            {ceremony ? (
               <>
                 <div className="mt-5 flex items-center justify-center" style={{ color: SLX_GREEN }}>
                   <span className="flex w-[70px] flex-col items-center whitespace-nowrap text-center text-[13px] uppercase md:w-[85px] md:text-[14px]" style={{ color: SLX_GRAY }}>
-                    <span>{reception.weekday}</span>
-                    <span className="normal-case opacity-80">{krWeekday}</span>
+                    <span>{ceremony.weekday}</span>
+                    <span className="normal-case opacity-80">{ceremonyKrWeekday}</span>
                   </span>
                   <span className="mx-3 h-[34px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: SLX_GRAY }} />
-                  <span className="text-[32px] md:text-[38px]" style={{ color: SLX_GREEN }}>{reception.day}</span>
+                  <span className="text-[32px] md:text-[38px]" style={{ color: SLX_GREEN }}>{ceremony.day}</span>
                   <span className="mx-3 h-[34px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: SLX_GRAY }} />
                   <span className="flex w-[70px] flex-col items-center whitespace-nowrap text-center text-[13px] uppercase md:w-[85px] md:text-[14px]" style={{ color: SLX_GRAY }}>
-                    <span>Tháng {reception.month}</span>
-                    <span className="normal-case opacity-80">{reception.monthNumber}월</span>
+                    <span>Tháng {ceremony.month}</span>
+                    <span className="normal-case opacity-80">{ceremony.monthNumber}월</span>
                   </span>
                 </div>
-                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{reception.yearNumber}</div>
-                <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: SLX_GRAY }}>{SLX_LUNAR}</div>
+                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{ceremony.yearNumber}</div>
+                <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: SLX_GRAY }}>{ceremony.lunar}</div>
               </>
             ) : null}
           </div>
@@ -226,7 +238,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
                   </span>
                 </div>
                 <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{reception.yearNumber}</div>
-                <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: SLX_GRAY }}>{SLX_LUNAR}</div>
+                <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: SLX_GRAY }}>{reception.lunar}</div>
                 <div className="mt-4 flex items-center justify-center gap-10">
                   {[
                     { vi: "Đón khách", ko: "하객 맞이", time: shiftTime(banquetTime, -30) },

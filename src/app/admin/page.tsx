@@ -12,10 +12,11 @@ function formatVnd(amount: number): string {
 export default async function AdminDashboardPage() {
   await verifyAdmin();
 
-  const [userCount, realInvitations, demoCount, paidCount, revenue] = await Promise.all([
+  const [userCount, realInvitations, demoCount, suggestionCount, paidCount, revenue] = await Promise.all([
     prisma.user.count({ where: { email: { not: SYSTEM_EMAIL } } }),
     prisma.invitation.count({ where: { isDemo: false } }),
     prisma.invitation.count({ where: { isDemo: true } }),
+    prisma.templateSuggestion.count(),
     prisma.payment.count({ where: { status: "paid" } }),
     prisma.payment.aggregate({ where: { status: "paid" }, _sum: { amount: true } }),
   ]);
@@ -24,6 +25,7 @@ export default async function AdminDashboardPage() {
     { label: "Người dùng", value: userCount, href: "/admin/users" },
     { label: "Thiệp thật", value: realInvitations, href: null },
     { label: "Thiệp demo", value: demoCount, href: "/admin/demos" },
+    { label: "Gợi ý mẫu", value: suggestionCount, href: "/admin/template-suggestions" },
     { label: "Đơn đã trả", value: paidCount, href: "/admin/payments" },
     { label: "Doanh thu", value: formatVnd(revenue._sum.amount ?? 0), href: "/admin/payments" },
   ];
@@ -31,7 +33,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <h1 className="font-heading text-2xl text-foreground">Tổng quan</h1>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {stats.map((stat) => {
           const card = (
             <div className="rounded-2xl border border-border bg-card p-5">

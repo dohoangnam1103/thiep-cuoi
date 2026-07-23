@@ -17,6 +17,7 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 function PhoenixWishForm({ M }: { M: string }) {
   const { formProps, pending, state } = useWishFormBinding();
@@ -39,17 +40,28 @@ function PhoenixWishForm({ M }: { M: string }) {
 /** Faithful rebuild of the Double Phoenix Red (song-phung-do) opened invitation. */
 export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
+  const people = orderedCouple(content);
   const SONGPHUNG = `/chungdoi/images/themes/${content.theme.assetFolder || "songphung-red"}`;
   const M = content.theme.primaryColor || "#710001";
   const CREAM = "#ffffff";
-  const brideShort = couple.brideShortName || "Ngọc Ánh";
-  const groomShort = couple.groomShortName || "Thế Bảo";
+  const headerNames = people.map((person) => person.shortName);
+  const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
   const galleryExtra = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const { lightbox, setLightbox } = useLightbox(gallery.length);
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
+    { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
+    couple.brideFirst,
+  );
+  const bankCards = orderByBrideFirst(
+    { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
+    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -94,8 +106,8 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
 
         <header className="relative z-10 flex flex-col items-center justify-center pb-[180px] pt-12 text-center md:pb-[220px] md:pt-16">
           <div className="mb-6 w-full pl-6 text-left text-[36px] uppercase md:mb-8 md:ml-[80px] md:pl-8 md:text-[52px]" style={{ fontFamily: '"Fz Aghita", "Pattaya", cursive' }}>
-            <div className="ml-[15px]">{brideShort}</div>
-            <div className="ml-[50px] mt-[10px]">{groomShort}</div>
+            <div className="ml-[15px]">{headerNames[0]}</div>
+            <div className="ml-[50px] mt-[10px]">{headerNames[1]}</div>
           </div>
           <div className="relative flex h-[260px] w-full items-center justify-center md:h-[488px]">
             <div className="absolute left-0 z-0 h-[110px] w-full md:h-[206px]" style={{ backgroundColor: M, top: "50%" }} />
@@ -118,19 +130,22 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
           <div className="mb-12 flex flex-col items-center gap-6 text-center md:mb-16 md:gap-8">
             <h2 className="relative z-10 text-[20px] font-bold uppercase md:text-[24px]">Thông Tin Lễ Cưới</h2>
             <div className="flex w-full items-start justify-center gap-3 md:gap-8">
-              <FamilyColumn title="Ông Bà" a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />
+              <FamilyColumn {...familyColumns[0]} />
               <div className="h-[60px] w-px self-center" style={{ backgroundColor: hexToRgba(M, 0.4) }} />
-              <FamilyColumn title="Ông Bà" a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />
+              <FamilyColumn {...familyColumns[1]} />
             </div>
+            <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[16px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2">
-              <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[0].birthOrder}</div>
               <div className="text-[35px] md:text-[48px]">&amp;</div>
-              <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{couple.groomBirthOrder || "Út Nam"}</div>
+              <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[1].birthOrder}</div>
             </div>
-            <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</p>
+            <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{invitationCeremonyMessage(content)}</p>
             {couple.ceremonyTime ? <p className="text-[14px] md:text-[15px]">Vào lúc {couple.ceremonyTime}</p> : null}
+            {ceremony ? <p className="text-[14px] font-semibold uppercase md:text-[16px]">{ceremony.weekday}, {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}</p> : null}
+            {ceremony ? <p className="text-[12px] opacity-75 md:text-[13px]">{ceremony.lunar}</p> : null}
           </div>
         </section>
 
@@ -165,6 +180,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
               <span className="mx-2 text-[14px] opacity-50 md:mx-3">/</span>
               <span className="text-[18px] font-semibold uppercase md:text-[20px]">Tháng {reception.month}</span>
             </div>
+            <div className="text-[12px] opacity-75 md:text-[13px]">{reception.lunar}</div>
             <div className="flex items-center justify-center gap-8">
               {schedule.slice(0, 2).map((s) => (
                 <div key={s.label} className="flex flex-col items-center">
@@ -250,10 +266,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
           <section className="relative z-10 px-6 py-10 text-center md:px-8">
             <h2 className="mb-8 text-[20px] font-bold uppercase md:text-[24px]">QR Mừng Cưới</h2>
             <div className="flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-              {([
-                { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-                { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-              ] as const).filter((q) => q.bank).map((q) => {
+              {bankCards.map((q) => {
                 const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
                 return (
                   <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">

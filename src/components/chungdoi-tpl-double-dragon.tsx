@@ -15,6 +15,7 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const DD_TEX = "/images/double-dragon.webp";
 const DD_HY = "/images/chu-hy.webp";
@@ -107,8 +108,9 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const DD_RED = palette.red;
   const DD_LINEN = palette.linen;
   const DD_GRAY = palette.gray;
-  const DD_LUNAR = palette.lunar;
   const DD_AVATARS = palette.avatars;
+  const people = orderedCouple(content);
+  const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const galleryShown = gallery.slice(0, 4);
@@ -116,10 +118,21 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
-  const bankCards = ([
-    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const bankCards = orderByBrideFirst(
     { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const avatarCards = orderByBrideFirst(
+    { src: DD_AVATARS.bride, person: people.find((person) => person.side === "bride")!, label: couple.brideBirthOrder || palette.brideLabel },
+    { src: DD_AVATARS.groom, person: people.find((person) => person.side === "groom")!, label: couple.groomBirthOrder || palette.groomLabel },
+    couple.brideFirst,
+  );
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
+    { title: families.groomParentTitle || "Ông bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
+    couple.brideFirst,
+  );
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -138,15 +151,15 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           </div>
           <div className="pointer-events-none relative z-20 flex items-start justify-center gap-2 sm:gap-4">
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
-              <img src={DD_AVATARS.groom} alt={couple.groomShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{couple.groomBirthOrder || palette.groomLabel}</div>
-              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: DD_RED, fontFamily: '"Fz Aghita", cursive' }}>{couple.groomShortName}</div>
+              <img src={avatarCards[0].src} alt={avatarCards[0].person.shortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
+              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{avatarCards[0].label}</div>
+              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: DD_RED, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[0].person.shortName}</div>
             </div>
             <div className="w-[52px] shrink-0 sm:w-[70px] md:w-[96px]" />
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
-              <img src={DD_AVATARS.bride} alt={couple.brideShortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
-              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{couple.brideBirthOrder || palette.brideLabel}</div>
-              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: DD_RED, fontFamily: '"Fz Aghita", cursive' }}>{couple.brideShortName}</div>
+              <img src={avatarCards[1].src} alt={avatarCards[1].person.shortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
+              <div className="mt-2 text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: DD_GRAY }}>{avatarCards[1].label}</div>
+              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: DD_RED, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[1].person.shortName}</div>
             </div>
           </div>
         </div>
@@ -158,10 +171,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           <DdTexture posY="10%" />
           <div className="relative z-10">
             <div className="mt-6 flex w-full items-start justify-center gap-3 px-2 sm:px-4 md:gap-8" style={{ color: DD_RED, fontFamily: DD_SERIF }}>
-              {[
-                { title: families.groomParentTitle || "Ông bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
-                { title: families.brideParentTitle || "Ông bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
-              ].map((f, i) => (
+              {familyColumns.map((f, i) => (
                 <div key={i} className="contents">
                   {i === 1 ? <div className="h-[60px] w-px self-center" style={{ backgroundColor: DD_RED }} /> : null}
                   <div className="flex min-w-0 max-w-[160px] flex-1 flex-col items-center gap-1 text-center md:max-w-[280px]">
@@ -175,33 +185,33 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
             </div>
 
             <div className="mt-8 flex flex-col gap-2 whitespace-pre-line px-4 text-center text-[16px] uppercase tracking-wider md:text-[20px]" style={{ color: DD_RED, fontFamily: DD_SERIF }}>
-              TRÂN TRỌNG BÁO TIN{"\n"}LỄ THÀNH HÔN CỦA CON CHÚNG TÔI
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
 
             <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-              <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: DD_RED, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{couple.groomBirthOrder || palette.groomLabel}</div>
+              <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: DD_RED, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{people[0].birthOrder}</div>
               <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: DD_GRAY }}>&amp;</div>
-              <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: DD_RED, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{couple.brideBirthOrder || palette.brideLabel}</div>
+              <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: DD_RED, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{people[1].birthOrder}</div>
             </div>
 
             <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>
               <div style={{ color: DD_RED }}>
-                <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+                <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
               </div>
               {couple.ceremonyTime ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: DD_GRAY }}>Vào lúc {couple.ceremonyTime}</p> : null}
-              {reception ? (
+              {ceremony ? (
                 <>
                   <div className="mt-5 flex items-center justify-center" style={{ color: DD_RED }}>
-                    <span className="w-[70px] whitespace-nowrap text-right text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>{reception.weekday}</span>
+                    <span className="w-[70px] whitespace-nowrap text-right text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>{ceremony.weekday}</span>
                     <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
-                    <span className="text-[32px] md:text-[38px]" style={{ color: DD_RED }}>{reception.day}</span>
+                    <span className="text-[32px] md:text-[38px]" style={{ color: DD_RED }}>{ceremony.day}</span>
                     <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
-                    <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>Tháng {reception.month}</span>
+                    <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>Tháng {ceremony.month}</span>
                   </div>
-                  <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{reception.yearNumber}</div>
-                  <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: DD_GRAY }}>{DD_LUNAR}</div>
+                  <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{ceremony.yearNumber}</div>
+                  <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: DD_GRAY }}>{ceremony.lunar}</div>
                 </>
               ) : null}
             </div>
@@ -248,7 +258,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
                   <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>Tháng {reception.month}</span>
                 </div>
                 <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{reception.yearNumber}</div>
-                <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: DD_GRAY }}>{DD_LUNAR}</div>
+                <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: DD_GRAY }}>{reception.lunar}</div>
                 {schedule.length > 0 ? (
                   <div className="mt-4 flex items-center justify-center gap-8">
                     <div className="flex flex-col items-center">

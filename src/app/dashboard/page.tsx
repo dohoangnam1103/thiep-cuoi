@@ -3,7 +3,6 @@ import Link from "next/link";
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { templateLabel } from "@/app/editor/[id]/templates";
-import { LogoMark } from "@/components/logo-mark";
 import { logout } from "../(auth)/actions";
 import { NewInvitationButton } from "./NewInvitationButton";
 
@@ -21,30 +20,19 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-      <header className="flex items-center justify-between gap-4">
-        <Link
-          href="/"
-          aria-label="Về trang chủ"
-          className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-muted"
-        >
-          <LogoMark className="size-9 shrink-0" />
-          <span className="font-pattaya text-2xl text-foreground sm:text-3xl">
-            Thiệp Mừng Online
-          </span>
-        </Link>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary"
-          >
-            Đăng xuất
-          </button>
-        </form>
-      </header>
-
-      <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
-        <NewInvitationButton />
+        <div className="flex flex-wrap items-center gap-2">
+          <NewInvitationButton />
+          <form action={logout}>
+            <button
+              type="submit"
+              className="rounded-full border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-secondary"
+            >
+              Đăng xuất
+            </button>
+          </form>
+        </div>
       </div>
 
       {invitations.length === 0 ? (

@@ -4,6 +4,14 @@ import { templates } from "@/data/chungdoi";
 
 const ALL_TEMPLATE_SLUGS = new Set(templates.map((t) => t.slug));
 
+const formBoolean = (defaultValue: boolean) => z.preprocess(
+  (value) => {
+    if (value === undefined || value === null || value === "") return defaultValue;
+    return value === true || value === "true" || value === "on" || value === 1 || value === "1";
+  },
+  z.boolean(),
+);
+
 export const scheduleItemSchema = z.object({
   time: z.string().max(20),
   label: z.string().max(120),
@@ -23,12 +31,16 @@ export const contentSchema = z.object({
   groomShortName: z.string().max(60).optional().default(""),
   groomBirthOrder: z.string().max(40).optional().default(""),
   brideBirthOrder: z.string().max(40).optional().default(""),
-  brideFirst: z.coerce.boolean().optional().default(true),
+  brideFirst: formBoolean(true),
   date: z.string().max(20).optional().default(""),
   time: z.string().max(20).optional().default(""),
   ceremonyDate: z.string().max(20).optional().default(""),
   ceremonyTime: z.string().max(20).optional().default(""),
   ceremonyHeader: z.string().max(200).optional().default(""),
+  ceremonyType: z.enum(["thanh-hon", "vu-quy"]).optional().default("thanh-hon"),
+  openingMessage: z.string().max(300).optional().default(""),
+  heroImage: z.string().max(300).optional().default(""),
+  showHeroImage: formBoolean(true),
 
   brideFather: z.string().max(120).optional().default(""),
   brideMother: z.string().max(120).optional().default(""),

@@ -11,6 +11,7 @@ import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
 import { getCurrentUserId } from "@/lib/dal";
+import { resolveCoupleNames } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { loadPublished } from "@/lib/published-invitation";
 import { FREE_TRIAL_DAYS } from "@/lib/payment";
@@ -53,12 +54,10 @@ export async function generateMetadata({
     return { title: "Thiệp cưới | Thiệp Mừng Online" };
   }
 
-  const { brideShortName, groomShortName, brideFullName, groomFullName } = invitation.content;
-  const bride = brideShortName || brideFullName;
-  const groom = groomShortName || groomFullName;
-  const title = bride && groom ? `Đám cưới ${groom} & ${bride}` : "Thiệp cưới";
-  const description = bride && groom
-    ? `Trân trọng kính mời bạn đến chung vui trong ngày cưới của ${groom} & ${bride}.`
+  const names = resolveCoupleNames(invitation.content);
+  const title = names ? `Đám cưới ${names}` : "Thiệp cưới";
+  const description = names
+    ? `Trân trọng kính mời bạn đến chung vui trong ngày cưới của ${names}.`
     : "Trân trọng kính mời bạn đến chung vui trong ngày cưới.";
 
   return {

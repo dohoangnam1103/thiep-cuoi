@@ -14,6 +14,8 @@ import { PublicGuestMediaDialog } from "@/components/public-guest-media-dialog";
 import { TARGET_PX } from "@/components/chungdoi-envelope-3d";
 import { InvitationMap } from "@/components/chungdoi-tpl-shared";
 import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
+import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
+import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
@@ -101,6 +103,7 @@ type FormattedDate = {
   monthNumber: number;
   dayNumber: number;
   yearNumber: number;
+  lunar: string;
 };
 
 function formatDate(iso: string): FormattedDate | null {
@@ -113,6 +116,7 @@ function formatDate(iso: string): FormattedDate | null {
     monthNumber: d.getMonth() + 1,
     dayNumber: d.getDate(),
     yearNumber: d.getFullYear(),
+    lunar: formatVietnameseLunarDate(iso),
   };
 }
 
@@ -245,8 +249,9 @@ function Lightbox({
 }
 
 function googleCalendarUrl(content: ChungDoiDemoContent) {
-  const { groomShortName, brideShortName, date, time } = content.couple;
-  const title = `Đám cưới ${groomShortName} & ${brideShortName}`;
+  const { date, time } = content.couple;
+  const people = orderedCouple(content);
+  const title = `Đám cưới ${people[0].shortName} & ${people[1].shortName}`;
   const start = `${date.replace(/-/g, "")}T${(time || "18:00").replace(":", "")}00`;
   const params = new URLSearchParams({
     action: "TEMPLATE",
@@ -810,6 +815,11 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
   );
 
   const hasBank = Boolean(bank.brideBankName || bank.groomBankName);
+  const orderedBanks = orderByBrideFirst(
+    { side: "Cô Dâu", name: bank.brideAccountName, bank: bank.brideBankName, number: bank.brideAccountNumber },
+    { side: "Chú Rể", name: bank.groomAccountName, bank: bank.groomBankName, number: bank.groomAccountNumber },
+    couple.brideFirst,
+  );
   const galleryPreview = gallery.slice(0, 4);
   const extraCount = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -824,6 +834,10 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
           {couple.brideFirst ? (<>{brideBlock}{groomBlock}</>) : (<>{groomBlock}{brideBlock}</>)}
         </div>
 
+        <p className="mx-auto mt-10 max-w-sm whitespace-pre-line text-center text-sm font-semibold uppercase leading-6 tracking-wide">
+          {invitationOpeningMessage(content)}
+        </p>
+
         <div className="mt-10 text-center">
           <span className="block text-4xl leading-[1.15]" style={{ ...nameStyle, color: tokens.textPrimary }}>
             {couple.brideFirst ? couple.brideFullName : couple.groomFullName}
@@ -836,9 +850,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
 
         {ceremony ? (
           <div className="mt-10 text-center">
-            {couple.ceremonyHeader ? (
-              <p className="whitespace-pre-line text-sm font-semibold uppercase tracking-wide">{couple.ceremonyHeader}</p>
-            ) : null}
+            <p className="whitespace-pre-line text-sm font-semibold uppercase tracking-wide">{invitationCeremonyMessage(content)}</p>
             {couple.ceremonyTime ? <p className="mt-2 text-sm">Vào lúc {couple.ceremonyTime}</p> : null}
             <div className="mt-4 flex items-center justify-center gap-3 text-sm font-semibold uppercase">
               <span>{ceremony.weekday}</span>
@@ -848,6 +860,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
               <span>Tháng {ceremony.month}</span>
             </div>
             <p className="mt-2 text-2xl font-bold">{ceremony.yearNumber}</p>
+            <p className="mt-2 text-xs leading-5 opacity-75">{ceremony.lunar}</p>
           </div>
         ) : null}
       </section>
@@ -876,10 +889,11 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
       {reception ? (
         <section className="reveal is-visible mt-16 text-center">
           <h3 className="text-lg font-semibold" style={{ fontFamily: '"Times New Roman", serif' }}>Tiệc cưới sẽ diễn ra vào lúc:</h3>
-          <p className="mt-3 text-4xl font-bold">{venue.banquetTime || couple.time}</p>
+          <p className="mt-3 text-4xl font-bold">{couple.time || venue.banquetTime}</p>
           <div className="mt-3 flex items-center justify-center gap-2 text-sm font-semibold uppercase">
             <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
           </div>
+          <p className="mt-2 text-xs leading-5 opacity-75">{reception.lunar}</p>
 
           {calendar ? (
             <div className="mx-auto mt-8 max-w-[320px] rounded-2xl border p-4" style={{ borderColor: tokens.guestBoxBorder }}>
@@ -971,22 +985,14 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
         <section className="reveal is-visible mt-16">
           <SectionHeading tokens={tokens}>Mừng Cưới</SectionHeading>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {bank.brideBankName ? (
-              <div className="flex flex-col items-center rounded-2xl border p-5 text-center" style={{ borderColor: tokens.guestBoxBorder, backgroundColor: tokens.guestBoxBg }}>
-                <h3 className="text-base font-semibold">Cô Dâu - {bank.brideAccountName}</h3>
-                <p className="mt-3 text-sm font-semibold">{bank.brideBankName}</p>
-                <p className="text-sm">{bank.brideAccountNumber}</p>
-                <p className="text-sm">{bank.brideAccountName}</p>
+            {orderedBanks.map((item) => item.bank ? (
+              <div key={item.side} className="flex flex-col items-center rounded-2xl border p-5 text-center" style={{ borderColor: tokens.guestBoxBorder, backgroundColor: tokens.guestBoxBg }}>
+                <h3 className="text-base font-semibold">{item.side} - {item.name}</h3>
+                <p className="mt-3 text-sm font-semibold">{item.bank}</p>
+                <p className="text-sm">{item.number}</p>
+                <p className="text-sm">{item.name}</p>
               </div>
-            ) : null}
-            {bank.groomBankName ? (
-              <div className="flex flex-col items-center rounded-2xl border p-5 text-center" style={{ borderColor: tokens.guestBoxBorder, backgroundColor: tokens.guestBoxBg }}>
-                <h3 className="text-base font-semibold">Chú Rể - {bank.groomAccountName}</h3>
-                <p className="mt-3 text-sm font-semibold">{bank.groomBankName}</p>
-                <p className="text-sm">{bank.groomAccountNumber}</p>
-                <p className="text-sm">{bank.groomAccountName}</p>
-              </div>
-            ) : null}
+            ) : null)}
           </div>
         </section>
       ) : null}
@@ -1004,15 +1010,17 @@ export function ChungDoiDemo({
   content: contentProp,
   liveForms = null,
   captureMode = false,
+  previewMode = false,
 }: {
   template: ChungDoiTemplate;
   content?: ChungDoiDemoContent;
   liveForms?: LiveForms;
   captureMode?: boolean;
+  previewMode?: boolean;
 }) {
   const content = contentProp ?? chungdoiDemoContent[template.slug];
 
-  const [opened, setOpened] = useState(captureMode);
+  const [opened, setOpened] = useState(captureMode || previewMode);
   const [opening, setOpening] = useState(false);
   const [playing, setPlaying] = useState(false);
   const openTimerRef = useRef<number | null>(null);
@@ -1068,7 +1076,7 @@ export function ChungDoiDemo({
   }, [captureMode, opened]);
 
   useEffect(() => {
-    if (!opened || !autoScrolling || captureMode) return;
+    if (!opened || !autoScrolling || captureMode || previewMode) return;
     const lenis = lenisRef.current;
     if (!lenis) return;
 
@@ -1095,7 +1103,7 @@ export function ChungDoiDemo({
       // Dừng animation scrollTo bằng cách neo về vị trí hiện tại.
       lenis.scrollTo(lenis.scroll, { immediate: true });
     };
-  }, [autoScrolling, captureMode, opened]);
+  }, [autoScrolling, captureMode, opened, previewMode]);
 
   useEffect(() => {
     return () => {
@@ -1152,7 +1160,7 @@ export function ChungDoiDemo({
     openTimerRef.current = window.setTimeout(() => {
       setOpened(true);
       autoScrollTimerRef.current = window.setTimeout(() => {
-        setAutoScrolling(true);
+        if (!previewMode) setAutoScrolling(true);
       }, 2000);
     }, 800);
     const audio = audioRef.current;
@@ -1173,7 +1181,7 @@ export function ChungDoiDemo({
   }
 
   function toggleAutoScroll(event: MouseEvent<HTMLElement>) {
-    if (!opened || autoScrollFinishedRef.current) return;
+    if (previewMode || !opened || autoScrollFinishedRef.current) return;
     const target = event.target as HTMLElement;
     if (target.closest("button,a,input,textarea,select,label,[role='button'],[contenteditable='true']")) return;
     setAutoScrolling((value) => !value);

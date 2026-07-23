@@ -7,7 +7,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/thiep/", "/dashboard/", "/editor/", "/api/", "/admin/"],
+      // HTML pages use robots metadata so crawlers must be able to read it.
+      disallow: ["/api/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

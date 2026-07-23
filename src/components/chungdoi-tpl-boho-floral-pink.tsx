@@ -1,13 +1,17 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import { FloralInvitation } from "@/components/chungdoi-tpl-floral-base";
 
 const BASE = "/chungdoi/images/themes/_decor/boho-floral-pink";
 const scriptFont = { fontFamily: '"Fz Aghita", "The Nautigal", cursive' };
 
 function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
-  const { couple, gallery } = content;
+  const { gallery } = content;
+  const people = orderedCouple(content);
+  const firstPhoto = invitationHeroImage(content);
+  const secondPhoto = content.heroImage ? gallery[0] : gallery[1];
 
   return (
     <header
@@ -28,25 +32,25 @@ function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
       />
 
       <div className="absolute right-[8%] top-[160px] z-20 flex w-[47%] flex-col items-center text-center md:right-[17%] md:top-[160px] md:w-[32%]">
-        <span className="text-[12px] tracking-[0.12em] md:text-[14px]">{couple.groomBirthOrder || "Trưởng Nam"}</span>
-        <span className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{couple.groomShortName || couple.groomFullName}</span>
-        <span className="mt-3 text-[12px] tracking-[0.12em] md:text-[14px]">{couple.brideBirthOrder || "Út Nữ"}</span>
-        <span className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{couple.brideShortName || couple.brideFullName}</span>
+        <span className="text-[12px] tracking-[0.12em] md:text-[14px]">{people[0].birthOrder}</span>
+        <span className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{people[0].shortName}</span>
+        <span className="mt-3 text-[12px] tracking-[0.12em] md:text-[14px]">{people[1].birthOrder}</span>
+        <span className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{people[1].shortName}</span>
       </div>
 
       <div className="relative z-10 mx-auto h-[690px] w-full max-w-[430px] md:ml-[18%] md:h-[650px] md:max-w-[440px]">
-        {gallery[0] ? (
+        {firstPhoto ? (
           <figure className="absolute left-[24%] top-[95px] w-[54%] rotate-[12deg] border-[5px] border-[#f4b7c2] bg-white shadow-sm md:left-[30%] md:top-[25px] md:w-[52%]">
             <div className="aspect-[0.72] overflow-hidden">
-              <img src={gallery[0]} alt={couple.groomFullName} className="h-full w-full object-cover" />
+              <img src={firstPhoto} alt={people[0].fullName} className="h-full w-full object-cover" />
             </div>
             <figcaption className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[27px] text-white md:text-[34px]" style={scriptFont}>Love always</figcaption>
           </figure>
         ) : null}
-        {gallery[1] ? (
+        {secondPhoto ? (
           <figure className="absolute bottom-[28px] left-[3%] w-[52%] -rotate-[12deg] border-[5px] border-[#aaa8c2] bg-white shadow-sm md:bottom-0 md:left-[4%] md:w-[51%]">
             <div className="aspect-[0.72] overflow-hidden">
-              <img src={gallery[1]} alt={couple.brideFullName} className="h-full w-full object-cover" />
+              <img src={secondPhoto} alt={people[1].fullName} className="h-full w-full object-cover" />
             </div>
             <figcaption className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[27px] text-white md:text-[34px]" style={scriptFont}>Symphony</figcaption>
           </figure>

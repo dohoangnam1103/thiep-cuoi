@@ -23,7 +23,10 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   const t = await getTranslations({ locale, namespace: "blog" });
 
   if (!post) {
-    return { title: { absolute: t("metaTitle") } };
+    return {
+      title: { absolute: t("metaTitle") },
+      robots: { index: false, follow: true },
+    };
   }
 
   const title = `${post.title} | Thiệp Mừng Online Blog`;
@@ -32,6 +35,7 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   return {
     title: { absolute: title },
     description: post.excerpt,
+    robots: { index: false, follow: true },
     alternates: blogAlternates(slug, locale),
     openGraph: {
       type: "article",

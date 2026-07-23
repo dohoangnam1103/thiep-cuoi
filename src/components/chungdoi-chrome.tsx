@@ -3,18 +3,30 @@
 import { ImageIcon, MessageCircle, Play, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { Toaster, toast } from "sonner";
 
 import NextLink from "next/link";
 
 // import { LanguageSwitcher } from "@/components/language-switcher"; // tạm ẩn: web chỉ dùng tiếng Việt
 import { LogoMark } from "@/components/logo-mark";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 
-type SessionState = { loggedIn: boolean; firstInvitationId: string | null };
+type SessionState = { loggedIn: boolean; firstInvitationId: string | null; email?: string | null };
+
+function isActivePath(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function desktopNavClassName(active: boolean) {
+  return `rounded-full px-3 py-2 transition ${
+    active ? "bg-primary/10 font-bold text-primary" : "hover:text-foreground"
+  }`;
+}
 
 export function Logo({ responsive = false }: { responsive?: boolean }) {
   return (
-    <Link href="/" className="flex items-center gap-2 rounded-full px-2 py-1 transition hover:bg-muted">
+    <Link href="/" className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-2 py-1 transition hover:bg-muted">
       <LogoMark className="size-8" />
       {responsive ? (
         <>
@@ -28,8 +40,15 @@ export function Logo({ responsive = false }: { responsive?: boolean }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({
+  initialLoggedIn = false,
+  hideCreateButton = false,
+}: {
+  initialLoggedIn?: boolean;
+  hideCreateButton?: boolean;
+}) {
   const t = useTranslations("chrome");
+  const pathname = usePathname() as string;
   const [session, setSession] = useState<SessionState | null>(null);
 
   useEffect(() => {
@@ -45,61 +64,90 @@ export function SiteHeader() {
     };
   }, []);
 
-  const loggedIn = session?.loggedIn ?? false;
+  const loggedIn = session?.loggedIn ?? initialLoggedIn;
   const guestsHref = session?.firstInvitationId
     ? `/dashboard/${session.firstInvitationId}/guests`
     : "/dashboard";
+  const templatesActive = isActivePath(pathname, "/templates");
+  const guestsActive = /^\/dashboard\/[^/]+\/guests(?:\/|$)/.test(pathname);
+  const dashboardActive = isActivePath(pathname, "/dashboard") && !guestsActive;
+  const pricingActive = isActivePath(pathname, "/pricing");
+  const blogActive = isActivePath(pathname, "/blog");
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo responsive />
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
-          <Link href="/templates" className="transition hover:text-foreground">
+          <Link href="/templates" className={desktopNavClassName(templatesActive)} aria-current={templatesActive ? "page" : undefined}>
             {t("nav.templates")}
           </Link>
           {loggedIn ? (
             <>
-              <NextLink href="/dashboard" className="transition hover:text-foreground">
+              <NextLink
+                href="/dashboard"
+                className={desktopNavClassName(dashboardActive)}
+                aria-current={dashboardActive ? "page" : undefined}
+              >
                 {t("nav.myInvitations")}
               </NextLink>
-              <NextLink href={guestsHref} className="transition hover:text-foreground">
-                {t("nav.guests")}
-              </NextLink>
+              {session && !session.firstInvitationId ? (
+                <button
+                  type="button"
+                  onClick={() => toast.info(t("noInvitationForGuests"))}
+                  className={desktopNavClassName(false)}
+                >
+                  {t("nav.guests")}
+                </button>
+              ) : (
+                <NextLink
+                  href={guestsHref}
+                  className={desktopNavClassName(guestsActive)}
+                  aria-current={guestsActive ? "page" : undefined}
+                >
+                  {t("nav.guests")}
+                </NextLink>
+              )}
             </>
           ) : null}
-          <Link href="/pricing" className="transition hover:text-foreground">
+          <Link href="/pricing" className={desktopNavClassName(pricingActive)} aria-current={pricingActive ? "page" : undefined}>
             {t("nav.pricing")}
           </Link>
-          <Link href="/blog" className="transition hover:text-foreground">
+          <Link href="/blog" className={desktopNavClassName(blogActive)} aria-current={blogActive ? "page" : undefined}>
             {t("nav.blog")}
           </Link>
         </nav>
         <div className="flex items-center gap-2">
           {/* Tạm ẩn: web hiện chỉ dùng tiếng Việt */}
           {/* <LanguageSwitcher /> */}
-          {loggedIn ? null : (
-            <NextLink
-              href="/login"
-              className="hidden rounded-full border border-border px-4 py-2 text-sm font-bold text-foreground transition hover:border-primary/60 hover:text-primary sm:inline-block"
+          {hideCreateButton ? null : loggedIn ? (
+            <Link
+              href="/templates"
+              className="shrink-0 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
             >
-              {t("login")}
+              {t("createNow")}
+            </Link>
+          ) : (
+            <NextLink
+              href={loginHref(TEMPLATE_LIST_PATH)}
+              className="shrink-0 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+            >
+              {t("createNow")}
             </NextLink>
           )}
-          <Link
-            href="/templates"
-            className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
-          >
-            {t("createNow")}
-          </Link>
         </div>
       </div>
+      <Toaster position="top-center" theme="light" richColors />
     </header>
   );
 }
 
 export function SiteFooter() {
   const t = useTranslations("chrome.footer");
+  const pathname = usePathname() as string;
+  const templatesActive = isActivePath(pathname, "/templates");
+  const pricingActive = isActivePath(pathname, "/pricing");
+  const toolsActive = isActivePath(pathname, "/tools");
 
   const columns: Array<[string, Array<[string, "/templates" | "/pricing" | "/tools" | "/blog" | "/help" | "/privacy-policy" | "/terms-of-service"]>]> = [
     [
@@ -156,13 +204,25 @@ export function SiteFooter() {
       </div>
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur-lg lg:hidden">
         <div className="mx-auto grid h-16 max-w-md grid-cols-3 text-xs font-bold text-muted-foreground">
-          <Link href="/templates" className="flex flex-col items-center justify-center gap-1 hover:text-foreground">
+          <Link
+            href="/templates"
+            className={`flex flex-col items-center justify-center gap-1 transition ${templatesActive ? "bg-primary/10 text-primary" : "hover:text-foreground"}`}
+            aria-current={templatesActive ? "page" : undefined}
+          >
             <ImageIcon className="size-5" /> {t("mobileTemplates")}
           </Link>
-          <Link href="/pricing" className="flex flex-col items-center justify-center gap-1 hover:text-foreground">
+          <Link
+            href="/pricing"
+            className={`flex flex-col items-center justify-center gap-1 transition ${pricingActive ? "bg-primary/10 text-primary" : "hover:text-foreground"}`}
+            aria-current={pricingActive ? "page" : undefined}
+          >
             <Play className="size-5" /> {t("pricing")}
           </Link>
-          <Link href="/tools" className="flex flex-col items-center justify-center gap-1 hover:text-foreground">
+          <Link
+            href="/tools"
+            className={`flex flex-col items-center justify-center gap-1 transition ${toolsActive ? "bg-primary/10 text-primary" : "hover:text-foreground"}`}
+            aria-current={toolsActive ? "page" : undefined}
+          >
             <Users className="size-5" /> {t("toolsHeading")}
           </Link>
         </div>

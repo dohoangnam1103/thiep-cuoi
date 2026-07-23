@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationCeremonyMessage, invitationHeroImage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
@@ -158,22 +159,25 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       document.body.style.overflow = original;
     };
   }, [giftOpen]);
-  const groomGiven = givenName(couple.groomFullName);
-  const brideGiven = givenName(couple.brideFullName);
+  const people = orderedCouple(content);
   const wedding = formatDate(couple.date);
   const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
   const calendar = buildCalendar(couple.date);
-  const portrait = gallery[0];
+  const portrait = invitationHeroImage(content);
   const albumShown = gallery.slice(0, 4);
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  // lunar date is demo-specific; project has no lunar-calendar dependency
-  const LUNAR = "(Tức ngày 17/06 năm Bính Ngọ)";
-  const banks = ([
-    { title: `${couple.groomBirthOrder || "Trưởng Nam"} - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { title: `${couple.brideBirthOrder || "Út Nữ"} - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { title: `${couple.groomBirthOrder || "Trưởng Nam"} - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
+    { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
+    couple.brideFirst,
+  );
 
   return (
     <div className="relative isolate flex w-full max-w-[480px] flex-col overflow-hidden overflow-x-clip md:mx-auto md:max-w-[900px] md:border" style={{ backgroundColor: palette.cardBg, borderColor: hexToRgba(palette.accent, 0.13) }}>
@@ -184,15 +188,15 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <p className="relative z-10 px-4 pt-10 text-center text-[11px] uppercase tracking-[0.35em] md:pt-[52px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Cormorant Garamond", "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>WELCOME TO OUR WEDDING</p>
         <div className="relative z-10 mx-auto mt-3 flex w-full max-w-[872px] items-center justify-center gap-4 px-4 md:mt-4 md:gap-5 md:px-10">
           <div className="min-w-0 flex-1 text-center">
-            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{couple.groomBirthOrder || "Trưởng Nam"}</p>
-            <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{groomGiven}</p>
+            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{people[0].birthOrder}</p>
+            <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[0].fullName)}</p>
           </div>
           <div className="flex w-[64px] shrink-0 items-center justify-center md:w-[83px]">
             <img alt="" className="h-[64px] w-[64px] object-contain md:h-[83px] md:w-[83px]" src={`${SHR}/chu-hy.webp`} style={{ filter: palette.chuHyFilter }} />
           </div>
           <div className="min-w-0 flex-1 text-center">
-            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{couple.brideBirthOrder || "Út Nữ"}</p>
-            <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{brideGiven}</p>
+            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{people[1].birthOrder}</p>
+            <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[1].fullName)}</p>
           </div>
         </div>
         <div className="relative z-10 mt-2 flex justify-center px-6 md:mt-3">
@@ -230,28 +234,28 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
         <div className="relative z-10">
           <div className="mt-6 flex w-full items-start justify-center gap-3 px-2 sm:px-4 md:gap-8">
-            <SongHyFamilyColumn palette={palette} title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />
+            <SongHyFamilyColumn palette={palette} {...familyColumns[0]} />
             <div className="h-[60px] w-px self-center" style={{ backgroundColor: palette.accent }} />
-            <SongHyFamilyColumn palette={palette} title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />
+            <SongHyFamilyColumn palette={palette} {...familyColumns[1]} />
           </div>
           <div className="mt-8 flex flex-col gap-2 px-4 text-center text-[16px] uppercase tracking-wider md:text-[20px]" style={{ whiteSpace: "pre-line", color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
-            {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+            {invitationOpeningMessage(content)}
           </div>
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{people[0].birthOrder}</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
-            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{people[1].birthOrder}</div>
           </div>
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
             <div style={{ color: palette.accent }}>
-              <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+              <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
             </div>
             {couple.ceremonyTime ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: palette.gray }}>VÀO LÚC {couple.ceremonyTime}</p> : null}
             {wedding ? <SongHyDateRow palette={palette} weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
             {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{wedding.yearNumber}</div> : null}
-            <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: palette.gray }}>{LUNAR}</div>
+            {wedding ? <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: palette.gray }}>{wedding.lunar}</div> : null}
           </div>
         </div>
       </div>
@@ -293,7 +297,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           <div className="mt-2 text-center text-[20px] font-semibold md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</div>
           {wedding ? <SongHyDateRow palette={palette} weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
           {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.yearNumber}</div> : null}
-          <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{LUNAR}</div>
+          <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding?.lunar}</div>
           <div className="mt-4 flex items-center justify-center gap-8">
             <div className="flex flex-col items-center">
               <span className="text-[11px] uppercase" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Khai tiệc</span>

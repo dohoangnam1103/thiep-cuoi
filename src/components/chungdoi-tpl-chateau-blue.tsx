@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
@@ -22,7 +23,6 @@ import {
 const CHATEAU_BASE = "/chungdoi/images/themes/_decor/chateau-blue";
 const CHATEAU_NAVY = "#123467";
 const CHATEAU_NAVY_MUTED = "rgba(18, 52, 103, 0.72)";
-const CHATEAU_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
 function ChateauHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -35,6 +35,7 @@ function ChateauHeading({ children }: { children: React.ReactNode }) {
 /** Faithful rebuild of the Chateau Blue (lau-dai-lam) opened invitation. */
 export function ChateauInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -48,10 +49,11 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -68,9 +70,9 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
             <img src={`${CHATEAU_BASE}/asset-1.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
           </div>
           <h1 className="relative z-30 mt-14 flex flex-col items-center leading-none md:mt-16" style={{ color: CHATEAU_NAVY }}>
-            <span className="text-[42px] md:text-[64px]" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[0].shortName}</span>
             <span className="my-8 text-[25px] md:my-10 md:text-[34px]" style={ampFont}>&amp;</span>
-            <span className="text-[42px] md:text-[64px]" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+            <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[1].shortName}</span>
           </h1>
           <div data-testid="chateau-blue-hero-scene" className="relative -mt-16 mb-10 flex min-h-[430px] w-full shrink-0 items-end justify-center md:-mt-14 md:mb-0 md:min-h-[680px]">
             <img src={`${CHATEAU_BASE}/cloud-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[50%] right-[-28%] z-0 h-auto w-[100%] max-w-none object-contain opacity-90" />
@@ -88,14 +90,14 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: CHATEAU_NAVY_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: CHATEAU_NAVY_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={ampFont}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: CHATEAU_NAVY_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: CHATEAU_NAVY_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -105,7 +107,7 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: CHATEAU_NAVY_MUTED }}>{CHATEAU_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: CHATEAU_NAVY_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
             <div className="relative flex justify-center">
@@ -143,7 +145,7 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: CHATEAU_NAVY_MUTED }}>{CHATEAU_LUNAR}</div>
+            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: CHATEAU_NAVY_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar framed by frame-lich */}
             {calendar ? (

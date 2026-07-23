@@ -23,6 +23,8 @@ export type ChungDoiDemoContent = {
     ceremonyDate: string;
     ceremonyTime: string;
     ceremonyHeader: string;
+    ceremonyType?: "thanh-hon" | "vu-quy";
+    openingMessage?: string;
   };
   families: {
     brideFather: string;
@@ -45,6 +47,8 @@ export type ChungDoiDemoContent = {
     groom: string;
   };
   gallery: string[];
+  heroImage?: string;
+  showHeroImage?: boolean;
   wishes: { name: string; time: string; text: string }[];
   bank: {
     brideBankName: string;

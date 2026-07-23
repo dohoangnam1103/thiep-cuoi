@@ -16,6 +16,7 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const ROYAL_GOLD = "#E1BC7C";
 const ROYAL_GOLD_MUTED = "#C39E5E";
@@ -104,6 +105,7 @@ function RoyalWishForm({ btnText }: { btnText: string }) {
 /** Faithful rebuild of the Royal (Hoàng Kim) opened invitation — dark base + gold frame, palette-parametrized for red/blue/green. */
 function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: ChungDoiDemoContent; palette?: RoyalPalette }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
+  const people = orderedCouple(content);
   const RYL = palette.assetPath;
   const BASE_GRADIENT = `linear-gradient(to bottom right, ${palette.baseFrom}, ${palette.baseTo}, ${palette.baseFrom})`;
   const wedding = formatDate(couple.date);
@@ -117,10 +119,16 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const [giftOpen, setGiftOpen] = useState(false);
 
-  const banks = ([
-    { title: content.bank.groomAccountName, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { title: content.bank.brideAccountName, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { title: content.bank.groomAccountName, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
+    { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
+    couple.brideFirst,
+  );
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -135,9 +143,9 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
         <header className="relative z-10 flex flex-col items-center justify-center px-6 pb-10 pt-16 text-center md:pt-20">
           <img alt="" aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 w-[70%] max-w-[360px] -translate-x-1/2 opacity-25" src={`${RYL}/flower.webp`} />
           <h1 className="relative z-10 flex flex-col items-center gap-1" style={{ color: ROYAL_GOLD }}>
-            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{couple.groomShortName || couple.groomFullName}</span>
+            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[0].shortName}</span>
             <span className="font-qellia text-[28px] md:text-[34px]">&amp;</span>
-            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{couple.brideShortName || couple.brideFullName}</span>
+            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[1].shortName}</span>
           </h1>
           {wedding ? (
             <p className="relative z-10 mt-4 text-[16px] tracking-wide md:text-[18px]" style={{ color: ROYAL_GOLD_MUTED, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.dayNumber} tháng {wedding.monthNumber}, {wedding.yearNumber}</p>
@@ -149,24 +157,25 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
           <div className="flex w-full flex-col items-center gap-8">
             <RoyalHeading>Thông tin lễ cưới</RoyalHeading>
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
-              <RoyalFamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />
+              <RoyalFamilyColumn {...familyColumns[0]} />
               <div className="h-[70px] w-px self-center" style={{ backgroundColor: hexToRgba(ROYAL_GOLD, 0.4) }} />
-              <RoyalFamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />
+              <RoyalFamilyColumn {...familyColumns[1]} />
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]" style={{ color: ROYAL_GOLD }}>
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: ROYAL_GOLD }}>{couple.groomFullName}</h3>
+              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: ROYAL_GOLD }}>{people[0].fullName}</h3>
               <div className="font-qellia text-[32px] md:text-[40px]" style={{ color: ROYAL_GOLD_MUTED }}>&amp;</div>
-              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: ROYAL_GOLD }}>{couple.brideFullName}</h3>
+              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: ROYAL_GOLD }}>{people[1].fullName}</h3>
             </div>
             {/* ceremony date */}
             <div className="flex flex-col items-center gap-2 text-center" style={{ color: ROYAL_GOLD }}>
-              <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+              <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
               {couple.ceremonyTime ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: ROYAL_GOLD_MUTED }}>Vào lúc {couple.ceremonyTime}</p> : null}
               {ceremony ? <RoyalDateRow weekday={ceremonyWeekdayUpper} day={ceremony.day} month={ceremony.month} /> : null}
               {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.yearNumber}</div> : null}
+              {ceremony ? <div className="text-xs opacity-75 md:text-sm" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.lunar}</div> : null}
             </div>
           </div>
 
@@ -197,6 +206,7 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
             <div className="text-[20px] font-semibold md:text-[24px]" style={{ color: ROYAL_GOLD, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</div>
             {wedding ? <RoyalDateRow weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
             {wedding ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: ROYAL_GOLD_MUTED }}>{wedding.yearNumber}</div> : null}
+            {wedding ? <div className="text-xs opacity-75 md:text-sm" style={{ color: ROYAL_GOLD_MUTED }}>{wedding.lunar}</div> : null}
 
             {/* calendar */}
             {calendar ? (

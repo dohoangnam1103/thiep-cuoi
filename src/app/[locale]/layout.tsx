@@ -1,24 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { routing } from "@/i18n/routing";
+import { indexableLocales, routing } from "@/i18n/routing";
+import { appFontVariables } from "@/lib/fonts";
 import { SITE_URL, absoluteUrl } from "@/lib/site-url";
 import "../globals.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,7 +23,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "metadata" });
 
   const languages = Object.fromEntries(
-    routing.locales.map((l) => [l, l === routing.defaultLocale ? "/" : `/${l}`]),
+    indexableLocales.map((l) => [l, l === routing.defaultLocale ? "/" : `/${l}`]),
   );
 
   const ogImage = absoluteUrl("/chungdoi/images/en/banner_hero.webp");
@@ -45,8 +35,15 @@ export async function generateMetadata({
       template: "%s | Thiệp Mừng Online",
     },
     description: t("description"),
+    robots: {
+      index: indexableLocales.includes(locale as (typeof indexableLocales)[number]),
+      follow: true,
+    },
     icons: {
       icon: "/chungdoi/icon-v2.png",
+    },
+    verification: {
+      google: "5sP6NNaX9ZwqFeSZiHdojYOOrd455yZVvfJHuZgApO4",
     },
     alternates: {
       canonical: locale === routing.defaultLocale ? "/" : `/${locale}`,
@@ -110,7 +107,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${appFontVariables} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <script

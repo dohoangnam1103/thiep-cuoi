@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
@@ -22,9 +23,11 @@ function CherryHeading({ children }: { children: React.ReactNode }) {
 
 export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
+  const heroImage = invitationHeroImage(content);
   const albumShown = gallery.slice(0, 4);
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
@@ -34,10 +37,11 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BLUSH }}>
@@ -47,17 +51,17 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
           <img src={`${BASE}/1.webp`} alt="" aria-hidden className="block h-auto w-full" />
         </div>
         <header className="relative z-20 flex flex-col items-center justify-center px-6 pb-12 pt-0 text-center md:-mt-[200px] md:px-10 md:pb-16 lg:-mt-[200px]">
-          {gallery[0] ? (
+          {heroImage ? (
             <div className="absolute right-[8.5vw] top-[-400px] z-20 rotate-[11.447deg] md:right-[5vw] md:top-[-896px] lg:right-8 lg:top-[-896px]">
               <div className="h-[88vw] w-[66vw] overflow-hidden border-[2.8vw] border-white bg-white shadow-2xl md:h-[62vw] md:w-[47vw] md:border-[2vw] lg:h-[448px] lg:w-[340px] lg:border-[14px]">
-                <img src={gallery[0]} alt="Wedding photo" className="h-full w-full object-cover" />
+                <img src={heroImage} alt="Wedding photo" className="h-full w-full object-cover" />
               </div>
             </div>
           ) : null}
           <h1 className="relative z-10 flex flex-col items-center gap-0 text-[65px] leading-[98px] md:text-[91px] md:leading-[137px]" style={{ color: "#ba4a59", ...nameFont }}>
-            <span>{couple.groomShortName || couple.groomFullName}</span>
+            <span>{people[0].shortName}</span>
             <span className="mt-1 text-[48px] leading-[72px] md:text-[65px] md:leading-[98px]">&amp;</span>
-            <span>{couple.brideShortName || couple.brideFullName}</span>
+            <span>{people[1].shortName}</span>
           </h1>
         </header>
 
@@ -83,13 +87,13 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
-            <p className="text-center text-[15px] uppercase tracking-wide md:text-[18px]" style={{ color: PINK_MUTED }}>Trân trọng báo tin lễ thành hôn</p>
+            <p className="whitespace-pre-line text-center text-[15px] uppercase tracking-wide md:text-[18px]" style={{ color: PINK_MUTED }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -99,6 +103,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -133,6 +138,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
 
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border-2 px-6 py-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(PINK, 0.35), backgroundColor: BLUSH }}>

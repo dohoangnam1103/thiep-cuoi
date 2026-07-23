@@ -18,6 +18,7 @@ import {
   FamilyColumn,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const BAROQUE_BASE = "/chungdoi/images/themes/_decor/baroque-gold";
 const GOLD = "#b8912f";
@@ -25,7 +26,6 @@ const GOLD_DARK = "#8a6a1f";
 const INK = "#3b2f1a";
 const INK_MUTED = "rgba(59, 47, 26, 0.72)";
 const CREAM = "#fbf6ea";
-const BAROQUE_LUNAR = "( Tức ngày 09/06 năm Bính Ngọ )";
 
 function BaroqueHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -71,14 +71,16 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
   const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
+  const people = orderedCouple(content);
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: CREAM }}>
@@ -94,9 +96,9 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             <div className="relative mt-6 w-[92%] max-w-[360px] md:mt-9 md:max-w-[520px]">
               <img src={`${BAROQUE_BASE}/khung.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-full object-contain" />
               <h1 className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center uppercase leading-none" style={{ ...nameFont, color: GOLD_DARK }}>
-                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{couple.groomShortName || couple.groomFullName}</span>
+                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{people[0].shortName}</span>
                 <span className="my-2 text-[clamp(18px,3vw,24px)] normal-case leading-none md:my-3" style={ampFont}>&amp;</span>
-                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{couple.brideShortName || couple.brideFullName}</span>
+                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{people[1].shortName}</span>
               </h1>
             </div>
           </header>
@@ -110,24 +112,24 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {invitationOpeningMessage(content)}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: GOLD_DARK }}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: INK_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: GOLD_DARK }}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: INK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={ampFont}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: GOLD_DARK }}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: INK_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: GOLD_DARK }}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: INK_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
-                {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
+                <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
                 {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
                 <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold" style={{ color: GOLD_DARK }}>{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: INK_MUTED }}>{BAROQUE_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: INK_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
             <div className="relative flex justify-center">
@@ -165,7 +167,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: INK_MUTED }}>{BAROQUE_LUNAR}</div>
+            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: INK_MUTED }}>{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <h3 className="text-[18px] uppercase tracking-wide md:text-[20px]" style={{ color: GOLD_DARK }}>Cùng đếm ngược</h3>

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba,
   formatDate,
@@ -85,10 +86,11 @@ function WishesList({ wishes }: { wishes: ChungDoiDemoContent["wishes"] }) {
 
 function GiftSection({ content }: { content: ChungDoiDemoContent }) {
   const { couple, bank } = content;
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
   if (banks.length === 0) return null;
   return (
     <SectionCard className="text-center">
@@ -99,6 +101,7 @@ function GiftSection({ content }: { content: ChungDoiDemoContent }) {
 
 export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -117,9 +120,9 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
 
         <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
           <h1 className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ ...nameFont, color: TEXT }}>
-            <span>{couple.groomShortName || couple.groomFullName}</span>
+            <span>{people[0].shortName}</span>
             <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]" style={nameFont}>&amp;</span>
-            <span>{couple.brideShortName || couple.brideFullName}</span>
+            <span>{people[1].shortName}</span>
           </h1>
         </header>
 
@@ -143,13 +146,13 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
-            <p className="whitespace-pre-line text-[15px] uppercase leading-relaxed tracking-[0.12em] md:text-[19px]">TRÂN TRỌNG BÁO TIN{`\n`}LỄ THÀNH HÔN CỦA CON CHÚNG TÔI</p>
+            <p className="whitespace-pre-line text-[15px] uppercase leading-relaxed tracking-[0.12em] md:text-[19px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2">
-              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[44px] leading-[1.1] md:text-[64px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[44px] leading-[1.1] md:text-[64px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[26px] md:text-[36px]" style={scriptFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[44px] leading-[1.1] md:text-[64px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[44px] leading-[1.1] md:text-[64px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1">
@@ -159,6 +162,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[30px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </SectionCard>
@@ -185,6 +189,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
             <div className="text-[22px] font-semibold md:text-[32px]">{venue.banquetTime || couple.time}</div>
             {reception ? <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]"><span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span></div> : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
             <CalendarBlock calendar={calendar} />
             <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition hover:bg-white/70" style={{ borderColor: ACCENT, color: ACCENT }}>Thêm vào lịch</a>
           </SectionCard>

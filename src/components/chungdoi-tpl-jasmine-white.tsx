@@ -2,12 +2,13 @@
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { FloralInvitation } from "@/components/chungdoi-tpl-floral-base";
+import { orderedCouple } from "@/lib/invitation-display";
 
 const BASE = "/chungdoi/images/themes/_decor/moclan-white";
 const compactName = (value: string) => value.trim().split(/\s+/).slice(-2).join(" ");
 
 function JasmineWhiteHero({ content }: { content: ChungDoiDemoContent }) {
-  const { couple } = content;
+  const people = orderedCouple(content);
   const scriptFont = { fontFamily: '"The Nautigal", cursive' };
 
   return (
@@ -17,9 +18,9 @@ function JasmineWhiteHero({ content }: { content: ChungDoiDemoContent }) {
         <div className="absolute inset-x-0 top-[12%] z-10 flex flex-col items-center text-center md:top-[8%]">
           <span className="whitespace-pre-line text-center text-[12px] uppercase leading-[1.55] tracking-[0.25em] md:text-[15px]">THE<br />WEDDING<br />OF</span>
           <h1 className="mt-6 flex flex-col items-center text-[72px] leading-[0.72] md:mt-8 md:text-[120px]" style={scriptFont}>
-          <span>{compactName(couple.groomShortName || couple.groomFullName)}</span>
+          <span>{compactName(people[0].shortName)}</span>
           <span className="my-3 text-[0.72em] md:my-5">&amp;</span>
-          <span>{compactName(couple.brideShortName || couple.brideFullName)}</span>
+          <span>{compactName(people[1].shortName)}</span>
           </h1>
         </div>
       </div>

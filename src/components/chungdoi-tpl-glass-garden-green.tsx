@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   buildCalendar,
   FamilyColumn,
@@ -19,7 +20,6 @@ import {
 const GREEN_BASE = "/chungdoi/images/themes/_decor/glass-garden-green";
 const GREEN = "#47613e";
 const GREEN_MUTED = hexToRgba(GREEN, 0.72);
-const GREEN_LUNAR = "( Tức ngày 10/03 năm Bính Ngọ )";
 
 function GreenHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -32,6 +32,7 @@ function GreenHeading({ children }: { children: React.ReactNode }) {
 /** Faithful rebuild of the Glass Garden Green (vuonkinh-xanh) opened invitation. */
 export function GlassGardenInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -45,10 +46,11 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -60,9 +62,9 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
         <section className="relative isolate z-20 flex w-full flex-col items-center pb-[110px] pt-16 md:pb-[150px] md:pt-[88px]">
           <div className="relative w-[62%] max-w-[250px]">
             <h1 className="relative z-20 flex aspect-[239/368] w-full flex-col items-center justify-center gap-3 rounded-[500px] border border-white/35 bg-white/40 px-5 text-center shadow-[inset_1.5px_1.5px_2px_rgba(255,255,255,0.45),inset_-1.5px_-1.5px_3px_rgba(120,140,110,0.12),0_18px_50px_-6px_rgba(53,69,47,0.3),0_6px_20px_2px_rgba(53,69,47,0.14)] backdrop-blur-[7px] md:gap-4" style={{ color: GREEN }}>
-              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{couple.groomShortName || couple.groomFullName}</span>
+              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{people[0].shortName}</span>
               <span className="text-[clamp(22px,6vw,32px)] leading-none opacity-90" style={ampFont}>&amp;</span>
-              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{couple.brideShortName || couple.brideFullName}</span>
+              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{people[1].shortName}</span>
             </h1>
             <img src={`${GREEN_BASE}/flower1-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-auto w-[135%] max-w-none -translate-x-1/2 translate-y-[46%] object-contain" />
           </div>
@@ -76,14 +78,14 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
-              {"TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"}
+              {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={ampFont}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -93,7 +95,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GREEN_MUTED }}>{GREEN_LUNAR}</div>
+                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GREEN_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -129,7 +131,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GREEN_MUTED }}>{GREEN_LUNAR}</div>
+            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GREEN_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar — CSS bordered box (no frame image), heart marker */}
             {calendar ? (

@@ -17,6 +17,7 @@ import {
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
+import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const LPD_UNI = '"UNI Chu truyen thong", "Baskerville", "Times New Roman", serif';
 const LPD_BODY = 'Baskerville, "Times New Roman", serif';
@@ -135,9 +136,8 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const CARD_BG = palette.cardBg;
   const BTN_TEXT = palette.btnText;
   const ENVELOPE = palette.envelope;
-  const groomShort = couple.groomShortName || couple.groomFullName;
-  const brideShort = couple.brideShortName || couple.brideFullName;
-  const headerNames = couple.brideFirst ? [brideShort, groomShort] : [groomShort, brideShort];
+  const people = orderedCouple(content);
+  const headerNames = people.map((person) => person.shortName);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -145,8 +145,6 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const galleryExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const CEREMONY_LUNAR = "(Tức ngày 14/12 năm Ất Tỵ / 農曆 14/12 乙巳)";
-  const RECEPTION_LUNAR = "(Tức ngày 14/04 năm Bính Ngọ / 農曆 14/04 丙午)";
 
   const [bankOpen, setBankOpen] = useState(false);
   useEffect(() => {
@@ -177,10 +175,16 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  const bankCards = ([
-    { role: "Chú Rể / 新郎", bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+  const bankCards = orderByBrideFirst(
     { role: "Cô Dâu / 新娘", bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { role: "Chú Rể / 新郎", bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const familyColumns = orderByBrideFirst(
+    { title: families.brideParentTitle || "Ông Bà", father: families.brideFather, mother: families.brideMother, address: families.brideAddress, translatedAddress: "台北市信義區信義路456號" },
+    { title: families.groomParentTitle || "Ông Bà", father: families.groomFather, mother: families.groomMother, address: families.groomAddress, translatedAddress: "台北市大安區忠孝東路123號" },
+    couple.brideFirst,
+  );
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -234,26 +238,21 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
               Thông tin lễ cưới <span className="opacity-70">/ 婚禮資訊</span>
             </h2>
             <div className="grid w-full max-w-[366px] grid-cols-2 items-start gap-6 text-center md:max-w-[560px] md:gap-10" style={{ color: GOLD, fontFamily: LPD_BODY }}>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-[15px] md:text-[18px]">{families.groomParentTitle || "Ông Bà"} <span className="opacity-70">/ 先生與女士</span></span>
-                <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{families.groomFather}</span>
-                <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{families.groomMother}</span>
-                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{families.groomAddress}</div>
-                <div className="text-[12px] opacity-60 md:text-[13px]">台北市大安區忠孝東路123號</div>
-              </div>
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-[15px] md:text-[18px]">{families.brideParentTitle || "Ông Bà"} <span className="opacity-70">/ 先生與女士</span></span>
-                <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{families.brideFather}</span>
-                <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{families.brideMother}</span>
-                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{families.brideAddress}</div>
-                <div className="text-[12px] opacity-60 md:text-[13px]">台北市信義區信義路456號</div>
-              </div>
+              {familyColumns.map((family) => (
+                <div key={`${family.father}-${family.mother}`} className="flex flex-col items-center gap-1.5">
+                  <span className="text-[15px] md:text-[18px]">{family.title} <span className="opacity-70">/ 先生與女士</span></span>
+                  <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{family.father}</span>
+                  <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{family.mother}</span>
+                  <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{family.address}</div>
+                  <div className="text-[12px] opacity-60 md:text-[13px]">{family.translatedAddress}</div>
+                </div>
+              ))}
             </div>
 
             {/* báo tin */}
             <div className="flex flex-col items-center gap-2 text-center" style={{ color: GOLD }}>
               <div className="flex max-w-[320px] flex-col gap-1 text-[16px] font-semibold leading-snug md:max-w-[460px] md:text-[22px]" style={{ whiteSpace: "pre-line", fontFamily: LPD_BODY }}>
-                TRÂN TRỌNG BÁO TIN{"\n"}LỄ THÀNH HÔN CỦA CON CHÚNG TÔI
+                {invitationOpeningMessage(content)}
               </div>
               <div className="flex flex-col gap-0.5 text-[13px] opacity-70 md:text-[15px]" style={{ whiteSpace: "pre-line" }}>
                 謹此敬告{"\n"}我們子女的婚禮
@@ -262,17 +261,17 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
 
             {/* couple full names */}
             <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{couple.groomFullName}</h3>
-              <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>ÚT NAM <span className="opacity-70">/ 幼子</span></div>
+              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+              <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>{people[0].birthOrder}</div>
               <div className="text-[35px] md:text-[48px]" style={{ fontFamily: LPD_UNI, color: GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{couple.brideFullName}</h3>
-              <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>ÚT NỮ <span className="opacity-70">/ 幼女</span></div>
+              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+              <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>{people[1].birthOrder}</div>
             </div>
 
             {/* ceremony */}
             <div className="flex flex-col items-center gap-4 text-center" style={{ fontFamily: LPD_BODY, color: GOLD }}>
               <div className="flex flex-col items-center gap-1">
-                <span className="text-[15px] font-semibold md:text-[19px]" style={{ whiteSpace: "pre-line" }}>{couple.ceremonyHeader || "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"}</span>
+                <span className="text-[15px] font-semibold md:text-[19px]" style={{ whiteSpace: "pre-line" }}>{invitationCeremonyMessage(content)}</span>
                 <span className="text-[13px] opacity-70 md:text-[15px]" style={{ whiteSpace: "pre-line" }}>婚禮儀式舉行地點{"\n"}自宅</span>
               </div>
               <p className="text-[15px] font-semibold uppercase md:text-[18px]">Vào lúc <span className="opacity-70">/ 時間</span></p>
@@ -281,7 +280,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                 <>
                   <LpdDateRow vnWeekday={ceremony.weekday} cnWeekday={LPD_CN_WEEKDAY[(ceremony.dayNumber + new Date(`${couple.ceremonyDate || couple.date}T00:00:00`).getDay() - ceremony.dayNumber + 7) % 7]} day={ceremony.day} month={ceremony.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
                   <div className="text-[22px] font-semibold md:text-[26px]">{ceremony.yearNumber}</div>
-                  <div className="text-[14px] opacity-80 md:text-[16px]">{CEREMONY_LUNAR}</div>
+                  <div className="text-[14px] opacity-80 md:text-[16px]">{ceremony.lunar}</div>
                 </>
               ) : null}
             </div>
@@ -299,7 +298,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                 <div className="text-[26px] md:text-[38px]">{venue.banquetTime || couple.time}</div>
                 <LpdDateRow vnWeekday={reception.weekday} cnWeekday={LPD_CN_WEEKDAY[new Date(`${couple.date}T00:00:00`).getDay()]} day={reception.day} month={reception.month} gold={GOLD} dayClass="text-[38px] md:text-[50px]" />
                 <div className="text-[23px] font-semibold md:text-[31px]">{reception.yearNumber}</div>
-                <div className="text-[14px] opacity-80 md:text-[16px]">{RECEPTION_LUNAR}</div>
+                <div className="text-[14px] opacity-80 md:text-[16px]">{reception.lunar}</div>
                 <div className="flex flex-col items-center">
                   <span className="text-sm uppercase tracking-wider md:text-[15px]">Khai tiệc <span className="opacity-70">/ 開席</span></span>
                   <span className="mt-1 text-xl font-semibold md:text-2xl">{venue.banquetTime || couple.time}</span>

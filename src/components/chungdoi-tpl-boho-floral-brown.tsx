@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap,
@@ -34,6 +35,7 @@ function BohoDivider() {
 
 export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate || couple.date);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -41,16 +43,21 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const groomPortrait = content.portraits?.groom || gallery[0];
-  const bridePortrait = content.portraits?.bride || gallery[1];
+  const groomPortrait = content.portraits?.groom || invitationHeroImage(content);
+  const bridePortrait = content.portraits?.bride || (content.heroImage ? gallery[0] : gallery[1]);
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = ([
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+  const banks = orderByBrideFirst(
     { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-  ] as const).filter((q) => q.bank);
+    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
+    couple.brideFirst,
+  ).filter((q) => q.bank);
+  const heroCards = people.map((person) => ({
+    person,
+    portrait: person.side === "bride" ? bridePortrait : groomPortrait,
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -67,30 +74,30 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
               <img src={`${BASE}/decoration_bar.webp`} alt="" aria-hidden className="h-auto w-full md:h-[150px] md:object-cover" />
             </div>
 
-            {groomPortrait ? (
+            {heroCards[0].portrait ? (
               <div className="absolute left-1/2 -top-[40px] z-20 flex -translate-x-[55%] items-center gap-3 md:-top-[60px] md:-translate-x-[56%] md:gap-4">
                 <div className="w-[170px] shrink-0 rotate-[-17deg] max-[353px]:w-[160px] md:w-[235px]">
                   <div className="relative aspect-[2/3] overflow-hidden border-[5px] border-[#795b4a]">
-                    <img src={groomPortrait} alt={couple.groomShortName || couple.groomFullName} className="h-full w-full object-cover" />
+                    <img src={heroCards[0].portrait} alt={heroCards[0].person.shortName} className="h-full w-full object-cover" />
                   </div>
                 </div>
                 <div className="text-left">
-                  <div className="text-[12px] tracking-widest text-[#4a2816] md:text-[14px]">{couple.groomBirthOrder || "Út Nam"}</div>
-                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{couple.groomShortName || couple.groomFullName.split(/\s+/).slice(-2).join(" ")}</div>
+                  <div className="text-[12px] tracking-widest text-[#4a2816] md:text-[14px]">{heroCards[0].person.birthOrder}</div>
+                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{heroCards[0].person.shortName}</div>
                 </div>
               </div>
             ) : null}
 
-            {bridePortrait ? (
+            {heroCards[1].portrait ? (
               <div className="absolute left-1/2 top-[150px] z-30 flex -translate-x-[40%] flex-row-reverse items-center gap-3 max-[353px]:top-[140px] md:top-[260px] md:-translate-x-[18%] md:gap-4">
                 <div className="w-[170px] shrink-0 rotate-[13deg] max-[353px]:w-[160px] md:w-[235px]">
                   <div className="relative aspect-[2/3] overflow-hidden border-[5px] border-[#795b4a]">
-                    <img src={bridePortrait} alt={couple.brideShortName || couple.brideFullName} className="h-full w-full object-cover" />
+                    <img src={heroCards[1].portrait} alt={heroCards[1].person.shortName} className="h-full w-full object-cover" />
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[12px] tracking-widest text-[#4a2816] md:text-[14px]">{couple.brideBirthOrder || "Thứ Nữ"}</div>
-                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{couple.brideShortName || couple.brideFullName.split(/\s+/).slice(-2).join(" ")}</div>
+                  <div className="text-[12px] tracking-widest text-[#4a2816] md:text-[14px]">{heroCards[1].person.birthOrder}</div>
+                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{heroCards[1].person.shortName}</div>
                 </div>
               </div>
             ) : null}
@@ -104,12 +111,13 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
+            <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={bodyNameFont}>{couple.groomFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{couple.groomBirthOrder || "Trưởng Nam"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={bodyNameFont}>{people[0].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={heroNameFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={bodyNameFont}>{couple.brideFullName}</h3>
-              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{couple.brideBirthOrder || "Út Nữ"}</div>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={bodyNameFont}>{people[1].fullName}</h3>
+              <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (
               <div className="flex flex-col items-center gap-1 text-center">
@@ -119,6 +127,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
                 <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
           </section>
@@ -153,6 +162,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
 
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border px-8 py-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(BROWN, 0.3), backgroundColor: "#fffdfa" }}>

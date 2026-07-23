@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 
+import { safeAuthReturnPath } from "@/lib/auth-redirects";
 import { getSession } from "@/lib/session";
 import { AuthForm } from "../AuthForm";
-import { login } from "../actions";
 import { authCopy } from "../auth-copy";
 
 type LoginPageProps = {
-  searchParams: Promise<{ authError?: string; error?: string }>;
+  searchParams: Promise<{ authError?: string; error?: string; next?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
@@ -15,8 +15,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     redirect("/dashboard");
   }
 
-  const { authError, error } = await searchParams;
+  const { authError, error, next } = await searchParams;
   const oauthError = authError === "google" || authError === "facebook" || error ? authCopy.oauthError : undefined;
+  const nextPath = safeAuthReturnPath(next);
 
-  return <AuthForm mode="login" action={login} copy={authCopy} oauthError={oauthError} />;
+  return <AuthForm copy={authCopy} nextPath={nextPath} oauthError={oauthError} />;
 }

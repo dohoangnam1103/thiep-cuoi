@@ -4,6 +4,8 @@ export const routing = defineRouting({
   locales: ["vi", "en", "ko", "ja", "zh"],
   defaultLocale: "vi",
   localePrefix: "as-needed",
+  // SEO metadata deliberately exposes only completed/indexable locales.
+  alternateLinks: false,
   pathnames: {
     "/": "/",
     "/templates": {
@@ -76,3 +78,7 @@ export const routing = defineRouting({
 });
 
 export type Locale = (typeof routing.locales)[number];
+
+// Only Vietnamese content is complete enough to be indexed today. Other
+// locales remain available to users while their content is being finished.
+export const indexableLocales: readonly Locale[] = ["vi"];

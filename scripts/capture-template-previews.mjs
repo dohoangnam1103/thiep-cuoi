@@ -14,15 +14,23 @@ import {
 import os from "node:os";
 import path from "node:path";
 
+import nextEnv from "@next/env";
+import { SignJWT } from "jose";
 import { chromium } from "playwright";
 import sharp from "sharp";
 
 const ROOT = process.cwd();
+const { loadEnvConfig } = nextEnv;
+loadEnvConfig(ROOT);
+
 const DATA_FILE = path.join(ROOT, "src/data/chungdoi.ts");
+const ROUTE_SLUGS_FILE = path.join(ROOT, "src/data/template-route-slugs.ts");
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const MANAGED_SERVER_URL = "http://127.0.0.1:3200";
 const CAPTURE_WIDTH = 384;
 const CAPTURE_HEIGHT = 844;
+const CAPTURE_DEVICE_SCALE_FACTOR = 2;
+const OUTPUT_WIDTH = CAPTURE_WIDTH * CAPTURE_DEVICE_SCALE_FACTOR;
 const MIN_PREVIEW_HEIGHT = 1_200;
 const WEBP_QUALITY = Number(process.env.CAPTURE_QUALITY ?? 84);
 const VERBOSE = process.env.CAPTURE_VERBOSE === "1";
@@ -54,16 +62,18 @@ Environment:
   CHROME_PATH       Đường dẫn Chrome/Chromium tùy chỉnh`);
 }
 
-function parseCatalog(source) {
+function parseCatalog(source, routeSource) {
   const completedBlock = source.match(
     /completedTemplateSlugs = new Set<string>\(\[([\s\S]*?)\]\)/,
   )?.[1];
-  const vietnameseBlock = source.match(
+  const vietnameseBlock = routeSource.match(
     /vietnameseTemplateSlugs = \[([\s\S]*?)\] as const/,
   )?.[1];
 
   if (!completedBlock || !vietnameseBlock) {
-    throw new Error("Không đọc được danh sách template từ src/data/chungdoi.ts");
+    throw new Error(
+      "Không đọc được danh sách template từ src/data/chungdoi.ts hoặc src/data/template-route-slugs.ts",
+    );
   }
 
   const completedSlugs = [...completedBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
@@ -166,6 +176,30 @@ async function stopServer(child) {
   if (child.exitCode === null) child.kill("SIGKILL");
 }
 
+async function createCaptureSessionCookie(baseUrl) {
+  const base = new URL(baseUrl);
+  const isLocal = base.hostname === "127.0.0.1" || base.hostname === "localhost";
+  const secret = process.env.CAPTURE_SESSION_SECRET || (isLocal ? process.env.SESSION_SECRET : null);
+  if (!secret) return null;
+
+  const expiresAt = Math.floor(Date.now() / 1_000) + 60 * 60;
+  const token = await new SignJWT({ userId: "template-preview-capture" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(expiresAt)
+    .sign(new TextEncoder().encode(secret));
+
+  return {
+    name: "session",
+    value: token,
+    url: base.origin,
+    httpOnly: true,
+    secure: base.protocol === "https:",
+    sameSite: "Lax",
+    expires: expiresAt,
+  };
+}
+
 async function settleInvitation(page) {
   await page.addStyleTag({
     content: `
@@ -253,13 +287,14 @@ async function rasterizeEmbeddedFrames(page) {
   }
 }
 
-async function captureTemplate(browser, baseUrl, template, stagingDir) {
+async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCookie) {
   const context = await browser.newContext({
     viewport: { width: CAPTURE_WIDTH, height: CAPTURE_HEIGHT },
-    deviceScaleFactor: 1,
+    deviceScaleFactor: CAPTURE_DEVICE_SCALE_FACTOR,
     locale: "vi-VN",
     reducedMotion: "reduce",
   });
+  if (sessionCookie) await context.addCookies([sessionCookie]);
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
@@ -288,7 +323,7 @@ async function captureTemplate(browser, baseUrl, template, stagingDir) {
 
     const png = await page.screenshot({ fullPage: true, animations: "disabled", type: "png" });
     const pngMetadata = await sharp(png).metadata();
-    if (pngMetadata.width !== CAPTURE_WIDTH) {
+    if (pngMetadata.width !== OUTPUT_WIDTH) {
       throw new Error(`Chiều rộng ảnh không hợp lệ: ${pngMetadata.width}px`);
     }
     if (!pngMetadata.height || pngMetadata.height < MIN_PREVIEW_HEIGHT) {
@@ -302,7 +337,7 @@ async function captureTemplate(browser, baseUrl, template, stagingDir) {
       .toFile(stagedPath);
 
     const [metadata, file] = await Promise.all([sharp(stagedPath).metadata(), stat(stagedPath)]);
-    if (metadata.format !== "webp" || metadata.width !== CAPTURE_WIDTH || file.size < 20_000) {
+    if (metadata.format !== "webp" || metadata.width !== OUTPUT_WIDTH || file.size < 20_000) {
       throw new Error(`WebP đầu ra không hợp lệ: ${outputName}`);
     }
 
@@ -339,8 +374,11 @@ async function main() {
     throw new Error("CAPTURE_QUALITY phải là số nguyên từ 1 đến 100");
   }
 
-  const source = await readFile(DATA_FILE, "utf8");
-  const allTemplates = parseCatalog(source);
+  const [source, routeSource] = await Promise.all([
+    readFile(DATA_FILE, "utf8"),
+    readFile(ROUTE_SLUGS_FILE, "utf8"),
+  ]);
+  const allTemplates = parseCatalog(source, routeSource);
   const templatesBySlug = new Map(allTemplates.map((template) => [template.slug, template]));
   const requested = readOption("--slug")
     ?.split(",")
@@ -360,16 +398,25 @@ async function main() {
   try {
     const server = await resolveServer();
     managedServer = server.child;
+    const sessionCookie = await createCaptureSessionCookie(server.baseUrl);
 
     const macChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
     const executablePath = process.env.CHROME_PATH || (existsSync(macChrome) ? macChrome : undefined);
     browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) });
 
-    console.log(`Chụp ${targets.length} mẫu ở ${CAPTURE_WIDTH}px, WebP quality ${WEBP_QUALITY}...`);
+    console.log(
+      `Chụp ${targets.length} mẫu ở viewport ${CAPTURE_WIDTH}px, xuất ${OUTPUT_WIDTH}px, WebP quality ${WEBP_QUALITY}...`,
+    );
     const results = [];
     for (const [index, template] of targets.entries()) {
       process.stdout.write(`[${index + 1}/${targets.length}] ${template.slug}... `);
-      const result = await captureTemplate(browser, server.baseUrl, template, stagingDir);
+      const result = await captureTemplate(
+        browser,
+        server.baseUrl,
+        template,
+        stagingDir,
+        sessionCookie,
+      );
       results.push(result);
       console.log(`${result.height}px, ${(result.size / 1024).toFixed(0)} KB`);
     }
