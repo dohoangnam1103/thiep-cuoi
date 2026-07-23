@@ -51,6 +51,7 @@ export type ChungDoiDemoContent = {
   heroImage?: string;
   heroImage2?: string;
   showHeroImage?: boolean;
+  dressCodeColors?: string;
   wishes: { name: string; time: string; text: string }[];
   bank: {
     brideBankName: string;
@@ -147,6 +148,7 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   "song-hy-green": {
     "slug": "song-hy-green",
     "invitationId": "hainam-khanhlinh",
+    "dressCodeColors": "#8b9a6b,#e8e8e8,#e8dcc8",
     "theme": {
       "primaryColor": "#e8f0e4",
       "fontFamily": "Fz Aghita",
@@ -790,6 +792,7 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   "dragon-phoenix-v3-red": {
     "slug": "dragon-phoenix-v3-red",
     "invitationId": "tuankiet-thanhha",
+    "dressCodeColors": "#710013,#fff4e3,#ffbe89",
     "theme": {
       "primaryColor": "#ffbe89",
       "fontFamily": "Fz Qellia",
@@ -1641,6 +1644,7 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   "brocade-flower-red": {
     "slug": "brocade-flower-red",
     "invitationId": "tuankhang-mylinh-gam-hoa",
+    "dressCodeColors": "#b53131,#f8ecdb,#c9a227",
     "theme": {
       "primaryColor": "#6a2104",
       "fontFamily": "Fz Aghita",
@@ -2020,6 +2024,7 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   "qasr-green": {
     "slug": "qasr-green",
     "invitationId": "minhquan-baotran-qasr",
+    "dressCodeColors": "#1e3d2f,#f1ede0,#c9a24a",
     "theme": {
       "primaryColor": "#708465",
       "fontFamily": "DFVN New Eddy",
@@ -2152,6 +2157,7 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   "qasr-gold": {
     "slug": "qasr-gold",
     "invitationId": "dangkhoa-myduyen-qasr-gold",
+    "dressCodeColors": "#a8842c,#f5efdd,#7a5a1e",
     "theme": {
       "primaryColor": "#544e27",
       "fontFamily": "DFVN New Eddy",

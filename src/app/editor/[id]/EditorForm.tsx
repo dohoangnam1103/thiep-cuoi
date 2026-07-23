@@ -58,6 +58,7 @@ import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, typ
 import type { InvitationContent } from "@/generated/prisma/client";
 import type { MusicPickerMessages } from "@/lib/music-picker";
 import { trackEvent } from "@/lib/analytics";
+import { cn } from "@/lib/utils";
 import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage } from "@/lib/invitation-display";
 import { isGoogleMapsShortUrl, isGoogleMapsUrl } from "@/lib/google-maps";
 import { shortNameFromFullName } from "@/lib/short-name";
@@ -230,6 +231,7 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
     heroImage: read("heroImage"),
     heroImage2: read("heroImage2"),
     showHeroImage,
+    dressCodeColors: read("dressCodeColors"),
     wishes: [],
     bank: {
       brideBankName: read("brideBankName"),
@@ -1166,6 +1168,154 @@ function ColorField({ name, label, defaultValue }: { name: string; label: string
   );
 }
 
+const DRESS_CODE_PRESETS: { hex: string; label: string }[] = [
+  { hex: "#1A1A1A", label: "Đen" },
+  { hex: "#FFFFFF", label: "Trắng" },
+  { hex: "#9CA3AF", label: "Xám" },
+  { hex: "#D9C6A5", label: "Be" },
+  { hex: "#A3B18A", label: "Xanh rêu" },
+  { hex: "#A9B8CC", label: "Xanh xám" },
+];
+
+/** Chọn nhiều màu trang phục; xuất chuỗi hex phân tách bằng dấu phẩy vào hidden input dressCodeColors. */
+function DressCodeField({ defaultValue }: { defaultValue: string }) {
+  const parse = (raw: string) =>
+    raw
+      .split(",")
+      .map((c) => c.trim())
+      .filter((c) => /^#[0-9a-fA-F]{6}$/.test(c))
+      .slice(0, 8);
+  const [colors, setColors] = useState<string[]>(() => parse(defaultValue));
+  const [custom, setCustom] = useState("#E8B7B7");
+  const hiddenRef = useRef<HTMLInputElement | null>(null);
+  const mountedRef = useRef(false);
+
+  const serialized = colors.join(",");
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+    hiddenRef.current?.dispatchEvent(new Event("input", { bubbles: true }));
+  }, [serialized]);
+
+  const addColor = (raw: string) => {
+    const hex = raw.trim();
+    if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+    setColors((prev) => {
+      if (prev.length >= 8) return prev;
+      if (prev.some((c) => c.toLowerCase() === hex.toLowerCase())) return prev;
+      return [...prev, hex];
+    });
+  };
+
+  const customValid = /^#[0-9a-fA-F]{6}$/.test(custom);
+  const atLimit = colors.length >= 8;
+
+  return (
+    <div className="sm:col-span-2">
+      <input ref={hiddenRef} type="hidden" name="dressCodeColors" value={serialized} />
+      <p className="mb-3 text-xs text-muted-foreground">
+        Gợi ý màu trang phục cho khách. Để trống nếu không muốn hiển thị mục này. Tối đa 8 màu.
+      </p>
+
+      <span className={labelClass}>Màu sắc</span>
+      <div className="mt-1 flex flex-wrap items-center gap-3">
+        {colors.map((color, index) => (
+          <div key={index} className="group relative">
+            <span
+              className="block size-11 rounded-full border border-border shadow-sm"
+              style={{ backgroundColor: color }}
+              aria-label={`Màu ${index + 1}: ${color}`}
+            />
+            <button
+              type="button"
+              onClick={() => setColors((prev) => prev.filter((_, i) => i !== index))}
+              className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full border border-border bg-background text-muted-foreground opacity-0 shadow transition group-hover:opacity-100 hover:text-destructive"
+              aria-label={`Xoá màu ${index + 1}`}
+            >
+              <X className="size-3" aria-hidden />
+            </button>
+          </div>
+        ))}
+        <label
+          className={cn(
+            "grid size-11 cursor-pointer place-items-center rounded-full border border-dashed border-border text-muted-foreground transition hover:border-primary/40 hover:text-foreground",
+            atLimit && "pointer-events-none opacity-40",
+          )}
+          aria-label="Thêm màu"
+        >
+          <Plus className="size-4" aria-hidden />
+          <input
+            type="color"
+            className="sr-only"
+            disabled={atLimit}
+            onChange={(e) => addColor(e.target.value)}
+          />
+        </label>
+      </div>
+
+      {!atLimit && (
+        <>
+          <span className={cn(labelClass, "mt-5 block")}>Chọn từ gợi ý</span>
+          <div className="mt-1 flex flex-wrap items-center gap-3">
+            {DRESS_CODE_PRESETS.map((preset) => {
+              const used = colors.some((c) => c.toLowerCase() === preset.hex.toLowerCase());
+              return (
+                <button
+                  key={preset.hex}
+                  type="button"
+                  disabled={used}
+                  onClick={() => addColor(preset.hex)}
+                  title={preset.label}
+                  aria-label={`Thêm màu ${preset.label}`}
+                  className="size-11 rounded-full border border-border shadow-sm transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-30"
+                  style={{ backgroundColor: preset.hex }}
+                />
+              );
+            })}
+          </div>
+
+          <div className="mt-5 border-t border-border pt-5">
+            <span className={cn(labelClass, "block")}>Màu tùy chỉnh</span>
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                type="color"
+                value={customValid ? custom : "#E8B7B7"}
+                onChange={(e) => setCustom(e.target.value)}
+                className="h-9 w-11 shrink-0 cursor-pointer rounded-lg border border-input bg-background"
+                aria-label="Chọn màu tùy chỉnh"
+              />
+              <input
+                value={custom}
+                onChange={(e) => setCustom(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addColor(custom);
+                  }
+                }}
+                placeholder="#E8B7B7"
+                className={inputClass}
+                aria-label="Mã màu tùy chỉnh"
+              />
+              <button
+                type="button"
+                disabled={!customValid}
+                onClick={() => addColor(custom)}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-muted disabled:opacity-40"
+              >
+                <Plus className="size-4" aria-hidden />
+                Thêm
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function SubHeader({ children }: { children: React.ReactNode }) {
   return <p className="sm:col-span-2 -mb-1 text-sm font-semibold text-foreground">{children}</p>;
 }
@@ -1956,6 +2106,10 @@ function EditorFormContent({
           <Grid>
             <ColorField name="primaryColor" label="Màu chủ đạo" defaultValue={seed("primaryColor", field(content, "primaryColor"))} />
           </Grid>
+        </Accordion>
+
+        <Accordion title="Dress Code" icon="👗" defaultOpen={false}>
+          <DressCodeField defaultValue={seed("dressCodeColors", field(content, "dressCodeColors"))} />
         </Accordion>
 
         <Accordion title="Thông tin chuyển khoản" icon="✉" defaultOpen={false}>

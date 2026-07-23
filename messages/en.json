@@ -38,6 +38,8 @@
       "help": "Help"
     },
     "createNow": "Create Invitation Now",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
     "login": "Log in",
     "noInvitationForGuests": "You don't have an invitation yet to view guests.",
     "footer": {

@@ -143,6 +143,9 @@ model InvitationContent {
   heroImage2    String  @default("")
   showHeroImage Boolean @default(true)
 
+  // dress code: CSV of hex colors, e.g. "#b53131,#f8ecdb,#c9a227"
+  dressCodeColors String @default("")
+
   // families
   brideFather      String @default("")
   brideMother      String @default("")

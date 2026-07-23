@@ -30,6 +30,7 @@ export const contentSchema = z.object({
   primaryColor: z.string().max(32).optional().default(""),
   fontFamily: z.string().max(80).optional().default(""),
   music: z.string().max(300).optional().default(""),
+  dressCodeColors: z.string().max(200).optional().default(""),
 
   brideFullName: z.string().max(120).optional().default(""),
   groomFullName: z.string().max(120).optional().default(""),

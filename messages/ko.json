@@ -38,6 +38,8 @@
       "help": "도움말"
     },
     "createNow": "지금 청첩장 만들기",
+    "menu": "메뉴",
+    "closeMenu": "메뉴 닫기",
     "login": "로그인",
     "noInvitationForGuests": "하객을 확인할 청첩장이 아직 없습니다.",
     "footer": {

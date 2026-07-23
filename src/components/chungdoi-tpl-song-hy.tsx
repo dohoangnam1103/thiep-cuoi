@@ -35,7 +35,7 @@ type SongHyPalette = {
   starSrc: string | null;
   modalBg: string;
   albumCarousel: boolean;
-  showCountdownDress: boolean;
+  showCountdown: boolean;
 };
 
 const SONG_HY_GREEN: SongHyPalette = {
@@ -49,7 +49,7 @@ const SONG_HY_GREEN: SongHyPalette = {
   starSrc: `${SHG}/star.webp`,
   modalBg: "rgb(220, 235, 222)",
   albumCarousel: false,
-  showCountdownDress: true,
+  showCountdown: true,
 };
 
 const SONG_HY_RED: SongHyPalette = {
@@ -63,7 +63,7 @@ const SONG_HY_RED: SongHyPalette = {
   starSrc: null,
   modalBg: "rgb(245, 224, 224)",
   albumCarousel: true,
-  showCountdownDress: false,
+  showCountdown: false,
 };
 
 function givenName(full: string) {
@@ -305,7 +305,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
               <span className="mt-1 text-[20px] font-semibold" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</span>
             </div>
           </div>
-          {palette.showCountdownDress ? (
+          {palette.showCountdown ? (
             <div className="mt-4 flex flex-col items-center justify-center">
               <h2 className="flex flex-col items-center text-center text-[20px] uppercase" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Cùng đếm ngược</h2>
               <SongHyCountdown palette={palette} target={`${couple.date}T${couple.time || "18:00"}`} />
@@ -352,20 +352,6 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
               <MapDirectionsButton query={mapQuery} style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }} />
             </div>
           </section>
-        </div>
-      ) : null}
-
-      {palette.showCountdownDress ? (
-        <div className="relative z-10 flex flex-col items-center gap-5 px-6 py-10 md:px-10 md:py-12">
-          <div className="flex flex-col items-center gap-1">
-            <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: '"Times New Roman", serif' }}>DRESS CODE</h2>
-            <p className="text-center text-sm opacity-70 md:text-base" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Trang phục dự tiệc</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            <div className="h-10 w-10 rounded-full shadow-md md:h-12 md:w-12" style={{ backgroundColor: "rgb(139, 154, 107)" }} />
-            <div className="h-10 w-10 rounded-full shadow-md md:h-12 md:w-12" style={{ backgroundColor: "rgb(232, 232, 232)", border: `1.5px solid ${hexToRgba(palette.accent, 0.19)}` }} />
-            <div className="h-10 w-10 rounded-full shadow-md md:h-12 md:w-12" style={{ backgroundColor: "rgb(232, 220, 200)", border: `1.5px solid ${hexToRgba(palette.accent, 0.19)}` }} />
-          </div>
         </div>
       ) : null}
 

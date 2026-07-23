@@ -16,7 +16,6 @@ import {
   FamilyColumn,
   SharedCarousel,
   SharedCountdown,
-  DressCode,
   GiftEnvelope,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
@@ -188,8 +187,6 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               <MapDirectionsButton query={mapQuery} style={{ color: GOLD }} />
             </section>
           ) : null}
-
-          <DressCode headingColor={GOLD} subColor={GOLD_MUTED} colors={[{ color: RED_DEEP, border: GOLD }, { color: "#fff4e3", border: GOLD }, { color: GOLD }]} />
 
           {/* SCHEDULE */}
           {schedule.length > 0 ? (

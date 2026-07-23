@@ -23,6 +23,7 @@ export type DemoContentFields = {
   heroImage: string;
   heroImage2: string;
   showHeroImage: boolean;
+  dressCodeColors: string;
 
   brideFather: string;
   brideMother: string;
@@ -79,6 +80,7 @@ export function fromDemoContent(demo: ChungDoiDemoContent): DemoSeed {
       heroImage: demo.heroImage ?? "",
       heroImage2: demo.heroImage2 ?? "",
       showHeroImage: demo.showHeroImage ?? true,
+      dressCodeColors: demo.dressCodeColors ?? "",
 
       brideFather: families.brideFather ?? "",
       brideMother: families.brideMother ?? "",

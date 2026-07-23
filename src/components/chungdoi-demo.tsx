@@ -22,7 +22,7 @@ import {
   VI_LIGHTBOX_ZOOM_LABELS,
 } from "@/components/lightbox-zoom";
 import { TARGET_PX } from "@/components/chungdoi-envelope-3d";
-import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
+import { DressCode, InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import {
@@ -209,6 +209,55 @@ function AdditionalCeremonies({
             </article>
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+/** Tách chuỗi màu "#a83232,#f8ecdb,#c9a227" thành mảng hex hợp lệ. */
+function parseDressCodeColors(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((c) => c.trim())
+    .filter((c) => /^#[0-9a-fA-F]{6}$/.test(c))
+    .slice(0, 8);
+}
+
+/** Độ sáng tương đối (0–255) để quyết định có cần viền cho chip màu sáng. */
+function colorLuminance(hex: string): number {
+  const value = hex.replace("#", "");
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return 0.299 * r + 0.587 * g + 0.114 * b;
+}
+
+/** Khối Dress Code dùng chung cho mọi mẫu thiệp, ăn màu theo theme qua tokens. */
+function CentralDressCode({
+  content,
+  tokens,
+}: {
+  content: ChungDoiDemoContent;
+  tokens: Tokens;
+}) {
+  const colors = parseDressCodeColors(content.dressCodeColors);
+  if (!colors.length) return null;
+
+  const border = hexToRgba(tokens.textPrimary, 0.35);
+  const chips = colors.map((color) => ({
+    color,
+    border: colorLuminance(color) > 210 ? border : undefined,
+  }));
+
+  return (
+    <section
+      data-dress-code
+      className="px-4 py-12 sm:px-6"
+      style={{ background: tokens.cardBg, color: tokens.textPrimary }}
+    >
+      <div className="mx-auto max-w-[760px]">
+        <DressCode headingColor={tokens.textPrimary} subColor={tokens.textSecondary} colors={chips} />
       </div>
     </section>
   );
@@ -1349,6 +1398,7 @@ export function ChungDoiDemo({
       )}
 
       <AdditionalCeremonies content={content} tokens={tokens} />
+      <CentralDressCode content={content} tokens={tokens} />
       <PublicGuestMomentsPortal templateSlug={content.slug} />
 
       {opened && !captureMode ? (

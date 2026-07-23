@@ -38,6 +38,8 @@
       "help": "帮助"
     },
     "createNow": "立即创建请柬",
+    "menu": "菜单",
+    "closeMenu": "关闭菜单",
     "login": "登录",
     "noInvitationForGuests": "您还没有可查看宾客的请柬。",
     "footer": {

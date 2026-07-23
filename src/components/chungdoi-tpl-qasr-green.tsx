@@ -11,7 +11,6 @@ import {
   FamilyColumn,
   SharedCarousel,
   SharedCountdown,
-  DressCode,
   GiftEnvelope,
   SharedWishForm,
   WEEKDAY_LABELS,
@@ -176,8 +175,6 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
               <MapDirectionsButton query={mapQuery} style={{ color: QASR_GREEN }} />
             </section>
           ) : null}
-
-          <DressCode headingColor={QASR_GREEN} subColor={QASR_GREEN_MUTED} colors={[{ color: QASR_GREEN }, { color: "#f1ede0", border: QASR_GREEN }, { color: QASR_GOLD }]} />
 
           {/* SCHEDULE — with ring decor */}
           {schedule.length > 0 ? (

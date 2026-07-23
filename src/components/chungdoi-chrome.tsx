@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageIcon, MessageCircle, Play, Users } from "lucide-react";
+import { ImageIcon, Menu, MessageCircle, Play, Plus, Users, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -50,6 +50,7 @@ export function SiteHeader({
   const t = useTranslations("chrome");
   const pathname = usePathname() as string;
   const [session, setSession] = useState<SessionState | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -72,12 +73,41 @@ export function SiteHeader({
   const guestsActive = /^\/dashboard\/[^/]+\/guests(?:\/|$)/.test(pathname);
   const dashboardActive = isActivePath(pathname, "/dashboard") && !guestsActive;
   const pricingActive = isActivePath(pathname, "/pricing");
+  const toolsActive = isActivePath(pathname, "/tools");
   const blogActive = isActivePath(pathname, "/blog");
+  const helpActive = isActivePath(pathname, "/help");
+
+  const menuItems: Array<{ label: string; href: string; active: boolean }> = [
+    { label: t("nav.templates"), href: "/templates", active: templatesActive },
+    ...(loggedIn
+      ? [
+          { label: t("nav.myInvitations"), href: "/dashboard", active: dashboardActive },
+          { label: t("nav.guests"), href: guestsHref, active: guestsActive },
+        ]
+      : []),
+    { label: t("nav.pricing"), href: "/pricing", active: pricingActive },
+    { label: t("nav.tools"), href: "/tools", active: toolsActive },
+    { label: t("nav.blog"), href: "/blog", active: blogActive },
+    { label: t("nav.help"), href: "/help", active: helpActive },
+  ];
 
   return (
+    <>
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo responsive />
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          className="flex size-10 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground lg:hidden"
+          aria-label={t("menu")}
+          aria-haspopup="dialog"
+          aria-expanded={menuOpen}
+        >
+          <Menu className="size-6" />
+        </button>
+        <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:left-auto lg:translate-x-0">
+          <Logo responsive />
+        </div>
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
           <Link href="/templates" className={desktopNavClassName(templatesActive)} aria-current={templatesActive ? "page" : undefined}>
             {t("nav.templates")}
@@ -123,22 +153,76 @@ export function SiteHeader({
           {hideCreateButton ? null : loggedIn ? (
             <Link
               href="/templates"
-              className="shrink-0 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+              aria-label={t("createNow")}
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2"
             >
-              {t("createNow")}
+              <Plus className="size-5 lg:hidden" />
+              <span className="hidden lg:inline">{t("createNow")}</span>
             </Link>
           ) : (
             <NextLink
               href={loginHref(TEMPLATE_LIST_PATH)}
-              className="shrink-0 whitespace-nowrap rounded-full bg-primary px-4 py-2 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+              aria-label={t("createNow")}
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2"
             >
-              {t("createNow")}
+              <Plus className="size-5 lg:hidden" />
+              <span className="hidden lg:inline">{t("createNow")}</span>
             </NextLink>
           )}
         </div>
       </div>
       <AdaptiveToaster />
     </header>
+
+      {/* Drawer menu trượt từ trái (mobile) */}
+      <div
+        className={`fixed inset-0 z-[60] lg:hidden ${menuOpen ? "" : "pointer-events-none"}`}
+        aria-hidden={!menuOpen}
+      >
+        <button
+          type="button"
+          aria-label={t("closeMenu")}
+          onClick={() => setMenuOpen(false)}
+          className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${menuOpen ? "opacity-100" : "opacity-0"}`}
+        />
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("menu")}
+          className={`absolute inset-y-0 left-0 flex w-72 max-w-[80%] flex-col bg-background shadow-2xl transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <Logo />
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              aria-label={t("closeMenu")}
+              className="flex size-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            >
+              <X className="size-5" />
+            </button>
+          </div>
+          <nav className="flex-1 overflow-y-auto px-3 py-4">
+            <ul className="space-y-1">
+              {menuItems.map((item) => (
+                <li key={`${item.label}-${item.href}`}>
+                  <NextLink
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex items-center rounded-xl px-4 py-3 text-base font-semibold transition ${
+                      item.active ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
+                    }`}
+                    aria-current={item.active ? "page" : undefined}
+                  >
+                    {item.label}
+                  </NextLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      </div>
+    </>
   );
 }
 

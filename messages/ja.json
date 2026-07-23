@@ -38,6 +38,8 @@
       "help": "ヘルプ"
     },
     "createNow": "今すぐ招待状を作成",
+    "menu": "メニュー",
+    "closeMenu": "メニューを閉じる",
     "login": "ログイン",
     "noInvitationForGuests": "ゲストを確認できる招待状がまだありません。",
     "footer": {

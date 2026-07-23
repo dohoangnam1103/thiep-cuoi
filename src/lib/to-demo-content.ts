@@ -101,6 +101,7 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
     heroImage: c?.heroImage ?? "",
     heroImage2: c?.heroImage2 ?? "",
     showHeroImage: c?.showHeroImage ?? true,
+    dressCodeColors: c?.dressCodeColors ?? "",
     wishes: invitation.wishes.map((w) => ({
       name: w.name,
       time: w.createdAt.toISOString(),

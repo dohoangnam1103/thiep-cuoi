@@ -38,6 +38,8 @@
       "help": "Trợ giúp"
     },
     "createNow": "Tạo ngay",
+    "menu": "Menu",
+    "closeMenu": "Đóng menu",
     "login": "Đăng nhập",
     "noInvitationForGuests": "Bạn chưa có thiệp nào để xem khách mời.",
     "footer": {

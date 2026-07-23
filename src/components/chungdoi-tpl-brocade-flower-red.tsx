@@ -5,7 +5,6 @@ import type React from "react";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
-  DressCode,
   FamilyColumn,
   Lightbox,
   MapDirectionsButton,
@@ -190,8 +189,6 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               <MapDirectionsButton query={mapQuery} style={{ color: BFR_RED }} />
             </section>
           ) : null}
-
-          <DressCode headingColor={BFR_RED} subColor={BFR_DARK_MUTED} colors={[{ color: "#b53131" }, { color: "#f8ecdb", border: BFR_RED }, { color: "#c9a227" }]} />
 
           {/* SCHEDULE — with pillar decor */}
           {schedule.length > 0 ? (
