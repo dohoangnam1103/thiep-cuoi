@@ -1,10 +1,9 @@
-import Link from "next/link";
-
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { templateLabel } from "@/app/editor/[id]/templates";
 import { logout } from "../(auth)/actions";
 import { NewInvitationButton } from "./NewInvitationButton";
+import { DashboardInvitationCard } from "./DashboardInvitationCard";
 
 export default async function DashboardPage() {
   const { userId } = await verifySession();
@@ -40,84 +39,26 @@ export default async function DashboardPage() {
           Bạn chưa có thiệp nào. Nhấn &quot;Tạo thiệp mới&quot; để bắt đầu.
         </p>
       ) : (
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+        <ul className="mt-8 flex flex-col gap-4">
           {invitations.map((inv) => {
             const bride = inv.content?.brideFullName?.trim();
             const groom = inv.content?.groomFullName?.trim();
             const names = [groom, bride].filter(Boolean).join(" & ");
-            const label = names || templateLabel(inv.templateId);
-            const published = inv.status === "published";
+            const templateName = templateLabel(inv.templateId);
             return (
-              <li
+              <DashboardInvitationCard
                 key={inv.id}
-                className="rounded-2xl border border-border bg-card p-5 shadow"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h2 className="font-heading text-lg font-semibold text-foreground">{label}</h2>
-                    {names ? (
-                      <p className="mt-0.5 text-sm text-muted-foreground">{templateLabel(inv.templateId)}</p>
-                    ) : null}
-                  </div>
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      published
-                        ? "bg-green-500/15 text-green-700"
-                        : "bg-amber-500/15 text-amber-700"
-                    }`}
-                  >
-                    {published ? "Đã xuất bản" : "Bản nháp"}
-                  </span>
-                </div>
-
-                <div className="mt-4 flex gap-4 text-sm text-muted-foreground">
-                  <span>{inv._count.rsvps} xác nhận</span>
-                  <span>{inv._count.wishes} lời chúc</span>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2 text-sm">
-                  <Link
-                    href={`/editor/${inv.id}`}
-                    className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
-                  >
-                    Chỉnh sửa
-                  </Link>
-                  <Link
-                    href={`/dashboard/${inv.id}/rsvp`}
-                    className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
-                  >
-                    Xem xác nhận
-                  </Link>
-                  <Link
-                    href={`/dashboard/${inv.id}/guests`}
-                    className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
-                  >
-                    Khách mời
-                  </Link>
-                  {published && inv.slug ? (
-                    <Link
-                      href={`/thiep/${inv.slug}`}
-                      className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground transition hover:bg-primary/90"
-                    >
-                      Xem thiệp
-                    </Link>
-                  ) : null}
-                  {inv.paid ? (
-                    <span className="rounded-full bg-green-500/15 px-4 py-1.5 font-medium text-green-700">
-                      Đã thanh toán
-                    </span>
-                  ) : (
-                    <Link
-                      href={`/dashboard/${inv.id}/thanh-toan`}
-                      data-ga-event="checkout_click"
-                      data-ga-param-source="dashboard"
-                      className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground transition hover:bg-primary/90"
-                    >
-                      Thanh toán
-                    </Link>
-                  )}
-                </div>
-              </li>
+                id={inv.id}
+                templateId={inv.templateId}
+                templateName={templateName}
+                title={names || templateName}
+                hasNames={Boolean(names)}
+                status={inv.status}
+                slug={inv.slug}
+                paid={inv.paid}
+                rsvpCount={inv._count.rsvps}
+                wishCount={inv._count.wishes}
+              />
             );
           })}
         </ul>

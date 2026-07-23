@@ -210,6 +210,67 @@ test.describe("dashboard — navigation", () => {
   });
 });
 
+test.describe("dashboard — template-themed cards", () => {
+  test("invitations render one full-width card per row on desktop", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    createInvitation(user.id, { templateId: "song-hy-red" });
+    createInvitation(user.id, { templateId: "royal-blue" });
+    try {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await loginAsUser(context, user.id);
+      await page.goto("/dashboard");
+      const cards = page.locator("ul li");
+      await expect(cards).toHaveCount(2);
+      const first = await cards.nth(0).boundingBox();
+      const second = await cards.nth(1).boundingBox();
+      if (!first || !second) throw new Error("expected two visible cards");
+      // Stacked vertically: the second card starts at or below the first card's bottom.
+      expect(second.y).toBeGreaterThanOrEqual(first.y + first.height - 1);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("a themed template exposes its background and a decoration", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    createInvitation(user.id, { templateId: "song-hy-red" });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto("/dashboard");
+      const card = page.locator('li[data-template-id="song-hy-red"]');
+      await expect(card).toHaveAttribute("data-themed", "true");
+      await expect(card).toHaveAttribute("style", /linear-gradient|url\(/);
+      const decorations = await card.locator("[data-decoration]").count();
+      expect(decorations).toBeGreaterThan(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("an unknown template falls back to the neutral card", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    createInvitation(user.id, { templateId: "totally-unknown-template" });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto("/dashboard");
+      const card = page.locator('li[data-template-id="totally-unknown-template"]');
+      await expect(card).toHaveAttribute("data-themed", "false");
+      await expect(card.locator("[data-decoration]")).toHaveCount(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+});
+
 test.describe("dashboard — guest manager v2", () => {
   test("owner can add and edit structured guest information", async ({ page, context }) => {
     const user = createUser();
