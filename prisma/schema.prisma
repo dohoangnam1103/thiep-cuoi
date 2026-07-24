@@ -34,6 +34,7 @@ model Invitation {
   isDemo            Boolean   @default(false)
   guestManagerToken String?   @unique
   publishedAt       DateTime?
+  reminderSentAt    DateTime?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
