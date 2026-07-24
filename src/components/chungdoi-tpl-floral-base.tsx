@@ -5,9 +5,9 @@ import type { CSSProperties, ReactNode } from "react";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
-  useLightbox, Lightbox, googleCalendarUrl, InvitationMap, MapDirectionsButton,
+  googleCalendarUrl, InvitationMap, MapDirectionsButton,
   FamilyColumn, SharedWishForm, WEEKDAY_LABELS,
-  GiftEnvelope, GiftQrGrid,
+  GiftEnvelope, GiftQrGrid, AlbumGallery,
 } from "@/components/chungdoi-tpl-shared";
 import {
   invitationCeremonyMessage,
@@ -60,9 +60,6 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const amp = P.ampFont || P.nameFont;
 
@@ -85,23 +82,13 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
     couple.brideFirst,
   ).filter((q) => q.bank);
 
-  const albumSection = albumShown.length > 0 ? (
+  const albumSection = gallery.length > 0 ? (
     <section className="relative flex w-full flex-col items-center gap-6">
       {albumDecor.map((d, i) => (
         <img key={`ad-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
       ))}
       <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Album Ảnh Cưới</FloralHeading>
-      <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-        {albumShown.map((src, i) => (
-          <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(P.accent, 0.3) }}>
-            <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-            {i === albumShown.length - 1 && albumExtra > 0 ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-            ) : null}
-          </button>
-        ))}
-      </div>
-      <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={P.accent} />
+      <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={P.accent} />
     </section>
   ) : null;
 
