@@ -7,8 +7,7 @@ import {
   formatDate,
   buildCalendar,
   formatWishTime,
-  useLightbox,
-  Lightbox,
+  AlbumGallery,
   googleCalendarUrl,
   InvitationMap,
   MapDirectionsButton,
@@ -106,9 +105,6 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
@@ -127,17 +123,12 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
           </h1>
         </header>
 
-        {albumShown.length > 0 ? (
+        {gallery.length > 0 ? (
           <section className="relative z-10 flex w-full flex-col items-center px-6 pb-12 md:mt-8 md:px-10 md:pb-16">
             <h2 className="text-[20px] font-normal uppercase md:text-[26px]" style={{ fontFamily: 'Baskerville, "Times New Roman", serif' }}>Album Ảnh Cưới</h2>
-            <div className="mt-7 grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-              {albumShown.map((src, i) => (
-                <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(ACCENT, 0.22) }}>
-                  <img src={src} alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
-                </button>
-              ))}
+            <div className="mt-7">
+              <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={ACCENT} gridAspect="aspect-square" />
             </div>
-            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={ACCENT} />
           </section>
         ) : null}
 
@@ -168,21 +159,6 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
             ) : null}
           </SectionCard>
 
-          {false && albumShown.length > 0 ? (
-            <SectionCard className="flex flex-col items-center gap-6">
-              <DecorButton className="pointer-events-none absolute -left-20 top-2 h-[180px] w-auto -rotate-12 object-contain opacity-[0.14] md:h-[260px]" />
-              <SpringHeading>Album Ảnh Cưới</SpringHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-[22px] border bg-white/70 p-1" style={{ borderColor: hexToRgba(ACCENT, 0.22) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full rounded-[18px] object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? <div className="absolute inset-1 flex items-center justify-center rounded-[18px] bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div> : null}
-                  </button>
-                ))}
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={ACCENT} />
-            </SectionCard>
-          ) : null}
 
           <SectionCard className="flex flex-col items-center gap-3 text-center">
             <SpringHeading>Thông Tin Tiệc Cưới</SpringHeading>
