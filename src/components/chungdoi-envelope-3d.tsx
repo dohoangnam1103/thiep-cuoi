@@ -21,6 +21,11 @@ type Envelope3DProps = {
   onOpen: () => void;
   paperColor: string;
   accentColor: string;
+  // Hoa tràn ra ngoài mép card: KHÔNG bake vào texture card (bị crop theo khung
+  // card) mà render riêng ở đây. Envelope3D chụp node này trên nền trong suốt
+  // trong vùng rộng hơn card (DECOR_PAD_PX mỗi phía), map lên plane lớn hơn là
+  // con của group xoay → hoa trồi ra ngoài mép và vẫn xoay cùng thiệp (3D thật).
+  renderDecor?: () => ReactNode;
 };
 
 // Vùng nút trong hệ UV mặt trước (0–1), gốc dưới-trái (three UV convention).
@@ -55,6 +60,9 @@ export const TARGET_PX = 340;
 const FALLBACK_RATIO = 1.35;
 const DEPTH = 0.008; // giấy mỏng, chỉ đủ dày để có mặt bên
 const CORNER = 0.08; // bo góc mặt phẳng, độc lập DEPTH
+// Vùng chụp hoa rộng hơn card mỗi phía (px) để chứa phần hoa translate ra ngoài
+// mép. Card region nằm giữa, hoa trồi vào vùng pad này → không bị crop.
+const DECOR_PAD_PX = 220;
 
 const BACK_Z = -(DEPTH / 2);
 
@@ -176,6 +184,7 @@ function Envelope({
   paperColor,
   accentColor,
   frontTex,
+  decorTex,
   ratio,
   btnUV,
 }: {
@@ -183,10 +192,17 @@ function Envelope({
   paperColor: string;
   accentColor: string;
   frontTex: Texture | null;
+  decorTex: Texture | null;
   ratio: number;
   btnUV: BtnUV | null;
 }) {
   const cardH = CARD_W * ratio;
+  // Mặt trước là plane RỘNG HƠN card (thêm padW mỗi phía) để chứa hoa tràn ra
+  // ngoài mép — hoa nằm cùng plane với card nên xoay chung với box (3D thật).
+  // Vùng card nằm CHÍNH GIỮA plane, padding trong suốt → hoa trồi ra hết box.
+  const padW = (CARD_W * DECOR_PAD_PX) / CARD_PX;
+  const faceW = CARD_W + 2 * padW;
+  const faceH = cardH + 2 * padW;
 
   // Scale box sao cho chiều ngang CARD_W (world) chiếu ra đúng TARGET_PX trên màn,
   // bất kể chiều cao viewport → màn desktop cao không làm thiệp bự. worldPerPx =
@@ -285,6 +301,16 @@ function Envelope({
           <meshBasicMaterial map={frontTex} toneMapped={false} transparent />
         </mesh>
       )}
+
+      {/* Lớp hoa: plane RỘNG HƠN card (faceW×faceH), nền trong suốt, đặt ngay
+          trước mặt card. Là con của group nên xoay CÙNG box → hoa tràn ra ngoài
+          mép mà vẫn "3D thật". raycast tắt để không chặn tap nút "Mở thiệp". */}
+      {decorTex && (
+        <mesh position={[0, 0, DEPTH / 2 + 0.004]} raycast={() => null}>
+          <planeGeometry args={[faceW, faceH]} />
+          <meshBasicMaterial map={decorTex} toneMapped={false} transparent depthWrite={false} />
+        </mesh>
+      )}
     </group>
   );
 }
@@ -294,9 +320,12 @@ export default function Envelope3D({
   onOpen,
   paperColor,
   accentColor,
+  renderDecor,
 }: Envelope3DProps) {
   const captureRef = useRef<HTMLDivElement>(null);
+  const decorRef = useRef<HTMLDivElement>(null);
   const [frontTex, setFrontTex] = useState<Texture | null>(null);
+  const [decorTex, setDecorTex] = useState<Texture | null>(null);
   const [ratio, setRatio] = useState(FALLBACK_RATIO);
   // Vùng nút "Mở thiệp" trong hệ UV mặt trước (0–1). Đo runtime từ DOM đã chụp
   // → hit-test tap theo UV, mở đúng khi chạm nút bất kể card đang xoay góc nào.
@@ -323,6 +352,24 @@ export default function Envelope3D({
         if (canvas.width > 0) setRatio(canvas.height / canvas.width);
         setFrontTex(tex);
         setBtnUV(measureButtonUV(node));
+
+        // Lớp hoa chụp riêng: nền trong suốt, vùng rộng hơn card (padding) để
+        // chứa phần hoa tràn mép. Map lên plane lớn hơn trong group xoay.
+        const decorNode = decorRef.current;
+        if (decorNode) {
+          const decorCanvas = await toCanvas(decorNode, {
+            pixelRatio: 2,
+            cacheBust: true,
+            backgroundColor: undefined,
+          });
+          if (cancelled) return;
+          const dTex = new CanvasTexture(decorCanvas);
+          dTex.colorSpace = SRGBColorSpace;
+          dTex.anisotropy = 4;
+          dTex.minFilter = LinearFilter;
+          dTex.needsUpdate = true;
+          setDecorTex(dTex);
+        }
       } catch {
         // Chụp lỗi → mặt trước để trống (box giấy vẫn hiện), user vẫn mở được.
       }
@@ -363,6 +410,40 @@ export default function Envelope3D({
         </div>
       </div>
 
+      {/* Node chụp hoa RIÊNG: vùng rộng hơn card DECOR_PAD_PX mỗi phía, nền trong
+          suốt. Card ảo (kích thước CARD_PX, trong suốt) đặt giữa qua padding →
+          hoa translate ngoài mép card rơi vào vùng pad, không bị crop. Map lên
+          plane faceW×faceH khớp đúng vì cùng tỉ lệ pad/card. */}
+      {renderDecor ? (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: -99999,
+            width: CARD_PX + 2 * DECOR_PAD_PX,
+            pointerEvents: "none",
+            opacity: 0,
+          }}
+        >
+          {/* padding (không margin) trên chính node chụp → tránh margin-collapse
+              làm card ảo dồn lên đỉnh, lệch cả lớp hoa. box-sizing border-box để
+              vùng nội dung = CARD_PX, card nằm CHÍNH GIỮA vùng pad. */}
+          <div
+            ref={decorRef}
+            style={{
+              boxSizing: "border-box",
+              width: CARD_PX + 2 * DECOR_PAD_PX,
+              padding: DECOR_PAD_PX,
+            }}
+          >
+            <div style={{ position: "relative", width: "100%", aspectRatio: "3 / 4.5" }}>
+              {renderDecor()}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <Canvas
         camera={{ position: [0, 0, 6], fov: 40 }}
         dpr={[1, 2]}
@@ -379,6 +460,7 @@ export default function Envelope3D({
           paperColor={paperColor}
           accentColor={accentColor}
           frontTex={frontTex}
+          decorTex={decorTex}
           ratio={ratio}
           btnUV={btnUV}
         />

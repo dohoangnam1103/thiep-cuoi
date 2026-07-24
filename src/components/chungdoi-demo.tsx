@@ -619,11 +619,15 @@ function CoverCard({
   tokens,
   onOpen,
   opening = false,
+  hideDecor = false,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
   onOpen: () => void;
   opening?: boolean;
+  // Ẩn lớp hoa (cardImages) — dùng khi chụp texture mặt trước 3D, vì hoa tràn
+  // mép sẽ bị crop theo khung card. Hoa được chụp riêng qua CoverDecor.
+  hideDecor?: boolean;
 }) {
   const liveForms = useLiveForms();
   const date = formatDate(content.couple.date);
@@ -671,33 +675,40 @@ function CoverCard({
         </div>
       ) : null}
 
-      {/* frosted glass panel sau text: nền theme + hoạ tiết trang trí làm chữ khó
-          đọc (bản gốc có tấm kính này). Đặt dưới text layer (z-10), trên lớp trang
-          trí (z-0). Blur nền + phủ trắng nhẹ → chữ luôn nổi bật bất kể màu theme. */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[5] rounded-lg"
-        style={{
-          background: "rgba(255,255,255,0.55)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-          boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 30px -12px rgba(0,0,0,0.25)",
-        }}
-      />
+      {/* frosted glass panel: CHỈ cho glass-garden-green — card nền trong suốt nằm
+          thẳng trên nền floral rối nên cần tấm kính phủ trắng + blur để chữ đọc
+          được. Các theme khác card có nền riêng (đặc hoặc rgba ~0.95) đọc tốt sẵn;
+          tấm trắng chỉ làm bệt màu nên KHÔNG áp. */}
+      {content.slug === "glass-garden-green" ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-[5] rounded-lg"
+          style={{
+            background: "rgba(255,255,255,0.55)",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 30px -12px rgba(0,0,0,0.25)",
+          }}
+        />
+      ) : null}
 
       {/* lớp hoa trang trí: nằm TRÊN frosted panel (z-[6]) và KHÔNG bị clip →
-          hoa tràn ra ngoài mép card và không bị lớp mờ che, giống bản gốc. */}
-      <div className="pointer-events-none absolute inset-0 z-[6]">
-        {tokens.cardImages.map((img, i) => (
-          <img
-            key={i}
-            src={img.src}
-            alt=""
-            aria-hidden="true"
-            className={`pointer-events-none absolute ${img.className}`}
-            style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
-          />
-        ))}
-      </div>
+          hoa tràn ra ngoài mép card và không bị lớp mờ che, giống bản gốc.
+          Ẩn khi chụp texture 3D (hideDecor) vì hoa tràn mép bị crop — cover 3D
+          chụp hoa riêng qua CoverDecor rồi map lên plane lớn hơn. */}
+      {!hideDecor ? (
+        <div className="pointer-events-none absolute inset-0 z-[6]">
+          {tokens.cardImages.map((img, i) => (
+            <img
+              key={i}
+              src={img.src}
+              alt=""
+              aria-hidden="true"
+              className={`pointer-events-none absolute ${img.className}`}
+              style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
+            />
+          ))}
+        </div>
+      ) : null}
 
       {/* transparent text layer on top: absolute + flex center → không đẩy chiều
           cao, cha giữ đúng aspectRatio 3:4.5 (portrait), 2D và texture 3D khớp. */}
@@ -896,9 +907,26 @@ function EnvelopeCover({
           renderCard={(handleOpen) => (
             <div className="relative">
               <Seal tokens={tokens} opening={opening} />
-              <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} />
+              <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} hideDecor />
             </div>
           )}
+          renderDecor={
+            tokens.cardImages.length
+              ? () => (
+                  <div className="pointer-events-none absolute inset-0">
+                    {tokens.cardImages.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img.src}
+                        alt=""
+                        aria-hidden="true"
+                        className={`pointer-events-none absolute ${img.className}`}
+                      />
+                    ))}
+                  </div>
+                )
+              : undefined
+          }
         />
         <p
           className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
