@@ -62,6 +62,7 @@ import { cn } from "@/lib/utils";
 import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage } from "@/lib/invitation-display";
 import { isGoogleMapsShortUrl, isGoogleMapsUrl } from "@/lib/google-maps";
 import { shortNameFromFullName } from "@/lib/short-name";
+import { normalizeAlbumLayout, type AlbumLayout } from "@/lib/album-layout";
 import { trialExpiresAt } from "@/lib/trial";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
@@ -232,6 +233,7 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
     heroImage2: read("heroImage2"),
     showHeroImage,
     dressCodeColors: read("dressCodeColors"),
+    albumLayout: normalizeAlbumLayout(read("albumLayout")),
     wishes: [],
     bank: {
       brideBankName: read("brideBankName"),
@@ -580,6 +582,7 @@ function EventDateTimeField({
   timeDefault,
   hint,
   requiredMark,
+  value,
   onDateChange,
 }: {
   dateName: string;
@@ -589,9 +592,11 @@ function EventDateTimeField({
   timeDefault?: string;
   hint?: string;
   requiredMark?: boolean;
+  value?: string;
   onDateChange?: (value: string) => void;
 }) {
-  const [date, setDate] = useState(dateDefault ?? "");
+  const [internalDate, setInternalDate] = useState(dateDefault ?? "");
+  const date = value !== undefined ? value : internalDate;
   const parsed = date ? new Date(`${date}T00:00:00`) : null;
   const weekday = parsed && !Number.isNaN(parsed.getTime())
     ? parsed.toLocaleDateString("vi-VN", { weekday: "long" })
@@ -624,7 +629,7 @@ function EventDateTimeField({
             type="date"
             value={date}
             onChange={(event) => {
-              setDate(event.target.value);
+              setInternalDate(event.target.value);
               onDateChange?.(event.target.value);
             }}
             aria-label={`${label} - ngày`}
@@ -1176,6 +1181,51 @@ const DRESS_CODE_PRESETS: { hex: string; label: string }[] = [
   { hex: "#A3B18A", label: "Xanh rêu" },
   { hex: "#A9B8CC", label: "Xanh xám" },
 ];
+
+const ALBUM_LAYOUT_OPTIONS: { value: AlbumLayout; label: string }[] = [
+  { value: "grid", label: "Lưới" },
+  { value: "mosaic", label: "Ghép ảnh" },
+  { value: "coverflow", label: "3D" },
+];
+
+/** Chọn kiểu hiển thị album; ghi giá trị vào hidden input albumLayout cho action + live preview. */
+function AlbumLayoutField({ defaultValue }: { defaultValue: string }) {
+  const [layout, setLayout] = useState<AlbumLayout>(() => normalizeAlbumLayout(defaultValue));
+  const hiddenRef = useRef<HTMLInputElement | null>(null);
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      return;
+    }
+    hiddenRef.current?.dispatchEvent(new Event("input", { bubbles: true }));
+  }, [layout]);
+
+  return (
+    <div className="sm:col-span-2">
+      <input ref={hiddenRef} type="hidden" name="albumLayout" value={layout} />
+      <span className={labelClass}>Kiểu hiển thị album</span>
+      <div className="mt-2 grid grid-cols-3 gap-2">
+        {ALBUM_LAYOUT_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => setLayout(opt.value)}
+            className={cn(
+              "rounded-lg border px-3 py-2 text-sm transition",
+              layout === opt.value
+                ? "border-primary bg-primary/10 text-foreground"
+                : "border-border text-muted-foreground hover:border-primary/40",
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /** Chọn nhiều màu trang phục; xuất chuỗi hex phân tách bằng dấu phẩy vào hidden input dressCodeColors. */
 function DressCodeField({ defaultValue }: { defaultValue: string }) {
@@ -1971,8 +2021,11 @@ function EditorFormContent({
                         onChange={(event) => {
                           const date = event.target.value;
                           setCeremonyRows((rows) => rows.map((item) => (
-                            item.id === row.id ? { ...item, date } : item
+                            item.id === row.id
+                              ? { ...item, date }
+                              : item.date ? item : { ...item, date }
                           )));
+                          if (date) setWeddingDate((prev) => prev || date);
                         }}
                         className={inputClass}
                       />
@@ -2020,6 +2073,7 @@ function EditorFormContent({
             >
               <Plus className="size-4.5" aria-hidden />
               {ceremonyT("add")}
+              <span className="text-xs font-normal italic text-muted-foreground">{ceremonyT("optional")}</span>
             </button>
           </div>
         </Accordion>
@@ -2034,13 +2088,16 @@ function EditorFormContent({
               timeDefault={seed("time", field(content, "time")) || seed("banquetTime", field(content, "banquetTime"))}
               hint="Thứ và ngày âm lịch được hệ thống tự tính từ ngày dương lịch."
               requiredMark
+              value={weddingDate}
               onDateChange={setWeddingDate}
             />
           </Grid>
           <div className="mt-6 border-t border-border pt-5">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-foreground">Chương trình</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Chương trình <span className="text-xs font-normal italic text-muted-foreground">(không bắt buộc)</span>
+                </p>
                 <p className="mt-1 text-xs text-muted-foreground">Các mốc như đón khách, khai tiệc, cắt bánh hoặc kết thúc.</p>
               </div>
               <button
@@ -2071,7 +2128,10 @@ function EditorFormContent({
         </Accordion>
 
         <Accordion title="Album ảnh" icon="▧">
-          <GalleryUploader initial={Array.isArray(draft?.galleryUrl) ? (draft!.galleryUrl as string[]) : gallery} />
+          <AlbumLayoutField defaultValue={seed("albumLayout", field(content, "albumLayout") ?? "grid")} />
+          <div className="mt-4">
+            <GalleryUploader initial={Array.isArray(draft?.galleryUrl) ? (draft!.galleryUrl as string[]) : gallery} />
+          </div>
         </Accordion>
 
         <TierDivider />
