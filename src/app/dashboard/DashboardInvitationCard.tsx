@@ -33,6 +33,14 @@ export function DashboardInvitationCard({
 }: DashboardInvitationCardProps) {
   const theme = resolveDashboardCardTheme(templateId);
   const published = status === "published";
+  // Card nền theme rất tương phản (nền hoa sáng, nền đỏ tối) nên chữ khó đọc.
+  // Bọc RIÊNG cụm text bên trái bằng chip nền trắng mờ ôm sát nội dung (không
+  // phủ cả card như tấm cũ) → text luôn đọc được trên mọi nền vì có nền trắng
+  // cục bộ, không phụ thuộc quầng sáng. Chip chỉ bật khi có theme.
+  const textChipClass = theme
+    ? "self-start rounded-xl bg-white/70 px-3 py-2 shadow-sm backdrop-blur-md"
+    : "";
+  const showTrialBanner = Boolean(published && !paid && publishedAt);
 
   return (
     <li
@@ -40,7 +48,7 @@ export function DashboardInvitationCard({
       data-themed={theme ? "true" : "false"}
       className={`relative overflow-hidden rounded-2xl border p-4 shadow sm:p-5 ${
         theme ? "border-black/10" : "border-border bg-card"
-      }`}
+      } ${showTrialBanner ? "" : "sm:min-h-[184px]"}`}
       style={theme ? { background: theme.background } : undefined}
     >
       {theme
@@ -59,20 +67,11 @@ export function DashboardInvitationCard({
           ))
         : null}
 
-      <div
-        className={`relative z-10 ${
-          theme ? "rounded-xl bg-white/45 p-4 backdrop-blur-sm sm:p-5" : ""
-        }`}
-      >
+      <div className="relative z-10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
+          <div className={`min-w-0 ${textChipClass}`}>
             <div className="flex flex-wrap items-center gap-3">
-              <h2
-                className={`font-heading text-lg font-semibold ${
-                  theme ? "" : "text-foreground"
-                }`}
-                style={theme ? { color: theme.textColor } : undefined}
-              >
+              <h2 className="font-heading text-lg font-semibold text-foreground">
                 {title}
               </h2>
               <span
@@ -86,19 +85,11 @@ export function DashboardInvitationCard({
               </span>
             </div>
             {hasNames ? (
-              <p
-                className={`mt-0.5 text-sm ${theme ? "" : "text-muted-foreground"}`}
-                style={theme ? { color: theme.mutedTextColor } : undefined}
-              >
+              <p className="mt-0.5 text-sm text-muted-foreground">
                 {templateName}
               </p>
             ) : null}
-            <div
-              className={`mt-2 flex gap-4 text-sm ${
-                theme ? "" : "text-muted-foreground"
-              }`}
-              style={theme ? { color: theme.mutedTextColor } : undefined}
-            >
+            <div className="mt-2 flex gap-4 text-sm text-muted-foreground">
               <span>{rsvpCount} xác nhận</span>
               <span>{wishCount} lời chúc</span>
             </div>
@@ -135,19 +126,10 @@ export function DashboardInvitationCard({
               <span className="rounded-full bg-green-500/15 px-4 py-1.5 font-medium text-green-700">
                 Đã thanh toán
               </span>
-            ) : (
-              <Link
-                href={`/dashboard/${id}/thanh-toan`}
-                data-ga-event="checkout_click"
-                data-ga-param-source="dashboard"
-                className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground transition hover:bg-primary/90"
-              >
-                Thanh toán
-              </Link>
-            )}
+            ) : null}
           </div>
         </div>
-        {published && !paid && publishedAt ? (
+        {showTrialBanner && publishedAt ? (
           <TrialCountdownBanner
             invitationId={id}
             expiresAt={trialExpiresAt(new Date(publishedAt)).getTime()}

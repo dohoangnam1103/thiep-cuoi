@@ -3,7 +3,6 @@
 import { ImageIcon, Menu, MessageCircle, Play, Plus, Users, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 import NextLink from "next/link";
 
@@ -13,7 +12,7 @@ import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { Link, usePathname } from "@/i18n/navigation";
 import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 
-type SessionState = { loggedIn: boolean; firstInvitationId: string | null; email?: string | null };
+type SessionState = { loggedIn: boolean; firstInvitationId: string | null; invitationCount?: number; email?: string | null };
 
 function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -66,9 +65,12 @@ export function SiteHeader({
   }, []);
 
   const loggedIn = session?.loggedIn ?? initialLoggedIn;
-  const guestsHref = session?.firstInvitationId
-    ? `/dashboard/${session.firstInvitationId}/guests`
-    : "/dashboard";
+  // Khách mời: đúng 1 thiệp → vào guests của thiệp đó luôn. 0 hoặc nhiều thiệp →
+  // vào /dashboard (danh sách thiệp) để user tự chọn.
+  const guestsHref =
+    session?.invitationCount === 1 && session.firstInvitationId
+      ? `/dashboard/${session.firstInvitationId}/guests`
+      : "/dashboard";
   const templatesActive = isActivePath(pathname, "/templates");
   const guestsActive = /^\/dashboard\/[^/]+\/guests(?:\/|$)/.test(pathname);
   const dashboardActive = isActivePath(pathname, "/dashboard") && !guestsActive;
@@ -121,23 +123,13 @@ export function SiteHeader({
               >
                 {t("nav.myInvitations")}
               </NextLink>
-              {session && !session.firstInvitationId ? (
-                <button
-                  type="button"
-                  onClick={() => toast.info(t("noInvitationForGuests"))}
-                  className={desktopNavClassName(false)}
-                >
-                  {t("nav.guests")}
-                </button>
-              ) : (
-                <NextLink
-                  href={guestsHref}
-                  className={desktopNavClassName(guestsActive)}
-                  aria-current={guestsActive ? "page" : undefined}
-                >
-                  {t("nav.guests")}
-                </NextLink>
-              )}
+              <NextLink
+                href={guestsHref}
+                className={desktopNavClassName(guestsActive)}
+                aria-current={guestsActive ? "page" : undefined}
+              >
+                {t("nav.guests")}
+              </NextLink>
             </>
           ) : null}
           <Link href="/pricing" className={desktopNavClassName(pricingActive)} aria-current={pricingActive ? "page" : undefined}>
