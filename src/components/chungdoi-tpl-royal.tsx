@@ -11,10 +11,9 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -114,9 +113,6 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
   const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
   const ceremonyWeekdayUpper = ceremony ? ceremony.weekday.toUpperCase() : "";
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const [giftOpen, setGiftOpen] = useState(false);
 
@@ -181,22 +177,10 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
           </div>
 
           {/* Album */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <div className="flex w-full flex-col items-center gap-6">
               <RoyalHeading>Album ảnh cưới</RoyalHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(ROYAL_GOLD, 0.3) }}>
-                    <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55">
-                        <span className="text-lg font-semibold text-white">+{albumExtra}</span>
-                      </div>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={ROYAL_GOLD} />
+              <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={ROYAL_GOLD} gridAspect="aspect-square" />
             </div>
           ) : null}
 

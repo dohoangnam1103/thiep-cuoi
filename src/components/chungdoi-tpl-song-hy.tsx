@@ -13,6 +13,7 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
+  AlbumGallery,
   Lightbox,
   InvitationMap,
   MapDirectionsButton,
@@ -266,7 +267,9 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           <SongHyBand palette={palette}>Album Ảnh Cưới</SongHyBand>
           <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
             <div className="relative z-10 mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
-              {palette.albumCarousel ? (
+              {(content.albumLayout ?? "grid") !== "grid" ? (
+                <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={palette.accent} gridAspect="aspect-square" />
+              ) : palette.albumCarousel ? (
                 <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-lg">
                   <SharedCarousel photos={gallery} />
                 </div>
