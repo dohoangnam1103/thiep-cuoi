@@ -423,6 +423,24 @@ export const templates = [
     "sourceUrl": "https://chungdoi.com/en/templates/royal-red"
   },
   {
+    "slug": "maroon-love",
+    "name": "Maroon Love",
+    "title": "Maroon Love Template - Đỏ Đô Sang Trọng | Thiệp Mừng Online",
+    "description": "Thiệp cưới Maroon Love nền đỏ đô đậm, chữ serif kem và điểm nhấn hồng. Phong cách lãng mạn, sang trọng. Tạo miễn phí trên Thiệp Mừng Online.",
+    "category": "Modern",
+    "color": "Red",
+    "isNew": true,
+    "highlights": [
+      "Nền đỏ đô đậm — ấm và sang trọng",
+      "Chữ serif màu kem thanh lịch",
+      "Điểm nhấn hồng phấn lãng mạn"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/royal_red.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/royal_red.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/royal_red.webp",
+    "sourceUrl": "https://chungdoi.com/en/templates/royal-red"
+  },
+  {
     "slug": "nhat-binh-red",
     "name": "Nhat Binh Red",
     "title": "Nhat Binh Red Template - Cream Paper, Vermillion Accents, Brown Envelope | Thiệp Mừng Online",
@@ -745,6 +763,7 @@ export const completedTemplateSlugs = new Set<string>([
   "double-dragon-blue",
   "double-dragon-green",
   "royal-red",
+  "maroon-love",
   "royal-blue",
   "royal-green",
   "spring-garden-green",

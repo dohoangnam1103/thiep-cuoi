@@ -522,6 +522,7 @@ export function GiftEnvelope({
   variant = "envelope",
   boxImage,
   decorImages = [],
+  photoImage,
 }: {
   banks: GiftBank[];
   accent: string;
@@ -529,9 +530,10 @@ export function GiftEnvelope({
   cardBg: string;
   heading?: string;
   labelColor?: string;
-  variant?: "envelope" | "giftbox";
+  variant?: "envelope" | "giftbox" | "photo";
   boxImage?: string;
   decorImages?: string[];
+  photoImage?: string;
 }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -547,8 +549,22 @@ export function GiftEnvelope({
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: dark }}>{heading}</h2>
-      <button data-testid="gift-envelope" type="button" aria-label={`Mở ${heading.toLowerCase()}`} onClick={() => setOpen(true)} className={`group relative cursor-pointer border-none bg-transparent outline-none ${variant === "giftbox" ? "h-[280px] w-[260px]" : "h-64 w-[200px]"}`}>
-        {variant === "giftbox" ? (
+      <button data-testid="gift-envelope" type="button" aria-label={`Mở ${heading.toLowerCase()}`} onClick={() => setOpen(true)} className={`group relative cursor-pointer border-none bg-transparent outline-none ${variant === "giftbox" ? "h-[280px] w-[260px]" : variant === "photo" ? "h-[300px] w-[280px]" : "h-64 w-[200px]"}`}>
+        {variant === "photo" ? (
+          <div data-testid="gift-envelope-animation" className="igb-wrapper relative flex h-full w-full items-center justify-center">
+            <span aria-hidden className="nhat-binh-sparkle absolute text-white" style={{ top: "10%", left: "14%", fontSize: 16, color: accent }}>✦</span>
+            <span aria-hidden className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute" style={{ top: "34%", right: "10%", fontSize: 12, color: accent }}>✦</span>
+            <span aria-hidden className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute" style={{ bottom: "18%", left: "18%", fontSize: 10, color: accent }}>✦</span>
+            <div className="igb-bob relative flex h-full w-full items-center justify-center" aria-hidden>
+              <div className="relative z-[2] -mr-[13%] w-[46%] max-w-[132px] origin-bottom" style={{ transform: "rotate(-8deg)" }}>
+                <img src={photoImage} alt="" aria-hidden className="igb-box h-auto w-full origin-bottom object-contain" style={{ filter: "drop-shadow(rgba(0,0,0,0.18) 0px 8px 16px)" }} />
+              </div>
+              <div className="relative z-[1] w-[46%] max-w-[132px] origin-bottom" style={{ transform: "scaleX(-1) rotate(-8deg)" }}>
+                <img src={photoImage} alt="" aria-hidden className="igb-box h-auto w-full origin-bottom object-contain" style={{ filter: "drop-shadow(rgba(0,0,0,0.18) 0px 8px 16px)" }} />
+              </div>
+            </div>
+          </div>
+        ) : variant === "giftbox" ? (
           <div data-testid="gift-envelope-animation" className="igb-wrapper relative flex h-full w-full items-end justify-center pb-8">
             <div className="igb-bob relative h-[220px] w-[200px]" aria-hidden>
               {decorImages.slice(0, IGB_DECOR_POS.length).map((src, i) => (
@@ -606,7 +622,7 @@ export function GiftEnvelope({
           </div>
         </div>
         )}
-        <p className={`${variant === "giftbox" ? "igb-hint bottom-0" : "nhat-binh-hint-text -bottom-2"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
+        <p className={`${variant === "giftbox" || variant === "photo" ? "igb-hint bottom-0" : "nhat-binh-hint-text -bottom-2"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>

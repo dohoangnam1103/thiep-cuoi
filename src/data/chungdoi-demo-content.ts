@@ -2457,6 +2457,85 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
     },
     "music": "/chungdoi/music/royal-red.mp3"
   },
+  "maroon-love": {
+    "slug": "maroon-love",
+    "invitationId": "maroon-love-demo",
+    "theme": {
+      "primaryColor": "#e8b4b8",
+      "fontFamily": "Fz Qellia",
+      "assetFolder": "maroon-love",
+      "assets": []
+    },
+    "couple": {
+      "brideFullName": "Lê Thị Cát Tường",
+      "groomFullName": "Phan Quốc Anh",
+      "brideShortName": "Ngọc Linh",
+      "groomShortName": "Hoài Nam",
+      "brideFirst": false,
+      "date": "2026-05-30",
+      "time": "11:00",
+      "ceremonyDate": "2026-02-01",
+      "ceremonyTime": "09:00",
+      "ceremonyHeader": "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA"
+    },
+    "families": {
+      "brideFather": "Lê  Đăng Khoa",
+      "brideMother": "Nguyễn Kim Oanh",
+      "brideAddress": "Ngõ 95 Láng Hạ, Láng Hạ, Đống Đa, Hà Nội",
+      "groomFather": "Phan Tiến Minh",
+      "groomMother": "Vương Thị Hồng",
+      "groomAddress": "Số 85 Nguyễn Thái Sơn, Phường 4, Gò Vấp, TP. Hồ Chí Minh",
+      "brideParentTitle": "Ông Bà",
+      "groomParentTitle": "Ông Bà"
+    },
+    "venue": {
+      "address": "Tiệc cưới Trống Đồng Cảnh Hồ, 173 Trường Chinh, Quận Thanh Xuân, Hà Nội",
+      "mapAddress": "Tiệc cưới Trống Đồng Cảnh Hồ, 173 Trường Chinh, Quận Thanh Xuân, Hà Nội",
+      "banquetTime": "11:00"
+    },
+    "schedule": [
+      {
+        "time": "17:30",
+        "label": "Đón khách"
+      },
+      {
+        "time": "18:30",
+        "label": "Khai tiệc"
+      },
+      {
+        "time": "18:45",
+        "label": "Rót rượu, cắt bánh"
+      },
+      {
+        "time": "19:00",
+        "label": "Phục vụ món chính"
+      },
+      {
+        "time": "21:00",
+        "label": "Kết thúc tiệc"
+      }
+    ],
+    "gallery": [
+      "/chungdoi/images/gallery/royal-red/photo-1.webp",
+      "/chungdoi/images/gallery/royal-red/photo-2.webp",
+      "/chungdoi/images/gallery/royal-red/photo-3.webp",
+      "/chungdoi/images/gallery/royal-red/photo-4.webp",
+      "/chungdoi/images/gallery/royal-red/photo-5.webp",
+      "/chungdoi/images/gallery/royal-red/photo-6.webp",
+      "/chungdoi/images/gallery/royal-red/photo-7.webp",
+      "/chungdoi/images/gallery/royal-red/photo-8.webp"
+    ],
+    "wishes": [],
+    "bank": {
+      "brideBankName": "VietinBank",
+      "brideAccountNumber": "8084856145",
+      "brideAccountName": "Lê Thị Cát Tường",
+      "groomBankName": "Vietcombank",
+      "groomAccountNumber": "874897489498",
+      "groomAccountName": "Phan Quốc Anh"
+    },
+    "music": "/chungdoi/music/royal-red.mp3"
+  },
   "nhat-binh-red": {
     "slug": "nhat-binh-red",
     "invitationId": "giakhang-dieuanh",

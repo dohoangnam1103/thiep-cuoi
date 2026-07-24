@@ -71,6 +71,7 @@ const RoyalRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-royal
 const RoyalBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-royal").then((m) => m.RoyalBlueInvitation));
 const RoyalGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-royal").then((m) => m.RoyalGreenInvitation));
 const ChateauBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-chateau-blue").then((m) => m.ChateauInvitation));
+const MaroonLoveInvitation = dynamic(() => import("@/components/chungdoi-tpl-maroon-love").then((m) => m.MaroonLoveInvitation));
 
 const AUDITED_TEMPLATE_RENDERERS = {
   "boho-floral-green": BohoFloralGreenInvitation,
@@ -1424,6 +1425,8 @@ export function ChungDoiDemo({
         <RoyalBlueInvitation content={content} />
       ) : content.slug === "royal-green" ? (
         <RoyalGreenInvitation content={content} />
+      ) : content.slug === "maroon-love" ? (
+        <MaroonLoveInvitation content={content} />
       ) : content.slug === "chateau-blue" ? (
         <ChateauBlueInvitation content={content} />
       ) : content.slug === "chateau-green" ? (

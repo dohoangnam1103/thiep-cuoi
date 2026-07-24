@@ -38,6 +38,7 @@ export const vietnameseTemplateSlugs = [
   ["double-dragon-blue", "song-long-lam"],
   ["dragon-phoenix-blue", "long-phung-lam"],
   ["dragon-phoenix-black", "long-phung-huyen"],
+  ["maroon-love", "maroon-love"],
 ] as const;
 
 const vietnameseSlugBySourceSlug = new Map<string, string>(vietnameseTemplateSlugs);
