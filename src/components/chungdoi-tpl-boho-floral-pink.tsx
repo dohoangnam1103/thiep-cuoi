@@ -10,8 +10,11 @@ const scriptFont = { fontFamily: '"Fz Aghita", "The Nautigal", cursive' };
 function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
   const { gallery } = content;
   const people = orderedCouple(content);
+  const heroOn = content.showHeroImage !== false;
   const firstPhoto = invitationHeroImage(content);
-  const secondPhoto = content.heroImage ? gallery[0] : gallery[1];
+  const secondPhoto = heroOn
+    ? content.heroImage2?.trim() || (content.heroImage ? gallery[0] : gallery[1])
+    : "";
 
   return (
     <header

@@ -3,7 +3,6 @@ const HERO_IMAGE_TEMPLATE_SLUGS = new Set([
   "song-hy-green",
   "boho-floral-green",
   "boho-floral-brown",
-  "boho-floral-pink",
   "elegant-leaf-green",
   "hoa-tinh-red",
   "cherry-blossom-pink",
@@ -13,6 +12,7 @@ const HERO_IMAGE_TEMPLATE_SLUGS = new Set([
 const DUAL_HERO_IMAGE_TEMPLATE_SLUGS = new Set([
   "double-dragon-red",
   "double-dragon-blue",
+  "boho-floral-pink",
 ]);
 
 export function templateSupportsHeroImage(templateSlug: string): boolean {
