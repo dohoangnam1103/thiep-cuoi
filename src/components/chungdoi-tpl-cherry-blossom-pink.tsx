@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
@@ -40,14 +42,42 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
     couple.brideFirst,
   ).filter((q) => q.bank);
 
+  const parallaxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = parallaxRef.current;
+    if (!root) return;
+    const layers = Array.from(root.querySelectorAll<HTMLElement>("[data-parallax]"));
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const scrolled = -root.getBoundingClientRect().top;
+      for (const el of layers) {
+        const speed = Number(el.dataset.parallax) || 0;
+        const flip = el.dataset.flip === "1" ? " scaleX(-1)" : "";
+        el.style.transform = `translateY(${(scrolled * speed).toFixed(2)}px)${flip}`;
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+  }, []);
+
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BLUSH }}>
-      <div className="relative w-full max-w-[480px] overflow-hidden rounded bg-[url('/chungdoi/images/themes/_decor/anhdao-pink/bg-full.jpg')] bg-cover bg-center md:mx-auto md:max-w-[900px] md:border" style={{ color: PINK, borderColor: hexToRgba(PINK, 0.2) }}>
+      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden rounded md:mx-auto md:max-w-[900px] md:border" style={{ color: PINK, borderColor: hexToRgba(PINK, 0.2) }}>
+        {/* BACKGROUND — dải watermark cành đào (900×6000) phủ full chiều rộng, lặp dọc suốt trang */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 bg-[url('/chungdoi/images/themes/_decor/anhdao-pink/bg-full.jpg')] bg-[length:100%_auto] bg-top bg-repeat-y"
+          aria-hidden
+        />
         {/* HEADER */}
         <div className="relative z-10 w-full">
           <img src={`${BASE}/1.webp`} alt="" aria-hidden className="block h-auto w-full" />
         </div>
-        <header className="relative z-20 flex flex-col items-center justify-center px-6 pb-12 pt-0 text-center md:-mt-[200px] md:px-10 md:pb-16 lg:-mt-[200px]">
+        <header className="relative z-10 flex flex-col items-center justify-center px-6 pb-12 pt-0 text-center md:-mt-[200px] md:px-10 md:pb-16 lg:-mt-[200px]">
+          {/* cành đào lớn mờ, lệch phải + chéo, phủ sau tên cặp đôi (giống bản gốc) + parallax. Header ở z-10 nên album (z-10, sau trong DOM) vẽ đè lên cành — cành hiện ở khoảng trống, không che ảnh. Mask fade đáy để cành tan dần thay vì bị album cắt ngang */}
+          <img src={`${BASE}/3.webp`} alt="" aria-hidden data-parallax="0.18" data-flip="1" className="pointer-events-none absolute left-[-8%] top-[-28%] -z-10 h-[250%] w-[150%] max-w-none object-contain opacity-50" style={{ willChange: "transform", backfaceVisibility: "hidden", maskImage: "linear-gradient(to bottom, #000 55%, transparent 82%)", WebkitMaskImage: "linear-gradient(to bottom, #000 55%, transparent 82%)" }} />
           {heroImage ? (
             <div className="absolute right-[8.5vw] top-[-400px] z-20 rotate-[11.447deg] md:right-[5vw] md:top-[-896px] lg:right-8 lg:top-[-896px]">
               <div className="h-[88vw] w-[66vw] overflow-hidden border-[2.8vw] border-white bg-white shadow-2xl md:h-[62vw] md:w-[47vw] md:border-[2vw] lg:h-[448px] lg:w-[340px] lg:border-[14px]">
@@ -101,7 +131,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
 
           {/* RECEPTION + CALENDAR */}
           <section className="relative flex w-full flex-col items-center gap-3">
-            <img src={`${BASE}/3.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-16 right-0 -z-10 h-[200px] w-auto max-w-none object-contain opacity-80 md:h-[300px]" />
+            <img src={`${BASE}/3.webp`} alt="" aria-hidden data-parallax="0.12" className="pointer-events-none absolute -top-24 right-[-12%] -z-10 h-[420px] w-auto max-w-none object-contain opacity-[0.22] md:-top-32 md:right-[-8%] md:h-[620px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }} />
             <CherryHeading>Thông Tin Tiệc Cưới</CherryHeading>
             <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]">Tiệc cưới sẽ diễn ra vào lúc:</p>
             <div className="text-[20px] font-semibold md:text-[30px]">{venue.banquetTime || couple.time}</div>
@@ -147,8 +177,8 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
           {/* SCHEDULE */}
           {schedule.length > 0 ? (
             <section className="relative flex w-full flex-col items-center gap-6">
-              <img src={`${BASE}/1.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-6 top-[70px] -z-10 h-[130px] w-auto object-contain opacity-70 md:h-[190px]" />
-              <img src={`${BASE}/2.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-6 top-[70px] -z-10 h-[130px] w-auto object-contain opacity-70 md:h-[190px]" />
+              <img src={`${BASE}/1.webp`} alt="" aria-hidden data-parallax="0.14" className="pointer-events-none absolute -left-6 top-[70px] -z-10 h-[130px] w-auto object-contain opacity-[0.15] md:h-[190px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }} />
+              <img src={`${BASE}/2.webp`} alt="" aria-hidden data-parallax="0.1" className="pointer-events-none absolute -right-6 top-[70px] -z-10 h-[130px] w-auto object-contain opacity-[0.15] md:h-[190px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }} />
               <CherryHeading>Lịch Trình Ngày Cưới</CherryHeading>
               <ol className="mx-auto flex w-full max-w-sm flex-col gap-4">
                 {schedule.map((s, i) => (
@@ -183,7 +213,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={PINK} dark={PINK} cardBg={BLUSH} heading="Hộp Quà Mừng" labelColor={PINK_MUTED} />
+              <GiftEnvelope banks={banks} accent={PINK} dark={PINK} cardBg={BLUSH} heading="Hộp Quà Mừng" labelColor={PINK_MUTED} variant="photo" photoImage="/chungdoi/images/envelope/cherry_blossom_pink.webp" />
             </section>
           ) : null}
         </div>
