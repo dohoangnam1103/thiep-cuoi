@@ -12,10 +12,9 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -49,10 +48,7 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const galleryShown = gallery.slice(0, 4);
-  const galleryExtra = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
     { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
@@ -150,25 +146,14 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
           </div>
         </section>
 
-        {galleryShown.length > 0 ? (
+        {gallery.length > 0 ? (
           <section className="relative z-10 flex flex-col items-center px-6 py-6 md:px-8 md:py-10">
             <h2 className="mb-6 text-center text-[20px] font-bold uppercase md:text-[24px]">Album Ảnh Cưới</h2>
-            <div className="w-full max-w-[320px] md:max-w-[550px]">
-              <div className="grid grid-cols-2 gap-3 p-4 md:gap-4 md:p-6">
-                {galleryShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg border bg-white/50" style={{ borderColor: "#00000011" }}>
-                    <img src={src} alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
-                    {i === galleryShown.length - 1 && galleryExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-lg font-semibold text-white">+{galleryExtra}</div>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
+            <div className="w-full max-w-[320px] md:max-w-[550px] p-4 md:p-6">
+              <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={CREAM} gridAspect="aspect-square" />
             </div>
           </section>
         ) : null}
-
-        <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={CREAM} />
 
         {reception ? (
           <section className="relative z-10 flex flex-col items-center gap-4 px-6 py-10 text-center md:gap-6 md:py-14">

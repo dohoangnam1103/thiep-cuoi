@@ -12,10 +12,9 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -142,9 +141,6 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const galleryShown = gallery.slice(0, 4);
-  const galleryExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
   const [bankOpen, setBankOpen] = useState(false);
@@ -211,26 +207,14 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
         <section className="relative z-10 px-4 pb-10 pt-4 md:px-10 md:pb-14">
           <div className="relative z-[2] flex w-full flex-col items-center gap-12 md:gap-16">
             {/* Album ảnh cưới */}
-            {galleryShown.length > 0 ? (
+            {gallery.length > 0 ? (
               <div className="flex w-full max-w-[478px] flex-col items-center md:max-w-none">
                 <h2 className="text-center text-[26px] font-semibold uppercase md:text-[32px]" style={{ color: GOLD, fontFamily: LPD_BODY, letterSpacing: "0.04em" }}>
                   Album Ảnh Cưới <span className="opacity-70">/ 婚禮相冊</span>
                 </h2>
                 <div className="mt-6 w-full max-w-[390px] md:max-w-[560px]">
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    {galleryShown.map((src, i) => (
-                      <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(GOLD, 0.25) }}>
-                        <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                        {i === galleryShown.length - 1 && galleryExtra > 0 ? (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/55">
-                            <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
-                          </div>
-                        ) : null}
-                      </button>
-                    ))}
-                  </div>
+                  <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={GOLD} gridAspect="aspect-square" />
                 </div>
-                <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GOLD} />
               </div>
             ) : null}
 

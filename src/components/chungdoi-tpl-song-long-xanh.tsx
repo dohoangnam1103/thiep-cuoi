@@ -8,12 +8,11 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
   GiftEnvelope,
   parseISODate,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -85,9 +84,6 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
   const krWeekday = recDate ? KR_DAYS[recDate.getDay()] : "";
   const ceremonyDate = parseISODate(couple.ceremonyDate);
   const ceremonyKrWeekday = ceremonyDate ? KR_DAYS[ceremonyDate.getDay()] : "";
-  const galleryShown = gallery.slice(0, 4);
-  const galleryExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time || "11:00";
 
@@ -192,26 +188,14 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
           </div>
         </div>
 
-        {galleryShown.length > 0 ? (
+        {gallery.length > 0 ? (
           <>
             <SlxBand vi="Album Ảnh Cưới" ko="웨딩 앨범" />
             <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
               <div className="mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {galleryShown.map((src, i) => (
-                    <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
-                      <img src={src} alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
-                      {i === galleryShown.length - 1 && galleryExtra > 0 ? (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                          <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
-                        </div>
-                      ) : null}
-                    </button>
-                  ))}
-                </div>
+                <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={SLX_LINEN} gridAspect="aspect-square" />
               </div>
             </div>
-            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={SLX_LINEN} />
           </>
         ) : null}
 

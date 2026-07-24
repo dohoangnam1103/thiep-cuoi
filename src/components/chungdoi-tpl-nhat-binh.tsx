@@ -13,10 +13,9 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -112,9 +111,6 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const galleryShown = gallery.slice(0, 4);
-  const galleryExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const [giftOpen, setGiftOpen] = useState(false);
   const banks = orderByBrideFirst(
@@ -252,28 +248,13 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
 
 
         {/* Album Ảnh Cưới */}
-        {galleryShown.length > 0 ? (
-          <>
-            <section className="relative z-[2] px-6 py-10 md:px-10 md:py-14">
-              <NhatBinhHeading red={RED}>Album Ảnh Cưới</NhatBinhHeading>
-              <div className="mx-auto mt-8 grid max-w-[560px] grid-cols-2 gap-3 md:gap-4">
-                {galleryShown.map((src, i) => {
-                  const isLast = i === galleryShown.length - 1;
-                  return (
-                    <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(BROWN, 0.2), backgroundColor: hexToRgba(BROWN, 0.03) }}>
-                      <img src={src} alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
-                      {isLast && galleryExtra > 0 ? (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/55">
-                          <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
-                        </div>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={RED} />
-          </>
+        {gallery.length > 0 ? (
+          <section className="relative z-[2] flex flex-col items-center px-6 py-10 md:px-10 md:py-14">
+            <NhatBinhHeading red={RED}>Album Ảnh Cưới</NhatBinhHeading>
+            <div className="mt-8">
+              <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={RED} gridAspect="aspect-square" />
+            </div>
+          </section>
         ) : null}
 
         {/* Thông Tin Tiệc Cưới */}

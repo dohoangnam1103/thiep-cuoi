@@ -9,18 +9,20 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
   GiftEnvelope,
   SharedWishForm,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
 const GREEN_BASE = "/chungdoi/images/themes/_decor/glass-garden-green";
 const GREEN = "#47613e";
 const GREEN_MUTED = hexToRgba(GREEN, 0.72);
+
+const GLASS_PANEL =
+  "rounded-3xl border border-white/40 bg-white/45 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.4),0_18px_50px_-12px_rgba(53,69,47,0.25)] backdrop-blur-[7px]";
 
 function GreenHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -37,9 +39,6 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
   const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
@@ -72,8 +71,8 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
         </section>
 
         <div className="relative z-10 flex w-full flex-col items-center gap-14 px-4 pb-14 md:px-10">
-          {/* CEREMONY INFO */}
-          <section className="flex w-full flex-col items-center gap-8">
+          {/* CEREMONY INFO — frosted glass panel */}
+          <section className={`relative flex w-full flex-col items-center gap-8 px-5 py-8 md:px-10 md:py-10 ${GLASS_PANEL}`}>
             <GreenHeading>Thông Tin Lễ Cưới</GreenHeading>
             <div className="flex w-full items-start justify-center gap-3 md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
@@ -102,25 +101,15 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
           </section>
 
           {/* ALBUM */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <GreenHeading>Album Ảnh Cưới</GreenHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GREEN} />
+              <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={GREEN} />
             </section>
           ) : null}
 
           {/* RECEPTION INFO + calendar */}
-          <section className="relative flex w-full flex-col items-center gap-3">
+          <section className={`relative flex w-full flex-col items-center gap-3 px-5 py-8 md:px-10 md:py-10 ${GLASS_PANEL}`}>
             <img src={`${GREEN_BASE}/dish.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-16 -left-[18%] -z-10 h-[220px] w-auto max-w-none object-contain opacity-90 md:-left-[6%] md:h-[300px]" />
             <img src={`${GREEN_BASE}/cake.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-10 -right-[16%] -z-10 h-[220px] w-auto max-w-none object-contain opacity-90 md:-right-[4%] md:h-[300px]" />
             <GreenHeading>Thông Tin Tiệc Cưới</GreenHeading>
@@ -157,7 +146,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
 
           {/* VENUE MAP */}
           {mapQuery ? (
-            <section className="flex w-full flex-col items-center gap-3 text-center">
+            <section className={`flex w-full flex-col items-center gap-3 px-5 py-8 text-center md:px-10 md:py-10 ${GLASS_PANEL}`}>
               <h3 className="text-[20px] font-bold uppercase md:text-[24px]" style={{ color: GREEN }}>Tiệc cưới sẽ tổ chức tại</h3>
               <p className="mx-auto mt-1 max-w-sm whitespace-pre-line text-sm leading-6 md:max-w-[500px]">{venue.address}</p>
               <div className="mt-4 w-full overflow-hidden rounded-2xl border" style={{ borderColor: hexToRgba(GREEN, 0.3) }}>
@@ -169,7 +158,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
 
           {/* SCHEDULE */}
           {schedule.length > 0 ? (
-            <section className="relative flex w-full flex-col items-center gap-6">
+            <section className={`relative flex w-full flex-col items-center gap-6 px-5 py-8 md:px-10 md:py-10 ${GLASS_PANEL}`}>
               <GreenHeading>Lịch Trình Ngày Cưới</GreenHeading>
               <ol className="mx-auto flex w-full max-w-sm flex-col gap-4">
                 {schedule.map((s, i) => (
@@ -183,7 +172,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
           ) : null}
 
           {/* WISHES — with faint corner flower */}
-          <section className="relative w-full">
+          <section className={`relative w-full px-5 py-8 md:px-10 md:py-10 ${GLASS_PANEL}`}>
             <img src={`${GREEN_BASE}/flower4-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-24 left-0 -z-10 h-[560px] w-auto max-w-none object-contain opacity-[0.15] md:-top-32 md:left-40 md:h-[680px]" />
             <div className="text-center"><GreenHeading>Sổ Lưu Bút</GreenHeading></div>
             <SharedWishForm accent={GREEN} />
@@ -204,7 +193,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
 
           {/* ANIMATED GIFT BOX */}
           {banks.length > 0 ? (
-            <section className="w-full text-center">
+            <section className={`w-full px-5 py-8 text-center md:px-10 md:py-10 ${GLASS_PANEL}`}>
               <GiftEnvelope banks={banks} accent="#e7b849" dark={GREEN} cardBg="#eef7f0" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} variant="giftbox" />
             </section>
           ) : null}

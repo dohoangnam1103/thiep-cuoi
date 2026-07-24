@@ -8,12 +8,11 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
   GiftEnvelope,
   GiftQrGrid,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -114,9 +113,6 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const galleryShown = gallery.slice(0, 4);
-  const galleryExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
   const bankCards = orderByBrideFirst(
@@ -224,27 +220,15 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
           </div>
         </div>
 
-        {galleryShown.length > 0 ? (
+        {gallery.length > 0 ? (
           <>
             <DdRedBand red={DD_RED} linen={DD_LINEN}>Album Ảnh Cưới</DdRedBand>
             <div className="relative w-full overflow-hidden" style={{ backgroundColor: DD_LINEN }}>
               <DdTexture posY="40%" />
-              <div className="relative z-10 mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {galleryShown.map((src, i) => (
-                    <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
-                      <img src={src} alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
-                      {i === galleryShown.length - 1 && galleryExtra > 0 ? (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                          <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
-                        </div>
-                      ) : null}
-                    </button>
-                  ))}
-                </div>
+              <div className="relative z-10 mx-auto flex w-full max-w-lg flex-col items-center px-2 py-4 sm:px-4">
+                <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={DD_RED} gridAspect="aspect-square" />
               </div>
             </div>
-            <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={DD_RED} />
           </>
         ) : null}
 

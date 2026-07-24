@@ -12,10 +12,9 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -88,9 +87,6 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const galleryShown = gallery.slice(0, 4);
-  const galleryExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
   const [bankOpen, setBankOpen] = useState(false);
@@ -228,24 +224,12 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             </div>
 
             {/* Album ảnh cưới */}
-            {galleryShown.length > 0 ? (
+            {gallery.length > 0 ? (
               <div className="relative flex w-full max-w-[478px] flex-col items-center px-2 py-[10px] md:max-w-none md:px-10 md:py-[15px] lg:px-10 lg:py-[20px]">
                 <CoBaHeading>Album Ảnh Cưới</CoBaHeading>
                 <div className="mt-6 w-full max-w-[390px] md:max-w-[560px] lg:max-w-[600px]">
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    {galleryShown.map((src, i) => (
-                      <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-[#542e0833] bg-[#542e0808]">
-                        <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} style={{ objectPosition: "50% 50%" }} />
-                        {i === galleryShown.length - 1 && galleryExtra > 0 ? (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/55">
-                            <span className="text-lg font-semibold text-white">+{galleryExtra}</span>
-                          </div>
-                        ) : null}
-                      </button>
-                    ))}
-                  </div>
+                  <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={RED} gridAspect="aspect-square" />
                 </div>
-                <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={RED} />
               </div>
             ) : null}
 
