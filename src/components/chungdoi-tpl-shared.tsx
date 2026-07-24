@@ -2,8 +2,12 @@
 
 import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import type { AlbumLayout } from "@/lib/album-layout";
+
+const CoverflowGallery = dynamic(() => import("./album-coverflow"), { ssr: false });
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   LightboxZoomControls,
@@ -603,6 +607,86 @@ export function GiftEnvelope({
           </div>
         </div>
       ), document.body) : null}
+    </div>
+  );
+}
+
+export function AlbumGallery({
+  photos,
+  layout = "grid",
+  accent,
+  gridAspect = "aspect-[3/4]",
+}: {
+  photos: string[];
+  layout?: AlbumLayout;
+  accent: string;
+  gridAspect?: string;
+}) {
+  const { lightbox, setLightbox } = useLightbox(photos.length);
+  if (photos.length === 0) return null;
+
+  const border = hexToRgba(accent, 0.3);
+  const lightboxEl = <Lightbox gallery={photos} index={lightbox} setIndex={setLightbox} accent={accent} />;
+
+  if (layout === "coverflow") {
+    return (
+      <div className="w-full">
+        <CoverflowGallery photos={photos} accent={accent} onOpen={setLightbox} />
+        {lightboxEl}
+      </div>
+    );
+  }
+
+  if (layout === "mosaic") {
+    const shown = photos.slice(0, 5);
+    const extra = Math.max(0, photos.length - 5);
+    const spanFor = (i: number) => (i === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1");
+    return (
+      <div className="w-full max-w-[400px] md:max-w-[560px]">
+        <div className="grid grid-cols-2 gap-3 [grid-auto-rows:1fr] md:grid-cols-3 md:gap-4">
+          {shown.map((src, i) => (
+            <button
+              key={src}
+              type="button"
+              onClick={() => setLightbox(i)}
+              className={`group relative aspect-square cursor-pointer overflow-hidden rounded-xl border ${spanFor(i)}`}
+              style={{ borderColor: border }}
+            >
+              <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
+              {i === shown.length - 1 && extra > 0 ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                  <span className="text-lg font-semibold text-white">+{extra}</span>
+                </div>
+              ) : null}
+            </button>
+          ))}
+        </div>
+        {lightboxEl}
+      </div>
+    );
+  }
+
+  const shown = photos.slice(0, 4);
+  const extra = Math.max(0, photos.length - 4);
+  return (
+    <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+      {shown.map((src, i) => (
+        <button
+          key={src}
+          type="button"
+          onClick={() => setLightbox(i)}
+          className={`group relative ${gridAspect} cursor-pointer overflow-hidden rounded-xl border`}
+          style={{ borderColor: border }}
+        >
+          <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
+          {i === shown.length - 1 && extra > 0 ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+              <span className="text-lg font-semibold text-white">+{extra}</span>
+            </div>
+          ) : null}
+        </button>
+      ))}
+      {lightboxEl}
     </div>
   );
 }
