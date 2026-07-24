@@ -646,22 +646,11 @@ function CoverCard({
       className="relative rounded-lg"
       style={{ aspectRatio: "3 / 4.5", boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
     >
-      {/* composited theme layer + corner decorations (behind the text) */}
+      {/* composited theme layer (behind everything) */}
       <div
         className="absolute inset-0 overflow-hidden rounded-lg"
         style={{ background: coverCardBackground(tokens), border: `1px solid ${tokens.guestBoxBorder}` }}
-      >
-        {tokens.cardImages.map((img, i) => (
-          <img
-            key={i}
-            src={img.src}
-            alt=""
-            aria-hidden="true"
-            className={`pointer-events-none absolute ${img.className}`}
-            style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
-          />
-        ))}
-      </div>
+      />
 
       {/* fly-out layer (không clip): bản gốc phía trên ẩn đi, bản này phóng to bay ra */}
       {opening ? (
@@ -681,6 +670,34 @@ function CoverCard({
             ))}
         </div>
       ) : null}
+
+      {/* frosted glass panel sau text: nền theme + hoạ tiết trang trí làm chữ khó
+          đọc (bản gốc có tấm kính này). Đặt dưới text layer (z-10), trên lớp trang
+          trí (z-0). Blur nền + phủ trắng nhẹ → chữ luôn nổi bật bất kể màu theme. */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[5] rounded-lg"
+        style={{
+          background: "rgba(255,255,255,0.55)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 10px 30px -12px rgba(0,0,0,0.25)",
+        }}
+      />
+
+      {/* lớp hoa trang trí: nằm TRÊN frosted panel (z-[6]) và KHÔNG bị clip →
+          hoa tràn ra ngoài mép card và không bị lớp mờ che, giống bản gốc. */}
+      <div className="pointer-events-none absolute inset-0 z-[6]">
+        {tokens.cardImages.map((img, i) => (
+          <img
+            key={i}
+            src={img.src}
+            alt=""
+            aria-hidden="true"
+            className={`pointer-events-none absolute ${img.className}`}
+            style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
+          />
+        ))}
+      </div>
 
       {/* transparent text layer on top: absolute + flex center → không đẩy chiều
           cao, cha giữ đúng aspectRatio 3:4.5 (portrait), 2D và texture 3D khớp. */}

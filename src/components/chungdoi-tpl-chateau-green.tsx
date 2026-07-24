@@ -11,6 +11,7 @@ import {
   MapDirectionsButton,
   FamilyColumn,
   GiftEnvelope,
+  GIFTBOX_MINI_DECORS,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -213,7 +214,7 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
           {/* ANIMATED GIFT BOX */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent="#e7b849" dark={GREEN} cardBg="#eef6f0" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} variant="giftbox" />
+              <GiftEnvelope banks={banks} accent="#e7b849" dark={GREEN} cardBg="#eef6f0" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} variant="giftbox" boxImage="/chungdoi/images/giftbox/chateau_green.webp" decorImages={GIFTBOX_MINI_DECORS} />
             </section>
           ) : null}
         </div>

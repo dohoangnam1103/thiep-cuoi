@@ -1193,6 +1193,7 @@
       "timeLabel": "Giờ",
       "dateHint": "Thứ và ngày âm lịch được hệ thống tự tính từ ngày dương lịch.",
       "add": "Thêm lễ",
+      "optional": "(không bắt buộc)",
       "empty": "Chưa có lễ nào. Nhấn “Thêm lễ” để tạo lễ mới.",
       "deleteLabel": "Xoá lễ {number}",
       "deleteTitle": "Xoá lễ này?",

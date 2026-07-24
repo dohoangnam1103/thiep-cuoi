@@ -582,6 +582,7 @@
       "timeLabel": "时间",
       "dateHint": "星期和农历日期会根据所选日期自动计算。",
       "add": "添加仪式",
+      "optional": "(选填)",
       "empty": "暂未添加仪式。点击“添加仪式”创建新仪式。",
       "deleteLabel": "删除仪式 {number}",
       "deleteTitle": "删除这个仪式？",

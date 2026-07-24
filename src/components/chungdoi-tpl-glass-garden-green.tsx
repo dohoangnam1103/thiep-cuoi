@@ -13,6 +13,7 @@ import {
   InvitationMap,
   MapDirectionsButton,
   GiftEnvelope,
+  GIFTBOX_MINI_DECORS,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -194,21 +195,19 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
           {/* ANIMATED GIFT BOX */}
           {banks.length > 0 ? (
             <section className={`w-full px-5 py-8 text-center md:px-10 md:py-10 ${GLASS_PANEL}`}>
-              <GiftEnvelope banks={banks} accent="#e7b849" dark={GREEN} cardBg="#eef7f0" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} variant="giftbox" />
+              <GiftEnvelope banks={banks} accent="#e7b849" dark={GREEN} cardBg="#eef7f0" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} variant="giftbox" boxImage="/chungdoi/images/giftbox/glass_garden_green.webp" decorImages={GIFTBOX_MINI_DECORS} />
             </section>
           ) : null}
         </div>
 
-        {/* FOOTER — bottom floral */}
-        <div className="pointer-events-none relative h-36 overflow-hidden md:h-48">
-          <img src={`${GREEN_BASE}/flower5-bottom.webp`} alt="" aria-hidden className="absolute left-1/2 top-1/2 h-auto w-[520px] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.12] md:w-[720px]" />
-        </div>
-        <footer data-template-footer className="relative z-10 flex w-full flex-col items-center justify-center px-4 py-6 text-center">
-          <span className="text-[12px] md:text-[15px] lg:text-[18px]" style={{ color: GREEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        {/* FOOTER — compact glass message with source floral layered underneath */}
+        <footer data-template-footer className="relative isolate z-10 mx-4 mt-2 pb-[46%] md:mx-10 md:pb-[38%]">
+          <div className={`relative z-20 flex flex-col items-center px-6 py-8 text-center md:px-10 md:py-10 ${GLASS_PANEL}`}>
+            <span className="max-w-[560px] text-[13px] leading-relaxed md:text-[16px] lg:text-[18px]" style={{ color: GREEN }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+            <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="mt-4 text-xs opacity-50 transition-opacity hover:opacity-70 md:mt-6" style={{ color: GREEN }}>♡ thiepmungonline.com</a>
+          </div>
+          <img src={`${GREEN_BASE}/flower5-bottom.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-10 h-auto w-[150%] max-w-none -translate-x-1/2 translate-y-[8%] object-contain" />
         </footer>
-        <div className="relative z-10 flex items-center justify-center py-3">
-          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: GREEN }}>♡ thiepmungonline.com</a>
-        </div>
       </div>
     </div>
   );

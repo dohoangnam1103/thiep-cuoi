@@ -346,8 +346,8 @@ export function SharedWishForm({ accent }: { accent: string }) {
   return (
     <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
-        <input name="name" required maxLength={120} className="w-full rounded-[6px] border px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Tên của bạn" />
-        <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-[6px] border px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Lời chúc của bạn" />
+        <input name="name" required maxLength={120} className="w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Tên của bạn" />
+        <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Lời chúc của bạn" />
         {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>Cảm ơn lời chúc của bạn!</p> : null}
         <div className="mt-2 flex items-center justify-end">
@@ -490,7 +490,28 @@ function GiftEnvelopeCorner({ className, rotation }: { className: string; rotati
   );
 }
 
+/** 7 hộp quà mini bay quanh hộp chính (đúng bộ asset nguồn). */
+export const GIFTBOX_MINI_DECORS = [
+  "/chungdoi/images/giftbox/mini/spring_garden_red.webp",
+  "/chungdoi/images/giftbox/mini/brocade_flower_red.webp",
+  "/chungdoi/images/giftbox/mini/baroque_gold.webp",
+  "/chungdoi/images/giftbox/mini/saraya_gold.webp",
+  "/chungdoi/images/giftbox/mini/boho_floral_pink.webp",
+  "/chungdoi/images/giftbox/mini/qasr_gold.webp",
+  "/chungdoi/images/giftbox/mini/double_dragon_blue.webp",
+];
+
 /** Nút phong bì mừng cưới (囍) + modal QR chuyển khoản. Tự quản state đóng/mở. */
+const IGB_DECOR_POS: CSSProperties[] = [
+  { left: -20, top: 10, width: 34, zIndex: 1, transform: "rotate(-22deg)" },
+  { left: 168, top: 2, width: 38, zIndex: 1, transform: "rotate(20deg)" },
+  { left: -16, top: 120, width: 26, zIndex: 1, transform: "rotate(-18deg)" },
+  { left: 182, top: 114, width: 24, zIndex: 1, transform: "rotate(14deg)" },
+  { left: -8, top: 172, width: 44, zIndex: 3, transform: "rotate(8deg)" },
+  { left: 26, top: 182, width: 26, zIndex: 3, transform: "rotate(-10deg)" },
+  { left: 118, top: 176, width: 40, zIndex: 3, transform: "rotate(-14deg)" },
+];
+
 export function GiftEnvelope({
   banks,
   accent,
@@ -499,6 +520,8 @@ export function GiftEnvelope({
   heading = "Phong Bao Mừng Cưới",
   labelColor,
   variant = "envelope",
+  boxImage,
+  decorImages = [],
 }: {
   banks: GiftBank[];
   accent: string;
@@ -507,6 +530,8 @@ export function GiftEnvelope({
   heading?: string;
   labelColor?: string;
   variant?: "envelope" | "giftbox";
+  boxImage?: string;
+  decorImages?: string[];
 }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -525,20 +550,26 @@ export function GiftEnvelope({
       <button data-testid="gift-envelope" type="button" aria-label={`Mở ${heading.toLowerCase()}`} onClick={() => setOpen(true)} className={`group relative cursor-pointer border-none bg-transparent outline-none ${variant === "giftbox" ? "h-[280px] w-[260px]" : "h-64 w-[200px]"}`}>
         {variant === "giftbox" ? (
           <div data-testid="gift-envelope-animation" className="igb-wrapper relative flex h-full w-full items-end justify-center pb-8">
-            <span className="igb-sparkle absolute left-[14%] top-[8%] z-20 text-[22px]" style={{ color: dark }}>✦</span>
-            <span className="igb-sparkle igb-sparkle-2 absolute right-[10%] top-[18%] z-20 text-base" style={{ color: dark }}>✦</span>
-            <span className="igb-sparkle igb-sparkle-3 absolute left-[5%] top-[32%] z-20 text-sm" style={{ color: dark }}>✦</span>
-            <span className="igb-sparkle igb-sparkle-4 absolute right-[5%] top-[26%] z-20 text-sm" style={{ color: dark }}>✦</span>
-            <div className="igb-confetti-field absolute left-1/2 top-[28%] z-0" aria-hidden>
-              {Array.from({ length: 8 }, (_, index) => <i key={index} className={`igb-confetti igb-confetti-${index + 1}`} />)}
-            </div>
             <div className="igb-bob relative h-[220px] w-[200px]" aria-hidden>
-              <div className="igb-shadow absolute -bottom-2 left-1/2 h-3 w-36 -translate-x-1/2 rounded-full bg-black/40 blur-sm" />
-              <span className="igb-present igb-present-1 absolute left-2 top-10 h-14 w-14"><i /></span>
-              <span className="igb-present igb-present-2 absolute right-0 top-4 h-12 w-12"><i /></span>
-              <span className="igb-present igb-present-3 absolute bottom-3 left-1/2 -ml-12 h-24 w-24"><i /></span>
-              <span className="igb-present igb-present-4 absolute bottom-8 left-0 h-12 w-12"><i /></span>
-              <span className="igb-present igb-present-5 absolute bottom-5 right-0 h-16 w-16"><i /></span>
+              {decorImages.slice(0, IGB_DECOR_POS.length).map((src, i) => (
+                <img
+                  key={src + i}
+                  src={src}
+                  alt=""
+                  aria-hidden
+                  className={`igb-decor igb-decor-${i + 1} absolute pointer-events-none`}
+                  style={{ ...IGB_DECOR_POS[i], filter: "drop-shadow(rgba(0,0,0,0.25) 0px 2px 3px)" }}
+                />
+              ))}
+              {boxImage ? (
+                <img
+                  src={boxImage}
+                  alt=""
+                  aria-hidden
+                  className="igb-box absolute pointer-events-none"
+                  style={{ left: "50%", bottom: 0, width: 170, maxHeight: 220, objectFit: "contain", marginLeft: -85, zIndex: 2, filter: "drop-shadow(rgba(0,0,0,0.25) 0px 10px 18px)" }}
+                />
+              ) : null}
             </div>
           </div>
         ) : (

@@ -799,6 +799,7 @@
       "timeLabel": "Time",
       "dateHint": "The weekday and lunar date are calculated automatically from the selected date.",
       "add": "Add ceremony",
+      "optional": "(optional)",
       "empty": "No ceremonies yet. Select “Add ceremony” to create one.",
       "deleteLabel": "Delete ceremony {number}",
       "deleteTitle": "Delete this ceremony?",
