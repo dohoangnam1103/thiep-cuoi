@@ -13,11 +13,10 @@ import {
   formatWishTime,
   googleCalendarUrl,
   hexToRgba,
-  Lightbox,
+  AlbumGallery,
   InvitationMap,
   MapDirectionsButton,
   SharedWishForm,
-  useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
@@ -40,9 +39,6 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const albumShown = gallery.slice(0, 4);
-  const albumExtra = Math.max(0, gallery.length - 4);
-  const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
   const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
@@ -117,20 +113,10 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
           </section>
 
           {/* ALBUM */}
-          {albumShown.length > 0 ? (
+          {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <ChateauHeading>Album Ảnh Cưới</ChateauHeading>
-              <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
-                {albumShown.map((src, i) => (
-                  <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border" style={{ borderColor: hexToRgba(CHATEAU_NAVY, 0.3) }}>
-                    <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
-                    {i === albumShown.length - 1 && albumExtra > 0 ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/55"><span className="text-lg font-semibold text-white">+{albumExtra}</span></div>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={CHATEAU_NAVY} />
+              <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={CHATEAU_NAVY} />
             </section>
           ) : null}
 
