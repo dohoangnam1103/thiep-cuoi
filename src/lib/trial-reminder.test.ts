@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { FREE_TRIAL_MS } from "./trial";
-import { shouldSendReminder, REMINDER_WINDOW_MS, type ReminderCandidate } from "./trial-reminder";
+import { buildCardName, shouldSendReminder, REMINDER_WINDOW_MS, type ReminderCandidate } from "./trial-reminder";
 
 const now = new Date("2026-07-24T09:00:00.000Z");
 
@@ -50,4 +50,20 @@ test("không gửi khi đã hết hạn (quá cửa sổ)", () => {
 test("không gửi khi còn quá xa (hơn 24h nữa mới hết hạn)", () => {
   const publishedAt = new Date(now.getTime() + 25 * 60 * 60 * 1000 - FREE_TRIAL_MS);
   assert.equal(shouldSendReminder(candidate({ publishedAt }), now), false);
+});
+
+test("buildCardName ghép hai tên ngắn", () => {
+  assert.equal(
+    buildCardName({ brideShortName: "Jade", groomShortName: "Thạch" }),
+    "Jade & Thạch",
+  );
+});
+
+test("buildCardName chỉ có một tên", () => {
+  assert.equal(buildCardName({ brideShortName: "Jade", groomShortName: "" }), "Jade");
+});
+
+test("buildCardName fallback khi thiếu cả hai", () => {
+  assert.equal(buildCardName({ brideShortName: "", groomShortName: "" }), "Thiệp cưới của bạn");
+  assert.equal(buildCardName(null), "Thiệp cưới của bạn");
 });

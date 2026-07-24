@@ -19,3 +19,12 @@ export function shouldSendReminder(c: ReminderCandidate, now: Date): boolean {
   const nowMs = now.getTime();
   return expiresAt > nowMs && expiresAt <= nowMs + REMINDER_WINDOW_MS;
 }
+
+export function buildCardName(
+  content: { brideShortName: string; groomShortName: string } | null,
+): string {
+  const parts = [content?.brideShortName, content?.groomShortName]
+    .map((p) => (p ?? "").trim())
+    .filter(Boolean);
+  return parts.length > 0 ? parts.join(" & ") : "Thiệp cưới của bạn";
+}
