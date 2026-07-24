@@ -146,6 +146,9 @@ model InvitationContent {
   // dress code: CSV of hex colors, e.g. "#b53131,#f8ecdb,#c9a227"
   dressCodeColors String @default("")
 
+  // album layout: "grid" | "mosaic" | "coverflow"
+  albumLayout   String @default("grid")
+
   // families
   brideFather      String @default("")
   brideMother      String @default("")

@@ -1,5 +1,6 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { Prisma } from "@/generated/prisma/client";
+import { normalizeAlbumLayout } from "@/lib/album-layout";
 import { DEFAULT_OPENING_MESSAGE } from "@/lib/invitation-display";
 import { shortNameFromFullName } from "@/lib/short-name";
 
@@ -102,6 +103,7 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
     heroImage2: c?.heroImage2 ?? "",
     showHeroImage: c?.showHeroImage ?? true,
     dressCodeColors: c?.dressCodeColors ?? "",
+    albumLayout: normalizeAlbumLayout(c?.albumLayout),
     wishes: invitation.wishes.map((w) => ({
       name: w.name,
       time: w.createdAt.toISOString(),
