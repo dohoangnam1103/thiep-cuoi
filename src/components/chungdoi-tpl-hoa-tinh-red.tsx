@@ -5,7 +5,7 @@ import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/inv
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap, MapDirectionsButton,
-  FamilyColumn, GiftEnvelope, SharedCarousel, SharedCountdown, SharedWishForm, WEEKDAY_LABELS,
+  FamilyColumn, GiftEnvelope, SharedCarousel, SharedCountdown, SharedWishForm, WEEKDAY_LABELS, AlbumGallery,
 } from "@/components/chungdoi-tpl-shared";
 
 const BASE = "/chungdoi/images/themes/_decor/love-art";
@@ -112,10 +112,16 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
           {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <HoaTinhHeading>Album Ảnh Cưới</HoaTinhHeading>
-              <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(PURPLE, 0.3) }}>
-                <SharedCarousel photos={gallery} arrowColor={PURPLE} />
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={PURPLE} />
+              {(content.albumLayout ?? "grid") === "grid" ? (
+                <>
+                  <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(PURPLE, 0.3) }}>
+                    <SharedCarousel photos={gallery} arrowColor={PURPLE} />
+                  </div>
+                  <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={PURPLE} />
+                </>
+              ) : (
+                <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={PURPLE} />
+              )}
             </section>
           ) : null}
 

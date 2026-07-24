@@ -14,6 +14,7 @@ import {
   InvitationMap,
   MapDirectionsButton,
   FamilyColumn,
+  AlbumGallery,
   SharedCarousel,
   SharedCountdown,
   GiftEnvelope,
@@ -134,10 +135,16 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
           {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <RedHeading>Album Ảnh Cưới</RedHeading>
-              <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
-                <SharedCarousel photos={gallery} arrowColor={GOLD} />
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GOLD} />
+              {(content.albumLayout ?? "grid") === "grid" ? (
+                <>
+                  <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(GOLD, 0.5) }}>
+                    <SharedCarousel photos={gallery} arrowColor={GOLD} />
+                  </div>
+                  <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={GOLD} />
+                </>
+              ) : (
+                <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={GOLD} />
+              )}
             </section>
           ) : null}
 

@@ -14,6 +14,7 @@ import {
   GiftEnvelope,
   SharedWishForm,
   WEEKDAY_LABELS,
+  AlbumGallery,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
@@ -111,10 +112,16 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
           {gallery.length > 0 ? (
             <section className="flex w-full flex-col items-center gap-6">
               <QasrHeading>Album Ảnh Cưới</QasrHeading>
-              <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
-                <SharedCarousel photos={gallery} arrowColor={QASR_GREEN} />
-              </div>
-              <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={QASR_GREEN} />
+              {(content.albumLayout ?? "grid") === "grid" ? (
+                <>
+                  <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-xl border md:max-w-[480px]" style={{ borderColor: hexToRgba(QASR_GOLD, 0.5) }}>
+                    <SharedCarousel photos={gallery} arrowColor={QASR_GREEN} />
+                  </div>
+                  <Lightbox gallery={gallery} index={lightbox} setIndex={setLightbox} accent={QASR_GREEN} />
+                </>
+              ) : (
+                <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={QASR_GREEN} />
+              )}
             </section>
           ) : null}
 
