@@ -142,11 +142,18 @@ export function SiteHeader({
         <div className="flex items-center gap-2">
           {/* Tạm ẩn: web hiện chỉ dùng tiếng Việt */}
           {/* <LanguageSwitcher /> */}
-          {hideCreateButton ? null : loggedIn ? (
+          {/* Nút "Tạo ngay": khi hideCreateButton (vd trang Mẫu thiệp) vẫn render
+              nhưng GIỮ CHỖ vô hình (invisible + non-interactive) → header đồng vị
+              trí mọi trang, nav không bị dồn lệch sang phải. */}
+          {loggedIn ? (
             <Link
               href="/templates"
               aria-label={t("createNow")}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2"
+              aria-hidden={hideCreateButton || undefined}
+              tabIndex={hideCreateButton ? -1 : undefined}
+              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
+                hideCreateButton ? "pointer-events-none invisible" : ""
+              }`}
             >
               <Plus className="size-5 lg:hidden" />
               <span className="hidden lg:inline">{t("createNow")}</span>
@@ -155,7 +162,11 @@ export function SiteHeader({
             <NextLink
               href={loginHref(TEMPLATE_LIST_PATH)}
               aria-label={t("createNow")}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2"
+              aria-hidden={hideCreateButton || undefined}
+              tabIndex={hideCreateButton ? -1 : undefined}
+              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
+                hideCreateButton ? "pointer-events-none invisible" : ""
+              }`}
             >
               <Plus className="size-5 lg:hidden" />
               <span className="hidden lg:inline">{t("createNow")}</span>
