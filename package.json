@@ -50,6 +50,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "seed:tracks": "tsx prisma/seed-tracks.ts",
+    "reminders:trial": "tsx scripts/send-trial-reminders.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

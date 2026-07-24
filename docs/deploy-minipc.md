@@ -107,9 +107,42 @@ ssh minipc 'docker images thiepmungonline-web'
 Nếu cần, retag image rollback thành `:latest` rồi chạy
 `docker compose up -d --no-build --no-deps --force-recreate web`.
 
+## Email nhắc thanh toán (Resend)
+
+Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ngày).
+
+1. Lấy API key tại [resend.com](https://resend.com) và thêm vào `.env` của
+   container (KHÔNG commit key vào git):
+
+   ```
+   RESEND_API_KEY=re_xxx
+   ```
+
+   Domain `thiepmungonline.com` phải đã verify trên Resend (email gửi từ
+   `noreply@thiepmungonline.com`).
+
+2. Script chạy trong container qua `docker exec`. Cron mỗi 9h sáng:
+
+   ```bash
+   0 9 * * *  docker exec thiepmungonline-web npm run reminders:trial >> /var/log/trial-reminders.log 2>&1
+   ```
+
+   Chạy thử ngay một lần:
+
+   ```bash
+   ssh minipc 'docker exec thiepmungonline-web npm run reminders:trial'
+   ```
+
+   Script tự quét thiệp `paid=false`, đã publish, chưa gửi nhắc, hết hạn trong
+   24h tới; gửi xong đánh dấu `reminderSentAt` để không gửi trùng. Gửi lỗi thì
+   giữ nguyên mốc để lần sau retry.
+
 ## Sự cố thường gặp
 
 - **Public trả 530**: tunnel không tới được origin hoặc DNS trỏ nhầm tunnel khác
   account. Xem mục ⚠️ trong [cloudflare-deploy.md](./cloudflare-deploy.md#5-cấu-hình-dns-hiện-tại-đã-xác-minh).
 - **Web LAN không lên 200**: xem log `ssh minipc 'docker logs --tail 200 thiepmungonline-web'`.
+- **Email nhắc không gửi**: kiểm tra `RESEND_API_KEY` trong container
+  (`docker exec thiepmungonline-web printenv RESEND_API_KEY`) và log
+  `/var/log/trial-reminders.log`.
 - **Build lỗi kiến trúc**: đảm bảo `docker buildx` dùng `--platform linux/amd64`.
