@@ -79,7 +79,7 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
           </button>
         </header>
 
-        <div className="mx-4 mb-3 grid shrink-0 grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 sm:mx-6 lg:hidden">
+        <div className="mx-4 mb-3 grid shrink-0 grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 sm:mx-6">
           <TemplateQrCode demoPath={demoPath} name={name} />
           <div>
             <h3 className="text-sm font-black leading-4 text-foreground">{modalT("phonePreviewTitle")}</h3>
@@ -134,7 +134,7 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
               </div>
 
               <div className="grid content-start gap-3">
-                <div className="relative z-10 hidden grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 lg:grid">
+                <div className="hidden">
                   <TemplateQrCode demoPath={demoPath} name={name} />
                   <div>
                     <h3 className="text-sm font-black leading-4 text-foreground">{modalT("phonePreviewTitle")}</h3>
