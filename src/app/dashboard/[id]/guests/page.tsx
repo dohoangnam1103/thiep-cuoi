@@ -59,6 +59,7 @@ export default async function GuestsPage({ params }: { params: Promise<{ id: str
 
   const responded = rows.filter((r) => r.responded).length;
   const attending = rows.filter((r) => r.latestRsvp?.attending).length;
+  const declined = rows.filter((r) => r.latestRsvp?.attending === false).length;
   const expectedGuests = rows.reduce((total, row) => total + row.maxGuests, 0);
   const labels = viMessages.guestManager;
   const questionRows = questions.map((question) => {
@@ -94,7 +95,7 @@ export default async function GuestsPage({ params }: { params: Promise<{ id: str
       <h1 className="mt-3 font-pattaya text-3xl text-foreground">{labels.title}</h1>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{labels.subtitle}</p>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
           <p className="text-2xl font-bold text-foreground">{rows.length}</p>
           <p className="text-sm text-muted-foreground">{labels.stats.total}</p>
@@ -106,6 +107,10 @@ export default async function GuestsPage({ params }: { params: Promise<{ id: str
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
           <p className="text-2xl font-bold text-emerald-700">{attending}</p>
           <p className="text-sm text-muted-foreground">{labels.stats.attending}</p>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-4 text-center">
+          <p className="text-2xl font-bold text-destructive">{declined}</p>
+          <p className="text-sm text-muted-foreground">{labels.stats.declined}</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
           <p className="text-2xl font-bold text-foreground">{expectedGuests}</p>

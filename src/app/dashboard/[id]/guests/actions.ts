@@ -8,11 +8,16 @@ import { z } from "zod";
 import { ownInvitation, verifySession } from "@/lib/dal";
 import type { GuestImportRow } from "@/lib/guest-manager";
 import { prisma } from "@/lib/prisma";
+import {
+  capitalizeVietnameseSentences,
+  titleCaseVietnameseName,
+} from "@/lib/text-case";
 
-const optionalText = (max: number) => z.string().trim().max(max).optional().default("");
+const optionalText = (max: number) => z.string().trim().max(max).optional().default("")
+  .transform(capitalizeVietnameseSentences);
 
 const guestSchema = z.object({
-  name: z.string().trim().min(1).max(120),
+  name: z.string().trim().min(1).max(120).transform(titleCaseVietnameseName),
   side: optionalText(60),
   role: optionalText(60),
   groupName: optionalText(100),

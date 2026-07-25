@@ -6,7 +6,6 @@ import { useActionState, useEffect, useState } from "react";
 
 import { trackEvent } from "@/lib/analytics";
 import { useLiveForms } from "@/components/chungdoi-live-forms";
-import { Combobox } from "@/components/ui/combobox";
 
 const FIELD_CLASS =
   "min-h-11 w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-500 focus:border-neutral-700 focus:ring-2 focus:ring-neutral-900/10";
@@ -22,7 +21,7 @@ export function PublicRsvpDialog() {
 
   if (!live) return null;
 
-  const { guest, questions, rsvpLabels: label } = live;
+  const { guest, rsvpLabels: label } = live;
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -76,73 +75,10 @@ export function PublicRsvpDialog() {
                   </div>
                 </fieldset>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="grid gap-2 text-sm font-medium">
-                    {label.guestCount}
-                    <input name="guests" type="number" min={1} max={guest?.maxGuests ?? 20} defaultValue={1} className={FIELD_CLASS} />
-                  </label>
-                  <label className="grid gap-2 text-sm font-medium">
-                    {label.side}
-                    <Combobox
-                      variant="neutral"
-                      aria-label={label.side}
-                      name="side"
-                      defaultValue={guest?.side ?? ""}
-                      options={[
-                        { value: "", label: label.sideEmpty },
-                        { value: "Nhà trai", label: label.groomSide },
-                        { value: "Nhà gái", label: label.brideSide },
-                      ]}
-                    />
-                  </label>
-                </div>
-
-                <label className="flex min-h-11 items-center gap-3 rounded-xl border border-neutral-300 px-3.5 text-sm font-medium">
-                  <input type="checkbox" name="shuttle" value="yes" className="size-4 accent-neutral-900" />
-                  {label.shuttle}
-                </label>
                 <label className="grid gap-2 text-sm font-medium">
-                  {label.dietary}
-                  <input name="dietary" maxLength={200} className={FIELD_CLASS} />
+                  {label.guestCount}
+                  <input name="guests" type="number" min={1} max={guest?.maxGuests ?? 20} defaultValue={1} className={FIELD_CLASS} />
                 </label>
-                <label className="grid gap-2 text-sm font-medium">
-                  {label.songRequest}
-                  <input name="songRequest" maxLength={200} className={FIELD_CLASS} />
-                </label>
-
-                {questions.map((question) => (
-                  <fieldset key={question.id} className="grid gap-2">
-                    <legend className="text-sm font-medium">
-                      {question.label}{question.required ? " *" : ""}
-                    </legend>
-                    {question.type === "text" ? (
-                      <input name={`question:${question.id}`} required={question.required} maxLength={500} className={FIELD_CLASS} />
-                    ) : question.type === "boolean" ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        <label className="flex min-h-11 items-center gap-2 rounded-xl border border-neutral-300 px-3 text-sm">
-                          <input type="radio" name={`question:${question.id}`} value="yes" required={question.required} className="accent-neutral-900" />
-                          {label.answerYes}
-                        </label>
-                        <label className="flex min-h-11 items-center gap-2 rounded-xl border border-neutral-300 px-3 text-sm">
-                          <input type="radio" name={`question:${question.id}`} value="no" required={question.required} className="accent-neutral-900" />
-                          {label.answerNo}
-                        </label>
-                      </div>
-                    ) : (
-                      <Combobox
-                        variant="neutral"
-                        aria-label={question.label}
-                        name={`question:${question.id}`}
-                        defaultValue=""
-                        placeholder={label.selectPlaceholder}
-                        options={question.options.map((option) => ({
-                          value: option,
-                          label: option,
-                        }))}
-                      />
-                    )}
-                  </fieldset>
-                ))}
 
                 <label className="grid gap-2 text-sm font-medium">
                   {label.message}

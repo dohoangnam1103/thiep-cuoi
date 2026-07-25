@@ -20,6 +20,7 @@ import {
 } from "@/lib/guest-media";
 import { prisma } from "@/lib/prisma";
 import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
+import { titleCaseVietnameseName } from "@/lib/text-case";
 import {
   EDITOR_UPLOAD_IMAGE_FORMATS,
   isAcceptedImageUpload,
@@ -102,7 +103,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   const contributorValue = formData.get("contributorName");
-  const contributorName = typeof contributorValue === "string" ? contributorValue.trim() : "";
+  const contributorName = typeof contributorValue === "string"
+    ? titleCaseVietnameseName(contributorValue)
+    : "";
   if (!contributorName || contributorName.length > 80) {
     return Response.json({ error: "invalidName" }, { status: 400 });
   }

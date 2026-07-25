@@ -1,8 +1,17 @@
 import { z } from "zod";
 
 import { templates } from "@/data/chungdoi";
+import {
+  capitalizeVietnameseSentences,
+  titleCaseVietnameseName,
+} from "@/lib/text-case";
 
 const ALL_TEMPLATE_SLUGS = new Set(templates.map((t) => t.slug));
+
+const optionalName = (max: number) => z.string().max(max).optional().default("")
+  .transform(titleCaseVietnameseName);
+const optionalSentence = (max: number) => z.string().max(max).optional().default("")
+  .transform(capitalizeVietnameseSentences);
 
 const formBoolean = (defaultValue: boolean) => z.preprocess(
   (value) => {
@@ -14,11 +23,11 @@ const formBoolean = (defaultValue: boolean) => z.preprocess(
 
 export const scheduleItemSchema = z.object({
   time: z.string().max(20),
-  label: z.string().max(120),
+  label: z.string().max(120).transform(capitalizeVietnameseSentences),
 });
 
 export const ceremonyItemSchema = z.object({
-  title: z.string().max(300),
+  title: z.string().max(300).transform(capitalizeVietnameseSentences),
   date: z.string().max(20),
   time: z.string().max(20),
 });
@@ -32,43 +41,43 @@ export const contentSchema = z.object({
   music: z.string().max(300).optional().default(""),
   dressCodeColors: z.string().max(200).optional().default(""),
 
-  brideFullName: z.string().max(120).optional().default(""),
-  groomFullName: z.string().max(120).optional().default(""),
-  brideShortName: z.string().max(60).optional().default(""),
-  groomShortName: z.string().max(60).optional().default(""),
-  groomBirthOrder: z.string().max(40).optional().default(""),
-  brideBirthOrder: z.string().max(40).optional().default(""),
+  brideFullName: optionalName(120),
+  groomFullName: optionalName(120),
+  brideShortName: optionalName(60),
+  groomShortName: optionalName(60),
+  groomBirthOrder: optionalSentence(40),
+  brideBirthOrder: optionalSentence(40),
   brideFirst: formBoolean(true),
   date: z.string().max(20).optional().default(""),
   time: z.string().max(20).optional().default(""),
   ceremonyDate: z.string().max(20).optional().default(""),
   ceremonyTime: z.string().max(20).optional().default(""),
-  ceremonyHeader: z.string().max(200).optional().default(""),
+  ceremonyHeader: optionalSentence(200),
   ceremonyType: z.enum(["thanh-hon", "vu-quy"]).optional().default("thanh-hon"),
-  openingMessage: z.string().max(300).optional().default(""),
+  openingMessage: optionalSentence(300),
   heroImage: z.string().max(300).optional().default(""),
   heroImage2: z.string().max(300).optional().default(""),
   showHeroImage: formBoolean(true),
 
-  brideFather: z.string().max(120).optional().default(""),
-  brideMother: z.string().max(120).optional().default(""),
-  brideAddress: z.string().max(200).optional().default(""),
-  groomFather: z.string().max(120).optional().default(""),
-  groomMother: z.string().max(120).optional().default(""),
-  groomAddress: z.string().max(200).optional().default(""),
-  brideParentTitle: z.string().max(60).optional().default(""),
-  groomParentTitle: z.string().max(60).optional().default(""),
+  brideFather: optionalName(120),
+  brideMother: optionalName(120),
+  brideAddress: optionalSentence(200),
+  groomFather: optionalName(120),
+  groomMother: optionalName(120),
+  groomAddress: optionalSentence(200),
+  brideParentTitle: optionalSentence(60),
+  groomParentTitle: optionalSentence(60),
 
-  address: z.string().max(200).optional().default(""),
+  address: optionalSentence(200),
   mapAddress: z.string().max(1_200).optional().default(""),
   banquetTime: z.string().max(60).optional().default(""),
 
   brideBankName: z.string().max(120).optional().default(""),
   brideAccountNumber: z.string().max(60).optional().default(""),
-  brideAccountName: z.string().max(120).optional().default(""),
+  brideAccountName: optionalName(120),
   groomBankName: z.string().max(120).optional().default(""),
   groomAccountNumber: z.string().max(60).optional().default(""),
-  groomAccountName: z.string().max(120).optional().default(""),
+  groomAccountName: optionalName(120),
 });
 
 export type EditorState = {

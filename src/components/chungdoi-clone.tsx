@@ -30,7 +30,8 @@ import {
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { WeddingFaqSection } from "@/components/chungdoi-faq";
-import { getVietnameseTemplateSlug, templates } from "@/data/chungdoi";
+import { TemplatePreviewModal } from "@/components/template-preview-modal";
+import { templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
@@ -104,16 +105,11 @@ function useRevealOnScroll() {
 const heroPreviewTemplates = featuredTemplates.slice(0, 6);
 
 function StackFan() {
-  const locale = useLocale();
   const [active, setActive] = useState(0);
+  const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
   const pausedRef = useRef(false);
 
   const count = heroPreviewTemplates.length;
-
-  const hrefFor = (slug: string) => {
-    const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(slug) : slug;
-    return `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
-  };
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -149,18 +145,19 @@ function StackFan() {
             opacity: isCenter ? 1 : 0.72,
           };
           return (
-            <a
+            <button
               key={template.slug}
-              href={hrefFor(template.slug)}
+              type="button"
               className="stack-fan-card group"
               style={style}
-              onClick={(e) => {
-                if (!isCenter) {
-                  e.preventDefault();
-                  setActive(index);
-                  pausedRef.current = true;
-                  window.setTimeout(() => (pausedRef.current = false), 2000);
+              onClick={() => {
+                if (isCenter) {
+                  setSelected(template);
+                  return;
                 }
+                setActive(index);
+                pausedRef.current = true;
+                window.setTimeout(() => (pausedRef.current = false), 2000);
               }}
             >
               <Image
@@ -178,7 +175,7 @@ function StackFan() {
                 <p className="font-heading text-sm font-black text-background">{template.name}</p>
                 <p className="text-[10px] text-background/80">{template.category} · {template.color}</p>
               </div>
-            </a>
+            </button>
           );
         })}
       </div>
@@ -199,6 +196,8 @@ function StackFan() {
           />
         ))}
       </div>
+
+      {selected ? <TemplatePreviewModal template={selected} onClose={() => setSelected(null)} /> : null}
     </div>
   );
 }
@@ -266,11 +265,7 @@ function TemplateCarousel() {
   );
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-  const hrefFor = (slug: string) => {
-    const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(slug) : slug;
-    return `/${locale === "vi" ? "mau-thiep" : `${locale}/templates`}/${routeSlug}/demo`;
-  };
+  const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
 
   const applyTween = useCallback((api: NonNullable<typeof emblaApi>) => {
     const engine = api.internalEngine();
@@ -319,7 +314,7 @@ function TemplateCarousel() {
 
       if (image) {
         image.style.filter = `saturate(${saturation.toFixed(3)}) brightness(${brightness.toFixed(3)}) contrast(${contrast.toFixed(3)})`;
-        image.style.transition = "filter 240ms ease, object-position 9000ms ease-in-out";
+        image.style.transition = "filter 240ms ease, transform 9000ms ease-in-out";
       }
     });
   }, []);
@@ -342,6 +337,7 @@ function TemplateCarousel() {
   }, [emblaApi, applyTween]);
 
   return (
+    <>
     <section className="overflow-hidden bg-background py-16">
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <div className="reveal">
@@ -373,11 +369,12 @@ function TemplateCarousel() {
                     if (emblaApi) applyTween(emblaApi);
                   }}
                 >
-                  <a
-                    href={hrefFor(template.slug)}
+                  <button
+                    type="button"
+                    onClick={() => setSelected(template)}
                     draggable={false}
                     aria-current={isActive ? "true" : undefined}
-                    className={`group relative block h-[520px] overflow-hidden rounded-2xl border bg-card transition-[border-color] duration-300 [will-change:transform] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
+                    className={`group relative block h-[520px] w-full overflow-hidden rounded-2xl border bg-card text-left transition-[border-color] duration-300 [will-change:transform] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
                       isActive ? "border-primary/85" : "border-border/40"
                     }`}
                   >
@@ -387,7 +384,7 @@ function TemplateCarousel() {
                       draggable={false}
                       loading="lazy"
                       decoding="async"
-                      className="pointer-events-none h-full w-full object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom"
+                      className="pointer-events-none block h-auto w-full max-w-none transition-transform duration-[9000ms] ease-in-out group-hover:translate-y-[calc(520px_-_100%)]"
                     />
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
                       {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
@@ -396,7 +393,7 @@ function TemplateCarousel() {
                         {template.category} - {template.color}
                       </p>
                     </div>
-                  </a>
+                  </button>
                 </div>
               );
             })}
@@ -446,6 +443,8 @@ function TemplateCarousel() {
         <p className="text-sm text-muted-foreground">{t("carousel.viewAllHint")}</p>
       </div>
     </section>
+    {selected ? <TemplatePreviewModal template={selected} onClose={() => setSelected(null)} /> : null}
+    </>
   );
 }
 

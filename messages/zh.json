@@ -59,7 +59,9 @@
       "privacyPolicy": "隐私政策",
       "termsOfService": "服务条款",
       "copyright": "© 2026 Thiệp Mừng Online - 在线婚礼请柬",
-      "chatWithUs": "联系我们"
+      "chatWithUs": "联系我们",
+      "facebookContact": "通过 Facebook 联系我们",
+      "zaloContact": "通过 Zalo 联系我们"
     }
   },
   "home": {
@@ -288,9 +290,16 @@
     "offerSecondary": "编辑过程中可随时更换模板。",
     "previewTypeLabel": "预览方式",
     "previewTypeValue": "完整请柬",
-    "highlightMobile": "适配手机和电脑屏幕",
-    "highlightRsvp": "内置在线出席回执",
-    "highlightGallery": "包含婚礼相册和活动信息",
+    "editSimple": "轻松编辑",
+    "unlimitedUpload": "无限上传照片",
+    "googleMapsLink": "Google 地图导航",
+    "multiLanguage": "多语言支持",
+    "guestName": "显示宾客姓名",
+    "shareLink": "通过链接和二维码分享",
+    "attendanceConfirmed": "确认出席",
+    "receiveWishes": "接收祝福和礼金红包",
+    "qrCodeDemo": "演示二维码",
+    "photoUploadAfterWedding": "婚礼后宾客可上传照片",
     "hoverHint": "悬停以暂停滚动",
     "imageAlt": "{name}婚礼请柬完整预览",
     "close": "关闭预览"

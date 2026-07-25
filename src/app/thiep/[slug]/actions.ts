@@ -4,21 +4,25 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import {
+  capitalizeVietnameseSentences,
+  titleCaseVietnameseName,
+} from "@/lib/text-case";
 
 const wishSchema = z.object({
-  name: z.string().trim().min(1, "Vui lòng nhập tên").max(120),
-  text: z.string().trim().min(1, "Vui lòng nhập lời chúc").max(1000),
+  name: z.string().trim().min(1, "Vui lòng nhập tên").max(120).transform(titleCaseVietnameseName),
+  text: z.string().trim().min(1, "Vui lòng nhập lời chúc").max(1000).transform(capitalizeVietnameseSentences),
 });
 
 const rsvpSchema = z.object({
-  name: z.string().trim().min(1, "Vui lòng nhập tên").max(120),
+  name: z.string().trim().min(1, "Vui lòng nhập tên").max(120).transform(titleCaseVietnameseName),
   attending: z.enum(["yes", "no"]),
   guests: z.coerce.number().int().min(0).max(50).default(1),
   side: z.string().trim().max(60).optional().default(""),
-  message: z.string().trim().max(1000).optional().default(""),
+  message: z.string().trim().max(1000).optional().default("").transform(capitalizeVietnameseSentences),
   shuttle: z.enum(["yes"]).optional(),
-  dietary: z.string().trim().max(200).optional().default(""),
-  songRequest: z.string().trim().max(200).optional().default(""),
+  dietary: z.string().trim().max(200).optional().default("").transform(capitalizeVietnameseSentences),
+  songRequest: z.string().trim().max(200).optional().default("").transform(capitalizeVietnameseSentences),
   guestId: z.string().trim().max(60).optional().default(""),
 });
 
@@ -112,7 +116,10 @@ export async function submitRsvp(slug: string, _prev: PublicState, formData: For
       }
       if (!options.includes(value)) return { error: "Phương án đã chọn chưa hợp lệ" };
     }
-    answers.push({ questionId: question.id, value });
+    answers.push({
+      questionId: question.id,
+      value: question.type === "text" ? capitalizeVietnameseSentences(value) : value,
+    });
   }
 
   await prisma.rsvp.create({

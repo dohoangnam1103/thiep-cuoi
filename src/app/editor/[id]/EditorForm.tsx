@@ -22,6 +22,7 @@ import {
   useState,
   useSyncExternalStore,
   useTransition,
+  type FocusEvent as ReactFocusEvent,
 } from "react";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
@@ -62,6 +63,10 @@ import { cn } from "@/lib/utils";
 import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage } from "@/lib/invitation-display";
 import { isGoogleMapsShortUrl, isGoogleMapsUrl } from "@/lib/google-maps";
 import { shortNameFromFullName } from "@/lib/short-name";
+import {
+  capitalizeVietnameseSentences,
+  titleCaseVietnameseName,
+} from "@/lib/text-case";
 import { normalizeAlbumLayout, type AlbumLayout } from "@/lib/album-layout";
 import { trialExpiresAt } from "@/lib/trial";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
@@ -133,6 +138,32 @@ function field(content: InvitationContent | null, key: keyof InvitationContent):
   const v = content?.[key];
   return typeof v === "string" ? v : "";
 }
+
+const NAME_CASE_FIELDS = new Set([
+  "brideFullName",
+  "groomFullName",
+  "brideShortName",
+  "groomShortName",
+  "brideFather",
+  "brideMother",
+  "groomFather",
+  "groomMother",
+  "brideAccountName",
+  "groomAccountName",
+]);
+
+const SENTENCE_CASE_FIELDS = new Set([
+  "brideBirthOrder",
+  "groomBirthOrder",
+  "openingMessage",
+  "ceremonyItemTitle",
+  "scheduleLabel",
+  "brideAddress",
+  "groomAddress",
+  "brideParentTitle",
+  "groomParentTitle",
+  "address",
+]);
 
 function normalizeBirthOrder(value: string): string {
   const trimmed = value.trim();
@@ -415,6 +446,7 @@ function VenueLocationFields({
           name="address"
           value={address}
           onChange={(event) => setAddress(event.target.value)}
+          onBlur={(event) => setAddress(capitalizeVietnameseSentences(event.currentTarget.value))}
           placeholder={t("addressPlaceholder")}
           className={inputClass}
         />
@@ -1675,6 +1707,41 @@ function EditorFormContent({
     }));
   }, [brideFirst, brideFullName, brideShortName, groomFullName, groomShortName, weddingDate, slugEdited]);
 
+  function handleTextCaseBlur(event: ReactFocusEvent<HTMLFormElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLTextAreaElement)) return;
+
+    const formatter = NAME_CASE_FIELDS.has(target.name)
+      ? titleCaseVietnameseName
+      : SENTENCE_CASE_FIELDS.has(target.name)
+        ? capitalizeVietnameseSentences
+        : null;
+    if (!formatter) return;
+
+    const normalized = formatter(target.value);
+    if (normalized === target.value) return;
+    target.value = normalized;
+
+    if (target.name === "brideFullName") {
+      setBrideFullName(normalized);
+      if (!brideShortNameEdited) setBrideShortName(shortNameFromFullName(normalized));
+    } else if (target.name === "groomFullName") {
+      setGroomFullName(normalized);
+      if (!groomShortNameEdited) setGroomShortName(shortNameFromFullName(normalized));
+    } else if (target.name === "brideShortName") {
+      setBrideShortName(normalized);
+      setBrideShortNameEdited(Boolean(normalized && normalized !== shortNameFromFullName(brideFullName)));
+    } else if (target.name === "groomShortName") {
+      setGroomShortName(normalized);
+      setGroomShortNameEdited(Boolean(normalized && normalized !== shortNameFromFullName(groomFullName)));
+    } else if (target.name === "ceremonyItemTitle") {
+      const rowId = target.id.replace(/^ceremony-title-/, "");
+      setCeremonyRows((rows) => rows.map((row) => (
+        row.id === rowId ? { ...row, title: normalized } : row
+      )));
+    }
+  }
+
   function onShowPreview() {
     const form = document.getElementById("editor-form") as HTMLFormElement | null;
     if (!form) return;
@@ -1748,6 +1815,7 @@ function EditorFormContent({
 
         <form
           action={saveFormAction}
+          onBlurCapture={handleTextCaseBlur}
           onReset={(event) => event.preventDefault()}
           onSubmitCapture={() => {
             const snapshot = captureDraft();

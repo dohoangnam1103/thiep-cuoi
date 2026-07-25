@@ -59,7 +59,9 @@
       "privacyPolicy": "Chính sách bảo mật",
       "termsOfService": "Điều khoản sử dụng",
       "copyright": "© 2026 Thiệp Mừng Online - Thiệp cưới online",
-      "chatWithUs": "Chat với chúng tôi"
+      "chatWithUs": "Liên hệ",
+      "facebookContact": "Liên hệ qua Facebook",
+      "zaloContact": "Liên hệ qua Zalo"
     }
   },
   "home": {
@@ -288,9 +290,16 @@
     "offerSecondary": "Bạn có thể đổi mẫu bất cứ lúc nào khi chỉnh sửa.",
     "previewTypeLabel": "Kiểu xem",
     "previewTypeValue": "Toàn bộ thiệp",
-    "highlightMobile": "Hiển thị đẹp trên điện thoại và máy tính",
-    "highlightRsvp": "Tích hợp xác nhận tham dự trực tuyến",
-    "highlightGallery": "Có sẵn album ảnh cưới và nội dung sự kiện",
+    "editSimple": "Chỉnh sửa đơn giản",
+    "unlimitedUpload": "Upload ảnh không giới hạn",
+    "googleMapsLink": "Google Maps chỉ đường",
+    "multiLanguage": "Đa ngôn ngữ",
+    "guestName": "Ghi tên khách mời",
+    "shareLink": "Chia sẻ qua link và QR Code",
+    "attendanceConfirmed": "Xác nhận tham dự",
+    "receiveWishes": "Nhận lời chúc và phong bao lì xì",
+    "qrCodeDemo": "Mã QR xem demo",
+    "photoUploadAfterWedding": "Khách mời được upload ảnh sau đám cưới",
     "hoverHint": "Rê chuột vào để dừng cuộn",
     "imageAlt": "Ảnh xem trước toàn bộ mẫu thiệp cưới {name}",
     "close": "Đóng cửa sổ xem trước"
@@ -601,7 +610,7 @@
       },
       "dragon-phoenix-red": {
         "name": "Long Phụng Đỏ",
-        "description": "Thiệp cưới Long Phụng Đỏ kết hợp họa tiết rồng phượng cổ điển với sắc đỏ trang trọng. Miễn phí tạo thiệp."
+        "description": "Thiệp cưới Long Phụng Đỏ kết hợp họa tiết rồng phượng cổ điển với sắc đỏ trang trọng."
       },
       "dragon-phoenix-v3-red": {
         "name": "Long Phụng V3 Đỏ",
@@ -875,9 +884,10 @@
     "listTitle": "Danh sách khách",
     "count": "Hiển thị {shown}/{total} khách",
     "stats": {
-      "total": "Tổng khách mời",
+      "total": "Tổng số thiệp đã mời",
       "responded": "Đã phản hồi",
       "attending": "Sẽ tham dự",
+      "declined": "Số khách từ chối",
       "expected": "Số khách dự kiến"
     },
     "actions": {

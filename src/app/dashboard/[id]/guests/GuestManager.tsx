@@ -32,6 +32,7 @@ import {
   useRef,
   useState,
   useTransition,
+  type FocusEvent as ReactFocusEvent,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -40,6 +41,10 @@ import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import { guestsToCsv, guestCsvTemplate, parseGuestCsv } from "@/lib/guest-csv";
 import type { GuestImportRow, GuestRow } from "@/lib/guest-manager";
+import {
+  capitalizeVietnameseSentences,
+  titleCaseVietnameseName,
+} from "@/lib/text-case";
 import { trackEvent } from "@/lib/analytics";
 import {
   addGuest,
@@ -151,10 +156,22 @@ function ModalFrame({
   );
 }
 
+function handleGuestTextCaseBlur(event: ReactFocusEvent<HTMLDivElement>) {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLTextAreaElement)) return;
+
+  const normalized = target.name === "name"
+    ? titleCaseVietnameseName(target.value)
+    : ["role", "greeting", "side", "groupName", "tableName"].includes(target.name)
+      ? capitalizeVietnameseSentences(target.value)
+      : target.value;
+  target.value = normalized;
+}
+
 function GuestFields({ guest }: { guest?: GuestRow }) {
   const t = useTranslations("guestManager");
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4" onBlurCapture={handleGuestTextCaseBlur}>
       <Field label={t("fields.role")}>
         <input
           name="role"
@@ -237,15 +254,16 @@ function GuestFields({ guest }: { guest?: GuestRow }) {
 
 function guestWithFormData(guest: GuestRow, formData: FormData): GuestRow {
   const text = (name: string) => String(formData.get(name) ?? "").trim();
+  const sentence = (name: string) => capitalizeVietnameseSentences(text(name));
 
   return {
     ...guest,
-    name: text("name"),
-    side: text("side"),
-    role: text("role"),
-    groupName: text("groupName"),
-    tableName: text("tableName"),
-    greeting: text("greeting"),
+    name: titleCaseVietnameseName(text("name")),
+    side: sentence("side"),
+    role: sentence("role"),
+    groupName: sentence("groupName"),
+    tableName: sentence("tableName"),
+    greeting: sentence("greeting"),
   };
 }
 

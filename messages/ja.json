@@ -59,7 +59,9 @@
       "privacyPolicy": "プライバシーポリシー",
       "termsOfService": "利用規約",
       "copyright": "© 2026 Thiệp Mừng Online - オンライン結婚式招待状",
-      "chatWithUs": "お問い合わせ"
+      "chatWithUs": "お問い合わせ",
+      "facebookContact": "Facebookで問い合わせる",
+      "zaloContact": "Zaloで問い合わせる"
     }
   },
   "home": {
@@ -288,9 +290,16 @@
     "offerSecondary": "編集中はいつでもテンプレートを変更できます。",
     "previewTypeLabel": "プレビュー形式",
     "previewTypeValue": "招待状全体",
-    "highlightMobile": "スマートフォンとパソコンに最適化",
-    "highlightRsvp": "オンライン出欠確認を搭載",
-    "highlightGallery": "ウェディングアルバムとイベント情報を収録",
+    "editSimple": "簡単編集",
+    "unlimitedUpload": "写真を無制限にアップロード",
+    "googleMapsLink": "Googleマップで道案内",
+    "multiLanguage": "多言語対応",
+    "guestName": "ゲスト名を表示",
+    "shareLink": "リンクとQRコードで共有",
+    "attendanceConfirmed": "出欠確認",
+    "receiveWishes": "お祝いメッセージとご祝儀を受け取る",
+    "qrCodeDemo": "デモ閲覧用QRコード",
+    "photoUploadAfterWedding": "結婚式後にゲストが写真をアップロード",
     "hoverHint": "カーソルを合わせてスクロールを停止",
     "imageAlt": "{name}結婚式招待状の全体プレビュー",
     "close": "プレビューを閉じる"

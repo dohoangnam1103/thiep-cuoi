@@ -59,7 +59,9 @@
       "privacyPolicy": "개인정보 처리방침",
       "termsOfService": "이용약관",
       "copyright": "© 2026 Thiệp Mừng Online - 온라인 청첩장",
-      "chatWithUs": "문의하기"
+      "chatWithUs": "문의하기",
+      "facebookContact": "Facebook으로 문의하기",
+      "zaloContact": "Zalo로 문의하기"
     }
   },
   "home": {
@@ -288,9 +290,16 @@
     "offerSecondary": "편집 중 언제든 다른 템플릿으로 변경할 수 있습니다.",
     "previewTypeLabel": "미리보기 방식",
     "previewTypeValue": "전체 청첩장",
-    "highlightMobile": "휴대폰과 데스크톱 화면에 최적화",
-    "highlightRsvp": "온라인 RSVP 기능 내장",
-    "highlightGallery": "웨딩 앨범과 행사 정보 포함",
+    "editSimple": "간편한 편집",
+    "unlimitedUpload": "무제한 사진 업로드",
+    "googleMapsLink": "Google 지도 길찾기",
+    "multiLanguage": "다국어 지원",
+    "guestName": "하객 이름 표시",
+    "shareLink": "링크와 QR 코드로 공유",
+    "attendanceConfirmed": "참석 여부 확인",
+    "receiveWishes": "축하 메시지와 축의금 받기",
+    "qrCodeDemo": "데모용 QR 코드",
+    "photoUploadAfterWedding": "결혼식 후 하객 사진 업로드",
     "hoverHint": "마우스를 올려 스크롤 일시 정지",
     "imageAlt": "{name} 웨딩 청첩장 전체 미리보기",
     "close": "미리보기 닫기"

@@ -5,12 +5,15 @@ import { z } from "zod";
 
 import { ownInvitation, verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
+import { capitalizeVietnameseSentences } from "@/lib/text-case";
 
 const questionSchema = z.object({
-  label: z.string().trim().min(1).max(180),
+  label: z.string().trim().min(1).max(180).transform(capitalizeVietnameseSentences),
   type: z.enum(["text", "boolean", "select"]),
   required: z.boolean().default(false),
-  options: z.array(z.string().trim().min(1).max(100)).max(12).default([]),
+  options: z.array(
+    z.string().trim().min(1).max(100).transform(capitalizeVietnameseSentences),
+  ).max(12).default([]),
 }).superRefine((data, context) => {
   if (data.type === "select" && data.options.length < 2) {
     context.addIssue({ code: "custom", path: ["options"], message: "invalidOptions" });

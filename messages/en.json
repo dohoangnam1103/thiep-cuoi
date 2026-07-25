@@ -59,7 +59,9 @@
       "privacyPolicy": "Privacy Policy",
       "termsOfService": "Terms of Service",
       "copyright": "© 2026 Thiệp Mừng Online - Online Wedding Invitations",
-      "chatWithUs": "Chat with us"
+      "chatWithUs": "Contact us",
+      "facebookContact": "Contact us on Facebook",
+      "zaloContact": "Contact us on Zalo"
     }
   },
   "home": {
@@ -288,9 +290,16 @@
     "offerSecondary": "You can switch templates at any time while editing.",
     "previewTypeLabel": "Preview type",
     "previewTypeValue": "Full invitation",
-    "highlightMobile": "Designed for phones and desktop screens",
-    "highlightRsvp": "Online RSVP is built in",
-    "highlightGallery": "Wedding gallery and event details included",
+    "editSimple": "Simple editing",
+    "unlimitedUpload": "Unlimited photo uploads",
+    "googleMapsLink": "Google Maps directions",
+    "multiLanguage": "Multi-language",
+    "guestName": "Guest name list",
+    "shareLink": "Share via link and QR Code",
+    "attendanceConfirmed": "Attendance confirmation",
+    "receiveWishes": "Receive wishes and red envelopes",
+    "qrCodeDemo": "QR code for demo",
+    "photoUploadAfterWedding": "Guests can upload photos after the wedding",
     "hoverHint": "Hover to pause scrolling",
     "imageAlt": "Full preview of the {name} wedding invitation",
     "close": "Close preview"

@@ -27,10 +27,11 @@ const DATA_FILE = path.join(ROOT, "src/data/chungdoi.ts");
 const ROUTE_SLUGS_FILE = path.join(ROOT, "src/data/template-route-slugs.ts");
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const MANAGED_SERVER_URL = "http://127.0.0.1:3200";
-const CAPTURE_WIDTH = 384;
+const CAPTURE_WIDTH = 480;
 const CAPTURE_HEIGHT = 844;
 const CAPTURE_DEVICE_SCALE_FACTOR = 2;
-const OUTPUT_WIDTH = CAPTURE_WIDTH * CAPTURE_DEVICE_SCALE_FACTOR;
+const RAW_CAPTURE_WIDTH = CAPTURE_WIDTH * CAPTURE_DEVICE_SCALE_FACTOR;
+const OUTPUT_WIDTH = 768;
 const MIN_PREVIEW_HEIGHT = 1_200;
 const WEBP_QUALITY = Number(process.env.CAPTURE_QUALITY ?? 84);
 const VERBOSE = process.env.CAPTURE_VERBOSE === "1";
@@ -323,8 +324,8 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
 
     const png = await page.screenshot({ fullPage: true, animations: "disabled", type: "png" });
     const pngMetadata = await sharp(png).metadata();
-    if (pngMetadata.width !== OUTPUT_WIDTH) {
-      throw new Error(`Chiều rộng ảnh không hợp lệ: ${pngMetadata.width}px`);
+    if (pngMetadata.width !== RAW_CAPTURE_WIDTH) {
+      throw new Error(`Chiều rộng ảnh chụp không hợp lệ: ${pngMetadata.width}px`);
     }
     if (!pngMetadata.height || pngMetadata.height < MIN_PREVIEW_HEIGHT) {
       throw new Error(`Chiều cao ảnh quá ngắn: ${pngMetadata.height ?? 0}px`);
@@ -333,6 +334,7 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
     const outputName = path.basename(template.listing);
     const stagedPath = path.join(stagingDir, outputName);
     await sharp(png)
+      .resize({ width: OUTPUT_WIDTH })
       .webp({ quality: WEBP_QUALITY, effort: 6, smartSubsample: true })
       .toFile(stagedPath);
 

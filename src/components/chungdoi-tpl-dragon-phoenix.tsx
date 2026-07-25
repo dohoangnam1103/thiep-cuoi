@@ -196,10 +196,17 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             <img alt="" className="h-[354px] w-auto md:h-[572px]" src={`${LPD}/rong.webp`} />
             <img alt="" className="h-[354px] w-auto md:h-[572px]" src={`${LPD}/phuong.webp`} />
           </div>
-          <h1 className="relative z-10 flex flex-col items-center" style={{ fontFamily: LPD_UNI, color: GOLD }}>
-            <span className="whitespace-nowrap leading-[75px] md:leading-[105px]" style={{ fontSize: 70 }}>{headerNames[0]}</span>
+          <h1
+            className="relative z-10 flex w-full flex-col items-center px-4"
+            style={{ fontFamily: LPD_UNI, color: GOLD }}
+          >
+            <span className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
+              {headerNames[0]}
+            </span>
             <span className="mt-1 text-[37px] md:text-[50px]">&amp;</span>
-            <span className="whitespace-nowrap leading-[75px] md:leading-[105px]" style={{ fontSize: 70 }}>{headerNames[1]}</span>
+            <span className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
+              {headerNames[1]}
+            </span>
           </h1>
         </header>
 

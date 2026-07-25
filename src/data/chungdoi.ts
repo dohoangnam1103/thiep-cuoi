@@ -130,7 +130,7 @@ export const templates = [
       "Separate engagement and reception sections",
       "Full family hierarchy support"
     ],
-    "listing": "/chungdoi/images/template-previews/en/listing/dragon_phoenix_red.webp",
+    "listing": "/chungdoi/images/template-previews/en/listing/dragon_phoenix_red_480.webp",
     "portrait": "/chungdoi/images/template-previews/en/portrait/dragon_phoenix_red.webp",
     "landscape": "/chungdoi/images/template-previews/en/landscape/dragon_phoenix_red.webp",
     "sourceUrl": "https://chungdoi.com/en/templates/dragon-phoenix-red"
