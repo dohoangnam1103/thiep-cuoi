@@ -307,6 +307,11 @@
   "demoCta": {
     "useTemplate": "Sử dụng thiệp này"
   },
+  "templateDemoSeo": {
+    "metaTitle": "Mẫu thiệp cưới {name} | Thiệp Mừng Online",
+    "heading": "Mẫu thiệp cưới {name}",
+    "imageAlt": "Ảnh xem trước mẫu thiệp cưới {name}"
+  },
   "weddingGuide": {
     "metadata": {
       "title": "Cách tạo thiệp cưới online chỉ với 7 bước | Thiệp Mừng Online",
@@ -675,6 +680,10 @@
       "royal-red": {
         "name": "Hoàng Kim Đỏ",
         "description": "Thiệp cưới Hoàng Kim Đỏ kết hợp nền đỏ trầm với điểm nhấn vàng sang trọng. Miễn phí tạo thiệp."
+      },
+      "maroon-love": {
+        "name": "Maroon Love",
+        "description": "Thiệp cưới Maroon Love nền đỏ đô đậm, chữ serif kem và điểm nhấn hồng lãng mạn. Xem demo miễn phí."
       },
       "nhat-binh-red": {
         "name": "Nhật Bình Đỏ",

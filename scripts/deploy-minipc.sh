@@ -66,9 +66,25 @@ rsync -az --delete \
   --exclude '.env.local' \
   --exclude '.env.*.local' \
   --exclude '.DS_Store' \
-  --exclude 'prisma/*.db' \
-  --exclude 'prisma/*.db-journal' \
-  --exclude 'public/uploads' \
+  --exclude '/*.db' \
+  --exclude '/*.db-journal' \
+  --exclude '/*.db-shm' \
+  --exclude '/*.db-wal' \
+  --exclude '/*.sqlite' \
+  --exclude '/*.sqlite-journal' \
+  --exclude '/*.sqlite-shm' \
+  --exclude '/*.sqlite-wal' \
+  --exclude '/data/' \
+  --exclude '/prisma/*.db' \
+  --exclude '/prisma/*.db-journal' \
+  --exclude '/prisma/*.db-shm' \
+  --exclude '/prisma/*.db-wal' \
+  --exclude '/prisma/*.sqlite' \
+  --exclude '/prisma/*.sqlite-journal' \
+  --exclude '/prisma/*.sqlite-shm' \
+  --exclude '/prisma/*.sqlite-wal' \
+  --exclude '/public/uploads/' \
+  --exclude '/temp/' \
   --exclude '.playwright-mcp' \
   --exclude '.capture' \
   --exclude '/.claude-flow' \
@@ -78,7 +94,6 @@ rsync -az --delete \
   --exclude '*.test.tsx' \
   --exclude '/tests' \
   --exclude '/docs/superpowers' \
-  --exclude 'temp' \
   ./ "${REMOTE_HOST}:${REMOTE_APP_DIR}/releases/current/"
 log_step "rsync source"
 

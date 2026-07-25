@@ -75,6 +75,9 @@ export function pageSeo({
   locale,
   image = SITE_SOCIAL_IMAGE_PATH,
   imageAlt = title,
+  imageWidth,
+  imageHeight,
+  imageType,
   openGraphTitle = title,
   openGraphDescription = description,
   twitterTitle = openGraphTitle,
@@ -87,6 +90,9 @@ export function pageSeo({
   locale?: AppLocale;
   image?: string;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageType?: string;
   openGraphTitle?: string;
   openGraphDescription?: string;
   twitterTitle?: string;
@@ -102,7 +108,13 @@ export function pageSeo({
         alt: imageAlt,
         type: "image/jpeg",
       }
-    : { url: imageUrl, alt: imageAlt };
+    : {
+        url: imageUrl,
+        width: imageWidth,
+        height: imageHeight,
+        alt: imageAlt,
+        type: imageType,
+      };
 
   return {
     title: { absolute: title },

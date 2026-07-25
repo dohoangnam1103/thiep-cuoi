@@ -20,11 +20,11 @@ function SpringGardenGreenHero({ content }: { content: ChungDoiDemoContent }) {
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[-130px] z-[1] h-[1650px] w-[1730px] -translate-x-[31%] bg-[url('/chungdoi/images/themes/_decor/nature/flower_paralax.webp')] bg-contain bg-center bg-no-repeat opacity-20 md:h-[2946px] md:w-[3092px]"
       />
-      <h1 className="relative z-10 flex w-full flex-col items-center gap-6 px-6 text-[50px] leading-[75px] md:px-10 md:text-[70px] md:leading-[105px]" style={nameFont}>
+      <div className="relative z-10 flex w-full flex-col items-center gap-6 px-6 text-[50px] leading-[75px] md:px-10 md:text-[70px] md:leading-[105px]" style={nameFont}>
         <span>{compactName(people[0].shortName)}</span>
         <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]">&amp;</span>
         <span>{compactName(people[1].shortName)}</span>
-      </h1>
+      </div>
     </header>
   );
 }

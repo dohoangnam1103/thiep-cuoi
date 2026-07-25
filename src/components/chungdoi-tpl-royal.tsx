@@ -139,11 +139,11 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
         {/* header — gold frame + flower + couple names */}
         <header className="relative z-10 flex flex-col items-center justify-center px-6 pb-10 pt-16 text-center md:pt-20">
           <img alt="" aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 w-[70%] max-w-[360px] -translate-x-1/2 opacity-25" src={`${RYL}/flower.webp`} />
-          <h1 className="relative z-10 flex flex-col items-center gap-1" style={{ color: ROYAL_GOLD }}>
+          <div className="relative z-10 flex flex-col items-center gap-1" style={{ color: ROYAL_GOLD }}>
             <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[0].shortName}</span>
             <span className="font-qellia text-[28px] md:text-[34px]">&amp;</span>
             <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[1].shortName}</span>
-          </h1>
+          </div>
           {wedding ? (
             <p className="relative z-10 mt-4 text-[16px] tracking-wide md:text-[18px]" style={{ color: ROYAL_GOLD_MUTED, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.dayNumber} tháng {wedding.monthNumber}, {wedding.yearNumber}</p>
           ) : null}

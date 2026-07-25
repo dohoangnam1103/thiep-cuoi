@@ -746,8 +746,8 @@ export const templates = [
   }
 ] satisfies ChungDoiTemplate[];
 
-// Slugs with a faithful, pixel-accurate rebuild in chungdoi-demo.tsx. Others still
-// fall back to the generic InvitationBody, so we hide them from the public listing.
+// Templates with complete dedicated renderers. This registry drives the public listing,
+// canonical demo sitemap entries, and editor choices; incomplete templates stay excluded.
 export const completedTemplateSlugs = new Set<string>([
   "double-phoenix-red",
   "double-phoenix-green",

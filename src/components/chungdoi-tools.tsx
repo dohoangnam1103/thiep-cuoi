@@ -47,7 +47,7 @@ export function ChungDoiTools() {
                       <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-black text-primary">{t("popular")}</span>
                     ) : null}
                   </div>
-                  <h3 className="mt-6 font-heading text-xl font-black text-foreground">{t(tool.nameKey)}</h3>
+                  <h2 className="mt-6 font-heading text-xl font-black text-foreground">{t(tool.nameKey)}</h2>
                   <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{t(tool.descKey)}</p>
                   <button className="mt-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-secondary px-4 py-2 text-sm font-black text-foreground transition hover:bg-muted">
                     {t("open")} <ArrowRight className="size-4" />

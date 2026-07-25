@@ -59,6 +59,28 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 
+# Runtime/local data (mounted or supplied outside the image)
+/data
+/temp
+/public/uploads
+/dev.db
+/*.db
+/*.db-journal
+/*.db-shm
+/*.db-wal
+/*.sqlite
+/*.sqlite-journal
+/*.sqlite-shm
+/*.sqlite-wal
+/prisma/*.db
+/prisma/*.db-journal
+/prisma/*.db-shm
+/prisma/*.db-wal
+/prisma/*.sqlite
+/prisma/*.sqlite-journal
+/prisma/*.sqlite-shm
+/prisma/*.sqlite-wal
+
 # Misc
 *.tsbuildinfo
 README.md

@@ -16,9 +16,12 @@ import {
   type Texture,
 } from "three";
 
+import { ENVELOPE_TARGET_PX } from "@/components/chungdoi-envelope-constants";
+
 type Envelope3DProps = {
   renderCard: (onOpen: () => void) => ReactNode;
   onOpen: () => void;
+  onReady?: () => void;
   paperColor: string;
   accentColor: string;
   // Hoa tràn ra ngoài mép card: KHÔNG bake vào texture card (bị crop theo khung
@@ -53,9 +56,8 @@ function measureButtonUV(root: HTMLElement): BtnUV | null {
 // Hẹp chiều ngang (420px) để card cao/dọc hơn — dễ xem trên điện thoại.
 const CARD_PX = 420;
 const CARD_W = 3;
-// Đích chung: card chiếu ra màn đúng TARGET_PX bất kể chiều cao viewport (màn cao
-// không làm box bự). Demo dùng CÙNG số này cho DOM lúc mở → swap 3D→DOM không giật.
-export const TARGET_PX = 340;
+// Đích chung: card chiếu ra màn đúng ENVELOPE_TARGET_PX bất kể chiều cao viewport
+// (màn cao không làm box bự). Demo dùng cùng số này cho DOM lúc mở để swap êm.
 // Fallback aspect (H/W) khi chưa chụp xong; sau khi chụp lấy tỉ lệ thật từ canvas.
 const FALLBACK_RATIO = 1.35;
 const DEPTH = 0.008; // giấy mỏng, chỉ đủ dày để có mặt bên
@@ -204,11 +206,11 @@ function Envelope({
   const faceW = CARD_W + 2 * padW;
   const faceH = cardH + 2 * padW;
 
-  // Scale box sao cho chiều ngang CARD_W (world) chiếu ra đúng TARGET_PX trên màn,
-  // bất kể chiều cao viewport → màn desktop cao không làm thiệp bự. worldPerPx =
+  // Scale box sao cho chiều ngang CARD_W (world) chiếu ra đúng
+  // ENVELOPE_TARGET_PX trên màn, bất kể chiều cao viewport. worldPerPx =
   // viewport.width/size.width (world unit trên 1 px màn ở z=0).
   const { viewport, size } = useThree();
-  const scale = (TARGET_PX * (viewport.width / size.width)) / CARD_W;
+  const scale = (ENVELOPE_TARGET_PX * (viewport.width / size.width)) / CARD_W;
 
   const envColor = useMemo(
     () => new Color(paperColor).multiplyScalar(0.96).getStyle(),
@@ -318,12 +320,14 @@ function Envelope({
 export default function Envelope3D({
   renderCard,
   onOpen,
+  onReady,
   paperColor,
   accentColor,
   renderDecor,
 }: Envelope3DProps) {
   const captureRef = useRef<HTMLDivElement>(null);
   const decorRef = useRef<HTMLDivElement>(null);
+  const readyNotifiedRef = useRef(false);
   const [frontTex, setFrontTex] = useState<Texture | null>(null);
   const [decorTex, setDecorTex] = useState<Texture | null>(null);
   const [ratio, setRatio] = useState(FALLBACK_RATIO);
@@ -379,6 +383,12 @@ export default function Envelope3D({
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!frontTex || (renderDecor && !decorTex) || readyNotifiedRef.current) return;
+    readyNotifiedRef.current = true;
+    onReady?.();
+  }, [decorTex, frontTex, onReady, renderDecor]);
 
   return (
     <>

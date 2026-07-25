@@ -9,13 +9,37 @@ import {
   findTemplateByRouteSlug,
   getVietnameseTemplateSlug,
   templates,
+  type ChungDoiTemplate,
 } from "@/data/chungdoi";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
 import { routing, type Locale } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
-import { templateAlternates } from "@/lib/seo";
-import { absoluteUrl } from "@/lib/site-url";
+import { pageSeo, templateAlternates } from "@/lib/seo";
 import { toDemoContent } from "@/lib/to-demo-content";
+
+const TEMPLATE_PREVIEW_WIDTH = 2400;
+const TEMPLATE_PREVIEW_HEIGHT = 1260;
+
+async function localizedTemplateCopy(locale: Locale, template: ChungDoiTemplate) {
+  const [listingT, demoT] = await Promise.all([
+    getTranslations({ locale, namespace: "listing" }),
+    getTranslations({ locale, namespace: "templateDemoSeo" }),
+  ]);
+  const nameKey = `templates.${template.slug}.name`;
+  const descriptionKey = `templates.${template.slug}.description`;
+  const name = listingT.has(nameKey) ? listingT(nameKey) : template.name;
+  const description = listingT.has(descriptionKey)
+    ? listingT(descriptionKey)
+    : template.description;
+
+  return {
+    description,
+    heading: demoT("heading", { name }),
+    imageAlt: demoT("imageAlt", { name }),
+    name,
+    title: demoT("metaTitle", { name }),
+  };
+}
 
 function localeSlug(sourceSlug: string, locale: Locale) {
   return locale === "vi" ? getVietnameseTemplateSlug(sourceSlug) : sourceSlug;
@@ -39,27 +63,23 @@ export async function generateMetadata({
     return { title: { absolute: "Demo | Thiệp Mừng Online" } };
   }
 
-  const title = template.title;
-  const image = absoluteUrl(template.landscape);
+  const copy = await localizedTemplateCopy(locale, template);
+  const alternates = templateAlternates(slug, locale);
+  if (!alternates) {
+    return { title: { absolute: "Demo | Thiệp Mừng Online" } };
+  }
 
-  return {
-    title: { absolute: title },
-    description: template.description,
-    alternates: templateAlternates(slug, locale) ?? undefined,
-    openGraph: {
-      type: "website",
-      title,
-      description: template.description,
-      images: [{ url: image }],
-      siteName: "Thiệp Mừng Online",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description: template.description,
-      images: [image],
-    },
-  };
+  return pageSeo({
+    title: copy.title,
+    description: copy.description,
+    alternates,
+    locale,
+    image: template.landscape,
+    imageAlt: copy.imageAlt,
+    imageWidth: TEMPLATE_PREVIEW_WIDTH,
+    imageHeight: TEMPLATE_PREVIEW_HEIGHT,
+    imageType: "image/webp",
+  });
 }
 
 export default async function DemoPage({
@@ -76,6 +96,7 @@ export default async function DemoPage({
 
   const template = findTemplateByRouteSlug(slug);
   if (!template) notFound();
+  const copy = await localizedTemplateCopy(locale, template);
 
   const invitation = await prisma.invitation.findFirst({
     where: { isDemo: true, templateId: template.slug },
@@ -105,7 +126,12 @@ export default async function DemoPage({
           params={{ template_id: template.slug, locale }}
         />
       ) : null}
-      <ChungDoiDemo template={template} content={content} captureMode={captureMode} />
+      <ChungDoiDemo
+        template={template}
+        content={content}
+        captureMode={captureMode}
+        heading={copy.heading}
+      />
       {!captureMode ? (
         <form
           action={createInvitation}

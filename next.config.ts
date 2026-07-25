@@ -3,10 +3,34 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 import { canonicalHostRedirects } from "./src/lib/seo-redirects";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
+  "font-src 'self' data:",
+  "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com",
+  "media-src 'self' data: blob:",
+  "frame-src https://www.google.com https://maps.google.com",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  "manifest-src 'self'",
+  ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
+].join("; ");
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  poweredByHeader: false,
   serverExternalPackages: ["heic-decode", "libheif-js"],
   experimental: {
+    // Keep static rendering while adding integrity metadata to built scripts.
+    sri: {
+      algorithm: "sha384",
+    },
     // Persist Turbopack's production-build cache between Docker builds. The
     // cache directory is mounted by Dockerfile, so warm deploys only rebuild
     // modules affected by the latest source changes.
@@ -29,6 +53,10 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [
+          {
+            key: "Content-Security-Policy",
+            value: contentSecurityPolicy,
+          },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           {

@@ -70,7 +70,7 @@ export default async function HelpPage({
                   <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
                     <Icon className="size-5" />
                   </div>
-                  <h3 className="mt-6 font-heading text-xl font-black text-foreground">{category.name}</h3>
+                  <h2 className="mt-6 font-heading text-xl font-black text-foreground">{category.name}</h2>
                   <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{category.description}</p>
                 </article>
               );

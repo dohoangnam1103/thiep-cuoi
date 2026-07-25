@@ -307,6 +307,11 @@
   "demoCta": {
     "useTemplate": "使用此请柬"
   },
+  "templateDemoSeo": {
+    "metaTitle": "{name} 婚礼请柬模板 | Thiệp Mừng Online",
+    "heading": "{name} 婚礼请柬模板",
+    "imageAlt": "{name} 婚礼请柬模板预览图"
+  },
   "listing": {
     "metaTitle": "婚礼请柬模板 | Thiệp Mừng Online",
     "metaDescription": "浏览 Thiệp Mừng Online 婚礼请柬模板：按风格和颜色筛选，预览并打开带封面动画、相册和 RSVP 的在线演示。",

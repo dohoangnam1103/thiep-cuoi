@@ -307,6 +307,11 @@
   "demoCta": {
     "useTemplate": "Use this invitation"
   },
+  "templateDemoSeo": {
+    "metaTitle": "{name} Wedding Invitation Template | Thiệp Mừng Online",
+    "heading": "{name} wedding invitation template",
+    "imageAlt": "Preview of the {name} wedding invitation template"
+  },
   "weddingGuide": {
     "metadata": {
       "title": "How to create an online wedding invitation in 7 steps | Thiệp Mừng Online",

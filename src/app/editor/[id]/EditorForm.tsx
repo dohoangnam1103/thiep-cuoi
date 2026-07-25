@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Dialog } from "@base-ui/react/dialog";
 import {
   ChevronDown,
@@ -42,7 +43,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import {
   directionsUrl,
   InvitationMap,
@@ -54,7 +54,6 @@ import { Combobox } from "@/components/ui/combobox";
 import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { heroImageCount } from "@/data/editor-template-capabilities";
-import { MusicPicker } from "@/components/music-picker";
 import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
 import type { MusicPickerMessages } from "@/lib/music-picker";
@@ -91,6 +90,13 @@ import { slugify, slugifyInput, slugFromFormFields } from "./slug";
 import { templateLabel } from "./templates";
 import { PublishSuccessDialog } from "./PublishSuccessDialog";
 import { ShareInvitationDialog } from "./ShareInvitationDialog";
+
+const ChungDoiDemo = dynamic(() =>
+  import("@/components/chungdoi-demo").then((module) => module.ChungDoiDemo),
+);
+const MusicPicker = dynamic(() =>
+  import("@/components/music-picker").then((module) => module.MusicPicker),
+);
 
 type EditorFormProps = {
   invitationId: string;

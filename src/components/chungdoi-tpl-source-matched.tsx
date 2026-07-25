@@ -23,11 +23,11 @@ function compactName(value: string) {
 function NameLockup({ content, className = "", font = scriptFont }: { content: ChungDoiDemoContent; className?: string; font?: CSSProperties }) {
   const couple = names(content);
   return (
-    <h1 className={`relative z-20 flex flex-col items-center text-center leading-[0.95] ${className}`} style={font}>
+    <div className={`relative z-20 flex flex-col items-center text-center leading-[0.95] ${className}`} style={font}>
       <span>{couple.groom}</span>
       <span className="my-2 text-[0.62em]">&amp;</span>
       <span>{couple.bride}</span>
-    </h1>
+    </div>
   );
 }
 
@@ -120,11 +120,11 @@ function SilkLineHero({ content }: { content: ChungDoiDemoContent }) {
     <header className="relative z-20 min-h-[760px] overflow-hidden px-6 text-[#9a674f]">
       <img src="/chungdoi/images/themes/silk-flora-brown/top-flower.webp" alt="" aria-hidden className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-top opacity-95" />
       <div className="relative z-10 flex min-h-[760px] items-end justify-start pb-36">
-        <h1 className="flex w-[48%] flex-col items-center text-center text-[34px] leading-[0.95]" style={scriptFont}>
+        <div className="flex w-[48%] flex-col items-center text-center text-[34px] leading-[0.95]" style={scriptFont}>
           <span>{compactName(couple.groom)}</span>
           <span className="my-3 text-[23px]">&amp;</span>
           <span>{compactName(couple.bride)}</span>
-        </h1>
+        </div>
       </div>
     </header>
   );

@@ -68,11 +68,11 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
         <img src={`${SGR_BASE}/top-right.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[38%] -left-[10%] -z-10 h-[240px] w-auto max-w-none -scale-x-100 object-contain opacity-[0.14] md:h-[360px]" />
 
         <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
-          <h1 className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ color: SGR_TEXT, ...nameFont }}>
+          <div className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ color: SGR_TEXT, ...nameFont }}>
             <span>{people[0].shortName}</span>
             <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]">&amp;</span>
             <span>{people[1].shortName}</span>
-          </h1>
+          </div>
         </header>
 
         {gallery.length > 0 ? (

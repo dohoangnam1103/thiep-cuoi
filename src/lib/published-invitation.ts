@@ -1,6 +1,8 @@
+import { cache } from "react";
+
 import { prisma } from "@/lib/prisma";
 
-export async function loadPublished(slug: string) {
+export const loadPublished = cache(async function loadPublished(slug: string) {
   return prisma.invitation.findFirst({
     where: { slug, status: "published" },
     include: {
@@ -12,6 +14,6 @@ export async function loadPublished(slug: string) {
       rsvpQuestions: { orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] },
     },
   });
-}
+});
 
 export type PublishedInvitation = NonNullable<Awaited<ReturnType<typeof loadPublished>>>;

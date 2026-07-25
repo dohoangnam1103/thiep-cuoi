@@ -307,6 +307,11 @@
   "demoCta": {
     "useTemplate": "この招待状を使う"
   },
+  "templateDemoSeo": {
+    "metaTitle": "{name} 結婚式招待状テンプレート | Thiệp Mừng Online",
+    "heading": "{name} 結婚式招待状テンプレート",
+    "imageAlt": "{name} 結婚式招待状テンプレートのプレビュー"
+  },
   "listing": {
     "metaTitle": "結婚式招待状テンプレート | Thiệp Mừng Online",
     "metaDescription": "Thiệp Mừng Onlineの結婚式招待状テンプレートを閲覧：スタイルと色で絞り込み、カバーアニメーション・ギャラリー・RSVP付きのライブデモをプレビューして開けます。",

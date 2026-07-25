@@ -42,9 +42,11 @@ export function Logo({ responsive = false }: { responsive?: boolean }) {
 export function SiteHeader({
   initialLoggedIn = false,
   hideCreateButton = false,
+  onSessionChange,
 }: {
   initialLoggedIn?: boolean;
   hideCreateButton?: boolean;
+  onSessionChange?: (loggedIn: boolean) => void;
 }) {
   const t = useTranslations("chrome");
   const pathname = usePathname() as string;
@@ -56,13 +58,16 @@ export function SiteHeader({
     fetch("/api/auth/session")
       .then((res) => (res.ok ? res.json() : null))
       .then((data: SessionState | null) => {
-        if (active && data) setSession(data);
+        if (active && data) {
+          setSession(data);
+          onSessionChange?.(data.loggedIn);
+        }
       })
       .catch(() => {});
     return () => {
       active = false;
     };
-  }, []);
+  }, [onSessionChange]);
 
   const loggedIn = session?.loggedIn ?? initialLoggedIn;
   // Khách mời: đúng 1 thiệp → vào guests của thiệp đó luôn. 0 hoặc nhiều thiệp →

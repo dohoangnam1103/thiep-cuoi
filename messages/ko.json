@@ -307,6 +307,11 @@
   "demoCta": {
     "useTemplate": "이 청첩장 사용하기"
   },
+  "templateDemoSeo": {
+    "metaTitle": "{name} 웨딩 초대장 템플릿 | Thiệp Mừng Online",
+    "heading": "{name} 웨딩 초대장 템플릿",
+    "imageAlt": "{name} 웨딩 초대장 템플릿 미리보기"
+  },
   "listing": {
     "metaTitle": "청첩장 템플릿 | Thiệp Mừng Online",
     "metaDescription": "Thiệp Mừng Online 청첩장 템플릿 둘러보기: 스타일과 색상으로 필터링하고, 커버 애니메이션·갤러리·RSVP가 있는 실시간 데모를 미리보고 열어보세요.",

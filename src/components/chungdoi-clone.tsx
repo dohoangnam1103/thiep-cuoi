@@ -33,10 +33,41 @@ import { WeddingFaqSection } from "@/components/chungdoi-faq";
 import { TemplatePreviewModal } from "@/components/template-preview-modal";
 import { templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
+import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
 const featuredTemplates = templates.slice(0, 20);
+
+const featuredListingImageHeights = {
+  song_hy_red: 7885,
+  song_hy_green: 7853,
+  double_dragon_red: 7838,
+  double_phoenix_red: 7742,
+  elegant_leaf_green: 8106,
+  dragon_phoenix_red_480: 8904,
+  dragon_phoenix_v3_red: 7056,
+  dragon_phoenix_v2_red: 7450,
+  double_dragon_green: 8354,
+  boho_floral_green: 8355,
+  boho_floral_pink: 7576,
+  jasmine_white: 8254,
+  silk_flora_brown: 8310,
+  chateau_blue: 9381,
+  brocade_flower_red: 8118,
+  crystal_floral_blue: 9168,
+  chateau_green: 9536,
+  baroque_gold: 7666,
+  qasr_green: 8746,
+  qasr_gold: 8350,
+} as const;
+
+function featuredListingImageHeight(src: string) {
+  const filename = src.slice(src.lastIndexOf("/") + 1, -".webp".length);
+  return featuredListingImageHeights[
+    filename as keyof typeof featuredListingImageHeights
+  ] ?? 768;
+}
 
 function useScrollProgress() {
   useEffect(() => {
@@ -378,9 +409,12 @@ function TemplateCarousel() {
                       isActive ? "border-primary/85" : "border-border/40"
                     }`}
                   >
-                    <img
+                    <Image
                       src={template.listing}
                       alt={template.name}
+                      width={768}
+                      height={featuredListingImageHeight(template.listing)}
+                      sizes="266px"
                       draggable={false}
                       loading="lazy"
                       decoding="async"
@@ -573,12 +607,15 @@ function GuestsSection() {
           </ul>
         </div>
         <div className="reveal">
-          <img
+          <Image
             src="/chungdoi/images/rsvp-showcase.png"
             alt={t("guests.title")}
+            width={1122}
+            height={1402}
+            sizes="(max-width: 1023px) 100vw, 704px"
             loading="lazy"
             decoding="async"
-            className="w-full"
+            className="h-auto w-full"
           />
         </div>
       </div>
@@ -593,12 +630,15 @@ function LanguageSection() {
     <section className="bg-background py-20">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div className="reveal">
-          <img
+          <Image
             src="/chungdoi/images/language-showcase.png"
             alt={t("languages.title")}
+            width={941}
+            height={1089}
+            sizes="(max-width: 1023px) 100vw, 576px"
             loading="lazy"
             decoding="async"
-            className="w-full"
+            className="h-auto w-full"
           />
         </div>
         <div className="reveal">
@@ -666,20 +706,17 @@ function TestimonialsSection() {
   );
 }
 
-export function ChungDoiClone({
-  createHref,
-  isAuthenticated,
-}: {
-  createHref: string;
-  isAuthenticated: boolean;
-}) {
+export function ChungDoiClone() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const createHref = isAuthenticated ? TEMPLATE_LIST_PATH : loginHref(TEMPLATE_LIST_PATH);
+
   useRevealOnScroll();
   useScrollProgress();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div id="scroll-progress" className="scroll-progress" aria-hidden />
-      <SiteHeader initialLoggedIn={isAuthenticated} />
+      <SiteHeader onSessionChange={setIsAuthenticated} />
       <HeroSection createHref={createHref} />
       <TemplateCarousel />
       <HowItWorks />

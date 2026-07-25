@@ -173,3 +173,63 @@ git diff -- src/app/robots.ts src/app/sitemap.ts src/lib/seo.ts src/proxy.ts nex
 - Đã chứng minh không còn nội dung/hành vi deceptive trên production.
 - Đã gửi Request Review và ghi lại thời điểm gửi.
 - Google Search Console xác nhận Security issue đã được gỡ.
+
+## Kết quả kiểm chứng batch 2026-07-26 (chưa deploy)
+
+Chạy trên bản build production-like (`.next/standalone`, `HOSTNAME=0.0.0.0`,
+`NEXT_PUBLIC_SITE_URL=https://thiepmungonline.com`).
+
+Dependency:
+
+- `npm audit --omit=dev --audit-level=high` → **0 vulnerabilities**.
+- `next` 16.2.11, `next-auth` 5.0.0-beta.32 (pin exact); overrides thêm
+  `fast-uri 3.1.4`, `@hono/node-server 2.0.11`, `valibot 1.4.2`, `sharp $sharp`.
+- 9 high còn lại đều thuộc chuỗi ESLint 9 (`brace-expansion`/`minimatch`),
+  dev-only, chỉ hết khi lên ESLint 10 (major). Không nằm trong runtime.
+
+Chất lượng:
+
+- `typecheck`, `typecheck:tests` pass; `test:unit` 109/109 pass;
+  `lint` 0 errors (267 warnings `no-img-element` cũ); build pass.
+
+Bundle first-load JS (trước → sau):
+
+- `/editor/[id]` 2.20 MB → 0.99 MB
+- `/thiep/[slug]` 1.82 MB → 0.86 MB
+- `/[locale]/templates/[slug]/demo` 1.86 MB → 0.91 MB
+- `/[locale]` 0.76 MB → 0.73 MB, không còn chunk Three.js trong first load.
+
+Hành vi thiệp demo (390 và 1280):
+
+- Trước khi mở: `<audio>` không có `src`, `preload="none"`, 0 request audio,
+  2 ảnh, ~229 ký tự nội dung. Cover hiển thị ngay, canvas 3D nạp sau idle.
+- Sau gesture mở: `src` audio được gắn và request đúng 1 lần, nội dung
+  ~1252 ký tự, 10 ảnh, chuyển 3D → DOM không đổi kích thước.
+- `?capture=1` vẫn render đầy đủ ngay (dùng cho screenshot) và có đúng 1 `h1`.
+- Tap mở thiệp vẫn giới hạn ở vùng nút theo UV như thiết kế (đã so với prod).
+
+SEO:
+
+- Sitemap: 49 URL (9 static + 40 demo tiếng Việt), 0 URL trùng.
+- Demo tiếng Việt: title/description/`h1` tiếng Việt, `og:url` + canonical
+  cùng nguồn, `og:image` 2400×1260.
+- `/thiep/<slug-không-tồn-tại>` trả 404 thật với cả UA thường và Googlebot.
+- Mỗi trang public chỉ còn đúng 1 `h1`.
+- Bổ sung `listing.templates.maroon-love` (vi) — trước đó prod log
+  `MISSING_MESSAGE` cho name/description.
+
+Bảo mật / hiệu năng header:
+
+- CSP có mặt trên mọi response, 0 CSP violation trong console ở `/`,
+  `/mau-thiep`, demo (390 và 1280); hydration hoạt động.
+- Không còn `X-Powered-By`; `/uploads/*` trả `X-Robots-Tag: noindex, nofollow`.
+- Homepage/listing/pricing trả `Cache-Control: s-maxage=31536000`
+  (trước là `private, no-store`).
+
+Chưa kiểm chứng được:
+
+- Trạng thái “Deceptive pages” trong Search Console (không có quyền truy cập).
+- Editor tab preview khi đã đăng nhập (cần session), chỉ xác nhận qua bundle
+  stats là `chungdoi-demo` không nằm trong first load.
+- Redirect canonical host + HSTS thực tế: local phải bỏ 2 redirect trong
+  `routes-manifest.json` để test, cần kiểm tra lại sau khi deploy.

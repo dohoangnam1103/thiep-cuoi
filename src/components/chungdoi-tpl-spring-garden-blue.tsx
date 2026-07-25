@@ -116,11 +116,11 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
         <div aria-hidden className="pointer-events-none absolute left-1/2 top-[1850px] z-[1] h-[1500px] w-[1650px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/vuon-xuan-blue/mid.webp')] bg-contain bg-center bg-no-repeat opacity-80 md:h-[2700px] md:w-[2950px]" />
 
         <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
-          <h1 className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ ...nameFont, color: TEXT }}>
+          <div className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ ...nameFont, color: TEXT }}>
             <span>{people[0].shortName}</span>
             <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]" style={nameFont}>&amp;</span>
             <span>{people[1].shortName}</span>
-          </h1>
+          </div>
         </header>
 
         {gallery.length > 0 ? (

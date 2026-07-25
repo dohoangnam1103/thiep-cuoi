@@ -49,7 +49,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const invitation = await loadPublished(slug);
-  if (!invitation?.content) {
+  if (!invitation) notFound();
+  if (!invitation.content) {
     return { title: "Thiệp cưới | Thiệp Mừng Online" };
   }
 

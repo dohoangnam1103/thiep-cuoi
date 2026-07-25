@@ -17,11 +17,11 @@ function JasmineWhiteHero({ content }: { content: ChungDoiDemoContent }) {
         <img src={`${BASE}/khung-hoa.webp`} alt="" aria-hidden className="block h-auto w-full" />
         <div className="absolute inset-x-0 top-[12%] z-10 flex flex-col items-center text-center md:top-[8%]">
           <span className="whitespace-pre-line text-center text-[12px] uppercase leading-[1.55] tracking-[0.25em] md:text-[15px]">THE<br />WEDDING<br />OF</span>
-          <h1 className="mt-6 flex flex-col items-center text-[72px] leading-[0.72] md:mt-8 md:text-[120px]" style={scriptFont}>
+          <div className="mt-6 flex flex-col items-center text-[72px] leading-[0.72] md:mt-8 md:text-[120px]" style={scriptFont}>
           <span>{compactName(people[0].shortName)}</span>
           <span className="my-3 text-[0.72em] md:my-5">&amp;</span>
           <span>{compactName(people[1].shortName)}</span>
-          </h1>
+          </div>
         </div>
       </div>
     </header>

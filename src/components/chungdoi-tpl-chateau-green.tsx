@@ -65,11 +65,11 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
             <p className="whitespace-nowrap text-center text-[13px] uppercase tracking-[0.12em] md:text-[20px] md:tracking-[0.2em]">Welcome To Our Wedding</p>
             <img src={`${GREEN_BASE}/divider-arrow.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
           </div>
-          <h1 className="relative z-30 mt-14 flex flex-col items-center leading-none md:mt-16" style={{ color: GREEN }}>
+          <div className="relative z-30 mt-14 flex flex-col items-center leading-none md:mt-16" style={{ color: GREEN }}>
             <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[0].shortName}</span>
             <span className="my-8 text-[25px] md:my-10 md:text-[34px]" style={ampFont}>&amp;</span>
             <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[1].shortName}</span>
-          </h1>
+          </div>
           <div data-testid="chateau-green-hero-scene" className="relative -mt-16 mb-20 flex min-h-[420px] w-full shrink-0 items-end justify-center md:mb-0 md:min-h-[650px]">
             {/* clouds behind castle */}
             <img src={`${GREEN_BASE}/cloud-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[14%] right-[-28%] z-0 h-auto w-[135%] max-w-none object-contain opacity-90" />

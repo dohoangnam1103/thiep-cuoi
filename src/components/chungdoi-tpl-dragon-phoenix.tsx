@@ -196,7 +196,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             <img alt="" className="h-[354px] w-auto md:h-[572px]" src={`${LPD}/rong.webp`} />
             <img alt="" className="h-[354px] w-auto md:h-[572px]" src={`${LPD}/phuong.webp`} />
           </div>
-          <h1
+          <div
             className="relative z-10 flex w-full flex-col items-center px-4"
             style={{ fontFamily: LPD_UNI, color: GOLD }}
           >
@@ -207,7 +207,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             <span className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
               {headerNames[1]}
             </span>
-          </h1>
+          </div>
         </header>
 
         {/* content */}

@@ -12,11 +12,11 @@ function ChibiRedHero({ content }: { content: ChungDoiDemoContent }) {
 
   return (
     <header data-template-hero="chibi-red" className="relative z-20 flex w-full flex-col items-center bg-[#fff1df] pt-5 text-center text-[#4c2d1f] md:pt-10">
-      <h1 className="relative z-10 mb-5 flex flex-wrap items-center justify-center gap-2 text-[24px] leading-none md:mb-8 md:gap-4 md:text-[32px] lg:text-[38px]" style={nameFont}>
+      <div className="relative z-10 mb-5 flex flex-wrap items-center justify-center gap-2 text-[24px] leading-none md:mb-8 md:gap-4 md:text-[32px] lg:text-[38px]" style={nameFont}>
         <span>{compactName(couple.brideFirst ? (couple.brideShortName || couple.brideFullName) : (couple.groomShortName || couple.groomFullName))}</span>
         <span className="text-[30px] md:text-[40px] lg:text-[48px]" style={{ fontFamily: '"Babylonica", cursive' }}>&amp;</span>
         <span>{compactName(couple.brideFirst ? (couple.groomShortName || couple.groomFullName) : (couple.brideShortName || couple.brideFullName))}</span>
-      </h1>
+      </div>
       <div className="relative z-[2] mx-auto w-[90%] max-w-[294px] md:max-w-[360px] lg:max-w-[414px]">
         <img src={`${BASE}/couple-main.webp`} alt="" aria-hidden className="h-auto w-full" />
       </div>

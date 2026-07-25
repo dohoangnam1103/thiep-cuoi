@@ -18,14 +18,14 @@ function MinimalismRedHero({ content }: { content: ChungDoiDemoContent }) {
         <div className="mb-[114px] mt-24 flex w-full justify-center md:mb-[146px] md:mt-32">
           <img src={`${BASE}/header-top-01.png`} alt="" aria-hidden className="h-auto w-[310px] object-contain md:w-[580px] lg:w-[620px]" />
         </div>
-        <h1
+        <div
           className="relative z-10 ml-[20%] mt-[15px] flex flex-col items-start text-[52px] leading-[0.72] text-black md:ml-[25%] md:mt-[85px] md:text-[76px] lg:ml-[28%] lg:text-[84px]"
           style={scriptFont}
         >
           <span>{compactName(people[0].shortName)}</span>
           <span className="my-3 ml-[18%] md:my-5">&amp;</span>
           <span>{compactName(people[1].shortName)}</span>
-        </h1>
+        </div>
         <div className="flex w-full justify-center pb-[50px] md:-mt-[70px] md:pb-[75px]">
           <img src={`${BASE}/header-bottom-01.png`} alt="" aria-hidden className="h-auto w-[310px] object-contain md:w-[580px] lg:w-[620px]" />
         </div>

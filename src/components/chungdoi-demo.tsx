@@ -21,7 +21,7 @@ import {
   useLightboxZoom,
   VI_LIGHTBOX_ZOOM_LABELS,
 } from "@/components/lightbox-zoom";
-import { TARGET_PX } from "@/components/chungdoi-envelope-3d";
+import { ENVELOPE_TARGET_PX } from "@/components/chungdoi-envelope-constants";
 import { DressCode, InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
@@ -848,7 +848,7 @@ function coverPaperColor(tokens: Tokens) {
   return colorToHex(compositeColor(card, opaqueBackground));
 }
 
-/** Cover phong bì 3D: render CoverCard DOM thật áp phẳng lên mặt phong bì R3F qua drei <Html transform>. */
+/** Cover phong bì: paint bản 2D ngay, chỉ nạp và khởi tạo WebGL khi trình duyệt rảnh. */
 function EnvelopeCover({
   content,
   tokens,
@@ -860,13 +860,31 @@ function EnvelopeCover({
   onOpen: () => void;
   opening: boolean;
 }) {
+  const [loadEnvelope3D, setLoadEnvelope3D] = useState(false);
+  const [envelope3DReady, setEnvelope3DReady] = useState(false);
+
+  useEffect(() => {
+    if (opening) return;
+
+    const idleWindow = window as unknown as {
+      requestIdleCallback?: Window["requestIdleCallback"];
+      cancelIdleCallback?: Window["cancelIdleCallback"];
+    };
+    if (idleWindow.requestIdleCallback) {
+      const idleId = idleWindow.requestIdleCallback(() => setLoadEnvelope3D(true), {
+        timeout: 1500,
+      });
+      return () => idleWindow.cancelIdleCallback?.(idleId);
+    }
+
+    const timeoutId = window.setTimeout(() => setLoadEnvelope3D(true), 500);
+    return () => window.clearTimeout(timeoutId);
+  }, [opening]);
+
   // Lúc mở: 3D face là texture tĩnh, không diễn được fly-phượng/bay-away. Swap
-  // sang DOM phẳng để chạy animation mở. Dùng cùng TARGET_PX như card 3D —
-  // KHÔNG dùng CoverOverlay chung (md:max-w-560px) vì nó nở gần-vuông → card
-  // giật từ dọc sang vuông ngay lúc bấm mở.
+  // sang DOM phẳng để chạy animation mở. Dùng cùng ENVELOPE_TARGET_PX như card
+  // 3D để không đổi cỡ trong lúc chuyển cảnh.
   if (opening) {
-    // Box 3D scale để chiếu ra đúng TARGET_PX (xem chungdoi-envelope-3d). DOM lúc
-    // mở dùng CÙNG TARGET_PX → swap 3D→DOM không đổi cỡ, hết giật.
     return (
       <div
         className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
@@ -876,7 +894,7 @@ function EnvelopeCover({
         <BurstParticles tokens={tokens} />
         <div
           className="relative z-10 w-full"
-          style={{ maxWidth: TARGET_PX, animation: "demo-envelope-away 0.8s ease-in forwards" }}
+          style={{ maxWidth: ENVELOPE_TARGET_PX, animation: "demo-envelope-away 0.8s ease-in forwards" }}
         >
           <Seal tokens={tokens} opening={opening} />
           <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
@@ -901,40 +919,60 @@ function EnvelopeCover({
       <ParticleField tokens={tokens} />
 
       <div className="relative z-10 h-full w-full">
-        <Envelope3D
-          onOpen={onOpen}
-          paperColor={coverPaperColor(tokens)}
-          accentColor={toSolidColor(tokens.accent, "#8C1C13")}
-          renderCard={(handleOpen) => (
-            <div className="relative">
+        {!envelope3DReady ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="relative w-full" style={{ maxWidth: ENVELOPE_TARGET_PX }}>
               <Seal tokens={tokens} opening={opening} />
-              <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} hideDecor />
+              <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
             </div>
-          )}
-          renderDecor={
-            tokens.cardImages.length
-              ? () => (
-                  <div className="pointer-events-none absolute inset-0">
-                    {tokens.cardImages.map((img, i) => (
-                      <img
-                        key={i}
-                        src={img.src}
-                        alt=""
-                        aria-hidden="true"
-                        className={`pointer-events-none absolute ${img.className}`}
-                      />
-                    ))}
-                  </div>
-                )
-              : undefined
-          }
-        />
-        <p
-          className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
-          style={{ color: tokens.accent }}
-        >
-          Kéo để xoay · Chụm 2 ngón để zoom
-        </p>
+          </div>
+        ) : null}
+
+        {loadEnvelope3D ? (
+          <div
+            aria-hidden={!envelope3DReady}
+            className={`absolute inset-0 ${envelope3DReady ? "opacity-100" : "pointer-events-none opacity-0"}`}
+          >
+            <Envelope3D
+              onOpen={onOpen}
+              onReady={() => setEnvelope3DReady(true)}
+              paperColor={coverPaperColor(tokens)}
+              accentColor={toSolidColor(tokens.accent, "#8C1C13")}
+              renderCard={(handleOpen) => (
+                <div className="relative">
+                  <Seal tokens={tokens} opening={opening} />
+                  <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} hideDecor />
+                </div>
+              )}
+              renderDecor={
+                tokens.cardImages.length
+                  ? () => (
+                      <div className="pointer-events-none absolute inset-0">
+                        {tokens.cardImages.map((img, i) => (
+                          <img
+                            key={i}
+                            src={img.src}
+                            alt=""
+                            aria-hidden="true"
+                            className={`pointer-events-none absolute ${img.className}`}
+                          />
+                        ))}
+                      </div>
+                    )
+                  : undefined
+              }
+            />
+          </div>
+        ) : null}
+
+        {envelope3DReady ? (
+          <p
+            className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
+            style={{ color: tokens.accent }}
+          >
+            Kéo để xoay · Chụm 2 ngón để zoom
+          </p>
+        ) : null}
       </div>
     </div>
   );
@@ -1200,12 +1238,14 @@ export function ChungDoiDemo({
   liveForms = null,
   captureMode = false,
   previewMode = false,
+  heading,
 }: {
   template: ChungDoiTemplate;
   content?: ChungDoiDemoContent;
   liveForms?: LiveForms;
   captureMode?: boolean;
   previewMode?: boolean;
+  heading?: string;
 }) {
   const content = contentProp ?? chungdoiDemoContent[template.slug];
 
@@ -1333,9 +1373,22 @@ export function ChungDoiDemo({
     );
   }
 
+  const semanticHeading = heading ?? (() => {
+    const people = orderedCouple(content);
+    return `${people[0].shortName} & ${people[1].shortName}`;
+  })();
   const AuditedTemplateRenderer = isAuditedTemplateSlug(content.slug)
     ? AUDITED_TEMPLATE_RENDERERS[content.slug]
     : null;
+
+  function getInteractiveAudio() {
+    const audio = audioRef.current;
+    if (!audio) return null;
+    if (!audio.getAttribute("src")) {
+      audio.src = content.music ?? DEFAULT_MUSIC;
+    }
+    return audio;
+  }
 
   function openInvitation() {
     const root = document.documentElement;
@@ -1352,14 +1405,14 @@ export function ChungDoiDemo({
         if (!previewMode) setAutoScrolling(true);
       }, 2000);
     }, 800);
-    const audio = audioRef.current;
+    const audio = getInteractiveAudio();
     if (audio) {
       audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
     }
   }
 
   function toggleMusic() {
-    const audio = audioRef.current;
+    const audio = getInteractiveAudio();
     if (!audio) return;
     if (audio.paused) {
       audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
@@ -1378,20 +1431,22 @@ export function ChungDoiDemo({
 
   return (
     <LiveFormsProvider value={liveForms}>
-    <GuestMediaGalleryProvider>
     <main
       id="top"
       data-capture-mode={captureMode ? "true" : undefined}
       className="relative min-h-screen bg-white"
       onClick={toggleAutoScroll}
     >
-      {!captureMode ? <audio ref={audioRef} src={content.music ?? DEFAULT_MUSIC} loop preload="auto" /> : null}
+      <h1 className="sr-only">{semanticHeading}</h1>
+      {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
 
       {!opened && !captureMode ? (
         <EnvelopeCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
       ) : null}
 
-      {AuditedTemplateRenderer ? (
+      {opened ? (
+        <>
+          {AuditedTemplateRenderer ? (
         <div className="contents" data-template-renderer={content.slug}>
           <AuditedTemplateRenderer content={content} />
         </div>
@@ -1445,14 +1500,18 @@ export function ChungDoiDemo({
         </div>
       )}
 
-      <AdditionalCeremonies content={content} tokens={tokens} />
-      <CentralDressCode content={content} tokens={tokens} />
-      <PublicGuestMomentsPortal templateSlug={content.slug} />
+          <AdditionalCeremonies content={content} tokens={tokens} />
+          <CentralDressCode content={content} tokens={tokens} />
+          <GuestMediaGalleryProvider>
+            <PublicGuestMomentsPortal templateSlug={content.slug} />
+            {!captureMode ? <PublicGuestMediaDialog /> : null}
+          </GuestMediaGalleryProvider>
+        </>
+      ) : null}
 
       {opened && !captureMode ? (
         <>
           <PublicRsvpDialog />
-          <PublicGuestMediaDialog />
           <button
             type="button"
             onClick={toggleMusic}
@@ -1465,7 +1524,6 @@ export function ChungDoiDemo({
         </>
       ) : null}
     </main>
-    </GuestMediaGalleryProvider>
     </LiveFormsProvider>
   );
 }

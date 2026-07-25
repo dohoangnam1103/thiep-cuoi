@@ -59,3 +59,32 @@ test("uses the branded social card by default without replacing page-specific im
     `${SITE_URL}/thiepmungonline/wedding-guide/chon-mau-thiep-tmo.webp`,
   );
 });
+test("adds localized template demo Open Graph URL, locale, and image details", () => {
+  const alternates = templateAlternates("song-hy-do", "vi");
+  assert.ok(alternates);
+
+  const metadata = pageSeo({
+    title: "Mẫu thiệp cưới Song Hỷ Đỏ | Thiệp Mừng Online",
+    description: "Thiệp cưới Song Hỷ Đỏ truyền thống.",
+    alternates,
+    locale: "vi",
+    image: "/chungdoi/images/template-previews/en/landscape/song_hy_red.webp",
+    imageAlt: "Ảnh xem trước mẫu thiệp cưới Song Hỷ Đỏ",
+    imageWidth: 2400,
+    imageHeight: 1260,
+    imageType: "image/webp",
+  });
+  const images = metadata.openGraph?.images;
+
+  assert.equal(metadata.description, "Thiệp cưới Song Hỷ Đỏ truyền thống.");
+  assert.equal(metadata.openGraph?.url, "/mau-thiep/song-hy-do/demo");
+  assert.equal(metadata.openGraph?.locale, "vi_VN");
+  assert.ok(Array.isArray(images));
+  assert.deepEqual(images[0], {
+    url: `${SITE_URL}/chungdoi/images/template-previews/en/landscape/song_hy_red.webp`,
+    width: 2400,
+    height: 1260,
+    alt: "Ảnh xem trước mẫu thiệp cưới Song Hỷ Đỏ",
+    type: "image/webp",
+  });
+});

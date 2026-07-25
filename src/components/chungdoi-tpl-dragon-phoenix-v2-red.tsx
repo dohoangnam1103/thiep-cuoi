@@ -71,11 +71,11 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
             <img src={`${DPV2_BASE}/chu-hy.webp`} alt="" aria-hidden className="h-12 w-12 object-contain md:h-14 md:w-14" />
           </div>
 
-          <h1 className="relative z-20 mt-7 flex flex-col items-center leading-none md:mt-9">
+          <div className="relative z-20 mt-7 flex flex-col items-center leading-none md:mt-9">
             <span className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[0]}</span>
             <span className="my-1 text-[26px] md:text-[34px]" style={ampFont}>&amp;</span>
             <span className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[1]}</span>
-          </h1>
+          </div>
 
           <div className="relative z-10 mt-5 flex h-[245px] w-full max-w-[660px] items-center justify-center md:mt-7 md:h-[310px]">
             <img src={`${DPV2_BASE}/phuong.webp`} alt="" aria-hidden className="h-[220px] w-[44%] object-contain object-right md:h-[290px]" />
