@@ -29,3 +29,14 @@ test("fails fast for unsafe production SITE_URL values", () => {
     /must not use localhost/,
   );
 });
+
+test("allows a loopback SITE_URL when the insecure opt-in is set", () => {
+  assert.equal(
+    resolveSiteUrl("http://127.0.0.1:3100", "production", true),
+    "http://127.0.0.1:3100",
+  );
+  assert.throws(
+    () => resolveSiteUrl(undefined, "production", true),
+    /required in production/,
+  );
+});

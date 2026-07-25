@@ -1,8 +1,14 @@
 const DEVELOPMENT_SITE_URL = "http://localhost:3000";
 
+// `next build` always runs with NODE_ENV=production, so local production builds
+// and the Playwright suite (which builds then serves on 127.0.0.1) need a way to
+// opt out of the HTTPS/localhost guards. Production images never set this.
+const INSECURE_SITE_URL_OPT_IN = "1";
+
 export function resolveSiteUrl(
   rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL,
   environment = process.env.NODE_ENV,
+  allowInsecure = process.env.ALLOW_INSECURE_SITE_URL === INSECURE_SITE_URL_OPT_IN,
 ): string {
   if (!rawSiteUrl) {
     if (environment === "production") {
@@ -18,7 +24,7 @@ export function resolveSiteUrl(
     throw new Error("NEXT_PUBLIC_SITE_URL must be a valid absolute URL.");
   }
 
-  if (environment === "production") {
+  if (environment === "production" && !allowInsecure) {
     if (siteUrl.protocol !== "https:") {
       throw new Error("NEXT_PUBLIC_SITE_URL must use HTTPS in production.");
     }

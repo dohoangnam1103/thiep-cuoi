@@ -45,6 +45,8 @@ export default defineConfig({
       PAYOS_API_KEY: "e2e-payos-api-key",
       PAYOS_CHECKSUM_KEY: "e2e-payos-checksum",
       NEXT_PUBLIC_SITE_URL: BASE_URL,
+      // `next build` forces NODE_ENV=production; the suite serves over loopback HTTP.
+      ALLOW_INSECURE_SITE_URL: "1",
       GUEST_MEDIA_ROOT: `${process.cwd()}/tests/e2e/.data/guest-media`,
       EDITOR_UPLOAD_ROOT: `${process.cwd()}/tests/e2e/.data/editor-uploads`,
       NODE_ENV: "test",
