@@ -17,11 +17,17 @@ import {
 } from "three";
 
 import { ENVELOPE_TARGET_PX } from "@/components/chungdoi-envelope-constants";
+import {
+  beginEnvelopePointerGesture,
+  shouldOpenEnvelopeFromGesture,
+  updateEnvelopePointerGesture,
+  type EnvelopeButtonUv,
+  type EnvelopePointerGesture,
+} from "@/lib/envelope-gesture";
 
 type Envelope3DProps = {
   renderCard: (onOpen: () => void) => ReactNode;
   onOpen: () => void;
-  onReady?: () => void;
   paperColor: string;
   accentColor: string;
   // Hoa tràn ra ngoài mép card: KHÔNG bake vào texture card (bị crop theo khung
@@ -31,12 +37,9 @@ type Envelope3DProps = {
   renderDecor?: () => ReactNode;
 };
 
-// Vùng nút trong hệ UV mặt trước (0–1), gốc dưới-trái (three UV convention).
-type BtnUV = { u0: number; u1: number; v0: number; v1: number };
-
 // Đo box nút [data-open-btn] so với card root → chuyển sang UV mặt trước.
 // DOM: top→bottom, y xuống. UV three: v đi lên → v = 1 - (y/height).
-function measureButtonUV(root: HTMLElement): BtnUV | null {
+function measureButtonUV(root: HTMLElement): EnvelopeButtonUv | null {
   const btn = root.querySelector<HTMLElement>("[data-open-btn]");
   if (!btn) return null;
   const r = root.getBoundingClientRect();
@@ -57,7 +60,7 @@ function measureButtonUV(root: HTMLElement): BtnUV | null {
 const CARD_PX = 420;
 const CARD_W = 3;
 // Đích chung: card chiếu ra màn đúng ENVELOPE_TARGET_PX bất kể chiều cao viewport
-// (màn cao không làm box bự). Demo dùng cùng số này cho DOM lúc mở để swap êm.
+// (màn cao không làm box bự). Fallback DOM dùng cùng số để lúc tải không đổi cỡ.
 // Fallback aspect (H/W) khi chưa chụp xong; sau khi chụp lấy tỉ lệ thật từ canvas.
 const FALLBACK_RATIO = 1.35;
 const DEPTH = 0.008; // giấy mỏng, chỉ đủ dày để có mặt bên
@@ -196,7 +199,7 @@ function Envelope({
   frontTex: Texture | null;
   decorTex: Texture | null;
   ratio: number;
-  btnUV: BtnUV | null;
+  btnUV: EnvelopeButtonUv | null;
 }) {
   const cardH = CARD_W * ratio;
   // Mặt trước là plane RỘNG HƠN card (thêm padW mỗi phía) để chứa hoa tràn ra
@@ -250,32 +253,69 @@ function Envelope({
     return geo;
   }, [cardH]);
 
-  // Drag xoay (OrbitControls) kết thúc bằng pointerup → trình duyệt tính là click,
-  // làm mở thiệp ngoài ý muốn. Lưu điểm pointerdown, chỉ mở nếu con trỏ gần như
-  // đứng yên (< 6px) → phân biệt tap thật với kéo xoay.
-  const downPos = useRef<{ x: number; y: number } | null>(null);
+  // Theo dõi độ lệch LỚN NHẤT trong cả gesture. Chỉ so điểm đầu-cuối là chưa đủ:
+  // user có thể kéo xa rồi quay về gần điểm cũ và bị nhận nhầm thành một tap.
+  const pointerGestureRef = useRef<EnvelopePointerGesture | null>(null);
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    downPos.current = { x: e.clientX, y: e.clientY };
+    if (!e.isPrimary) {
+      const gesture = pointerGestureRef.current;
+      if (gesture) {
+        pointerGestureRef.current = updateEnvelopePointerGesture(gesture, {
+          pointerId: e.pointerId,
+          clientX: e.clientX,
+          clientY: e.clientY,
+        });
+      }
+      return;
+    }
+
+    pointerGestureRef.current = beginEnvelopePointerGesture({
+      pointerId: e.pointerId,
+      clientX: e.clientX,
+      clientY: e.clientY,
+      uv: e.object.name === "envelope-front-face" && e.uv
+        ? { u: e.uv.x, v: e.uv.y }
+        : null,
+      button: btnUV,
+    });
   };
 
-  // Mở CHỈ khi tap gần như đứng yên (phân biệt kéo xoay) VÀ điểm chạm rơi trong
-  // vùng nút theo UV mặt trước. e.uv có sẵn vì raycast trúng mesh có texture.
-  const handleFacePointerUp = (e: ThreeEvent<PointerEvent>) => {
-    const start = downPos.current;
-    downPos.current = null;
-    if (!start || !btnUV || !e.uv) return;
-    const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
-    if (moved > 6) return; // kéo xoay → không mở
-    const u = e.uv.x;
-    const v = e.uv.y;
-    if (u < btnUV.u0 || u > btnUV.u1 || v < btnUV.v0 || v > btnUV.v1) return;
+  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    const gesture = pointerGestureRef.current;
+    if (!gesture) return;
+    pointerGestureRef.current = updateEnvelopePointerGesture(gesture, {
+      pointerId: e.pointerId,
+      clientX: e.clientX,
+      clientY: e.clientY,
+    });
+  };
+
+  // Mở chỉ khi pointer nhấn xuống VÀ nhả lên trong vùng nút, chưa từng kéo quá
+  // ngưỡng, và không có pointer thứ hai tham gia (pinch zoom).
+  const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
+    const gesture = pointerGestureRef.current;
+    pointerGestureRef.current = null;
+    if (
+      e.object.name !== "envelope-front-face" ||
+      !shouldOpenEnvelopeFromGesture({
+        gesture,
+        pointerId: e.pointerId,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        uv: e.uv ? { u: e.uv.x, v: e.uv.y } : null,
+        button: btnUV,
+      })
+    ) {
+      return;
+    }
+
     e.stopPropagation();
     onOpen();
   };
 
   return (
-    <group scale={scale} onPointerDown={handlePointerDown}>
+    <group scale={scale}>
       <mesh geometry={geometry}>
         {/* emissive = màu paper ở cường độ thấp → nền tông giấy không phụ thuộc
             đèn, directional chỉ thêm khối nhẹ, hết bị xám khi xoay ra sau. */}
@@ -299,7 +339,17 @@ function Envelope({
       {/* Mặt trước: card DOM đã chụp, dán sát mặt +z. Dùng faceGeometry bo tròn
           (không plane chữ nhật) → khớp mép box, hết góc thừa. */}
       {frontTex && (
-        <mesh geometry={faceGeometry} position={[0, 0, DEPTH / 2 + 0.002]} onPointerUp={handleFacePointerUp}>
+        <mesh
+          name="envelope-front-face"
+          geometry={faceGeometry}
+          position={[0, 0, DEPTH / 2 + 0.002]}
+          onPointerCancel={() => {
+            pointerGestureRef.current = null;
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+        >
           <meshBasicMaterial map={frontTex} toneMapped={false} transparent />
         </mesh>
       )}
@@ -320,20 +370,18 @@ function Envelope({
 export default function Envelope3D({
   renderCard,
   onOpen,
-  onReady,
   paperColor,
   accentColor,
   renderDecor,
 }: Envelope3DProps) {
   const captureRef = useRef<HTMLDivElement>(null);
   const decorRef = useRef<HTMLDivElement>(null);
-  const readyNotifiedRef = useRef(false);
   const [frontTex, setFrontTex] = useState<Texture | null>(null);
   const [decorTex, setDecorTex] = useState<Texture | null>(null);
   const [ratio, setRatio] = useState(FALLBACK_RATIO);
   // Vùng nút "Mở thiệp" trong hệ UV mặt trước (0–1). Đo runtime từ DOM đã chụp
   // → hit-test tap theo UV, mở đúng khi chạm nút bất kể card đang xoay góc nào.
-  const [btnUV, setBtnUV] = useState<BtnUV | null>(null);
+  const [btnUV, setBtnUV] = useState<EnvelopeButtonUv | null>(null);
 
   // Chụp card DOM (ẩn ngoài màn) → CanvasTexture cho mặt trước 3D.
   useEffect(() => {
@@ -383,12 +431,6 @@ export default function Envelope3D({
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (!frontTex || (renderDecor && !decorTex) || readyNotifiedRef.current) return;
-    readyNotifiedRef.current = true;
-    onReady?.();
-  }, [decorTex, frontTex, onReady, renderDecor]);
 
   return (
     <>

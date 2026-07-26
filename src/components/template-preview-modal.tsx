@@ -79,7 +79,7 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
           </button>
         </header>
 
-        <div className="mx-4 mb-3 grid shrink-0 grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 sm:mx-6">
+        <div className="mx-6 mb-3 hidden shrink-0 grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 sm:grid">
           <TemplateQrCode demoPath={demoPath} name={name} />
           <div>
             <h3 className="text-sm font-black leading-4 text-foreground">{modalT("phonePreviewTitle")}</h3>

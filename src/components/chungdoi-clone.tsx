@@ -345,7 +345,6 @@ function TemplateCarousel() {
 
       if (image) {
         image.style.filter = `saturate(${saturation.toFixed(3)}) brightness(${brightness.toFixed(3)}) contrast(${contrast.toFixed(3)})`;
-        image.style.transition = "filter 240ms ease, transform 9000ms ease-in-out";
       }
     });
   }, []);
@@ -418,7 +417,8 @@ function TemplateCarousel() {
                       draggable={false}
                       loading="lazy"
                       decoding="async"
-                      className="pointer-events-none block h-auto w-full max-w-none transition-transform duration-[9000ms] ease-in-out group-hover:translate-y-[calc(520px_-_100%)]"
+                      data-carousel-preview
+                      className="pointer-events-none block h-auto w-full max-w-none [transition-duration:240ms,1200ms] [transition-property:filter,translate] [transition-timing-function:ease,ease-out] group-hover:translate-y-[calc(520px_-_100%)] group-hover:[transition-duration:240ms,40000ms] group-hover:[transition-timing-function:ease,linear] motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none"
                     />
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
                       {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}

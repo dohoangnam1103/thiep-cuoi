@@ -21,7 +21,6 @@ import {
   useLightboxZoom,
   VI_LIGHTBOX_ZOOM_LABELS,
 } from "@/components/lightbox-zoom";
-import { ENVELOPE_TARGET_PX } from "@/components/chungdoi-envelope-constants";
 import { DressCode, InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
@@ -848,7 +847,7 @@ function coverPaperColor(tokens: Tokens) {
   return colorToHex(compositeColor(card, opaqueBackground));
 }
 
-/** Cover phong bì: paint bản 2D ngay, chỉ nạp và khởi tạo WebGL khi trình duyệt rảnh. */
+/** Cover phong bì: chỉ dùng một renderer WebGL để không swap 3D/2D sau khi tải. */
 function EnvelopeCover({
   content,
   tokens,
@@ -860,112 +859,65 @@ function EnvelopeCover({
   onOpen: () => void;
   opening: boolean;
 }) {
-  const [loadEnvelope3D, setLoadEnvelope3D] = useState(false);
-  const [envelope3DReady, setEnvelope3DReady] = useState(false);
-
-  useEffect(() => {
-    if (opening) return;
-
-    const idleWindow = window as unknown as {
-      requestIdleCallback?: Window["requestIdleCallback"];
-      cancelIdleCallback?: Window["cancelIdleCallback"];
-    };
-    if (idleWindow.requestIdleCallback) {
-      const idleId = idleWindow.requestIdleCallback(() => setLoadEnvelope3D(true), {
-        timeout: 1500,
-      });
-      return () => idleWindow.cancelIdleCallback?.(idleId);
-    }
-
-    const timeoutId = window.setTimeout(() => setLoadEnvelope3D(true), 500);
-    return () => window.clearTimeout(timeoutId);
-  }, [opening]);
-
-  // Lúc mở: 3D face là texture tĩnh, không diễn được fly-phượng/bay-away. Swap
-  // sang DOM phẳng để chạy animation mở. Dùng cùng ENVELOPE_TARGET_PX như card
-  // 3D để không đổi cỡ trong lúc chuyển cảnh.
-  if (opening) {
-    return (
-      <div
-        className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
-        style={{ background: tokens.background, animation: "demo-cover-out 0.8s ease-in forwards" }}
-      >
-        <ParticleField tokens={tokens} />
-        <BurstParticles tokens={tokens} />
-        <div
-          className="relative z-10 w-full"
-          style={{ maxWidth: ENVELOPE_TARGET_PX, animation: "demo-envelope-away 0.8s ease-in forwards" }}
-        >
-          <Seal tokens={tokens} opening={opening} />
-          <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
-      style={{ background: tokens.background }}
+      style={{
+        background: tokens.background,
+        animation: opening ? "demo-cover-out 0.8s ease-in forwards" : undefined,
+      }}
     >
       <button
         type="button"
         data-open-invitation-control
         onClick={onOpen}
+        disabled={opening}
         className="sr-only focus:fixed focus:bottom-6 focus:left-1/2 focus:z-[100] focus:block focus:h-auto focus:w-auto focus:-translate-x-1/2 focus:overflow-visible focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-neutral-900 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2"
       >
         Mở thiệp
       </button>
       <ParticleField tokens={tokens} />
+      {opening ? <BurstParticles tokens={tokens} /> : null}
 
-      <div className="relative z-10 h-full w-full">
-        {!envelope3DReady ? (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative w-full" style={{ maxWidth: ENVELOPE_TARGET_PX }}>
-              <Seal tokens={tokens} opening={opening} />
-              <CoverCard content={content} tokens={tokens} onOpen={onOpen} opening={opening} />
-            </div>
-          </div>
-        ) : null}
+      <div
+        className={`relative z-10 h-full w-full ${opening ? "pointer-events-none" : ""}`}
+        data-envelope-renderer="3d"
+        style={{
+          animation: opening ? "demo-envelope-away 0.8s ease-in forwards" : undefined,
+        }}
+      >
+        <div className="absolute inset-0">
+          <Envelope3D
+            onOpen={onOpen}
+            paperColor={coverPaperColor(tokens)}
+            accentColor={toSolidColor(tokens.accent, "#8C1C13")}
+            renderCard={(handleOpen) => (
+              <div className="relative">
+                <Seal tokens={tokens} opening={opening} />
+                <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} hideDecor />
+              </div>
+            )}
+            renderDecor={
+              tokens.cardImages.length
+                ? () => (
+                    <div className="pointer-events-none absolute inset-0">
+                      {tokens.cardImages.map((img, i) => (
+                        <img
+                          key={i}
+                          src={img.src}
+                          alt=""
+                          aria-hidden="true"
+                          className={`pointer-events-none absolute ${img.className}`}
+                        />
+                      ))}
+                    </div>
+                  )
+                : undefined
+            }
+          />
+        </div>
 
-        {loadEnvelope3D ? (
-          <div
-            aria-hidden={!envelope3DReady}
-            className={`absolute inset-0 ${envelope3DReady ? "opacity-100" : "pointer-events-none opacity-0"}`}
-          >
-            <Envelope3D
-              onOpen={onOpen}
-              onReady={() => setEnvelope3DReady(true)}
-              paperColor={coverPaperColor(tokens)}
-              accentColor={toSolidColor(tokens.accent, "#8C1C13")}
-              renderCard={(handleOpen) => (
-                <div className="relative">
-                  <Seal tokens={tokens} opening={opening} />
-                  <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} hideDecor />
-                </div>
-              )}
-              renderDecor={
-                tokens.cardImages.length
-                  ? () => (
-                      <div className="pointer-events-none absolute inset-0">
-                        {tokens.cardImages.map((img, i) => (
-                          <img
-                            key={i}
-                            src={img.src}
-                            alt=""
-                            aria-hidden="true"
-                            className={`pointer-events-none absolute ${img.className}`}
-                          />
-                        ))}
-                      </div>
-                    )
-                  : undefined
-              }
-            />
-          </div>
-        ) : null}
-
-        {envelope3DReady ? (
+        {!opening ? (
           <p
             className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
             style={{ color: tokens.accent }}
@@ -1252,6 +1204,7 @@ export function ChungDoiDemo({
   const [opened, setOpened] = useState(captureMode || previewMode);
   const [opening, setOpening] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const openingRef = useRef(false);
   const openTimerRef = useRef<number | null>(null);
   const autoScrollTimerRef = useRef<number | null>(null);
   const autoScrollFinishedRef = useRef(false);
@@ -1391,6 +1344,9 @@ export function ChungDoiDemo({
   }
 
   function openInvitation() {
+    if (openingRef.current || opened) return;
+    openingRef.current = true;
+
     const root = document.documentElement;
     const originalScrollBehavior = root.style.scrollBehavior;
     root.style.scrollBehavior = "auto";

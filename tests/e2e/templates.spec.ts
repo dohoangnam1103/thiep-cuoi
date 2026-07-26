@@ -404,6 +404,28 @@ test.describe("templates — demo pages", () => {
     await expect(page.locator("main#top audio")).toHaveCount(1);
   });
 
+  test("song-hy cover never swaps back to a visible 2D fallback", async ({ page }) => {
+    await page.goto("/mau-thiep/song-hy-xanh/demo", { timeout: 60_000 });
+
+    const stage = page.locator("[data-envelope-renderer]");
+    await expect(stage).toBeVisible();
+
+    const visibleOpenButtonCount = () => page.locator("[data-open-btn]").evaluateAll(
+      (buttons) => buttons.filter((button) => {
+        const rect = button.getBoundingClientRect();
+        return rect.left >= 0 && rect.top >= 0 && rect.width > 0 && rect.height > 0;
+      }).length,
+    );
+
+    await expect(stage).toHaveAttribute("data-envelope-renderer", "3d");
+    expect(await visibleOpenButtonCount()).toBe(0);
+
+    await page.waitForTimeout(3_000);
+    await expect(stage).toBeVisible();
+    await expect(stage).toHaveAttribute("data-envelope-renderer", "3d");
+    expect(await visibleOpenButtonCount()).toBe(0);
+  });
+
   test("royal-red demo loads without crashing", async ({ page }) => {
     const res = await page.goto("/vi/templates/hoang-kim-do/demo", { timeout: 60_000 });
     expect(res?.ok()).toBeTruthy();
