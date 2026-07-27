@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { test, expect } from "@playwright/test";
 
-import { loginAsUser } from "./helpers/auth";
+import { loginAsAdmin, loginAsUser, SEEDED_ADMIN } from "./helpers/auth";
 import { getDb } from "./helpers/db";
 import { createUser, cleanupUser } from "./helpers/fixtures";
 
@@ -18,6 +18,31 @@ const PNG_BYTES = Buffer.from(
 );
 
 test.describe("POST /api/upload", () => {
+  test("admin session can upload an editor image", async ({ context, page }) => {
+    const row = getDb()
+      .prepare("SELECT id FROM Admin WHERE email = ?")
+      .get(SEEDED_ADMIN.email) as { id: string } | undefined;
+    if (!row) throw new Error("seeded admin not found in test.db");
+
+    await loginAsAdmin(context, row.id);
+    let savedName: string | undefined;
+    try {
+      const res = await page.request.post("/api/upload", {
+        multipart: {
+          file: { name: "admin.png", mimeType: "image/png", buffer: await readFile(VALID_PNG_PATH) },
+        },
+      });
+      expect(res.status()).toBe(200);
+      const body = (await res.json()) as { url: string };
+      expect(body.url).toMatch(/^\/uploads\/[\w-]+\.webp$/);
+      savedName = body.url.replace("/uploads/", "");
+    } finally {
+      if (savedName) {
+        await unlink(path.join(UPLOAD_DIR, savedName)).catch(() => {});
+      }
+    }
+  });
+
   test("unauthenticated → 401", async ({ request }) => {
     const res = await request.post("/api/upload", {
       multipart: {

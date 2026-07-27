@@ -1,20 +1,15 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
+import { invitationHeroImages, orderedCouple } from "@/lib/invitation-display";
 import { FloralInvitation } from "@/components/chungdoi-tpl-floral-base";
 
 const BASE = "/chungdoi/images/themes/_decor/boho-floral-pink";
 const scriptFont = { fontFamily: '"Fz Aghita", "The Nautigal", cursive' };
 
 function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
-  const { gallery } = content;
   const people = orderedCouple(content);
-  const heroOn = content.showHeroImage !== false;
-  const firstPhoto = invitationHeroImage(content);
-  const secondPhoto = heroOn
-    ? content.heroImage2?.trim() || (content.heroImage ? gallery[0] : gallery[1])
-    : "";
+  const [firstPhoto, secondPhoto] = invitationHeroImages(content);
 
   return (
     <header

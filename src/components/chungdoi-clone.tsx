@@ -30,10 +30,13 @@ import {
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { WeddingFaqSection } from "@/components/chungdoi-faq";
+import { WeddingGuideVideo } from "@/components/wedding-guide-video";
+import { useTemplateName } from "@/components/template-name-overrides";
 import { TemplatePreviewModal } from "@/components/template-preview-modal";
 import { templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
 import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
@@ -139,17 +142,39 @@ function StackFan() {
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
   const pausedRef = useRef(false);
+  const autoplayTimerRef = useRef<number | null>(null);
+  const templateName = useTemplateName();
 
   const count = heroPreviewTemplates.length;
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => {
-      if (pausedRef.current) return;
-      setActive((prev) => (prev + 1) % count);
+  const resetAutoplay = useCallback(function scheduleNextTemplate() {
+    if (autoplayTimerRef.current !== null) {
+      window.clearTimeout(autoplayTimerRef.current);
+      autoplayTimerRef.current = null;
+    }
+    if (
+      pausedRef.current
+      || window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    autoplayTimerRef.current = window.setTimeout(() => {
+      autoplayTimerRef.current = null;
+      setActive((previous) => (previous + 1) % count);
+      scheduleNextTemplate();
     }, 2800);
-    return () => window.clearInterval(id);
-  }, [count, active]);
+  }, [count]);
+
+  useEffect(() => {
+    resetAutoplay();
+    return () => {
+      if (autoplayTimerRef.current !== null) {
+        window.clearTimeout(autoplayTimerRef.current);
+        autoplayTimerRef.current = null;
+      }
+    };
+  }, [resetAutoplay]);
 
   // slot: vị trí trong quạt tính từ thẻ active (0 = giữa nổi lên, 1..n xòe sang phải theo vòng).
   const slotOf = (index: number) => (index - active + count) % count;
@@ -158,8 +183,14 @@ function StackFan() {
     <div className="relative mx-auto w-full max-w-[380px]">
       <div
         className="stack-fan-stage"
-        onMouseEnter={() => (pausedRef.current = true)}
-        onMouseLeave={() => (pausedRef.current = false)}
+        onMouseEnter={() => {
+          pausedRef.current = true;
+          resetAutoplay();
+        }}
+        onMouseLeave={() => {
+          pausedRef.current = false;
+          resetAutoplay();
+        }}
       >
         {heroPreviewTemplates.map((template, index) => {
           const slot = slotOf(index);
@@ -186,14 +217,13 @@ function StackFan() {
                   setSelected(template);
                   return;
                 }
+                resetAutoplay();
                 setActive(index);
-                pausedRef.current = true;
-                window.setTimeout(() => (pausedRef.current = false), 2000);
               }}
             >
               <Image
-                src={template.portrait}
-                alt={template.name}
+                src={templatePreviewUrl(template.portrait)}
+                alt={templateName(template.slug, template.name)}
                 fill
                 sizes="230px"
                 draggable={false}
@@ -203,7 +233,9 @@ function StackFan() {
                 className="h-full w-full rounded-2xl object-cover object-top shadow-[0_18px_44px_rgb(0_0_0/0.22)]"
               />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent p-4 opacity-0 transition-opacity group-hover:opacity-100">
-                <p className="font-heading text-sm font-black text-background">{template.name}</p>
+                <p className="font-heading text-sm font-black text-background">
+                  {templateName(template.slug, template.name)}
+                </p>
                 <p className="text-[10px] text-background/80">{template.category} · {template.color}</p>
               </div>
             </button>
@@ -216,13 +248,12 @@ function StackFan() {
             key={template.slug}
             type="button"
             className={`coverflow-dot${index === active ? " is-active" : ""}`}
-            aria-label={template.name}
+            aria-label={templateName(template.slug, template.name)}
             aria-selected={index === active}
             role="tab"
             onClick={() => {
+              resetAutoplay();
               setActive(index);
-              pausedRef.current = true;
-              window.setTimeout(() => (pausedRef.current = false), 2000);
             }}
           />
         ))}
@@ -286,7 +317,9 @@ const EMPHASIS_TWEEN_FACTOR = 9;
 
 function TemplateCarousel() {
   const t = useTranslations("home");
+  const listingT = useTranslations("listing");
   const locale = useLocale();
+  const templateName = useTemplateName();
   const autoplay = useRef(
     Autoplay({ delay: 4200, stopOnInteraction: false, stopOnMouseEnter: true }),
   );
@@ -409,8 +442,8 @@ function TemplateCarousel() {
                     }`}
                   >
                     <Image
-                      src={template.listing}
-                      alt={template.name}
+                      src={templatePreviewUrl(template.listing)}
+                      alt={templateName(template.slug, template.name)}
                       width={768}
                       height={featuredListingImageHeight(template.listing)}
                       sizes="266px"
@@ -422,9 +455,11 @@ function TemplateCarousel() {
                     />
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
                       {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
-                      <h3 className="mt-2 font-heading text-lg font-black text-background">{template.name}</h3>
+                      <h3 className="mt-2 font-heading text-lg font-black text-background">
+                        {templateName(template.slug, template.name)}
+                      </h3>
                       <p className="text-sm text-background/80">
-                        {template.category} - {template.color}
+                        {listingT(`categories.${template.category}`)} - {listingT(`colors.${template.color}`)}
                       </p>
                     </div>
                   </button>
@@ -437,7 +472,10 @@ function TemplateCarousel() {
         <button
           type="button"
           aria-label={t("carousel.prev")}
-          onClick={() => emblaApi?.scrollPrev()}
+          onClick={() => {
+            autoplay.current.reset();
+            emblaApi?.scrollPrev();
+          }}
           className="absolute left-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-lg backdrop-blur transition-all hover:bg-background hover:shadow-xl sm:left-4"
         >
           <ChevronLeft className="size-5" />
@@ -445,7 +483,10 @@ function TemplateCarousel() {
         <button
           type="button"
           aria-label={t("carousel.next")}
-          onClick={() => emblaApi?.scrollNext()}
+          onClick={() => {
+            autoplay.current.reset();
+            emblaApi?.scrollNext();
+          }}
           className="absolute right-2 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-lg backdrop-blur transition-all hover:bg-background hover:shadow-xl sm:right-4"
         >
           <ChevronRight className="size-5" />
@@ -459,7 +500,10 @@ function TemplateCarousel() {
             type="button"
             aria-label={t("carousel.goTo", { number: index + 1 })}
             aria-current={index === selectedIndex}
-            onClick={() => emblaApi?.scrollTo(index)}
+            onClick={() => {
+              autoplay.current.reset();
+              emblaApi?.scrollTo(index);
+            }}
             className={`h-2 rounded-full transition-all ${
               index === selectedIndex ? "w-6 bg-primary" : "w-2 bg-border hover:bg-muted-foreground/40"
             }`}
@@ -516,10 +560,8 @@ function HowItWorks() {
               </li>
             ))}
           </ol>
-          <div className="reveal w-full max-w-xs overflow-hidden rounded-3xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] max-lg:mx-auto lg:justify-self-start">
-            <div className="flex aspect-[9/16] items-center justify-center bg-secondary text-muted-foreground">
-              <Play className="size-12 opacity-40" />
-            </div>
+          <div className="reveal aspect-video w-full max-w-xl overflow-hidden rounded-3xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] max-lg:mx-auto lg:justify-self-start">
+            <WeddingGuideVideo title={t("howItWorks.ctaHint")} />
           </div>
         </div>
         <div className="reveal mt-14 flex flex-col items-center gap-3">
@@ -623,47 +665,6 @@ function GuestsSection() {
   );
 }
 
-function LanguageSection() {
-  const t = useTranslations("home");
-
-  return (
-    <section className="bg-background py-20">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-        <div className="reveal">
-          <Image
-            src="/chungdoi/images/language-showcase.png"
-            alt={t("languages.title")}
-            width={941}
-            height={1089}
-            sizes="(max-width: 1023px) 100vw, 576px"
-            loading="lazy"
-            decoding="async"
-            className="h-auto w-full"
-          />
-        </div>
-        <div className="reveal">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("languages.eyebrow")}</p>
-          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("languages.title")}</h2>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">{t("languages.subtitle")}</p>
-          <ul className="mt-8 space-y-4 text-foreground">
-            {[
-              t("languages.point1"),
-              t("languages.point2"),
-              t("languages.point3"),
-              t("languages.point4"),
-            ].map((item) => (
-              <li key={item} className="flex gap-3">
-                <Check className="mt-1 size-5 shrink-0 text-primary" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 const testimonialKeys = ["t1", "t2", "t3", "t4", "t5", "t6"] as const;
 
 function TestimonialsSection() {
@@ -723,7 +724,6 @@ export function ChungDoiClone() {
       <SupportSection />
       <TestimonialsSection />
       <GuestsSection />
-      <LanguageSection />
       <WeddingFaqSection animated id="pricing" />
       <SiteFooter />
     </main>

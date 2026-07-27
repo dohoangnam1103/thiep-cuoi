@@ -19,13 +19,7 @@ type Alternates = {
 
 type AppLocale = (typeof routing.locales)[number];
 
-const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = {
-  vi: "vi_VN",
-  en: "en_US",
-  ko: "ko_KR",
-  ja: "ja_JP",
-  zh: "zh_CN",
-};
+const OPEN_GRAPH_LOCALES: Record<AppLocale, string> = { vi: "vi_VN" };
 
 export function openGraphLocale(locale: AppLocale): string {
   return OPEN_GRAPH_LOCALES[locale];

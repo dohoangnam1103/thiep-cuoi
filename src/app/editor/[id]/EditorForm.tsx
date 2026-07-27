@@ -42,6 +42,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 import {
   directionsUrl,
@@ -114,6 +115,8 @@ type EditorFormProps = {
   initialTrack: { url: string; title: string; artist: string } | null;
   saveAction?: (id: string, prev: EditorState, formData: FormData) => Promise<EditorState>;
   adminMode?: boolean;
+  /** Admin-renamed template names, keyed by slug. Falls back to built-in names. */
+  templateLabels?: Record<string, string>;
 };
 
 type CeremonyRow = {
@@ -810,7 +813,16 @@ function BirthOrderField({
 }
 
 /** Chọn mẫu thiệp bằng lưới thumbnail thay cho <select>. */
-function TemplatePicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function TemplatePicker({
+  value,
+  onChange,
+  labels,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  labels?: Record<string, string>;
+}) {
+  const label = (slug: string) => labels?.[slug] ?? templateLabel(slug);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const mountedRef = useRef(false);
 
@@ -844,15 +856,15 @@ function TemplatePicker({ value, onChange }: { value: string; onChange: (value: 
             >
               <span className="relative block aspect-[3/4] overflow-hidden bg-muted">
                 <Image
-                  src={template.listing}
-                  alt={templateLabel(template.slug)}
+                  src={templatePreviewUrl(template.listing)}
+                  alt={label(template.slug)}
                   fill
                   sizes="(min-width: 640px) 200px, 50vw"
                   className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
                 />
               </span>
               <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
-                {templateLabel(template.slug)}
+                {label(template.slug)}
               </span>
               {active ? (
                 <span className="absolute right-2 top-2 rounded-full bg-primary px-1.5 text-xs text-primary-foreground">
@@ -1496,6 +1508,7 @@ function EditorFormContent({
   initialTrack,
   saveAction: saveActionProp,
   adminMode = false,
+  templateLabels,
   restoredDraft,
 }: EditorFormProps & { restoredDraft: Draft | null }) {
   const venueT = useTranslations("editor.venue");
@@ -2269,7 +2282,11 @@ function EditorFormContent({
         </Accordion>
 
         <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
-          <TemplatePicker value={selectedTemplateId} onChange={setSelectedTemplateId} />
+          <TemplatePicker
+            value={selectedTemplateId}
+            onChange={setSelectedTemplateId}
+            labels={templateLabels}
+          />
         </Accordion>
 
         {adminMode && (

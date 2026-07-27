@@ -6,8 +6,10 @@ import QRCode from "qrcode";
 import { useEffect, useRef, useState } from "react";
 
 import { createInvitation } from "@/app/dashboard/actions";
+import { useTemplateName } from "@/components/template-name-overrides";
 import { Link } from "@/i18n/navigation";
 import { getVietnameseTemplateSlug, type ChungDoiTemplate } from "@/data/chungdoi";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 export function demoSlug(template: ChungDoiTemplate, locale: string) {
   return locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
@@ -17,8 +19,12 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
   const t = useTranslations("listing");
   const modalT = useTranslations("templatePreviewModal");
   const locale = useLocale();
+  const templateName = useTemplateName();
   const isVietnamese = locale === "vi";
-  const name = isVietnamese ? t(`templates.${template.slug}.name`) : template.name;
+  const name = templateName(
+    template.slug,
+    isVietnamese ? t(`templates.${template.slug}.name`) : template.name,
+  );
   const description = isVietnamese ? t(`templates.${template.slug}.description`) : template.description;
   const category = isVietnamese ? t(`categories.${template.category}`) : template.category;
   const color = isVietnamese ? t(`colors.${template.color}`) : template.color;
@@ -227,11 +233,11 @@ function TemplateQrCode({ demoPath, name }: { demoPath: string; name: string }) 
 function AutoScrollingPreview({ template, alt }: { template: ChungDoiTemplate; alt: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const source = templatePreviewUrl(template.listing);
 
   useEffect(() => {
     const container = containerRef.current;
     const image = imageRef.current;
-    const source = template.listing;
     if (!container || !image) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -304,7 +310,7 @@ function AutoScrollingPreview({ template, alt }: { template: ChungDoiTemplate; a
       container.removeEventListener("pointerenter", pauseOnFinePointer);
       container.removeEventListener("pointerleave", resumeOnFinePointer);
     };
-  }, [template.listing]);
+  }, [source]);
 
   return (
     <div
@@ -314,7 +320,7 @@ function AutoScrollingPreview({ template, alt }: { template: ChungDoiTemplate; a
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imageRef}
-        src={template.listing}
+        src={source}
         alt={alt}
         className="absolute inset-x-0 top-0 block h-auto w-full max-w-none will-change-transform"
       />

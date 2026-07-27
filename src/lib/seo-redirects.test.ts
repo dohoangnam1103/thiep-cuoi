@@ -14,13 +14,16 @@ test("redirects template detail and alias URLs directly to the canonical demo", 
   );
   assert.equal(
     canonicalTemplatePath("/en/templates/song-hy-do/demo"),
-    "/en/templates/song-hy-red/demo",
+    "/mau-thiep/song-hy-do/demo",
+  );
+  assert.equal(
+    canonicalTemplatePath("/en/templates/song-hy-red/demo"),
+    "/mau-thiep/song-hy-do/demo",
   );
 });
 
 test("leaves canonical demo URLs and unrelated paths unchanged", () => {
   assert.equal(canonicalTemplatePath("/mau-thiep/song-hy-do/demo"), null);
-  assert.equal(canonicalTemplatePath("/en/templates/song-hy-red/demo"), null);
   assert.equal(canonicalTemplatePath("/mau-thiep/khong-ton-tai/demo"), null);
   assert.equal(canonicalTemplatePath("/bang-gia"), null);
 });

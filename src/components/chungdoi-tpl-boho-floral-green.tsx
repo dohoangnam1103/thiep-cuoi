@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationHeroImage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationHeroImages, invitationHeroSlots, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   AlbumGallery, googleCalendarUrl, InvitationMap, MapDirectionsButton,
@@ -43,8 +43,8 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const groomPortrait = content.portraits?.groom || invitationHeroImage(content);
-  const bridePortrait = content.portraits?.bride || (content.heroImage ? gallery[0] : gallery[1]);
+  const heroSlots = invitationHeroSlots(content);
+  const heroFallback = invitationHeroImages(content);
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
@@ -54,7 +54,13 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
     { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
     couple.brideFirst,
   ).filter((q) => q.bank);
-  const heroCards = people.map((person) => ({ person, portrait: person.side === "bride" ? bridePortrait : groomPortrait }));
+  const heroCards = people.map((person, i) => ({
+    person,
+    portrait: heroSlots[i]
+      || (person.side === "bride" ? content.portraits?.bride : content.portraits?.groom)
+      || heroFallback[i]
+      || "",
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">

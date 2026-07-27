@@ -5,10 +5,16 @@ import { useState } from "react";
 
 import { completedTemplates } from "@/data/chungdoi";
 import { templateLabel } from "@/app/editor/[id]/templates";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 import { createInvitation } from "./actions";
 
-export function NewInvitationButton() {
+export function NewInvitationButton({
+  templateLabels,
+}: {
+  templateLabels?: Record<string, string>;
+}) {
   const [open, setOpen] = useState(false);
+  const label = (slug: string) => templateLabels?.[slug] ?? templateLabel(slug);
 
   return (
     <>
@@ -60,15 +66,15 @@ export function NewInvitationButton() {
                     >
                       <span className="relative block aspect-[3/4] overflow-hidden bg-muted">
                         <Image
-                          src={template.listing}
-                          alt={templateLabel(template.slug)}
+                          src={templatePreviewUrl(template.listing)}
+                          alt={label(template.slug)}
                           fill
                           sizes="(min-width: 640px) 200px, 50vw"
                           className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
                         />
                       </span>
                       <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
-                        {templateLabel(template.slug)}
+                        {label(template.slug)}
                       </span>
                     </button>
                   </form>

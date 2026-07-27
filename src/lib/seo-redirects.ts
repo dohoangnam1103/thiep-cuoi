@@ -26,10 +26,8 @@ export function canonicalTemplatePath(pathname: string): string | null {
   const sourceSlug = getSourceTemplateSlug(routeSlug);
   if (!sourceSlug) return null;
 
-  const canonicalSlug = locale === "vi"
-    ? getVietnameseTemplateSlug(sourceSlug)
-    : sourceSlug;
-  const basePath = locale === "vi" ? "/mau-thiep" : `/${locale}/templates`;
+  const canonicalSlug = getVietnameseTemplateSlug(sourceSlug);
+  const basePath = "/mau-thiep";
   const canonicalPath = `${basePath}/${canonicalSlug}/demo`;
 
   return pathname === canonicalPath ? null : canonicalPath;

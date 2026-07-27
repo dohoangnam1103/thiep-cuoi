@@ -275,8 +275,8 @@ test.describe("admin: demos", () => {
       const inv = createInvitation(user.id, { isDemo: true });
       await loginAsAdmin(context, seededAdminId());
       await page.goto(`/admin/demos/${inv.id}`);
-      // The editor shell renders the back-link twice (toolbar + header).
-      await expect(page.getByRole("link", { name: /Danh sách thiệp demo/ }).first()).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Chỉnh sửa thiệp" })).toBeVisible();
+      await expect(page.locator("#editor-form")).toBeVisible();
     } finally {
       cleanupUser(user.id);
     }

@@ -15,19 +15,24 @@ import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
 import { routing, type Locale } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
 import { pageSeo, templateAlternates } from "@/lib/seo";
+import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 import { toDemoContent } from "@/lib/to-demo-content";
 
 const TEMPLATE_PREVIEW_WIDTH = 2400;
 const TEMPLATE_PREVIEW_HEIGHT = 1260;
 
 async function localizedTemplateCopy(locale: Locale, template: ChungDoiTemplate) {
-  const [listingT, demoT] = await Promise.all([
+  const [listingT, demoT, nameOverrides] = await Promise.all([
     getTranslations({ locale, namespace: "listing" }),
     getTranslations({ locale, namespace: "templateDemoSeo" }),
+    getPublicTemplateNameOverrides(),
   ]);
   const nameKey = `templates.${template.slug}.name`;
   const descriptionKey = `templates.${template.slug}.description`;
-  const name = listingT.has(nameKey) ? listingT(nameKey) : template.name;
+  const name =
+    nameOverrides[template.slug]?.trim()
+    || (listingT.has(nameKey) ? listingT(nameKey) : template.name);
   const description = listingT.has(descriptionKey)
     ? listingT(descriptionKey)
     : template.description;
@@ -74,7 +79,7 @@ export async function generateMetadata({
     description: copy.description,
     alternates,
     locale,
-    image: template.landscape,
+    image: templatePreviewUrl(template.landscape),
     imageAlt: copy.imageAlt,
     imageWidth: TEMPLATE_PREVIEW_WIDTH,
     imageHeight: TEMPLATE_PREVIEW_HEIGHT,

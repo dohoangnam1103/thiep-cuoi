@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 
 import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { WeddingFaqSection } from "@/components/chungdoi-faq";
+import { useTemplateName } from "@/components/template-name-overrides";
 import { TemplatePreviewModal, demoSlug } from "@/components/template-preview-modal";
 import { TemplateSuggestionCta } from "@/components/template-suggestion-cta";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,7 @@ import {
   templateColors,
   type ChungDoiTemplate,
 } from "@/data/chungdoi";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 const listingImageHeights = {
   baroque_gold: 7666,
@@ -177,8 +179,12 @@ function FilterPills({
 function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSelect: () => void }) {
   const t = useTranslations("listing");
   const locale = useLocale();
+  const templateName = useTemplateName();
   const isVietnamese = locale === "vi";
-  const name = isVietnamese ? t(`templates.${template.slug}.name`) : template.name;
+  const name = templateName(
+    template.slug,
+    isVietnamese ? t(`templates.${template.slug}.name`) : template.name,
+  );
   const description = isVietnamese ? t(`templates.${template.slug}.description`) : template.description;
   const category = isVietnamese ? t(`categories.${template.category}`) : template.category;
 
@@ -193,7 +199,7 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
       >
         <div className="relative h-[460px] overflow-hidden rounded-2xl bg-muted">
           <Image
-            src={template.listing}
+            src={templatePreviewUrl(template.listing)}
             alt={name}
             width={768}
             height={listingImageHeight(template.listing)}

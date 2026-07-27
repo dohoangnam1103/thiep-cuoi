@@ -12,7 +12,6 @@ import {
   MailOpen,
   MessageSquareHeart,
   Music2,
-  Play,
   Sparkles,
   UserRound,
   UsersRound,
@@ -23,6 +22,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
+import { WeddingGuideVideo } from "@/components/wedding-guide-video";
 import { getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -137,7 +137,7 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
               <span className="text-foreground">{t("breadcrumbCurrent")}</span>
             </nav>
 
-            <div className="grid items-center gap-12 lg:grid-cols-[1fr_17.5rem] lg:gap-16">
+            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
               <div className="text-center lg:text-left">
                 <h1 className="font-heading text-4xl font-black leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.5rem]">
                   {t("hero.title")}
@@ -164,18 +164,8 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
                 </Link>
               </div>
 
-              <div
-                className="relative mx-auto flex aspect-[9/16] w-full max-w-[17.5rem] flex-col items-center justify-center overflow-hidden rounded-2xl border border-primary/20 bg-[radial-gradient(circle_at_50%_18%,rgba(201,52,48,0.18),transparent_32%),linear-gradient(180deg,var(--card),var(--secondary))] px-8 text-center shadow-[0_20px_60px_rgb(0_0_0/0.14)]"
-                aria-label={t("hero.videoComingSoon")}
-              >
-                <span className="flex size-20 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/25">
-                  <Play className="ml-1 size-8 fill-current" />
-                </span>
-                <p className="mt-7 font-heading text-2xl font-black text-foreground">{t("hero.videoComingSoon")}</p>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("hero.videoHint")}</p>
-                <span className="absolute inset-x-8 bottom-8 text-xs font-bold uppercase tracking-[0.18em] text-primary/70">
-                  {t("hero.brand")}
-                </span>
+              <div className="aspect-video w-full overflow-hidden rounded-2xl border border-primary/20 bg-card shadow-[0_20px_60px_rgb(0_0_0/0.14)]">
+                <WeddingGuideVideo title={t("hero.videoTitle")} />
               </div>
             </div>
           </div>

@@ -29,3 +29,6 @@ export const TEMPLATE_LABELS: Record<string, string> = Object.fromEntries(
 export function templateLabel(templateId: string): string {
   return TEMPLATE_LABELS[templateId] ?? templateId;
 }
+
+/** Max length of an admin-provided template name. */
+export const TEMPLATE_LABEL_MAX_LENGTH = 60;

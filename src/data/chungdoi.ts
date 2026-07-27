@@ -29,7 +29,7 @@ export type ChungDoiTemplate = {
 export const templates = [
   {
     "slug": "song-hy-red",
-    "name": "Double Happiness Red",
+    "name": "Song Hỷ Đỏ",
     "title": "Double Happiness Red Template - Elegant Shuangxi & Arch Photo | Thiệp Mừng Online",
     "description": "Double Happiness Red wedding e-card: red sunburst, shuangxi motif, arch photo frame, happiness seal envelope. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -47,7 +47,7 @@ export const templates = [
   },
   {
     "slug": "song-hy-green",
-    "name": "Double Happiness Green",
+    "name": "Song Hỷ Xanh",
     "title": "Double Happiness Green Template - Forest Green Shuangxi & Arch Photo | Thiệp Mừng Online",
     "description": "Double Happiness Green wedding e-card: forest green shuangxi motif, arch photo frame, happiness seal envelope. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -65,7 +65,7 @@ export const templates = [
   },
   {
     "slug": "double-dragon-red",
-    "name": "Double Dragon Red",
+    "name": "Song Long Đỏ",
     "title": "Double Dragon Red Template - Traditional Elegant Wedding Invitation | Thiệp Mừng Online",
     "description": "Double Dragon Red online wedding invitation featuring classic twin dragon motifs and elegant red tones. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -83,7 +83,7 @@ export const templates = [
   },
   {
     "slug": "double-phoenix-red",
-    "name": "Double Phoenix Red",
+    "name": "Song Phụng Đỏ",
     "title": "Double Phoenix Red Template - Graceful Traditional Wedding Invitation | Thiệp Mừng Online",
     "description": "Double Phoenix Red online wedding invitation featuring elegant twin phoenix motifs and a classic red palette. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -101,7 +101,7 @@ export const templates = [
   },
   {
     "slug": "elegant-leaf-green",
-    "name": "Elegant Leaf Green",
+    "name": "Thanh Diệp Xanh",
     "title": "Elegant Leaf Green Template - Modern Minimalist Wedding Invitation | Thiệp Mừng Online",
     "description": "Elegant Leaf Green online wedding invitation — clean green tones with a refined minimalist style. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -119,7 +119,7 @@ export const templates = [
   },
   {
     "slug": "dragon-phoenix-red",
-    "name": "Dragon Phoenix Red",
+    "name": "Long Phụng Đỏ",
     "title": "Dragon Phoenix Red Template - Classic Traditional Wedding Invitation | Thiệp Mừng Online",
     "description": "Dragon Phoenix Red online wedding invitation with classic dragon and phoenix motifs, formal red tones. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -137,7 +137,7 @@ export const templates = [
   },
   {
     "slug": "dragon-phoenix-v3-red",
-    "name": "Dragon Phoenix V3 Red",
+    "name": "Long Phụng V3 Đỏ",
     "title": "Dragon Phoenix V3 Red Template - Deep Red Classic Wedding Invitation | Thiệp Mừng Online",
     "description": "Dragon Phoenix V3 Red online wedding invitation featuring an arched dragon-phoenix photo frame, deep red tones, and swallow accents. Free on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -155,7 +155,7 @@ export const templates = [
   },
   {
     "slug": "dragon-phoenix-v2-red",
-    "name": "Dragon Phoenix V2 Red",
+    "name": "Long Phụng V2 Đỏ",
     "title": "Dragon Phoenix V2 Red Template - Classic Modern Wedding Invitation | Thiệp Mừng Online",
     "description": "Dragon Phoenix V2 Red online wedding invitation — improved version with refined dragon and phoenix artwork and a modern layout. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -173,7 +173,7 @@ export const templates = [
   },
   {
     "slug": "double-dragon-green",
-    "name": "Double Dragon Green",
+    "name": "Song Long Xanh",
     "title": "Double Dragon Green Template - Elegant Nature-Inspired Wedding Invitation | Thiệp Mừng Online",
     "description": "Double Dragon Green online wedding invitation with classic twin dragon motifs and fresh green tones. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -191,7 +191,7 @@ export const templates = [
   },
   {
     "slug": "boho-floral-green",
-    "name": "Boho Floral Green",
+    "name": "Hoa Mộc Xanh",
     "title": "Boho Floral Green Template - Fresh Watercolor Wedding Invitation | Thiệp Mừng Online",
     "description": "Boho Floral Green wedding invitation with fresh green watercolor flowers on a warm cream background. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -208,7 +208,7 @@ export const templates = [
   },
   {
     "slug": "boho-floral-pink",
-    "name": "Boho Floral Pink",
+    "name": "Hoa Mộc Hồng",
     "title": "Boho Floral Pink Template - Romantic Watercolor Wedding Invitation | Thiệp Mừng Online",
     "description": "Boho Floral Pink wedding invitation with romantic pink watercolor flowers on a warm cream background. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -226,7 +226,7 @@ export const templates = [
   },
   {
     "slug": "jasmine-white",
-    "name": "Jasmine White",
+    "name": "Mai Lan Trắng",
     "title": "Jasmine White Template - Minimalist Elegant Wedding Invitation | Thiệp Mừng Online",
     "description": "Jasmine White wedding invitation with a warm cream background and deep olive green tones — a refined, minimalist modern style. Free demo on Thiệp Mừng Online.",
     "category": "Signature",
@@ -244,7 +244,7 @@ export const templates = [
   },
   {
     "slug": "silk-flora-brown",
-    "name": "Silk Flora Brown",
+    "name": "Hoa Lụa Nâu",
     "title": "Silk Flora Brown Template - Minimal Warm Cream Wedding Invitation | Thiệp Mừng Online",
     "description": "Silk Flora Brown is a warm minimalist wedding invitation with clean typography, clear structure, and a calm modern tone. Free demo on Thiệp Mừng Online.",
     "category": "Signature",
@@ -262,7 +262,7 @@ export const templates = [
   },
   {
     "slug": "chateau-blue",
-    "name": "Chateau Blue",
+    "name": "Lâu Đài Lam",
     "title": "Chateau Blue Template - Classic European Royal Wedding Invitation | Thiệp Mừng Online",
     "description": "Chateau Blue wedding e-card: hand-painted European manor, banquet table, Italian cypress trees, framed mini calendar; deep blue on cream. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Royal",
@@ -280,7 +280,7 @@ export const templates = [
   },
   {
     "slug": "brocade-flower-red",
-    "name": "Brocade Flower Red",
+    "name": "Gấm Hoa Đỏ",
     "title": "Brocade Flower Red Template - Ornate Red and Gold Wedding Invitation | Thiệp Mừng Online",
     "description": "Brocade Flower Red wedding e-card: ornate brocade patterns, red roses, gold pillars and a floral calendar frame; deep maroon and olive green on warm cream. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Royal",
@@ -298,7 +298,7 @@ export const templates = [
   },
   {
     "slug": "crystal-floral-blue",
-    "name": "Crystal Floral Blue",
+    "name": "Hoa Thủy Tinh Lam",
     "title": "Crystal Floral Blue Template - Elegant European Blue Wedding Invitation | Thiệp Mừng Online",
     "description": "Crystal Floral Blue wedding e-card: a porcelain-blue crystal floral frame, delicate florals, warm cream background and a dedicated calendar frame; fresh porcelain blue. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Floral",
@@ -316,7 +316,7 @@ export const templates = [
   },
   {
     "slug": "chateau-green",
-    "name": "Chateau Green",
+    "name": "Lâu Đài Xanh",
     "title": "Chateau Green Template - European Garden Wedding Invitation | Thiệp Mừng Online",
     "description": "Chateau Green wedding e-card: watercolor European chateau on a wildflower garden, leafy trees, fountain, forest-green palette on cream. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Royal",
@@ -334,7 +334,7 @@ export const templates = [
   },
   {
     "slug": "baroque-gold",
-    "name": "Baroque Gold",
+    "name": "Hoàng Gia Vàng",
     "title": "Baroque Gold Template - Ornate Gold Frame European Wedding Invitation | Thiệp Mừng Online",
     "description": "Baroque Gold wedding e-card: ornate gilded frame, Roman pillars, damask ivory background and a gold framed calendar; gold-bronze with olive. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Royal",
@@ -352,7 +352,7 @@ export const templates = [
   },
   {
     "slug": "qasr-green",
-    "name": "Qasr Green",
+    "name": "Thành Cung Xanh",
     "title": "Qasr Green Template - Domed Palace Garden Wedding Invitation | Thiệp Mừng Online",
     "description": "Qasr Green wedding e-card: a domed palace and a couple in sage-green attire on warm cream, white-rose and eucalyptus florals, a heart-marked framed calendar, and full Arabic RTL support. Free to create on Thiệp Mừng Online.",
     "category": "Royal",
@@ -370,7 +370,7 @@ export const templates = [
   },
   {
     "slug": "qasr-gold",
-    "name": "Qasr Gold",
+    "name": "Thành Cung Vàng",
     "title": "Qasr Gold Template - Desert Oasis Domed Palace Wedding Invitation | Thiệp Mừng Online",
     "description": "Qasr Gold wedding e-card: a domed palace amid a desert oasis, date palms, a couple in Gulf attire on warm sand-cream, a heart-marked framed calendar, and full Arabic RTL support. Free to create on Thiệp Mừng Online.",
     "category": "Royal",
@@ -388,7 +388,7 @@ export const templates = [
   },
   {
     "slug": "glass-garden-green",
-    "name": "Glass Garden Green",
+    "name": "Vườn Kính Xanh",
     "title": "Glass Garden Green Template - Soft Floral Garden Wedding Invitation | Thiệp Mừng Online",
     "description": "Glass Garden Green wedding e-card: a soft floral background fills the card, the names sit in a clear oval glass frame, and a large glass panel wraps the content in garden-green over white blooms. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -406,7 +406,7 @@ export const templates = [
   },
   {
     "slug": "royal-red",
-    "name": "Royal Red",
+    "name": "Hoàng Kim Đỏ",
     "title": "Royal Red Template - Luxurious Royal Wedding Invitation | Thiệp Mừng Online",
     "description": "Royal Red wedding invitation with deep red background and stunning gold accents. A regal, high-end style. Free to create on Thiệp Mừng Online.",
     "category": "Royal",
@@ -424,7 +424,7 @@ export const templates = [
   },
   {
     "slug": "maroon-love",
-    "name": "Maroon Love",
+    "name": "Tình Yêu Đỏ Đô",
     "title": "Maroon Love Template - Đỏ Đô Sang Trọng | Thiệp Mừng Online",
     "description": "Thiệp cưới Maroon Love nền đỏ đô đậm, chữ serif kem và điểm nhấn hồng. Phong cách lãng mạn, sang trọng. Tạo miễn phí trên Thiệp Mừng Online.",
     "category": "Modern",
@@ -435,14 +435,14 @@ export const templates = [
       "Chữ serif màu kem thanh lịch",
       "Điểm nhấn hồng phấn lãng mạn"
     ],
-    "listing": "/chungdoi/images/template-previews/en/listing/royal_red.webp",
-    "portrait": "/chungdoi/images/template-previews/en/portrait/royal_red.webp",
-    "landscape": "/chungdoi/images/template-previews/en/landscape/royal_red.webp",
+    "listing": "/chungdoi/images/template-previews/en/listing/maroon_love.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/maroon_love.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/maroon_love.webp",
     "sourceUrl": "https://chungdoi.com/en/templates/royal-red"
   },
   {
     "slug": "nhat-binh-red",
-    "name": "Nhat Binh Red",
+    "name": "Nhật Bình Đỏ",
     "title": "Nhat Binh Red Template - Cream Paper, Vermillion Accents, Brown Envelope | Thiệp Mừng Online",
     "description": "Nhat Binh Red wedding invitation: warm cream paper, brown and vermillion type, parallax clouds and florals; brown envelope, cream card, double-happiness seal. Free on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -460,7 +460,7 @@ export const templates = [
   },
   {
     "slug": "hoa-tinh-red",
-    "name": "Love Art Red Wedding Invitation",
+    "name": "Họa Tình Đỏ",
     "title": "Love Art Red Wedding Invitation Template - Romantic Comic-Art Style | Thiệp Mừng Online",
     "description": "Love Art Red online wedding invitation: comic-art style, red heart florals, handwritten fonts, unique tilted couple photo frames. Free to create on Thiệp Mừng Online.",
     "category": "Modern",
@@ -478,7 +478,7 @@ export const templates = [
   },
   {
     "slug": "co-ba-red",
-    "name": "Co Ba Red",
+    "name": "Cô Ba Đỏ",
     "title": "Co Ba Red Template - Vietnamese Vintage Wedding Invitation | Thiệp Mừng Online",
     "description": "Co Ba Red wedding e-card: warm aged-paper background, brown type with a blue accent, Ben Thanh Market illustration, and a matching brown envelope. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Modern",
@@ -496,7 +496,7 @@ export const templates = [
   },
   {
     "slug": "royal-blue",
-    "name": "Royal Blue",
+    "name": "Hoàng Kim Lam",
     "title": "Royal Blue Template - Luxurious Royal Wedding Invitation | Thiệp Mừng Online",
     "description": "Royal Blue wedding invitation with deep navy background and stunning gold accents. A regal, high-end style. Free to create on Thiệp Mừng Online.",
     "category": "Royal",
@@ -514,7 +514,7 @@ export const templates = [
   },
   {
     "slug": "royal-green",
-    "name": "Royal Green",
+    "name": "Hoàng Kim Xanh",
     "title": "Royal Green Template - Luxurious Royal Wedding Invitation | Thiệp Mừng Online",
     "description": "Royal Green wedding invitation with deep forest green background and stunning gold accents. A regal, high-end style. Free to create on Thiệp Mừng Online.",
     "category": "Royal",
@@ -532,7 +532,7 @@ export const templates = [
   },
   {
     "slug": "spring-garden-green",
-    "name": "Spring Garden Green",
+    "name": "Vườn Xuân Xanh",
     "title": "Spring Garden Green Template - Fresh Nature Wedding Invitation | Thiệp Mừng Online",
     "description": "Spring Garden Green online wedding invitation with hand-drawn leaf motifs and refreshing green tones. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -549,7 +549,7 @@ export const templates = [
   },
   {
     "slug": "chibi-red",
-    "name": "Chibi Red",
+    "name": "Chibi Đỏ",
     "title": "Chibi Red Template - Cute Illustrated Wedding Invitation | Thiệp Mừng Online",
     "description": "Chibi Red online wedding invitation featuring adorable illustrated couple artwork and a playful design. Free to create on Thiệp Mừng Online.",
     "category": "Modern",
@@ -567,7 +567,7 @@ export const templates = [
   },
   {
     "slug": "boho-floral-brown",
-    "name": "Boho Floral Brown",
+    "name": "Hoa Mộc Nâu",
     "title": "Boho Floral Brown Template - Rustic Earthy Wedding Invitation | Thiệp Mừng Online",
     "description": "Boho Floral Brown wedding invitation with rustic brown watercolor flowers on a warm cream background. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -585,7 +585,7 @@ export const templates = [
   },
   {
     "slug": "spring-garden-red",
-    "name": "Spring Garden Red",
+    "name": "Vườn Xuân Đỏ",
     "title": "Spring Garden Red Template - Warm Nature Wedding Invitation | Thiệp Mừng Online",
     "description": "Spring Garden Red online wedding invitation with floral nature motifs and warm red tones. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Floral",
@@ -603,7 +603,7 @@ export const templates = [
   },
   {
     "slug": "dragon-phoenix-green",
-    "name": "Dragon Phoenix Green",
+    "name": "Long Phụng Xanh",
     "title": "Dragon Phoenix Green Template - Classic Refined Wedding Invitation | Thiệp Mừng Online",
     "description": "Dragon Phoenix Green online wedding invitation with dragon and phoenix motifs and elegant green tones. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -621,7 +621,7 @@ export const templates = [
   },
   {
     "slug": "spring-garden-blue",
-    "name": "Spring Garden Blue",
+    "name": "Vườn Xuân Lam",
     "title": "Spring Garden Blue Template - Refined Elegant Wedding Invitation | Thiệp Mừng Online",
     "description": "Spring Garden Blue online wedding invitation with floral nature motifs and soft blue tones. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -638,7 +638,7 @@ export const templates = [
   },
   {
     "slug": "minimalism-red",
-    "name": "Minimalism Red",
+    "name": "Tối Giản Đỏ",
     "title": "Minimalism Red Template - Modern Minimalist Wedding Invitation | Thiệp Mừng Online",
     "description": "Minimalist style wedding invitation with a clean white background and elegant red accents. Refined, contemporary, and free to create on Thiệp Mừng Online.",
     "category": "Modern",
@@ -656,7 +656,7 @@ export const templates = [
   },
   {
     "slug": "cherry-blossom-pink",
-    "name": "Cherry Blossom Pink",
+    "name": "Anh Đào Hồng",
     "title": "Cherry Blossom Pink Template - Romantic Floral Wedding Invitation | Thiệp Mừng Online",
     "description": "Cherry Blossom Pink online wedding invitation with soft pink sakura petals and a romantic modern style. Free to create on Thiệp Mừng Online.",
     "category": "Floral",
@@ -674,7 +674,7 @@ export const templates = [
   },
   {
     "slug": "double-phoenix-green",
-    "name": "Double Phoenix Green",
+    "name": "Song Phụng Xanh",
     "title": "Double Phoenix Green Template - Graceful Nature Wedding Invitation | Thiệp Mừng Online",
     "description": "Double Phoenix Green online wedding invitation with twin phoenix motifs and fresh green tones. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -692,7 +692,7 @@ export const templates = [
   },
   {
     "slug": "double-dragon-blue",
-    "name": "Double Dragon Blue",
+    "name": "Song Long Lam",
     "title": "Double Dragon Blue Template - Romantic Gentle Wedding Invitation | Thiệp Mừng Online",
     "description": "Double Dragon Blue online wedding invitation with twin dragon motifs and soft blue tones. Free to create, 3-day trial on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -710,7 +710,7 @@ export const templates = [
   },
   {
     "slug": "dragon-phoenix-blue",
-    "name": "Dragon Phoenix Blue",
+    "name": "Long Phụng Lam",
     "title": "Dragon Phoenix Blue Template - Classic Luxurious Wedding Invitation | Thiệp Mừng Online",
     "description": "Dragon Phoenix Blue online wedding invitation with classic dragon and phoenix motifs and elegant blue tones. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",
@@ -728,7 +728,7 @@ export const templates = [
   },
   {
     "slug": "dragon-phoenix-black",
-    "name": "Dragon Phoenix Black",
+    "name": "Long Phụng Đen",
     "title": "Dragon Phoenix Black Template - Mysterious Luxurious Wedding Invitation | Thiệp Mừng Online",
     "description": "Dragon Phoenix Black online wedding invitation with dragon and phoenix motifs on a deep black background. Free to create on Thiệp Mừng Online.",
     "category": "Traditional",

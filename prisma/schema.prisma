@@ -89,6 +89,13 @@ model Voucher {
   createdAt DateTime  @default(now())
 }
 
+/// Admin-editable display name for a template. Absent row = use the built-in name.
+model TemplateLabel {
+  slug      String   @id
+  name      String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
 model AppConfig {
   id                  String   @id @default("default")
   productPrice        Int      @default(150000)

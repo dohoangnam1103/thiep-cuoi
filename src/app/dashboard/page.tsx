@@ -1,6 +1,6 @@
 import { verifySession } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
-import { templateLabel } from "@/app/editor/[id]/templates";
+import { getTemplateLabels, labelFromMap } from "@/lib/template-labels";
 import { logout } from "../(auth)/actions";
 import { NewInvitationButton } from "./NewInvitationButton";
 import { DashboardInvitationCard } from "./DashboardInvitationCard";
@@ -8,20 +8,23 @@ import { DashboardInvitationCard } from "./DashboardInvitationCard";
 export default async function DashboardPage() {
   const { userId } = await verifySession();
 
-  const invitations = await prisma.invitation.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    include: {
-      content: { select: { brideFullName: true, groomFullName: true } },
-      _count: { select: { rsvps: true, wishes: true } },
-    },
-  });
+  const [invitations, templateLabels] = await Promise.all([
+    prisma.invitation.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        content: { select: { brideFullName: true, groomFullName: true } },
+        _count: { select: { rsvps: true, wishes: true } },
+      },
+    }),
+    getTemplateLabels(),
+  ]);
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
         <div className="flex flex-wrap items-center gap-2">
-          <NewInvitationButton />
+          <NewInvitationButton templateLabels={templateLabels} />
           <form action={logout}>
             <button
               type="submit"
@@ -43,7 +46,7 @@ export default async function DashboardPage() {
             const bride = inv.content?.brideFullName?.trim();
             const groom = inv.content?.groomFullName?.trim();
             const names = [groom, bride].filter(Boolean).join(" & ");
-            const templateName = templateLabel(inv.templateId);
+            const templateName = labelFromMap(templateLabels, inv.templateId);
             return (
               <DashboardInvitationCard
                 key={inv.id}

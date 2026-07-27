@@ -4,6 +4,7 @@ import path from "node:path";
 
 import type { NextRequest } from "next/server";
 
+import { getAdminSession } from "@/lib/admin-session";
 import { editorUploadPublicUrl, editorUploadRoot } from "@/lib/editor-uploads";
 import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
 import { getSession } from "@/lib/session";
@@ -15,8 +16,8 @@ import {
 const MAX_BYTES = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
-  if (!session) {
+  const [session, adminSession] = await Promise.all([getSession(), getAdminSession()]);
+  if (!session && !adminSession) {
     return Response.json({ error: "Chưa đăng nhập" }, { status: 401 });
   }
 

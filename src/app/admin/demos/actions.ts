@@ -2,10 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 
+import { z } from "zod";
+
 import { prisma } from "@/lib/prisma";
 import { verifyAdmin } from "@/lib/admin-dal";
-import { getVietnameseTemplateSlug } from "@/data/chungdoi";
+import { completedTemplateSlugs, getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
+import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
+import { defaultTemplateLabel } from "@/lib/template-labels";
 import {
   contentSchema,
   parseCeremonies,
@@ -81,4 +85,63 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
   }
 
   return { ok: true, persisted: true };
+}
+
+const renameSchema = z.object({
+  templateId: z.string().trim().min(1, "Thiếu mẫu thiệp"),
+  name: z
+    .string()
+    .trim()
+    .max(TEMPLATE_LABEL_MAX_LENGTH, `Tên tối đa ${TEMPLATE_LABEL_MAX_LENGTH} ký tự`),
+});
+
+export type RenameTemplateState = { error?: string; ok?: boolean; name?: string } | undefined;
+
+/**
+ * Renames a template's display name. An empty name clears the override so the
+ * built-in name is used again.
+ */
+export async function renameTemplate(
+  _prev: RenameTemplateState,
+  formData: FormData,
+): Promise<RenameTemplateState> {
+  await verifyAdmin();
+
+  const parsed = renameSchema.safeParse({
+    templateId: formData.get("templateId"),
+    name: formData.get("name") ?? "",
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+  }
+  const { templateId, name } = parsed.data;
+
+  if (!completedTemplateSlugs.has(templateId)) {
+    return { error: "Mẫu thiệp không tồn tại" };
+  }
+
+  if (name) {
+    await prisma.templateLabel.upsert({
+      where: { slug: templateId },
+      create: { slug: templateId, name },
+      update: { name },
+    });
+  } else {
+    await prisma.templateLabel.deleteMany({ where: { slug: templateId } });
+  }
+
+  revalidatePath("/admin/demos");
+  revalidatePath("/dashboard");
+  revalidatePath("/editor", "layout");
+  // Home + listing are ISR-cached, so refresh the localized URLs that show
+  // template names. Demo pages render per request and need no invalidation.
+  // Paths are the internal (pre-rewrite) locale routes, same convention as
+  // saveDemo above.
+  for (const locale of routing.locales) {
+    revalidatePath(`/${locale}`);
+    revalidatePath(`/${locale}/templates`);
+  }
+
+
+  return { ok: true, name: name || defaultTemplateLabel(templateId) };
 }

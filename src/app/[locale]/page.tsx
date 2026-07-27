@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiClone } from "@/components/chungdoi-clone";
+import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
 import type { Locale } from "@/i18n/routing";
 import { pageSeo, staticAlternates } from "@/lib/seo";
+import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
 
 export async function generateMetadata({
   params,
@@ -26,9 +28,17 @@ export async function generateMetadata({
   });
 }
 
+/** ISR so admin renames land without a redeploy. */
+export const revalidate = 600;
+
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const templateNameOverrides = await getPublicTemplateNameOverrides();
 
-  return <ChungDoiClone />;
+  return (
+    <TemplateNameOverridesProvider value={templateNameOverrides}>
+      <ChungDoiClone />
+    </TemplateNameOverridesProvider>
+  );
 }

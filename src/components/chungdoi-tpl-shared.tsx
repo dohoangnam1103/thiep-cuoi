@@ -385,14 +385,43 @@ export function SharedCountdown({ target, className, style }: { target: string; 
 /** Slideshow ảnh cover: tự chạy 4s + mũi tên + dot. Bọc trong khung `relative`. */
 export function SharedCarousel({ photos, className, arrowColor = "#fff" }: { photos: string[]; className?: string; arrowColor?: string }) {
   const [i, setI] = useState(0);
+  const autoplayTimerRef = useRef<number | null>(null);
   const count = photos.length;
-  useEffect(() => {
+
+  const resetAutoplay = useCallback(function scheduleNextSlide() {
+    if (autoplayTimerRef.current !== null) {
+      window.clearTimeout(autoplayTimerRef.current);
+      autoplayTimerRef.current = null;
+    }
     if (count <= 1) return;
-    const id = window.setInterval(() => setI((v) => (v + 1) % count), 4000);
-    return () => window.clearInterval(id);
+
+    autoplayTimerRef.current = window.setTimeout(() => {
+      autoplayTimerRef.current = null;
+      setI((value) => (value + 1) % count);
+      scheduleNextSlide();
+    }, 4000);
   }, [count]);
+
+  useEffect(() => {
+    resetAutoplay();
+    return () => {
+      if (autoplayTimerRef.current !== null) {
+        window.clearTimeout(autoplayTimerRef.current);
+        autoplayTimerRef.current = null;
+      }
+    };
+  }, [resetAutoplay]);
+
   if (count === 0) return null;
-  const step = (d: number) => setI((v) => (v + d + count) % count);
+  const step = (d: number) => {
+    resetAutoplay();
+    setI((value) => (value + d + count) % count);
+  };
+  const select = (index: number) => {
+    resetAutoplay();
+    setI(index);
+  };
+
   return (
     <div className={className ?? "absolute inset-0 overflow-hidden"}>
       <div className="flex h-full w-full transition-transform duration-500 ease-out" style={{ transform: `translate3d(${-i * 100}%,0,0)` }}>
@@ -408,7 +437,7 @@ export function SharedCarousel({ photos, className, arrowColor = "#fff" }: { pho
           <button type="button" aria-label="Ảnh sau" onClick={() => step(1)} className="absolute right-1 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/25 text-2xl transition hover:bg-black/40" style={{ color: arrowColor }}>›</button>
           <div className="absolute inset-x-0 bottom-2 z-10 flex justify-center gap-1.5">
             {photos.map((src, idx) => (
-              <button key={src} type="button" aria-label={`Ảnh ${idx + 1}`} onClick={() => setI(idx)} className="h-1.5 w-1.5 rounded-full transition" style={{ backgroundColor: idx === i ? "#fff" : "rgba(255,255,255,0.5)" }} />
+              <button key={src} type="button" aria-label={`Ảnh ${idx + 1}`} onClick={() => select(idx)} className="h-1.5 w-1.5 rounded-full transition" style={{ backgroundColor: idx === i ? "#fff" : "rgba(255,255,255,0.5)" }} />
             ))}
           </div>
         </>

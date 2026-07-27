@@ -13,7 +13,7 @@ const contentSecurityPolicy = [
   "font-src 'self' data:",
   "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com",
   "media-src 'self' data: blob:",
-  "frame-src https://www.google.com https://maps.google.com",
+  "frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -27,6 +27,17 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   serverExternalPackages: ["heic-decode", "libheif-js"],
+  images: {
+    localPatterns: [
+      {
+        pathname: "/**",
+        search: "",
+      },
+      {
+        pathname: "/chungdoi/images/template-previews/**",
+      },
+    ],
+  },
   experimental: {
     // Keep static rendering while adding integrity metadata to built scripts.
     sri: {
@@ -47,7 +58,14 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return canonicalHostRedirects(process.env.NEXT_PUBLIC_SITE_URL);
+    return [
+      ...canonicalHostRedirects(process.env.NEXT_PUBLIC_SITE_URL),
+      {
+        source: "/:locale(en|ko|ja|zh)",
+        destination: "/",
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [

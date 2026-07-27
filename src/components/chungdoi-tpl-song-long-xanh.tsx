@@ -15,7 +15,7 @@ import {
   parseISODate,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationHeroSlots, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const SLX_GREEN = "#1F3A25";
 const SLX_LINEN = "#ECE8D6";
@@ -97,9 +97,10 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
     { a: families.groomFather, b: families.groomMother, addr: families.groomAddress, title: families.groomParentTitle || "Ông bà" },
     couple.brideFirst,
   );
-  const avatarCards = people.map((person) => ({
+  const heroSlots = invitationHeroSlots(content);
+  const avatarCards = people.map((person, i) => ({
     person,
-    src: person.side === "bride" ? SLX_AVATARS.bride : SLX_AVATARS.groom,
+    src: heroSlots[i] || (person.side === "bride" ? SLX_AVATARS.bride : SLX_AVATARS.groom),
     sideLabel: person.side === "bride" ? "신부" : "신랑",
   }));
 
