@@ -23,8 +23,12 @@ export async function generateMetadata({
   });
 }
 
-/** ISR so admin renames land without a redeploy. */
-export const revalidate = 600;
+/**
+ * Template names come from the runtime database, which is unavailable while the
+ * Docker image is being built. Keep this route dynamic so a build-time fallback
+ * cannot stay visible after an admin rename.
+ */
+export const dynamic = "force-dynamic";
 
 export default async function TemplatesPage({
   params,

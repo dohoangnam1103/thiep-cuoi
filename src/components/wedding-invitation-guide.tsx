@@ -137,7 +137,7 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
               <span className="text-foreground">{t("breadcrumbCurrent")}</span>
             </nav>
 
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="grid items-center gap-12 lg:grid-cols-[1fr_17.5rem] lg:gap-16">
               <div className="text-center lg:text-left">
                 <h1 className="font-heading text-4xl font-black leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.5rem]">
                   {t("hero.title")}
@@ -164,7 +164,7 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
                 </Link>
               </div>
 
-              <div className="aspect-video w-full overflow-hidden rounded-2xl border border-primary/20 bg-card shadow-[0_20px_60px_rgb(0_0_0/0.14)]">
+              <div className="mx-auto aspect-[9/16] w-full max-w-[17.5rem] overflow-hidden rounded-2xl border border-primary/20 bg-card shadow-[0_20px_60px_rgb(0_0_0/0.14)]">
                 <WeddingGuideVideo title={t("hero.videoTitle")} />
               </div>
             </div>

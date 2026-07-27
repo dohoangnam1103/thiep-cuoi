@@ -560,7 +560,7 @@ function HowItWorks() {
               </li>
             ))}
           </ol>
-          <div className="reveal aspect-video w-full max-w-xl overflow-hidden rounded-3xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] max-lg:mx-auto lg:justify-self-start">
+          <div className="reveal aspect-[9/16] w-full max-w-xs overflow-hidden rounded-3xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)] max-lg:mx-auto lg:justify-self-start">
             <WeddingGuideVideo title={t("howItWorks.ctaHint")} />
           </div>
         </div>

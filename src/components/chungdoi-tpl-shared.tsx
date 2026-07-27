@@ -714,9 +714,16 @@ export function AlbumGallery({
   }
 
   if (layout === "mosaic") {
-    const shown = photos.slice(0, 5);
-    const extra = Math.max(0, photos.length - 5);
-    const spanFor = (i: number) => (i === 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1");
+    const shown = photos.slice(0, 6);
+    const extra = Math.max(0, photos.length - shown.length);
+    const spanFor = (i: number) => {
+      if (i !== 0) return "col-span-1 row-span-1";
+      // Six tiles fill a 3×3 desktop mosaic. On the two-column mobile grid,
+      // keep all six square so no unmatched cell is left at the bottom.
+      return shown.length === 6
+        ? "col-span-1 row-span-1 md:col-span-2 md:row-span-2"
+        : "col-span-2 row-span-2";
+    };
     return (
       <div className="w-full max-w-[400px] md:max-w-[560px]">
         <div className="grid grid-cols-2 gap-3 [grid-auto-rows:1fr] md:grid-cols-3 md:gap-4">

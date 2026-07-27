@@ -7,6 +7,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { completedTemplateSlugs, getVietnameseTemplateSlug } from "@/data/chungdoi";
+import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
 import { defaultTemplateLabel } from "@/lib/template-labels";
@@ -133,15 +134,16 @@ export async function renameTemplate(
   revalidatePath("/admin/demos");
   revalidatePath("/dashboard");
   revalidatePath("/editor", "layout");
-  // Home + listing are ISR-cached, so refresh the localized URLs that show
-  // template names. Demo pages render per request and need no invalidation.
-  // Paths are the internal (pre-rewrite) locale routes, same convention as
-  // saveDemo above.
+
+  // Invalidate both the internal App Router paths and the externally visible
+  // localized paths. With next-intl rewrites, invalidating only
+  // `/{locale}/templates` does not evict the `/mau-thiep` route cache.
   for (const locale of routing.locales) {
     revalidatePath(`/${locale}`);
     revalidatePath(`/${locale}/templates`);
+    revalidatePath(getPathname({ href: "/", locale }));
+    revalidatePath(getPathname({ href: "/templates", locale }));
   }
-
 
   return { ok: true, name: name || defaultTemplateLabel(templateId) };
 }
