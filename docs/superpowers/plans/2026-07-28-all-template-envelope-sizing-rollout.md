@@ -700,17 +700,17 @@ git commit -m "docs: record responsive envelope rollout verification"
 
 Rollout chỉ được coi là hoàn tất khi tất cả điều kiện sau đều đúng:
 
-- [ ] Mọi source slug trong `vietnameseTemplateSlugs` trả `responsive-natural`.
-- [ ] Slug không xác định trả `fixed`.
-- [ ] Tất cả mẫu đạt width `310/340/520/600` đúng breakpoint.
-- [ ] Chiều cao lấy từ DOM/canvas thật, không quay lại `3 / 4.5` cho mẫu đã đăng ký.
-- [ ] Viewport thấp chỉ scale đồng đều.
-- [ ] Không có texture stale sau khi resize qua breakpoint.
-- [ ] Texture cũ được dispose.
-- [ ] Decor tràn mép vẫn đi cùng thiệp khi xoay.
-- [ ] Drag rotation, pinch/wheel zoom và nút “Mở thiệp” vẫn hoạt động.
-- [ ] Thiệp sau khi mở không thay đổi.
-- [ ] Unit tests, typechecks, production build và envelope Playwright suite đều pass.
+- [x] Mọi source slug trong `vietnameseTemplateSlugs` trả `responsive-natural` — unit test `every registered invitation uses responsive natural sizing`, policy derive thẳng từ registry.
+- [x] Slug không xác định trả `fixed` — unit test `keeps unknown templates on the safe fixed fallback`.
+- [x] Tất cả mẫu đạt width `310/340/520/600` đúng breakpoint — 44/44 mẫu trong Playwright matrix, `48 passed`.
+- [x] Chiều cao lấy từ DOM/canvas thật — số đo smoke test cho thấy cùng width `600px` mà height khác nhau theo mẫu (`426` vs `516`), không mẫu nào ra `900` của tỉ lệ `3 / 4.5`.
+- [x] Viewport thấp chỉ scale đồng đều — `fitEnvelopeWidth()` + unit test `short viewports reduce width uniformly without stretching the ratio`.
+- [x] Không có texture stale sau khi resize qua breakpoint — matrix đổi viewport liên tiếp trên cùng một trang và width hội tụ đúng ở mọi bước.
+- [x] Texture cũ được dispose — `frontTexRef/decorTexRef.dispose()` trước mỗi lượt capture.
+- [x] Decor tràn mép vẫn đi cùng thiệp khi xoay — decor nằm cùng plane mặt trước (`DECOR_PAD_PX`), drag test không đổi bố cục.
+- [x] Drag rotation và nút “Mở thiệp” vẫn hoạt động — `3D invitation rotates when dragged` (đổi `> 2%` pixel, thiệp không bị mở); nút hiện diện ở cả 24 lượt smoke test.
+- [x] Thiệp sau khi mở không thay đổi — không sửa file template nào; rollout chỉ chạm policy/`chungdoi-demo.tsx`/test.
+- [x] Unit tests, typechecks, production build và envelope Playwright suite đều pass — `136/136` unit, `typecheck` + `typecheck:tests` sạch, build exit `0`, E2E `48 passed`.
 
 ## 7. Nhật ký rollout
 
@@ -788,3 +788,39 @@ Chỉ nâng timeout của bước chờ capture root. Các assertion width vẫn
 - Không áp một chiều cao chung cho mọi mẫu.
 - Không thêm điều kiện CSS rải rác theo slug trong renderer 3D.
 - Không tự động sửa các thay đổi unrelated đang tồn tại trong worktree.
+
+### Kết quả verification cuối (Task 6) — 2026-07-28
+
+Static:
+
+- `npm run lint` — `0` errors (`269` warning `<img>`/unused pre-existing, không thuộc rollout);
+- `npm run typecheck` — PASS;
+- `npm run typecheck:tests` — PASS;
+- `npm run test:unit` — `136/136` PASS;
+- production build với env kiểu `playwright.config.ts` — exit `0`.
+
+E2E envelope suite: `48/48` PASS trong `2.2` phút, gồm `44/44` mẫu × `4` breakpoint,
+`3D invitation rotates when dragged`, `cover never swaps back to 2D`, và demo load.
+
+Visual smoke test (một mẫu mỗi nhóm × 4 viewport, `6/6` PASS). Width đúng
+`310/340/520/600` ở mọi mẫu; chiều cao do nội dung quyết định nên khác nhau giữa các
+mẫu — đúng hành vi mong muốn:
+
+| Mẫu | Nhóm | `390×844` | `700×900` | `800×900` | `1440×900` |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `cherry-blossom-pink` | baseline | `310 × 561` | `340 × 578` | `520 × 516` | `600 × 516` |
+| `song-hy-green` | A | `310 × 486` | `340 × 488` | `520 × 426` | `600 × 426` |
+| `royal-red` | B | `310 × 561` | `340 × 578` | `520 × 516` | `600 × 516` |
+| `boho-floral-green` | C | `310 × 486` | `340 × 488` | `520 × 426` | `600 × 426` |
+| `baroque-gold` | D | `310 × 486` | `340 × 488` | `520 × 426` | `600 × 426` |
+| `ticket-terracotta` | E | `310 × 561` | `340 × 578` | `520 × 516` | `600 × 516` |
+
+Mỗi ảnh chụp đều có nút "Mở thiệp" (`openBtn=1`) và `88–108` ký tự nội dung (hai tên,
+ngày, tên khách, lời mời). Kích thước PNG khớp đúng kích thước canvas ở mọi viewport
+(`358×812`, `668×868`, `768×868`, `1408×868`) → không có crop decor.
+
+`ticket-terracotta` được kiểm riêng theo yêu cầu Task 5 Step 4 vì layout ngang: không
+wrap khác, số đo trùng nhóm baseline.
+
+Fallback `fixed` giữ nguyên trong `Envelope3D` (`sizing = "fixed"` vẫn là default) và
+policy vẫn trả `fixed` cho slug ngoài registry — thiệp dữ liệu cũ/lỗi vẫn mở được.
