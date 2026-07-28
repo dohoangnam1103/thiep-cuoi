@@ -81,6 +81,7 @@ temp/
 
 # Scratch screenshots / DOM snapshots at repo root
 /*.png
+/*.jpg
 /*.jpeg
 /original-body-snapshot.md
 docs/research/original-dom/

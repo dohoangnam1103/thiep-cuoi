@@ -66,6 +66,9 @@ rsync -az --delete \
   --exclude '.env.local' \
   --exclude '.env.*.local' \
   --exclude '.DS_Store' \
+  --exclude '/*.png' \
+  --exclude '/*.jpg' \
+  --exclude '/*.jpeg' \
   --exclude '/*.db' \
   --exclude '/*.db-journal' \
   --exclude '/*.db-shm' \
