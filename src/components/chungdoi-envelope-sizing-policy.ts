@@ -30,6 +30,27 @@ export const responsiveEnvelopeTemplateSlugs = new Set<string>([
   "nhat-binh-red",
   "hoa-tinh-red",
   "co-ba-red",
+
+  // Nhóm C — hoa lá và vườn xuân
+  "elegant-leaf-green",
+  "boho-floral-green",
+  "boho-floral-pink",
+  "boho-floral-brown",
+  "jasmine-white",
+  "silk-flora-brown",
+  "brocade-flower-red",
+  "crystal-floral-blue",
+  "glass-garden-green",
+  "spring-garden-green",
+  "spring-garden-red",
+  "spring-garden-blue",
+
+  // Nhóm D — lâu đài và cung điện
+  "chateau-blue",
+  "chateau-green",
+  "baroque-gold",
+  "qasr-green",
+  "qasr-gold",
 ]);
 
 export function envelopeSizingForTemplate(slug: string): EnvelopeSizing {

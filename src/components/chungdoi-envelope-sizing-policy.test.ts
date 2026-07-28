@@ -49,3 +49,29 @@ test("groups A and B use responsive natural sizing", () => {
     assert.equal(envelopeSizingForTemplate(slug), "responsive-natural", slug);
   }
 });
+
+const groupCAndD = [
+  "elegant-leaf-green",
+  "boho-floral-green",
+  "boho-floral-pink",
+  "boho-floral-brown",
+  "jasmine-white",
+  "silk-flora-brown",
+  "brocade-flower-red",
+  "crystal-floral-blue",
+  "glass-garden-green",
+  "spring-garden-green",
+  "spring-garden-red",
+  "spring-garden-blue",
+  "chateau-blue",
+  "chateau-green",
+  "baroque-gold",
+  "qasr-green",
+  "qasr-gold",
+] as const;
+
+test("groups C and D use responsive natural sizing", () => {
+  for (const slug of groupCAndD) {
+    assert.equal(envelopeSizingForTemplate(slug), "responsive-natural", slug);
+  }
+});

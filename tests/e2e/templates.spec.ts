@@ -114,6 +114,29 @@ const ENVELOPE_GROUP_B_SLUGS = [
   "co-ba-red",
 ] as const;
 
+const ENVELOPE_GROUP_C_SLUGS = [
+  "elegant-leaf-green",
+  "boho-floral-green",
+  "boho-floral-pink",
+  "boho-floral-brown",
+  "jasmine-white",
+  "silk-flora-brown",
+  "brocade-flower-red",
+  "crystal-floral-blue",
+  "glass-garden-green",
+  "spring-garden-green",
+  "spring-garden-red",
+  "spring-garden-blue",
+] as const;
+
+const ENVELOPE_GROUP_D_SLUGS = [
+  "chateau-blue",
+  "chateau-green",
+  "baroque-gold",
+  "qasr-green",
+  "qasr-gold",
+] as const;
+
 // Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
 const ENVELOPE_SIZING_CASES = [
   { viewport: { width: 1440, height: 900 }, expectedWidth: 600 },
@@ -540,6 +563,18 @@ test.describe("templates — demo pages", () => {
 
   for (const sourceSlug of ENVELOPE_GROUP_B_SLUGS) {
     test(`envelope sizing group B — ${sourceSlug}`, async ({ page }) => {
+      await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
+    });
+  }
+
+  for (const sourceSlug of ENVELOPE_GROUP_C_SLUGS) {
+    test(`envelope sizing group C — ${sourceSlug}`, async ({ page }) => {
+      await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
+    });
+  }
+
+  for (const sourceSlug of ENVELOPE_GROUP_D_SLUGS) {
+    test(`envelope sizing group D — ${sourceSlug}`, async ({ page }) => {
       await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
     });
   }

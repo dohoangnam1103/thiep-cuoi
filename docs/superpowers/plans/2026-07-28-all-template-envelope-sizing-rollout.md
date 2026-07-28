@@ -719,8 +719,8 @@ Rollout chỉ được coi là hoàn tất khi tất cả điều kiện sau đ�
 | 2026-07-28 | Baseline `cherry-blossom-pink` | Hoàn thành | Desktop `600 × 515.5`; mobile `310 × 561`; 3D/zoom/drag/open đã kiểm tra |
 | 2026-07-28 | Nhóm A | Hoàn thành | 9/9 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
 | 2026-07-28 | Nhóm B | Hoàn thành | 10/10 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
-| 2026-07-28 | Nhóm C | Chưa triển khai | Thực hiện theo Task 4 |
-| 2026-07-28 | Nhóm D | Chưa triển khai | Thực hiện theo Task 4 |
+| 2026-07-28 | Nhóm C | Hoàn thành | 12/12 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
+| 2026-07-28 | Nhóm D | Hoàn thành | 5/5 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
 | 2026-07-28 | Nhóm E | Chưa triển khai | Thực hiện theo Task 5 |
 
 ### Ghi chú Task 3 — test `3D invitation rotates automatically`
@@ -744,6 +744,21 @@ allowlist (trở lại `fixed` như trước Task 3) thì test **vẫn đỏ**; 
 Bản sửa đổi test sang `3D invitation rotates when dragged` — kéo chuột để xoay là
 hợp đồng thật mà rollout phải giữ. Ngưỡng `2%` gấp `5×` nhiễu đã đo, cộng assertion
 thiệp không bị mở do cú kéo. Chạy 3/3 lần đều pass.
+
+### Ghi chú Task 4 — bẫy server stale khi chạy Playwright
+
+Lần chạy đầu cho Nhóm C/D đỏ **17/17** với lỗi `must use the responsive capture
+root ... Received: 0`. Đây **không** phải lỗi code: `playwright.config.ts` đặt
+`reuseExistingServer: !process.env.CI`, nên khi còn một server sống ở cổng `3100`
+Playwright dùng lại **build cũ** chưa chứa allowlist vừa sửa. Kiểm chứng: `.next`
+build lúc `11:21`, policy sửa lúc `11:23` — build cũ hơn code.
+
+Sau khi kill process ở cổng `3100` và xóa `.next` để buộc build lại, đúng 17/17 mẫu
+PASS mà không sửa một dòng code nào.
+
+Quy tắc cho các batch sau: trước khi kết luận một mẫu "lệch kích thước", xác nhận
+build mới hơn lần sửa policy gần nhất. Cách nhanh nhất là kill cổng `3100` rồi chạy
+lại. Không đi chẩn đoán CSS/padding trước khi loại trừ được nguyên nhân này.
 
 ## 8. Phạm vi không làm trong rollout này
 
