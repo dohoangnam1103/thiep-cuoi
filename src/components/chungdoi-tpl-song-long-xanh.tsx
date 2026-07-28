@@ -329,7 +329,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
           <>
             <div className="relative z-10 h-[80px] w-full" style={{ backgroundColor: SLX_GREEN }} />
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: SLX_LINEN }}>
-              <GiftEnvelope banks={bankCards} accent="#f4c76a" dark={SLX_GREEN} cardBg={SLX_LINEN} heading="Phong Bao Mừng Cưới" labelColor={SLX_GRAY} />
+              <GiftEnvelope templateSlug={content.slug} banks={bankCards} accent="#f4c76a" dark={SLX_GREEN} cardBg={SLX_LINEN} heading="Phong Bao Mừng Cưới" labelColor={SLX_GRAY} />
               <span className="mt-1 text-[12px] opacity-80 md:text-[13px]" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>축의금</span>
             </div>
           </>

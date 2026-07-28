@@ -213,7 +213,7 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={QASR_GOLD} dark={QASR_GOLD_DARK} cardBg="#fbf5e6" heading="Hộp Quà Mừng" labelColor={QASR_GOLD_MUTED} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={QASR_GOLD} dark={QASR_GOLD_DARK} cardBg="#fbf5e6" heading="Hộp Quà Mừng" labelColor={QASR_GOLD_MUTED} />
             </section>
           ) : null}
         </div>

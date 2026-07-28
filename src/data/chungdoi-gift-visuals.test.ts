@@ -41,6 +41,25 @@ export const REQUIRED_GIFTBOX_MINI_ASSETS = [
 const giftboxDirectory = join(process.cwd(), "public", "chungdoi", "images", "giftbox");
 const auditPath = join(process.cwd(), "docs", "research", "GIFT_VISUAL_SOURCE_AUDIT.md");
 const registryPath = join(process.cwd(), "src", "data", "chungdoi-gift-visuals.ts");
+const GIFT_ENVELOPE_CALLER_FILES = [
+  "chungdoi-tpl-arch-sage.tsx",
+  "chungdoi-tpl-boho-floral-brown.tsx",
+  "chungdoi-tpl-boho-floral-green.tsx",
+  "chungdoi-tpl-chateau-green.tsx",
+  "chungdoi-tpl-cherry-blossom-pink.tsx",
+  "chungdoi-tpl-crystal-floral-blue.tsx",
+  "chungdoi-tpl-double-dragon.tsx",
+  "chungdoi-tpl-dragon-phoenix-v3-red.tsx",
+  "chungdoi-tpl-elegant-leaf-green.tsx",
+  "chungdoi-tpl-floral-base.tsx",
+  "chungdoi-tpl-glass-garden-green.tsx",
+  "chungdoi-tpl-hoa-tinh-red.tsx",
+  "chungdoi-tpl-qasr-gold.tsx",
+  "chungdoi-tpl-qasr-green.tsx",
+  "chungdoi-tpl-song-long-xanh.tsx",
+  "chungdoi-tpl-spring-garden-blue.tsx",
+  "chungdoi-tpl-zen-sand.tsx",
+] as const;
 
 function assertWebp(path: string): void {
   const signature = readFileSync(path).subarray(0, 12);
@@ -57,6 +76,21 @@ test("gift visual registry exports its public contract", () => {
   assert.match(source, /export type GiftVisual\b/);
   assert.match(source, /export const CLONED_GIFT_VISUAL_SLUGS\b/);
   assert.match(source, /export function resolveGiftVisual\b/);
+});
+
+test("every GiftEnvelope caller passes its template slug", () => {
+  for (const filename of GIFT_ENVELOPE_CALLER_FILES) {
+    const source = readFileSync(
+      join(process.cwd(), "src", "components", filename),
+      "utf8",
+    );
+
+    assert.match(
+      source,
+      /<GiftEnvelope[\s\S]*?templateSlug=\{content\.slug\}/,
+      filename,
+    );
+  }
 });
 
 test("cloned gift visual slugs exactly cover audited envelopes and gift boxes", () => {

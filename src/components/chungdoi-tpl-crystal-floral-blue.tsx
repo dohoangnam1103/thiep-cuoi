@@ -204,7 +204,7 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="relative w-full text-center">
-              <GiftEnvelope banks={banks} accent={BLUE} dark={BLUE} cardBg="#f8fbff" heading="Hộp Quà Mừng" labelColor={BLUE_MUTED} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={BLUE} dark={BLUE} cardBg="#f8fbff" heading="Hộp Quà Mừng" labelColor={BLUE_MUTED} />
             </section>
           ) : null}
         </div>

@@ -473,15 +473,36 @@ test.describe("templates — demo pages", () => {
 
     const envelope = page.getByTestId("gift-envelope");
     await expect(envelope).toBeAttached();
-    await expect(envelope.locator(".nhat-binh-envelope-body")).toHaveCSS("animation-name", "nhat-binh-envelope-shake");
-    await expect(envelope.locator(".nhat-binh-envelope-front")).toHaveCSS("animation-name", "nhat-binh-glow-pulse");
-    await expect(envelope.locator(".nhat-binh-coin-1")).toHaveCSS("animation-name", "nhat-binh-coin-float-1");
+    await expect(envelope).toHaveAttribute("data-gift-visual-kind", "layered-image");
+    await expect(
+      envelope.locator('img[src$="/boho-floral-pink/envelope.webp"]'),
+    ).toHaveCount(2);
+    await expect(envelope.locator('[data-gift-layer="back"]')).toHaveCSS(
+      "animation-name",
+      "gift-envelope-back-float",
+    );
+    await expect(envelope.locator('[data-gift-layer="front"]')).toHaveCSS(
+      "animation-name",
+      "gift-envelope-front-float",
+    );
 
     await expect(page.locator("[data-template-footer]")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(page.locator("[data-template-lower-decor]")).toHaveCSS("opacity", "0.07");
 
     await envelope.click();
     await expect(page.getByRole("heading", { name: "Phong Bao Mừng Cưới" }).last()).toBeVisible();
+  });
+
+  test("Song Long Xanh renders its two source dragon envelopes", async ({ page }) => {
+    await page.goto("/mau-thiep/song-long-xanh/demo?capture=1", { timeout: 60_000 });
+    const envelope = page.getByTestId("gift-envelope");
+    await expect(envelope).toHaveAttribute("data-gift-visual-kind", "layered-image");
+    const layers = envelope.locator(
+      'img[src$="/double-dragon-green/envelope.webp"]',
+    );
+    await expect(layers).toHaveCount(2);
+    await expect(envelope.locator('[data-gift-layer="back"]')).toHaveCount(1);
+    await expect(envelope.locator('[data-gift-layer="front"]')).toHaveCount(1);
   });
 
   test("gift modal hides bank labels and separates adjacent QR codes", async ({ page, context }) => {

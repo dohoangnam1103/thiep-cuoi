@@ -13,7 +13,6 @@ import {
   InvitationMap,
   MapDirectionsButton,
   GiftEnvelope,
-  GIFTBOX_MINI_DECORS,
   SharedWishForm,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -253,15 +252,13 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
           {banks.length > 0 ? (
             <section className="relative z-10 w-full px-5 py-8 text-center md:px-10 md:py-10">
               <GiftEnvelope
+                templateSlug={content.slug}
                 banks={banks}
                 accent="#e7b849"
                 dark={GREEN}
                 cardBg="#eef7f0"
                 heading="Hộp Quà Mừng"
                 labelColor={GREEN_MUTED}
-                variant="giftbox"
-                boxImage="/chungdoi/images/giftbox/glass_garden_green.webp"
-                decorImages={GIFTBOX_MINI_DECORS}
               />
             </section>
           ) : null}

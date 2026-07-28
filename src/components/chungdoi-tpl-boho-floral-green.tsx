@@ -230,7 +230,7 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={ACCENT} dark={GREEN} cardBg={CARD} heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={ACCENT} dark={GREEN} cardBg={CARD} heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} />
             </section>
           ) : null}
         </div>

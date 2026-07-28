@@ -198,7 +198,7 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={GREEN} dark={GREEN} cardBg="#fbfaf5" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={GREEN} dark={GREEN} cardBg="#fbfaf5" heading="Hộp Quà Mừng" labelColor={GREEN_MUTED} />
             </section>
           ) : null}
         </div>

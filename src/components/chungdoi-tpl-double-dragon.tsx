@@ -351,7 +351,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
             </div>
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: DD_LINEN }}>
               {palette.giftMode === "envelope" ? (
-                <GiftEnvelope banks={bankCards} accent="#f4c76a" dark={DD_RED} cardBg={DD_LINEN} heading={palette.giftHeading} labelColor={DD_GRAY} />
+                <GiftEnvelope templateSlug={content.slug} banks={bankCards} accent="#f4c76a" dark={DD_RED} cardBg={DD_LINEN} heading={palette.giftHeading} labelColor={DD_GRAY} />
               ) : (
                 <GiftQrGrid banks={bankCards} heading={palette.giftHeading} accent={DD_RED} />
               )}

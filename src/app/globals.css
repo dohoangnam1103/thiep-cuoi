@@ -1133,6 +1133,43 @@ html.lenis body {
   animation: igb-gift-bob 2.4s ease-in-out infinite;
 }
 
+.ienv-back {
+  animation: gift-envelope-back-float 2.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ienv-card {
+  animation: gift-envelope-front-float 2.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ienv-shadow {
+  animation: gift-envelope-shadow-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes gift-envelope-back-float {
+  0%, 100% { transform: translateX(20%) translateY(-10%) scale(-0.8, 0.8) rotate(-15deg); }
+  50% { transform: translateX(18%) translateY(-14%) scale(-0.82, 0.82) rotate(-18deg); }
+}
+
+@keyframes gift-envelope-front-float {
+  0%, 100% { rotate: -10deg; transform: translateY(0); }
+  50% { rotate: -7deg; transform: translateY(-8px); }
+}
+
+@keyframes gift-envelope-shadow-pulse {
+  0%, 100% { opacity: 0.75; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: 0.45; transform: translateX(-50%) scaleX(0.86); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ienv-back,
+  .ienv-card,
+  .ienv-shadow {
+    animation: none;
+  }
+}
+
 .igb-box {
   transition: transform 0.3s;
   transform-origin: 50% 100%;

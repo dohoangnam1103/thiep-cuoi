@@ -281,6 +281,7 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
           {banks.length > 0 ? (
             <Block className="gap-10 text-center">
               <GiftEnvelope
+                templateSlug={content.slug}
                 banks={banks}
                 accent={SEAL}
                 dark={SEAL}
