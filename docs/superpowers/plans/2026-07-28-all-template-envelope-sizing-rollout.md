@@ -721,7 +721,7 @@ Rollout chỉ được coi là hoàn tất khi tất cả điều kiện sau đ�
 | 2026-07-28 | Nhóm B | Hoàn thành | 10/10 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
 | 2026-07-28 | Nhóm C | Hoàn thành | 12/12 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
 | 2026-07-28 | Nhóm D | Hoàn thành | 5/5 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
-| 2026-07-28 | Nhóm E | Chưa triển khai | Thực hiện theo Task 5 |
+| 2026-07-28 | Nhóm E | Hoàn thành | 7/7 mẫu đạt `600/520/340/310` đủ 4 breakpoint; policy chuyển sang derive từ registry nên `44/44` mẫu dùng `responsive-natural` |
 
 ### Ghi chú Task 3 — test `3D invitation rotates automatically`
 
@@ -759,6 +759,27 @@ PASS mà không sửa một dòng code nào.
 Quy tắc cho các batch sau: trước khi kết luận một mẫu "lệch kích thước", xác nhận
 build mới hơn lần sửa policy gần nhất. Cách nhanh nhất là kill cổng `3100` rồi chạy
 lại. Không đi chẩn đoán CSS/padding trước khi loại trừ được nguyên nhân này.
+
+### Ghi chú Task 5 — cold-start timeout của capture root
+
+Lần chạy đầu cho Nhóm E đỏ **5/7** (`chibi-red`, `minimalism-red`, `maroon-love`,
+`editorial-noir`, `ticket-terracotta`) trong khi `zen-sand` và `arch-sage` PASS. Lần
+này **không** phải server stale — build đã mới. Cũng không phải lỗi sizing:
+`chibi-red` chạy riêng một mình PASS ngay.
+
+Nguyên nhân là timeout. Helper chờ capture root bằng `expect().toHaveCount(1)` với
+`expect.timeout` mặc định `10s`, nhưng texture cover chỉ xuất hiện sau
+`document.fonts.ready` cộng **hai** lượt `toCanvas()` (lượt đầu hay trượt ảnh/font
+khi cache lạnh). Trên server vừa build với 5 worker cùng render WebGL, chuỗi đó vượt
+`10s`.
+
+Số đo sau khi nâng riêng timeout của bước này lên `45s`, chạy lại đúng điều kiện
+cold-start (xóa `.next`, kill cổng `3100`, 5 worker): **7/7 PASS**. Năm mẫu từng đỏ
+mất `9.1–10.9s` — nằm ngay trên ngưỡng `10s` cũ; hai mẫu luôn xanh chỉ mất
+`2.5–2.7s`. Chênh lệch này khớp chính xác với chẩn đoán.
+
+Chỉ nâng timeout của bước chờ capture root. Các assertion width vẫn giữ
+`expect.poll` mặc định, nên một mẫu thật sự sai kích thước vẫn đỏ nhanh.
 
 ## 8. Phạm vi không làm trong rollout này
 

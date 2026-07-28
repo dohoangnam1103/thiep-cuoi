@@ -137,6 +137,16 @@ const ENVELOPE_GROUP_D_SLUGS = [
   "qasr-gold",
 ] as const;
 
+const ENVELOPE_GROUP_E_SLUGS = [
+  "chibi-red",
+  "minimalism-red",
+  "maroon-love",
+  "editorial-noir",
+  "ticket-terracotta",
+  "zen-sand",
+  "arch-sage",
+] as const;
+
 // Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
 const ENVELOPE_SIZING_CASES = [
   { viewport: { width: 1440, height: 900 }, expectedWidth: 600 },
@@ -163,8 +173,15 @@ async function expectResponsiveEnvelopeSizing(
   await page.setViewportSize(cases[0].viewport);
   await page.goto(`/mau-thiep/${routeSlug}/demo`, { timeout: 60_000 });
 
+  // The capture root only mounts after the client-only Envelope3D hydrates, and
+  // that waits on `document.fonts.ready` plus two `toCanvas` passes. On a
+  // freshly built server with several workers rendering WebGL at once that
+  // exceeds the 10s default, so give hydration its own budget — a short timeout
+  // here reports a sizing failure for what is really a cold start.
   const capture = page.locator('[data-envelope-capture-root="responsive-natural"]');
-  await expect(capture, `${routeSlug} must use the responsive capture root`).toHaveCount(1);
+  await expect(capture, `${routeSlug} must use the responsive capture root`).toHaveCount(1, {
+    timeout: 45_000,
+  });
 
   for (const current of cases) {
     await page.setViewportSize(current.viewport);
@@ -575,6 +592,12 @@ test.describe("templates — demo pages", () => {
 
   for (const sourceSlug of ENVELOPE_GROUP_D_SLUGS) {
     test(`envelope sizing group D — ${sourceSlug}`, async ({ page }) => {
+      await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
+    });
+  }
+
+  for (const sourceSlug of ENVELOPE_GROUP_E_SLUGS) {
+    test(`envelope sizing group E — ${sourceSlug}`, async ({ page }) => {
       await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
     });
   }
