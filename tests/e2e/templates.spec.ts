@@ -28,21 +28,9 @@ const KNOWN_NAMES = {
   royal: "Hoàng Kim Đỏ",
 } as const;
 
-const ANIMATED_ENVELOPE_SLUGS = [
+const PROCEDURAL_GIFT_SLUGS = [
   "song-hy-red",
   "song-hy-green",
-  "double-dragon-red",
-  "elegant-leaf-green",
-  "dragon-phoenix-v3-red",
-  "double-dragon-green",
-  "boho-floral-green",
-  "crystal-floral-blue",
-  "qasr-green",
-  "qasr-gold",
-  "hoa-tinh-red",
-  "boho-floral-brown",
-  "spring-garden-blue",
-  "cherry-blossom-pink",
   "dragon-phoenix-red",
   "dragon-phoenix-blue",
   "dragon-phoenix-black",
@@ -52,6 +40,25 @@ const ANIMATED_ENVELOPE_SLUGS = [
   "royal-green",
   "co-ba-red",
 ] as const;
+
+const SOURCE_IMAGE_GIFT_ASSETS = {
+  "boho-floral-green": "boho-floral-green",
+  "boho-floral-pink": "boho-floral-pink",
+  "boho-floral-brown": "boho-floral-brown",
+  "spring-garden-green": "spring-garden-green",
+  "spring-garden-blue": "spring-garden-blue",
+  "elegant-leaf-green": "elegant-leaf-green",
+  "hoa-tinh-red": "hoa-tinh-red",
+  "minimalism-red": "minimalism-red",
+  "crystal-floral-blue": "crystal-floral-blue",
+  "chibi-red": "chibi-red",
+  "double-dragon-red": "double-dragon-red",
+  "double-dragon-green": "double-dragon-green",
+  "dragon-phoenix-v3-red": "dragon-phoenix-v3-red",
+  "qasr-green": "qasr-green",
+  "qasr-gold": "qasr-gold",
+  "cherry-blossom-pink": "cherry-blossom-pink",
+} as const;
 
 const ANIMATED_GIFT_BOX_SLUGS = ["chateau-green", "glass-garden-green"] as const;
 
@@ -541,7 +548,7 @@ test.describe("templates — demo pages", () => {
   test("every source-animated gift envelope keeps moving", async ({ page }) => {
     test.setTimeout(300_000);
 
-    for (const slug of ANIMATED_ENVELOPE_SLUGS) {
+    for (const slug of PROCEDURAL_GIFT_SLUGS) {
       const response = await page.goto(`/mau-thiep/${slug}/demo?capture=1`, { waitUntil: "domcontentloaded", timeout: 60_000 });
       expect(response?.ok(), slug).toBeTruthy();
 
@@ -549,6 +556,24 @@ test.describe("templates — demo pages", () => {
       await expect(envelope, slug).toBeAttached();
       await expect(envelope.locator(".nhat-binh-envelope-body"), slug).toHaveCSS("animation-name", "nhat-binh-envelope-shake");
       await expect(envelope.locator(".nhat-binh-envelope-front"), slug).toHaveCSS("animation-name", "nhat-binh-glow-pulse");
+    }
+  });
+
+  test("every source-image gift template renders its registered pair", async ({ page }) => {
+    test.setTimeout(300_000);
+
+    for (const [slug, assetDirectory] of Object.entries(SOURCE_IMAGE_GIFT_ASSETS)) {
+      const response = await page.goto(
+        `/mau-thiep/${getVietnameseTemplateSlug(slug)}/demo?capture=1`,
+        { waitUntil: "domcontentloaded", timeout: 60_000 },
+      );
+      expect(response?.ok(), slug).toBeTruthy();
+      const envelope = page.getByTestId("gift-envelope");
+      await expect(envelope, slug).toHaveAttribute("data-gift-visual-kind", "layered-image");
+      const srcSuffix = slug === "cherry-blossom-pink"
+        ? "/cherry_blossom_pink.webp"
+        : `/${assetDirectory}/envelope.webp`;
+      await expect(envelope.locator(`img[src$="${srcSuffix}"]`), slug).toHaveCount(2);
     }
   });
 
@@ -560,6 +585,8 @@ test.describe("templates — demo pages", () => {
       const giftBox = page.getByTestId("gift-envelope");
       await expect(giftBox, slug).toBeAttached();
       await expect(giftBox.locator(".igb-bob"), slug).toHaveCSS("animation-name", "igb-gift-bob");
+      await expect(giftBox.locator(".igb-decor"), slug).toHaveCount(7);
+      await expect(giftBox.locator(".igb-box"), slug).toHaveCount(1);
     }
   });
 
@@ -1041,7 +1068,7 @@ test.describe("templates — demo pages", () => {
   });
 
   test("demo gift envelope button appears after hydration", async ({ page }) => {
-    await page.goto("/vi/templates/song-hy-do/demo", { timeout: 60_000 });
+    await page.goto("/vi/templates/song-hy-do/demo?capture=1", { timeout: 60_000 });
 
     await expect(page.getByRole("button", { name: "Mở hộp mừng cưới" })).toBeVisible({
       timeout: 45_000,
