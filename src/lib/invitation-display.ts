@@ -48,52 +48,105 @@ export function invitationHeroImage(content: ChungDoiDemoContent): string {
   return content.heroImage?.trim() || content.gallery[0] || "";
 }
 
-/**
- * Second header photo for templates that show two photos at the top of the card.
- * Falls back to the album when the dedicated slot is empty: if slot 1 is filled the
- * album starts at index 0, otherwise slot 1 already consumed gallery[0].
- */
-export function invitationHeroImage2(content: ChungDoiDemoContent): string {
-  if (content.showHeroImage === false) return "";
-  const explicit = content.heroImage2?.trim();
-  if (explicit) return explicit;
-  return (content.heroImage?.trim() ? content.gallery[0] : content.gallery[1]) || "";
-}
+export type HeroPhotos = { bride: string; groom: string };
 
-/** Both header photos in display order (slot 1, slot 2), with album fallback. */
-export function invitationHeroImages(content: ChungDoiDemoContent): [string, string] {
-  return [invitationHeroImage(content), invitationHeroImage2(content)];
-}
+type HeroPhotoOptions = {
+  /** Fill an empty slot with the next unused album photo. */
+  albumFallback?: boolean;
+  /**
+   * The layout pins each photo to a side (a bride frame, a groom frame), so the
+   * album fills bride-first regardless of which family is announced first.
+   */
+  fixedSides?: boolean;
+};
 
 /**
- * Only what the user uploaded into the two header slots, in display order.
- * Use this for templates that already ship a curated default portrait per side
- * so the theme artwork stays in place until a photo is actually uploaded.
+ * Header photos keyed by person: `heroImage` is always the bride's slot and
+ * `heroImage2` the groom's. Keeping them person-scoped means changing the
+ * display order never moves a photo under the other person's name.
+ *
+ * An empty slot can borrow from the album. Those photos belong to nobody yet,
+ * so they fill in display order — the card keeps reading left to right even
+ * when the groom's family comes first.
  */
-export function invitationHeroSlots(content: ChungDoiDemoContent): [string, string] {
-  if (content.showHeroImage === false) return ["", ""];
-  return [content.heroImage?.trim() || "", content.heroImage2?.trim() || ""];
+export function invitationHeroPhotos(
+  content: ChungDoiDemoContent,
+  { albumFallback = false, fixedSides = false }: HeroPhotoOptions = {},
+): HeroPhotos {
+  if (content.showHeroImage === false) return { bride: "", groom: "" };
+
+  const photos = {
+    bride: content.heroImage?.trim() || "",
+    groom: content.heroImage2?.trim() || "",
+  };
+  if (!albumFallback) return photos;
+
+  const album = content.gallery.filter((photo) => photo.trim());
+  let unused = 0;
+  const fillOrder = fixedSides
+    ? (["bride", "groom"] as const)
+    : orderByBrideFirst<CoupleSide>("bride", "groom", content.couple.brideFirst);
+  for (const side of fillOrder) {
+    photos[side] ||= album[unused++] || "";
+  }
+  return photos;
+}
+
+/** Both header photos in display order, so slot 1 follows whoever comes first. */
+export function orderedHeroPhotos(
+  content: ChungDoiDemoContent,
+  options?: HeroPhotoOptions,
+): [string, string] {
+  const photos = invitationHeroPhotos(content, options);
+  return orderByBrideFirst(photos.bride, photos.groom, content.couple.brideFirst);
 }
 
 export function orderByBrideFirst<T>(bride: T, groom: T, brideFirst: boolean): [T, T] {
   return brideFirst ? [bride, groom] : [groom, bride];
 }
 
-export function orderedCouple(content: ChungDoiDemoContent) {
+export type CoupleSide = "bride" | "groom";
+
+export type InvitationPerson = {
+  side: CoupleSide;
+  fullName: string;
+  shortName: string;
+  birthOrder: string;
+  /** The header photo uploaded for this person, never for this position. */
+  heroPhoto: string;
+};
+
+/**
+ * Both people keyed by side, each carrying their own header photo. Use this when
+ * a template pins artwork to a side (a bride frame, a groom frame) so the photo
+ * and the frame can never drift apart; use {@link orderedCouple} when the layout
+ * only cares about who comes first.
+ */
+export function invitationCouple(
+  content: ChungDoiDemoContent,
+  options?: HeroPhotoOptions,
+): Record<CoupleSide, InvitationPerson> {
   const { couple } = content;
-  return orderByBrideFirst(
-    {
-      side: "bride" as const,
+  const heroPhotos = invitationHeroPhotos(content, options);
+  return {
+    bride: {
+      side: "bride",
       fullName: couple.brideFullName,
       shortName: couple.brideShortName || couple.brideFullName,
       birthOrder: couple.brideBirthOrder || "Út Nữ",
+      heroPhoto: heroPhotos.bride,
     },
-    {
-      side: "groom" as const,
+    groom: {
+      side: "groom",
       fullName: couple.groomFullName,
       shortName: couple.groomShortName || couple.groomFullName,
       birthOrder: couple.groomBirthOrder || "Trưởng Nam",
+      heroPhoto: heroPhotos.groom,
     },
-    couple.brideFirst,
-  );
+  };
+}
+
+export function orderedCouple(content: ChungDoiDemoContent) {
+  const { bride, groom } = invitationCouple(content);
+  return orderByBrideFirst(bride, groom, content.couple.brideFirst);
 }

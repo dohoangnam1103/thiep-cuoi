@@ -9,6 +9,10 @@ import { type ComponentType, type Dispatch, type MouseEvent, type SetStateAction
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
+import {
+  envelopeDecorOverflowForTemplate,
+  type EnvelopeDecorOverflow,
+} from "@/components/chungdoi-envelope-decor-policy";
 import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
@@ -629,15 +633,17 @@ function CoverCard({
   onOpen,
   opening = false,
   hideDecor = false,
+  contentOnly = false,
+  decorOverflow = "visible",
   naturalHeight = false,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
   onOpen: () => void;
   opening?: boolean;
-  // Ẩn lớp hoa (cardImages) — dùng khi chụp texture mặt trước 3D, vì hoa tràn
-  // mép sẽ bị crop theo khung card. Hoa được chụp riêng qua CoverDecor.
   hideDecor?: boolean;
+  contentOnly?: boolean;
+  decorOverflow?: EnvelopeDecorOverflow;
   naturalHeight?: boolean;
 }) {
   const liveForms = useLiveForms();
@@ -664,14 +670,17 @@ function CoverCard({
         boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)",
       }}
     >
-      {/* composited theme layer (behind everything) */}
-      <div
-        className="absolute inset-0 overflow-hidden rounded-lg"
-        style={{ background: coverCardBackground(tokens), border: `1px solid ${tokens.guestBoxBorder}` }}
-      />
+      {/* composited theme layer (behind everything). Content-only capture bỏ
+          toàn bộ nền để texture overlay phía trên WebGL giữ alpha trong suốt. */}
+      {!contentOnly ? (
+        <div
+          className="absolute inset-0 overflow-hidden rounded-lg"
+          style={{ background: coverCardBackground(tokens), border: `1px solid ${tokens.guestBoxBorder}` }}
+        />
+      ) : null}
 
       {/* fly-out layer (không clip): bản gốc phía trên ẩn đi, bản này phóng to bay ra */}
-      {opening ? (
+      {opening && !contentOnly ? (
         <div className="pointer-events-none absolute inset-0 z-20">
           {tokens.cardImages
             .filter((img) => img.flyOnOpen)
@@ -693,7 +702,7 @@ function CoverCard({
           thẳng trên nền floral rối nên cần tấm kính phủ trắng + blur để chữ đọc
           được. Các theme khác card có nền riêng (đặc hoặc rgba ~0.95) đọc tốt sẵn;
           tấm trắng chỉ làm bệt màu nên KHÔNG áp. */}
-      {content.slug === "glass-garden-green" ? (
+      {content.slug === "glass-garden-green" && !contentOnly ? (
         <div
           className="pointer-events-none absolute inset-0 z-[5] rounded-lg"
           style={{
@@ -705,12 +714,14 @@ function CoverCard({
         />
       ) : null}
 
-      {/* lớp hoa trang trí: nằm TRÊN frosted panel (z-[6]) và KHÔNG bị clip →
-          hoa tràn ra ngoài mép card và không bị lớp mờ che, giống bản gốc.
-          Ẩn khi chụp texture 3D (hideDecor) vì hoa tràn mép bị crop — cover 3D
-          chụp hoa riêng qua CoverDecor rồi map lên plane lớn hơn. */}
-      {!hideDecor ? (
-        <div className="pointer-events-none absolute inset-0 z-[6]">
+      {/* Các mẫu clip bake decor vào card ở z-6, dưới text/nút z-10. Riêng mẫu
+          cho phép vượt mép sẽ bỏ bản này: Envelope3D dùng một plane hoa nguyên
+          vẹn và một content overlay trong suốt ở phía trên, nên không có seam. */}
+      {tokens.cardImages.length && !hideDecor && !contentOnly ? (
+        <div
+          className="pointer-events-none absolute inset-0 z-[6] overflow-hidden rounded-lg"
+          data-envelope-decor-overflow={decorOverflow}
+        >
           {tokens.cardImages.map((img, i) => (
             <img
               key={i}
@@ -727,6 +738,7 @@ function CoverCard({
       {/* Với mode mặc định, text phủ absolute để giữ card 3:4.5. Riêng các mẫu
           opt-in natural height, text tham gia flow và quyết định chiều cao card. */}
       <div
+        data-envelope-card-content
         className={naturalHeight
           ? "relative z-10 px-6 pb-14 pt-28 text-center md:pb-8 md:pt-24"
           : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
@@ -879,6 +891,8 @@ function EnvelopeCover({
 }) {
   const sizing = envelopeSizingForTemplate(content.slug);
   const naturalHeight = sizing === "responsive-natural";
+  const decorOverflow = envelopeDecorOverflowForTemplate(content.slug);
+  const renderOverflowDecor = decorOverflow === "visible" && tokens.cardImages.length > 0;
 
   return (
     <div
@@ -897,6 +911,17 @@ function EnvelopeCover({
       >
         Mở thiệp
       </button>
+      {content.slug === "glass-garden-green" ? (
+        <div
+          data-envelope-background-glass
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background: "rgba(255,255,255,0.12)",
+            backdropFilter: "blur(8px) saturate(1.05)",
+            WebkitBackdropFilter: "blur(8px) saturate(1.05)",
+          }}
+        />
+      ) : null}
       <ParticleField tokens={tokens} />
       {opening ? <BurstParticles tokens={tokens} /> : null}
 
@@ -921,13 +946,14 @@ function EnvelopeCover({
                   tokens={tokens}
                   onOpen={handleOpen}
                   opening={opening}
-                  hideDecor
+                  hideDecor={renderOverflowDecor}
+                  decorOverflow={decorOverflow}
                   naturalHeight={naturalHeight}
                 />
               </div>
             )}
             renderDecor={
-              tokens.cardImages.length
+              renderOverflowDecor
                 ? () => (
                     <div className="pointer-events-none absolute inset-0">
                       {tokens.cardImages.map((img, i) => (
@@ -939,6 +965,24 @@ function EnvelopeCover({
                           className={`pointer-events-none absolute ${img.className}`}
                         />
                       ))}
+                    </div>
+                  )
+                : undefined
+            }
+            renderOverlay={
+              renderOverflowDecor
+                ? () => (
+                    <div className="relative">
+                      <Seal tokens={tokens} opening={false} />
+                      <CoverCard
+                        content={content}
+                        tokens={tokens}
+                        onOpen={onOpen}
+                        contentOnly
+                        hideDecor
+                        decorOverflow={decorOverflow}
+                        naturalHeight={naturalHeight}
+                      />
                     </div>
                   )
                 : undefined

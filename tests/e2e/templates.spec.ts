@@ -141,10 +141,6 @@ const ENVELOPE_GROUP_E_SLUGS = [
   "chibi-red",
   "minimalism-red",
   "maroon-love",
-  "editorial-noir",
-  "ticket-terracotta",
-  "zen-sand",
-  "arch-sage",
 ] as const;
 
 // Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
@@ -182,6 +178,42 @@ async function expectResponsiveEnvelopeSizing(
   await expect(capture, `${routeSlug} must use the responsive capture root`).toHaveCount(1, {
     timeout: 45_000,
   });
+
+  // Shared CoverCard contract for every template: whenever cardImages exist,
+  // their in-card copy must sit below the text/button layer. Templates with no
+  // cardImages legitimately have no decor layer.
+  const cardContent = capture.locator("[data-envelope-card-content]");
+  await expect(cardContent).toHaveCount(1);
+  const cardDecor = capture.locator("[data-envelope-decor-overflow]");
+  const cardDecorCount = await cardDecor.count();
+  expect(
+    cardDecorCount,
+    `${routeSlug} has at most one in-card decor layer`,
+  ).toBeLessThanOrEqual(1);
+  if (cardDecorCount === 1) {
+    const stacking = await capture.evaluate((root) => {
+      const content = root.querySelector<HTMLElement>(
+        "[data-envelope-card-content]",
+      );
+      const decor = root.querySelector<HTMLElement>(
+        "[data-envelope-decor-overflow]",
+      );
+      return {
+        content: Number.parseInt(
+          content ? getComputedStyle(content).zIndex : "0",
+          10,
+        ),
+        decor: Number.parseInt(
+          decor ? getComputedStyle(decor).zIndex : "0",
+          10,
+        ),
+      };
+    });
+    expect(
+      stacking.content,
+      `${routeSlug} content must sit above decor`,
+    ).toBeGreaterThan(stacking.decor);
+  }
 
   for (const current of cases) {
     await page.setViewportSize(current.viewport);
@@ -339,6 +371,27 @@ test.describe("templates — demo pages", () => {
 
     await page.goto("/mau-thiep/chibi-red/demo?capture=1", { timeout: 60_000 });
     await expect(page.locator('img[src$="/chibi_red/couple-main.webp"]')).toBeVisible();
+  });
+
+  test("Vườn Kính uses one continuous glass surface with its floral layers", async ({ page }) => {
+    await page.goto("/mau-thiep/vuonkinh-xanh/demo?capture=1", { timeout: 60_000 });
+
+    const surface = page.locator("[data-glass-garden-surface]");
+    await expect(surface).toHaveCount(1);
+    await expect(surface).toHaveCSS("background-color", "rgba(255, 255, 255, 0.4)");
+    await expect(surface).toHaveCSS("backdrop-filter", "blur(7px) saturate(1.08)");
+    await expect(surface.locator("[data-template-footer]")).toHaveCount(1);
+
+    const sections = surface.locator(":scope > section");
+    expect(await sections.count()).toBeGreaterThan(3);
+    for (const section of await sections.all()) {
+      await expect(section).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(section).toHaveCSS("backdrop-filter", "none");
+    }
+
+    const floralLayers = surface.locator("[data-glass-garden-background-flower]");
+    await expect(floralLayers).toHaveCount(4);
+    await expect(surface.locator('img[src$="/flower5-bottom.webp"]')).toHaveCount(1);
   });
 
   test("all source-parity templates dispatch through their dedicated renderer", async ({ page }) => {
@@ -560,6 +613,53 @@ test.describe("templates — demo pages", () => {
     expect(desktopSize.height).not.toBe(900);
     // The legacy fixed path would force 600 × 900 at a 3 / 4.5 ratio.
     expect(desktopSize.height).not.toBe(Math.round((desktopSize.width / 3) * 4.5));
+  });
+
+  test("envelope decorations match the Chung Đôi clipping policy", async ({
+    page,
+  }) => {
+    await page.goto("/mau-thiep/song-hy-do/demo", { timeout: 60_000 });
+
+    await expect(page.locator("[data-envelope-background-glass]")).toHaveCount(
+      0,
+    );
+
+    const clippedDecor = page.locator(
+      '[data-envelope-capture-root="responsive-natural"] [data-envelope-decor-overflow="clip"]',
+    );
+    await expect(clippedDecor).toHaveCount(1, { timeout: 45_000 });
+    await expect(clippedDecor).toHaveCSS("overflow", "hidden");
+    await expect(clippedDecor.locator("img")).toHaveCount(2);
+    await expect(page.locator("[data-envelope-decor-card]")).toHaveCount(0);
+
+    await page.goto("/mau-thiep/vuonkinh-xanh/demo", { timeout: 60_000 });
+
+    const backgroundGlass = page.locator("[data-envelope-background-glass]");
+    await expect(backgroundGlass).toHaveCount(1);
+    await expect(backgroundGlass).toHaveCSS(
+      "background-color",
+      "rgba(255, 255, 255, 0.12)",
+    );
+    await expect(backgroundGlass).toHaveCSS(
+      "backdrop-filter",
+      "blur(8px) saturate(1.05)",
+    );
+
+    const overflowDecor = page.locator("[data-envelope-decor-card]");
+    await expect(overflowDecor).toHaveCount(1, { timeout: 45_000 });
+    await expect(overflowDecor.locator("img")).toHaveCount(3);
+    await expect(overflowDecor).toHaveAttribute(
+      "data-envelope-decor-compositing",
+      "full-layer",
+    );
+    await expect(
+      page.locator("[data-envelope-content-overlay-root]"),
+    ).toHaveCount(1);
+    await expect(
+      page.locator(
+        '[data-envelope-capture-root="responsive-natural"] [data-envelope-decor-overflow="visible"]',
+      ),
+    ).toHaveCount(0);
   });
 
   // Drives the rollout matrix helper through the already-approved baseline, so a

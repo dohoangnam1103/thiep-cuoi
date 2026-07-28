@@ -15,7 +15,7 @@ import {
   GiftQrGrid,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationCouple, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 
 const DD_TEX = "/images/double-dragon.webp";
 const DD_HY = "/images/chu-hy.webp";
@@ -120,15 +120,14 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
     { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
     couple.brideFirst,
   ).filter((q) => q.bank);
-  const heroOn = content.showHeroImage !== false;
-  const heroSlots = [content.heroImage, content.heroImage2];
+  const { bride, groom } = invitationCouple(content);
   const avatarCards = orderByBrideFirst(
-    { src: DD_AVATARS.bride, person: people.find((person) => person.side === "bride")!, label: couple.brideBirthOrder || palette.brideLabel },
-    { src: DD_AVATARS.groom, person: people.find((person) => person.side === "groom")!, label: couple.groomBirthOrder || palette.groomLabel },
+    { src: DD_AVATARS.bride, person: bride, label: couple.brideBirthOrder || palette.brideLabel },
+    { src: DD_AVATARS.groom, person: groom, label: couple.groomBirthOrder || palette.groomLabel },
     couple.brideFirst,
-  ).map((card, i) => ({
+  ).map((card) => ({
     ...card,
-    src: (heroOn && heroSlots[i]?.trim()) || card.src,
+    src: card.person.heroPhoto || card.src,
   }));
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },

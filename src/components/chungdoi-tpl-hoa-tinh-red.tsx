@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationHeroImages, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCouple, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap, MapDirectionsButton,
@@ -26,7 +26,9 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const [firstPhoto, secondPhoto] = invitationHeroImages(content);
+  // Khung "bride frame"/"groom frame" và hoa văn dau/re gắn cứng theo bên,
+  // nên ảnh phải lấy theo bên thay vì theo thứ tự hiển thị.
+  const { bride, groom } = invitationCouple(content, { albumFallback: true, fixedSides: true });
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"Alex Brush", cursive' };
@@ -49,13 +51,13 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             <div className="relative pb-[115%]">
               <div className="absolute left-0 top-0 z-[5] w-[57%] -rotate-[4deg]">
                 <div className="relative pb-[133.33%]">
-                  {firstPhoto ? <img src={firstPhoto} alt={people[0].fullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
+                  {bride.heroPhoto ? <img src={bride.heroPhoto} alt={bride.fullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
                   <img src={`${BASE}/bride frame.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
                 </div>
               </div>
               <div className="absolute bottom-[-50px] right-0 z-[6] w-[55%] rotate-[3deg]">
                 <div className="relative pb-[133.33%]">
-                  {secondPhoto ? <img src={secondPhoto} alt={people[1].fullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
+                  {groom.heroPhoto ? <img src={groom.heroPhoto} alt={groom.fullName} className="absolute left-[2%] top-[2%] h-[96%] w-[96%] rounded-[6px] object-cover shadow-md" /> : null}
                   <img src={`${BASE}/groom frame.webp`} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
                 </div>
               </div>
@@ -64,16 +66,16 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             </div>
           </div>
           <div className="absolute bottom-[calc(27%-70px)] left-[5%] z-[7] flex flex-col items-center text-center md:bottom-[calc(27%-125px)] md:left-[calc(5%+150px)]">
-            <p className="text-[13px] md:text-[15px]">{people[0].birthOrder}</p>
-            <p className="text-[19px] font-bold uppercase md:text-[23px]">{people[0].shortName}</p>
+            <p className="text-[13px] md:text-[15px]">{bride.birthOrder}</p>
+            <p className="text-[19px] font-bold uppercase md:text-[23px]">{bride.shortName}</p>
             <img src={`${BASE}/dau.webp`} alt="" aria-hidden className="mt-[15px] w-[70px] md:mt-[25px] md:w-[85px]" />
           </div>
           <img src={`${BASE}/tim.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-[calc(10%-20px)] left-[calc(42%-100px)] z-[6] w-[11%] max-w-[48px] md:bottom-[calc(10%-50px)] md:max-w-[58px]" />
           <div className="absolute bottom-[5%] right-[5%] z-[7] flex items-center md:right-[calc(5%+130px)]">
             <img src={`${BASE}/re.webp`} alt="" aria-hidden className="mr-[15px] w-[113px] md:mr-[25px] md:w-[135px]" />
             <div className="text-center">
-              <p className="text-[13px] md:text-[15px]">{people[1].birthOrder}</p>
-              <p className="text-[19px] font-bold uppercase md:text-[23px]">{people[1].shortName}</p>
+              <p className="text-[13px] md:text-[15px]">{groom.birthOrder}</p>
+              <p className="text-[19px] font-bold uppercase md:text-[23px]">{groom.shortName}</p>
             </div>
           </div>
           <div className="h-[600px] w-full md:h-[840px]" />

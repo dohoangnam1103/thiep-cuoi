@@ -330,6 +330,8 @@
     "demoCta": "查看请柬演示",
     "useStyle": "创建请柬",
     "new": "新",
+    "templates": {
+    },
     "suggestion": {
       "title": "还没找到喜欢的设计？",
       "description": "告诉我们您想要的设计。我们会根据新人的需求定期制作新的请柬模板。",

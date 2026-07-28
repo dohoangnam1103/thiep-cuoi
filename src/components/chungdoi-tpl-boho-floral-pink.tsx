@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationHeroImages, orderedCouple } from "@/lib/invitation-display";
+import { orderedCouple, orderedHeroPhotos } from "@/lib/invitation-display";
 import { FloralInvitation } from "@/components/chungdoi-tpl-floral-base";
 
 const BASE = "/chungdoi/images/themes/_decor/boho-floral-pink";
@@ -9,7 +9,7 @@ const scriptFont = { fontFamily: '"Fz Aghita", "The Nautigal", cursive' };
 
 function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
   const people = orderedCouple(content);
-  const [firstPhoto, secondPhoto] = invitationHeroImages(content);
+  const [firstPhoto, secondPhoto] = orderedHeroPhotos(content, { albumFallback: true });
 
   return (
     <header

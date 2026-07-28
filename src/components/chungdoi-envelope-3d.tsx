@@ -40,13 +40,14 @@ type EnvelopeSizing = "fixed" | "responsive-natural";
 
 type Envelope3DProps = {
   renderCard: (onOpen: () => void) => ReactNode;
+  // Overlay alpha chỉ chứa text/nút/seal. Dùng cùng một lớp decor nguyên vẹn
+  // phía dưới rồi phủ content lên trên → hoa liền mạch, content vẫn luôn nổi.
+  renderOverlay?: () => ReactNode;
   onOpen: () => void;
   paperColor: string;
   accentColor: string;
-  // Hoa tràn ra ngoài mép card: KHÔNG bake vào texture card (bị crop theo khung
-  // card) mà render riêng ở đây. Envelope3D chụp node này trên nền trong suốt
-  // trong vùng rộng hơn card (DECOR_PAD_PX mỗi phía), map lên plane lớn hơn là
-  // con của group xoay → hoa trồi ra ngoài mép và vẫn xoay cùng thiệp (3D thật).
+  // Hoa tràn ra ngoài mép card được chụp nguyên vẹn trên nền trong suốt và đặt
+  // giữa front texture với content overlay. Không cắt/ghép tại biên card.
   renderDecor?: () => ReactNode;
   sizing?: EnvelopeSizing;
 };
@@ -82,7 +83,6 @@ const CORNER = 0.08; // bo góc mặt phẳng, độc lập DEPTH
 // Vùng chụp hoa rộng hơn card mỗi phía (px) để chứa phần hoa translate ra ngoài
 // mép. Card region nằm giữa, hoa trồi vào vùng pad này → không bị crop.
 const DECOR_PAD_PX = 220;
-
 const BACK_Z = -(DEPTH / 2);
 
 // Mặt sau vẽ nguyên bằng CanvasTexture (4 nắp + seam + bóng + wax seal) → không
@@ -204,6 +204,7 @@ function Envelope({
   accentColor,
   frontTex,
   decorTex,
+  overlayTex,
   ratio,
   btnUV,
   captureWidth,
@@ -215,6 +216,7 @@ function Envelope({
   accentColor: string;
   frontTex: Texture | null;
   decorTex: Texture | null;
+  overlayTex: Texture | null;
   ratio: number;
   btnUV: EnvelopeButtonUv | null;
   captureWidth: number;
@@ -390,6 +392,18 @@ function Envelope({
           <meshBasicMaterial map={decorTex} toneMapped={false} transparent depthWrite={false} />
         </mesh>
       )}
+
+      {/* Text/nút/seal alpha nằm trên hoa. Cùng faceGeometry và UV với front
+          texture nên khớp tuyệt đối ở mọi góc xoay, không tạo đường may. */}
+      {overlayTex && (
+        <mesh
+          geometry={faceGeometry}
+          position={[0, 0, DEPTH / 2 + 0.006]}
+          raycast={() => null}
+        >
+          <meshBasicMaterial map={overlayTex} toneMapped={false} transparent depthWrite={false} />
+        </mesh>
+      )}
     </group>
   );
 }
@@ -418,6 +432,7 @@ function getServerEnvelopeWidth(): number {
 
 export default function Envelope3D({
   renderCard,
+  renderOverlay,
   onOpen,
   paperColor,
   accentColor,
@@ -434,10 +449,13 @@ export default function Envelope3D({
   const targetWidth = naturalSizing ? responsiveWidth : ENVELOPE_TARGET_PX;
   const captureRef = useRef<HTMLDivElement>(null);
   const decorRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [frontTex, setFrontTex] = useState<Texture | null>(null);
   const [decorTex, setDecorTex] = useState<Texture | null>(null);
+  const [overlayTex, setOverlayTex] = useState<Texture | null>(null);
   const frontTexRef = useRef<Texture | null>(null);
   const decorTexRef = useRef<Texture | null>(null);
+  const overlayTexRef = useRef<Texture | null>(null);
   const [ratio, setRatio] = useState(FALLBACK_RATIO);
   // Vùng nút "Mở thiệp" trong hệ UV mặt trước (0–1). Đo runtime từ DOM đã chụp
   // → hit-test tap theo UV, mở đúng khi chạm nút bất kể card đang xoay góc nào.
@@ -448,6 +466,7 @@ export default function Envelope3D({
     let cancelled = false;
     let pendingFrontTexture: Texture | null = null;
     let pendingDecorTexture: Texture | null = null;
+    let pendingOverlayTexture: Texture | null = null;
     const node = captureRef.current;
     if (!node) return;
 
@@ -461,6 +480,9 @@ export default function Envelope3D({
         decorTexRef.current?.dispose();
         decorTexRef.current = null;
         setDecorTex(null);
+        overlayTexRef.current?.dispose();
+        overlayTexRef.current = null;
+        setOverlayTex(null);
         setBtnUV(null);
 
         if (document.fonts?.ready) await document.fonts.ready;
@@ -491,11 +513,27 @@ export default function Envelope3D({
             backgroundColor: undefined,
           });
           if (cancelled) return;
+
           pendingDecorTexture = new CanvasTexture(decorCanvas);
           pendingDecorTexture.colorSpace = SRGBColorSpace;
           pendingDecorTexture.anisotropy = 4;
           pendingDecorTexture.minFilter = LinearFilter;
           pendingDecorTexture.needsUpdate = true;
+        }
+
+        const overlayNode = overlayRef.current;
+        if (overlayNode) {
+          const overlayCanvas = await toCanvas(overlayNode, {
+            pixelRatio: 2,
+            cacheBust: true,
+            backgroundColor: undefined,
+          });
+          if (cancelled) return;
+          pendingOverlayTexture = new CanvasTexture(overlayCanvas);
+          pendingOverlayTexture.colorSpace = SRGBColorSpace;
+          pendingOverlayTexture.anisotropy = 4;
+          pendingOverlayTexture.minFilter = LinearFilter;
+          pendingOverlayTexture.needsUpdate = true;
         }
 
         if (cancelled || !pendingFrontTexture) return;
@@ -507,6 +545,11 @@ export default function Envelope3D({
           setDecorTex(pendingDecorTexture);
           pendingDecorTexture = null;
         }
+        if (pendingOverlayTexture) {
+          overlayTexRef.current = pendingOverlayTexture;
+          setOverlayTex(pendingOverlayTexture);
+          pendingOverlayTexture = null;
+        }
         setRatio(nextRatio);
         setBtnUV(nextButtonUV);
       } catch {
@@ -514,6 +557,8 @@ export default function Envelope3D({
         pendingFrontTexture = null;
         pendingDecorTexture?.dispose();
         pendingDecorTexture = null;
+        pendingOverlayTexture?.dispose();
+        pendingOverlayTexture = null;
         // Chụp lỗi → mặt trước để trống (box giấy vẫn hiện), user vẫn mở được.
       }
     };
@@ -522,12 +567,14 @@ export default function Envelope3D({
       cancelled = true;
       pendingFrontTexture?.dispose();
       pendingDecorTexture?.dispose();
+      pendingOverlayTexture?.dispose();
     };
   }, [captureWidth, naturalSizing]);
 
   useEffect(() => () => {
     frontTexRef.current?.dispose();
     decorTexRef.current?.dispose();
+    overlayTexRef.current?.dispose();
   }, []);
 
   return (
@@ -591,6 +638,7 @@ export default function Envelope3D({
           >
             <div
               data-envelope-decor-card
+              data-envelope-decor-compositing="full-layer"
               style={{
                 position: "relative",
                 width: "100%",
@@ -599,6 +647,31 @@ export default function Envelope3D({
             >
               {renderDecor()}
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Content overlay trong suốt có cùng width/height card. Không nền, không
+          decor; chỉ text/nút/seal để luôn nằm trên plane hoa nguyên vẹn. */}
+      {renderOverlay ? (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: -99999,
+            width: captureWidth,
+            pointerEvents: "none",
+            opacity: 0,
+          }}
+        >
+          <div
+            ref={overlayRef}
+            data-envelope-content-overlay-root
+            style={{ width: captureWidth }}
+          >
+            <style>{"[data-envelope-content-overlay-root] *{box-shadow:none!important;filter:none!important}"}</style>
+            {renderOverlay()}
           </div>
         </div>
       ) : null}
@@ -620,6 +693,7 @@ export default function Envelope3D({
           accentColor={accentColor}
           frontTex={frontTex}
           decorTex={decorTex}
+          overlayTex={overlayTex}
           ratio={ratio}
           btnUV={btnUV}
           captureWidth={captureWidth}

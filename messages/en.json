@@ -547,6 +547,8 @@
     "demoCta": "VIEW INVITATION DEMO",
     "useStyle": "CREATE INVITATION",
     "new": "New",
+    "templates": {
+    },
     "suggestion": {
       "title": "Can't find the right design?",
       "description": "Tell us what you are looking for. We regularly create new invitation templates based on couples' requests.",

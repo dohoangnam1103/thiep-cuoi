@@ -80,10 +80,6 @@ const groupE = [
   "chibi-red",
   "minimalism-red",
   "maroon-love",
-  "editorial-noir",
-  "ticket-terracotta",
-  "zen-sand",
-  "arch-sage",
 ] as const;
 
 test("group E uses responsive natural sizing", () => {

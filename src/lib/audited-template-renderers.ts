@@ -16,6 +16,10 @@ export const AUDITED_TEMPLATE_SLUGS = [
   "glass-garden-green",
   "chibi-red",
   "cherry-blossom-pink",
+  "editorial-noir",
+  "ticket-terracotta",
+  "zen-sand",
+  "arch-sage",
 ] as const;
 
 export type AuditedTemplateSlug = (typeof AUDITED_TEMPLATE_SLUGS)[number];
