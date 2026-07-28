@@ -743,6 +743,78 @@ export const templates = [
     "portrait": "/chungdoi/images/template-previews/en/portrait/dragon_phoenix_black.webp",
     "landscape": "/chungdoi/images/template-previews/en/landscape/dragon_phoenix_black.webp",
     "sourceUrl": "https://chungdoi.com/en/templates/dragon-phoenix-black"
+  },
+  {
+    "slug": "editorial-noir",
+    "name": "Tạp Chí Đen",
+    "title": "Editorial Noir Template - Magazine Layout Wedding Invitation | Thiệp Mừng Online",
+    "description": "Editorial Noir wedding e-card: oversized typography, hairline rules and an asymmetric magazine grid on off-white paper. Free to create, 3-day trial on Thiệp Mừng Online.",
+    "category": "Modern",
+    "color": "Black",
+    "isNew": true,
+    "highlights": [
+      "Oversized editorial typography as the only ornament",
+      "Numbered sections and hairline rules like a print magazine",
+      "Asymmetric grid with full-bleed photography"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/editorial_noir.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/editorial_noir.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/editorial_noir.webp",
+    "sourceUrl": ""
+  },
+  {
+    "slug": "ticket-terracotta",
+    "name": "Vé Cưới Đất",
+    "title": "Ticket Terracotta Template - Boarding Pass Wedding Invitation | Thiệp Mừng Online",
+    "description": "Ticket Terracotta wedding e-card: boarding-pass stubs, perforated rules and a barcode footer in warm clay tones. Free to create, 3-day trial on Thiệp Mừng Online.",
+    "category": "Modern",
+    "color": "Brown",
+    "isNew": true,
+    "highlights": [
+      "Boarding-pass stubs with perforated edges",
+      "Label and value fields like a printed ticket",
+      "Barcode footer and serial number detail"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/ticket_terracotta.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/ticket_terracotta.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/ticket_terracotta.webp",
+    "sourceUrl": ""
+  },
+  {
+    "slug": "zen-sand",
+    "name": "Thiền Cát",
+    "title": "Zen Sand Template - Japanese Minimal Wedding Invitation | Thiệp Mừng Online",
+    "description": "Zen Sand wedding e-card: generous white space, wide-tracked type and a single hand-drawn ensō circle on sand paper. Free to create, 3-day trial on Thiệp Mừng Online.",
+    "category": "Modern",
+    "color": "White",
+    "isNew": true,
+    "highlights": [
+      "Japanese minimal layout built on white space",
+      "Single ensō circle as the only decorative mark",
+      "Wide letter-spacing with one idea per screen"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/zen_sand.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/zen_sand.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/zen_sand.webp",
+    "sourceUrl": ""
+  },
+  {
+    "slug": "arch-sage",
+    "name": "Vòm Xanh Rêu",
+    "title": "Arch Sage Template - Layered Arch Wedding Invitation | Thiệp Mừng Online",
+    "description": "Arch Sage wedding e-card: layered arch frames, soft sage gradients and photos set inside rounded doorways. Free to create, 3-day trial on Thiệp Mừng Online.",
+    "category": "Modern",
+    "color": "Green",
+    "isNew": true,
+    "highlights": [
+      "Layered arch frames instead of rectangular cards",
+      "Photos set inside rounded doorway shapes",
+      "Soft sage gradients drawn entirely in code"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/arch_sage.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/arch_sage.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/arch_sage.webp",
+    "sourceUrl": ""
   }
 ] satisfies ChungDoiTemplate[];
 
@@ -789,6 +861,10 @@ export const completedTemplateSlugs = new Set<string>([
   "chibi-red",
   "minimalism-red",
   "cherry-blossom-pink",
+  "editorial-noir",
+  "ticket-terracotta",
+  "zen-sand",
+  "arch-sage",
 ]);
 
 export const completedTemplates = templates.filter((template) => completedTemplateSlugs.has(template.slug));

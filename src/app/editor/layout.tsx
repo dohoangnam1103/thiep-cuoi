@@ -22,6 +22,7 @@ export default function EditorLayout({ children }: { children: React.ReactNode }
           locale="vi"
           messages={{
             editor: viMessages.editor,
+            invitationTemplate: viMessages.invitationTemplate,
             trialCountdown: viMessages.trialCountdown,
           }}
         >

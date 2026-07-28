@@ -40,7 +40,13 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
       <Link href="/admin/demos" className="text-sm text-primary hover:underline">
         ← Danh sách thiệp demo
       </Link>
-      <NextIntlClientProvider locale="vi" messages={{ editor: viMessages.editor }}>
+      <NextIntlClientProvider
+        locale="vi"
+        messages={{
+          editor: viMessages.editor,
+          invitationTemplate: viMessages.invitationTemplate,
+        }}
+      >
         <EditorForm
           adminMode
           saveAction={saveDemo}

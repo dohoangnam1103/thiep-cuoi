@@ -189,11 +189,9 @@ function normalizeBirthOrder(value: string): string {
 }
 
 function buildPreviewContent(form: HTMLFormElement, invitationId: string): ChungDoiDemoContent {
-  const read = (name: string) =>
-    ((form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null)?.value ?? "").trim();
-  const readAll = (name: string) =>
-    Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`))
-      .map((el) => el.value);
+  const formData = new FormData(form);
+  const read = (name: string) => String(formData.get(name) ?? "").trim();
+  const readAll = (name: string) => formData.getAll(name).map(String);
   const brideFirst = read("brideFirst") !== "false";
   const showHeroImage = read("showHeroImage") !== "false";
 
@@ -1165,7 +1163,7 @@ function HeroImageUploader({
         <div>
           <p className="text-sm font-semibold text-foreground">Ảnh đầu thiệp</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {count === 2 ? "Hai ảnh cho phần mở đầu của mẫu thiệp này." : "Ảnh riêng cho phần mở đầu của mẫu thiệp này."}
+            {count === 2 ? "Hai ảnh cho phần mở đầu của mẫu thiệp này. Vị trí hiển thị theo thứ tự nhà trai/nhà gái bạn đã chọn." : "Ảnh riêng cho phần mở đầu của mẫu thiệp này."}
           </p>
         </div>
         <label className="inline-flex shrink-0 cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
@@ -1181,8 +1179,8 @@ function HeroImageUploader({
 
       {count === 2 ? (
         <div className="grid grid-cols-2 gap-3">
-          <HeroImageSlot name="heroImage" label="Ảnh 1" initialUrl={initialUrl} dimmed={!enabled} onUploaded={() => setEnabled(true)} />
-          <HeroImageSlot name="heroImage2" label="Ảnh 2" initialUrl={initialUrl2} dimmed={!enabled} onUploaded={() => setEnabled(true)} />
+          <HeroImageSlot name="heroImage" label="Ảnh cô dâu" initialUrl={initialUrl} dimmed={!enabled} onUploaded={() => setEnabled(true)} />
+          <HeroImageSlot name="heroImage2" label="Ảnh chú rể" initialUrl={initialUrl2} dimmed={!enabled} onUploaded={() => setEnabled(true)} />
         </div>
       ) : (
         <>

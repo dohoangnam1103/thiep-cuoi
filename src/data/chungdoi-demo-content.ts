@@ -67,7 +67,7 @@ export type ChungDoiDemoContent = {
   music: string | null;
 };
 
-export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
+const crawledChungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   "song-hy-red": {
     "slug": "song-hy-red",
     "invitationId": "giakhanh-quynhanh",
@@ -4409,3 +4409,43 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
     "music": "/chungdoi/music/dragon-phoenix-black.mp3"
   }
 } satisfies Record<string, ChungDoiDemoContent>;
+
+function createLayoutDemo(
+  slug: string,
+  baseSlug: string,
+  primaryColor: string,
+  fontFamily: string,
+): ChungDoiDemoContent {
+  const base = crawledChungdoiDemoContent[baseSlug];
+  if (!base) throw new Error(`Missing layout demo base: ${baseSlug}`);
+
+  return {
+    ...base,
+    slug,
+    invitationId: `demo-${slug}`,
+    theme: {
+      ...base.theme,
+      primaryColor,
+      fontFamily,
+      assetFolder: slug,
+      assets: [],
+    },
+    couple: { ...base.couple },
+    families: { ...base.families },
+    venue: { ...base.venue },
+    ceremonies: base.ceremonies?.map((ceremony) => ({ ...ceremony })),
+    schedule: base.schedule.map((item) => ({ ...item })),
+    portraits: base.portraits ? { ...base.portraits } : undefined,
+    gallery: [...base.gallery],
+    wishes: base.wishes.map((wish) => ({ ...wish })),
+    bank: { ...base.bank },
+  };
+}
+
+export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
+  ...crawledChungdoiDemoContent,
+  "editorial-noir": createLayoutDemo("editorial-noir", "minimalism-red", "#8c1c13", "Lora"),
+  "ticket-terracotta": createLayoutDemo("ticket-terracotta", "boho-floral-brown", "#a4462d", "Lora"),
+  "zen-sand": createLayoutDemo("zen-sand", "silk-flora-brown", "#8c3b2f", "Lora"),
+  "arch-sage": createLayoutDemo("arch-sage", "chateau-green", "#6b7f6a", "Lora"),
+};

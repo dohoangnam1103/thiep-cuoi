@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationHeroImages, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { orderByBrideFirst, orderedCouple, orderedHeroPhotos } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   AlbumGallery, googleCalendarUrl, InvitationMap, MapDirectionsButton,
@@ -26,7 +26,7 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
-  const [firstPhoto, secondPhoto] = invitationHeroImages(content);
+  const [firstPhoto, secondPhoto] = orderedHeroPhotos(content, { albumFallback: true });
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"The Nautigal", cursive' };
 

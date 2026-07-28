@@ -281,4 +281,34 @@ test.describe("admin: demos", () => {
       cleanupUser(user.id);
     }
   });
+
+  test("preview uses the newly selected bride and groom birth order", async ({ page }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id, { isDemo: true, templateId: "double-dragon-red" });
+      await page.goto("/admin/login");
+      await page.locator("#email").fill(SEEDED_ADMIN.email);
+      await page.locator("#password").fill(SEEDED_ADMIN.password);
+      await page.locator('button[type="submit"]').click();
+      await page.waitForURL(/\/admin$/);
+      await page.goto(`/admin/demos/${inv.id}`);
+
+      const brideBirthOrder = page.getByRole("combobox", { name: "Thứ bậc cô dâu" });
+      await brideBirthOrder.focus();
+      await page.keyboard.press("ArrowDown");
+      await page.getByRole("option", { name: "Thứ Nữ" }).click();
+
+      const groomBirthOrder = page.getByRole("combobox", { name: "Thứ bậc chú rể" });
+      await groomBirthOrder.focus();
+      await page.keyboard.press("ArrowDown");
+      await page.getByRole("option", { name: "Thứ Nam" }).click();
+
+      await page.getByRole("button", { name: "Xem trước" }).click();
+
+      await expect(page.getByText("Thứ Nữ", { exact: true }).first()).toBeVisible();
+      await expect(page.getByText("Thứ Nam", { exact: true }).first()).toBeVisible();
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
 });

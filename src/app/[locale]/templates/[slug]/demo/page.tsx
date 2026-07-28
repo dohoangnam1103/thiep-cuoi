@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -143,14 +144,18 @@ export default async function DemoPage({
           data-ga-event="select_template"
           data-ga-param-template-id={template.slug}
           data-ga-param-source="template_demo"
-          className="fixed right-3 top-3 z-[95] rounded-full border border-white/60 bg-white/90 p-1 shadow-2xl backdrop-blur-md sm:right-5 sm:top-5"
+          className="fixed right-3 top-3 z-[95] sm:right-5 sm:top-5"
         >
           <input type="hidden" name="templateId" value={template.slug} />
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:px-6 sm:py-3"
+            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-primary px-4 py-2.5 text-[13px] font-semibold tracking-tight text-primary-foreground shadow-lg ring-1 ring-white/60 transition duration-200 hover:bg-primary/90 hover:shadow-xl active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary sm:px-6 sm:py-3 sm:text-sm"
           >
             {t("useTemplate")}
+            <ArrowRight
+              aria-hidden
+              className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
+            />
           </button>
         </form>
       ) : null}

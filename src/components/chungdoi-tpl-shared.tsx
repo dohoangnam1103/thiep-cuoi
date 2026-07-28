@@ -21,6 +21,7 @@ import {
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { orderedCouple } from "@/lib/invitation-display";
+import { cn } from "@/lib/utils";
 
 export { buildVietQrImageUrl } from "@/lib/vietqr";
 
@@ -266,10 +267,10 @@ export function MapDirectionsButton({ query, label = "Chỉ đường", classNam
       href={directionsUrl(query)}
       target="_blank"
       rel="noopener noreferrer"
-      className={
-        className ??
-        "mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-current px-5 py-2 text-sm font-medium tracking-wide transition-opacity hover:opacity-70"
-      }
+      className={cn(
+        "mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-current px-5 py-2 text-sm font-medium tracking-wide transition-opacity hover:opacity-70",
+        className,
+      )}
       style={style}
     >
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

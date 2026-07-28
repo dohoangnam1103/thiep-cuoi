@@ -8,6 +8,41 @@
     "twitterDescription": "Tự tạo thiệp cưới online miễn phí, không cần biết thiết kế. Chỉ cần chọn mẫu và điền thông tin.",
     "socialImageAlt": "Tạo thiệp cưới online tại Thiệp Mừng Online"
   },
+  "invitationTemplate": {
+    "invitation": "Thiệp mời",
+    "weddingPass": "Vé dự tiệc cưới",
+    "admitTwo": "Dành cho hai người",
+    "and": "và",
+    "respectfulInvitation": "Trân trọng kính mời",
+    "details": "Chi tiết",
+    "day": "Ngày",
+    "time": "Giờ",
+    "weekday": "Thứ",
+    "family": "Gia đình",
+    "bride": "Cô dâu",
+    "groom": "Chú rể",
+    "brideFamily": "Nhà Gái",
+    "groomFamily": "Nhà Trai",
+    "parents": "Ông Bà",
+    "ceremony": "Lễ cưới",
+    "reception": "Tiệc cưới",
+    "lunarDate": "Âm lịch",
+    "location": "Địa điểm",
+    "remaining": "Còn lại",
+    "addToCalendar": "Thêm vào lịch",
+    "month": "Tháng {month}",
+    "calendar": "Lịch tháng {month}",
+    "album": "Album cưới",
+    "timeline": "Lịch trình",
+    "map": "Bản đồ",
+    "dressCode": "Trang phục",
+    "guestbook": "Sổ lưu bút",
+    "gift": "Mừng cưới",
+    "saveTheDate": "Lưu ngày vui",
+    "startsAt": "Bắt đầu lúc",
+    "weddingPhotoAlt": "Ảnh cưới của {couple}",
+    "presenceHonor": "Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!"
+  },
   "auth": {
     "loginTitle": "Đăng nhập",
     "signupTitle": "Tạo tài khoản",
@@ -752,6 +787,22 @@
       "dragon-phoenix-black": {
         "name": "Long Phụng Đen",
         "description": "Thiệp cưới Long Phụng Đen kết hợp họa tiết rồng phượng vàng với nền đen sâu và sang trọng. Miễn phí tạo thiệp."
+      },
+      "editorial-noir": {
+        "name": "Tạp Chí Đen",
+        "description": "Thiệp cưới Tạp Chí Đen dùng chữ khổ lớn, đường kẻ mảnh và bố cục bất đối xứng như một tạp chí thời trang."
+      },
+      "ticket-terracotta": {
+        "name": "Vé Cưới Đất",
+        "description": "Thiệp cưới Vé Cưới Đất mô phỏng vé lên máy bay với đường xé, trường thông tin và mã vạch trên nền đất nung ấm."
+      },
+      "zen-sand": {
+        "name": "Thiền Cát",
+        "description": "Thiệp cưới Thiền Cát tối giản theo tinh thần Nhật Bản, nhiều khoảng thở và một vòng ensō vẽ tay trên nền giấy washi."
+      },
+      "arch-sage": {
+        "name": "Vòm Xanh Rêu",
+        "description": "Thiệp cưới Vòm Xanh Rêu xếp lớp khung cửa vòm, chuyển sắc dịu và ảnh cưới bo theo dáng cổng."
       }
     }
   },

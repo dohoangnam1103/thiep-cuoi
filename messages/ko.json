@@ -8,6 +8,41 @@
     "twitterDescription": "템플릿을 고르고 정보를 입력하세요. 디자인 기술이 필요하지 않습니다.",
     "socialImageAlt": "Thiệp Mừng Online에서 온라인 청첩장 만들기"
   },
+  "invitationTemplate": {
+    "invitation": "청첩장",
+    "weddingPass": "웨딩 패스",
+    "admitTwo": "2인 입장",
+    "and": "그리고",
+    "respectfulInvitation": "정중히 초대합니다",
+    "details": "상세 정보",
+    "day": "날짜",
+    "time": "시간",
+    "weekday": "요일",
+    "family": "가족",
+    "bride": "신부",
+    "groom": "신랑",
+    "brideFamily": "신부 측",
+    "groomFamily": "신랑 측",
+    "parents": "부모님",
+    "ceremony": "결혼식",
+    "reception": "피로연",
+    "lunarDate": "음력",
+    "location": "장소",
+    "remaining": "남은 시간",
+    "addToCalendar": "캘린더에 추가",
+    "month": "{month}월",
+    "calendar": "{month}월 달력",
+    "album": "웨딩 앨범",
+    "timeline": "일정",
+    "map": "지도",
+    "dressCode": "드레스 코드",
+    "guestbook": "방명록",
+    "gift": "축의금",
+    "saveTheDate": "날짜를 기억해 주세요",
+    "startsAt": "시작 시간",
+    "weddingPhotoAlt": "{couple}의 웨딩 사진",
+    "presenceHonor": "귀한 걸음으로 함께해 주시면 두 가족에게 큰 기쁨이 되겠습니다."
+  },
   "auth": {
     "loginTitle": "로그인",
     "signupTitle": "계정 만들기",
@@ -330,6 +365,24 @@
     "demoCta": "청첩장 데모 보기",
     "useStyle": "청첩장 만들기",
     "new": "신규",
+    "templates": {
+      "editorial-noir": {
+        "name": "에디토리얼 누아르",
+        "description": "큰 타이포그래피와 가는 선, 비대칭 패션 매거진 구성을 따뜻한 아이보리 종이에 담았습니다."
+      },
+      "ticket-terracotta": {
+        "name": "테라코타 티켓",
+        "description": "절취선, 정보 필드, 바코드 디테일을 갖춘 따뜻한 테라코타 웨딩 패스 디자인입니다."
+      },
+      "zen-sand": {
+        "name": "젠 샌드",
+        "description": "넉넉한 여백과 손으로 그린 엔소 원을 와시 종이에 담은 일본식 미니멀 청첩장입니다."
+      },
+      "arch-sage": {
+        "name": "세이지 아치",
+        "description": "겹쳐진 문형 아치와 부드러운 세이지 그라데이션, 곡선형 웨딩 사진이 어우러집니다."
+      }
+    },
     "suggestion": {
       "title": "마음에 드는 디자인이 없나요?",
       "description": "원하는 디자인을 알려 주세요. 커플의 요청을 바탕으로 새로운 청첩장 템플릿을 정기적으로 제작합니다.",

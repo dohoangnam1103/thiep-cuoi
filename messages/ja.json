@@ -8,6 +8,41 @@
     "twitterDescription": "テンプレートを選んで情報を入力。デザインスキルは不要です。",
     "socialImageAlt": "Thiệp Mừng Onlineでオンライン結婚式招待状を作成"
   },
+  "invitationTemplate": {
+    "invitation": "結婚式招待状",
+    "weddingPass": "ウェディングパス",
+    "admitTwo": "2名様",
+    "and": "と",
+    "respectfulInvitation": "謹んでご招待申し上げます",
+    "details": "詳細",
+    "day": "日付",
+    "time": "時間",
+    "weekday": "曜日",
+    "family": "ご家族",
+    "bride": "新婦",
+    "groom": "新郎",
+    "brideFamily": "新婦家",
+    "groomFamily": "新郎家",
+    "parents": "ご両親",
+    "ceremony": "挙式",
+    "reception": "披露宴",
+    "lunarDate": "旧暦",
+    "location": "会場",
+    "remaining": "あと",
+    "addToCalendar": "カレンダーに追加",
+    "month": "{month}月",
+    "calendar": "{month}月のカレンダー",
+    "album": "ウェディングアルバム",
+    "timeline": "当日の流れ",
+    "map": "地図",
+    "dressCode": "ドレスコード",
+    "guestbook": "ゲストブック",
+    "gift": "お祝い",
+    "saveTheDate": "Save the date",
+    "startsAt": "開始時刻",
+    "weddingPhotoAlt": "{couple}のウェディング写真",
+    "presenceHonor": "皆様のご臨席を両家一同、心よりお待ち申し上げます。"
+  },
   "auth": {
     "loginTitle": "ログイン",
     "signupTitle": "アカウント作成",
@@ -330,6 +365,24 @@
     "demoCta": "招待状デモを見る",
     "useStyle": "招待状を作成",
     "new": "新着",
+    "templates": {
+      "editorial-noir": {
+        "name": "エディトリアル・ノワール",
+        "description": "大きな文字、細い罫線、非対称のファッション誌風レイアウトを温かなアイボリー紙に表現。"
+      },
+      "ticket-terracotta": {
+        "name": "テラコッタ・チケット",
+        "description": "ミシン目、情報欄、バーコードを備えた温かなテラコッタ色のウェディングパス。"
+      },
+      "zen-sand": {
+        "name": "禅サンド",
+        "description": "豊かな余白と手描きの円相を和紙に配した、和のミニマルな結婚式招待状。"
+      },
+      "arch-sage": {
+        "name": "アーチ・セージ",
+        "description": "重なる扉形アーチ、柔らかなセージのグラデーション、曲線に切り抜いたウェディング写真。"
+      }
+    },
     "suggestion": {
       "title": "気に入るデザインが見つかりませんか？",
       "description": "お探しのデザインをお知らせください。カップルのご要望をもとに新しい招待状テンプレートを定期的に制作しています。",

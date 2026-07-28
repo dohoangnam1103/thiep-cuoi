@@ -8,6 +8,41 @@
     "twitterDescription": "选择模板并填写信息，无需设计技能。",
     "socialImageAlt": "在Thiệp Mừng Online制作在线婚礼请柬"
   },
+  "invitationTemplate": {
+    "invitation": "婚礼请柬",
+    "weddingPass": "婚礼入场券",
+    "admitTwo": "两位入场",
+    "and": "与",
+    "respectfulInvitation": "诚挚邀请",
+    "details": "详情",
+    "day": "日期",
+    "time": "时间",
+    "weekday": "星期",
+    "family": "双方家庭",
+    "bride": "新娘",
+    "groom": "新郎",
+    "brideFamily": "女方家庭",
+    "groomFamily": "男方家庭",
+    "parents": "父母",
+    "ceremony": "婚礼仪式",
+    "reception": "婚宴",
+    "lunarDate": "农历",
+    "location": "地点",
+    "remaining": "倒计时",
+    "addToCalendar": "添加到日历",
+    "month": "{month}月",
+    "calendar": "{month}月日历",
+    "album": "婚礼相册",
+    "timeline": "婚礼流程",
+    "map": "地图",
+    "dressCode": "着装建议",
+    "guestbook": "祝福留言",
+    "gift": "礼金",
+    "saveTheDate": "请记住这一天",
+    "startsAt": "开始时间",
+    "weddingPhotoAlt": "{couple}的婚礼照片",
+    "presenceHonor": "诚盼您的莅临，与我们共同见证这份喜悦。"
+  },
   "auth": {
     "loginTitle": "登录",
     "signupTitle": "创建账户",
@@ -330,6 +365,24 @@
     "demoCta": "查看请柬演示",
     "useStyle": "创建请柬",
     "new": "新",
+    "templates": {
+      "editorial-noir": {
+        "name": "黑色杂志",
+        "description": "以醒目大字、纤细分隔线和不对称时尚杂志版式呈现在暖象牙纸上。"
+      },
+      "ticket-terracotta": {
+        "name": "陶土婚礼票",
+        "description": "温暖陶土色的登机牌式请柬，带撕线、信息栏和条形码细节。"
+      },
+      "zen-sand": {
+        "name": "禅意沙",
+        "description": "日式极简请柬，以充足留白和手绘圆相点缀和纸质感背景。"
+      },
+      "arch-sage": {
+        "name": "鼠尾草拱门",
+        "description": "层叠门形拱框、柔和鼠尾草渐变与弧形裁切的婚礼照片相互映衬。"
+      }
+    },
     "suggestion": {
       "title": "还没找到喜欢的设计？",
       "description": "告诉我们您想要的设计。我们会根据新人的需求定期制作新的请柬模板。",

@@ -7,7 +7,11 @@ import {
   defaultCeremonyMessage,
   invitationCeremonies,
   invitationCeremonyMessage,
+  invitationCouple,
+  invitationHeroPhotos,
   orderByBrideFirst,
+  orderedCouple,
+  orderedHeroPhotos,
 } from "./invitation-display";
 
 function displayContent(
@@ -70,6 +74,161 @@ test("default invitation messages match the editor defaults", () => {
 test("orderByBrideFirst applies one display order everywhere", () => {
   assert.deepEqual(orderByBrideFirst("nhà gái", "nhà trai", true), ["nhà gái", "nhà trai"]);
   assert.deepEqual(orderByBrideFirst("nhà gái", "nhà trai", false), ["nhà trai", "nhà gái"]);
+});
+
+function heroContent(overrides: {
+  heroImage?: string;
+  heroImage2?: string;
+  gallery?: string[];
+  brideFirst?: boolean;
+  showHeroImage?: boolean;
+}): ChungDoiDemoContent {
+  const content = displayContent();
+  return {
+    ...content,
+    heroImage: overrides.heroImage,
+    heroImage2: overrides.heroImage2,
+    showHeroImage: overrides.showHeroImage,
+    gallery: overrides.gallery ?? [],
+    couple: {
+      ...content.couple,
+      brideFullName: "Quỳnh Anh",
+      groomFullName: "Gia Khánh",
+      brideFirst: overrides.brideFirst ?? true,
+    },
+  };
+}
+
+test("hero slots belong to a person, not a position", () => {
+  const content = heroContent({ heroImage: "/bride.webp", heroImage2: "/groom.webp" });
+
+  assert.deepEqual(invitationHeroPhotos(content), {
+    bride: "/bride.webp",
+    groom: "/groom.webp",
+  });
+});
+
+test("hiding the header photos clears both people", () => {
+  const content = heroContent({
+    heroImage: "/bride.webp",
+    heroImage2: "/groom.webp",
+    showHeroImage: false,
+  });
+
+  assert.deepEqual(invitationHeroPhotos(content), { bride: "", groom: "" });
+});
+
+test("the groom photo stays with the groom when the groom's family comes first", () => {
+  const brideFirst = heroContent({
+    heroImage: "/bride.webp",
+    heroImage2: "/groom.webp",
+    brideFirst: true,
+  });
+  const groomFirst = heroContent({
+    heroImage: "/bride.webp",
+    heroImage2: "/groom.webp",
+    brideFirst: false,
+  });
+
+  assert.deepEqual(orderedHeroPhotos(brideFirst), ["/bride.webp", "/groom.webp"]);
+  assert.deepEqual(orderedHeroPhotos(groomFirst), ["/groom.webp", "/bride.webp"]);
+});
+
+test("each person in the display order carries their own header photo", () => {
+  const content = heroContent({
+    heroImage: "/bride.webp",
+    heroImage2: "/groom.webp",
+    brideFirst: false,
+  });
+
+  const [first, second] = orderedCouple(content);
+  assert.equal(first.side, "groom");
+  assert.equal(first.heroPhoto, "/groom.webp");
+  assert.equal(second.side, "bride");
+  assert.equal(second.heroPhoto, "/bride.webp");
+});
+
+test("invitationCouple keeps each side addressable for side-specific artwork", () => {
+  const content = heroContent({
+    heroImage: "/bride.webp",
+    heroImage2: "/groom.webp",
+    brideFirst: false,
+  });
+
+  const { bride, groom } = invitationCouple(content);
+  assert.equal(bride.side, "bride");
+  assert.equal(bride.fullName, "Quỳnh Anh");
+  assert.equal(bride.heroPhoto, "/bride.webp");
+  assert.equal(groom.side, "groom");
+  assert.equal(groom.fullName, "Gia Khánh");
+  assert.equal(groom.heroPhoto, "/groom.webp");
+});
+
+test("invitationCouple can fall back to the album per side", () => {
+  const content = heroContent({
+    heroImage2: "/groom.webp",
+    gallery: ["/album-1.webp"],
+    brideFirst: false,
+  });
+
+  const { bride, groom } = invitationCouple(content, { albumFallback: true });
+  assert.equal(bride.heroPhoto, "/album-1.webp");
+  assert.equal(groom.heroPhoto, "/groom.webp");
+});
+
+test("an empty hero slot falls back to that person's album photo", () => {
+  const content = heroContent({ gallery: ["/album-1.webp", "/album-2.webp"] });
+
+  assert.deepEqual(invitationHeroPhotos(content, { albumFallback: true }), {
+    bride: "/album-1.webp",
+    groom: "/album-2.webp",
+  });
+});
+
+test("the album fallback follows the display order, not the bride slot", () => {
+  const content = heroContent({
+    gallery: ["/album-1.webp", "/album-2.webp"],
+    brideFirst: false,
+  });
+
+  // Nobody uploaded a photo yet, so the album fills the visible positions in
+  // order: the first album photo stays in the first frame either way.
+  assert.deepEqual(orderedHeroPhotos(content, { albumFallback: true }), [
+    "/album-1.webp",
+    "/album-2.webp",
+  ]);
+  assert.deepEqual(invitationHeroPhotos(content, { albumFallback: true }), {
+    bride: "/album-2.webp",
+    groom: "/album-1.webp",
+  });
+});
+
+test("templates with side-locked frames fill the album from the bride's frame", () => {
+  const content = heroContent({
+    gallery: ["/album-1.webp", "/album-2.webp"],
+    brideFirst: false,
+  });
+
+  // A bride frame stays a bride frame, so its slot is the first one on the card
+  // no matter which family is announced first.
+  const { bride, groom } = invitationCouple(content, {
+    albumFallback: true,
+    fixedSides: true,
+  });
+  assert.equal(bride.heroPhoto, "/album-1.webp");
+  assert.equal(groom.heroPhoto, "/album-2.webp");
+});
+
+test("the album fallback fills only the slot the user left empty", () => {
+  const content = heroContent({
+    heroImage2: "/groom.webp",
+    gallery: ["/album-1.webp", "/album-2.webp"],
+  });
+
+  assert.deepEqual(invitationHeroPhotos(content, { albumFallback: true }), {
+    bride: "/album-1.webp",
+    groom: "/groom.webp",
+  });
 });
 
 test("invitationCeremonies prefers the new ordered ceremony list", () => {

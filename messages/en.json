@@ -8,6 +8,41 @@
     "twitterDescription": "Choose a template and add your details. No design skills required.",
     "socialImageAlt": "Create an online wedding invitation with Thiệp Mừng Online"
   },
+  "invitationTemplate": {
+    "invitation": "Wedding invitation",
+    "weddingPass": "Wedding pass",
+    "admitTwo": "Admit two",
+    "and": "and",
+    "respectfulInvitation": "Together with our families",
+    "details": "Details",
+    "day": "Date",
+    "time": "Time",
+    "weekday": "Day",
+    "family": "Families",
+    "bride": "Bride",
+    "groom": "Groom",
+    "brideFamily": "Bride's family",
+    "groomFamily": "Groom's family",
+    "parents": "Parents",
+    "ceremony": "Ceremony",
+    "reception": "Reception",
+    "lunarDate": "Lunar date",
+    "location": "Location",
+    "remaining": "Countdown",
+    "addToCalendar": "Add to calendar",
+    "month": "Month {month}",
+    "calendar": "Calendar · {month}",
+    "album": "Wedding album",
+    "timeline": "Timeline",
+    "map": "Map",
+    "dressCode": "Dress code",
+    "guestbook": "Guestbook",
+    "gift": "Wedding gift",
+    "saveTheDate": "Save the date",
+    "startsAt": "Starts at",
+    "weddingPhotoAlt": "Wedding portrait of {couple}",
+    "presenceHonor": "Your presence would be an honor and a joy to our families."
+  },
   "auth": {
     "loginTitle": "Sign in",
     "signupTitle": "Create account",
@@ -547,6 +582,24 @@
     "demoCta": "VIEW INVITATION DEMO",
     "useStyle": "CREATE INVITATION",
     "new": "New",
+    "templates": {
+      "editorial-noir": {
+        "name": "Editorial Noir",
+        "description": "Oversized type, hairline rules, and an asymmetric fashion-magazine layout on warm ivory paper."
+      },
+      "ticket-terracotta": {
+        "name": "Ticket Terracotta",
+        "description": "A warm terracotta boarding-pass invitation with perforations, labeled fields, and a barcode footer."
+      },
+      "zen-sand": {
+        "name": "Zen Sand",
+        "description": "A Japanese-inspired minimal invitation with generous space and one hand-drawn ensō on washi paper."
+      },
+      "arch-sage": {
+        "name": "Arch Sage",
+        "description": "Layered doorway arches, soft sage gradients, and wedding portraits cropped into elegant curves."
+      }
+    },
     "suggestion": {
       "title": "Can't find the right design?",
       "description": "Tell us what you are looking for. We regularly create new invitation templates based on couples' requests.",

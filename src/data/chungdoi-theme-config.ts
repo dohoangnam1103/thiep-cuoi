@@ -1731,5 +1731,85 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
         }
       ]
     }
+  },
+  "editorial-noir": {
+    "theme": {
+      "background": "linear-gradient(145deg, #111111, #2b2926)",
+      "cardBg": "#f4f1ea",
+      "textPrimary": "#111111",
+      "textSecondary": "rgba(17, 17, 17, 0.68)",
+      "accent": "#8c1c13",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(140, 28, 19, 0.5)",
+      "buttonBg": "#111111",
+      "buttonText": "#f4f1ea",
+      "guestBoxBg": "rgba(17, 17, 17, 0.04)",
+      "guestBoxBorder": "rgba(17, 17, 17, 0.2)",
+      "particleColors": ["#f4f1ea", "#8c1c13", "#111111"],
+      "particleType": "confetti"
+    },
+    "fonts": { "couple": "\"Lora\", serif", "ampersand": "\"Lora\", serif" },
+    "sealType": "heart",
+    "decorations": { "cardImages": [] }
+  },
+  "ticket-terracotta": {
+    "theme": {
+      "background": "linear-gradient(145deg, #6f2e20, #a4462d)",
+      "cardBg": "#f6ede4",
+      "textPrimary": "#3b2318",
+      "textSecondary": "rgba(59, 35, 24, 0.72)",
+      "accent": "#a4462d",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(164, 70, 45, 0.5)",
+      "buttonBg": "#a4462d",
+      "buttonText": "#fffaf5",
+      "guestBoxBg": "rgba(164, 70, 45, 0.06)",
+      "guestBoxBorder": "rgba(164, 70, 45, 0.28)",
+      "particleColors": ["#f6ede4", "#d88a6b", "#a4462d"],
+      "particleType": "confetti"
+    },
+    "fonts": { "couple": "\"Lora\", serif", "ampersand": null },
+    "sealType": "heart",
+    "decorations": { "cardImages": [] }
+  },
+  "zen-sand": {
+    "theme": {
+      "background": "linear-gradient(145deg, #b8ae9f, #eae4d9)",
+      "cardBg": "#f7f4ee",
+      "textPrimary": "#2c2a26",
+      "textSecondary": "rgba(44, 42, 38, 0.64)",
+      "accent": "#8c3b2f",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(140, 59, 47, 0.42)",
+      "buttonBg": "#2c2a26",
+      "buttonText": "#f7f4ee",
+      "guestBoxBg": "rgba(44, 42, 38, 0.04)",
+      "guestBoxBorder": "rgba(44, 42, 38, 0.18)",
+      "particleColors": ["#f7f4ee", "#eae4d9", "#8c3b2f"],
+      "particleType": "petals"
+    },
+    "fonts": { "couple": "\"Lora\", serif", "ampersand": null },
+    "sealType": "heart",
+    "decorations": { "cardImages": [] }
+  },
+  "arch-sage": {
+    "theme": {
+      "background": "linear-gradient(145deg, #33402f, #6b7f6a)",
+      "cardBg": "#eef1ea",
+      "textPrimary": "#33402f",
+      "textSecondary": "rgba(51, 64, 47, 0.7)",
+      "accent": "#6b7f6a",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(107, 127, 106, 0.5)",
+      "buttonBg": "#6b7f6a",
+      "buttonText": "#fbfcf9",
+      "guestBoxBg": "rgba(107, 127, 106, 0.07)",
+      "guestBoxBorder": "rgba(107, 127, 106, 0.3)",
+      "particleColors": ["#eef1ea", "#a6b3a3", "#6b7f6a"],
+      "particleType": "leaves"
+    },
+    "fonts": { "couple": "\"Lora\", serif", "ampersand": null },
+    "sealType": "heart",
+    "decorations": { "cardImages": [] }
   }
 };
