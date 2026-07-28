@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1003,
+    "height": 1568
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/coastal-mediterranean/opening-plate.webp",
+  "layers": [
+    {
+      "id": "vase",
+      "src": "/chungdoi/images/themes/_decor/coastal-mediterranean/opening-vase.webp",
+      "rect": {
+        "x": 778,
+        "y": 1068,
+        "width": 225,
+        "height": 500
+      }
+    },
+    {
+      "id": "upper-olive",
+      "src": "/chungdoi/images/themes/_decor/coastal-mediterranean/opening-upper-olive.webp",
+      "rect": {
+        "x": 325,
+        "y": 0,
+        "width": 678,
+        "height": 603
+      }
+    },
+    {
+      "id": "lower-olive",
+      "src": "/chungdoi/images/themes/_decor/coastal-mediterranean/opening-lower-olive.webp",
+      "rect": {
+        "x": 0,
+        "y": 1056,
+        "width": 450,
+        "height": 512
+      }
+    }
+  ]
+}

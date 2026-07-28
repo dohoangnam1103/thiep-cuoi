@@ -113,6 +113,27 @@ html.lenis body {
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Lora";
+  src: url("/chungdoi/fonts/Lora-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+.font-art-uni { font-family: "UNI Chu truyen thong", "Fz Qellia", serif; }
+.font-art-haydon { font-family: "SVN-HC Haydon Brush", "Pattaya", cursive; }
+.font-art-new-eddy { font-family: "DFVN New Eddy", "Fz Qellia", serif; }
+.font-art-qellia { font-family: "Fz Qellia", "Times New Roman", serif; }
+.font-art-pattaya { font-family: "Pattaya", cursive; }
+.font-art-signora { font-family: "1FTV VIP Signora", "Fz Aghita", cursive; }
+.font-art-lora { font-family: "Lora", Georgia, serif; }
+.font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
+.font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
+.font-art-built { font-family: "SVN-HC Built Titling", HelveticaNeue, sans-serif; }
+.font-art-alex { font-family: "Alex Brush", "Fz Aghita", cursive; }
+.font-art-pacifico { font-family: "SVN-HC Pacifico", "Pattaya", cursive; }
+.font-art-helvetica { font-family: HelveticaNeue, Arial, sans-serif; }
+.font-art-marvin { font-family: "SVN-HC Marvin Visions", HelveticaNeue, sans-serif; }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -583,6 +604,93 @@ html.lenis body {
   animation-name: demo-ambient-fall;
 }
 
+.invitation-parallax-motif {
+  overflow: hidden;
+  border-radius: 48%;
+  will-change: transform;
+}
+
+@keyframes invitation-parallax-drift {
+  from { transform: translate3d(0, -12px, 0) rotate(-1.5deg) scale(1.02); }
+  to { transform: translate3d(0, 18px, 0) rotate(1.5deg) scale(1.06); }
+}
+
+.invitation-hero-artwork {
+  opacity: 0.32;
+}
+
+@supports ((mask-image: linear-gradient(#000, #000)) or (-webkit-mask-image: linear-gradient(#000, #000))) {
+  .invitation-hero-artwork {
+    opacity: 1;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      transparent 88%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      transparent 88%,
+      transparent 100%
+    );
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+}
+
+@keyframes invitation-hero-parallax {
+  from { transform: translate3d(0, -3%, 0) scale(1.04); }
+  to { transform: translate3d(0, 7%, 0) scale(1.14); }
+}
+
+@keyframes invitation-photo-reveal {
+  from { opacity: 0.82; transform: translate3d(0, 28px, 0) scale(0.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.invitation-parallax-left,
+.invitation-parallax-right,
+.invitation-parallax-center {
+  animation: invitation-parallax-drift 9s ease-in-out infinite alternate;
+}
+
+.invitation-parallax-right {
+  animation-delay: -3s;
+  animation-duration: 11s;
+}
+
+.invitation-parallax-center {
+  animation-delay: -6s;
+  animation-duration: 13s;
+}
+
+@supports (animation-timeline: view()) {
+
+  .invitation-hero-parallax {
+    animation: invitation-hero-parallax linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% exit 100%;
+  }
+
+  .invitation-photo-reveal {
+    animation: invitation-photo-reveal linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 38%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation-parallax-motif,
+  .invitation-hero-parallax,
+  .invitation-photo-reveal {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 @keyframes demo-shine {
   0% {
     transform: translateX(-120%) skewX(-12deg);
@@ -679,9 +787,35 @@ html.lenis body {
   }
 }
 
+@keyframes demo-art-envelope-away {
+  0%,
+  48% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(-5vh) rotate(-0.6deg);
+    opacity: 0.94;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(-2deg);
+    opacity: 0;
+  }
+}
+
 @keyframes demo-cover-out {
   0%,
   55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes demo-art-cover-out {
+  0%,
+  70% {
     opacity: 1;
   }
   100% {
@@ -1120,5 +1254,20 @@ html.lenis body {
 
   .shiny-text {
     animation: none;
+  }
+}
+/* Tight alpha layers share one canvas coordinate system with the 3D card. */
+.opening-effect-artwork {
+  overflow: visible;
+}
+
+.opening-effect-artwork [data-opening-layer] {
+  transform-box: fill-box;
+  will-change: transform, opacity, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening-effect-artwork [data-opening-layer] {
+    filter: none !important;
   }
 }

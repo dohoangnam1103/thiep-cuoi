@@ -341,17 +341,17 @@ export function FitText({
 }
 
 /** Generic wish form bound to the live-forms provider. `accent` colors the border + button. */
-export function SharedWishForm({ accent }: { accent: string }) {
+export function SharedWishForm({ accent, centered = false }: { accent: string; centered?: boolean }) {
   const { formProps, pending, state } = useWishFormBinding();
 
   return (
     <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
-        <input name="name" required maxLength={120} className="w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Tên của bạn" />
-        <textarea name="text" rows={3} required maxLength={1000} className="w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none" style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Lời chúc của bạn" />
+        <input name="name" required maxLength={120} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Tên của bạn" />
+        <textarea name="text" rows={3} required maxLength={1000} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Lời chúc của bạn" />
         {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>Cảm ơn lời chúc của bạn!</p> : null}
-        <div className="mt-2 flex items-center justify-end">
+        <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
           <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: "#fff" }}>{pending ? "Đang gửi..." : "Gửi lời chúc"}</button>
         </div>
       </div>
@@ -480,23 +480,32 @@ export function GiftQrGrid({
   banks,
   heading = "Hộp Quà Mừng",
   accent,
+  radiusClass = "rounded-xl",
+  headingClassName,
 }: {
   banks: GiftBank[];
   heading?: string;
   accent: string;
+  radiusClass?: string;
+  headingClassName?: string;
 }) {
   if (banks.length === 0) return null;
 
   return (
     <div data-testid="gift-qr-grid" className="flex w-full flex-col items-center gap-6 text-center">
-      <h2 className="text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: accent }}>{heading}</h2>
+      <h2
+        className={cn("text-[20px] font-bold uppercase tracking-wide md:text-[24px]", headingClassName)}
+        style={{ color: accent }}
+      >
+        {heading}
+      </h2>
       <div className="flex w-full flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
         {banks.map((gift) => {
           const qr = buildVietQrImageUrl({ bank: gift.bank, accountNumber: gift.num, accountName: gift.name });
           return (
             <div key={gift.label} className="flex max-w-[200px] flex-1 flex-col items-center">
               <h3 className="mb-2 flex min-h-8 items-start justify-center text-xs font-semibold" style={{ color: accent }}>{gift.label}</h3>
-              <div className="size-32 rounded-xl bg-white p-2 shadow-lg sm:size-40">
+              <div className={cn("size-32 bg-white p-2 shadow-lg sm:size-40", radiusClass)}>
                 <img src={qr} alt={`QR - ${gift.label}`} className="h-full w-full object-contain" />
               </div>
               <p className="mt-2 text-[13px] font-semibold" style={{ color: accent }}>{gift.bank}</p>
@@ -693,11 +702,13 @@ export function AlbumGallery({
   layout = "grid",
   accent,
   gridAspect = "aspect-[3/4]",
+  radiusClass = "rounded-xl",
 }: {
   photos: string[];
   layout?: AlbumLayout;
   accent: string;
   gridAspect?: string;
+  radiusClass?: string;
 }) {
   const { lightbox, setLightbox } = useLightbox(photos.length);
   if (photos.length === 0) return null;
@@ -733,7 +744,11 @@ export function AlbumGallery({
               key={src}
               type="button"
               onClick={() => setLightbox(i)}
-              className={`group relative aspect-square cursor-pointer overflow-hidden rounded-xl border ${spanFor(i)}`}
+              className={cn(
+                "group relative aspect-square cursor-pointer overflow-hidden border",
+                radiusClass,
+                spanFor(i),
+              )}
               style={{ borderColor: border }}
             >
               <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
@@ -759,7 +774,11 @@ export function AlbumGallery({
           key={src}
           type="button"
           onClick={() => setLightbox(i)}
-          className={`group relative ${gridAspect} cursor-pointer overflow-hidden rounded-xl border`}
+          className={cn(
+            "group relative cursor-pointer overflow-hidden border",
+            gridAspect,
+            radiusClass,
+          )}
           style={{ borderColor: border }}
         >
           <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />

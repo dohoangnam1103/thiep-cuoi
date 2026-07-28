@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1003,
+    "height": 1568
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/aurora-glass-dark/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-ribbon",
+      "src": "/chungdoi/images/themes/_decor/aurora-glass-dark/opening-left-ribbon.webp",
+      "rect": {
+        "x": 22,
+        "y": 0,
+        "width": 421,
+        "height": 1532
+      }
+    },
+    {
+      "id": "right-ribbon",
+      "src": "/chungdoi/images/themes/_decor/aurora-glass-dark/opening-right-ribbon.webp",
+      "rect": {
+        "x": 525,
+        "y": 62,
+        "width": 478,
+        "height": 1502
+      }
+    },
+    {
+      "id": "flare",
+      "src": "/chungdoi/images/themes/_decor/aurora-glass-dark/opening-flare.webp",
+      "rect": {
+        "x": 269,
+        "y": 0,
+        "width": 493,
+        "height": 332
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/truc-chi-minimal/opening-plate.webp",
+  "layers": [
+    {
+      "id": "bamboo-ring",
+      "src": "/chungdoi/images/themes/_decor/truc-chi-minimal/opening-bamboo-ring.webp",
+      "rect": {
+        "x": 85,
+        "y": 17,
+        "width": 929,
+        "height": 1092
+      }
+    },
+    {
+      "id": "bamboo-cluster",
+      "src": "/chungdoi/images/themes/_decor/truc-chi-minimal/opening-bamboo-cluster.webp",
+      "rect": {
+        "x": 42,
+        "y": 18,
+        "width": 669,
+        "height": 1371
+      }
+    },
+    {
+      "id": "backlight",
+      "src": "/chungdoi/images/themes/_decor/truc-chi-minimal/opening-backlight.webp",
+      "rect": {
+        "x": 45,
+        "y": 89,
+        "width": 1032,
+        "height": 1244
+      }
+    }
+  ]
+}

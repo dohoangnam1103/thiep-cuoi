@@ -151,6 +151,27 @@ const ENVELOPE_SIZING_CASES = [
   { viewport: { width: 390, height: 844 }, expectedWidth: 310 },
 ] as const;
 
+const ART_OPENING_CASES = [
+  ["dong-ho-folk", 1420],
+  ["tho-cam-highland", 1360],
+  ["son-mai-lacquer", 1480],
+  ["bat-trang-blue", 1400],
+  ["hang-trong-folk", 1500],
+  ["sen-monoline", 1340],
+  ["truc-chi-minimal", 1450],
+  ["long-phung-deco", 1500],
+  ["ao-dai-hue", 1380],
+  ["art-deco-gatsby", 1460],
+  ["celestial-map", 1440],
+  ["coastal-mediterranean", 1350],
+  ["swiss-brutalist", 1300],
+  ["riso-duotone", 1370],
+  ["cinema-credit", 1490],
+  ["aurora-glass-dark", 1410],
+  ["y2k-chrome", 1390],
+  ["botanical-lavender", 1430],
+] as const;
+
 /**
  * Assert an unopened envelope tracks the Chung Đôi capture width at each
  * breakpoint. Height is intentionally unchecked — it follows real content, so
@@ -225,6 +246,36 @@ async function expectResponsiveEnvelopeSizing(
       )
       .toBe(current.expectedWidth);
   }
+}
+
+async function openCapturedEnvelope(page: Page) {
+  const stage = page.locator('[data-envelope-renderer="3d"]');
+  const capture = page.locator("[data-envelope-capture-root]");
+  await expect(stage).toBeVisible({ timeout: 30_000 });
+  await expect(capture).toHaveCount(1, { timeout: 45_000 });
+
+  const buttonRatio = await capture.evaluate((root) => {
+    const button = root.querySelector<HTMLElement>("[data-open-btn]");
+    if (!button) throw new Error("captured envelope has no open button");
+    const rootBox = root.getBoundingClientRect();
+    const buttonBox = button.getBoundingClientRect();
+    return {
+      x: (buttonBox.left + buttonBox.width / 2 - rootBox.left) / rootBox.width,
+      y: (buttonBox.top + buttonBox.height / 2 - rootBox.top) / rootBox.height,
+    };
+  });
+  const projectedSize = (await stage.getAttribute("data-envelope-projected-size"))
+    ?.split("x")
+    .map(Number);
+  const stageBox = await stage.boundingBox();
+  if (!stageBox || !projectedSize || projectedSize.length !== 2) {
+    throw new Error("3D envelope has no projected layout");
+  }
+  await page.mouse.click(
+    stageBox.x + stageBox.width / 2 + (buttonRatio.x - 0.5) * projectedSize[0],
+    stageBox.y + stageBox.height / 2 + (buttonRatio.y - 0.5) * projectedSize[1],
+  );
+  return stage;
 }
 
 function invitationCount(userId: string): number {
@@ -587,6 +638,216 @@ test.describe("templates — demo pages", () => {
     await expect(stage).toBeVisible();
     await expect(stage).toHaveAttribute("data-envelope-renderer", "3d");
     expect(await visibleOpenButtonCount()).toBe(0);
+  });
+
+  test("fly-on-open decorations stay visible while the 3D cover leaves", async ({ page }) => {
+    const port = Number(process.env.E2E_PORT ?? 3100);
+    await page.goto(`http://localhost:${port}/mau-thiep/song-phung-do/demo`, {
+      timeout: 60_000,
+    });
+
+    const stage = page.locator('[data-envelope-renderer="3d"]');
+    await expect(stage).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator("[data-envelope-opening-fly]")).toHaveCount(0);
+
+    const capture = page.locator("[data-envelope-capture-root]");
+    await expect(capture).toHaveCount(1, { timeout: 45_000 });
+    const buttonRatio = await capture.evaluate((root) => {
+      const button = root.querySelector<HTMLElement>("[data-open-btn]");
+      if (!button) throw new Error("captured envelope has no open button");
+      const rootBox = root.getBoundingClientRect();
+      const buttonBox = button.getBoundingClientRect();
+      return {
+        x: (buttonBox.left + buttonBox.width / 2 - rootBox.left) / rootBox.width,
+        y: (buttonBox.top + buttonBox.height / 2 - rootBox.top) / rootBox.height,
+      };
+    });
+    const projectedSize = (await stage.getAttribute("data-envelope-projected-size"))
+      ?.split("x")
+      .map(Number);
+    const stageBox = await stage.boundingBox();
+    if (!stageBox || !projectedSize || projectedSize.length !== 2) {
+      throw new Error("3D envelope has no projected layout");
+    }
+    await page.mouse.click(
+      stageBox.x + stageBox.width / 2 + (buttonRatio.x - 0.5) * projectedSize[0],
+      stageBox.y + stageBox.height / 2 + (buttonRatio.y - 0.5) * projectedSize[1],
+    );
+
+    const flyingDecor = page.locator("[data-envelope-opening-fly]");
+    await expect(flyingDecor).toHaveCount(2);
+    for (const image of await flyingDecor.all()) {
+      await expect(image).toBeVisible();
+      await expect(image).toHaveCSS("animation-name", "demo-dragon-fly");
+    }
+    await expect(stage).toHaveCSS("animation-name", "demo-envelope-away");
+  });
+
+  test("isolated art opening layers replace the WebGL decor without removing the 3D stage", async ({ page }) => {
+    const port = Number(process.env.E2E_PORT ?? 3100);
+    await page.goto(`http://localhost:${port}/mau-thiep/dong-ho-dan-gian/demo`, {
+      timeout: 60_000,
+    });
+
+    const stage = page.locator('[data-envelope-renderer="3d"]');
+    const capture = page.locator("[data-envelope-capture-root]");
+    const staticEffect = page.locator('[data-opening-effect-mode="static"]');
+    await expect(stage).toBeVisible({ timeout: 30_000 });
+    await expect(capture).toHaveCount(1, { timeout: 45_000 });
+    await expect(staticEffect).toHaveCount(1);
+    await expect(staticEffect.locator("[data-opening-layer]")).toHaveCount(3);
+    const staticClip = page.locator('[data-opening-static-clip="card"]');
+    await expect(staticClip).toHaveCount(1);
+    await expect(staticClip).toHaveCSS("overflow", "hidden");
+
+    const buttonRatio = await capture.evaluate((root) => {
+      const button = root.querySelector<HTMLElement>("[data-open-btn]");
+      if (!button) throw new Error("captured art envelope has no open button");
+      const rootBox = root.getBoundingClientRect();
+      const buttonBox = button.getBoundingClientRect();
+      return {
+        x: (buttonBox.left + buttonBox.width / 2 - rootBox.left) / rootBox.width,
+        y: (buttonBox.top + buttonBox.height / 2 - rootBox.top) / rootBox.height,
+      };
+    });
+    const projectedSize = (await stage.getAttribute("data-envelope-projected-size"))
+      ?.split("x")
+      .map(Number);
+    const stageBox = await stage.boundingBox();
+    if (!stageBox || !projectedSize || projectedSize.length !== 2) {
+      throw new Error("art envelope has no projected layout");
+    }
+
+    await page.mouse.click(
+      stageBox.x + stageBox.width / 2 + (buttonRatio.x - 0.5) * projectedSize[0],
+      stageBox.y + stageBox.height / 2 + (buttonRatio.y - 0.5) * projectedSize[1],
+    );
+
+    const openingEffect = page.locator('[data-opening-effect-mode="opening"]');
+    await expect(openingEffect).toHaveCount(1);
+    await expect(openingEffect.locator('[data-opening-static-clip="card"]')).toHaveCount(0);
+    await expect(openingEffect).toHaveAttribute(
+      "data-opening-effect",
+      "dong-ho-folk-layered-opening",
+    );
+    await expect(openingEffect).toHaveAttribute("data-opening-effect-duration", "1420");
+    const layers = openingEffect.locator("[data-opening-layer]");
+    await expect(layers).toHaveCount(3);
+    const sources = await layers.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-opening-layer-src")),
+    );
+    expect(sources.every((source) => source?.includes("/opening-") && !source.endsWith("/artwork.webp"))).toBe(true);
+    await expect(stage).toBeAttached();
+    await expect(stage).toHaveCSS("animation-name", "demo-art-envelope-away");
+    await expect(stage).toHaveCSS("animation-duration", "1.42s");
+
+    await page.waitForTimeout(1_050);
+    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toHaveCount(0);
+    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toBeAttached({
+      timeout: 1_000,
+    });
+    await expect(openingEffect).toHaveCount(0);
+  });
+
+  test("optional opening layer failure never falls back to the composite artwork", async ({ page }) => {
+    const port = Number(process.env.E2E_PORT ?? 3100);
+    await page.route("**/dong-ho-folk/opening-right-chicken.webp", (route) => route.abort());
+    await page.goto(`http://localhost:${port}/mau-thiep/dong-ho-dan-gian/demo`, {
+      timeout: 60_000,
+    });
+
+    await expect(page.locator('[data-opening-effect-mode="static"] [data-opening-layer]')).toHaveCount(2, {
+      timeout: 45_000,
+    });
+    await page.locator("[data-open-invitation-control]").evaluate((button) =>
+      (button as HTMLButtonElement).click(),
+    );
+    const openingLayers = page.locator(
+      '[data-opening-effect-mode="opening"] [data-opening-layer]',
+    );
+    await expect(openingLayers).toHaveCount(2);
+    const sources = await openingLayers.evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute("data-opening-layer-src")),
+    );
+    expect(sources.some((source) => source?.endsWith("/artwork.webp"))).toBe(false);
+    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toBeAttached({
+      timeout: 2_000,
+    });
+  });
+
+  test("reduced art opening uses a short opacity-only reveal", async ({ page }) => {
+    const port = Number(process.env.E2E_PORT ?? 3100);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(`http://localhost:${port}/mau-thiep/dong-ho-dan-gian/demo`, {
+      timeout: 60_000,
+    });
+
+    await openCapturedEnvelope(page);
+    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toBeAttached({
+      timeout: 600,
+    });
+    await expect(page.locator('[data-opening-effect-mode="opening"]')).toHaveCount(0);
+  });
+
+  test("all art invitation opening effects mount and reveal on desktop and mobile", async ({ page }) => {
+    test.setTimeout(900_000);
+    const port = Number(process.env.E2E_PORT ?? 3100);
+
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(viewport);
+      for (const [slug, durationMs] of ART_OPENING_CASES) {
+        const routeSlug = getVietnameseTemplateSlug(slug);
+        await page.goto(`http://localhost:${port}/mau-thiep/${routeSlug}/demo`, {
+          waitUntil: "domcontentloaded",
+          timeout: 60_000,
+        });
+
+        const staticEffect = page.locator('[data-opening-effect-mode="static"]');
+        await expect(staticEffect, `${slug} static effect @ ${viewport.width}`).toHaveCount(1, {
+          timeout: 45_000,
+        });
+        await expect(staticEffect).toHaveAttribute(
+          "data-opening-effect",
+          `${slug}-layered-opening`,
+        );
+        await expect(staticEffect).toHaveAttribute(
+          "data-opening-effect-duration",
+          String(durationMs),
+        );
+        const staticLayers = staticEffect.locator("[data-opening-layer]");
+        await expect(staticLayers).toHaveCount(3);
+        const staticSources = await staticLayers.evaluateAll((nodes) =>
+          nodes.map((node) => node.getAttribute("data-opening-layer-src")),
+        );
+        expect(
+          staticSources.every(
+            (source) => source?.includes("/opening-") && !source.endsWith("/artwork.webp"),
+          ),
+          slug,
+        ).toBe(true);
+
+        const stage = page.locator('[data-envelope-renderer="3d"]');
+        await expect(stage).toBeVisible({ timeout: 30_000 });
+        await page.locator("[data-open-invitation-control]").evaluate((button) =>
+          (button as HTMLButtonElement).click(),
+        );
+        const openingEffect = page.locator('[data-opening-effect-mode="opening"]');
+        await expect(openingEffect, `${slug} opening effect @ ${viewport.width}`).toHaveCount(1);
+        await expect(openingEffect.locator("[data-opening-layer]")).toHaveCount(3);
+        await expect(stage).toBeAttached();
+        await expect(page.locator(`[data-template-renderer="${slug}"]`)).toBeAttached({
+          timeout: durationMs + 1_500,
+        });
+        await expect(openingEffect).toHaveCount(0);
+        const hasHorizontalOverflow = await page.evaluate(
+          () => document.documentElement.scrollWidth > window.innerWidth + 1,
+        );
+        expect(hasHorizontalOverflow, `${slug} overflow @ ${viewport.width}`).toBe(false);
+      }
+    }
   });
 
   // Width per breakpoint is covered by the rollout matrix; this guards the other

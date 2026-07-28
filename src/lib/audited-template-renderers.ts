@@ -1,4 +1,9 @@
-export const AUDITED_TEMPLATE_SLUGS = [
+import {
+  generatedTemplateSlugs,
+  type GeneratedTemplateSlug,
+} from "@/data/templates/generated-data";
+
+export const BASE_AUDITED_TEMPLATE_SLUGS = [
   "boho-floral-green",
   "boho-floral-pink",
   "boho-floral-brown",
@@ -16,13 +21,15 @@ export const AUDITED_TEMPLATE_SLUGS = [
   "glass-garden-green",
   "chibi-red",
   "cherry-blossom-pink",
-  "editorial-noir",
-  "ticket-terracotta",
-  "zen-sand",
-  "arch-sage",
 ] as const;
 
-export type AuditedTemplateSlug = (typeof AUDITED_TEMPLATE_SLUGS)[number];
+export const AUDITED_TEMPLATE_SLUGS = [
+  ...BASE_AUDITED_TEMPLATE_SLUGS,
+  ...generatedTemplateSlugs,
+] as const;
+
+export type BaseAuditedTemplateSlug = (typeof BASE_AUDITED_TEMPLATE_SLUGS)[number];
+export type AuditedTemplateSlug = BaseAuditedTemplateSlug | GeneratedTemplateSlug;
 
 const auditedTemplateSlugSet = new Set<string>(AUDITED_TEMPLATE_SLUGS);
 

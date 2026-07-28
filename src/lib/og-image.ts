@@ -27,6 +27,14 @@ const FONT_FILE_BY_FAMILY: Record<string, string> = {
   "DFVN New Eddy": "DFVN-NewEddy-Regular.otf",
   Pattaya: "Pattaya-Regular.woff",
   "1FTV VIP Signora": "1FTV-VIP-Signora-Regular.otf",
+  "SVN-HC Haydon Brush": "SVN-HC-Haydon-Brush.otf",
+  Lora: "Lora-Regular.ttf",
+  "The Nautigal": "TheNautigal-Regular.ttf",
+  "SVN-HC Built Titling": "SVN-HC-Built-Titling.otf",
+  "Alex Brush": "AlexBrush-Regular.ttf",
+  "SVN-HC Pacifico": "SVN-HC-Pacifico.otf",
+  HelveticaNeue: "HelveticaNeueLight.otf",
+  "SVN-HC Marvin Visions": "SVN-HC-Marvin-Visions.otf",
 };
 
 const FALLBACK_FONT = { family: "Lora", file: "Lora-Regular.ttf" };

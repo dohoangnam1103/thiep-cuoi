@@ -8,6 +8,7 @@ import {
   mkdir,
   mkdtemp,
   readFile,
+  readdir,
   rename,
   rm,
   stat,
@@ -28,6 +29,7 @@ loadEnvConfig(ROOT);
 
 const DATA_FILE = path.join(ROOT, "src/data/chungdoi.ts");
 const ROUTE_SLUGS_FILE = path.join(ROOT, "src/data/template-route-slugs.ts");
+const TEMPLATE_MANIFESTS_DIR = path.join(ROOT, "src/data/templates");
 const PREVIEW_VERSION_FILE = path.join(ROOT, "src/data/template-preview-version.ts");
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const MANAGED_SERVER_URL = "http://127.0.0.1:3200";
@@ -84,7 +86,7 @@ Environment:
   CHROME_PATH                  Đường dẫn Chrome/Chromium tùy chỉnh`);
 }
 
-function parseCatalog(source, routeSource) {
+function parseCatalog(source, routeSource, manifestSources = []) {
   const completedBlock = source.match(
     /completedTemplateSlugs = new Set<string>\(\[([\s\S]*?)\]\)/,
   )?.[1];
@@ -119,6 +121,24 @@ function parseCatalog(source, routeSource) {
       },
     ]),
   );
+
+  for (const manifestSource of manifestSources) {
+    const slug =
+      manifestSource.match(/const slug = "([^"]+)";/)?.[1] ??
+      manifestSource.match(/\bslug:\s*"([^"]+)"/)?.[1];
+    const route = manifestSource.match(/viRouteSlug:\s*"([^"]+)"/)?.[1];
+    if (!slug || !route) {
+      throw new Error("Không đọc được slug hoặc viRouteSlug từ template manifest");
+    }
+    const previewStem = slug.replaceAll("-", "_");
+    completedSlugs.push(slug);
+    routeBySlug.set(slug, route);
+    assetsBySlug.set(slug, {
+      listing: `/chungdoi/images/template-previews/en/listing/${previewStem}.webp`,
+      portrait: `/chungdoi/images/template-previews/en/portrait/${previewStem}.webp`,
+      landscape: `/chungdoi/images/template-previews/en/landscape/${previewStem}.webp`,
+    });
+  }
 
   const templates = completedSlugs.map((slug) => {
     const assets = assetsBySlug.get(slug);
@@ -845,11 +865,17 @@ async function main() {
     throw new Error("CAPTURE_QUALITY phải là số nguyên từ 1 đến 100");
   }
 
-  const [source, routeSource] = await Promise.all([
+  const manifestFileNames = (await readdir(TEMPLATE_MANIFESTS_DIR))
+    .filter((fileName) => fileName.endsWith(".manifest.ts"))
+    .sort((a, b) => a.localeCompare(b));
+  const [source, routeSource, ...manifestSources] = await Promise.all([
     readFile(DATA_FILE, "utf8"),
     readFile(ROUTE_SLUGS_FILE, "utf8"),
+    ...manifestFileNames.map((fileName) =>
+      readFile(path.join(TEMPLATE_MANIFESTS_DIR, fileName), "utf8"),
+    ),
   ]);
-  const allTemplates = parseCatalog(source, routeSource);
+  const allTemplates = parseCatalog(source, routeSource, manifestSources);
   const templatesBySlug = new Map(allTemplates.map((template) => [template.slug, template]));
   const requested = readOption("--slug")
     ?.split(",")

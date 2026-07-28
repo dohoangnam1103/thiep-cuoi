@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/son-mai-lacquer/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-crane",
+      "src": "/chungdoi/images/themes/_decor/son-mai-lacquer/opening-left-crane.webp",
+      "rect": {
+        "x": 51,
+        "y": 11,
+        "width": 549,
+        "height": 502
+      }
+    },
+    {
+      "id": "right-crane",
+      "src": "/chungdoi/images/themes/_decor/son-mai-lacquer/opening-right-crane.webp",
+      "rect": {
+        "x": 325,
+        "y": 272,
+        "width": 769,
+        "height": 538
+      }
+    },
+    {
+      "id": "gold-clouds",
+      "src": "/chungdoi/images/themes/_decor/son-mai-lacquer/opening-gold-clouds.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1122,
+        "height": 1033
+      }
+    }
+  ]
+}

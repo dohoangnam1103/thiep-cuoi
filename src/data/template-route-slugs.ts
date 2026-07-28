@@ -1,3 +1,5 @@
+import { generatedTemplateRouteSlugs } from "./templates/generated-data";
+
 export const vietnameseTemplateSlugs = [
   ["song-hy-red", "song-hy-do"],
   ["song-hy-green", "song-hy-xanh"],
@@ -39,6 +41,7 @@ export const vietnameseTemplateSlugs = [
   ["dragon-phoenix-blue", "long-phung-lam"],
   ["dragon-phoenix-black", "long-phung-huyen"],
   ["maroon-love", "maroon-love"],
+  ...generatedTemplateRouteSlugs,
 ] as const;
 
 const vietnameseSlugBySourceSlug = new Map<string, string>(vietnameseTemplateSlugs);

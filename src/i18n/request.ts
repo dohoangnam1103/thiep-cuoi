@@ -1,4 +1,5 @@
 import { getRequestConfig } from "next-intl/server";
+import { generatedListingMessages } from "@/data/templates/generated-data";
 import { routing } from "./routing";
 
 export default getRequestConfig(async () => {
@@ -6,6 +7,15 @@ export default getRequestConfig(async () => {
 
   return {
     locale: routing.defaultLocale,
-    messages,
+    messages: {
+      ...messages,
+      listing: {
+        ...messages.listing,
+        templates: {
+          ...messages.listing.templates,
+          ...generatedListingMessages.vi,
+        },
+      },
+    },
   };
 });

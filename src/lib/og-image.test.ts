@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -7,6 +9,34 @@ import {
   resolveOgFont,
   resolveOgTheme,
 } from "@/lib/og-image";
+
+const ART_OG_FONTS = {
+  "dong-ho-folk": ["UNI Chu truyen thong", "UNI_Chu_truyen_thong.ttf"],
+  "tho-cam-highland": ["SVN-HC Haydon Brush", "SVN-HC-Haydon-Brush.otf"],
+  "son-mai-lacquer": ["DFVN New Eddy", "DFVN-NewEddy-Regular.otf"],
+  "bat-trang-blue": ["Fz Qellia", "Fz_Qellia_Fix.ttf"],
+  "hang-trong-folk": ["Pattaya", "Pattaya-Regular.woff"],
+  "sen-monoline": ["1FTV VIP Signora", "1FTV-VIP-Signora-Regular.otf"],
+  "truc-chi-minimal": ["Lora", "Lora-Regular.ttf"],
+  "long-phung-deco": ["Fz Aghita", "FzAghita.ttf"],
+  "ao-dai-hue": ["The Nautigal", "TheNautigal-Regular.ttf"],
+  "art-deco-gatsby": ["SVN-HC Built Titling", "SVN-HC-Built-Titling.otf"],
+  "celestial-map": ["Alex Brush", "AlexBrush-Regular.ttf"],
+  "coastal-mediterranean": ["SVN-HC Pacifico", "SVN-HC-Pacifico.otf"],
+  "swiss-brutalist": ["HelveticaNeue", "HelveticaNeueLight.otf"],
+  "riso-duotone": ["SVN-HC Marvin Visions", "SVN-HC-Marvin-Visions.otf"],
+} as const;
+
+test("all art invitation families resolve to local OG font files", () => {
+  for (const [slug, [family, file]] of Object.entries(ART_OG_FONTS)) {
+    assert.deepEqual(resolveOgFont(slug), { family, file }, slug);
+    assert.equal(
+      existsSync(path.join(process.cwd(), "public", "chungdoi", "fonts", file)),
+      true,
+      `${slug}: ${file}`,
+    );
+  }
+});
 
 test("resolveCoupleNames dùng shortName, thứ tự theo brideFirst", () => {
   assert.equal(

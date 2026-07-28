@@ -88,6 +88,7 @@ rsync -az --delete \
   --exclude '/prisma/*.sqlite-wal' \
   --exclude '/public/uploads/' \
   --exclude '/temp/' \
+  --exclude '/tmp/' \
   --exclude '.playwright-mcp' \
   --exclude '.capture' \
   --exclude '/.claude-flow' \

@@ -2,6 +2,7 @@
 // Do not hand-edit; re-run the script to refresh.
 
 import type { AlbumLayout } from "@/lib/album-layout";
+import { generatedDemoContent } from "@/data/templates/generated-data";
 
 export type ChungDoiDemoContent = {
   slug: string;
@@ -4407,5 +4408,6 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
       "groomAccountName": "Vo Nhat Long"
     },
     "music": "/chungdoi/music/dragon-phoenix-black.mp3"
-  }
+  },
+  ...generatedDemoContent,
 } satisfies Record<string, ChungDoiDemoContent>;

@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/cinema-credit/opening-plate.webp",
+  "layers": [
+    {
+      "id": "projector-light",
+      "src": "/chungdoi/images/themes/_decor/cinema-credit/opening-projector-light.webp",
+      "rect": {
+        "x": 275,
+        "y": 535,
+        "width": 559,
+        "height": 439
+      }
+    },
+    {
+      "id": "seat-rows",
+      "src": "/chungdoi/images/themes/_decor/cinema-credit/opening-seat-rows.webp",
+      "rect": {
+        "x": 0,
+        "y": 768,
+        "width": 1122,
+        "height": 634
+      }
+    },
+    {
+      "id": "couple",
+      "src": "/chungdoi/images/themes/_decor/cinema-credit/opening-couple.webp",
+      "rect": {
+        "x": 496,
+        "y": 614,
+        "width": 146,
+        "height": 216
+      }
+    }
+  ]
+}

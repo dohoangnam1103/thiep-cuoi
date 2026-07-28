@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/bat-trang-blue/opening-plate.webp",
+  "layers": [
+    {
+      "id": "swallows",
+      "src": "/chungdoi/images/themes/_decor/bat-trang-blue/opening-swallows.webp",
+      "rect": {
+        "x": 321,
+        "y": 173,
+        "width": 555,
+        "height": 331
+      }
+    },
+    {
+      "id": "lotus",
+      "src": "/chungdoi/images/themes/_decor/bat-trang-blue/opening-lotus.webp",
+      "rect": {
+        "x": 53,
+        "y": 426,
+        "width": 807,
+        "height": 907
+      }
+    },
+    {
+      "id": "cobalt-medallion",
+      "src": "/chungdoi/images/themes/_decor/bat-trang-blue/opening-cobalt-medallion.webp",
+      "rect": {
+        "x": 113,
+        "y": 67,
+        "width": 929,
+        "height": 943
+      }
+    }
+  ]
+}

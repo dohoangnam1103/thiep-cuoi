@@ -9,6 +9,7 @@ import { type ComponentType, type Dispatch, type MouseEvent, type SetStateAction
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
+import type { ArtOpeningEffect } from "@/data/templates/opening-effect";
 import {
   envelopeDecorOverflowForTemplate,
   type EnvelopeDecorOverflow,
@@ -27,7 +28,13 @@ import {
   VI_LIGHTBOX_ZOOM_LABELS,
 } from "@/components/lightbox-zoom";
 import { DressCode, InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
-import { isAuditedTemplateSlug, type AuditedTemplateSlug } from "@/lib/audited-template-renderers";
+import { OpeningEffectArtwork } from "@/components/chungdoi-opening-effect";
+import { GENERATED_TEMPLATE_RENDERERS } from "@/components/generated/template-renderers";
+import {
+  isAuditedTemplateSlug,
+  type AuditedTemplateSlug,
+  type BaseAuditedTemplateSlug,
+} from "@/lib/audited-template-renderers";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import {
   invitationCeremonies,
@@ -38,7 +45,6 @@ import {
 } from "@/lib/invitation-display";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
-const ArchSageInvitation = dynamic(() => import("@/components/chungdoi-tpl-arch-sage").then((m) => m.ArchSageInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
 const BohoFloralGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-green").then((m) => m.BohoFloralGreenInvitation));
 const BohoFloralPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-pink").then((m) => m.BohoFloralPinkInvitation));
@@ -49,7 +55,6 @@ const CrystalFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-
 const DragonPhoenixV2Invitation = dynamic(() => import("@/components/chungdoi-tpl-dragon-phoenix-v2-red").then((m) => m.DragonPhoenixV2Invitation));
 const DragonPhoenixV3Invitation = dynamic(() => import("@/components/chungdoi-tpl-dragon-phoenix-v3-red").then((m) => m.DragonPhoenixV3Invitation));
 const ElegantLeafInvitation = dynamic(() => import("@/components/chungdoi-tpl-elegant-leaf-green").then((m) => m.ElegantLeafInvitation));
-const EditorialNoirInvitation = dynamic(() => import("@/components/chungdoi-tpl-editorial-noir").then((m) => m.EditorialNoirInvitation));
 const GlassGardenInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-green").then((m) => m.GlassGardenInvitation));
 const HoaTinhInvitation = dynamic(() => import("@/components/chungdoi-tpl-hoa-tinh-red").then((m) => m.HoaTinhInvitation));
 const JasmineWhiteInvitation = dynamic(() => import("@/components/chungdoi-tpl-jasmine-white").then((m) => m.JasmineWhiteInvitation));
@@ -61,8 +66,6 @@ const SilkFloraBrownInvitation = dynamic(() => import("@/components/chungdoi-tpl
 const SpringGardenBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-spring-garden-blue").then((m) => m.SpringGardenBlueInvitation));
 const SpringGardenGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-spring-garden-green").then((m) => m.SpringGardenGreenInvitation));
 const SpringGardenRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-spring-garden-red").then((m) => m.SpringGardenRedInvitation));
-const TicketTerracottaInvitation = dynamic(() => import("@/components/chungdoi-tpl-ticket-terracotta").then((m) => m.TicketTerracottaInvitation));
-const ZenSandInvitation = dynamic(() => import("@/components/chungdoi-tpl-zen-sand").then((m) => m.ZenSandInvitation));
 const PhoenixInvitation = dynamic(() => import("@/components/chungdoi-tpl-phoenix").then((m) => m.PhoenixInvitation));
 const SongHyGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-song-hy").then((m) => m.SongHyGreenInvitation));
 const SongHyRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-song-hy").then((m) => m.SongHyRedInvitation));
@@ -81,7 +84,7 @@ const RoyalGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-roy
 const ChateauBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-chateau-blue").then((m) => m.ChateauInvitation));
 const MaroonLoveInvitation = dynamic(() => import("@/components/chungdoi-tpl-maroon-love").then((m) => m.MaroonLoveInvitation));
 
-const AUDITED_TEMPLATE_RENDERERS = {
+const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "boho-floral-green": BohoFloralGreenInvitation,
   "boho-floral-pink": BohoFloralPinkInvitation,
   "boho-floral-brown": BohoFloralInvitation,
@@ -99,10 +102,11 @@ const AUDITED_TEMPLATE_RENDERERS = {
   "glass-garden-green": GlassGardenInvitation,
   "chibi-red": ChibiRedInvitation,
   "cherry-blossom-pink": CherryBlossomInvitation,
-  "editorial-noir": EditorialNoirInvitation,
-  "ticket-terracotta": TicketTerracottaInvitation,
-  "zen-sand": ZenSandInvitation,
-  "arch-sage": ArchSageInvitation,
+} satisfies Record<BaseAuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
+
+const AUDITED_TEMPLATE_RENDERERS = {
+  ...BASE_AUDITED_TEMPLATE_RENDERERS,
+  ...GENERATED_TEMPLATE_RENDERERS,
 } satisfies Record<AuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
 const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
 
@@ -427,6 +431,7 @@ type Tokens = {
   coupleFont: string | undefined;
   sealType: string | null;
   cardImages: { src: string; className: string; flyOnOpen: boolean }[];
+  openingEffect?: ArtOpeningEffect;
 };
 
 function resolveTokens(content: ChungDoiDemoContent): Tokens {
@@ -454,6 +459,7 @@ function resolveTokens(content: ChungDoiDemoContent): Tokens {
       coupleFont: crawledFont,
       sealType: null,
       cardImages: [],
+      openingEffect: undefined,
     };
   }
 
@@ -475,6 +481,7 @@ function resolveTokens(content: ChungDoiDemoContent): Tokens {
     coupleFont: cfg.fonts.couple ?? crawledFont,
     sealType: cfg.sealType,
     cardImages: cfg.decorations.cardImages,
+    openingEffect: cfg.openingEffect,
   };
 }
 
@@ -622,6 +629,46 @@ function BurstParticles({ tokens }: { tokens: Tokens }) {
           />
         );
       })}
+    </div>
+  );
+}
+
+function OpeningFlyDecor({
+  tokens,
+  size,
+}: {
+  tokens: Tokens;
+  size: { width: number; height: number } | null;
+}) {
+  const flyingImages = tokens.cardImages.filter((image) => image.flyOnOpen);
+  if (!size || flyingImages.length === 0) return null;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+    >
+      <div
+        className="relative"
+        style={{ width: size.width, height: size.height }}
+      >
+        {flyingImages.map((image, index) => (
+          <div
+            key={`${image.src}-${index}`}
+            className={`pointer-events-none absolute ${image.className}`}
+          >
+            {/* Asset decor cần giữ kích thước class động của theme khi phóng ra. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={image.src}
+              alt=""
+              data-envelope-opening-fly
+              className="block h-auto w-full"
+              style={{ animation: "demo-dragon-fly 1.2s ease-in forwards" }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -883,23 +930,47 @@ function EnvelopeCover({
   tokens,
   onOpen,
   opening,
+  reducedMotion,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
   onOpen: () => void;
   opening: boolean;
+  reducedMotion: boolean;
 }) {
   const sizing = envelopeSizingForTemplate(content.slug);
   const naturalHeight = sizing === "responsive-natural";
   const decorOverflow = envelopeDecorOverflowForTemplate(content.slug);
   const renderOverflowDecor = decorOverflow === "visible" && tokens.cardImages.length > 0;
+  const openingEffect = tokens.openingEffect;
+  const renderSeparateDecor = renderOverflowDecor || Boolean(openingEffect);
+  const openingDuration = openingEffect
+    ? reducedMotion
+      ? openingEffect.reducedMotion.durationMs
+      : openingEffect.durationMs
+    : 800;
+  const [projectedSize, setProjectedSize] = useState<{ width: number; height: number } | null>(null);
+  const handleProjectedSizeChange = useCallback((nextSize: { width: number; height: number }) => {
+    setProjectedSize((currentSize) => {
+      if (
+        currentSize &&
+        Math.abs(currentSize.width - nextSize.width) < 0.5 &&
+        Math.abs(currentSize.height - nextSize.height) < 0.5
+      ) {
+        return currentSize;
+      }
+      return nextSize;
+    });
+  }, []);
 
   return (
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
       style={{
         background: tokens.background,
-        animation: opening ? "demo-cover-out 0.8s ease-in forwards" : undefined,
+        animation: opening
+          ? `${openingEffect ? "demo-art-cover-out" : "demo-cover-out"} ${openingDuration}ms linear forwards`
+          : undefined,
       }}
     >
       <button
@@ -924,18 +995,39 @@ function EnvelopeCover({
       ) : null}
       <ParticleField tokens={tokens} />
       {opening ? <BurstParticles tokens={tokens} /> : null}
+      {opening && !openingEffect ? <OpeningFlyDecor tokens={tokens} size={projectedSize} /> : null}
+      {opening && openingEffect && projectedSize ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
+          style={{ width: projectedSize.width, height: projectedSize.height }}
+        >
+          <OpeningEffectArtwork
+            effect={openingEffect}
+            opening
+            reducedMotion={reducedMotion}
+          />
+        </div>
+      ) : null}
 
       <div
         className={`relative z-10 h-full w-full ${opening ? "pointer-events-none" : ""}`}
         data-envelope-renderer="3d"
+        data-envelope-projected-size={projectedSize
+          ? `${Math.round(projectedSize.width)}x${Math.round(projectedSize.height)}`
+          : undefined}
         style={{
-          animation: opening ? "demo-envelope-away 0.8s ease-in forwards" : undefined,
+          animation: opening
+            ? `${openingEffect ? "demo-art-envelope-away" : "demo-envelope-away"} ${openingDuration}ms linear forwards`
+            : undefined,
         }}
       >
         <div className="absolute inset-0">
           <Envelope3D
             sizing={sizing}
+            decorVisible={openingEffect ? !opening : true}
             onOpen={onOpen}
+            onProjectedSizeChange={handleProjectedSizeChange}
             paperColor={coverPaperColor(tokens)}
             accentColor={toSolidColor(tokens.accent, "#8C1C13")}
             renderCard={(handleOpen) => (
@@ -953,24 +1045,33 @@ function EnvelopeCover({
               </div>
             )}
             renderDecor={
-              renderOverflowDecor
+              renderSeparateDecor
                 ? () => (
-                    <div className="pointer-events-none absolute inset-0">
-                      {tokens.cardImages.map((img, i) => (
-                        <img
-                          key={i}
-                          src={img.src}
-                          alt=""
-                          aria-hidden="true"
-                          className={`pointer-events-none absolute ${img.className}`}
-                        />
-                      ))}
+                    <div
+                      className={`pointer-events-none absolute inset-0 ${
+                        openingEffect ? "overflow-hidden rounded-lg" : ""
+                      }`}
+                      data-opening-static-clip={openingEffect ? "card" : undefined}
+                    >
+                      {openingEffect ? (
+                        <OpeningEffectArtwork effect={openingEffect} />
+                      ) : (
+                        tokens.cardImages.map((img, i) => (
+                          <img
+                            key={i}
+                            src={img.src}
+                            alt=""
+                            aria-hidden="true"
+                            className={`pointer-events-none absolute ${img.className}`}
+                          />
+                        ))
+                      )}
                     </div>
                   )
                 : undefined
             }
             renderOverlay={
-              renderOverflowDecor
+              renderSeparateDecor
                 ? () => (
                     <div className="relative">
                       <Seal tokens={tokens} opening={false} />
@@ -1284,11 +1385,20 @@ export function ChungDoiDemo({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
   const [autoScrolling, setAutoScrolling] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const autoScrollingRef = useRef(false);
 
   useEffect(() => {
     autoScrollingRef.current = autoScrolling;
   }, [autoScrolling]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPrefersReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   const tokens = useMemo(() => (content ? resolveTokens(content) : null), [content]);
 
@@ -1428,12 +1538,18 @@ export function ChungDoiDemo({
 
     autoScrollFinishedRef.current = false;
     setOpening(true);
+    const openingEffect = tokens?.openingEffect;
+    const revealDelay = openingEffect
+      ? prefersReducedMotion
+        ? openingEffect.reducedMotion.durationMs
+        : openingEffect.durationMs
+      : 800;
     openTimerRef.current = window.setTimeout(() => {
       setOpened(true);
       autoScrollTimerRef.current = window.setTimeout(() => {
         if (!previewMode) setAutoScrolling(true);
       }, 2000);
-    }, 800);
+    }, revealDelay);
     const audio = getInteractiveAudio();
     if (audio) {
       audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
@@ -1470,7 +1586,13 @@ export function ChungDoiDemo({
       {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
 
       {!opened && !captureMode ? (
-        <EnvelopeCover content={content} tokens={tokens} opening={opening} onOpen={openInvitation} />
+        <EnvelopeCover
+          content={content}
+          tokens={tokens}
+          opening={opening}
+          reducedMotion={prefersReducedMotion}
+          onOpen={openInvitation}
+        />
       ) : null}
 
       {opened ? (

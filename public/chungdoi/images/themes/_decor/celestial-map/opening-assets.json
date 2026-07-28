@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/celestial-map/opening-plate.webp",
+  "layers": [
+    {
+      "id": "constellations",
+      "src": "/chungdoi/images/themes/_decor/celestial-map/opening-constellations.webp",
+      "rect": {
+        "x": 135,
+        "y": 81,
+        "width": 848,
+        "height": 1167
+      }
+    },
+    {
+      "id": "moons",
+      "src": "/chungdoi/images/themes/_decor/celestial-map/opening-moons.webp",
+      "rect": {
+        "x": 540,
+        "y": 95,
+        "width": 44,
+        "height": 1205
+      }
+    },
+    {
+      "id": "center-star",
+      "src": "/chungdoi/images/themes/_decor/celestial-map/opening-center-star.webp",
+      "rect": {
+        "x": 435,
+        "y": 595,
+        "width": 217,
+        "height": 224
+      }
+    }
+  ]
+}

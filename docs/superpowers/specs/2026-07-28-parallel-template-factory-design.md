@@ -3,6 +3,16 @@
 **Ngày:** 2026-07-28
 **Mục tiêu:** Sản xuất 18 mẫu thiệp cưới mới (9 truyền thống VN + 9 modern/quốc tế) bằng pipeline fan-out nhiều agent song song, có tầng phê bình thẩm mỹ tự động, tận dụng quota lớn.
 
+## Cập nhật tiếp tục trên Codex (2026-07-28)
+
+- Commit `42118fe` đã đưa renderer, gallery, nhạc và preview cho 4 mẫu `editorial-noir`, `ticket-terracotta`, `zen-sand`, `arch-sage` vào branch, nhưng chưa nối catalog, route, demo content, theme và i18n. Vì vậy 4 mẫu chưa thực sự xuất hiện công khai.
+- Codex hiện có image generation. Asset mới ưu tiên tạo riêng theo concept, không tải artwork thương mại từ đối thủ. Nguồn public-domain hoặc museum open-access chỉ dùng để kiểm chứng motif lịch sử và ghi provenance khi có sử dụng trực tiếp.
+- Manifest/registrar được triển khai trước với 4 mẫu trên làm ca kiểm chứng. Sau đó 18 mẫu mới dùng cùng một đường đăng ký, thay vì sửa thủ công nhiều registry.
+- Baseline trước khi tiếp tục: 138/138 unit test pass, TypeScript app và test pass.
+- Kết quả triển khai: 22 manifest được registrar nối tự động (4 mẫu đang park + 18 mẫu mới), đưa catalog lên 62 mẫu và renderer audit lên 39 mẫu. Cả 18 mẫu mới có artwork gốc, 5 locale và đủ preview listing/portrait/landscape.
+- Sau review sản phẩm, cả 18 mẫu giữ bố cục một cột nhưng phần thiệp sau khi mở được nới tối đa 900px, với cột nội dung đọc tối đa 760px và co toàn chiều rộng trên mobile. Bìa trước khi mở không thay đổi. Artwork được tái sử dụng thành ba lớp nền parallax mờ; hero và ảnh cô dâu/chú rể có chuyển động cuộn nhẹ, đồng thời tắt hoàn toàn khi người dùng bật giảm chuyển động. 8 mẫu dùng một ảnh mở đầu và 10 mẫu dùng hai ảnh cô dâu/chú rể xếp dọc.
+- Gate trực quan đã kiểm tra đủ 6 họ thẩm mỹ trên preview thật; ảnh mở đầu, nội dung, lịch, album, bản đồ, sổ lưu bút và QR đều hiển thị, không có ảnh trắng hoặc section bị cắt.
+
 ## Bối cảnh
 
 Repo hiện có **40 slug** trong catalog / 40 file renderer (một số file chứa nhiều biến thể màu). Khảo sát cho thấy sự đơn điệu về trục thẩm mỹ:
@@ -204,7 +214,7 @@ Cả 6 điều, không thiếu điều nào:
 | Agent tự cho điểm cao | Critic là agent khác, xem ảnh, có ngưỡng số |
 | Critic hạ tier làm mất giá trị | Ràng buộc critic dùng model mạnh |
 | Capture script xóa demo local | Bắt buộc `--no-sync-production` |
-| `audited-template-renderers.test.ts` count hard-code | Registrar set `17` → `35` (17 base + 18 mới) |
+| `audited-template-renderers.test.ts` count hard-code | Registrar nối động `17` base + 4 mẫu park + 18 mẫu mới = `39` |
 | 18 mẫu nhàn nhạt giống nhau | Mỗi concept có cột "khác biệt" ràng buộc từ đầu; critic tiêu chí Độc bản |
 | Asset chưa có khi renderer chạy | Stage 2 chạy trước stage 3, chặn cứng |
 

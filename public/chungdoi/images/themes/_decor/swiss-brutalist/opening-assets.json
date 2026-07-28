@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/swiss-brutalist/opening-plate.webp",
+  "layers": [
+    {
+      "id": "upper-black-block",
+      "src": "/chungdoi/images/themes/_decor/swiss-brutalist/opening-upper-black-block.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 479,
+        "height": 239
+      }
+    },
+    {
+      "id": "lower-blocks",
+      "src": "/chungdoi/images/themes/_decor/swiss-brutalist/opening-lower-blocks.webp",
+      "rect": {
+        "x": 0,
+        "y": 236,
+        "width": 483,
+        "height": 1166
+      }
+    },
+    {
+      "id": "red-axis",
+      "src": "/chungdoi/images/themes/_decor/swiss-brutalist/opening-red-axis.webp",
+      "rect": {
+        "x": 286,
+        "y": 0,
+        "width": 22,
+        "height": 1402
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/art-deco-gatsby/opening-plate.webp",
+  "layers": [
+    {
+      "id": "fan-crown",
+      "src": "/chungdoi/images/themes/_decor/art-deco-gatsby/opening-fan-crown.webp",
+      "rect": {
+        "x": 61,
+        "y": 75,
+        "width": 995,
+        "height": 751
+      }
+    },
+    {
+      "id": "columns",
+      "src": "/chungdoi/images/themes/_decor/art-deco-gatsby/opening-columns.webp",
+      "rect": {
+        "x": 131,
+        "y": 223,
+        "width": 857,
+        "height": 1016
+      }
+    },
+    {
+      "id": "corners",
+      "src": "/chungdoi/images/themes/_decor/art-deco-gatsby/opening-corners.webp",
+      "rect": {
+        "x": 12,
+        "y": 13,
+        "width": 1095,
+        "height": 1381
+      }
+    }
+  ]
+}

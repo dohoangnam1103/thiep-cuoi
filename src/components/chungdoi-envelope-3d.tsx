@@ -50,6 +50,8 @@ type Envelope3DProps = {
   // giữa front texture với content overlay. Không cắt/ghép tại biên card.
   renderDecor?: () => ReactNode;
   sizing?: EnvelopeSizing;
+  onProjectedSizeChange?: (size: { width: number; height: number }) => void;
+  decorVisible?: boolean;
 };
 
 // Đo box nút [data-open-btn] so với card root → chuyển sang UV mặt trước.
@@ -204,24 +206,28 @@ function Envelope({
   accentColor,
   frontTex,
   decorTex,
+  decorVisible,
   overlayTex,
   ratio,
   btnUV,
   captureWidth,
   targetWidth,
   fitToViewport,
+  onProjectedSizeChange,
 }: {
   onOpen: () => void;
   paperColor: string;
   accentColor: string;
   frontTex: Texture | null;
   decorTex: Texture | null;
+  decorVisible: boolean;
   overlayTex: Texture | null;
   ratio: number;
   btnUV: EnvelopeButtonUv | null;
   captureWidth: number;
   targetWidth: number;
   fitToViewport: boolean;
+  onProjectedSizeChange?: (size: { width: number; height: number }) => void;
 }) {
   const cardH = CARD_W * ratio;
   // Mặt trước là plane RỘNG HƠN card (thêm padW mỗi phía) để chứa hoa tràn ra
@@ -243,6 +249,13 @@ function Envelope({
       })
     : targetWidth;
   const scale = (projectedWidth * (viewport.width / size.width)) / CARD_W;
+
+  useEffect(() => {
+    onProjectedSizeChange?.({
+      width: projectedWidth,
+      height: projectedWidth * ratio,
+    });
+  }, [onProjectedSizeChange, projectedWidth, ratio]);
 
   const envColor = useMemo(
     () => new Color(paperColor).multiplyScalar(0.96).getStyle(),
@@ -386,7 +399,7 @@ function Envelope({
       {/* Lớp hoa: plane RỘNG HƠN card (faceW×faceH), nền trong suốt, đặt ngay
           trước mặt card. Là con của group nên xoay CÙNG box → hoa tràn ra ngoài
           mép mà vẫn "3D thật". raycast tắt để không chặn tap nút "Mở thiệp". */}
-      {decorTex && (
+      {decorVisible && decorTex && (
         <mesh position={[0, 0, DEPTH / 2 + 0.004]} raycast={() => null}>
           <planeGeometry args={[faceW, faceH]} />
           <meshBasicMaterial map={decorTex} toneMapped={false} transparent depthWrite={false} />
@@ -437,7 +450,9 @@ export default function Envelope3D({
   paperColor,
   accentColor,
   renderDecor,
+  decorVisible = true,
   sizing = "fixed",
+  onProjectedSizeChange,
 }: Envelope3DProps) {
   const responsiveWidth = useSyncExternalStore(
     subscribeEnvelopeWidth,
@@ -693,12 +708,14 @@ export default function Envelope3D({
           accentColor={accentColor}
           frontTex={frontTex}
           decorTex={decorTex}
+          decorVisible={decorVisible}
           overlayTex={overlayTex}
           ratio={ratio}
           btnUV={btnUV}
           captureWidth={captureWidth}
           targetWidth={targetWidth}
           fitToViewport={naturalSizing}
+          onProjectedSizeChange={onProjectedSizeChange}
         />
         <OrbitControls
           autoRotate={false}

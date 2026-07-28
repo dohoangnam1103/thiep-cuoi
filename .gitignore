@@ -62,6 +62,7 @@ next-env.d.ts
 
 # Local temp files
 temp/
+tmp/
 .capture/
 
 # Playwright MCP artifacts

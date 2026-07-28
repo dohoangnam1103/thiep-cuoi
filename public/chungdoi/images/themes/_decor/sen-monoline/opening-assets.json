@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/sen-monoline/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-lotus",
+      "src": "/chungdoi/images/themes/_decor/sen-monoline/opening-left-lotus.webp",
+      "rect": {
+        "x": 0,
+        "y": 163,
+        "width": 591,
+        "height": 1239
+      }
+    },
+    {
+      "id": "right-lotus",
+      "src": "/chungdoi/images/themes/_decor/sen-monoline/opening-right-lotus.webp",
+      "rect": {
+        "x": 419,
+        "y": 154,
+        "width": 667,
+        "height": 1248
+      }
+    },
+    {
+      "id": "leaf-pods",
+      "src": "/chungdoi/images/themes/_decor/sen-monoline/opening-leaf-pods.webp",
+      "rect": {
+        "x": 5,
+        "y": 431,
+        "width": 1117,
+        "height": 971
+      }
+    }
+  ]
+}

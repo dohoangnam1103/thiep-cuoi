@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/botanical-lavender/opening-plate.webp",
+  "layers": [
+    {
+      "id": "lavender",
+      "src": "/chungdoi/images/themes/_decor/botanical-lavender/opening-lavender.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 523,
+        "height": 1402
+      }
+    },
+    {
+      "id": "mustard-pods",
+      "src": "/chungdoi/images/themes/_decor/botanical-lavender/opening-mustard-pods.webp",
+      "rect": {
+        "x": 713,
+        "y": 72,
+        "width": 409,
+        "height": 1330
+      }
+    },
+    {
+      "id": "stems",
+      "src": "/chungdoi/images/themes/_decor/botanical-lavender/opening-stems.webp",
+      "rect": {
+        "x": 14,
+        "y": 39,
+        "width": 1094,
+        "height": 1363
+      }
+    }
+  ]
+}

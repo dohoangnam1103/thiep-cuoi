@@ -4,6 +4,10 @@ import {
   getVietnameseTemplateSlug,
   vietnameseTemplateSlugs,
 } from "./template-route-slugs";
+import {
+  generatedTemplates,
+  generatedTemplateSlugs,
+} from "./templates/generated-data";
 
 export {
   getTemplateRouteSlugs,
@@ -743,7 +747,8 @@ export const templates = [
     "portrait": "/chungdoi/images/template-previews/en/portrait/dragon_phoenix_black.webp",
     "landscape": "/chungdoi/images/template-previews/en/landscape/dragon_phoenix_black.webp",
     "sourceUrl": "https://chungdoi.com/en/templates/dragon-phoenix-black"
-  }
+  },
+  ...generatedTemplates,
 ] satisfies ChungDoiTemplate[];
 
 // Templates with complete dedicated renderers. This registry drives the public listing,
@@ -789,6 +794,7 @@ export const completedTemplateSlugs = new Set<string>([
   "chibi-red",
   "minimalism-red",
   "cherry-blossom-pink",
+  ...generatedTemplateSlugs,
 ]);
 
 export const completedTemplates = templates.filter((template) => completedTemplateSlugs.has(template.slug));

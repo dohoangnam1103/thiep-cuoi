@@ -2,6 +2,9 @@
 // Per-template visual design tokens reverse-engineered from chungdoi.com's demo bundle.
 // Do not hand-edit; re-run the script to refresh.
 
+import { generatedThemeConfigs } from "@/data/templates/generated-data";
+import type { ArtOpeningEffect } from "@/data/templates/opening-effect";
+
 export type ChungDoiCardImage = {
   src: string;
   className: string;
@@ -27,6 +30,7 @@ export type ChungDoiThemeConfig = {
   fonts: { couple: string | null; ampersand: string | null };
   sealType: string | null;
   decorations: { cardImages: ChungDoiCardImage[] };
+  openingEffect?: ArtOpeningEffect;
 };
 
 export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
@@ -1731,5 +1735,6 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
         }
       ]
     }
-  }
+  },
+  ...generatedThemeConfigs,
 };
