@@ -87,6 +87,33 @@ const TRANSPARENT_FOOTER_SLUGS = [
   "silk-flora-brown",
 ] as const;
 
+// Rollout batches from docs/superpowers/plans/2026-07-28-all-template-envelope-sizing-rollout.md.
+// Source slugs only — route slugs are resolved through the registry at test time.
+const ENVELOPE_GROUP_A_SLUGS = [
+  "song-hy-red",
+  "song-hy-green",
+  "double-dragon-red",
+  "double-dragon-green",
+  "double-dragon-blue",
+  "double-phoenix-red",
+  "double-phoenix-green",
+  "dragon-phoenix-red",
+  "dragon-phoenix-green",
+] as const;
+
+const ENVELOPE_GROUP_B_SLUGS = [
+  "dragon-phoenix-v3-red",
+  "dragon-phoenix-v2-red",
+  "dragon-phoenix-blue",
+  "dragon-phoenix-black",
+  "royal-red",
+  "royal-blue",
+  "royal-green",
+  "nhat-binh-red",
+  "hoa-tinh-red",
+  "co-ba-red",
+] as const;
+
 // Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
 const ENVELOPE_SIZING_CASES = [
   { viewport: { width: 1440, height: 900 }, expectedWidth: 600 },
@@ -469,7 +496,11 @@ test.describe("templates — demo pages", () => {
     expect(await visibleOpenButtonCount()).toBe(0);
   });
 
-  test("cherry blossom cover follows source sizing without changing other templates", async ({ page }) => {
+  // Width per breakpoint is covered by the rollout matrix; this guards the other
+  // half of the rule — height comes from real card content, so it must sit near
+  // the Chung Đôi reference instead of stretching to the viewport or snapping
+  // back to the legacy 3 / 4.5 ratio.
+  test("cherry blossom cover height follows real content, not the viewport", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/mau-thiep/anh-dao-hong/demo", { timeout: 60_000 });
 
@@ -487,17 +518,8 @@ test.describe("templates — demo pages", () => {
     expect(desktopSize.height).toBeGreaterThanOrEqual(480);
     expect(desktopSize.height).toBeLessThanOrEqual(560);
     expect(desktopSize.height).not.toBe(900);
-
-    await page.setViewportSize({ width: 390, height: 844 });
-    await expect.poll(() => cherryCapture.evaluate((node) => ({
-      width: Math.round(node.getBoundingClientRect().width),
-      height: Math.round(node.getBoundingClientRect().height),
-    }))).toMatchObject({ width: 310 });
-
-    await page.goto("/mau-thiep/song-hy-xanh/demo", { timeout: 60_000 });
-    const fixedCapture = page.locator('[data-envelope-capture-root="fixed"]');
-    await expect(fixedCapture).toHaveAttribute("data-envelope-target-width", "340");
-    await expect(fixedCapture).toHaveCSS("width", "420px");
+    // The legacy fixed path would force 600 × 900 at a 3 / 4.5 ratio.
+    expect(desktopSize.height).not.toBe(Math.round((desktopSize.width / 3) * 4.5));
   });
 
   // Drives the rollout matrix helper through the already-approved baseline, so a
@@ -510,6 +532,18 @@ test.describe("templates — demo pages", () => {
     );
   });
 
+  for (const sourceSlug of ENVELOPE_GROUP_A_SLUGS) {
+    test(`envelope sizing group A — ${sourceSlug}`, async ({ page }) => {
+      await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
+    });
+  }
+
+  for (const sourceSlug of ENVELOPE_GROUP_B_SLUGS) {
+    test(`envelope sizing group B — ${sourceSlug}`, async ({ page }) => {
+      await expectResponsiveEnvelopeSizing(page, getVietnameseTemplateSlug(sourceSlug));
+    });
+  }
+
   test("royal-red demo loads without crashing", async ({ page }) => {
     const res = await page.goto("/vi/templates/hoang-kim-do/demo", { timeout: 60_000 });
     expect(res?.ok()).toBeTruthy();
@@ -518,23 +552,52 @@ test.describe("templates — demo pages", () => {
     await expect(page.locator("main#top audio")).toHaveCount(1);
   });
 
-  test("3D invitation rotates automatically", async ({ page }) => {
+  // The cover sets `autoRotate={false}` and runs no animation loop, so an idle
+  // canvas only jitters by OrbitControls damping (measured 0.1–0.4% of channels
+  // — below any threshold worth asserting). Drag rotation is the real contract,
+  // and it is what the responsive sizing rollout must not break.
+  test("3D invitation rotates when dragged", async ({ page }) => {
     await page.goto("/vi/templates/song-long-xanh/demo", { timeout: 60_000 });
 
     const canvas = page.locator("canvas").first();
     await expect(canvas).toBeVisible({ timeout: 30_000 });
+    // Textures are captured from the DOM after fonts settle; drag before they
+    // land would diff two loading frames instead of two rotations.
+    await page.waitForTimeout(2_500);
 
-    const firstFrame = await sharp(await canvas.screenshot()).raw().toBuffer();
-    await page.waitForTimeout(1_500);
-    const secondFrame = await sharp(await canvas.screenshot()).raw().toBuffer();
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error("cover canvas has no layout box");
+    const midY = box.y + box.height / 2;
+
+    const beforeDrag = await sharp(await canvas.screenshot()).raw().toBuffer();
+
+    // Drag well clear of the "Mở thiệp" hit area so the gesture rotates the
+    // card instead of opening the invitation.
+    await page.mouse.move(box.x + box.width * 0.5, midY);
+    await page.mouse.down();
+    for (const step of [0.6, 0.7, 0.8, 0.85]) {
+      await page.mouse.move(box.x + box.width * step, midY, { steps: 4 });
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(600);
+
+    const afterDrag = await sharp(await canvas.screenshot()).raw().toBuffer();
+    expect(afterDrag.length).toBe(beforeDrag.length);
+
     let changedChannels = 0;
-    for (let index = 0; index < firstFrame.length; index += 1) {
-      if (Math.abs(firstFrame[index] - secondFrame[index]) > 8) {
+    for (let index = 0; index < beforeDrag.length; index += 1) {
+      if (Math.abs(beforeDrag[index] - afterDrag[index]) > 8) {
         changedChannels += 1;
       }
     }
 
-    expect(changedChannels / firstFrame.length).toBeGreaterThan(0.01);
+    // Dragging turns the card in 3D, which repaints far more than damping noise.
+    expect(changedChannels / beforeDrag.length).toBeGreaterThan(0.02);
+    // The invitation must not have opened — the cover stage is still mounted.
+    await expect(page.locator("[data-envelope-renderer]")).toHaveAttribute(
+      "data-envelope-renderer",
+      "3d",
+    );
   });
 
   test("demo gift envelope button appears after hydration", async ({ page }) => {

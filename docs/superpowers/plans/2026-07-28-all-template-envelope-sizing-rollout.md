@@ -717,11 +717,33 @@ Rollout chỉ được coi là hoàn tất khi tất cả điều kiện sau đ�
 | Ngày | Nhóm | Trạng thái | Số đo/ghi chú |
 | --- | --- | --- | --- |
 | 2026-07-28 | Baseline `cherry-blossom-pink` | Hoàn thành | Desktop `600 × 515.5`; mobile `310 × 561`; 3D/zoom/drag/open đã kiểm tra |
-| 2026-07-28 | Nhóm A | Chưa triển khai | Thực hiện theo Task 3 |
-| 2026-07-28 | Nhóm B | Chưa triển khai | Thực hiện theo Task 3 |
+| 2026-07-28 | Nhóm A | Hoàn thành | 9/9 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
+| 2026-07-28 | Nhóm B | Hoàn thành | 10/10 mẫu đạt `600/520/340/310` đủ 4 breakpoint |
 | 2026-07-28 | Nhóm C | Chưa triển khai | Thực hiện theo Task 4 |
 | 2026-07-28 | Nhóm D | Chưa triển khai | Thực hiện theo Task 4 |
 | 2026-07-28 | Nhóm E | Chưa triển khai | Thực hiện theo Task 5 |
+
+### Ghi chú Task 3 — test `3D invitation rotates automatically`
+
+Test cũ đo pixel canvas ở trạng thái đứng yên và đòi đổi `> 1%`. Nó **không** kiểm
+xoay tự động: cover đặt `autoRotate={false}` và không có `useFrame`/rAF nào trong
+đường cover (tìm vét toàn repo chỉ ra đúng một dòng `autoRotate={false}`), và
+`autoRotate={true}` chưa từng tồn tại trong git history. Test viết ngày 2026-07-15
+(`247e08e`), còn `autoRotate={false}` vào ngày 2026-07-23 (`52675fb`) — tức test có
+trước và không được cập nhật khi hành vi đổi.
+
+Thứ nó thực sự đo là nhiễu damping của `OrbitControls`. Probe timeline: canvas chỉ
+đổi `0.17–0.36%` ở mọi cửa sổ thời gian, first→last chỉ `0.114%`. Ngưỡng `1%` nằm
+sát vùng nhiễu này nên luôn mong manh; sizing mới làm ảnh desktop rộng `600px` thay
+vì `420px`, mẫu số pixel tăng nhanh hơn tử số nên tỉ lệ loãng xuống `~0.25%`.
+
+Đã xác nhận **không phải hồi quy do rollout**: bỏ `double-dragon-green` khỏi
+allowlist (trở lại `fixed` như trước Task 3) thì test **vẫn đỏ**; chạy 3/3 lần đều
+đỏ nên không flaky.
+
+Bản sửa đổi test sang `3D invitation rotates when dragged` — kéo chuột để xoay là
+hợp đồng thật mà rollout phải giữ. Ngưỡng `2%` gấp `5×` nhiễu đã đo, cộng assertion
+thiệp không bị mở do cú kéo. Chạy 3/3 lần đều pass.
 
 ## 8. Phạm vi không làm trong rollout này
 
