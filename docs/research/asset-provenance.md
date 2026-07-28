@@ -42,4 +42,4 @@ The `opening-plate.webp`, `opening-*.webp`, and `opening-assets.json` files unde
 
 ## Chung Đôi source gift visuals
 
-The gift visuals listed in [GIFT_VISUAL_SOURCE_AUDIT.md](./GIFT_VISUAL_SOURCE_AUDIT.md) were downloaded unchanged from their documented `https://chungdoi.com/images/envelope/` and `https://chungdoi.com/images/giftbox/` source URLs on 2026-07-29. They are stored locally solely for source-parity reconstruction; the application does not hotlink them at runtime.
+The 25 gift visuals newly added on 2026-07-29 and listed in [GIFT_VISUAL_SOURCE_AUDIT.md](./GIFT_VISUAL_SOURCE_AUDIT.md) were downloaded unchanged from their documented `https://chungdoi.com/images/envelope/` and `https://chungdoi.com/images/giftbox/` source URLs. The pre-existing `cherry_blossom_pink.webp` envelope and the `chateau_green.webp` and `glass_garden_green.webp` base gift boxes were re-audited on that date, not newly downloaded. All of these files are stored locally solely for source-parity reconstruction; the application does not hotlink them at runtime.

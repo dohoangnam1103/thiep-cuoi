@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -35,24 +35,54 @@ export const REQUIRED_GIFTBOX_MINI_ASSETS = [
 ] as const;
 
 const giftboxDirectory = join(process.cwd(), "public", "chungdoi", "images", "giftbox");
+const auditPath = join(process.cwd(), "docs", "research", "GIFT_VISUAL_SOURCE_AUDIT.md");
+
+function assertWebp(path: string): void {
+  const signature = readFileSync(path).subarray(0, 12);
+
+  assert.deepEqual(signature.subarray(0, 4), Buffer.from("RIFF"), `${path} is missing a RIFF signature`);
+  assert.deepEqual(signature.subarray(8, 12), Buffer.from("WEBP"), `${path} is missing a WebP signature`);
+}
 
 test("every audited source gift asset is stored locally", () => {
-  for (const slug of Object.keys(PAIRED_ENVELOPE_SOURCE_ASSETS)) {
+  const audit = readFileSync(auditPath, "utf8");
+  const pairedAssets = Object.entries(PAIRED_ENVELOPE_SOURCE_ASSETS);
+
+  assert.equal(pairedAssets.length, 18, "the paired envelope contract must contain exactly 18 mappings");
+  assert.equal(REQUIRED_GIFTBOX_MINI_ASSETS.length, 7, "the mini asset contract must contain exactly 7 filenames");
+
+  for (const [slug, sourceFilename] of pairedAssets) {
+    const localPath = join(giftboxDirectory, slug, "envelope.webp");
     assert.ok(
-      existsSync(join(giftboxDirectory, slug, "envelope.webp")),
+      existsSync(localPath),
       `missing local paired envelope for ${slug}`,
+    );
+    assertWebp(localPath);
+    assert.match(
+      audit,
+      new RegExp(`\\| ${slug} \\|[^\\n]*\\| /images/envelope/${sourceFilename.replace(".", "\\.")} \\|`),
+      `audit source path does not match the ${slug} mapping`,
     );
   }
 
   for (const asset of REQUIRED_GIFTBOX_MINI_ASSETS) {
+    const localPath = join(giftboxDirectory, "mini", asset);
     assert.ok(
-      existsSync(join(giftboxDirectory, "mini", asset)),
+      existsSync(localPath),
       `missing local giftbox mini asset ${asset}`,
+    );
+    assertWebp(localPath);
+    assert.match(
+      audit,
+      new RegExp(`/images/giftbox/mini/${asset.replace(".", "\\.")}`),
+      `audit is missing mini asset ${asset}`,
     );
   }
 
+  const cherryPath = join(process.cwd(), "public", "chungdoi", "images", "envelope", "cherry_blossom_pink.webp");
   assert.ok(
-    existsSync(join(process.cwd(), "public", "chungdoi", "images", "envelope", "cherry_blossom_pink.webp")),
+    existsSync(cherryPath),
     "missing local cherry blossom envelope asset",
   );
+  assertWebp(cherryPath);
 });

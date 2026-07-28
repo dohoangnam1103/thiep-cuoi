@@ -1,5 +1,7 @@
 # Chung Đôi Gift Visual Source Audit
 
+On 2026-07-29, 25 assets in this audit were newly added locally: the 18 paired envelopes and the seven mini layers listed below. `cherry_blossom_pink.webp` and the two base gift boxes (`chateau_green.webp` and `glass_garden_green.webp`) were pre-existing local files that were re-audited, not newly downloaded.
+
 | Template slug | Source demo | Composition | Source artwork |
 | --- | --- | --- | --- |
 | boho-floral-green | https://chungdoi.com/vi/mau-thiep/hoa-moc-xanh/demo | Paired envelope | /images/envelope/boho_floral_green.webp |
@@ -23,3 +25,13 @@
 | cherry-blossom-pink | https://chungdoi.com/vi/mau-thiep/anh-dao-hong/demo | Paired envelope | /images/envelope/cherry_blossom_pink.webp |
 | chateau-green | https://chungdoi.com/vi/mau-thiep/lau-dai-xanh/demo | Gift box + seven mini layers | /images/giftbox/chateau_green.webp |
 | glass-garden-green | https://chungdoi.com/vi/mau-thiep/vuonkinh-xanh/demo | Gift box + seven mini layers | /images/giftbox/glass_garden_green.webp |
+
+## Newly added mini-layer source paths
+
+- /images/giftbox/mini/spring_garden_green.webp
+- /images/giftbox/mini/dragon_phoenix_v2.webp
+- /images/giftbox/mini/chateau_blue.webp
+- /images/giftbox/mini/glass_garden_green.webp
+- /images/giftbox/mini/jasmine_white.webp
+- /images/giftbox/mini/double_phoenix_red.webp
+- /images/giftbox/mini/chateau_green.webp
