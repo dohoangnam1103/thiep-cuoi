@@ -26,9 +26,7 @@ const backLayerClassName = "ienv-back absolute inset-0 z-[1] h-full w-full origi
 const frontLayerClassName = "ienv-card absolute inset-0 z-[2] h-full w-full object-contain object-bottom -rotate-[10deg] [filter:drop-shadow(0_10px_18px_rgba(0,0,0,0.22))]";
 const doubleDragonWrapperClassName = "bg-[url('/images/double-dragon.webp')] bg-[length:clamp(300px,50vw,500px)] bg-center";
 
-function pairedEnvelope(slug: string, wrapperClassName?: string): LayeredImageGiftVisual {
-  const src = `/chungdoi/images/giftbox/${slug}/envelope.webp`;
-
+function pairedEnvelopeFromSource(src: string, wrapperClassName?: string): LayeredImageGiftVisual {
   return {
     kind: "layered-image",
     layers: [
@@ -47,6 +45,13 @@ function pairedEnvelope(slug: string, wrapperClassName?: string): LayeredImageGi
     ],
     ...(wrapperClassName ? { wrapperClassName } : {}),
   };
+}
+
+function pairedEnvelope(slug: string, wrapperClassName?: string): LayeredImageGiftVisual {
+  return pairedEnvelopeFromSource(
+    `/chungdoi/images/giftbox/${slug}/envelope.webp`,
+    wrapperClassName,
+  );
 }
 
 const GIFT_VISUALS = {
@@ -68,17 +73,9 @@ const GIFT_VISUALS = {
   "dragon-phoenix-v3-red": pairedEnvelope("dragon-phoenix-v3-red"),
   "qasr-green": pairedEnvelope("qasr-green"),
   "qasr-gold": pairedEnvelope("qasr-gold"),
-  "cherry-blossom-pink": {
-    kind: "layered-image",
-    layers: [
-      {
-        role: "front",
-        src: "/chungdoi/images/envelope/cherry_blossom_pink.webp",
-        className: frontLayerClassName,
-        required: true,
-      },
-    ],
-  },
+  "cherry-blossom-pink": pairedEnvelopeFromSource(
+    "/chungdoi/images/envelope/cherry_blossom_pink.webp",
+  ),
   "chateau-green": {
     kind: "giftbox",
     boxImage: "/chungdoi/images/giftbox/chateau_green.webp",

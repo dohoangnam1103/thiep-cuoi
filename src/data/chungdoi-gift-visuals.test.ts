@@ -97,6 +97,22 @@ test("double dragon green uses the paired layered envelope contract", () => {
   });
 });
 
+test("cherry blossom pink uses two ordered layers from its source envelope", () => {
+  const visual = resolveGiftVisual("cherry-blossom-pink");
+
+  assert.equal(visual.kind, "layered-image");
+  if (visual.kind !== "layered-image") return;
+
+  assert.deepEqual(visual.layers.map((layer) => layer.role), ["back", "front"]);
+  assert.deepEqual(
+    visual.layers.map((layer) => layer.src),
+    [
+      "/chungdoi/images/envelope/cherry_blossom_pink.webp",
+      "/chungdoi/images/envelope/cherry_blossom_pink.webp",
+    ],
+  );
+});
+
 test("templates without cloned assets remain procedural", () => {
   assert.deepEqual(resolveGiftVisual("arch-sage"), { kind: "procedural" });
   assert.deepEqual(resolveGiftVisual("zen-sand"), { kind: "procedural" });
