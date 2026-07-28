@@ -10,6 +10,7 @@ import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
+import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
 import { PublicGuestMediaDialog } from "@/components/public-guest-media-dialog";
 import {
@@ -33,6 +34,7 @@ import {
 } from "@/lib/invitation-display";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
+const ArchSageInvitation = dynamic(() => import("@/components/chungdoi-tpl-arch-sage").then((m) => m.ArchSageInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
 const BohoFloralGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-green").then((m) => m.BohoFloralGreenInvitation));
 const BohoFloralPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-pink").then((m) => m.BohoFloralPinkInvitation));
@@ -43,6 +45,7 @@ const CrystalFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-
 const DragonPhoenixV2Invitation = dynamic(() => import("@/components/chungdoi-tpl-dragon-phoenix-v2-red").then((m) => m.DragonPhoenixV2Invitation));
 const DragonPhoenixV3Invitation = dynamic(() => import("@/components/chungdoi-tpl-dragon-phoenix-v3-red").then((m) => m.DragonPhoenixV3Invitation));
 const ElegantLeafInvitation = dynamic(() => import("@/components/chungdoi-tpl-elegant-leaf-green").then((m) => m.ElegantLeafInvitation));
+const EditorialNoirInvitation = dynamic(() => import("@/components/chungdoi-tpl-editorial-noir").then((m) => m.EditorialNoirInvitation));
 const GlassGardenInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-green").then((m) => m.GlassGardenInvitation));
 const HoaTinhInvitation = dynamic(() => import("@/components/chungdoi-tpl-hoa-tinh-red").then((m) => m.HoaTinhInvitation));
 const JasmineWhiteInvitation = dynamic(() => import("@/components/chungdoi-tpl-jasmine-white").then((m) => m.JasmineWhiteInvitation));
@@ -54,6 +57,8 @@ const SilkFloraBrownInvitation = dynamic(() => import("@/components/chungdoi-tpl
 const SpringGardenBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-spring-garden-blue").then((m) => m.SpringGardenBlueInvitation));
 const SpringGardenGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-spring-garden-green").then((m) => m.SpringGardenGreenInvitation));
 const SpringGardenRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-spring-garden-red").then((m) => m.SpringGardenRedInvitation));
+const TicketTerracottaInvitation = dynamic(() => import("@/components/chungdoi-tpl-ticket-terracotta").then((m) => m.TicketTerracottaInvitation));
+const ZenSandInvitation = dynamic(() => import("@/components/chungdoi-tpl-zen-sand").then((m) => m.ZenSandInvitation));
 const PhoenixInvitation = dynamic(() => import("@/components/chungdoi-tpl-phoenix").then((m) => m.PhoenixInvitation));
 const SongHyGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-song-hy").then((m) => m.SongHyGreenInvitation));
 const SongHyRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-song-hy").then((m) => m.SongHyRedInvitation));
@@ -90,6 +95,10 @@ const AUDITED_TEMPLATE_RENDERERS = {
   "glass-garden-green": GlassGardenInvitation,
   "chibi-red": ChibiRedInvitation,
   "cherry-blossom-pink": CherryBlossomInvitation,
+  "editorial-noir": EditorialNoirInvitation,
+  "ticket-terracotta": TicketTerracottaInvitation,
+  "zen-sand": ZenSandInvitation,
+  "arch-sage": ArchSageInvitation,
 } satisfies Record<AuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
 const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
 
@@ -868,7 +877,8 @@ function EnvelopeCover({
   onOpen: () => void;
   opening: boolean;
 }) {
-  const responsiveNaturalSizing = content.slug === "cherry-blossom-pink";
+  const sizing = envelopeSizingForTemplate(content.slug);
+  const naturalHeight = sizing === "responsive-natural";
 
   return (
     <div
@@ -899,7 +909,7 @@ function EnvelopeCover({
       >
         <div className="absolute inset-0">
           <Envelope3D
-            sizing={responsiveNaturalSizing ? "responsive-natural" : "fixed"}
+            sizing={sizing}
             onOpen={onOpen}
             paperColor={coverPaperColor(tokens)}
             accentColor={toSolidColor(tokens.accent, "#8C1C13")}
@@ -912,7 +922,7 @@ function EnvelopeCover({
                   onOpen={handleOpen}
                   opening={opening}
                   hideDecor
-                  naturalHeight={responsiveNaturalSizing}
+                  naturalHeight={naturalHeight}
                 />
               </div>
             )}
