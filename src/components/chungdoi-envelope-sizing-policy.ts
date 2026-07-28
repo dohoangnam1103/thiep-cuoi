@@ -3,7 +3,9 @@
 // đều import được.
 export type EnvelopeSizing = "fixed" | "responsive-natural";
 
-const responsiveEnvelopeTemplateSlugs = new Set<string>([
+// Exported chỉ để unit test kiểm tra coverage trong lúc rollout. UI luôn hỏi
+// qua envelopeSizingForTemplate(), không đọc trực tiếp set này.
+export const responsiveEnvelopeTemplateSlugs = new Set<string>([
   "cherry-blossom-pink",
 ]);
 

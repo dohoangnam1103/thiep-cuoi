@@ -1,5 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import sharp from "sharp";
+
+import { getVietnameseTemplateSlug } from "@/data/template-route-slugs";
 
 import { loginAsUser } from "./helpers/auth";
 import { getDb } from "./helpers/db";
@@ -84,6 +86,47 @@ const TRANSPARENT_FOOTER_SLUGS = [
   "jasmine-white",
   "silk-flora-brown",
 ] as const;
+
+// Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
+const ENVELOPE_SIZING_CASES = [
+  { viewport: { width: 1440, height: 900 }, expectedWidth: 600 },
+  { viewport: { width: 800, height: 900 }, expectedWidth: 520 },
+  { viewport: { width: 700, height: 900 }, expectedWidth: 340 },
+  { viewport: { width: 390, height: 844 }, expectedWidth: 310 },
+] as const;
+
+/**
+ * Assert an unopened envelope tracks the Chung Đôi capture width at each
+ * breakpoint. Height is intentionally unchecked — it follows real content, so
+ * it legitimately differs per template.
+ *
+ * Each case is a viewport resize on an already-loaded WebGL page, so the cost
+ * per extra breakpoint is far below a fresh `goto`. Batches may still narrow to
+ * the mobile/desktop ends when a full sweep would blow up suite runtime.
+ */
+async function expectResponsiveEnvelopeSizing(
+  page: Page,
+  routeSlug: string,
+  cases: readonly { viewport: { width: number; height: number }; expectedWidth: number }[] =
+    ENVELOPE_SIZING_CASES,
+) {
+  await page.setViewportSize(cases[0].viewport);
+  await page.goto(`/mau-thiep/${routeSlug}/demo`, { timeout: 60_000 });
+
+  const capture = page.locator('[data-envelope-capture-root="responsive-natural"]');
+  await expect(capture, `${routeSlug} must use the responsive capture root`).toHaveCount(1);
+
+  for (const current of cases) {
+    await page.setViewportSize(current.viewport);
+    await expect
+      .poll(
+        async () =>
+          Math.round(await capture.evaluate((node) => node.getBoundingClientRect().width)),
+        { message: `${routeSlug} @ ${current.viewport.width}px` },
+      )
+      .toBe(current.expectedWidth);
+  }
+}
 
 function invitationCount(userId: string): number {
   const row = getDb()
@@ -455,6 +498,16 @@ test.describe("templates — demo pages", () => {
     const fixedCapture = page.locator('[data-envelope-capture-root="fixed"]');
     await expect(fixedCapture).toHaveAttribute("data-envelope-target-width", "340");
     await expect(fixedCapture).toHaveCSS("width", "420px");
+  });
+
+  // Drives the rollout matrix helper through the already-approved baseline, so a
+  // regression in the helper itself surfaces before a batch relies on it. Route
+  // slugs come from the registry — never a second hand-written mapping.
+  test("envelope sizing baseline holds at every breakpoint", async ({ page }) => {
+    await expectResponsiveEnvelopeSizing(
+      page,
+      getVietnameseTemplateSlug("cherry-blossom-pink"),
+    );
   });
 
   test("royal-red demo loads without crashing", async ({ page }) => {
