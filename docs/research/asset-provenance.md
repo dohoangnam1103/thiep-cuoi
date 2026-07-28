@@ -1,6 +1,6 @@
 # Generated Wedding Template Asset Provenance
 
-All artwork in this document was generated with OpenAI's built-in `imagegen` tool on 2026-07-28. The files are original raster artwork created for Chungdoi; no third-party reference images or web-sourced assets were used. Each source was normalized to WebP for production and saved under `public/chungdoi/images/themes/_decor/<slug>/artwork.webp`.
+The generated template artwork in the first section of this document was created with OpenAI's built-in `imagegen` tool on 2026-07-28. The files are original raster artwork created for Chungdoi; no third-party reference images or web-sourced assets were used. Each source was normalized to WebP for production and saved under `public/chungdoi/images/themes/_decor/<slug>/artwork.webp`.
 
 ## Final prompt set
 
@@ -39,3 +39,7 @@ The `opening-plate.webp`, `opening-*.webp`, and `opening-assets.json` files unde
 - Flat graphic themes were separated deterministically from their original pixels so registration stays exact; their clean plates were rebuilt from the original palette without retaining the animated shapes.
 - Every foreground was trimmed losslessly with a two-pixel transparent safety border. `opening-assets.json` records its exact source-canvas rectangle so the closed and animated frames share one coordinate system.
 - The asset validator requires original canvas dimensions for plates, genuine alpha for foregrounds, in-bounds rectangles, unique paths, and rejects `artwork.webp` as a foreground fallback.
+
+## Chung Đôi source gift visuals
+
+The gift visuals listed in [GIFT_VISUAL_SOURCE_AUDIT.md](./GIFT_VISUAL_SOURCE_AUDIT.md) were downloaded unchanged from their documented `https://chungdoi.com/images/envelope/` and `https://chungdoi.com/images/giftbox/` source URLs on 2026-07-29. They are stored locally solely for source-parity reconstruction; the application does not hotlink them at runtime.
