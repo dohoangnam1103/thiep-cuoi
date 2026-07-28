@@ -620,6 +620,7 @@ function CoverCard({
   onOpen,
   opening = false,
   hideDecor = false,
+  naturalHeight = false,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
@@ -628,6 +629,7 @@ function CoverCard({
   // Ẩn lớp hoa (cardImages) — dùng khi chụp texture mặt trước 3D, vì hoa tràn
   // mép sẽ bị crop theo khung card. Hoa được chụp riêng qua CoverDecor.
   hideDecor?: boolean;
+  naturalHeight?: boolean;
 }) {
   const liveForms = useLiveForms();
   const date = formatDate(content.couple.date);
@@ -648,7 +650,10 @@ function CoverCard({
   return (
     <div
       className="relative rounded-lg"
-      style={{ aspectRatio: "3 / 4.5", boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)" }}
+      style={{
+        aspectRatio: naturalHeight ? undefined : "3 / 4.5",
+        boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)",
+      }}
     >
       {/* composited theme layer (behind everything) */}
       <div
@@ -710,9 +715,13 @@ function CoverCard({
         </div>
       ) : null}
 
-      {/* transparent text layer on top: absolute + flex center → không đẩy chiều
-          cao, cha giữ đúng aspectRatio 3:4.5 (portrait), 2D và texture 3D khớp. */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center">
+      {/* Với mode mặc định, text phủ absolute để giữ card 3:4.5. Riêng các mẫu
+          opt-in natural height, text tham gia flow và quyết định chiều cao card. */}
+      <div
+        className={naturalHeight
+          ? "relative z-10 px-6 pb-14 pt-28 text-center md:pb-8 md:pt-24"
+          : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
+      >
         <div className="mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl" style={{ color: tokens.textPrimary }}>
           <span className="block w-full" style={nameStyle}>
             {names[0]}
@@ -859,6 +868,8 @@ function EnvelopeCover({
   onOpen: () => void;
   opening: boolean;
 }) {
+  const responsiveNaturalSizing = content.slug === "cherry-blossom-pink";
+
   return (
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
@@ -888,13 +899,21 @@ function EnvelopeCover({
       >
         <div className="absolute inset-0">
           <Envelope3D
+            sizing={responsiveNaturalSizing ? "responsive-natural" : "fixed"}
             onOpen={onOpen}
             paperColor={coverPaperColor(tokens)}
             accentColor={toSolidColor(tokens.accent, "#8C1C13")}
             renderCard={(handleOpen) => (
               <div className="relative">
                 <Seal tokens={tokens} opening={opening} />
-                <CoverCard content={content} tokens={tokens} onOpen={handleOpen} opening={opening} hideDecor />
+                <CoverCard
+                  content={content}
+                  tokens={tokens}
+                  onOpen={handleOpen}
+                  opening={opening}
+                  hideDecor
+                  naturalHeight={responsiveNaturalSizing}
+                />
               </div>
             )}
             renderDecor={

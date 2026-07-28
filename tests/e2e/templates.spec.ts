@@ -426,6 +426,37 @@ test.describe("templates — demo pages", () => {
     expect(await visibleOpenButtonCount()).toBe(0);
   });
 
+  test("cherry blossom cover follows source sizing without changing other templates", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/mau-thiep/anh-dao-hong/demo", { timeout: 60_000 });
+
+    const cherryCapture = page.locator('[data-envelope-capture-root="responsive-natural"]');
+    await expect(cherryCapture).toHaveCount(1);
+    await expect.poll(() => cherryCapture.evaluate((node) => ({
+      width: Math.round(node.getBoundingClientRect().width),
+      height: Math.round(node.getBoundingClientRect().height),
+    }))).toMatchObject({ width: 600 });
+
+    const desktopSize = await cherryCapture.evaluate((node) => ({
+      width: Math.round(node.getBoundingClientRect().width),
+      height: Math.round(node.getBoundingClientRect().height),
+    }));
+    expect(desktopSize.height).toBeGreaterThanOrEqual(480);
+    expect(desktopSize.height).toBeLessThanOrEqual(560);
+    expect(desktopSize.height).not.toBe(900);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect.poll(() => cherryCapture.evaluate((node) => ({
+      width: Math.round(node.getBoundingClientRect().width),
+      height: Math.round(node.getBoundingClientRect().height),
+    }))).toMatchObject({ width: 310 });
+
+    await page.goto("/mau-thiep/song-hy-xanh/demo", { timeout: 60_000 });
+    const fixedCapture = page.locator('[data-envelope-capture-root="fixed"]');
+    await expect(fixedCapture).toHaveAttribute("data-envelope-target-width", "340");
+    await expect(fixedCapture).toHaveCSS("width", "420px");
+  });
+
   test("royal-red demo loads without crashing", async ({ page }) => {
     const res = await page.goto("/vi/templates/hoang-kim-do/demo", { timeout: 60_000 });
     expect(res?.ok()).toBeTruthy();
