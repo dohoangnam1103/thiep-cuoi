@@ -5,25 +5,37 @@
 
 ## Bối cảnh
 
-Repo hiện có 44 slug trong catalog / 40 file renderer. Khảo sát cho thấy sự đơn điệu về trục thẩm mỹ:
+Repo hiện có **40 slug** trong catalog / 40 file renderer (một số file chứa nhiều biến thể màu). Khảo sát cho thấy sự đơn điệu về trục thẩm mỹ:
 
 - Chỉ 8 giá trị `color` trong toàn catalog (Red, Green, Blue, Pink, White, Brown, Gold, Black)
-- Chỉ 7 font couple; `Fz Aghita` + `Fz Qellia` chiếm ~24/44 slug
+- Chỉ 7 font couple; `Fz Aghita` + `Fz Qellia` chiếm phần lớn slug
 - Không có tím/lavender, không có mustard/cam đất
 - Toàn bộ motif truyền thống là Hán tự long-phụng-song-hỷ — **không có tạo hình dân gian bản địa nào** (Đông Hồ, Hàng Trống, thổ cẩm, sơn mài)
-- 4 mẫu duy nhất thuần CSS/SVG: `arch-sage`, `editorial-noir`, `ticket-terracotta`, `zen-sand`. 40 slug còn lại phụ thuộc raster.
+- 4 mẫu thuần CSS/SVG (`arch-sage`, `editorial-noir`, `ticket-terracotta`, `zen-sand`) là công việc đang park; 40 slug đang live phụ thuộc raster.
 
-Branch `feat/new-invitation-layouts` đang dở 4 mẫu trên (thiếu preview `vi`, thiếu seed, test audit đỏ). Quyết định: **park** sang `wip/old-4-layouts`, làm lại theo pipeline mới. Giữ lại `src/components/chungdoi-tpl-ornaments.tsx` — 29 SVG primitive dùng được cho ~14 mẫu mới.
+Branch `feat/new-invitation-layouts` đang dở 4 mẫu trên (thiếu preview `vi`, thiếu seed, test audit đỏ). Quyết định: **park** sang `wip/old-4-layouts`, làm lại theo pipeline mới. Giữ lại `src/components/chungdoi-tpl-ornaments.tsx` — **10** SVG primitive (`HairRule`, `OrnamentDivider`, `DiamondRule`, `EnsoCircle`, `LinkedRings`, `LeafSprig`, `PerforationRule`, `Barcode`, `ArchOutline`, `CornerBracket`) dùng lại được.
+
+## Trạng thái đã xác minh (2026-07-28, sau khi park)
+
+Xác minh trực tiếp trên working tree, không dựa vào khảo sát agent:
+
+- `templates[]` = **40**, `completedTemplateSlugs` = **40**, `vietnameseTemplateSlugs` = **40**, `AUDITED_TEMPLATE_SLUGS` = **17**
+- 4 mẫu park đã bị revert khỏi 5 registry (`chungdoi.ts`, `template-route-slugs.ts`, `audited-template-renderers.ts`, `chungdoi-demo-content.ts`, `chungdoi-demo.tsx`)
+- Wiring đầy đủ của 4 mẫu đó được snapshot ở commit `cb9b6fa` trên branch `backup/new-templates-snapshot` (reachable, an toàn khỏi GC)
+- Còn sót chưa dọn: 4 renderer `.tsx` (untracked), 4 entry trong `chungdoi-theme-config.ts` (dirty), 12 preview WebP (untracked), `new-invitation-layouts.test.ts` (untracked), entry `listing.templates.*` + namespace `invitationTemplate` trong 5 file messages (dirty)
+- `src/data/templates/` **chưa tồn tại** — Task 1 tạo mới
+- Type renderer dùng là `ChungDoiDemoContent` từ `@/data/chungdoi-demo-content` (bản rich), **không phải** type trùng tên trong `chungdoi.ts` (bản đó không được component nào dùng)
+- Không có hàm `createLayoutDemo` — `chungdoiDemoContent` là `Record<string, ChungDoiDemoContent>` với object literal đầy đủ
 
 ## Vấn đề kiến trúc cốt lõi: tranh chấp file dùng chung
 
-Một mẫu mới phải chạm **14 điểm đăng ký**, trong đó ~10 điểm là file dùng chung cho cả 44 slug:
+Một mẫu mới phải chạm **14 điểm đăng ký**, trong đó ~10 điểm là file dùng chung cho cả 40 slug:
 
 | File | Điểm chạm |
 |---|---|
-| `src/data/chungdoi.ts` | `templates[]` + `completedTemplateSlugs` (:867) |
-| `src/data/template-route-slugs.ts` | `vietnameseTemplateSlugs` (:45) |
-| `src/lib/audited-template-renderers.ts` | `AUDITED_TEMPLATE_SLUGS` (:22) |
+| `src/data/chungdoi.ts` | `templates[]` (:29-747) + `completedTemplateSlugs` (:751-792) |
+| `src/data/template-route-slugs.ts` | `vietnameseTemplateSlugs` (:1-42) |
+| `src/lib/audited-template-renderers.ts` | `AUDITED_TEMPLATE_SLUGS` (17 slug hiện tại) |
 | `src/components/chungdoi-demo.tsx` | `dynamic()` import + `AUDITED_TEMPLATE_RENDERERS` map |
 | `src/data/chungdoi-theme-config.ts` | theme token |
 | `src/data/chungdoi-demo-content.ts` | demo content |
@@ -32,7 +44,7 @@ Một mẫu mới phải chạm **14 điểm đăng ký**, trong đó ~10 điể
 | `tests/e2e/templates.spec.ts` | `ENVELOPE_GROUP_E_SLUGS` |
 | `src/components/chungdoi-envelope-sizing-policy.test.ts` | `groupE` |
 | `src/lib/new-invitation-layouts.test.ts` | `NEW_LAYOUTS` |
-| `src/lib/audited-template-renderers.test.ts` | count hard-code `21` → phải bump (xem tính toán dưới) |
+| `src/lib/audited-template-renderers.test.ts` | count hard-code → registrar set `35` |
 
 18 agent cùng ghi 10 file này song song = hỗn loạn merge. Đây là cách đốt quota vô ích nhất.
 
@@ -54,7 +66,7 @@ export const manifest: TemplateManifest = {
   fonts: { couple, body },
   sealType: "happiness",
   decorations: { cardImages: [...] },
-  demoContent: { baseSlug: "song-hy-red", accent: "#...", font: "Lora" },
+  demoContent: { baseSlug: "song-hy-red", primaryColor: "#...", fontFamily: "Lora" },
   i18n: {
     vi: { name, description },
     en: { name, description },
@@ -100,7 +112,7 @@ Stage 2 chạy **trước** stage 3 vì renderer không render được khi asse
 
 ### Truyền thống VN (9)
 
-| # | Slug | Concept | Khác biệt so với 44 mẫu hiện có |
+| # | Slug | Concept | Khác biệt so với 40 mẫu hiện có |
 |---|---|---|---|
 | 1 | `dong-ho-folk` | Đông Hồ woodblock | Giấy dó, màu điệp — không mẫu nào có tạo hình dân gian |
 | 2 | `tho-cam-highland` | Thổ cẩm H'Mông/Thái | `brocade-flower-red` là gấm cung đình Trung, không phải dệt vùng cao |
@@ -160,7 +172,7 @@ Bốn tiêu chí, mỗi cái 1–5, kèm lý do bắt buộc:
 
 | Tiêu chí | Hỏi gì | Ngưỡng |
 |---|---|---|
-| Độc bản | Có lẫn với mẫu nào trong 44 mẫu cũ? Critic được xem 3 preview gần nhất về màu để so | ≥4 |
+| Độc bản | Có lẫn với mẫu nào trong 40 mẫu cũ? Critic được xem 3 preview gần nhất về màu để so | ≥4 |
 | Hoàn thiện | Chữ tràn, ảnh vỡ, khoảng trắng chết, chồng lớp, mobile 375px | ≥4 |
 | Trung thực concept | Trông có đúng là "sơn mài"/"Art Deco", hay chỉ là màu na ná | ≥4 |
 | Bán được | Cô dâu VN có gửi cái này cho họ hàng không | ≥3 |
@@ -192,12 +204,12 @@ Cả 6 điều, không thiếu điều nào:
 | Agent tự cho điểm cao | Critic là agent khác, xem ảnh, có ngưỡng số |
 | Critic hạ tier làm mất giá trị | Ràng buộc critic dùng model mạnh |
 | Capture script xóa demo local | Bắt buộc `--no-sync-production` |
-| `audited-template-renderers.test.ts` count hard-code | Registrar bump `21` → `35` (17 base + 18 mới) |
+| `audited-template-renderers.test.ts` count hard-code | Registrar set `17` → `35` (17 base + 18 mới) |
 | 18 mẫu nhàn nhạt giống nhau | Mỗi concept có cột "khác biệt" ràng buộc từ đầu; critic tiêu chí Độc bản |
 | Asset chưa có khi renderer chạy | Stage 2 chạy trước stage 3, chặn cứng |
 
 ## Ngoài phạm vi
 
-- Không sửa 44 mẫu hiện có
+- Không sửa 40 mẫu hiện có
 - Không đổi editor / capabilities trừ khi mẫu mới cần hero image
 - Không deploy production trong đợt này — chỉ tới gate duyệt người thật
