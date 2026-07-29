@@ -10,6 +10,11 @@ import type { AlbumLayout } from "@/lib/album-layout";
 const CoverflowGallery = dynamic(() => import("./album-coverflow"), { ssr: false });
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
+  GiftboxArtwork,
+  LayeredGiftArtwork,
+} from "@/components/chungdoi-gift-envelope-artwork";
+import { resolveGiftVisual } from "@/data/chungdoi-gift-visuals";
+import {
   LightboxZoomControls,
   useLightboxZoom,
   VI_LIGHTBOX_ZOOM_LABELS,
@@ -529,50 +534,23 @@ function GiftEnvelopeCorner({ className, rotation }: { className: string; rotati
   );
 }
 
-/** 7 hộp quà mini bay quanh hộp chính (đúng bộ asset nguồn). */
-export const GIFTBOX_MINI_DECORS = [
-  "/chungdoi/images/giftbox/mini/spring_garden_red.webp",
-  "/chungdoi/images/giftbox/mini/brocade_flower_red.webp",
-  "/chungdoi/images/giftbox/mini/baroque_gold.webp",
-  "/chungdoi/images/giftbox/mini/saraya_gold.webp",
-  "/chungdoi/images/giftbox/mini/boho_floral_pink.webp",
-  "/chungdoi/images/giftbox/mini/qasr_gold.webp",
-  "/chungdoi/images/giftbox/mini/double_dragon_blue.webp",
-];
-
-/** Nút phong bì mừng cưới (囍) + modal QR chuyển khoản. Tự quản state đóng/mở. */
-const IGB_DECOR_POS: CSSProperties[] = [
-  { left: -20, top: 10, width: 34, zIndex: 1, transform: "rotate(-22deg)" },
-  { left: 168, top: 2, width: 38, zIndex: 1, transform: "rotate(20deg)" },
-  { left: -16, top: 120, width: 26, zIndex: 1, transform: "rotate(-18deg)" },
-  { left: 182, top: 114, width: 24, zIndex: 1, transform: "rotate(14deg)" },
-  { left: -8, top: 172, width: 44, zIndex: 3, transform: "rotate(8deg)" },
-  { left: 26, top: 182, width: 26, zIndex: 3, transform: "rotate(-10deg)" },
-  { left: 118, top: 176, width: 40, zIndex: 3, transform: "rotate(-14deg)" },
-];
-
+/** Nút phong bì mừng cưới theo từng mẫu + modal QR chuyển khoản. */
 export function GiftEnvelope({
+  templateSlug,
   banks,
   accent,
   dark,
   cardBg,
   heading = "Phong Bao Mừng Cưới",
   labelColor,
-  variant = "envelope",
-  boxImage,
-  decorImages = [],
-  photoImage,
 }: {
+  templateSlug: string;
   banks: GiftBank[];
   accent: string;
   dark: string;
   cardBg: string;
   heading?: string;
   labelColor?: string;
-  variant?: "envelope" | "giftbox" | "photo";
-  boxImage?: string;
-  decorImages?: string[];
-  photoImage?: string;
 }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -585,48 +563,28 @@ export function GiftEnvelope({
   }, [open]);
   if (banks.length === 0) return null;
   const muted = labelColor ?? hexToRgba(dark, 0.72);
+  const visual = resolveGiftVisual(templateSlug);
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: dark }}>{heading}</h2>
-      <button data-testid="gift-envelope" type="button" aria-label={`Mở ${heading.toLowerCase()}`} onClick={() => setOpen(true)} className={`group relative cursor-pointer border-none bg-transparent outline-none ${variant === "giftbox" ? "h-[280px] w-[260px]" : variant === "photo" ? "h-[300px] w-[280px]" : "h-64 w-[200px]"}`}>
-        {variant === "photo" ? (
-          <div data-testid="gift-envelope-animation" className="igb-wrapper relative flex h-full w-full items-center justify-center">
-            <span aria-hidden className="nhat-binh-sparkle absolute text-white" style={{ top: "10%", left: "14%", fontSize: 16, color: accent }}>✦</span>
-            <span aria-hidden className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute" style={{ top: "34%", right: "10%", fontSize: 12, color: accent }}>✦</span>
-            <span aria-hidden className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute" style={{ bottom: "18%", left: "18%", fontSize: 10, color: accent }}>✦</span>
-            <div className="igb-bob relative flex h-full w-full items-center justify-center" aria-hidden>
-              <div className="relative z-[2] -mr-[13%] w-[46%] max-w-[132px] origin-bottom" style={{ transform: "rotate(-8deg)" }}>
-                <img src={photoImage} alt="" aria-hidden className="igb-box h-auto w-full origin-bottom object-contain" style={{ filter: "drop-shadow(rgba(0,0,0,0.18) 0px 8px 16px)" }} />
-              </div>
-              <div className="relative z-[1] w-[46%] max-w-[132px] origin-bottom" style={{ transform: "scaleX(-1) rotate(-8deg)" }}>
-                <img src={photoImage} alt="" aria-hidden className="igb-box h-auto w-full origin-bottom object-contain" style={{ filter: "drop-shadow(rgba(0,0,0,0.18) 0px 8px 16px)" }} />
-              </div>
-            </div>
-          </div>
-        ) : variant === "giftbox" ? (
-          <div data-testid="gift-envelope-animation" className="igb-wrapper relative flex h-full w-full items-end justify-center pb-8">
-            <div className="igb-bob relative h-[220px] w-[200px]" aria-hidden>
-              {decorImages.slice(0, IGB_DECOR_POS.length).map((src, i) => (
-                <img
-                  key={src + i}
-                  src={src}
-                  alt=""
-                  aria-hidden
-                  className={`igb-decor igb-decor-${i + 1} absolute pointer-events-none`}
-                  style={{ ...IGB_DECOR_POS[i], filter: "drop-shadow(rgba(0,0,0,0.25) 0px 2px 3px)" }}
-                />
-              ))}
-              {boxImage ? (
-                <img
-                  src={boxImage}
-                  alt=""
-                  aria-hidden
-                  className="igb-box absolute pointer-events-none"
-                  style={{ left: "50%", bottom: 0, width: 170, maxHeight: 220, objectFit: "contain", marginLeft: -85, zIndex: 2, filter: "drop-shadow(rgba(0,0,0,0.25) 0px 10px 18px)" }}
-                />
-              ) : null}
-            </div>
-          </div>
+      <button
+        data-testid="gift-envelope"
+        data-gift-visual-kind={visual.kind}
+        data-gift-visual-slug={templateSlug}
+        type="button"
+        aria-label={`Mở ${heading.toLowerCase()}`}
+        onClick={() => setOpen(true)}
+        className={cn(
+          "group relative cursor-pointer border-none bg-transparent outline-none",
+          visual.kind === "giftbox" || visual.kind === "layered-image"
+            ? "h-[300px] w-[280px]"
+            : "h-64 w-[200px]",
+        )}
+      >
+        {visual.kind === "layered-image" ? (
+          <LayeredGiftArtwork visual={visual} />
+        ) : visual.kind === "giftbox" ? (
+          <GiftboxArtwork visual={visual} />
         ) : (
         <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
           {[
@@ -661,7 +619,7 @@ export function GiftEnvelope({
           </div>
         </div>
         )}
-        <p className={`${variant === "giftbox" || variant === "photo" ? "igb-hint bottom-0" : "nhat-binh-hint-text -bottom-2"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
+        <p className={`${visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>

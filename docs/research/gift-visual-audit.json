@@ -1,0 +1,352 @@
+[
+  {
+    "slug": "song-hy-red",
+    "route": "song-hy-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-hy-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/song_hy_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "song-hy-green",
+    "route": "song-hy-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-hy-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/song_hy_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "double-dragon-red",
+    "route": "song-long-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-long-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/double_dragon_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "double-phoenix-red",
+    "route": "song-phung-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-phung-do/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "elegant-leaf-green",
+    "route": "thanh-diep-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/thanh-diep-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/elegant_leaf_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "dragon-phoenix-red",
+    "route": "long-phung-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/long-phung-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/dragon_phoenix.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "dragon-phoenix-v3-red",
+    "route": "long-phung-v3-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/long-phung-v3-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/dragon_phoenix_v3.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "dragon-phoenix-v2-red",
+    "route": "long-phung-v2-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/long-phung-v2-do/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "double-dragon-green",
+    "route": "song-long-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-long-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/double_dragon_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "boho-floral-green",
+    "route": "hoa-moc-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-moc-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/boho_floral_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "boho-floral-pink",
+    "route": "hoa-moc-hong",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-moc-hong/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/boho_floral_pink.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "jasmine-white",
+    "route": "mai-lan-trang",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/mai-lan-trang/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "silk-flora-brown",
+    "route": "hoa-lua-nau",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-lua-nau/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "chateau-blue",
+    "route": "lau-dai-lam",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/lau-dai-lam/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "brocade-flower-red",
+    "route": "gam-hoa-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/gam-hoa-do/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "crystal-floral-blue",
+    "route": "hoa-thuy-tinh-lam",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-thuy-tinh-lam/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/crystal_floral_blue.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "chateau-green",
+    "route": "lau-dai-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/lau-dai-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/giftbox/mini/dragon_phoenix_v2.webp",
+      "https://chungdoi.com/images/giftbox/mini/glass_garden_green.webp",
+      "https://chungdoi.com/images/giftbox/mini/saraya_gold.webp",
+      "https://chungdoi.com/images/giftbox/mini/qasr_gold.webp",
+      "https://chungdoi.com/images/giftbox/mini/chateau_blue.webp",
+      "https://chungdoi.com/images/giftbox/mini/spring_garden_red.webp",
+      "https://chungdoi.com/images/giftbox/chateau_green.webp",
+      "https://chungdoi.com/images/giftbox/mini/spring_garden_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "baroque-gold",
+    "route": "hoang-gia-vang",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoang-gia-vang/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/baroque_gold.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "qasr-green",
+    "route": "thanhcung-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/thanhcung-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/qasr_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "qasr-gold",
+    "route": "thanhcung-vang",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/thanhcung-vang/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/qasr_gold.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "glass-garden-green",
+    "route": "vuonkinh-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/vuonkinh-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/giftbox/mini/saraya_gold.webp",
+      "https://chungdoi.com/images/giftbox/mini/jasmine_white.webp",
+      "https://chungdoi.com/images/giftbox/mini/double_phoenix_red.webp",
+      "https://chungdoi.com/images/giftbox/mini/baroque_gold.webp",
+      "https://chungdoi.com/images/giftbox/mini/boho_floral_pink.webp",
+      "https://chungdoi.com/images/giftbox/mini/brocade_flower_red.webp",
+      "https://chungdoi.com/images/giftbox/mini/chateau_green.webp",
+      "https://chungdoi.com/images/giftbox/glass_garden_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "royal-red",
+    "route": "hoang-kim-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoang-kim-do/demo",
+    "assets": [],
+    "error": "page.goto: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://chungdoi.com/vi/mau-thiep/hoang-kim-do/demo\", waiting until \"networkidle\"\u001b[22m\n"
+  },
+  {
+    "slug": "nhat-binh-red",
+    "route": "nhat-binh-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/nhat-binh-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/nhat_binh_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "hoa-tinh-red",
+    "route": "hoa-tinh-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-tinh-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/hoa_tinh_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "co-ba-red",
+    "route": "co-ba-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/co-ba-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/co_ba_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "royal-blue",
+    "route": "hoang-kim-lam",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoang-kim-lam/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/royal.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "royal-green",
+    "route": "hoang-kim-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoang-kim-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/royal.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "spring-garden-green",
+    "route": "vuon-xuan-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/vuon-xuan-xanh/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/spring_garden_green.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "chibi-red",
+    "route": "chibi-red",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/chibi-red/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/chibi_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "boho-floral-brown",
+    "route": "hoa-moc-nau",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-moc-nau/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/boho_floral_brown.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "spring-garden-red",
+    "route": "vuon-xuan-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/vuon-xuan-do/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "dragon-phoenix-green",
+    "route": "long-phung-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/long-phung-xanh/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "spring-garden-blue",
+    "route": "vuon-xuan-lam",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/vuon-xuan-lam/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/spring_garden_blue.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "minimalism-red",
+    "route": "minimalism-do",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/minimalism-do/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/minimalism_red.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "cherry-blossom-pink",
+    "route": "anh-dao-hong",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/anh-dao-hong/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/cherry_blossom_pink.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "double-phoenix-green",
+    "route": "song-phung-xanh",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-phung-xanh/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "double-dragon-blue",
+    "route": "song-long-lam",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/song-long-lam/demo",
+    "assets": [],
+    "error": null
+  },
+  {
+    "slug": "dragon-phoenix-blue",
+    "route": "long-phung-lam",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/long-phung-lam/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/dragon_phoenix.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "dragon-phoenix-black",
+    "route": "long-phung-huyen",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/long-phung-huyen/demo",
+    "assets": [
+      "https://chungdoi.com/images/envelope/dragon_phoenix.webp"
+    ],
+    "error": null
+  },
+  {
+    "slug": "maroon-love",
+    "route": "maroon-love",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/maroon-love/demo",
+    "assets": [],
+    "error": null
+  }
+]

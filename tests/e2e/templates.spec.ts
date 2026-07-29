@@ -474,10 +474,9 @@ test.describe("templates — demo pages", () => {
     await expect(hero.locator('img[src$="/boho-floral-pink/asset_2.webp"]')).toBeVisible();
 
     const envelope = page.getByTestId("gift-envelope");
-    await expect(envelope).toBeAttached();
-    await expect(envelope.locator(".nhat-binh-envelope-body")).toHaveCSS("animation-name", "nhat-binh-envelope-shake");
-    await expect(envelope.locator(".nhat-binh-envelope-front")).toHaveCSS("animation-name", "nhat-binh-glow-pulse");
-    await expect(envelope.locator(".nhat-binh-coin-1")).toHaveCSS("animation-name", "nhat-binh-coin-float-1");
+    await expect(envelope).toHaveAttribute("data-gift-visual-slug", "boho-floral-pink");
+    await expect(envelope.locator('img[src$="/giftbox/boho-floral-pink/envelope.webp"]')).toHaveCount(2);
+    await expect(envelope.locator(".igb-bob")).toHaveCSS("animation-name", "igb-gift-bob");
 
     await expect(page.locator("[data-template-footer]")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(page.locator("[data-template-lower-decor]")).toHaveCSS("opacity", "0.07");
@@ -519,7 +518,7 @@ test.describe("templates — demo pages", () => {
     }
   });
 
-  test("every source-animated gift envelope keeps moving", async ({ page }) => {
+  test("every source gift envelope uses its template artwork", async ({ page }) => {
     test.setTimeout(300_000);
 
     for (const slug of ANIMATED_ENVELOPE_SLUGS) {
@@ -528,8 +527,8 @@ test.describe("templates — demo pages", () => {
 
       const envelope = page.getByTestId("gift-envelope");
       await expect(envelope, slug).toBeAttached();
-      await expect(envelope.locator(".nhat-binh-envelope-body"), slug).toHaveCSS("animation-name", "nhat-binh-envelope-shake");
-      await expect(envelope.locator(".nhat-binh-envelope-front"), slug).toHaveCSS("animation-name", "nhat-binh-glow-pulse");
+      await expect(envelope.locator(`img[src$="/giftbox/${slug}/envelope.webp"]`), slug).toHaveCount(2);
+      await expect(envelope.locator(".igb-bob"), slug).toHaveCSS("animation-name", "igb-gift-bob");
     }
   });
 
@@ -544,19 +543,21 @@ test.describe("templates — demo pages", () => {
     }
   });
 
-  test("source-static gift sections stay QR-only", async ({ page }) => {
+  test("previously QR-only source sections use their template envelope", async ({ page }) => {
     test.setTimeout(180_000);
 
     for (const slug of STATIC_QR_SLUGS) {
       const response = await page.goto(`/mau-thiep/${slug}/demo?capture=1`, { waitUntil: "domcontentloaded", timeout: 60_000 });
       expect(response?.ok(), slug).toBeTruthy();
-      await expect(page.getByTestId("gift-envelope"), slug).toHaveCount(0);
-      await expect(page.locator('img[alt^="QR -"]').first(), slug).toBeAttached();
+      const envelope = page.getByTestId("gift-envelope");
+      await expect(envelope, slug).toBeAttached();
+      await expect(envelope.locator(`img[src$="/giftbox/${slug}/envelope.webp"]`), slug).toHaveCount(2);
     }
   });
 
   test("bank QR images resolve to a locally generated VietQR SVG", async ({ page }) => {
     await page.goto("/mau-thiep/vuon-xuan-do/demo?capture=1", { timeout: 60_000 });
+    await page.getByTestId("gift-envelope").click();
 
     const qrImage = page.locator('img[alt^="QR -"]').first();
     await expect(qrImage).toBeVisible();

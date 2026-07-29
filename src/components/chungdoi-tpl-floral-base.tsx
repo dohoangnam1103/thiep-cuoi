@@ -227,7 +227,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
               {P.giftMode === "qr" ? (
                 <GiftQrGrid banks={banks} accent={P.giftColor ?? P.accent} heading={P.giftHeading || "Hộp Quà Mừng"} />
               ) : (
-                <GiftEnvelope banks={banks} accent={P.accent} dark={P.giftColor ?? P.accent} cardBg={P.cardBg} heading={P.giftHeading || "Phong Bao Mừng Cưới"} labelColor={muted} />
+                <GiftEnvelope templateSlug={content.slug} banks={banks} accent={P.accent} dark={P.giftColor ?? P.accent} cardBg={P.cardBg} heading={P.giftHeading || "Phong Bao Mừng Cưới"} labelColor={muted} />
               )}
             </section>
           ) : null}

@@ -10,7 +10,7 @@ import {
   SharedWishForm,
   WEEKDAY_LABELS,
   buildCalendar,
-  buildVietQrImageUrl,
+  GiftEnvelope,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
@@ -190,22 +190,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
 
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <SpringHeading>QR Mừng Cưới</SpringHeading>
-              <div className="mt-6 flex flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-                {banks.map((q) => {
-                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
-                  return (
-                    <div key={q.label} className="flex max-w-[200px] flex-1 flex-col items-center">
-                      <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-xs font-semibold">{q.label}</h3>
-                      <div className="size-32 rounded-xl bg-white p-2 sm:size-40"><img src={qr} alt={`QR - ${q.label}`} className="h-full w-full object-contain" /></div>
-                      <p className="mt-2 text-[13px] font-semibold">{q.bank}</p>
-                      <p className="text-[13px] font-mono">{q.num}</p>
-                      <p className="text-[13px]">{q.name}</p>
-                      <a href={`${qr}&download=1`} download className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: SGR_TEXT, color: SGR_TEXT }}>Lưu QR</a>
-                    </div>
-                  );
-                })}
-              </div>
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={SGR_ACCENT} dark={SGR_TEXT} cardBg={SGR_BG} heading="Phong Bao Mừng Cưới" labelColor={SGR_MUTED} />
             </section>
           ) : null}
         </div>

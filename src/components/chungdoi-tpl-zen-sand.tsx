@@ -280,7 +280,7 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
           {/* Quà mừng */}
           {banks.length > 0 ? (
             <Block className="gap-10 text-center">
-              <GiftEnvelope
+              <GiftEnvelope templateSlug={content.slug}
                 banks={banks}
                 accent={SEAL}
                 dark={SEAL}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -286,19 +287,7 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
             <div className="flex w-full flex-col items-center">
               <RoyalHeading>Phong bì mừng cưới</RoyalHeading>
               <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative mt-4 cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 240 }}>
-                <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
-                  <span aria-hidden="true" className="nhat-binh-sparkle absolute left-6 top-6 text-lg" style={{ color: ROYAL_GOLD }}>✦</span>
-                  <span aria-hidden="true" className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute right-7 top-10 text-sm" style={{ color: ROYAL_GOLD }}>✦</span>
-                  <span aria-hidden="true" className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute bottom-10 left-10 text-sm" style={{ color: ROYAL_GOLD }}>✦</span>
-                  <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
-                    <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
-                      <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: ROYAL_GOLD }} />
-                      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${ROYAL_GOLD} 0%, ${ROYAL_GOLD_MUTED} 100%)`, border: `3px solid ${hexToRgba(ROYAL_GOLD, 0.6)}` }}>
-                        <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1 }}>囍</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <TemplateGiftArtwork templateSlug={content.slug} />
                 <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: ROYAL_GOLD }}>Nhấn để mở</p>
               </button>
             </div>

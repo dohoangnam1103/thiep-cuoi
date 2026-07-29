@@ -232,7 +232,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={GOLD} dark={GOLD} cardBg={RED_DEEP} heading="Hộp Quà Mừng" labelColor={GOLD} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={GOLD} dark={GOLD} cardBg={RED_DEEP} heading="Hộp Quà Mừng" labelColor={GOLD} />
             </section>
           ) : null}
         </div>

@@ -216,7 +216,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={PURPLE} dark="#111111" cardBg="#fffaf7" heading="Hộp Quà Mừng" labelColor={PURPLE_MUTED} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={PURPLE} dark="#111111" cardBg="#fffaf7" heading="Hộp Quà Mừng" labelColor={PURPLE_MUTED} />
             </section>
           ) : null}
         </div>

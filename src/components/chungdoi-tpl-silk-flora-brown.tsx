@@ -37,7 +37,7 @@ export function SilkFloraBrownInvitation({ content }: { content: ChungDoiDemoCon
         nameFont: { fontFamily: '"The Nautigal", cursive' },
         ampFont: { fontFamily: '"The Nautigal", cursive' },
         giftHeading: "Hộp Quà Mừng",
-        giftMode: "qr",
+        giftMode: "envelope",
         giftColor: "#996247",
         footerBg: "transparent",
         footerText: "#996247",

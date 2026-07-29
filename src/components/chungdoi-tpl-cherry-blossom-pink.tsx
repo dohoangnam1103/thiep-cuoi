@@ -213,7 +213,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={PINK} dark={PINK} cardBg={BLUSH} heading="Hộp Quà Mừng" labelColor={PINK_MUTED} variant="photo" photoImage="/chungdoi/images/envelope/cherry_blossom_pink.webp" />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={PINK} dark={PINK} cardBg={BLUSH} heading="Hộp Quà Mừng" labelColor={PINK_MUTED} />
             </section>
           ) : null}
         </div>

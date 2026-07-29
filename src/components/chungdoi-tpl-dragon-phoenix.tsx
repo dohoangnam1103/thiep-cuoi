@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -390,19 +391,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                 <h2 className="mb-1 text-[24px] font-semibold md:text-[30px]" style={{ color: GOLD, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
                 <p className="mb-4 text-[14px] opacity-70 md:text-[16px]" style={{ color: GOLD }}>結婚紅包</p>
                 <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setBankOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-                  <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
-                    <span aria-hidden="true" className="nhat-binh-sparkle absolute left-6 top-6 text-lg" style={{ color: GOLD }}>✦</span>
-                    <span aria-hidden="true" className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute right-7 top-10 text-sm" style={{ color: GOLD }}>✦</span>
-                    <span aria-hidden="true" className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute bottom-10 left-10 text-sm" style={{ color: GOLD }}>✦</span>
-                    <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
-                      <div className="nhat-binh-envelope-front absolute overflow-hidden rounded-lg" style={{ inset: 0, backgroundColor: "#b91c1c", boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}>
-                        <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: GOLD }} />
-                        <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${GOLD} 0%, #d97706 100%)`, border: "3px solid #fef3c7" }}>
-                          <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1 }}>囍</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <TemplateGiftArtwork templateSlug={content.slug} />
                   <p className="nhat-binh-hint-text absolute -bottom-3 left-1/2 flex -translate-x-1/2 flex-col items-center whitespace-nowrap text-xs font-medium" style={{ color: GOLD }}>
                     <span>Nhấn để mở</span>
                     <span className="opacity-70">點擊開啟</span>

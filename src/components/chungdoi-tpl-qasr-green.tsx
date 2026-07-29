@@ -221,7 +221,7 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
           {/* GIFT ENVELOPE */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope banks={banks} accent={QASR_GOLD} dark={QASR_GREEN} cardBg="#f8f4e8" heading="Hộp Quà Mừng" labelColor={QASR_GREEN_MUTED} />
+              <GiftEnvelope templateSlug={content.slug} banks={banks} accent={QASR_GOLD} dark={QASR_GREEN} cardBg="#f8f4e8" heading="Hộp Quà Mừng" labelColor={QASR_GREEN_MUTED} />
             </section>
           ) : null}
         </div>

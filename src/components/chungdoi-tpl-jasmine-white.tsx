@@ -41,7 +41,7 @@ export function JasmineWhiteInvitation({ content }: { content: ChungDoiDemoConte
         nameFont: { fontFamily: '"The Nautigal", cursive' },
         ampFont: { fontFamily: '"The Nautigal", cursive' },
         giftHeading: "Hộp Quà Mừng",
-        giftMode: "qr",
+        giftMode: "envelope",
         giftColor: "#404a1d",
         footerBg: "transparent",
         footerText: "#404a1d",

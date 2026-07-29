@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationCeremonyMessage, invitationHeroImage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
@@ -411,32 +412,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <div className="relative z-10 flex flex-col items-center justify-center py-8">
           <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
           <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-            <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
-              {[
-                { w: 30.8, style: { top: "5%", right: "5%" } },
-                { w: 25.2, style: { top: "20%", left: "0%" } },
-                { w: 28, style: { bottom: "20%", right: "0%" } },
-                { w: 22.4, style: { bottom: "8%", left: "8%" } },
-                { w: 21, style: { top: "45%", right: "-5%" } },
-              ].map((c, i) => (
-                <div key={i} className={`nhat-binh-coin-${i + 1} absolute rounded-full`} style={{ width: c.w, height: c.w, background: "rgb(251, 191, 36)", border: "2px solid rgb(245, 158, 11)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
-                  <div className="absolute rounded-full" style={{ inset: 2, border: "2px solid rgb(253, 224, 71)" }} />
-                </div>
-              ))}
-              <span className="nhat-binh-sparkle absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
-              <span className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
-              <span className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
-              <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
-                <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "rgb(92, 22, 18)" }} />
-                <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "rgb(107, 29, 24)" }} />
-                <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "rgb(185, 28, 28)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
-                  <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: "rgb(251, 191, 36)" }} />
-                  <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: "radial-gradient(circle, rgb(251, 191, 36) 0%, rgb(217, 119, 6) 100%)", border: "3px solid rgb(254, 243, 199)" }}>
-                    <span className="font-bold" style={{ fontSize: 30.8, color: "rgb(185, 28, 28)", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TemplateGiftArtwork templateSlug={content.slug} />
             <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: "rgb(70, 70, 70)" }}>Nhấn để mở</p>
           </button>
         </div>

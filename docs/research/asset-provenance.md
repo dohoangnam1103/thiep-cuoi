@@ -56,3 +56,11 @@ The `opening-plate.webp`, `opening-*.webp`, and `opening-assets.json` files unde
 - Flat graphic themes were separated deterministically from their original pixels so registration stays exact; their clean plates were rebuilt from the original palette without retaining the animated shapes.
 - Every foreground was trimmed losslessly with a two-pixel transparent safety border. `opening-assets.json` records its exact source-canvas rectangle so the closed and animated frames share one coordinate system.
 - The asset validator requires original canvas dimensions for plates, genuine alpha for foregrounds, in-bounds rectangles, unique paths, and rejects `artwork.webp` as a foreground fallback.
+
+## Chung Đôi wedding gift visuals (2026-07-29)
+
+The wedding-envelope and gift-box assets under `public/chungdoi/images/giftbox/` are first-party presentation assets downloaded from the matching public template demos at `https://chungdoi.com/vi/mau-thiep/<route>/demo`. Original files came from `https://chungdoi.com/images/envelope/` and `https://chungdoi.com/images/giftbox/`; they are stored locally without modification and are not hotlinked.
+
+The complete template-to-source audit, shared-source exceptions, and exact gift-box mini sets are documented in `docs/research/GIFT_VISUAL_SOURCE_AUDIT.md`. The raw browser network capture is `docs/research/gift-visual-audit.json`, and `scripts/download-gift-visuals.mjs` records the deterministic source URL to local path mapping.
+
+These downloaded clone assets are separate from the original/generated template artwork documented above. Confirm deployment rights for the Chung Đôi source assets before distributing this repository outside the Chung Đôi/Thiệp Mừng Online product context.

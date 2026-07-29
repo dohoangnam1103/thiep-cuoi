@@ -56,8 +56,8 @@ const DD_BLUE_PALETTE: DdPalette = {
   lunar: "(Tức ngày 12/09 năm Ất Tỵ)",
   groomLabel: "Út Nam",
   brideLabel: "Thứ Nữ",
-  giftHeading: "QR Mừng Cưới",
-  giftMode: "qr",
+  giftHeading: "Phong Bao Mừng Cưới",
+  giftMode: "envelope",
   avatars: {
     groom: "/chungdoi/uploads/double-dragon-blue/ff30b091-fbe1-4f66-8163-be41d70554d6.jpg",
     bride: "/chungdoi/uploads/double-dragon-blue/26477c03-eb5a-4486-b06b-74ea917b48e1.jpg",
@@ -351,7 +351,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
             </div>
             <div className="relative z-10 flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: DD_LINEN }}>
               {palette.giftMode === "envelope" ? (
-                <GiftEnvelope banks={bankCards} accent="#f4c76a" dark={DD_RED} cardBg={DD_LINEN} heading={palette.giftHeading} labelColor={DD_GRAY} />
+                <GiftEnvelope templateSlug={content.slug} banks={bankCards} accent="#f4c76a" dark={DD_RED} cardBg={DD_LINEN} heading={palette.giftHeading} labelColor={DD_GRAY} />
               ) : (
                 <GiftQrGrid banks={bankCards} heading={palette.giftHeading} accent={DD_RED} />
               )}

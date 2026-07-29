@@ -335,7 +335,7 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
           {/* Quà mừng */}
           {banks.length > 0 ? (
             <section className="w-full text-center">
-              <GiftEnvelope
+              <GiftEnvelope templateSlug={content.slug}
                 banks={banks}
                 accent={DEEP}
                 dark={SAGE}

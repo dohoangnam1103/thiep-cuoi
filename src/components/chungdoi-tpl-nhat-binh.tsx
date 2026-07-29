@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -378,45 +379,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
           <div className="relative z-[2] flex flex-col items-center justify-center px-2 py-[10px] text-center md:px-10 md:py-[15px] lg:py-[20px]">
             <h2 className="mb-4 flex flex-col items-center text-[21px] md:text-[25px] lg:text-[32px]" style={{ color: BROWN, fontFamily: NB_TITLING, fontWeight: 400, letterSpacing: "0.02em" }}>Phong Bao Mừng Cưới</h2>
             <button type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-              <div className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
-                {[
-                  { w: 30.8, style: { top: "5%", right: "5%" } },
-                  { w: 25.2, style: { top: "20%", left: "0%" } },
-                  { w: 28, style: { bottom: "20%", right: "0%" } },
-                  { w: 22.4, style: { bottom: "8%", left: "8%" } },
-                  { w: 21, style: { top: "45%", right: "-5%" } },
-                ].map((c, i) => (
-                  <div key={i} className={`absolute rounded-full nhat-binh-coin-${i + 1}`} style={{ width: c.w, height: c.w, background: "rgb(251, 191, 36)", border: "2px solid rgb(245, 158, 11)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
-                    <div className="absolute rounded-full" style={{ inset: 2, border: "2px solid rgb(253, 224, 71)" }} />
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ width: c.w * 0.28, height: c.w * 0.28, border: "2px solid rgb(217, 119, 6)", boxShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px inset" }} />
-                  </div>
-                ))}
-                <span className="nhat-binh-sparkle absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
-                <span className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
-                <span className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
-                <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
-                  <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "rgb(92, 22, 18)" }} />
-                  <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "rgb(107, 29, 24)" }} />
-                  <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "rgb(185, 28, 28)", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
-                    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-radial-gradient(circle at 0px 0px, transparent 0px, transparent 11.2px, rgb(127, 29, 29) 11.2px, rgb(127, 29, 29) 11.9px)", backgroundSize: "21px 21px", backgroundPosition: "10.5px 10.5px" }} />
-                    <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: "rgb(251, 191, 36)" }} />
-                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: "radial-gradient(circle, rgb(251, 191, 36) 0%, rgb(217, 119, 6) 100%)", border: "3px solid rgb(254, 243, 199)" }}>
-                      <span className="font-bold" style={{ fontSize: 30.8, color: "rgb(185, 28, 28)", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
-                    </div>
-                    {([
-                      { pos: "top-2 left-2", rot: 0 },
-                      { pos: "top-2 right-2", rot: 90 },
-                      { pos: "bottom-2 left-2", rot: -90 },
-                      { pos: "bottom-2 right-2", rot: 180 },
-                    ] as const).map((corner) => (
-                      <svg key={corner.pos} className={`absolute ${corner.pos}`} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" style={{ transform: `rotate(${corner.rot}deg)` }}>
-                        <path d="M2 2 L2 16 L6 16 L6 6 L16 6 L16 2 Z" opacity="0.85" strokeLinecap="square" strokeLinejoin="miter" />
-                        <path d="M6 10 L10 10 L10 6" opacity="0.85" strokeLinecap="square" />
-                      </svg>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <TemplateGiftArtwork templateSlug={content.slug} />
               <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: BROWN }}>Nhấn để mở</p>
             </button>
           </div>

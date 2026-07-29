@@ -3,6 +3,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 
+import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   WEEKDAY_LABELS,
@@ -250,32 +251,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             <section className="flex w-full flex-col items-center gap-4">
               <BaroqueHeading>Phong Bao Mừng Cưới</BaroqueHeading>
               <button data-testid="gift-envelope" type="button" aria-label="Mở phong bao mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-                <div data-testid="gift-envelope-animation" className="nhat-binh-envelope-wrapper relative flex h-full w-full items-center justify-center">
-                  {[
-                    { w: 30.8, style: { top: "5%", right: "5%" } },
-                    { w: 25.2, style: { top: "20%", left: "0%" } },
-                    { w: 28, style: { bottom: "20%", right: "0%" } },
-                    { w: 22.4, style: { bottom: "8%", left: "8%" } },
-                    { w: 21, style: { top: "45%", right: "-5%" } },
-                  ].map((c, i) => (
-                    <div key={i} className={`nhat-binh-coin-${i + 1} absolute rounded-full`} style={{ width: c.w, height: c.w, background: GOLD, border: `2px solid ${GOLD_DARK}`, boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 3px", ...c.style }}>
-                      <div className="absolute rounded-full" style={{ inset: 2, border: `2px solid ${hexToRgba(GOLD, 0.6)}` }} />
-                    </div>
-                  ))}
-                  <span className="nhat-binh-sparkle absolute text-white" style={{ top: "8%", left: "20%", fontSize: 14 }}>✦</span>
-                  <span className="nhat-binh-sparkle nhat-binh-sparkle-2 absolute text-white" style={{ bottom: "35%", right: "8%", fontSize: 11.2 }}>✦</span>
-                  <span className="nhat-binh-sparkle nhat-binh-sparkle-3 absolute text-white" style={{ top: "40%", left: "3%", fontSize: 8.4 }}>✦</span>
-                  <div className="nhat-binh-envelope-body relative" style={{ width: 140, height: 196 }}>
-                    <div className="absolute rounded-b-lg" style={{ left: 2, right: -2, bottom: -3, height: 196, backgroundColor: "#6b1d18" }} />
-                    <div className="absolute rounded-r-lg" style={{ top: 2, bottom: -2, right: -3, width: 140, backgroundColor: "#7a2620" }} />
-                    <div className="nhat-binh-envelope-front absolute inset-0 overflow-hidden rounded-lg" style={{ backgroundColor: "#b91c1c", boxShadow: "rgba(0, 0, 0, 0.3) 0px 4px 20px" }}>
-                      <div className="absolute left-0 right-0 top-0" style={{ height: 4, backgroundColor: GOLD }} />
-                      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg" style={{ width: 63, height: 63, background: `radial-gradient(circle, ${GOLD} 0%, ${GOLD_DARK} 100%)`, border: "3px solid #fef3c7" }}>
-                        <span className="font-bold" style={{ fontSize: 30.8, color: "#b91c1c", lineHeight: 1, textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>囍</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <TemplateGiftArtwork templateSlug={content.slug} />
                 <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: INK_MUTED }}>Nhấn để mở</p>
               </button>
             </section>

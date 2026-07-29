@@ -94,7 +94,7 @@ function GiftSection({ content }: { content: ChungDoiDemoContent }) {
   if (banks.length === 0) return null;
   return (
     <SectionCard className="text-center">
-      <GiftEnvelope banks={banks} accent={TEXT} dark={ACCENT} cardBg="#eef7fa" heading="Phong Bao Mừng Cưới" labelColor={MUTED} />
+      <GiftEnvelope templateSlug={content.slug} banks={banks} accent={TEXT} dark={ACCENT} cardBg="#eef7fa" heading="Phong Bao Mừng Cưới" labelColor={MUTED} />
     </SectionCard>
   );
 }
