@@ -4,6 +4,7 @@ import auroraGlassDarkAssets from "../../../public/chungdoi/images/themes/_decor
 import batTrangBlueAssets from "../../../public/chungdoi/images/themes/_decor/bat-trang-blue/opening-assets.json";
 import botanicalLavenderAssets from "../../../public/chungdoi/images/themes/_decor/botanical-lavender/opening-assets.json";
 import celestialMapAssets from "../../../public/chungdoi/images/themes/_decor/celestial-map/opening-assets.json";
+import chimLacIvoryAssets from "../../../public/chungdoi/images/themes/_decor/chim-lac-ivory/opening-assets.json";
 import cinemaCreditAssets from "../../../public/chungdoi/images/themes/_decor/cinema-credit/opening-assets.json";
 import coastalMediterraneanAssets from "../../../public/chungdoi/images/themes/_decor/coastal-mediterranean/opening-assets.json";
 import dongHoFolkAssets from "../../../public/chungdoi/images/themes/_decor/dong-ho-folk/opening-assets.json";
@@ -14,6 +15,7 @@ import senMonolineAssets from "../../../public/chungdoi/images/themes/_decor/sen
 import sonMaiLacquerAssets from "../../../public/chungdoi/images/themes/_decor/son-mai-lacquer/opening-assets.json";
 import swissBrutalistAssets from "../../../public/chungdoi/images/themes/_decor/swiss-brutalist/opening-assets.json";
 import thoCamHighlandAssets from "../../../public/chungdoi/images/themes/_decor/tho-cam-highland/opening-assets.json";
+import trongDongDongSonAssets from "../../../public/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-assets.json";
 import trucChiMinimalAssets from "../../../public/chungdoi/images/themes/_decor/truc-chi-minimal/opening-assets.json";
 import y2kChromeAssets from "../../../public/chungdoi/images/themes/_decor/y2k-chrome/opening-assets.json";
 
@@ -192,6 +194,18 @@ const effectInputs = {
   "botanical-lavender": [botanicalLavenderAssets, {
     durationMs: 1430,
     exits: { lavender: [-84, -46, 2.9, -9, 8], "mustard-pods": [86, 48, 2.9, 9, 8], stems: [0, 78, 2.5, 6, 7] },
+  }],
+  "trong-dong-dong-son": [trongDongDongSonAssets, {
+    durationMs: 1470,
+    exits: { "spiral-bands": [0, 0, 3.2, 22, 9], "lac-birds": [0, -86, 3, -14, 9], "sun-star": [0, 0, 4, 0, 14] },
+    peaks: { "sun-star": { brightness: 1.45 } },
+    origins: { "spiral-bands": "50% 50%", "lac-birds": "50% 50%", "sun-star": "50% 50%" },
+  }],
+  "chim-lac-ivory": [chimLacIvoryAssets, {
+    durationMs: 1320,
+    exits: { "bird-flock": [92, -70, 2.9, 10, 8], "drum-profile": [0, 80, 2.6, -4, 7], "frieze-bands": [0, 0, 3.1, 6, 8] },
+    peaks: { "bird-flock": { xPercent: 4, yPercent: -3 } },
+    origins: { "bird-flock": "50% 50%", "drum-profile": "50% 100%", "frieze-bands": "50% 50%" },
   }],
 } as const;
 

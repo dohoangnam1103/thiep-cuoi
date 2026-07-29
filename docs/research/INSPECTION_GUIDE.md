@@ -87,7 +87,7 @@ After inspection, create these files in `docs/research/`:
 
 Phần này là nguồn quyết định duy nhất khi tạo thêm mẫu thiệp cưới cho Chung Đôi. Đọc hết trước khi thiết kế hoặc code mẫu mới. Không hỏi lại các lựa chọn sản phẩm đã được khóa ở đây, trừ khi yêu cầu mới của người dùng thay đổi chúng rõ ràng.
 
-Playbook được đúc kết sau khi triển khai và review 18 mẫu nghệ thuật ngày 2026-07-28. Nó áp dụng trực tiếp cho các mẫu mới dùng hệ thống manifest và renderer dùng chung.
+Playbook được đúc kết sau khi triển khai và review 18 mẫu nghệ thuật ngày 2026-07-28, và được áp dụng lại cho hai mẫu Đông Sơn ngày 2026-07-29. Nó áp dụng trực tiếp cho các mẫu mới dùng hệ thống manifest và renderer dùng chung.
 
 ## Kiến trúc hiện tại
 
@@ -128,7 +128,7 @@ Playbook được đúc kết sau khi triển khai và review 18 mẫu nghệ th
 - Mọi asset được khai báo trong manifest phải là public path bắt đầu bằng `/` và phải tồn tại trên đĩa trước khi chạy registrar.
 - Artwork mới phải là asset gốc hoặc có quyền sử dụng rõ ràng. Ghi nguồn tại `docs/research/asset-provenance.md` nếu dùng nguồn bên ngoài.
 
-## 18 mẫu đã triển khai bằng renderer này
+## 20 mẫu đã triển khai bằng renderer này
 
 | Slug | Số ảnh mở đầu |
 |---|---:|
@@ -150,6 +150,8 @@ Playbook được đúc kết sau khi triển khai và review 18 mẫu nghệ th
 | `aurora-glass-dark` | 1 |
 | `y2k-chrome` | 1 |
 | `botanical-lavender` | 2 |
+| `trong-dong-dong-son` | 2 |
+| `chim-lac-ivory` | 1 |
 
 Số ảnh mở đầu được khai báo bằng `heroImageCount: 1 | 2` trong manifest. Editor dựa vào giá trị này để hiện đúng số vùng upload.
 
@@ -213,6 +215,8 @@ Số ảnh mở đầu được khai báo bằng `heroImageCount: 1 | 2` trong m
 - Mọi content card và media frame lớn của nhóm art invitation dùng radius `24px` (`rounded-[1.5rem]`), không giữ ngoại lệ vuông `0–3px`.
 - Button và calendar-day highlight tiếp tục dùng `radiusClass` riêng của theme; không dùng radius control để quyết định radius card.
 - Border phải bao ngoài padding. Không đặt đường viền hoặc SVG absolute đi xuyên qua vùng chữ.
+- Khi tự vẽ artwork hero, dồn toàn bộ chủ thể và hoạ tiết vào khoảng `38%` chiều cao trên của canvas. Cụm ngày/tên neo xuống đáy hero, còn mask chỉ trong suốt hoàn toàn từ `88%`, nên mọi nét nằm giữa `38%` và `88%` sẽ đè lên chữ.
+- Không đặt dải trang trí ngang (sawtooth, ladder, triangle band) ở nửa dưới canvas. Nếu cần dải, đặt phía trên chủ thể chính.
 - Hoạ tiết nền nằm sau nội dung, opacity vừa đủ và không làm giảm độ tương phản chữ.
 
 ### 8. Typography theo chủ đề nhưng vẫn dễ đọc
@@ -341,7 +345,7 @@ npm run templates:validate-opening-assets -- --slugs <slug>
 ### Bước 4. Tạo wrapper renderer
 
 - Tạo `src/components/chungdoi-tpl-<slug>.tsx`.
-- Copy cấu trúc của một wrapper thuộc 18 mẫu, không copy toàn bộ renderer.
+- Copy cấu trúc của một wrapper thuộc 20 mẫu, không copy toàn bộ renderer.
 - Khai báo `ArtInvitationConfig` bằng Tailwind class.
 - Dùng `satisfies ArtInvitationConfig`.
 - Export named component đúng với `rendererExport` trong manifest.
@@ -437,6 +441,7 @@ Kiểm tra ít nhất các trạng thái sau bằng browser thật:
 | Hiệu ứng có layer nhưng nhìn như không bung | Fade/blur quá sớm hoặc card rời quá nhanh | Giữ layer sắc nét tới khoảng `70%`, duration `1.3–1.5s`, card chỉ thoát mạnh ở đoạn cuối |
 | Layer lỗi làm background composite phóng to | Dùng ảnh gốc làm fallback | Layer tùy chọn lỗi thì bỏ qua; không bao giờ fallback sang `artwork.webp` |
 | Sửa 18 mẫu làm Song Phụng mất hiệu ứng | Dùng chung nhánh animation cho art invitation và `flyOnOpen` legacy | Giữ hai pipeline riêng và luôn chạy test hồi quy Song Phụng |
+| Hoạ tiết trong artwork chạy ngang qua ngày và tên | Vẽ chủ thể hoặc dải trang trí ở khoảng `40%–88%` chiều cao canvas, đúng vùng mask còn opacity và đúng chỗ cụm text neo đáy | Giữ mọi chủ thể và dải hoạ tiết trong khoảng `0%–38%` chiều cao canvas; phần dưới chỉ để nền trơn và hạt mờ |
 
 ## Definition of Done cho mẫu mới
 
@@ -483,7 +488,7 @@ Các invariant chính được bảo vệ bởi:
 
 Các test trên phải tiếp tục xác nhận:
 
-- 18 slug có manifest, route, catalog, demo, theme, renderer và preview.
+- 20 slug có manifest, route, catalog, demo, theme, renderer và preview.
 - `heroImageCount` đúng cho từng mẫu.
 - Shared renderer vẫn là một cột.
 - Width vẫn là `900px` và `760px`.

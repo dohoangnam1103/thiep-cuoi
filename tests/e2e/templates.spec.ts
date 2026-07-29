@@ -170,6 +170,8 @@ const ART_OPENING_CASES = [
   ["aurora-glass-dark", 1410],
   ["y2k-chrome", 1390],
   ["botanical-lavender", 1430],
+  ["trong-dong-dong-son", 1470],
+  ["chim-lac-ivory", 1320],
 ] as const;
 
 /**

@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/chim-lac-ivory/opening-plate.webp",
+  "layers": [
+    {
+      "id": "frieze-bands",
+      "src": "/chungdoi/images/themes/_decor/chim-lac-ivory/opening-frieze-bands.webp",
+      "rect": {
+        "x": 10,
+        "y": 211,
+        "width": 1004,
+        "height": 1309
+      }
+    },
+    {
+      "id": "drum-profile",
+      "src": "/chungdoi/images/themes/_decor/chim-lac-ivory/opening-drum-profile.webp",
+      "rect": {
+        "x": 264,
+        "y": 822,
+        "width": 496,
+        "height": 494
+      }
+    },
+    {
+      "id": "bird-flock",
+      "src": "/chungdoi/images/themes/_decor/chim-lac-ivory/opening-bird-flock.webp",
+      "rect": {
+        "x": 25,
+        "y": 385,
+        "width": 809,
+        "height": 243
+      }
+    }
+  ]
+}

@@ -38,6 +38,8 @@ const NEW_ART_TEMPLATE_SLUGS = [
   "aurora-glass-dark",
   "y2k-chrome",
   "botanical-lavender",
+  "trong-dong-dong-son",
+  "chim-lac-ivory",
 ] as const;
 
 const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], 1 | 2> = {
@@ -59,6 +61,8 @@ const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[numbe
   "aurora-glass-dark": 1,
   "y2k-chrome": 1,
   "botanical-lavender": 2,
+  "trong-dong-dong-son": 2,
+  "chim-lac-ivory": 1,
 };
 
 const NEW_ART_TEMPLATE_FONTS = {
@@ -80,6 +84,8 @@ const NEW_ART_TEMPLATE_FONTS = {
   "aurora-glass-dark": ["Alex Brush", "font-art-alex"],
   "y2k-chrome": ["SVN-HC Marvin Visions", "font-art-marvin"],
   "botanical-lavender": ["1FTV VIP Signora", "font-art-signora"],
+  "trong-dong-dong-son": ["UNI Chu truyen thong", "font-art-uni"],
+  "chim-lac-ivory": ["Fz Qellia", "font-art-qellia"],
 } as const satisfies Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], readonly [string, string]>;
 
 test("generated template manifests are wired through every public data registry", () => {

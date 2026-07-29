@@ -1,6 +1,6 @@
 # Generated Wedding Template Asset Provenance
 
-All artwork in this document was generated with OpenAI's built-in `imagegen` tool on 2026-07-28. The files are original raster artwork created for Chungdoi; no third-party reference images or web-sourced assets were used. Each source was normalized to WebP for production and saved under `public/chungdoi/images/themes/_decor/<slug>/artwork.webp`.
+Most artwork in this document was generated with OpenAI's built-in `imagegen` tool on 2026-07-28; the two Đông Sơn themes added on 2026-07-29 were instead hand-authored as SVG and rasterized (see the vector-authored section below). Every file is original artwork created for Chungdoi; no third-party reference images or web-sourced assets were used. Each source was normalized to WebP for production and saved under `public/chungdoi/images/themes/_decor/<slug>/artwork.webp`.
 
 ## Final prompt set
 
@@ -27,13 +27,30 @@ Every prompt requested a vertical, text-free wedding-invitation hero artwork wit
 | Y2K Chrome | `y2k-chrome/artwork.webp` | Sculptural liquid-chrome ribbons forming an abstract heart, cool silver with cyan and magenta reflections on pearl gray. |
 | Botanical Lavender | `botanical-lavender/artwork.webp` | Airy editorial lavender herbarium, pressed stems, translucent vellum layers and restrained lilac ink on warm ivory. |
 
+## Vector-authored Đông Sơn set (2026-07-29)
+
+Two later themes were not produced with image generation at all. `trong-dong-dong-son` and
+`chim-lac-ivory` were hand-authored as SVG in `scripts/generate-dong-son-artwork.mjs` and
+rasterized with Sharp, so every plate and foreground layer shares one exact coordinate system.
+The geometry — sun star, sawtooth ring, S-scroll spirals, ladder and triangle bands, and the
+Lạc bird glyph — is drawn from the public-domain visual vocabulary of Đông Sơn bronze drums
+(c. 1000 BCE – 100 CE); no third-party file, tracing or web-sourced image was used.
+
+| Template | Production file | Composition |
+| --- | --- | --- |
+| Đông Sơn Bronze Drum | `trong-dong-dong-son/artwork.webp` | Patinated teal bronze drum face, fourteen-ray gold sun star, sawtooth and S-scroll rings, eight tangent ivory Lạc birds, ladder and triangle frieze bands. |
+| Chim Lạc Ivory | `chim-lac-ivory/artwork.webp` | Ivory paper field, fine-line Đông Sơn drum profile with faint cinnabar fill, airy cinnabar bird flight arc, thin ladder and triangle friezes. |
+
+Rerun with `node scripts/generate-dong-son-artwork.mjs`, then re-derive the opening layers with
+`npm run templates:prepare-opening-assets` using the commands the script prints.
+
 ## Processing
 
 The generated originals were converted with Sharp to the production dimensions used by each theme. Preview images in `public/chungdoi/images/template-previews/en/` were then captured from the real Next.js routes in listing, portrait and landscape variants.
 
 ## Layered opening derivatives
 
-The `opening-plate.webp`, `opening-*.webp`, and `opening-assets.json` files under each of the 18 theme directories were produced on 2026-07-28 solely as motion-layer derivatives of that theme's local `artwork.webp`. No web-sourced or third-party imagery was added.
+The `opening-plate.webp`, `opening-*.webp`, and `opening-assets.json` files under each of the 20 theme directories were produced solely as motion-layer derivatives of that theme's local `artwork.webp` — the first 18 on 2026-07-28, the two Đông Sơn themes on 2026-07-29. No web-sourced or third-party imagery was added.
 
 - Textured and photographic subjects were reconstructed or isolated with OpenAI image generation, exported against a controlled chroma field, and converted to genuine transparent alpha with edge despill and a one-pixel contraction.
 - Flat graphic themes were separated deterministically from their original pixels so registration stays exact; their clean plates were rebuilt from the original palette without retaining the animated shapes.
