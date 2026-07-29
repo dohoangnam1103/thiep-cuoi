@@ -579,7 +579,11 @@
       "Floral": "Hoa lá",
       "Signature": "Thanh lịch",
       "Royal": "Hoàng gia",
-      "Modern": "Hiện đại"
+      "Modern": "Hiện đại",
+      "Vietnamese Heritage": "Di sản Việt",
+      "Botanical": "Cỏ cây",
+      "Minimal": "Tối giản",
+      "Destination": "Điểm đến"
     },
     "colors": {
       "All": "Tất cả",
@@ -590,7 +594,13 @@
       "Brown": "Nâu",
       "Blue": "Lam",
       "Gold": "Vàng",
-      "Black": "Đen"
+      "Black": "Đen",
+      "Purple": "Tím",
+      "Ivory": "Ngà",
+      "Ochre": "Vàng đất",
+      "Orange": "Cam",
+      "Bronze": "Đồng",
+      "Silver": "Bạc"
     },
     "templates": {
       "song-hy-red": {

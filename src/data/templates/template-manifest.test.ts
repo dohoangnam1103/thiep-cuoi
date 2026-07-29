@@ -5,6 +5,8 @@ import test from "node:test";
 
 import {
   completedTemplateSlugs,
+  templateCategories,
+  templateColors,
   templates,
 } from "@/data/chungdoi";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -222,4 +224,17 @@ test("new art templates have localized renderers and captured preview variants",
   assert.match(globalStyles, /#000 42%/);
   assert.match(globalStyles, /transparent 88%/);
   assert.match(globalStyles, /@media \(prefers-reduced-motion: reduce\)/);
+});
+
+test("every catalog category and color has a Vietnamese listing label", () => {
+  const messages = JSON.parse(
+    readFileSync(path.join(process.cwd(), "messages", "vi.json"), "utf8"),
+  ) as { listing: { categories: Record<string, string>; colors: Record<string, string> } };
+
+  for (const category of templateCategories) {
+    assert.ok(messages.listing.categories[category], `listing.categories.${category} thiếu bản dịch`);
+  }
+  for (const color of templateColors) {
+    assert.ok(messages.listing.colors[color], `listing.colors.${color} thiếu bản dịch`);
+  }
 });

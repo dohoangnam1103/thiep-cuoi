@@ -360,6 +360,23 @@ npm run templates:register
 
 Registrar phải chạy thành công trước khi sửa catalog hoặc registry bằng tay. Nếu thất bại, sửa manifest, renderer hoặc asset theo lỗi báo ra.
 
+### Bước 5b. Bổ sung nhãn category và color
+
+- `listing.categories` và `listing.colors` trong `messages/vi.json` **không** do registrar sinh ra. Registrar chỉ sinh `listing.templates.<slug>`.
+- Nếu manifest dùng `category` hoặc `color` chưa có trong `messages/vi.json`, trang `/mau-thiep` sẽ in ra key thô kiểu `listing.categories.Minimal` hoặc `listing.colors.Bronze`.
+- Sau khi chạy registrar, thêm nhãn tiếng Việt cho mọi `category`/`color` mới vào `messages/vi.json`. Các locale khác dùng thẳng giá trị tiếng Anh nên không cần key.
+- Test `template-manifest.test.ts` chặn regression này.
+
+### Bước 5c. Seed thiệp demo vào DB
+
+```bash
+npm run seed:demos
+```
+
+- Trang `/admin/demos` liệt kê từ bảng `invitation` với `isDemo: true`, không từ catalog. Mẫu mới không tự xuất hiện chỉ vì đã có manifest.
+- Script dùng upsert theo `demo-<slug>` nên chạy lại an toàn, chỉ ghi vào DB local (`dev.db`).
+- Trên production phải chạy lại script này sau khi deploy mẫu mới, nếu không admin sẽ không sửa được nội dung demo của mẫu.
+
 ### Bước 6. Chụp preview
 
 Chụp một mẫu:
@@ -442,6 +459,8 @@ Kiểm tra ít nhất các trạng thái sau bằng browser thật:
 | Layer lỗi làm background composite phóng to | Dùng ảnh gốc làm fallback | Layer tùy chọn lỗi thì bỏ qua; không bao giờ fallback sang `artwork.webp` |
 | Sửa 18 mẫu làm Song Phụng mất hiệu ứng | Dùng chung nhánh animation cho art invitation và `flyOnOpen` legacy | Giữ hai pipeline riêng và luôn chạy test hồi quy Song Phụng |
 | Hoạ tiết trong artwork chạy ngang qua ngày và tên | Vẽ chủ thể hoặc dải trang trí ở khoảng `40%–88%` chiều cao canvas, đúng vùng mask còn opacity và đúng chỗ cụm text neo đáy | Giữ mọi chủ thể và dải hoạ tiết trong khoảng `0%–38%` chiều cao canvas; phần dưới chỉ để nền trơn và hạt mờ |
+| Trang `/mau-thiep` hiện key thô `listing.categories.X` / `listing.colors.Y` | Manifest khai báo `category` hoặc `color` mới nhưng `messages/vi.json` chưa có nhãn tiếng Việt | Sau khi thêm manifest, bổ sung nhãn vào `listing.categories` và `listing.colors` của `messages/vi.json`; test unit chặn regression |
+| `/admin/demos` không thấy mẫu mới | Trang admin đọc từ bảng `invitation` (`isDemo: true`) trong DB, không đọc catalog | Chạy `npm run seed:demos` sau khi registrar chạy xong |
 
 ## Definition of Done cho mẫu mới
 
@@ -450,6 +469,8 @@ Kiểm tra ít nhất các trạng thái sau bằng browser thật:
 - [ ] Manifest đủ 5 locale.
 - [ ] Wrapper dùng shared renderer, không inline style.
 - [ ] Registrar chạy thành công.
+- [ ] `listing.categories` và `listing.colors` trong `messages/vi.json` có nhãn cho mọi category/color mới.
+- [ ] Đã chạy `npm run seed:demos` để mẫu mới xuất hiện ở `/admin/demos`.
 - [ ] Bìa trước mở không bị thay đổi ngoài yêu cầu.
 - [ ] Thiệp sau mở một cột, outer `900px`, content `760px`.
 - [ ] Mobile full width, không horizontal overflow.
