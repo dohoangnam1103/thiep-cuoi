@@ -236,7 +236,7 @@ export function BlogPostForm({
             className={cn(inputClassName, state?.fieldErrors?.status && "border-destructive")}
           >
             <option value="draft">Bản nháp</option>
-            <option value="published">Đã xuất bản</option>
+            <option value="published">Xuất bản</option>
           </select>
           <FieldError>{state?.fieldErrors?.status}</FieldError>
         </label>

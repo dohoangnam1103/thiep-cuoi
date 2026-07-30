@@ -1274,7 +1274,7 @@ html.lenis body {
 }
 
 .blog-editor-content {
-  min-height: 26rem;
+  min-height: 12rem;
   padding: 1.25rem;
   outline: none;
   color: var(--foreground);

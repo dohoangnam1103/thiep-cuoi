@@ -302,7 +302,10 @@ export function BlogEditor({
         />
       </div>
 
-      <EditorContent editor={editor} />
+      <EditorContent
+        editor={editor}
+        className="[&_.ProseMirror]:min-h-48"
+      />
 
       {uploading ? (
         <p className="border-t border-border px-4 py-2 text-xs text-muted-foreground">Đang xử lý ảnh…</p>

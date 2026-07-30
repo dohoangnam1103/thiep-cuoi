@@ -1,5 +1,6 @@
 "use client";
 
+import { LoaderCircle, RotateCcw, Trash2 } from "lucide-react";
 import { useTransition } from "react";
 
 import {
@@ -41,22 +42,30 @@ export function BlogRowActions({ id, title, trashed }: BlogRowActionsProps) {
   }
 
   return trashed ? (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex items-center gap-1.5">
       <button
         type="button"
         onClick={restore}
         disabled={pending}
-        className="text-sm font-bold text-primary hover:underline disabled:opacity-50"
+        aria-label={`Khôi phục bài viết ${title}`}
+        title="Khôi phục"
+        className="inline-flex size-9 items-center justify-center rounded-full border border-primary/20 text-primary transition hover:border-primary/40 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Khôi phục
+        {pending ? (
+          <LoaderCircle className="size-[18px] animate-spin" aria-hidden="true" />
+        ) : (
+          <RotateCcw className="size-[18px]" aria-hidden="true" />
+        )}
       </button>
       <button
         type="button"
         onClick={permanentlyDelete}
         disabled={pending}
-        className="text-sm font-bold text-destructive hover:underline disabled:opacity-50"
+        aria-label={`Xoá vĩnh viễn bài viết ${title}`}
+        title="Xoá vĩnh viễn"
+        className="inline-flex size-9 items-center justify-center rounded-full border border-destructive/20 text-destructive transition hover:border-destructive/40 hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Xoá vĩnh viễn
+        <Trash2 className="size-[18px]" aria-hidden="true" />
       </button>
     </div>
   ) : (
@@ -64,9 +73,15 @@ export function BlogRowActions({ id, title, trashed }: BlogRowActionsProps) {
       type="button"
       onClick={moveToTrash}
       disabled={pending}
-      className="text-sm font-bold text-destructive hover:underline disabled:opacity-50"
+      aria-label={`Chuyển bài viết ${title} vào thùng rác`}
+      title="Chuyển vào thùng rác"
+      className="inline-flex size-9 items-center justify-center rounded-full border border-destructive/20 text-destructive transition hover:border-destructive/40 hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
     >
-      Thùng rác
+      {pending ? (
+        <LoaderCircle className="size-[18px] animate-spin" aria-hidden="true" />
+      ) : (
+        <Trash2 className="size-[18px]" aria-hidden="true" />
+      )}
     </button>
   );
 }

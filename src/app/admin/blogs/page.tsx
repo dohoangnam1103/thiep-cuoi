@@ -22,7 +22,7 @@ type AdminBlogsPageProps = {
 const filters: Array<{ value: AdminBlogFilter; label: string }> = [
   { value: "all", label: "Tất cả" },
   { value: "draft", label: "Bản nháp" },
-  { value: "published", label: "Đã xuất bản" },
+  { value: "published", label: "Xuất bản" },
   { value: "trash", label: "Thùng rác" },
 ];
 
@@ -96,15 +96,15 @@ export default async function AdminBlogsPage({
       </nav>
 
       <div className="overflow-x-auto rounded-2xl border border-border bg-background">
-        <table className="w-full min-w-[880px] text-sm">
+        <table className="w-full min-w-[960px] text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
               <th className="w-24 px-4 py-3 font-medium">Ảnh</th>
               <th className="px-4 py-3 font-medium">Bài viết</th>
-              <th className="px-4 py-3 font-medium">Chuyên mục</th>
-              <th className="px-4 py-3 font-medium">Trạng thái</th>
-              <th className="px-4 py-3 font-medium">Cập nhật</th>
-              <th className="px-4 py-3 font-medium">Thao tác</th>
+              <th className="w-40 px-4 py-3 font-medium">Chuyên mục</th>
+              <th className="w-28 px-4 py-3 font-medium">Trạng thái</th>
+              <th className="w-44 px-4 py-3 font-medium">Cập nhật</th>
+              <th className="w-36 px-4 py-3 font-medium">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -139,13 +139,13 @@ export default async function AdminBlogsPage({
                       {post.excerpt}
                     </p>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
+                  <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                     {post.category ?? "—"}
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={cn(
-                        "rounded-full px-2.5 py-1 text-xs font-bold",
+                        "inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold",
                         trashed
                           ? "bg-destructive/10 text-destructive"
                           : post.status === "published"
@@ -156,7 +156,7 @@ export default async function AdminBlogsPage({
                       {trashed
                         ? "Thùng rác"
                         : post.status === "published"
-                          ? "Đã xuất bản"
+                          ? "Xuất bản"
                           : "Bản nháp"}
                     </span>
                   </td>
@@ -164,24 +164,27 @@ export default async function AdminBlogsPage({
                     {formatDate(post.updatedAt)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                       {!trashed ? (
                         <Link
                           href={`/admin/blogs/${post.id}`}
-                          className="inline-flex items-center gap-1.5 font-bold text-primary hover:underline"
+                          aria-label={`Sửa bài viết ${post.title}`}
+                          title="Sửa bài viết"
+                          className="inline-flex size-9 items-center justify-center rounded-full border border-primary/20 text-primary transition hover:border-primary/40 hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
-                          <FilePenLine className="size-4" />
-                          Sửa
+                          <FilePenLine className="size-[18px]" aria-hidden="true" />
                         </Link>
                       ) : null}
                       {!trashed && post.status === "published" ? (
                         <Link
                           href={`/blog/${post.slug}`}
                           target="_blank"
-                          className="inline-flex items-center gap-1.5 font-bold text-foreground hover:underline"
+                          rel="noopener noreferrer"
+                          aria-label={`Xem bài viết ${post.title}`}
+                          title="Xem bài viết"
+                          className="inline-flex size-9 items-center justify-center rounded-full border border-border text-foreground transition hover:border-foreground/30 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         >
-                          <Eye className="size-4" />
-                          Xem
+                          <Eye className="size-[18px]" aria-hidden="true" />
                         </Link>
                       ) : null}
                       <BlogRowActions id={post.id} title={post.title} trashed={trashed} />
