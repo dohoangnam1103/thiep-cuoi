@@ -64,3 +64,17 @@ The wedding-envelope and gift-box assets under `public/chungdoi/images/giftbox/`
 The complete template-to-source audit, shared-source exceptions, and exact gift-box mini sets are documented in `docs/research/GIFT_VISUAL_SOURCE_AUDIT.md`. The raw browser network capture is `docs/research/gift-visual-audit.json`, and `scripts/download-gift-visuals.mjs` records the deterministic source URL to local path mapping.
 
 These downloaded clone assets are separate from the original/generated template artwork documented above. Confirm deployment rights for the Chung Đôi source assets before distributing this repository outside the Chung Đôi/Thiệp Mừng Online product context.
+
+## Dấu Ấn Ngọc Ngà / Ivory Signature (2026-07-29)
+
+`ivory-signature` is original vector-authored artwork generated locally by
+`scripts/generate-ivory-signature-artwork.mjs`. The warm-ivory paper, navy liner,
+olive pocket, champagne seal, blank stationery card, and matching olive gift
+envelope are SVG geometry created for this repository and rasterized with Sharp;
+no external artwork, tracing, logo, or web-sourced image was used.
+
+The four opening WebPs and `opening-assets.json` are deterministic derivatives of
+that source composition. The template reuses the repository's existing local
+`zen-sand` demo gallery and music as fallback content; it adds no third-party
+photography. User-published invitations replace the fallback hero and gallery
+through the editor.

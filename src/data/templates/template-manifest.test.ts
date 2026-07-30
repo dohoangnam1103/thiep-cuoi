@@ -40,8 +40,10 @@ const NEW_ART_TEMPLATE_SLUGS = [
   "aurora-glass-dark",
   "y2k-chrome",
   "botanical-lavender",
+  "rap-hy-sai-gon",
   "trong-dong-dong-son",
   "chim-lac-ivory",
+  "ivory-signature",
 ] as const;
 
 const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], 1 | 2> = {
@@ -63,8 +65,10 @@ const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[numbe
   "aurora-glass-dark": 1,
   "y2k-chrome": 1,
   "botanical-lavender": 2,
+  "rap-hy-sai-gon": 1,
   "trong-dong-dong-son": 2,
   "chim-lac-ivory": 1,
+  "ivory-signature": 1,
 };
 
 const NEW_ART_TEMPLATE_FONTS = {
@@ -86,8 +90,10 @@ const NEW_ART_TEMPLATE_FONTS = {
   "aurora-glass-dark": ["Alex Brush", "font-art-alex"],
   "y2k-chrome": ["SVN-HC Marvin Visions", "font-art-marvin"],
   "botanical-lavender": ["1FTV VIP Signora", "font-art-signora"],
+  "rap-hy-sai-gon": ["SVN-HC Marvin Visions", "font-art-marvin"],
   "trong-dong-dong-son": ["UNI Chu truyen thong", "font-art-uni"],
   "chim-lac-ivory": ["Fz Qellia", "font-art-qellia"],
+  "ivory-signature": ["1FTV VIP Signora", "font-art-signora"],
 } as const satisfies Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], readonly [string, string]>;
 
 test("generated template manifests are wired through every public data registry", () => {
@@ -224,6 +230,12 @@ test("new art templates have localized renderers and captured preview variants",
   assert.match(globalStyles, /#000 42%/);
   assert.match(globalStyles, /transparent 88%/);
   assert.match(globalStyles, /@media \(prefers-reduced-motion: reduce\)/);
+});
+
+test("demo invitations leave music empty so the shared default track is used", () => {
+  for (const [slug, content] of Object.entries(chungdoiDemoContent)) {
+    assert.equal(content.music, null, `${slug}: demo music must use the shared default`);
+  }
 });
 
 test("every catalog category and color has a Vietnamese listing label", () => {

@@ -68,7 +68,7 @@ export type ChungDoiDemoContent = {
   music: string | null;
 };
 
-export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
+const templateDemoContent: Record<string, ChungDoiDemoContent> = {
   "song-hy-red": {
     "slug": "song-hy-red",
     "invitationId": "giakhanh-quynhanh",
@@ -4411,3 +4411,10 @@ export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = {
   },
   ...generatedDemoContent,
 } satisfies Record<string, ChungDoiDemoContent>;
+
+export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = Object.fromEntries(
+  Object.entries(templateDemoContent).map(([slug, content]) => [
+    slug,
+    { ...content, music: null },
+  ]),
+);

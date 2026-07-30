@@ -694,6 +694,8 @@
     "title": "The latest wedding invitation tips and trends",
     "readMore": "Read more →",
     "pagination": "1 - 12 / 22 articles",
+    "postCount": "{count} articles",
+    "empty": "No articles have been published yet.",
     "backToBlog": "← Back to Blog",
     "cloneNote1": "This is a UI clone of Thiệp Mừng Online. The full content of the original article is published at thiepmungonline.com. This copy keeps the article structure, summary and layout for design-reference purposes.",
     "cloneNote2": "You can browse all the online wedding invitation templates, helper tools and pricing right here in this clone via the navigation bar above.",

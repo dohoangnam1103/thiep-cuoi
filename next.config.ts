@@ -12,8 +12,8 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com",
   "font-src 'self' data:",
   "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com",
-  "media-src 'self' data: blob:",
-  "frame-src https://www.google.com https://maps.google.com",
+  "media-src 'self' data: blob: https:",
+  "frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -95,6 +95,15 @@ const nextConfig: NextConfig = {
         // Keeping them out of the index also reduces the chance that a benign
         // screenshot is mistaken for a deceptive page when crawled by itself.
         source: "/uploads/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, nosnippet, noarchive",
+          },
+        ],
+      },
+      {
+        source: "/blog-media/:path*",
         headers: [
           {
             key: "X-Robots-Tag",

@@ -80,6 +80,22 @@ Google OAuth callback URLs phải gồm:
 - Local: `http://localhost:3000/api/auth/callback/google`
 - Production: `https://thiepmungonline.com/api/auth/callback/google`
 
+AI Template Studio trong `/admin/template-studio` dùng API OpenAI-compatible. Không có key,
+trang vẫn chạy với bộ preset local; để bật AI, thêm vào `.env`:
+
+```dotenv
+OPENAI_API_KEY=sk-xxx
+AI_MODEL=gpt-4o-mini
+# Tùy chọn cho provider OpenAI-compatible khác:
+# AI_BASE_URL=https://provider.example/v1
+```
+
+Có thể dùng `AI_API_KEY` thay cho `OPENAI_API_KEY`. Admin cũng có thể cấu hình
+Base URL, model và API key ở mục **Kết nối AI** cuối `/admin/template-studio`;
+cấu hình trong DB được ưu tiên hơn `.env`. API key trong DB được mã hóa AES-256-GCM
+bằng khóa dẫn xuất từ `SESSION_SECRET`, vì vậy không đổi `SESSION_SECRET` khi vẫn cần
+dùng key đã lưu. Không đưa key vào source hoặc biến `NEXT_PUBLIC_*`.
+
 ## Bố cục trên Mini PC
 
 ```

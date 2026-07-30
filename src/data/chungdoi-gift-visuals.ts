@@ -104,8 +104,15 @@ const sourceGiftVisuals: Record<string, GiftVisual> = {
   },
 };
 
+const originalGiftVisuals: Record<string, GiftVisual> = {
+  "ivory-signature": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/giftbox/ivory-signature/envelope.webp",
+  },
+};
+
 const PROCEDURAL_FALLBACK: ProceduralGiftVisual = { kind: "procedural" };
 
 export function resolveGiftVisual(templateSlug: string): GiftVisual {
-  return sourceGiftVisuals[templateSlug] ?? PROCEDURAL_FALLBACK;
+  return sourceGiftVisuals[templateSlug] ?? originalGiftVisuals[templateSlug] ?? PROCEDURAL_FALLBACK;
 }

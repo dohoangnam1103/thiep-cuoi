@@ -100,7 +100,28 @@ model AppConfig {
   id                  String   @id @default("default")
   productPrice        Int      @default(150000)
   repeatCustomerPrice Int      @default(99000)
+  aiBaseUrl           String?
+  aiApiKeyEncrypted   String?
+  aiModel             String?
   updatedAt           DateTime @updatedAt
+}
+
+model BlogPost {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  excerpt      String
+  category     String?
+  contentHtml  String
+  thumbnailUrl String?
+  status       String    @default("draft")
+  publishedAt  DateTime?
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  @@index([status, deletedAt, publishedAt])
+  @@index([deletedAt, updatedAt])
 }
 
 model TemplateSuggestion {
@@ -155,7 +176,7 @@ model InvitationContent {
   dressCodeColors String @default("")
 
   // album layout: "grid" | "mosaic" | "coverflow"
-  albumLayout   String @default("grid")
+  albumLayout String @default("grid")
 
   // families
   brideFather      String @default("")

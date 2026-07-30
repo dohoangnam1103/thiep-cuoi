@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@source not "../generated/prisma";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -1271,3 +1272,116 @@ html.lenis body {
     filter: none !important;
   }
 }
+
+.blog-editor-content {
+  min-height: 26rem;
+  padding: 1.25rem;
+  outline: none;
+  color: var(--foreground);
+  line-height: 1.75;
+}
+
+.blog-editor-content > * + *,
+.blog-article-content > * + * {
+  margin-top: 1.25rem;
+}
+
+.blog-editor-content h1,
+.blog-article-content h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.blog-editor-content h2,
+.blog-article-content h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.blog-editor-content h3,
+.blog-article-content h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.blog-editor-content ul,
+.blog-article-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.blog-editor-content ol,
+.blog-article-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+
+.blog-editor-content li + li,
+.blog-article-content li + li {
+  margin-top: 0.4rem;
+}
+
+.blog-editor-content blockquote,
+.blog-article-content blockquote {
+  border-left: 4px solid var(--primary);
+  padding: 0.35rem 0 0.35rem 1.25rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.blog-editor-content a,
+.blog-article-content a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.blog-editor-content hr,
+.blog-article-content hr {
+  margin-block: 2rem;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.blog-editor-content img,
+.blog-article-content img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 1rem;
+}
+
+.blog-editor-content iframe,
+.blog-editor-content video,
+.blog-article-content iframe,
+.blog-article-content video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+  border: 0;
+  border-radius: 1rem;
+  background: #000;
+}
+
+.blog-editor-content p.is-editor-empty:first-child::before {
+  content: "Bắt đầu viết nội dung…";
+  float: left;
+  height: 0;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.blog-article-content {
+  color: var(--foreground);
+  font-size: 1.0625rem;
+  line-height: 1.9;
+}
+
+/* Blog typography is shared by the TipTap canvas and sanitized public HTML. */

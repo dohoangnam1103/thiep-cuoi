@@ -1,0 +1,49 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/ivory-signature/opening-plate.webp",
+  "layers": [
+    {
+      "id": "navy-liner",
+      "src": "/chungdoi/images/themes/_decor/ivory-signature/opening-navy-liner.webp",
+      "rect": {
+        "x": 162,
+        "y": 94,
+        "width": 700,
+        "height": 440
+      }
+    },
+    {
+      "id": "ivory-card",
+      "src": "/chungdoi/images/themes/_decor/ivory-signature/opening-ivory-card.webp",
+      "rect": {
+        "x": 266,
+        "y": 122,
+        "width": 492,
+        "height": 326
+      }
+    },
+    {
+      "id": "olive-pocket",
+      "src": "/chungdoi/images/themes/_decor/ivory-signature/opening-olive-pocket.webp",
+      "rect": {
+        "x": 143,
+        "y": 346,
+        "width": 738,
+        "height": 224
+      }
+    },
+    {
+      "id": "champagne-seal",
+      "src": "/chungdoi/images/themes/_decor/ivory-signature/opening-champagne-seal.webp",
+      "rect": {
+        "x": 436,
+        "y": 366,
+        "width": 152,
+        "height": 152
+      }
+    }
+  ]
+}

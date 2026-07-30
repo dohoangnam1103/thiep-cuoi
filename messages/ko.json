@@ -477,6 +477,8 @@
     "title": "최신 청첩장 팁과 트렌드",
     "readMore": "더 보기 →",
     "pagination": "1 - 12 / 22 게시글",
+    "postCount": "게시글 {count}개",
+    "empty": "아직 게시된 글이 없습니다.",
     "backToBlog": "← 블로그로 돌아가기",
     "cloneNote1": "이것은 Thiệp Mừng Online의 UI 클론입니다. 원본 기사의 전체 내용은 thiepmungonline.com에 게시되어 있습니다. 이 복사본은 디자인 참고 목적으로 기사 구조, 요약, 레이아웃을 유지합니다.",
     "cloneNote2": "위 내비게이션 바를 통해 이 클론에서 모든 온라인 청첩장 템플릿, 도우미 도구, 가격을 둘러볼 수 있습니다.",

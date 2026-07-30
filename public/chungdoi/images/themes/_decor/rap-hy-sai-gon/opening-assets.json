@@ -1,0 +1,24 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/rap-hy-sai-gon/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-curtain",
+      "src": "/chungdoi/images/themes/_decor/rap-hy-sai-gon/opening-left-curtain.webp",
+      "rect": { "x": 0, "y": 0, "width": 1122, "height": 1402 }
+    },
+    {
+      "id": "right-curtain",
+      "src": "/chungdoi/images/themes/_decor/rap-hy-sai-gon/opening-right-curtain.webp",
+      "rect": { "x": 0, "y": 0, "width": 1122, "height": 1402 }
+    },
+    {
+      "id": "song-hy-marquee",
+      "src": "/chungdoi/images/themes/_decor/rap-hy-sai-gon/opening-song-hy-marquee.webp",
+      "rect": { "x": 0, "y": 0, "width": 1122, "height": 1402 }
+    }
+  ]
+}

@@ -25,8 +25,10 @@ const ART_OPENING_THEME_SLUGS = [
   "aurora-glass-dark",
   "y2k-chrome",
   "botanical-lavender",
+  "rap-hy-sai-gon",
   "trong-dong-dong-son",
   "chim-lac-ivory",
+  "ivory-signature",
 ] as const;
 
 export async function assertOpeningForegroundAsset(filePath: string): Promise<void> {

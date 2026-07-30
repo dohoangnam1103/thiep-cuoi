@@ -3,8 +3,10 @@ import artDecoGatsbyAssets from "../../../public/chungdoi/images/themes/_decor/a
 import auroraGlassDarkAssets from "../../../public/chungdoi/images/themes/_decor/aurora-glass-dark/opening-assets.json";
 import batTrangBlueAssets from "../../../public/chungdoi/images/themes/_decor/bat-trang-blue/opening-assets.json";
 import botanicalLavenderAssets from "../../../public/chungdoi/images/themes/_decor/botanical-lavender/opening-assets.json";
+import rapHySaiGonAssets from "../../../public/chungdoi/images/themes/_decor/rap-hy-sai-gon/opening-assets.json";
 import celestialMapAssets from "../../../public/chungdoi/images/themes/_decor/celestial-map/opening-assets.json";
 import chimLacIvoryAssets from "../../../public/chungdoi/images/themes/_decor/chim-lac-ivory/opening-assets.json";
+import ivorySignatureAssets from "../../../public/chungdoi/images/themes/_decor/ivory-signature/opening-assets.json";
 import cinemaCreditAssets from "../../../public/chungdoi/images/themes/_decor/cinema-credit/opening-assets.json";
 import coastalMediterraneanAssets from "../../../public/chungdoi/images/themes/_decor/coastal-mediterranean/opening-assets.json";
 import dongHoFolkAssets from "../../../public/chungdoi/images/themes/_decor/dong-ho-folk/opening-assets.json";
@@ -42,6 +44,7 @@ type PeakOverride = {
 
 type MotionConfig = {
   durationMs: number;
+  startOpacity?: number;
   exits: Readonly<Record<string, ExitTuple>>;
   peaks?: Readonly<Record<string, PeakOverride>>;
   origins?: Readonly<Record<string, OpeningEffectLayer["transformOrigin"]>>;
@@ -67,7 +70,7 @@ function createArtOpeningEffect(
       transformOrigin: config.origins?.[asset.id] ?? defaultOrigin,
       delayMs: 0,
       easing: "linear",
-      startOpacity: 0.2,
+      startOpacity: config.startOpacity ?? 0.2,
       peak: {
         offset: 0.24 as const,
         xPercent: peak?.xPercent ?? 0,
@@ -195,6 +198,13 @@ const effectInputs = {
     durationMs: 1430,
     exits: { lavender: [-84, -46, 2.9, -9, 8], "mustard-pods": [86, 48, 2.9, 9, 8], stems: [0, 78, 2.5, 6, 7] },
   }],
+  "rap-hy-sai-gon": [rapHySaiGonAssets, {
+    durationMs: 1480,
+    startOpacity: 0.04,
+    exits: { "left-curtain": [-106, -12, 3.2, -12, 10], "right-curtain": [106, -12, 3.2, 12, 10], "song-hy-marquee": [0, -88, 3.7, 0, 14] },
+    peaks: { "left-curtain": { xPercent: -4, yPercent: 0 }, "right-curtain": { xPercent: 4, yPercent: 0 }, "song-hy-marquee": { brightness: 1.45 } },
+    origins: { "left-curtain": "100% 50%", "right-curtain": "0% 50%", "song-hy-marquee": "50% 50%" },
+  }],
   "trong-dong-dong-son": [trongDongDongSonAssets, {
     durationMs: 1470,
     exits: { "spiral-bands": [0, 0, 3.2, 22, 9], "lac-birds": [0, -86, 3, -14, 9], "sun-star": [0, 0, 4, 0, 14] },
@@ -206,6 +216,12 @@ const effectInputs = {
     exits: { "bird-flock": [92, -70, 2.9, 10, 8], "drum-profile": [0, 80, 2.6, -4, 7], "frieze-bands": [0, 0, 3.1, 6, 8] },
     peaks: { "bird-flock": { xPercent: 4, yPercent: -3 } },
     origins: { "bird-flock": "50% 50%", "drum-profile": "50% 100%", "frieze-bands": "50% 50%" },
+  }],
+  "ivory-signature": [ivorySignatureAssets, {
+    durationMs: 1420,
+    exits: { "navy-liner": [0, -84, 2.7, -3, 8], "ivory-card": [0, -104, 3.1, 0, 8], "olive-pocket": [0, 82, 2.8, 4, 8], "champagne-seal": [0, 0, 3.8, -8, 12] },
+    peaks: { "ivory-card": { yPercent: -8 }, "champagne-seal": { brightness: 1.4 } },
+    origins: { "navy-liner": "50% 0%", "ivory-card": "50% 100%", "olive-pocket": "50% 100%", "champagne-seal": "50% 50%" },
   }],
 } as const;
 

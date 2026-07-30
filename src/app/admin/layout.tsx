@@ -18,16 +18,20 @@ const NAV = [
   { href: "/admin", label: "Tổng quan" },
   { href: "/admin/users", label: "Người dùng" },
   { href: "/admin/demos", label: "Thiệp demo" },
+  { href: "/admin/blogs", label: "Bài viết" },
+  { href: "/admin/template-studio", label: "AI Studio" },
   { href: "/admin/template-suggestions", label: "Gợi ý mẫu thiệp" },
   { href: "/admin/payments", label: "Giao dịch" },
   { href: "/admin/vouchers", label: "Voucher" },
 ];
 
-const SUPER_ADMIN_NAV = { href: "/admin/admins", label: "Admin" };
+const SUPER_ADMIN_NAV = [
+  { href: "/admin/admins", label: "Admin" },
+];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const admin = await getCurrentAdmin();
-  const nav = admin?.isSuperAdmin ? [...NAV, SUPER_ADMIN_NAV] : NAV;
+  const nav = admin?.isSuperAdmin ? [...NAV, ...SUPER_ADMIN_NAV] : NAV;
 
   return (
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>

@@ -38,8 +38,10 @@ const artThemeDurations = {
   "aurora-glass-dark": 1410,
   "y2k-chrome": 1390,
   "botanical-lavender": 1430,
+  "rap-hy-sai-gon": 1480,
   "trong-dong-dong-son": 1470,
   "chim-lac-ivory": 1320,
+  "ivory-signature": 1420,
 } as const;
 
 function createEffect(): ArtOpeningEffect {
@@ -247,7 +249,7 @@ test("prepareOpeningAssets emits tight alpha crops with exact canvas coordinates
   }
 });
 
-test("all 18 art themes register unique clean layered opening effects", () => {
+test("all art themes register unique clean layered opening effects", () => {
   const ids = new Set<string>();
   assert.deepEqual(Object.keys(artOpeningEffects).sort(), Object.keys(artThemeDurations).sort());
 
@@ -255,7 +257,10 @@ test("all 18 art themes register unique clean layered opening effects", () => {
     const durationMs = artThemeDurations[slug];
     const effect = artOpeningEffects[slug];
     assert.equal(effect.durationMs, durationMs);
-    assert.equal(effect.layers.length, 3);
+    assert.ok(
+      effect.layers.length >= 3 && effect.layers.length <= 4,
+      `${slug}: opening effect must contain 3 or 4 layers`,
+    );
     assert.doesNotThrow(() => assertValidArtOpeningEffect(effect));
     assert.equal(ids.has(effect.id), false, `duplicate effect id: ${effect.id}`);
     ids.add(effect.id);

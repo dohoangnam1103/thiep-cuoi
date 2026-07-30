@@ -68,6 +68,24 @@ export function isAcceptedImageUpload(
   );
 }
 
+export function hasMatchingImageUploadDescriptor(
+  file: UploadFileDescriptor,
+  allowedFormats: readonly StandardUploadImageFormat[],
+): boolean {
+  const mimeType = file.type.trim().toLowerCase();
+  const extension = extensionOf(file.name);
+
+  if (HEIF_EXTENSIONS.has(extension)) {
+    return HEIF_MIME_TYPES.has(mimeType);
+  }
+
+  return allowedFormats.some(
+    (format) =>
+      STANDARD_MIME_TYPES[format].includes(mimeType)
+      && STANDARD_EXTENSIONS[format].includes(extension),
+  );
+}
+
 function ascii(bytes: Uint8Array, start: number): string {
   return String.fromCharCode(bytes[start], bytes[start + 1], bytes[start + 2], bytes[start + 3]);
 }
