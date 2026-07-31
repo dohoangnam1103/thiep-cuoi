@@ -59,6 +59,7 @@ type EventInsertProps = {
   date: string;
   label: string;
   message: string;
+  messageStyle?: "display" | "body";
   time: string;
   tone: "ivory" | "lacquer";
 };
@@ -211,14 +212,45 @@ function FamilyPanel({
   );
 }
 
+function CoupleNames({
+  first,
+  second,
+  conjunction,
+  className,
+}: {
+  first: string;
+  second: string;
+  conjunction: string;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "flex flex-col items-center gap-0.5 leading-tight sm:flex-row sm:gap-0",
+        className,
+      )}
+    >
+      <span className="max-w-full text-balance">{first}</span>
+      <span className="font-art-lora text-base italic text-[#B58A3A] sm:mx-2">
+        {conjunction}
+      </span>
+      <span className="max-w-full text-balance">{second}</span>
+    </span>
+  );
+}
+
 function EventInsert({
   date,
   label,
   message,
+  messageStyle = "display",
   time,
   tone,
 }: EventInsertProps) {
   const isIvory = tone === "ivory";
+  const messageClassName = messageStyle === "body"
+    ? "font-art-lora text-lg font-medium leading-[1.45] sm:text-xl"
+    : "font-art-uni text-3xl font-normal leading-tight sm:text-4xl";
 
   return (
     <article
@@ -240,7 +272,8 @@ function EventInsert({
       </p>
       <h3
         className={cn(
-          "mt-6 whitespace-pre-line font-art-uni text-3xl font-normal leading-tight sm:text-4xl",
+          "mt-6 whitespace-pre-line",
+          messageClassName,
           isIvory ? "text-[#5A0B12]" : "text-[#EAD9B8]",
         )}
       >
@@ -399,18 +432,6 @@ export function LongPhungGatefoldInvitationBody({
     },
     couple.brideFirst,
   ).filter((entry) => entry.bank && entry.num);
-  const chapterLinks = [
-    { id: "gatefold-families-heading", label: t("family") },
-    { id: "gatefold-events-heading", label: t("ceremony") },
-    { id: "gatefold-countdown-heading", label: t("day") },
-    ...(gallery.length ? [{ id: "gatefold-album-heading", label: t("album") }] : []),
-    ...(schedule.length ? [{ id: "gatefold-timeline-heading", label: t("timeline") }] : []),
-    { id: "gatefold-map-heading", label: t("map") },
-    { id: "gatefold-dress-code-heading", label: t("dressCode") },
-    { id: "gatefold-guestbook-heading", label: t("guestbook") },
-    ...(banks.length ? [{ id: "gatefold-gift", label: t("gift") }] : []),
-  ];
-
   return (
     <div
       data-gatefold-invitation-body="true"
@@ -423,22 +444,6 @@ export function LongPhungGatefoldInvitationBody({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(124,27,27,0.36),transparent_30%),radial-gradient(circle_at_88%_34%,rgba(181,138,58,0.09),transparent_26%)]"
       />
-      <nav
-        aria-label={t("invitation")}
-        data-gatefold-chapter-nav
-        className="sticky top-0 z-30 mx-auto flex w-full max-w-7xl gap-2 overflow-x-auto border-y border-[#B58A3A]/30 bg-[#17110F]/88 px-4 py-3 backdrop-blur-md sm:justify-center sm:px-7"
-      >
-        {chapterLinks.map((chapter) => (
-          <a
-            key={chapter.id}
-            href={`#${chapter.id}`}
-            className="shrink-0 border border-[#B58A3A]/28 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#EAD9B8]/78 transition-colors hover:border-[#B58A3A]/70 hover:text-[#EAD9B8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B58A3A] active:translate-y-px"
-          >
-            {chapter.label}
-          </a>
-        ))}
-      </nav>
-
       {portraitPrints.length ? (
         <section
           aria-labelledby="gatefold-portraits-heading"
@@ -454,7 +459,7 @@ export function LongPhungGatefoldInvitationBody({
               <figure
                 key={`${print.person.side}-${print.src}`}
                 className={cn(
-                  "relative min-w-0 bg-[#EAD9B8] p-3 pb-12 shadow-[0_2rem_5rem_rgba(23,17,15,0.42)] sm:p-4 sm:pb-14",
+                  "relative min-w-0 bg-[#EAD9B8] p-3 pb-6 shadow-[0_2rem_5rem_rgba(23,17,15,0.42)] sm:p-4 sm:pb-7",
                   index === 0
                     ? "md:col-span-7 md:col-start-1 md:row-start-1 md:-rotate-[1.5deg]"
                     : "md:col-span-6 md:col-start-7 md:row-start-1 md:mt-24 md:rotate-[1.25deg]",
@@ -471,7 +476,7 @@ export function LongPhungGatefoldInvitationBody({
                     src={print.src}
                   />
                 </div>
-                <figcaption className="absolute inset-x-4 bottom-4 truncate text-center font-art-uni text-2xl text-[#5A0B12]">
+                <figcaption className="mt-5 px-2 text-center font-art-uni text-2xl leading-tight text-[#5A0B12] text-balance sm:mt-6">
                   {print.person.shortName}
                 </figcaption>
               </figure>
@@ -503,13 +508,12 @@ export function LongPhungGatefoldInvitationBody({
               <p className="mx-auto mt-8 max-w-[29ch] whitespace-pre-line text-sm leading-7 text-[#3B2117]">
                 {invitationOpeningMessage(content)}
               </p>
-              <p className="mt-9 font-art-uni text-3xl leading-tight text-[#7C1B1B]">
-                {people[0].shortName}
-                <span className="mx-2 font-art-lora text-base italic text-[#B58A3A]">
-                  {t("and")}
-                </span>
-                {people[1].shortName}
-              </p>
+              <CoupleNames
+                className="mt-9 font-art-uni text-3xl text-[#7C1B1B]"
+                conjunction={t("and")}
+                first={people[0].shortName}
+                second={people[1].shortName}
+              />
               <p className="mt-6 text-sm font-semibold leading-6 text-[#5A0B12]">
                 {formatGatefoldLocalizedDate(couple.date, locale)}
               </p>
@@ -557,6 +561,7 @@ export function LongPhungGatefoldInvitationBody({
               date={formatGatefoldLocalizedDate(couple.date, locale)}
               label={t("reception")}
               message={venue.address}
+              messageStyle="body"
               time={venue.banquetTime || couple.time}
               tone="lacquer"
             />
@@ -846,13 +851,12 @@ export function LongPhungGatefoldInvitationBody({
         <p className="mx-auto max-w-[46ch] text-sm leading-7 text-[#EAD9B8]/72">
           {t("presenceHonor")}
         </p>
-        <p className="mt-7 font-art-uni text-4xl leading-tight text-[#B58A3A] sm:text-5xl">
-          {people[0].shortName}
-          <span className="mx-3 font-art-lora text-base italic text-[#EAD9B8]/72">
-            {t("and")}
-          </span>
-          {people[1].shortName}
-        </p>
+        <CoupleNames
+          className="mt-7 font-art-uni text-4xl text-[#B58A3A] sm:text-5xl"
+          conjunction={t("and")}
+          first={people[0].shortName}
+          second={people[1].shortName}
+        />
       </footer>
     </div>
   );

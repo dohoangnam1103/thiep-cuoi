@@ -599,9 +599,11 @@ khách Việt. Không mở rộng sang 66 mẫu và không thay physical opening
 - Thêm foil-glint procedural rất nhẹ trên hai wing composite, thay đổi opacity
   theo góc camera; fallback dùng glint CSS. Đây là material treatment, không
   claim rằng mascot đã có semantic animation layer authoring.
-- Production document có chapter rail sticky bằng các label Việt hiện có,
+- Production document từng có chapter rail sticky bằng các label Việt hiện có,
   scroll-safe anchors; family foldout có sao chép địa chỉ với feedback rõ ràng;
   shell có nút xem lại bìa mà không reload trang hoặc restart experience cũ.
+  Chapter rail được gỡ ở refinement mobile tiếp theo để nội dung sau opening
+  thoáng hơn.
 
 ### Validation follow-up
 
@@ -621,3 +623,28 @@ khách Việt. Không mở rộng sang 66 mẫu và không thay physical opening
   alpha/mask/foil/height/shadow hợp lệ mới được thay composite runtime.
 - Không thêm particle, confetti, bounce game-like, shader effect nặng hoặc
   autoplay âm thanh mới. Motion và sound vẫn tuân theo reduced motion/mute.
+
+## Checkpoint follow-up — 2026-07-31 — mobile reading refinement
+
+Đã xử lý phản hồi visual trên production document sau khi mở thiệp, chỉ trong
+phạm vi `long-phung-gatefold`.
+
+### Đã chỉnh
+
+- Gỡ chapter rail sticky ngang gồm `Gia đình`, `Lễ cưới`, `Ngày`, `Album cưới`
+  và các mục phụ; phần document sau opening giờ đi thẳng vào nội dung, không
+  chiếm chiều cao viewport mobile.
+- Tách caption tên người khỏi mép ảnh bằng flow layout và khoảng thở riêng;
+  không còn caption absolute sát cạnh dưới của ảnh portrait print.
+- Couple names ở family insert và footer dùng layout xếp dọc trên mobile,
+  chuyển về hàng ngang từ breakpoint `sm`, tránh dính/rớt tên người thứ hai.
+- Địa điểm reception dùng body font `Lora` dễ đọc thay vì display font cách
+  điệu; vẫn giữ màu lacquer/ivory và line break từ nội dung địa chỉ.
+
+### Validation follow-up
+
+- `npm run typecheck`: pass.
+- ESLint file invitation và E2E: pass.
+- `npx playwright test tests/e2e/long-phung-gatefold.spec.ts`: pass 6/6.
+- E2E capture xác nhận chapter rail không còn render và hai nút copy địa chỉ
+  vẫn còn nguyên.

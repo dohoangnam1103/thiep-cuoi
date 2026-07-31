@@ -129,8 +129,7 @@ test.describe("Long Phụng Gatefold lab", () => {
     await expect(page.getByTestId("long-phung-gatefold-stage")).toHaveCount(0);
     await expect(page.locator('[data-template-renderer="long-phung-gatefold"]')).toBeVisible();
     await expect(page.locator("[data-template-footer]")).toBeVisible();
-    await expect(page.locator("[data-gatefold-chapter-nav]")).toBeVisible();
-    await expect(page.locator('a[href="#gatefold-families-heading"]')).toBeVisible();
+    await expect(page.locator("[data-gatefold-chapter-nav]")).toHaveCount(0);
     await expect(page.locator("[data-copy-address]")).toHaveCount(2);
   });
 });
