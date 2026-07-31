@@ -50,6 +50,8 @@ export default defineConfig({
       GUEST_MEDIA_ROOT: `${process.cwd()}/tests/e2e/.data/guest-media`,
       EDITOR_UPLOAD_ROOT: `${process.cwd()}/tests/e2e/.data/editor-uploads`,
       GATEFOLD_LAB_ENABLED: "1",
+      SLEEVE_LAB_ENABLED: "1",
+      DORAEMON_DOOR_LAB_ENABLED: "1",
       NODE_ENV: "test",
     },
   },

@@ -669,3 +669,77 @@ Theo phản hồi UX mới, opening chỉ được phép bắt đầu từ nút 
 - `npx playwright test tests/e2e/long-phung-gatefold.spec.ts`: pass 6/6,
   gồm click giữa canvas không mở, click mặt sau fallback không mở và mở bằng
   nút explicit.
+
+## Handoff cuối — 2026-07-31 — trạng thái live và chống hồi quy
+
+Đây là checkpoint ưu tiên khi tiếp tục `long-phung-gatefold` hoặc lấy nó làm
+baseline cho một mẫu Three.js mới. Không làm lại các vấn đề dưới đây nếu không
+có yêu cầu người dùng thay đổi rõ ràng.
+
+### Bản đang chạy production
+
+- Public demo: `https://thiepmungonline.com/mau-thiep/long-phung-gatefold/demo`.
+  Dùng URL này để review; `/vi/lab/long-phung-gatefold` bị middleware redirect
+  về `/lab/...` và không phải URL public dùng cho khách.
+- Branch: `feat/new-invitation-layouts`.
+- Các commit theo thứ tự:
+  - `0f2e6d3` — ship pilot Long Phụng Gatefold đầu tiên.
+  - `154cb13` — refinement khả năng đọc mobile.
+  - `03ca90b` — khóa opening về explicit button.
+- Deploy production hiện tại: `20260731050730`; container healthy, database
+  `quick_check=ok`, route public HTTP 200 và HTML không còn
+  `long-phung-gatefold-clasp-gesture`.
+
+### UX contract hiện tại — không hồi quy
+
+- Bìa vẫn là vật thể gatefold WebGL hai mặt có drag/tilt/flip; clasp vẫn là chi
+  tiết visual và được animate khi mở. Drag/click canvas không được mở thiệp.
+- **Chỉ nút native `Mở thiệp` mới được gọi opening.** Không thêm lại hit-target,
+  `onClick`, pointer gesture hoặc drag-to-open trên clasp, bìa, mặt sau hay
+  canvas. Khi ở mặt sau, khóa nút mở cho đến lúc về mặt trước.
+- Giữ fallback CSS hai mặt tương đương WebGL. Click lên carrier/fallback hoặc
+  mặt sau không được mở thiệp.
+- Không khôi phục chapter rail sticky ngang (`Gia đình`, `Lễ cưới`, `Ngày`,
+  `Album cưới`, ...); nội dung sau handoff đi thẳng vào portrait prints và
+  document để mobile không có horizontal-scrolling rail thừa.
+- Caption tên dưới portrait print phải ở normal flow, có khoảng thở sau ảnh;
+  không đưa về `position: absolute` sát ảnh hoặc `truncate` làm mất tên.
+- Tên đôi ở family insert và footer xếp dọc trên mobile, chỉ về hàng ngang từ
+  breakpoint `sm`; không ghép tên dài thành một dòng trên mobile.
+- Địa điểm/event address dùng body font `Lora`, không dùng display font
+  `UNI Chu truyen thong`/`Fz Qellia`. Display font chỉ dành cho tên đôi và
+  heading nghi lễ.
+
+### Những phần phải giữ khi tiếp tục
+
+- Physical opening `closed -> opening -> handoff -> opened`, camera handoff,
+  reduced-motion, mute/audio lifecycle, haptic, replay cover, back-face flip,
+  CSS fallback, registration manifest và public demo fixture đều đang hoạt
+  động. Không refactor sang renderer art-scroll hoặc envelope legacy.
+- Composite dragon/phoenix vẫn chỉ là runtime fallback có
+  `semanticLayersReady: false`; không claim là semantic animation production.
+  Chỉ thay bằng source authoring có layer/mask/registration/foil-height-shadow
+  đầy đủ và pass diff QA.
+- Không thêm particle/confetti/bounce/shader nặng/autoplay audio. Không mở rộng
+  sang hàng loạt 66 mẫu trong cùng task.
+
+### Validation tối thiểu trước lần sau
+
+1. `git status`, rồi đọc `AGENTS.md`, roadmap, playbook và checkpoint này.
+2. `npm run typecheck`, lint đúng file đã sửa, `ALLOW_INSECURE_SITE_URL=1 npm run build`.
+3. `npx playwright test tests/e2e/long-phung-gatefold.spec.ts`; bộ test phải
+   giữ 6/6 pass, gồm explicit button-only, WebGL/fallback, mobile, reduced
+   motion, replay và production capture.
+4. Visual QA mobile `390×844`: không overflow ngang, không chapter rail, caption
+   có khoảng cách với ảnh, tên đôi không vỡ khó đọc, địa chỉ dùng body font.
+5. Chỉ commit/push/deploy khi người dùng yêu cầu. Deploy dùng
+   `./scripts/deploy-minipc.sh`; script backup SQLite/uploads, healthcheck và
+   rollback guard.
+
+### Shortcut đã lưu cho mẫu Three.js tiếp theo
+
+`docs/research/INSPECTION_GUIDE.md` có section **Shortcut intent: “tạo mẫu
+thiệp mới theo phong cách 3D Three.js”**. Cụm yêu cầu đó mặc định nghĩa là tạo
+một pilot theo toàn bộ contract trên: concept → `TemplateArtDirection` →
+`AssetBible` → storyboard → mini asset pack → implementation/test; không hỏi
+lại các lựa chọn chung trừ hình học/concept mới, và không tự deploy.

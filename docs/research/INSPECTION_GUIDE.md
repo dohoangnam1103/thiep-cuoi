@@ -94,6 +94,43 @@ animation ba giai đoạn và responsive PC/mobile, được lưu tại
 [`DISTINCTIVE_TEMPLATE_ROADMAP.md`](./DISTINCTIVE_TEMPLATE_ROADMAP.md). Phải đọc
 tài liệu đó trước khi thiết kế một renderer family mới hoặc mẫu thí điểm đầu tiên.
 
+## Shortcut intent: “tạo mẫu thiệp mới theo phong cách 3D Three.js”
+
+Khi người dùng dùng cụm này (hoặc “thiệp 3D Three.js”, “mẫu 3D mới”), mặc định
+hiểu đây là yêu cầu tạo **một pilot renderer family phá cách**, theo contract của
+`long-phung-gatefold`; không hiểu là tạo thêm một art-scroll/theme thường.
+Chỉ hỏi lại khi hướng hình học hoặc concept chưa được nêu và không thể suy ra an
+toàn.
+
+Trước khi làm phải đọc `AGENTS.md`, toàn bộ
+[`DISTINCTIVE_TEMPLATE_ROADMAP.md`](./DISTINCTIVE_TEMPLATE_ROADMAP.md), phần
+playbook này và checkpoint/continuation của pilot gần nhất nếu có. Sau đó kiểm
+tra `git status` và code hiện tại, rồi tóm tắt ngắn contract trước khi code.
+
+Mặc định cần giữ các điểm sau, trừ khi người dùng yêu cầu khác rõ ràng:
+
+- Chỉ làm **một mẫu thí điểm**, không triển khai hàng loạt 66 mẫu.
+- Chốt lần lượt concept, `TemplateArtDirection`, `AssetBible`, storyboard và
+  mini asset pack trước khi làm rộng renderer; giữ các quyết định đã khóa trong
+  roadmap.
+- Dùng React Three Fiber/Three.js/Drei cho vật thể bìa, GSAP cho một master
+  opening timeline và React DOM cho nội dung sau handoff; không tự thêm engine
+  animation hay physics mới.
+- Bìa là vật thể 3D hai mặt có độ dày, ánh sáng/bóng và drag/tilt/flip. Opening
+  tiếp nối pose hiện tại, không fade/swap sang trang khác.
+- **Chỉ nút native `Mở thiệp` được phép bắt đầu opening.** Click/tap/drag vào
+  dấu ấn, bìa, mặt sau hoặc canvas chỉ được tilt/flip/quan sát; tuyệt đối không
+  trigger opening. Nút cần giữ keyboard accessibility; mặt sau khóa nút mở cho
+  tới khi quay về mặt trước.
+- Có CSS/static two-sided fallback, reduced-motion path, mobile-first layout,
+  mute/audio lifecycle an toàn, asset registration/alpha QA và test cho cả
+  WebGL lẫn fallback.
+- Typography: display font chỉ dành cho tên/heading; body font dùng cho địa
+  chỉ, ngày giờ, control và nội dung đọc. Ưu tiên khách Việt khi không có yêu
+  cầu locale khác.
+- Chạy typecheck, lint đúng phạm vi, build và E2E/visual QA trước bàn giao.
+  Chỉ commit, push hoặc deploy khi người dùng nói rõ.
+
 ## Kiến trúc hiện tại
 
 ### Renderer và component dùng chung

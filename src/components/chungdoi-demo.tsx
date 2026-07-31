@@ -32,7 +32,10 @@ import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-sh
 import { OpeningEffectArtwork } from "@/components/chungdoi-opening-effect";
 import { GENERATED_TEMPLATE_RENDERERS } from "@/components/generated/template-renderers";
 import { LongPhungGatefoldLab } from "@/components/chungdoi-long-phung-gatefold-lab";
+import { NguyetAnhSleeveLab } from "@/components/chungdoi-nguyet-anh-sleeve-lab";
 import { LongPhungGatefoldInvitation } from "@/components/chungdoi-tpl-long-phung-gatefold";
+import { NguyetAnhSleeveInvitation } from "@/components/chungdoi-tpl-nguyet-anh-sleeve";
+import { DoraemonDoorInvitation } from "@/components/chungdoi-tpl-doraemon-door";
 import {
   isAuditedTemplateSlug,
   type AuditedTemplateSlug,
@@ -113,6 +116,11 @@ const AUDITED_TEMPLATE_RENDERERS = {
   ...GENERATED_TEMPLATE_RENDERERS,
 } satisfies Record<AuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
 const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
+const DoraemonDoorLab = dynamic(
+  () => import("@/components/chungdoi-doraemon-door-lab")
+    .then((module) => module.DoraemonDoorLab),
+  { ssr: false },
+);
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -1328,8 +1336,15 @@ export function ChungDoiDemo({
   heading?: string;
 }) {
   const gatefoldT = useTranslations("gatefoldLab");
+  const sleeveT = useTranslations("sleeveLab");
+  const doraemonDoorT = useTranslations("doraemonDoorLab");
   const content = contentProp ?? chungdoiDemoContent[template.slug];
   const isGatefoldExperience = content?.slug === "long-phung-gatefold";
+  const isSleeveExperience = content?.slug === "nguyet-anh-sleeve";
+  const isDoraemonDoorExperience = content?.slug === "doraemon-door";
+  const isPhysicalExperience = isGatefoldExperience
+    || isSleeveExperience
+    || isDoraemonDoorExperience;
 
   const [opened, setOpened] = useState(captureMode || previewMode);
   const [opening, setOpening] = useState(false);
@@ -1367,6 +1382,17 @@ export function ChungDoiDemo({
       document.body.style.overflow = original;
     };
   }, [opened, content]);
+
+  useEffect(() => {
+    if (!opened || !isDoraemonDoorExperience) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLElement>("[data-physical-handoff-target]")
+        ?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [isDoraemonDoorExperience, opened]);
 
   useEffect(() => {
     if (!opened || captureMode) return;
@@ -1455,8 +1481,8 @@ export function ChungDoiDemo({
     };
   }, []);
 
-  const handleGatefoldStateChange = useCallback((nextState: "closed" | "opening" | "handoff" | "opened") => {
-    if (!isGatefoldExperience || !content) return;
+  const handlePhysicalExperienceStateChange = useCallback((nextState: "closed" | "opening" | "handoff" | "opened") => {
+    if (!isPhysicalExperience || !content) return;
 
     if (nextState === "closed") {
       openingRef.current = false;
@@ -1486,7 +1512,7 @@ export function ChungDoiDemo({
     autoScrollTimerRef.current = window.setTimeout(() => {
       if (!previewMode) setAutoScrolling(true);
     }, 2000);
-  }, [content, isGatefoldExperience, previewMode]);
+  }, [content, isPhysicalExperience, previewMode]);
 
   if (!content || !tokens) {
     return (
@@ -1564,8 +1590,8 @@ export function ChungDoiDemo({
     }
   }
 
-  function replayGatefoldCover() {
-    if (!isGatefoldExperience) return;
+  function replayPhysicalCover() {
+    if (!isPhysicalExperience) return;
 
     if (autoScrollTimerRef.current) {
       window.clearTimeout(autoScrollTimerRef.current);
@@ -1601,7 +1627,23 @@ export function ChungDoiDemo({
         isGatefoldExperience && !previewMode ? (
           <LongPhungGatefoldLab
             content={content}
-            onStateChange={handleGatefoldStateChange}
+            onStateChange={handlePhysicalExperienceStateChange}
+            renderBody={false}
+            showControls={false}
+            muted={audioMuted}
+          />
+        ) : isSleeveExperience && !previewMode ? (
+          <NguyetAnhSleeveLab
+            content={content}
+            onStateChange={handlePhysicalExperienceStateChange}
+            renderBody={false}
+            showControls={false}
+            muted={audioMuted}
+          />
+        ) : isDoraemonDoorExperience && !previewMode ? (
+          <DoraemonDoorLab
+            content={content}
+            onStateChange={handlePhysicalExperienceStateChange}
             renderBody={false}
             showControls={false}
             muted={audioMuted}
@@ -1622,6 +1664,14 @@ export function ChungDoiDemo({
           {isGatefoldExperience ? (
         <div className="contents" data-template-renderer={content.slug}>
           <LongPhungGatefoldInvitation content={content} />
+        </div>
+      ) : isSleeveExperience ? (
+        <div className="contents" data-template-renderer={content.slug}>
+          <NguyetAnhSleeveInvitation content={content} />
+        </div>
+      ) : isDoraemonDoorExperience ? (
+        <div className="contents" data-template-renderer={content.slug}>
+          <DoraemonDoorInvitation content={content} />
         </div>
       ) : AuditedTemplateRenderer ? (
         <div className="contents" data-template-renderer={content.slug}>
@@ -1677,7 +1727,7 @@ export function ChungDoiDemo({
         </div>
       )}
 
-          {!isGatefoldExperience ? <AdditionalCeremonies content={content} tokens={tokens} /> : null}
+          {!isPhysicalExperience ? <AdditionalCeremonies content={content} tokens={tokens} /> : null}
           <GuestMediaGalleryProvider>
             <PublicGuestMomentsPortal templateSlug={content.slug} />
             {!captureMode ? <PublicGuestMediaDialog /> : null}
@@ -1689,14 +1739,38 @@ export function ChungDoiDemo({
         <>
           <PublicRsvpDialog />
           <div className="fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:right-6">
-            {isGatefoldExperience && !previewMode ? (
+            {isPhysicalExperience && !previewMode ? (
               <button
                 type="button"
-                data-testid="long-phung-gatefold-replay-cover"
-                onClick={replayGatefoldCover}
-                aria-label={gatefoldT("replayCover")}
-                title={gatefoldT("replayCover")}
-                className="flex size-12 items-center justify-center rounded-full border border-[#B58A3A]/55 bg-[#17110F]/88 text-[#EAD9B8] shadow-lg shadow-[#17110F]/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B58A3A] active:translate-y-px"
+                data-testid={
+                  isGatefoldExperience
+                    ? "long-phung-gatefold-replay-cover"
+                    : isSleeveExperience
+                      ? "nguyet-anh-sleeve-replay-cover"
+                      : "doraemon-door-replay-cover"
+                }
+                onClick={replayPhysicalCover}
+                aria-label={
+                  isGatefoldExperience
+                    ? gatefoldT("replayCover")
+                    : isSleeveExperience
+                      ? sleeveT("replayCover")
+                      : doraemonDoorT("replayCover")
+                }
+                title={
+                  isGatefoldExperience
+                    ? gatefoldT("replayCover")
+                    : isSleeveExperience
+                      ? sleeveT("replayCover")
+                      : doraemonDoorT("replayCover")
+                }
+                className={
+                  isGatefoldExperience
+                    ? "flex size-12 items-center justify-center rounded-full border border-[#B58A3A]/55 bg-[#17110F]/88 text-[#EAD9B8] shadow-lg shadow-[#17110F]/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B58A3A] active:translate-y-px"
+                    : isSleeveExperience
+                      ? "flex size-12 items-center justify-center border border-[#78C7D7]/70 bg-[#0B1116]/90 text-[#D7E4EA] shadow-lg shadow-black/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#78C7D7] active:translate-y-px"
+                      : "flex size-12 items-center justify-center rounded-full border border-[#B94170]/70 bg-[#E96F9A]/92 text-[#FFF9EE] shadow-lg shadow-[#39BCEB]/25 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17334A] active:translate-y-px"
+                }
               >
                 <RotateCcw aria-hidden className="size-5" strokeWidth={1.5} />
               </button>

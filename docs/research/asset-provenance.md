@@ -48,6 +48,20 @@ Rerun with `node scripts/generate-dong-son-artwork.mjs`, then re-derive the open
 
 The generated originals were converted with Sharp to the production dimensions used by each theme. Preview images in `public/chungdoi/images/template-previews/en/` were then captured from the real Next.js routes in listing, portrait and landscape variants.
 
+## Nguyệt Ảnh Sleeve (2026-07-31)
+
+`nguyet-anh-sleeve` uses one original lotus photogram generated with the built-in
+`imagegen` tool. No reference image, third-party artwork, logo or web-sourced
+asset was used. The prompt and exact visual constraints are stored in
+`docs/research/templates/nguyet-anh-sleeve/prompts.md`.
+
+The selected RGB master is
+`public/chungdoi/templates/nguyet-anh-sleeve/source/lotus-photogram-master-v1.png`.
+Sharp produced the desktop and mobile WebP variants under
+`public/chungdoi/templates/nguyet-anh-sleeve/cover/`. The smoked-glass sleeve,
+film perforations, aperture ring, metal rails, lighting and shadow are
+procedural runtime geometry/materials rather than generated raster assets.
+
 ## Layered opening derivatives
 
 The `opening-plate.webp`, `opening-*.webp`, and `opening-assets.json` files under each of the 20 theme directories were produced solely as motion-layer derivatives of that theme's local `artwork.webp` — the first 18 on 2026-07-28, the two Đông Sơn themes on 2026-07-29. No web-sourced or third-party imagery was added.

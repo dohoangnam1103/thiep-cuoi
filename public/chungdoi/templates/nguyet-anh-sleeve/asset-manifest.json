@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "assetBible": "../../../../docs/research/templates/nguyet-anh-sleeve/SPEC.md",
+  "sourcePromptFile": "../../../../docs/research/templates/nguyet-anh-sleeve/prompts.md",
+  "assets": [
+    {
+      "id": "lotus-photogram-master",
+      "source": "source/lotus-photogram-master-v1.png",
+      "runtime": "cover/lotus-photogram-v1.webp",
+      "role": "color",
+      "width": 1024,
+      "height": 1536,
+      "anchor": [0.5, 0.5],
+      "pivot": [0.5, 0.5],
+      "zLayer": 0,
+      "mobileVariant": "cover/lotus-photogram-v1.mobile.webp"
+    }
+  ]
+}
