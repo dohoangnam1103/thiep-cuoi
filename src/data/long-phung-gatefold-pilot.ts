@@ -30,6 +30,7 @@ export type TemplateArtDirection = {
 
 export type PhysicalOpeningModel = {
   object: "gatefold";
+  openTrigger: "explicit-button";
   closedInteraction: {
     mode: "tilt-and-flip";
     showsBackFace: true;
@@ -73,7 +74,7 @@ export const longPhungGatefoldArtDirection = {
   coverGeometry:
     "vertical three-panel gatefold; full-width center board; two half-width hinged wings; designed back board and visible paper edges",
   openingMechanism:
-    "center clasp releases; left and right wings unfold with a short stagger; camera settles on the inner center sheet; WebGL-to-DOM geometric handoff",
+    "the explicit open button releases the visual center clasp; left and right wings unfold with a short stagger; camera settles on the inner center sheet; WebGL-to-DOM geometric handoff",
   typography: {
     display: '"UNI Chu truyen thong", "Fz Qellia", serif',
     body: '"Lora", "Times New Roman", serif',
@@ -107,6 +108,7 @@ export const longPhungGatefoldArtDirection = {
 
 export const longPhungGatefoldOpeningModel = {
   object: "gatefold",
+  openTrigger: "explicit-button",
   closedInteraction: {
     mode: "tilt-and-flip",
     showsBackFace: true,
@@ -115,7 +117,8 @@ export const longPhungGatefoldOpeningModel = {
     gestureThresholdPx: 8,
     settleBehavior: "hold",
   },
-  affordance: "central clasp placed over the meeting seam of the two wings",
+  affordance:
+    "explicit Mở thiệp button starts the opening; the central clasp remains a visual release detail and never opens on click",
   hinges: [
     {
       part: "left-wing",

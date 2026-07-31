@@ -11,7 +11,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
 import { gsap } from "gsap";
@@ -60,12 +59,6 @@ const stateTranslationKeys: Record<GatefoldExperienceState, "stateClosed" | "sta
   opening: "stateOpening",
   handoff: "stateHandoff",
   opened: "stateOpened",
-};
-
-type ClaspGesture = {
-  pointerId: number;
-  originX: number;
-  originY: number;
 };
 
 type CameraSettleMotion = {
@@ -308,8 +301,6 @@ export function LongPhungGatefoldLab({
   const handoffFrameRef = useRef<number | null>(null);
   const fallbackTimerRef = useRef<number | null>(null);
   const openingRequestRef = useRef(false);
-  const claspGestureRef = useRef<ClaspGesture | null>(null);
-  const suppressClaspClickRef = useRef(false);
   const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
   const [sceneReady, setSceneReady] = useState(false);
   const [canvasMounted, setCanvasMounted] = useState(true);
@@ -435,8 +426,6 @@ export function LongPhungGatefoldLab({
     timelineRef.current?.kill();
     timelineRef.current = null;
     openingRequestRef.current = false;
-    claspGestureRef.current = null;
-    suppressClaspClickRef.current = false;
     setHasTimeline(false);
     if (handoffFrameRef.current !== null) {
       window.cancelAnimationFrame(handoffFrameRef.current);
@@ -723,56 +712,6 @@ export function LongPhungGatefoldLab({
   const canFlip = state === "closed" && (webglSupported === false || sceneReady);
   const fallbackMotion = reducedMotion ? "reduced" : isMobile ? "mobile" : "desktop";
 
-  const handleClaspPointerDown = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
-    if (!canOpen || openingRequestRef.current) return;
-
-    if (!event.isPrimary || claspGestureRef.current) {
-      claspGestureRef.current = null;
-      suppressClaspClickRef.current = true;
-      return;
-    }
-
-    claspGestureRef.current = {
-      pointerId: event.pointerId,
-      originX: event.clientX,
-      originY: event.clientY,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }, [canOpen]);
-
-  const handleClaspPointerMove = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
-    const gesture = claspGestureRef.current;
-    if (!gesture || gesture.pointerId !== event.pointerId || !event.isPrimary) return;
-
-    const distance = Math.hypot(event.clientX - gesture.originX, event.clientY - gesture.originY);
-    if (distance < longPhungGatefoldPilot.physicalOpening.gestureThresholdPx) return;
-
-    claspGestureRef.current = null;
-    suppressClaspClickRef.current = true;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    openInvitation();
-  }, [openInvitation]);
-
-  const clearClaspGesture = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
-    const gesture = claspGestureRef.current;
-    if (gesture?.pointerId !== event.pointerId) return;
-
-    claspGestureRef.current = null;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  }, []);
-
-  const handleClaspClick = useCallback(() => {
-    if (suppressClaspClickRef.current) {
-      suppressClaspClickRef.current = false;
-      return;
-    }
-    openInvitation();
-  }, [openInvitation]);
-
   const toggleBackFace = useCallback(() => {
     if (!canFlip || openingRequestRef.current) return;
 
@@ -814,20 +753,6 @@ export function LongPhungGatefoldLab({
               flipped={fallbackFlipped}
               isOpening={state === "opening" || state === "opened"}
               motion={fallbackMotion}
-            />
-          ) : null}
-          {webglSupported === true && canvasMounted && state === "closed" ? (
-            <button
-              aria-label={t("releaseClasp")}
-              data-testid="long-phung-gatefold-clasp-gesture"
-              disabled={!canOpen}
-              type="button"
-              onClick={handleClaspClick}
-              onPointerCancel={clearClaspGesture}
-              onPointerDown={handleClaspPointerDown}
-              onPointerMove={handleClaspPointerMove}
-              onPointerUp={clearClaspGesture}
-              className="absolute left-1/2 top-1/2 z-20 grid size-20 -translate-x-1/2 -translate-y-1/2 touch-none place-items-center rounded-full border border-transparent outline-none focus-visible:border-[#EAD9B8] focus-visible:ring-2 focus-visible:ring-[#EAD9B8]/70 disabled:pointer-events-none"
             />
           ) : null}
           <LongPhungGatefoldHandoffHero

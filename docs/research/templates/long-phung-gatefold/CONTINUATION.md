@@ -648,3 +648,24 @@ phạm vi `long-phung-gatefold`.
 - `npx playwright test tests/e2e/long-phung-gatefold.spec.ts`: pass 6/6.
 - E2E capture xác nhận chapter rail không còn render và hai nút copy địa chỉ
   vẫn còn nguyên.
+
+## Checkpoint follow-up — 2026-07-31 — explicit open affordance
+
+Theo phản hồi UX mới, opening chỉ được phép bắt đầu từ nút `Mở thiệp`.
+
+### Đã chỉnh
+
+- Gỡ hit-target và toàn bộ handler drag/click trên dấu ấn trung tâm; click hoặc
+  drag khu vực clasp chỉ còn là tương tác canvas/tilt, không gọi opening.
+- Click lên mặt sau/carrying cover cũng không gọi opening; nút `Xem mặt sau`
+  vẫn chỉ flip mặt và khóa nút mở cho đến khi quay lại mặt trước.
+- `PhysicalOpeningModel` đã ghi rõ `openTrigger: "explicit-button"`; clasp vẫn
+  được animate như chi tiết release khi nút mở được nhấn.
+
+### Validation follow-up
+
+- `npm run typecheck`: pass.
+- ESLint lab và E2E: pass.
+- `npx playwright test tests/e2e/long-phung-gatefold.spec.ts`: pass 6/6,
+  gồm click giữa canvas không mở, click mặt sau fallback không mở và mở bằng
+  nút explicit.

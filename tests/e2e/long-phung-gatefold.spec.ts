@@ -27,25 +27,20 @@ async function expectOpenedGatefold(page: Page) {
 test.describe("Long Phụng Gatefold lab", () => {
   test.describe.configure({ mode: "serial" });
 
-  test("desktop preserves the physical-opening state machine from a clasp drag", async ({ page }) => {
+  test("desktop opens only from the explicit open button", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await loadGatefoldLab(page);
+    const openControl = await loadGatefoldLab(page);
 
     const stage = page.getByTestId("long-phung-gatefold-stage");
-    const clasp = page.getByTestId("long-phung-gatefold-clasp-gesture");
-    const claspBox = await clasp.boundingBox();
-    if (!claspBox) throw new Error("gatefold clasp hit target has no layout box");
+    const canvas = page.getByTestId("long-phung-gatefold-canvas");
+    const canvasBox = await canvas.boundingBox();
+    if (!canvasBox) throw new Error("gatefold canvas has no layout box");
 
-    await page.mouse.move(claspBox.x + claspBox.width / 2, claspBox.y + claspBox.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(claspBox.x + claspBox.width / 2 + 20, claspBox.y + claspBox.height / 2, {
-      steps: 3,
-    });
-    await page.mouse.up();
+    await page.mouse.click(canvasBox.x + canvasBox.width / 2, canvasBox.y + canvasBox.height / 2);
+    await expect(stage).toHaveAttribute("data-gatefold-state", "closed");
+    await expect(openControl).toBeEnabled();
 
-    await expect(stage).toHaveAttribute("data-gatefold-state", "opening");
-    await expect(stage).toHaveAttribute("data-gatefold-pose-captured", "true");
-    await expect(stage).toHaveAttribute("data-gatefold-phase", /unfold|reveal|settle|handoff/);
+    await openControl.click();
     await expectOpenedGatefold(page);
   });
 
@@ -91,6 +86,11 @@ test.describe("Long Phụng Gatefold lab", () => {
     await expect(fallback).toHaveAttribute("data-gatefold-fallback-flipped", "true");
     await expect(flipControl).toHaveAttribute("aria-pressed", "true");
     await expect(openControl).toBeDisabled();
+    await fallback.click({ position: { x: 120, y: 180 } });
+    await expect(page.getByTestId("long-phung-gatefold-stage")).toHaveAttribute(
+      "data-gatefold-state",
+      "closed",
+    );
 
     await flipControl.click();
     await expect(fallback).toHaveAttribute("data-gatefold-fallback-flipped", "false");
