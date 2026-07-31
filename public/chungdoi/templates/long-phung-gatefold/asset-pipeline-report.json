@@ -1,0 +1,393 @@
+{
+  "schemaVersion": 1,
+  "templateSlug": "long-phung-gatefold",
+  "palette": {
+    "lacquerCrimson": "#5A0B12",
+    "deepCinnabar": "#7C1B1B",
+    "antiqueGold": "#B58A3A",
+    "warmIvory": "#EAD9B8",
+    "lacquerBlack": "#17110F"
+  },
+  "policy": {
+    "sourceMastersAreImmutable": true,
+    "semanticLayerSynthesis": "forbidden",
+    "transparentRgbRule": "RGB is zeroed before encoding only where alpha is exactly zero; antialiased visible edge pixels are preserved. Hidden RGB decoded from WebP is unspecified by the format and is not treated as visible image data.",
+    "fullCanvasRegistration": "Mascot runtime composites and all future author layers stay on their declared full canvas; the pipeline never trims them.",
+    "diagnosticLayout": "2x2: lacquer black, warm ivory, lacquer crimson, QA-only chroma green.",
+    "promotionRule": "Composite and candidate WebP files are safe for the isolated lab only. Production body/wing/tail/whisker names remain blocked until authored full-canvas files exist and recomposition matches the master."
+  },
+  "sources": [
+    {
+      "id": "dragon-left-composite-v2",
+      "status": "immutable-composite",
+      "source": {
+        "path": "source/dragon-left-master-v2.png",
+        "bytes": 1048975,
+        "sha256": "59a55212b25c97dcd086723dd6b32a2eb28dc549f4d234f3b28911bca390791a",
+        "width": 887,
+        "height": 1774,
+        "format": "png"
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "visiblePixels": 280351,
+        "translucentPixels": 145272,
+        "fullyTransparentPixels": 1293187,
+        "coverageRatio": 0.1781660182340687,
+        "visibleBounds": {
+          "left": 111,
+          "top": 105,
+          "width": 635,
+          "height": 1567
+        }
+      },
+      "transparentRgbNormalization": {
+        "fullyTransparentPixels": 1293187,
+        "pixelsChanged": 23906,
+        "rgbChannelValuesCleared": 70560
+      },
+      "runtime": {
+        "path": "cover/dragon-left-composite-v2.webp",
+        "bytes": 330152,
+        "sha256": "a882971e133f24bc5b5c8ee6cee870d9a639cbd03317bd40fbd2a8dde1542641",
+        "width": 887,
+        "height": 1774,
+        "format": "webp"
+      },
+      "mobileRuntime": {
+        "path": "cover/dragon-left-composite-v2.mobile.webp",
+        "bytes": 139398,
+        "sha256": "ed7c4e74b6bc8bf5e3f83c1342ee79a39a8cdd5861a509bf5f34ec05c948a20e",
+        "width": 444,
+        "height": 888,
+        "format": "webp"
+      },
+      "fourBackgroundDiagnostic": {
+        "path": "diagnostics/dragon-left-composite-v2-four-background.png",
+        "bytes": 1141241,
+        "sha256": "6c43e9b13afa0cace669e6a64789641114ea3f3a9707d061a78ae63bb48b0d39",
+        "width": 960,
+        "height": 1920,
+        "format": "png"
+      }
+    },
+    {
+      "id": "phoenix-right-composite-v1",
+      "status": "immutable-composite",
+      "source": {
+        "path": "source/phoenix-right-master-v1.png",
+        "bytes": 1529898,
+        "sha256": "fe8cba7f75747d9910762762c3d1292419e18892579c1bcb0effcc5b4c243b25",
+        "width": 887,
+        "height": 1774,
+        "format": "png"
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "visiblePixels": 449801,
+        "translucentPixels": 32161,
+        "fullyTransparentPixels": 1123737,
+        "coverageRatio": 0.28585328095031703,
+        "visibleBounds": {
+          "left": 178,
+          "top": 82,
+          "width": 553,
+          "height": 1611
+        }
+      },
+      "transparentRgbNormalization": {
+        "fullyTransparentPixels": 1123737,
+        "pixelsChanged": 22848,
+        "rgbChannelValuesCleared": 66346
+      },
+      "runtime": {
+        "path": "cover/phoenix-right-composite-v1.webp",
+        "bytes": 371208,
+        "sha256": "57eb03ae53989534fb194a9373c3ba363a100c087db488e366b745541d723296",
+        "width": 887,
+        "height": 1774,
+        "format": "webp"
+      },
+      "mobileRuntime": {
+        "path": "cover/phoenix-right-composite-v1.mobile.webp",
+        "bytes": 126022,
+        "sha256": "4d3aad1fbcc63b3540b693b0f0022a3c8a069e8599cbfabb688912891bfd800f",
+        "width": 444,
+        "height": 888,
+        "format": "webp"
+      },
+      "fourBackgroundDiagnostic": {
+        "path": "diagnostics/phoenix-right-composite-v1-four-background.png",
+        "bytes": 1204093,
+        "sha256": "f16f522e60e5ebb64ec0447acabdc5a06518928f3b531444c94dc24b62084dc3",
+        "width": 960,
+        "height": 1920,
+        "format": "png"
+      }
+    },
+    {
+      "id": "cloud-front-candidate-v1",
+      "status": "lab-candidate",
+      "source": {
+        "path": "source/cloud-front-master-v1.png",
+        "bytes": 101293,
+        "sha256": "a3b09c8bc3bdcda3b8ff020078003d0a6583c32eb53bd7a619508759be629f69",
+        "width": 1254,
+        "height": 1254,
+        "format": "png"
+      },
+      "alpha": {
+        "min": 0,
+        "max": 255,
+        "visiblePixels": 16086,
+        "translucentPixels": 6604,
+        "fullyTransparentPixels": 1556430,
+        "coverageRatio": 0.010229466663614234,
+        "visibleBounds": {
+          "left": 286,
+          "top": 354,
+          "width": 707,
+          "height": 501
+        }
+      },
+      "transparentRgbNormalization": {
+        "fullyTransparentPixels": 1556430,
+        "pixelsChanged": 8219,
+        "rgbChannelValuesCleared": 23934
+      },
+      "runtime": {
+        "path": "opening/cloud-front-candidate-v1.webp",
+        "bytes": 34694,
+        "sha256": "aacd0284c529ca70142d7a864d26ba9c287a9c7c955944eec5ed3a2cbc960aef",
+        "width": 1254,
+        "height": 1254,
+        "format": "webp"
+      },
+      "mobileRuntime": {
+        "path": "opening/cloud-front-candidate-v1.mobile.webp",
+        "bytes": 22504,
+        "sha256": "3f674f26c25ca111238c5904480c5e2d199726f112f0b99dedfa0c387e2c9e66",
+        "width": 640,
+        "height": 640,
+        "format": "webp"
+      },
+      "fourBackgroundDiagnostic": {
+        "path": "diagnostics/cloud-front-candidate-v1-four-background.png",
+        "bytes": 79958,
+        "sha256": "894722b2b175bb6a1b02d5c1c343fc1b2d4a2af523cf23632e5ef6efe235249b",
+        "width": 960,
+        "height": 960,
+        "format": "png"
+      }
+    }
+  ],
+  "materials": {
+    "provenance": "Deterministic periodic fields generated by this script; no AI color image is interpreted as PBR data.",
+    "paperColorBase": "#EAD9B8",
+    "paperColor": {
+      "path": "materials/paper-color.webp",
+      "bytes": 10692,
+      "sha256": "6e23e1837aeb184bd2659e49428bea23c0f7569cc862ba5f0b5f31ed2c64fb2b",
+      "width": 2048,
+      "height": 2048,
+      "format": "webp"
+    },
+    "paperNormal": {
+      "path": "materials/paper-normal.webp",
+      "bytes": 371456,
+      "sha256": "a35bd1e9bd6626b5dd8acb217c10965ed598b2f6038671ae7a6e61b0e048320e",
+      "width": 2048,
+      "height": 2048,
+      "format": "webp"
+    },
+    "foilRoughness": {
+      "path": "materials/foil-roughness.webp",
+      "bytes": 99506,
+      "sha256": "c76b9dfc46bf3b681082b74ce89f1cd88681780fb617e3f6620f4ca4979ac074",
+      "width": 1024,
+      "height": 1024,
+      "format": "webp"
+    }
+  },
+  "authoringReadiness": {
+    "readyForSemanticPromotion": false,
+    "files": [
+      {
+        "id": "dragon-body-left",
+        "path": "source/dragon-body-left.png",
+        "kind": "animation-layer",
+        "status": "missing"
+      },
+      {
+        "id": "dragon-whiskers-left",
+        "path": "source/dragon-whiskers-left.png",
+        "kind": "animation-layer",
+        "status": "missing"
+      },
+      {
+        "id": "dragon-foil-mask",
+        "path": "source/dragon-foil-mask.png",
+        "kind": "mask",
+        "status": "missing"
+      },
+      {
+        "id": "dragon-emboss-mask",
+        "path": "source/dragon-emboss-mask.png",
+        "kind": "mask",
+        "status": "missing"
+      },
+      {
+        "id": "dragon-shadow",
+        "path": "source/dragon-shadow.png",
+        "kind": "shadow",
+        "status": "missing"
+      },
+      {
+        "id": "phoenix-body-right",
+        "path": "source/phoenix-body-right.png",
+        "kind": "animation-layer",
+        "status": "missing"
+      },
+      {
+        "id": "phoenix-wing-front-right",
+        "path": "source/phoenix-wing-front-right.png",
+        "kind": "animation-layer",
+        "status": "missing"
+      },
+      {
+        "id": "phoenix-tail-front-right",
+        "path": "source/phoenix-tail-front-right.png",
+        "kind": "animation-layer",
+        "status": "missing"
+      },
+      {
+        "id": "phoenix-foil-mask",
+        "path": "source/phoenix-foil-mask.png",
+        "kind": "mask",
+        "status": "missing"
+      },
+      {
+        "id": "phoenix-emboss-mask",
+        "path": "source/phoenix-emboss-mask.png",
+        "kind": "mask",
+        "status": "missing"
+      },
+      {
+        "id": "phoenix-shadow",
+        "path": "source/phoenix-shadow.png",
+        "kind": "shadow",
+        "status": "missing"
+      },
+      {
+        "id": "cloud-back",
+        "path": "source/cloud-back.png",
+        "kind": "animation-layer",
+        "status": "missing"
+      }
+    ],
+    "missingAuthorMasks": [
+      "source/dragon-foil-mask.png",
+      "source/dragon-emboss-mask.png",
+      "source/phoenix-foil-mask.png",
+      "source/phoenix-emboss-mask.png"
+    ],
+    "invalidAuthorMasks": [],
+    "missingAuthorLayers": [
+      "source/dragon-body-left.png",
+      "source/dragon-whiskers-left.png",
+      "source/dragon-shadow.png",
+      "source/phoenix-body-right.png",
+      "source/phoenix-wing-front-right.png",
+      "source/phoenix-tail-front-right.png",
+      "source/phoenix-shadow.png",
+      "source/cloud-back.png"
+    ],
+    "invalidAuthorLayers": [],
+    "recompositions": [
+      {
+        "id": "dragon-left",
+        "status": "blocked-missing-author-files",
+        "missingAuthorFiles": [
+          "source/dragon-body-left.png",
+          "source/dragon-whiskers-left.png"
+        ]
+      },
+      {
+        "id": "phoenix-right",
+        "status": "blocked-missing-author-files",
+        "missingAuthorFiles": [
+          "source/phoenix-body-right.png",
+          "source/phoenix-wing-front-right.png",
+          "source/phoenix-tail-front-right.png"
+        ]
+      }
+    ]
+  },
+  "byteReport": {
+    "generatedImageBytes": 3930924,
+    "artifacts": [
+      {
+        "path": "cover/dragon-left-composite-v2.mobile.webp",
+        "bytes": 139398,
+        "sha256": "ed7c4e74b6bc8bf5e3f83c1342ee79a39a8cdd5861a509bf5f34ec05c948a20e"
+      },
+      {
+        "path": "cover/dragon-left-composite-v2.webp",
+        "bytes": 330152,
+        "sha256": "a882971e133f24bc5b5c8ee6cee870d9a639cbd03317bd40fbd2a8dde1542641"
+      },
+      {
+        "path": "cover/phoenix-right-composite-v1.mobile.webp",
+        "bytes": 126022,
+        "sha256": "4d3aad1fbcc63b3540b693b0f0022a3c8a069e8599cbfabb688912891bfd800f"
+      },
+      {
+        "path": "cover/phoenix-right-composite-v1.webp",
+        "bytes": 371208,
+        "sha256": "57eb03ae53989534fb194a9373c3ba363a100c087db488e366b745541d723296"
+      },
+      {
+        "path": "diagnostics/cloud-front-candidate-v1-four-background.png",
+        "bytes": 79958,
+        "sha256": "894722b2b175bb6a1b02d5c1c343fc1b2d4a2af523cf23632e5ef6efe235249b"
+      },
+      {
+        "path": "diagnostics/dragon-left-composite-v2-four-background.png",
+        "bytes": 1141241,
+        "sha256": "6c43e9b13afa0cace669e6a64789641114ea3f3a9707d061a78ae63bb48b0d39"
+      },
+      {
+        "path": "diagnostics/phoenix-right-composite-v1-four-background.png",
+        "bytes": 1204093,
+        "sha256": "f16f522e60e5ebb64ec0447acabdc5a06518928f3b531444c94dc24b62084dc3"
+      },
+      {
+        "path": "materials/foil-roughness.webp",
+        "bytes": 99506,
+        "sha256": "c76b9dfc46bf3b681082b74ce89f1cd88681780fb617e3f6620f4ca4979ac074"
+      },
+      {
+        "path": "materials/paper-color.webp",
+        "bytes": 10692,
+        "sha256": "6e23e1837aeb184bd2659e49428bea23c0f7569cc862ba5f0b5f31ed2c64fb2b"
+      },
+      {
+        "path": "materials/paper-normal.webp",
+        "bytes": 371456,
+        "sha256": "a35bd1e9bd6626b5dd8acb217c10965ed598b2f6038671ae7a6e61b0e048320e"
+      },
+      {
+        "path": "opening/cloud-front-candidate-v1.mobile.webp",
+        "bytes": 22504,
+        "sha256": "3f674f26c25ca111238c5904480c5e2d199726f112f0b99dedfa0c387e2c9e66"
+      },
+      {
+        "path": "opening/cloud-front-candidate-v1.webp",
+        "bytes": 34694,
+        "sha256": "aacd0284c529ca70142d7a864d26ba9c287a9c7c955944eec5ed3a2cbc960aef"
+      }
+    ]
+  }
+}

@@ -1,9 +1,10 @@
 "use client";
 
 import Lenis from "lenis";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play, RotateCcw } from "lucide-react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { type ComponentType, type Dispatch, type MouseEvent, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
@@ -30,6 +31,8 @@ import {
 import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { OpeningEffectArtwork } from "@/components/chungdoi-opening-effect";
 import { GENERATED_TEMPLATE_RENDERERS } from "@/components/generated/template-renderers";
+import { LongPhungGatefoldLab } from "@/components/chungdoi-long-phung-gatefold-lab";
+import { LongPhungGatefoldInvitation } from "@/components/chungdoi-tpl-long-phung-gatefold";
 import {
   isAuditedTemplateSlug,
   type AuditedTemplateSlug,
@@ -1324,11 +1327,14 @@ export function ChungDoiDemo({
   previewMode?: boolean;
   heading?: string;
 }) {
+  const gatefoldT = useTranslations("gatefoldLab");
   const content = contentProp ?? chungdoiDemoContent[template.slug];
+  const isGatefoldExperience = content?.slug === "long-phung-gatefold";
 
   const [opened, setOpened] = useState(captureMode || previewMode);
   const [opening, setOpening] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [audioMuted, setAudioMuted] = useState(false);
   const openingRef = useRef(false);
   const openTimerRef = useRef<number | null>(null);
   const autoScrollTimerRef = useRef<number | null>(null);
@@ -1449,6 +1455,39 @@ export function ChungDoiDemo({
     };
   }, []);
 
+  const handleGatefoldStateChange = useCallback((nextState: "closed" | "opening" | "handoff" | "opened") => {
+    if (!isGatefoldExperience || !content) return;
+
+    if (nextState === "closed") {
+      openingRef.current = false;
+      setOpening(false);
+      return;
+    }
+
+    if (nextState === "opening" || nextState === "handoff") {
+      if (!openingRef.current) {
+        openingRef.current = true;
+        setOpening(true);
+        const audio = audioRef.current;
+        if (audio) {
+          audio.src = content.music ?? DEFAULT_INVITATION_MUSIC;
+          audio.play().then(() => {
+            setPlaying(true);
+            setAudioMuted(false);
+          }).catch(() => setPlaying(false));
+        }
+      }
+      return;
+    }
+
+    openingRef.current = false;
+    setOpening(false);
+    setOpened(true);
+    autoScrollTimerRef.current = window.setTimeout(() => {
+      if (!previewMode) setAutoScrolling(true);
+    }, 2000);
+  }, [content, isGatefoldExperience, previewMode]);
+
   if (!content || !tokens) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#f3e6d0] px-6 text-center">
@@ -1503,7 +1542,10 @@ export function ChungDoiDemo({
     }, revealDelay);
     const audio = getInteractiveAudio();
     if (audio) {
-      audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+      audio.play().then(() => {
+        setPlaying(true);
+        setAudioMuted(false);
+      }).catch(() => setPlaying(false));
     }
   }
 
@@ -1511,11 +1553,30 @@ export function ChungDoiDemo({
     const audio = getInteractiveAudio();
     if (!audio) return;
     if (audio.paused) {
-      audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+      audio.play().then(() => {
+        setPlaying(true);
+        setAudioMuted(false);
+      }).catch(() => setPlaying(false));
     } else {
       audio.pause();
       setPlaying(false);
+      setAudioMuted(true);
     }
+  }
+
+  function replayGatefoldCover() {
+    if (!isGatefoldExperience) return;
+
+    if (autoScrollTimerRef.current) {
+      window.clearTimeout(autoScrollTimerRef.current);
+      autoScrollTimerRef.current = null;
+    }
+    autoScrollFinishedRef.current = false;
+    openingRef.current = false;
+    setAutoScrolling(false);
+    setOpening(false);
+    setOpened(false);
+    window.scrollTo({ behavior: "auto", top: 0 });
   }
 
   function toggleAutoScroll(event: MouseEvent<HTMLElement>) {
@@ -1537,18 +1598,32 @@ export function ChungDoiDemo({
       {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
 
       {!opened && !captureMode ? (
-        <EnvelopeCover
-          content={content}
-          tokens={tokens}
-          opening={opening}
-          reducedMotion={prefersReducedMotion}
-          onOpen={openInvitation}
-        />
+        isGatefoldExperience && !previewMode ? (
+          <LongPhungGatefoldLab
+            content={content}
+            onStateChange={handleGatefoldStateChange}
+            renderBody={false}
+            showControls={false}
+            muted={audioMuted}
+          />
+        ) : (
+          <EnvelopeCover
+            content={content}
+            tokens={tokens}
+            opening={opening}
+            reducedMotion={prefersReducedMotion}
+            onOpen={openInvitation}
+          />
+        )
       ) : null}
 
       {opened ? (
         <>
-          {AuditedTemplateRenderer ? (
+          {isGatefoldExperience ? (
+        <div className="contents" data-template-renderer={content.slug}>
+          <LongPhungGatefoldInvitation content={content} />
+        </div>
+      ) : AuditedTemplateRenderer ? (
         <div className="contents" data-template-renderer={content.slug}>
           <AuditedTemplateRenderer content={content} />
         </div>
@@ -1602,7 +1677,7 @@ export function ChungDoiDemo({
         </div>
       )}
 
-          <AdditionalCeremonies content={content} tokens={tokens} />
+          {!isGatefoldExperience ? <AdditionalCeremonies content={content} tokens={tokens} /> : null}
           <GuestMediaGalleryProvider>
             <PublicGuestMomentsPortal templateSlug={content.slug} />
             {!captureMode ? <PublicGuestMediaDialog /> : null}
@@ -1613,15 +1688,30 @@ export function ChungDoiDemo({
       {opened && !captureMode ? (
         <>
           <PublicRsvpDialog />
-          <button
-            type="button"
-            onClick={toggleMusic}
-            aria-label={playing ? "Tạm dừng nhạc" : "Phát nhạc"}
-            className="fixed bottom-5 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 sm:right-6"
-            style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
-          >
-            {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
-          </button>
+          <div className="fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:right-6">
+            {isGatefoldExperience && !previewMode ? (
+              <button
+                type="button"
+                data-testid="long-phung-gatefold-replay-cover"
+                onClick={replayGatefoldCover}
+                aria-label={gatefoldT("replayCover")}
+                title={gatefoldT("replayCover")}
+                className="flex size-12 items-center justify-center rounded-full border border-[#B58A3A]/55 bg-[#17110F]/88 text-[#EAD9B8] shadow-lg shadow-[#17110F]/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B58A3A] active:translate-y-px"
+              >
+                <RotateCcw aria-hidden className="size-5" strokeWidth={1.5} />
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={toggleMusic}
+              aria-label={playing ? "Tạm dừng nhạc" : "Phát nhạc"}
+              aria-pressed={playing}
+              className="flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 sm:right-6"
+              style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
+            >
+              {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
+            </button>
+          </div>
         </>
       ) : null}
     </main>

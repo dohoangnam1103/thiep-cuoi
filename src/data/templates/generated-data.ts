@@ -14,17 +14,18 @@ import { manifest as manifest11 } from "./editorial-noir.manifest";
 import { manifest as manifest12 } from "./hang-trong-folk.manifest";
 import { manifest as manifest13 } from "./ivory-signature.manifest";
 import { manifest as manifest14 } from "./long-phung-deco.manifest";
-import { manifest as manifest15 } from "./rap-hy-sai-gon.manifest";
-import { manifest as manifest16 } from "./riso-duotone.manifest";
-import { manifest as manifest17 } from "./sen-monoline.manifest";
-import { manifest as manifest18 } from "./son-mai-lacquer.manifest";
-import { manifest as manifest19 } from "./swiss-brutalist.manifest";
-import { manifest as manifest20 } from "./tho-cam-highland.manifest";
-import { manifest as manifest21 } from "./ticket-terracotta.manifest";
-import { manifest as manifest22 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest23 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest24 } from "./y2k-chrome.manifest";
-import { manifest as manifest25 } from "./zen-sand.manifest";
+import { manifest as manifest15 } from "./long-phung-gatefold.manifest";
+import { manifest as manifest16 } from "./rap-hy-sai-gon.manifest";
+import { manifest as manifest17 } from "./riso-duotone.manifest";
+import { manifest as manifest18 } from "./sen-monoline.manifest";
+import { manifest as manifest19 } from "./son-mai-lacquer.manifest";
+import { manifest as manifest20 } from "./swiss-brutalist.manifest";
+import { manifest as manifest21 } from "./tho-cam-highland.manifest";
+import { manifest as manifest22 } from "./ticket-terracotta.manifest";
+import { manifest as manifest23 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest24 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest25 } from "./y2k-chrome.manifest";
+import { manifest as manifest26 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
@@ -58,6 +59,7 @@ export const generatedTemplateManifests = [
   manifest23,
   manifest24,
   manifest25,
+  manifest26,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];

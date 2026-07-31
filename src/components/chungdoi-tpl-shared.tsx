@@ -345,19 +345,43 @@ export function FitText({
   );
 }
 
+type SharedWishFormLabels = {
+  namePlaceholder?: string;
+  textPlaceholder?: string;
+  success?: string;
+  submit?: string;
+  pending?: string;
+};
+
 /** Generic wish form bound to the live-forms provider. `accent` colors the border + button. */
-export function SharedWishForm({ accent, centered = false }: { accent: string; centered?: boolean }) {
+export function SharedWishForm({
+  accent,
+  centered = false,
+  labels,
+}: {
+  accent: string;
+  centered?: boolean;
+  labels?: SharedWishFormLabels;
+}) {
   const { formProps, pending, state } = useWishFormBinding();
+  const copy = {
+    namePlaceholder: "Tên của bạn",
+    textPlaceholder: "Lời chúc của bạn",
+    success: "Cảm ơn lời chúc của bạn!",
+    submit: "Gửi lời chúc",
+    pending: "Đang gửi...",
+    ...labels,
+  };
 
   return (
     <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
-        <input name="name" required maxLength={120} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Tên của bạn" />
-        <textarea name="text" rows={3} required maxLength={1000} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder="Lời chúc của bạn" />
+        <input name="name" required maxLength={120} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
+        <textarea name="text" rows={3} required maxLength={1000} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
         {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
-        {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>Cảm ơn lời chúc của bạn!</p> : null}
+        {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{copy.success}</p> : null}
         <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
-          <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: "#fff" }}>{pending ? "Đang gửi..." : "Gửi lời chúc"}</button>
+          <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: "#fff" }}>{pending ? copy.pending : copy.submit}</button>
         </div>
       </div>
     </form>
@@ -365,7 +389,17 @@ export function SharedWishForm({ accent, centered = false }: { accent: string; c
 }
 
 /** Đếm ngược tới `target` (ISO "YYYY-MM-DDTHH:mm"). Màu do wrapper set qua className/style. */
-export function SharedCountdown({ target, className, style }: { target: string; className?: string; style?: CSSProperties }) {
+export function SharedCountdown({
+  target,
+  className,
+  labels,
+  style,
+}: {
+  target: string;
+  className?: string;
+  labels?: { days?: string; hours?: string; minutes?: string; seconds?: string };
+  style?: CSSProperties;
+}) {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     const tick = () => setNow(Date.now());
@@ -383,7 +417,7 @@ export function SharedCountdown({ target, className, style }: { target: string; 
   const secs = Math.floor((diff % 60000) / 1000);
   return (
     <p className={className ?? "mt-2 text-center text-[20px] font-semibold md:text-[22px]"} style={style}>
-      {days} ngày {hours} giờ {mins} phút {secs} giây
+      {days} {labels?.days ?? "ngày"} {hours} {labels?.hours ?? "giờ"} {mins} {labels?.minutes ?? "phút"} {secs} {labels?.seconds ?? "giây"}
     </p>
   );
 }
@@ -486,12 +520,14 @@ export function GiftQrGrid({
   heading = "Hộp Quà Mừng",
   accent,
   radiusClass = "rounded-xl",
+  saveQrLabel = "Lưu QR",
   headingClassName,
 }: {
   banks: GiftBank[];
   heading?: string;
   accent: string;
   radiusClass?: string;
+  saveQrLabel?: string;
   headingClassName?: string;
 }) {
   if (banks.length === 0) return null;
@@ -516,7 +552,7 @@ export function GiftQrGrid({
               <p className="mt-2 text-[13px] font-semibold" style={{ color: accent }}>{gift.bank}</p>
               <p className="font-mono text-[13px]" style={{ color: accent }}>{gift.num}</p>
               <p className="text-[13px]" style={{ color: accent }}>{gift.name}</p>
-              <a href={`${qr}&download=1`} download className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>Lưu QR</a>
+              <a href={`${qr}&download=1`} download className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>{saveQrLabel}</a>
             </div>
           );
         })}

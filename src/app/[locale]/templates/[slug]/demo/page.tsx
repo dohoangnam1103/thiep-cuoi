@@ -121,7 +121,7 @@ export default async function DemoPage({
         gallery: storedContent.gallery.length > 0 ? storedContent.gallery : fallbackContent.gallery,
         wishes: storedContent.wishes.length > 0 ? storedContent.wishes : fallbackContent.wishes,
       }
-    : storedContent;
+    : storedContent ?? fallbackContent;
   const captureMode = capture === "1";
 
   return (

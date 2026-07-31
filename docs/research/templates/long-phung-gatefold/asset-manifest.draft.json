@@ -1,0 +1,209 @@
+{
+  "status": "draft",
+  "version": 0,
+  "templateSlug": "long-phung-gatefold",
+  "selectedConcept": "concepts/selected-a-engraved-restraint-v2.png",
+  "assetBible": "SPEC.md#assetbible",
+  "sourcePromptFile": "mini-asset-prompts.md",
+  "coordinateSystem": {
+    "origin": "top-left",
+    "units": "normalized-wing-local",
+    "xDirection": "right",
+    "yDirection": "down",
+    "notes": "Approved master canvases are 887x1774 px. Anchors and pivots remain provisional until the split animation layers are registered against the real gatefold UV layout."
+  },
+  "coordinateSpaces": {
+    "left-wing": "The local coordinate space of the left folding wing; its origin and pivot travel with the left wing.",
+    "right-wing": "The local coordinate space of the right folding wing; its origin and pivot travel with the right wing.",
+    "gatefold-root": "The center/root coordinate space. Opening-only clouds can cross in front of separated wings but remain hidden while the cover is closed.",
+    "material-uv": "A tileable material-texture coordinate space; it is not registered to either mascot master."
+  },
+  "assets": [
+    {
+      "id": "dragon-body-left",
+      "source": "source/dragon-left-master-v2.png",
+      "runtime": "cover/dragon-body-left.webp",
+      "role": "color",
+      "coordinateSpace": "left-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 20
+    },
+    {
+      "id": "dragon-whiskers-left",
+      "source": "source/dragon-whiskers-left.png",
+      "runtime": "cover/dragon-whiskers-left.webp",
+      "role": "animation-layer",
+      "coordinateSpace": "left-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "pivot": [0.68, 0.24],
+      "zLayer": 30
+    },
+    {
+      "id": "dragon-foil-mask",
+      "source": "source/dragon-foil-mask.png",
+      "runtime": "cover/dragon-foil-mask.png",
+      "role": "mask",
+      "coordinateSpace": "left-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 21
+    },
+    {
+      "id": "dragon-emboss-mask",
+      "source": "source/dragon-emboss-mask.png",
+      "runtime": "cover/dragon-emboss-mask.png",
+      "role": "mask",
+      "coordinateSpace": "left-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 21
+    },
+    {
+      "id": "dragon-shadow",
+      "source": "source/dragon-shadow.png",
+      "runtime": "cover/dragon-shadow.webp",
+      "role": "shadow",
+      "coordinateSpace": "left-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 10
+    },
+    {
+      "id": "phoenix-body-right",
+      "source": "source/phoenix-right-master-v1.png",
+      "runtime": "cover/phoenix-body-right.webp",
+      "role": "color",
+      "coordinateSpace": "right-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 20
+    },
+    {
+      "id": "phoenix-wing-front-right",
+      "source": "source/phoenix-wing-front-right.png",
+      "runtime": "cover/phoenix-wing-front-right.webp",
+      "role": "animation-layer",
+      "coordinateSpace": "right-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "pivot": [0.46, 0.34],
+      "zLayer": 30
+    },
+    {
+      "id": "phoenix-tail-front-right",
+      "source": "source/phoenix-tail-front-right.png",
+      "runtime": "cover/phoenix-tail-front-right.webp",
+      "role": "animation-layer",
+      "coordinateSpace": "right-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "pivot": [0.5, 0.46],
+      "zLayer": 31
+    },
+    {
+      "id": "phoenix-foil-mask",
+      "source": "source/phoenix-foil-mask.png",
+      "runtime": "cover/phoenix-foil-mask.png",
+      "role": "mask",
+      "coordinateSpace": "right-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 21
+    },
+    {
+      "id": "phoenix-emboss-mask",
+      "source": "source/phoenix-emboss-mask.png",
+      "runtime": "cover/phoenix-emboss-mask.png",
+      "role": "mask",
+      "coordinateSpace": "right-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 21
+    },
+    {
+      "id": "phoenix-shadow",
+      "source": "source/phoenix-shadow.png",
+      "runtime": "cover/phoenix-shadow.webp",
+      "role": "shadow",
+      "coordinateSpace": "right-wing",
+      "targetWidth": 887,
+      "targetHeight": 1774,
+      "anchor": [0.5, 0.5],
+      "zLayer": 10
+    },
+    {
+      "id": "cloud-back",
+      "source": "source/cloud-back.png",
+      "runtime": "opening/cloud-back.webp",
+      "role": "animation-layer",
+      "coordinateSpace": "gatefold-root",
+      "targetWidth": 3072,
+      "targetHeight": 3072,
+      "anchor": [0.5, 0.5],
+      "zLayer": 5
+    },
+    {
+      "id": "cloud-front",
+      "source": "source/cloud-front-master-v1.png",
+      "runtime": "opening/cloud-front.webp",
+      "role": "animation-layer",
+      "coordinateSpace": "gatefold-root",
+      "assetStatus": "lab-candidate",
+      "sourceActualWidth": 1254,
+      "sourceActualHeight": 1254,
+      "notes": "Generated with the integrated image tool and chroma-cleaned. Use only in the isolated lab at native resolution; a 3072px production source comes after mascot-layer QA.",
+      "targetWidth": 3072,
+      "targetHeight": 3072,
+      "anchor": [0.5, 0.5],
+      "zLayer": 40
+    },
+    {
+      "id": "paper-color",
+      "source": "source/paper-color-master.png",
+      "runtime": "materials/paper-color.webp",
+      "role": "texture",
+      "coordinateSpace": "material-uv",
+      "targetWidth": 2048,
+      "targetHeight": 2048,
+      "zLayer": 0
+    },
+    {
+      "id": "paper-normal",
+      "source": "source/paper-height-master.png",
+      "runtime": "materials/paper-normal.webp",
+      "role": "texture",
+      "coordinateSpace": "material-uv",
+      "targetWidth": 2048,
+      "targetHeight": 2048,
+      "zLayer": 0
+    },
+    {
+      "id": "foil-roughness",
+      "source": "source/foil-roughness-master.png",
+      "runtime": "materials/foil-roughness.webp",
+      "role": "texture",
+      "coordinateSpace": "material-uv",
+      "targetWidth": 1024,
+      "targetHeight": 1024,
+      "zLayer": 0
+    }
+  ],
+  "productionBlockers": [
+    "The approved masters are used as temporary base layers for the prototype only; replace them with registered split body layers before runtime promotion.",
+    "Validate pivots against the real generated split layers.",
+    "Create mobile variants only after the 320px readability check.",
+    "Do not promote this file to public/chungdoi/templates until every referenced file exists and passes alpha/material review."
+  ]
+}

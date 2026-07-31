@@ -89,6 +89,11 @@ Phần này là nguồn quyết định duy nhất khi tạo thêm mẫu thiệp
 
 Playbook được đúc kết sau khi triển khai và review 18 mẫu nghệ thuật ngày 2026-07-28, và được áp dụng lại cho hai mẫu Đông Sơn ngày 2026-07-29. Nó áp dụng trực tiếp cho các mẫu mới dùng hệ thống manifest và renderer dùng chung.
 
+Các renderer family có UI phá cách, cùng yêu cầu bắt buộc về bìa click-to-open,
+animation ba giai đoạn và responsive PC/mobile, được lưu tại
+[`DISTINCTIVE_TEMPLATE_ROADMAP.md`](./DISTINCTIVE_TEMPLATE_ROADMAP.md). Phải đọc
+tài liệu đó trước khi thiết kế một renderer family mới hoặc mẫu thí điểm đầu tiên.
+
 ## Kiến trúc hiện tại
 
 ### Renderer và component dùng chung

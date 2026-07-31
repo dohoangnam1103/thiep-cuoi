@@ -1,0 +1,387 @@
+.stage {
+  display: grid;
+  min-height: min(74svh, 46rem);
+  place-items: center;
+  perspective: 1200px;
+}
+
+.carrier {
+  grid-area: 1 / 1;
+  position: relative;
+  width: min(82vw, 29rem);
+  aspect-ratio: 3 / 4.38;
+  transform: rotateX(2deg) rotateY(-3deg);
+  transform-style: preserve-3d;
+  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backFaceOverlay {
+  grid-area: 1 / 1;
+  z-index: 6;
+  display: grid;
+  width: min(82vw, 29rem);
+  aspect-ratio: 3 / 4.38;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(181 138 58 / 82%);
+  background:
+    radial-gradient(circle at 36% 20%, #7c1b1b 0%, #17110f 58%, #0d0908 100%);
+  box-shadow: 0 1.6rem 3.2rem rgb(23 17 15 / 40%);
+  opacity: 0;
+  pointer-events: none;
+  transform: rotateX(2deg) scale(0.98);
+  transition: opacity 150ms ease, transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backFaceOverlay::before,
+.backFaceOverlay::after {
+  position: absolute;
+  border: 1px solid rgb(181 138 58 / 75%);
+  content: "";
+}
+
+.backFaceOverlay::before {
+  inset: 1rem;
+}
+
+.backFaceOverlay::after {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 999px;
+}
+
+.flipped .carrier {
+  transform: rotateX(2deg) rotateY(177deg);
+}
+
+.flipped .backFaceOverlay {
+  opacity: 1;
+  transform: rotateX(2deg) scale(1);
+  transition-delay: 470ms, 0ms;
+}
+
+.center,
+.backBoard,
+.backCover,
+.wing,
+.wingFace {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(181 138 58 / 82%);
+}
+
+.center {
+  overflow: hidden;
+  background: #ead9b8;
+  box-shadow: 0 1.6rem 3.2rem rgb(23 17 15 / 40%);
+  transform: translateZ(-0.2rem);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backBoard,
+.backCover {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgb(124 27 27 / 38%), transparent 45%),
+    #17110f;
+  backface-visibility: hidden;
+}
+
+.backBoard {
+  transform: rotateY(180deg) translateZ(-0.21rem);
+}
+
+.backCover {
+  transform: rotateY(180deg) translateZ(-0.36rem);
+}
+
+.backBoard::before,
+.backBoard::after,
+.backCover::before,
+.backCover::after {
+  position: absolute;
+  content: "";
+  border: 1px solid rgb(181 138 58 / 75%);
+}
+
+.backBoard::before {
+  inset: 1rem;
+}
+
+.backCover::before {
+  inset: 1rem;
+}
+
+.backBoard::after,
+.backCover::after {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 999px;
+}
+
+.backPrint {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 78%;
+  min-height: 72%;
+  place-items: center;
+  align-content: center;
+  gap: 0.7rem;
+  padding: 1.4rem 1rem;
+  border: 1px solid rgb(181 138 58 / 72%);
+  color: #ead9b8;
+  text-align: center;
+}
+
+.backPrint::before {
+  position: absolute;
+  inset: 0.45rem;
+  border: 1px solid rgb(181 138 58 / 38%);
+  content: "";
+}
+
+.backTitle,
+.backPrint strong,
+.backNames,
+.backMessage,
+.backSeal {
+  position: relative;
+  z-index: 1;
+}
+
+.backTitle {
+  font-size: 0.52rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.backRule {
+  position: relative;
+  z-index: 1;
+  width: 2.8rem;
+  height: 1px;
+  background: #b58a3a;
+}
+
+.backPrint strong {
+  max-width: 100%;
+  font-family: "UNI Chu truyen thong", "Fz Qellia", serif;
+  font-size: clamp(1.1rem, 5vw, 1.8rem);
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+.backNames {
+  color: #b58a3a;
+  font-family: "Lora", "Times New Roman", serif;
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
+.backMessage {
+  max-width: 24ch;
+  color: rgb(234 217 184 / 76%);
+  font-family: "Lora", "Times New Roman", serif;
+  font-size: 0.65rem;
+  line-height: 1.55;
+}
+
+.backSeal {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgb(181 138 58 / 68%);
+  border-radius: 999px;
+  color: #b58a3a;
+  font-size: 0.8rem;
+}
+
+.wing {
+  width: 50%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 860ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.leftWing {
+  left: 0;
+  transform-origin: right center;
+}
+
+.rightWing {
+  left: 50%;
+  transform-origin: left center;
+}
+
+.opening .leftWing {
+  transform: rotateY(-156deg);
+}
+
+.opening .rightWing {
+  transform: rotateY(156deg);
+}
+
+.opening .center {
+  transform: translateZ(0.18rem);
+}
+
+.desktop .wing {
+  transition-duration: 874ms;
+}
+
+.desktop .leftWing {
+  transition-delay: 342ms;
+}
+
+.desktop .rightWing {
+  transition-delay: 412ms;
+}
+
+.desktop .center {
+  transition-delay: 798ms;
+  transition-duration: 342ms;
+}
+
+.desktop .clasp {
+  transition-duration: 300ms;
+  transition-delay: 152ms;
+}
+
+.mobile .wing {
+  transition-duration: 759ms;
+}
+
+.mobile .leftWing {
+  transition-delay: 297ms;
+}
+
+.mobile .rightWing {
+  transition-delay: 367ms;
+}
+
+.mobile .center {
+  transition-delay: 693ms;
+  transition-duration: 297ms;
+}
+
+.mobile .clasp {
+  transition-duration: 260ms;
+  transition-delay: 132ms;
+}
+
+.reduced .wing {
+  transition-duration: 80ms;
+}
+
+.reduced .leftWing {
+  transition-delay: 54ms;
+}
+
+.reduced .rightWing {
+  transition-delay: 54ms;
+}
+
+.reduced .center {
+  transition-delay: 90ms;
+  transition-duration: 40ms;
+}
+
+.reduced .clasp {
+  transition-duration: 35ms;
+  transition-delay: 28ms;
+}
+
+.wingFace {
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  backface-visibility: hidden;
+}
+
+.outerFace {
+  position: relative;
+  background:
+    linear-gradient(145deg, rgb(124 27 27 / 52%), transparent 46%),
+    #5a0b12;
+}
+
+.outerFace::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    128deg,
+    transparent 34%,
+    rgb(255 233 176 / 0.25) 49%,
+    rgb(181 138 58 / 0.08) 57%,
+    transparent 72%
+  );
+  content: "";
+  mix-blend-mode: screen;
+  opacity: 0.2;
+  pointer-events: none;
+  transform: translateX(-18%);
+  transition: opacity 420ms ease, transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.carrier:hover .outerFace::after {
+  opacity: 0.46;
+  transform: translateX(14%);
+}
+
+.innerFace {
+  background: #ead9b8;
+  transform: rotateY(180deg);
+}
+
+.artwork {
+  position: relative;
+  z-index: 1;
+  width: 74%;
+  height: 74%;
+}
+
+.artwork img {
+  object-fit: contain;
+}
+
+.clasp {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: 3rem;
+  height: 3rem;
+  transform: translate(-50%, -50%) translateZ(0.34rem);
+  transition: opacity 180ms ease, transform 300ms ease;
+}
+
+.claspLeft,
+.claspRight {
+  width: 50%;
+  height: 100%;
+  border: 1px solid rgb(234 217 184 / 38%);
+  background: #b58a3a;
+  box-shadow: 0 0.5rem 1rem rgb(23 17 15 / 35%);
+}
+
+.claspLeft {
+  border-radius: 999px 0 0 999px;
+  border-right: 0;
+}
+
+.claspRight {
+  border-left-color: rgb(90 11 18 / 56%);
+  border-radius: 0 999px 999px 0;
+}
+
+.opening .clasp {
+  opacity: 0;
+  transform: translate(-50%, -50%) translateZ(0.8rem) scale(0.78);
+}

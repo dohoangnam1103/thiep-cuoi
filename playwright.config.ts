@@ -49,6 +49,7 @@ export default defineConfig({
       ALLOW_INSECURE_SITE_URL: "1",
       GUEST_MEDIA_ROOT: `${process.cwd()}/tests/e2e/.data/guest-media`,
       EDITOR_UPLOAD_ROOT: `${process.cwd()}/tests/e2e/.data/editor-uploads`,
+      GATEFOLD_LAB_ENABLED: "1",
       NODE_ENV: "test",
     },
   },
