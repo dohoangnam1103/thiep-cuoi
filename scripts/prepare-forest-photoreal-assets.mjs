@@ -33,7 +33,7 @@ const ENTRY_DECODED_BUDGET = 18_175_312;
 const BRANCH_CELL_SIZE = 256;
 const BRANCH_CELL_PADDING = 12;
 const BRANCH_REQUIRED_GUTTER = 8;
-const BRANCH_ALPHA_THRESHOLD = 8;
+const BRANCH_SUBJECT_ALPHA_THRESHOLD = 8;
 
 const POLY_HAVEN_SOURCES = Object.freeze({
   groundArm: {
@@ -164,7 +164,7 @@ function getBranchCellBounds(data, info, cellX, cellY) {
   for (let y = sourceTop; y < sourceTop + sourceCellHeight; y += 1) {
     for (let x = sourceLeft; x < sourceLeft + sourceCellWidth; x += 1) {
       const alpha = data[(y * info.width + x) * info.channels + 3];
-      if (alpha <= BRANCH_ALPHA_THRESHOLD) continue;
+      if (alpha <= BRANCH_SUBJECT_ALPHA_THRESHOLD) continue;
       minimumX = Math.min(minimumX, x);
       minimumY = Math.min(minimumY, y);
       maximumX = Math.max(maximumX, x);
@@ -246,7 +246,7 @@ async function createBranchColor(branchSource) {
     offset += branchAtlas.info.channels
   ) {
     const alpha = branchAtlas.data[offset + 3];
-    if (alpha <= BRANCH_ALPHA_THRESHOLD) {
+    if (alpha <= BRANCH_SUBJECT_ALPHA_THRESHOLD) {
       branchAtlas.data[offset] = 0;
       branchAtlas.data[offset + 1] = 0;
       branchAtlas.data[offset + 2] = 0;
@@ -412,7 +412,7 @@ async function validateOutputs(outputDir) {
               decodedConifer.info.channels +
               3
           ];
-          if (alpha > BRANCH_ALPHA_THRESHOLD) {
+          if (alpha !== 0) {
             throw new Error(
               `conifer-color.webp cell ${cellX},${cellY} gutter alpha is ${alpha}`,
             );

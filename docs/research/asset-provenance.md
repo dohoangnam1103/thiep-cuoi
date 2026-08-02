@@ -392,16 +392,17 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/imagegen/scripts/remove_chro
 
 The accepted alpha master has SHA-256
 `ec37c286f0acb74b57d9f97cdc1621a1f83e3f92d0514893f50f8bde6b07d095`.
-The preparation script splits the master into four source cells, finds each
-cell's material bounds at alpha greater than 8, fits each bounded subject
-independently inside a 232-by-232 box, and centers it in its own 256-by-256
-destination cell. Alpha values at or below 8 and their RGB are cleared, as is
-hidden RGB in fully transparent pixels. A deterministic residual-magenta
-cleanup clamps blue to green when it exceeds green and caps only pink-biased
-red pixels at 1.25 times green. The production WebP is decoded and verified to
-have alpha at or below 8 in every pixel of every cell's eight-pixel border; the
-current decoded borders are fully transparent and the nearest material begins
-at least 12 pixels from each relevant cell edge.
+The preparation script splits the master into four source cells, uses alpha
+greater than 8 only to find each cell's subject bounds, fits each bounded
+subject independently inside a 232-by-232 box, and centers it in its own
+256-by-256 destination cell. Source-edge alpha values at or below 8 and their
+RGB are cleared, as is hidden RGB in fully transparent pixels. A deterministic
+residual-magenta cleanup clamps blue to green when it exceeds green and caps
+only pink-biased red pixels at 1.25 times green. Separately, the final
+production WebP is decoded and verified to have alpha exactly 0 in every pixel
+of every cell's eight-pixel border; the current decoded borders are fully
+transparent and the nearest material begins at least 12 pixels from each
+relevant cell edge.
 
 ### Poly Haven CC0 sources
 

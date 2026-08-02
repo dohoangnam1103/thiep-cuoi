@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
 
@@ -128,8 +128,9 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
       }
 
       assert.ok(subjectPixels >= 2_500, `branch cell ${cellX},${cellY} is empty`);
-      assert.ok(
-        maximumGutterAlpha <= 8,
+      assert.equal(
+        maximumGutterAlpha,
+        0,
         `branch cell ${cellX},${cellY} gutter alpha is ${maximumGutterAlpha}`,
       );
     }
@@ -143,4 +144,24 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
     }
   }
   assert.ok(opaqueBarkPixels / barkPixels >= 0.99);
+});
+
+test("preparation rejects every nonzero decoded conifer gutter alpha", () => {
+  const preparationScript = readFileSync(
+    resolve(process.cwd(), "scripts/prepare-forest-photoreal-assets.mjs"),
+    "utf8",
+  );
+  const validationStart = preparationScript.indexOf("const decodedConifer");
+  const validationEnd = preparationScript.indexOf(
+    "const entryAssets",
+    validationStart,
+  );
+  assert.ok(validationStart >= 0 && validationEnd > validationStart);
+  const validationSection = preparationScript.slice(
+    validationStart,
+    validationEnd,
+  );
+
+  assert.match(validationSection, /if \(alpha !== 0\) \{/);
+  assert.doesNotMatch(validationSection, /BRANCH_SUBJECT_ALPHA_THRESHOLD/);
 });
