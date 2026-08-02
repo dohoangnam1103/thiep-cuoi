@@ -88,6 +88,338 @@
     "pause": "暂停",
     "reset": "重置"
   },
+  "flowDemoLab": {
+    "metaTitle": "请柬动效引擎实验台",
+    "metaDescription": "用于比较 CSS、WAAPI、GSAP、Canvas 2D 与 WebGL 中四种动效编排的内部实验台。",
+    "title": "一套动效框架，五种渲染方式",
+    "subtitle": "布局、时长和转场意图保持一致，只改变渲染技术，以便在加入请柬主题前选择合适的基础。",
+    "mobilePriority": "最高优先级：在普通手机上保持稳定、顺滑。",
+    "controlsLabel": "动效实验台控制项",
+    "viewLabel": "视图",
+    "viewFocus": "聚焦",
+    "viewCompare": "对比",
+    "choreographyLabel": "动效",
+    "engineLabel": "技术",
+    "replay": "重播",
+    "reducedMotion": "减少动态效果",
+    "previewLabel": "动效预览",
+    "compareHint": "五个引擎会以同一节拍同时运行，便于视觉对比。",
+    "webglLoading": "正在准备 WebGL",
+    "webglUnavailable": "此设备或浏览器无法使用 WebGL。",
+    "stage": {
+      "kicker": "内容框架",
+      "title": "Lorem & Ipsum",
+      "body": "使用中性内容，让评审只关注动效与布局。",
+      "date": "00 · 00 · 0000"
+    },
+    "choreographies": {
+      "splitGate": {
+        "label": "Split Gate",
+        "description": "两侧表面分开并让出中心，之后可替换为帘幕、门、叶片、云层或玻璃。"
+      },
+      "irisBloom": {
+        "label": "Iris Bloom",
+        "description": "同心层从中央绽放，可映射为花、太阳、月亮、鼓面、蕾丝或光环。"
+      },
+      "depthPortal": {
+        "label": "Depth Portal",
+        "description": "多层平面沿深度推进并露出内容，适合拱门、森林、电影、城市或银河。"
+      },
+      "ribbonSweep": {
+        "label": "Ribbon Sweep",
+        "description": "一条曲线带横扫画面后让出内容，可映射为丝绸、水墨、波浪、烟雾、光或胶片。"
+      }
+    },
+    "engines": {
+      "css": {
+        "label": "CSS Keyframes",
+        "description": "最轻量的基准：代码少、易维护，并对浏览器合成器友好。"
+      },
+      "waapi": {
+        "label": "Web Animations API",
+        "description": "使用原生 DOM 时间线，无需在每一帧更新 React。"
+      },
+      "gsap": {
+        "label": "GSAP",
+        "description": "更适合复杂编排的增强型时间线参考。"
+      },
+      "canvas": {
+        "label": "Canvas 2D",
+        "description": "以有限 RAF 循环和受限像素密度，在单一表面绘制全部几何。"
+      },
+      "webgl": {
+        "label": "R3F / WebGL",
+        "description": "基础网格沿深度移动，按需渲染且空闲时没有循环。"
+      }
+    },
+    "guardrailsTitle": "对比条件",
+    "guardrailsBody": "每个版本使用相同的几何角色、时长和终点。本实验台评估的是动效方向，而非请柬内容。",
+    "guardrailTransform": "DOM 仅动画 transform 与 opacity，不使用模糊、阴影或布局变化。",
+    "guardrailFinite": "所有时间线与 RAF 循环在交接后完全停止。",
+    "guardrailDpr": "Canvas 与 WebGL 在移动端使用 DPR 1，桌面端最高 1.25。",
+    "compareWarning": "对比视图仅用于视觉评审，不能作为 FPS 基准测试。"
+  },
+  "dalatJourneyLab": {
+    "metaTitle": "雾中大叻花园 — Journey Lab",
+    "metaDescription": "一场穿行于梦幻大叻花园五个站点的第一人称沉浸式旅程。",
+    "entryKicker": "一段穿雾之旅",
+    "entryTitle": "雾中大叻花园",
+    "entryBody": "上下滑动前行，横向拖动环视四周。每一站都藏着一小段故事。",
+    "enter": "步入",
+    "previous": "返回",
+    "next": "继续",
+    "loading": "正在雾中打开一条路",
+    "fallbackNotice": "您的设备正在使用更轻量的场景版本。",
+    "reducedMotion": "减少动态",
+    "gestureHint": "上下滑动移动 · 横向拖动环视",
+    "checkpointStatus": "{current} / {total}：{name}",
+    "checkpoints": {
+      "mistGate": {
+        "name": "雾之门",
+        "kicker": "黎明之前",
+        "title": "00 · 00 · 0000",
+        "body": "一扇门通向雾气缭绕的森林。旅程从这里开始。",
+        "detail": "雾之门——旅程的起点。"
+      },
+      "memoryPines": {
+        "name": "记忆之林",
+        "kicker": "穿过松林的光",
+        "title": "00 · 00 · 0000",
+        "body": "松树之间悬着淡淡的记忆之窗。",
+        "detail": "记忆之林——横向拖动环视四周。"
+      },
+      "timeGlasshouse": {
+        "name": "时光温室",
+        "kicker": "温室之内",
+        "title": "00 · 00 · 0000",
+        "body": "时间在玻璃墙上化作一圈圈绽放的花环。",
+        "detail": "时光温室——日期就在这里。"
+      },
+      "lakePavilion": {
+        "name": "湖畔亭",
+        "kicker": "黄金时分",
+        "title": "00 · 00 · 0000",
+        "body": "道路静静映在如镜的湖面上。",
+        "detail": "湖畔亭——指路就在脚下。"
+      },
+      "wishValley": {
+        "name": "愿望之谷",
+        "kicker": "暮色四合",
+        "title": "00 · 00 · 0000",
+        "body": "每许下一个愿望，山谷便亮起一簇光。",
+        "detail": "愿望之谷——留言放在石桌上。"
+      }
+    },
+    "invitation": {
+      "cover": "请柬信息",
+      "album": "婚礼相册",
+      "albumIntro": "收藏两人旅程中的 {count} 个瞬间。",
+      "bride": "新娘",
+      "schedule": "婚礼日程",
+      "map": "场地与地图",
+      "mapUnavailable": "场地地址正在更新。",
+      "wishes": "祝福留言",
+      "gift": "电子礼金红包",
+      "wishesIntro": "留下祝福，与新人一起珍藏这一天。",
+      "giftIntro": "如果想送上心意，可以使用电子礼金红包。",
+      "giftUnavailable": "新娘或新郎的账户信息确认后，礼金红包将会显示。",
+      "groom": "新郎",
+      "calendar": "我们的日子",
+      "directions": "查看路线",
+      "addToCalendar": "添加到日历",
+      "openGift": "打开礼金红包",
+      "wishNamePlaceholder": "您的姓名",
+      "wishPlaceholder": "写下对新人的祝福…",
+      "wishSubmit": "发送祝福",
+      "wishSuccess": "感谢您的祝福！"
+    }
+  },
+  "forestWeddingJourneyLab": {
+    "metaTitle": "森林婚礼旅程 — 3D 实验室",
+    "metaDescription": "一封 3D 婚礼请柬，带领宾客穿过柔和日光森林中的各个功能区域。",
+    "entryKicker": "一场婚礼正在筹备",
+    "entryBody": "滑动前行 · 横向拖动环顾四周",
+    "enter": "进入",
+    "previous": "返回",
+    "next": "继续",
+    "loading": "正在准备花门",
+    "fallbackNotice": "您的设备正在使用较轻量的森林版本。",
+    "reducedMotion": "减少动态效果",
+    "gestureHint": "纵向滑动移动 · 横向拖动环顾四周",
+  "sceneStatus": "{current}/{total}: {name}",
+  "demoContent": {
+    "ceremonyHeader": "我们将在双方家人的喜悦与祝福中举行婚礼。",
+    "openingMessage": "谨与双方家人诚挚邀请您共同见证我们的婚礼。",
+    "families": {
+      "brideParentTitle": "父母",
+      "groomParentTitle": "父母"
+    },
+    "schedule": {
+      "guestWelcome": "迎接宾客",
+      "banquetOpening": "婚宴开始",
+      "toastAndCake": "祝酒与切蛋糕",
+      "mainCourse": "享用主菜",
+      "farewell": "送别宾客"
+    },
+    "wishes": {
+      "first": "愿你们百年好合，携手走过幸福美满的人生。",
+      "second": "愿爱、理解与欢笑永远充满你们温暖的家。"
+    }
+  },
+  "longCopy": {
+    "familyParentTitle": "非常非常长的双方家庭代表姓名与所有挚爱亲友共同分享这个重要日子的喜悦",
+    "venueAddress": "名称非常长的户外宾客接待区，穿过夏日花园即可抵达森林婚宴厅，大叻市潘周桢街25号",
+    "labels": {
+      "rsvpAttendance": "请告知您和所有一同前来的亲友是否能够出席这场婚礼庆典。",
+      "rsvpNotes": "请详细写下新人筹备婚礼时需要了解的所有事项",
+      "wishText": "请为即将开启人生新旅程的新人写下一段真挚而完整的祝福"
+    }
+  },
+  "sceneNames": {
+      "coverGate": "花门",
+      "families": "双方家庭",
+      "openingMessage": "欢迎辞",
+      "calendar": "婚礼日历",
+      "schedule": "流程安排",
+      "galleryPhoto": "共同瞬间",
+      "dressCode": "着装要求",
+      "venue": "场地",
+      "map": "地图",
+      "rsvp": "出席回复",
+      "wishes": "祝福",
+      "gift": "婚礼礼金",
+      "finale": "感谢"
+    },
+    "labels": {
+      "brideFamily": "新娘家庭",
+      "groomFamily": "新郎家庭",
+      "invitation": "请柬",
+      "ceremony": "婚礼仪式",
+      "reception": "婚宴",
+      "date": "日期",
+      "time": "时间",
+      "addToCalendar": "添加到日历",
+      "directions": "获取路线",
+      "photoAlt": "婚礼回忆",
+      "rsvpName": "您的姓名",
+      "rsvpAttendance": "您会出席吗？",
+      "attendingYes": "是的，我会出席",
+      "attendingNo": "抱歉，我无法出席",
+      "rsvpGuests": "随行人数",
+      "rsvpNotes": "留言",
+      "rsvpSubmit": "提交回复",
+      "rsvpSuccess": "感谢您的回复。",
+      "rsvpNameRequired": "请输入您的姓名。",
+      "rsvpGuestsInvalid": "请输入有效的随行人数。",
+      "wishName": "您的姓名",
+      "wishText": "您的祝福",
+      "wishSubmit": "发送祝福",
+      "wishSuccess": "感谢您的祝福。",
+      "wishRequired": "请填写祝福语。",
+      "formError": "暂时无法提交表单，请重试。",
+      "openGift": "打开礼金",
+      "closeGift": "关闭礼金",
+      "bankName": "银行",
+      "accountHolder": "账户名",
+      "accountNumber": "账号",
+      "giftUnavailable": "礼金信息正在更新。",
+      "mapUnavailable": "地图正在更新。",
+      "photoUnavailable": "照片正在更新。",
+      "thankYou": "感谢您与我们共度这特别的一天。"
+    }
+  },
+  "detectiveConanCasebookLab": {
+    "metaTitle": "婚礼档案4869实验室",
+    "metaDescription": "用于检查 Three.js 案件簿封面、翻页与 DOM 阅读器衔接的内部实验室。",
+    "title": "婚礼档案4869",
+    "caseLabel": "婚礼档案4869",
+    "coverKicker": "最终案件：我们的婚礼",
+    "backTitle": "绝密信息",
+    "and": "与",
+    "loading": "正在准备档案",
+    "open": "打开档案",
+    "viewBack": "查看封底",
+    "viewFront": "返回封面",
+    "replayCover": "重看案件簿封面",
+    "closedHint": "拖动查看不同角度，再用独立按钮打开档案。",
+    "stateClosed": "档案处于关闭状态。",
+    "stateOpening": "案件簿封面正在打开。",
+    "stateHandoff": "正在进入阅读页面。",
+    "stateOpened": "婚礼档案已打开。",
+    "forceReducedMotion": "强制减少动态效果",
+    "reducedMotionActive": "减少动态效果已启用",
+    "fullMotionActive": "完整动态效果已启用",
+    "timeline": "时间轴进度：{progress}%",
+    "play": "播放",
+    "pause": "暂停",
+    "reset": "重置"
+  },
+  "detectiveConanCasebook": {
+    "readerLabel": "婚礼档案4869阅读器",
+    "chapterNavigation": "章节导航",
+    "previousPage": "上一页",
+    "nextPage": "下一页",
+    "chapterProgress": "{current}/{total} · {title}",
+    "goToChapter": "前往章节 {title}",
+    "introEyebrow": "档案开启",
+    "introTitle": "邀请已确认",
+    "and": "与",
+    "dateTime": "{date} · {time}",
+    "shinichiRanAlt": "身着婚礼服装的新一与小兰",
+    "castShinichiRan": "工藤新一 · 毛利兰",
+    "familiesTitle": "双方家庭",
+    "brideFamily": "女方家庭",
+    "groomFamily": "男方家庭",
+    "parents": "父母",
+    "conanKogoroAlt": "柯南与毛利小五郎",
+    "castConanKogoro": "江户川柯南 · 毛利小五郎",
+    "ceremonyTitle": "婚礼时间",
+    "receptionLabel": "婚宴",
+    "detectiveBoysAlt": "步美、元太、灰原与阿笠博士",
+    "castDetectiveBoys": "少年侦探团 · 阿笠博士 · 灰原",
+    "scheduleTitle": "婚礼日程",
+    "days": "天",
+    "hours": "时",
+    "minutes": "分",
+    "seconds": "秒",
+    "calendarTitle": "{year}年{month}月",
+    "addToCalendar": "添加到日历",
+    "calendarUnavailable": "婚礼日期正在更新。",
+    "galleryTitle": "珍贵瞬间",
+    "galleryAlt": "婚礼照片 {index}",
+    "galleryEmpty": "相册正在准备中。",
+    "morePhotos": "档案中另有 {count} 张照片",
+    "heijiFriendsAlt": "平次、和叶、园子与世良",
+    "castHeijiFriends": "平次 · 和叶 · 园子 · 世良",
+    "mapEyebrow": "现场坐标",
+    "mapTitle": "婚宴地点",
+    "mapFrameTitle": "婚礼场地地图",
+    "directionsAction": "打开导航",
+    "dressCodeTitle": "建议着装颜色",
+    "dressColorAlt": "着装颜色 {color}",
+    "akaiFuruyaAlt": "赤井秀一与降谷零",
+    "castAkaiFuruya": "赤井秀一 · 降谷零",
+    "guestbookTitle": "留下祝福",
+    "guestbookHint": "每一份祝福，都会成为幸福婚礼档案中的珍贵证词。",
+    "wishesTitle": "见证者留言",
+    "wishesEmpty": "欢迎留下第一份婚礼祝福。",
+    "wishName": "您的名字",
+    "wishText": "写下祝福",
+    "wishSubmit": "发送祝福",
+    "wishPending": "发送中...",
+    "wishSuccess": "祝福已记录到档案中。",
+    "giftTitle": "婚礼贺礼",
+    "giftHint": "如想远程送上贺礼，可使用以下信息。",
+    "giftNote": "您的到来依然是最珍贵的礼物。",
+    "giftEmpty": "贺礼信息尚未添加。",
+    "bankDetails": "账户信息",
+    "saveQr": "保存二维码",
+    "finaleEyebrow": "案件结论",
+    "finaleTitle": "答案就是我们",
+    "finaleMessage": "循着所有线索，走过漫长等待，最终答案是共度一生。",
+    "presenceHonor": "诚挚期待您见证这桩幸福案件正式圆满结案。",
+    "momentsTitle": "宾客时刻"
+  },
   "doraemonDoor": {
     "heroKicker": "一扇通往婚礼日的门",
     "invitationTitle": "请和我们一起走过这扇门",
@@ -397,6 +729,10 @@
   },
   "demoCta": {
     "useTemplate": "使用此请柬"
+  },
+  "invitationControls": {
+    "playMusic": "播放音乐",
+    "pauseMusic": "暂停音乐"
   },
   "templateDemoSeo": {
     "metaTitle": "{name} 婚礼请柬模板 | Thiệp Mừng Online",

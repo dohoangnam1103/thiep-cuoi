@@ -7,6 +7,9 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 const TEST_DB_URL = "file:./tests/e2e/.data/test.db";
 
 export default defineConfig({
+  metadata: {
+    forestProductionBuild: true,
+  },
   testDir: "./tests/e2e",
   outputDir: "./tests/e2e/.artifacts",
   fullyParallel: true,
@@ -52,6 +55,10 @@ export default defineConfig({
       GATEFOLD_LAB_ENABLED: "1",
       SLEEVE_LAB_ENABLED: "1",
       DORAEMON_DOOR_LAB_ENABLED: "1",
+      DETECTIVE_CONAN_CASEBOOK_LAB_ENABLED: "1",
+      FLOW_DEMO_LAB_ENABLED: "1",
+      DALAT_JOURNEY_LAB_ENABLED: "1",
+      FOREST_WEDDING_JOURNEY_LAB_ENABLED: "1",
       NODE_ENV: "test",
     },
   },

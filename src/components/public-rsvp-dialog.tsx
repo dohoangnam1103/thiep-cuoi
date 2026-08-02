@@ -6,11 +6,16 @@ import { useActionState, useEffect, useState } from "react";
 
 import { trackEvent } from "@/lib/analytics";
 import { useLiveForms } from "@/components/chungdoi-live-forms";
+import { cn } from "@/lib/utils";
 
 const FIELD_CLASS =
   "min-h-11 w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-500 focus:border-neutral-700 focus:ring-2 focus:ring-neutral-900/10";
 
-export function PublicRsvpDialog() {
+export function PublicRsvpDialog({
+  triggerClassName,
+}: {
+  triggerClassName?: string;
+}) {
   const live = useLiveForms();
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(live?.rsvpAction ?? (async () => undefined), undefined);
@@ -25,7 +30,12 @@ export function PublicRsvpDialog() {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger className="fixed bottom-5 left-4 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 sm:left-6">
+      <Dialog.Trigger
+        className={cn(
+          "fixed bottom-5 left-4 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 sm:left-6",
+          triggerClassName,
+        )}
+      >
         <Send className="size-4" aria-hidden />
         {label.open}
       </Dialog.Trigger>

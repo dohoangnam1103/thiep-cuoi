@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "assetBible": "../../../../docs/research/templates/detective-conan-casebook/SPEC.md",
+  "sourcePromptFile": "../../../../docs/research/templates/detective-conan-casebook/prompts.md",
+  "assets": [
+    {
+      "id": "shinichi-ran-wedding",
+      "source": "characters/source/shinichi-ran-wedding.png",
+      "runtime": "characters/shinichi-ran-wedding.webp",
+      "mobileVariant": "characters/shinichi-ran-wedding.mobile.webp",
+      "role": "cover-couple",
+      "cast": ["Shinichi Kudo", "Ran Mouri"],
+      "width": 864,
+      "height": 1821,
+      "mobileWidth": 522,
+      "mobileHeight": 1100,
+      "anchor": [0.5, 1],
+      "pivot": [0.5, 1],
+      "zLayer": 14
+    },
+    {
+      "id": "conan-kogoro",
+      "source": "characters/source/conan-kogoro.png",
+      "runtime": "characters/conan-kogoro.webp",
+      "mobileVariant": "characters/conan-kogoro.mobile.webp",
+      "role": "opening-witnesses",
+      "cast": ["Conan Edogawa", "Kogoro Mouri"],
+      "width": 864,
+      "height": 1821,
+      "mobileWidth": 522,
+      "mobileHeight": 1100,
+      "anchor": [0.5, 1],
+      "pivot": [0.5, 1],
+      "zLayer": 12
+    },
+    {
+      "id": "detective-boys",
+      "source": "characters/source/detective-boys.png",
+      "runtime": "characters/detective-boys.webp",
+      "mobileVariant": "characters/detective-boys.mobile.webp",
+      "role": "schedule-cast",
+      "cast": [
+        "Ayumi Yoshida",
+        "Genta Kojima",
+        "Professor Agasa",
+        "Ai Haibara",
+        "Mitsuhiko Tsuburaya"
+      ],
+      "width": 1536,
+      "height": 1024,
+      "mobileWidth": 900,
+      "mobileHeight": 600,
+      "anchor": [0.5, 1],
+      "pivot": [0.5, 1],
+      "zLayer": 10
+    },
+    {
+      "id": "heiji-friends",
+      "source": "characters/source/heiji-friends.png",
+      "runtime": "characters/heiji-friends.webp",
+      "mobileVariant": "characters/heiji-friends.mobile.webp",
+      "role": "friends-cast",
+      "cast": [
+        "Heiji Hattori",
+        "Kazuha Toyama",
+        "Sonoko Suzuki",
+        "Masumi Sera"
+      ],
+      "width": 1536,
+      "height": 1024,
+      "mobileWidth": 900,
+      "mobileHeight": 600,
+      "anchor": [0.5, 1],
+      "pivot": [0.5, 1],
+      "zLayer": 11
+    },
+    {
+      "id": "akai-furuya",
+      "source": "characters/source/akai-furuya.png",
+      "runtime": "characters/akai-furuya.webp",
+      "mobileVariant": "characters/akai-furuya.mobile.webp",
+      "role": "allies-cast",
+      "cast": ["Shuichi Akai", "Rei Furuya"],
+      "width": 864,
+      "height": 1821,
+      "mobileWidth": 522,
+      "mobileHeight": 1100,
+      "anchor": [0.5, 1],
+      "pivot": [0.5, 1],
+      "zLayer": 13
+    }
+  ]
+}

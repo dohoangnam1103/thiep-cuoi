@@ -18,6 +18,12 @@ import "../globals.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 
+const FOREST_LAB_LOCALES = ["en", "ja", "ko", "zh"] as const;
+
+function isForestLabLocale(locale: string): boolean {
+  return FOREST_LAB_LOCALES.some((candidate) => candidate === locale);
+}
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -28,7 +34,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "metadata" });
+  const appLocale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
+  const t = await getTranslations({ locale: appLocale, namespace: "metadata" });
 
   const languages = Object.fromEntries(
     indexableLocales.map((l) => [l, l === routing.defaultLocale ? "/" : `/${l}`]),
@@ -71,7 +80,7 @@ export async function generateMetadata({
       title: t("title"),
       description: t("description"),
       url: locale === routing.defaultLocale ? "/" : `/${locale}`,
-      locale: openGraphLocale(locale as (typeof routing.locales)[number]),
+      locale: openGraphLocale(appLocale),
       images: [{
         url: ogImage,
         width: SITE_SOCIAL_IMAGE_WIDTH,
@@ -97,13 +106,15 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale) && !isForestLabLocale(locale)) {
     notFound();
   }
 
-  setRequestLocale(locale);
-
-  const t = await getTranslations({ locale, namespace: "metadata" });
+  const appLocale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
+  setRequestLocale(appLocale);
+  const t = await getTranslations({ locale: appLocale, namespace: "metadata" });
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [

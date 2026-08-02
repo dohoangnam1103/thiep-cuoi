@@ -121,6 +121,11 @@ const DoraemonDoorLab = dynamic(
     .then((module) => module.DoraemonDoorLab),
   { ssr: false },
 );
+const DetectiveConanCasebookLab = dynamic(
+  () => import("@/components/chungdoi-detective-conan-casebook-lab")
+    .then((module) => module.DetectiveConanCasebookLab),
+  { ssr: false },
+);
 
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -1338,13 +1343,21 @@ export function ChungDoiDemo({
   const gatefoldT = useTranslations("gatefoldLab");
   const sleeveT = useTranslations("sleeveLab");
   const doraemonDoorT = useTranslations("doraemonDoorLab");
+  const invitationControlsT = useTranslations("invitationControls");
+  const detectiveConanCasebookT = useTranslations(
+    "detectiveConanCasebookLab",
+  );
   const content = contentProp ?? chungdoiDemoContent[template.slug];
   const isGatefoldExperience = content?.slug === "long-phung-gatefold";
   const isSleeveExperience = content?.slug === "nguyet-anh-sleeve";
   const isDoraemonDoorExperience = content?.slug === "doraemon-door";
+  const isDetectiveConanCasebookExperience =
+    content?.slug === "detective-conan-casebook";
+  const isPaginatedExperience = isDetectiveConanCasebookExperience;
   const isPhysicalExperience = isGatefoldExperience
     || isSleeveExperience
-    || isDoraemonDoorExperience;
+    || isDoraemonDoorExperience
+    || isDetectiveConanCasebookExperience;
 
   const [opened, setOpened] = useState(captureMode || previewMode);
   const [opening, setOpening] = useState(false);
@@ -1359,6 +1372,7 @@ export function ChungDoiDemo({
   const [autoScrolling, setAutoScrolling] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const autoScrollingRef = useRef(false);
+  const [physicalReplayVersion, setPhysicalReplayVersion] = useState(0);
 
   useEffect(() => {
     autoScrollingRef.current = autoScrolling;
@@ -1375,27 +1389,47 @@ export function ChungDoiDemo({
   const tokens = useMemo(() => (content ? resolveTokens(content) : null), [content]);
 
   useEffect(() => {
-    if (opened || !content) return;
-    const original = document.body.style.overflow;
+    if (!content || (opened && !isPaginatedExperience)) return;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalRootOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    if (isPaginatedExperience) {
+      document.documentElement.style.overflow = "hidden";
+    }
     return () => {
-      document.body.style.overflow = original;
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalRootOverflow;
     };
-  }, [opened, content]);
+  }, [content, isPaginatedExperience, opened]);
 
   useEffect(() => {
-    if (!opened || !isDoraemonDoorExperience) return;
+    if (
+      !opened
+      || (!isDoraemonDoorExperience && !isDetectiveConanCasebookExperience)
+    ) {
+      return;
+    }
 
     const frame = window.requestAnimationFrame(() => {
-      document
-        .querySelector<HTMLElement>("[data-physical-handoff-target]")
-        ?.focus({ preventScroll: true });
+      const focusTarget = isDetectiveConanCasebookExperience
+        ? document.querySelector<HTMLElement>(
+          '[data-testid="detective-conan-casebook-reader"] '
+          + '[data-position="current"] [data-chapter-heading]',
+        )
+        : document.querySelector<HTMLElement>(
+          "[data-physical-handoff-target]",
+        );
+      focusTarget?.focus({ preventScroll: true });
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [isDoraemonDoorExperience, opened]);
+  }, [
+    isDetectiveConanCasebookExperience,
+    isDoraemonDoorExperience,
+    opened,
+  ]);
 
   useEffect(() => {
-    if (!opened || captureMode) return;
+    if (!opened || captureMode || isPaginatedExperience) return;
 
     const lenis = new Lenis({ syncTouch: false, allowNestedScroll: true });
     lenisRef.current = lenis;
@@ -1421,10 +1455,18 @@ export function ChungDoiDemo({
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [captureMode, opened]);
+  }, [captureMode, isPaginatedExperience, opened]);
 
   useEffect(() => {
-    if (!opened || !autoScrolling || captureMode || previewMode) return;
+    if (
+      !opened
+      || !autoScrolling
+      || captureMode
+      || previewMode
+      || isPaginatedExperience
+    ) {
+      return;
+    }
     const lenis = lenisRef.current;
     if (!lenis) return;
 
@@ -1451,7 +1493,13 @@ export function ChungDoiDemo({
       // Dừng animation scrollTo bằng cách neo về vị trí hiện tại.
       lenis.scrollTo(lenis.scroll, { immediate: true });
     };
-  }, [autoScrolling, captureMode, opened, previewMode]);
+  }, [
+    autoScrolling,
+    captureMode,
+    isPaginatedExperience,
+    opened,
+    previewMode,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -1459,6 +1507,38 @@ export function ChungDoiDemo({
       if (autoScrollTimerRef.current) window.clearTimeout(autoScrollTimerRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      !isDetectiveConanCasebookExperience
+      || physicalReplayVersion === 0
+    ) {
+      return;
+    }
+
+    const focusOpenButton = () => {
+      const button = document.querySelector<HTMLButtonElement>(
+        '[data-testid="detective-conan-casebook-open"]',
+      );
+      if (!button || button.disabled) return false;
+      button.focus({ preventScroll: true });
+      return true;
+    };
+    const observer = new MutationObserver(() => {
+      if (focusOpenButton()) observer.disconnect();
+    });
+    observer.observe(document.body, {
+      attributeFilter: ["disabled"],
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+    focusOpenButton();
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isDetectiveConanCasebookExperience, physicalReplayVersion]);
 
   useEffect(() => {
     const originalScrollRestoration = history.scrollRestoration;
@@ -1509,10 +1589,17 @@ export function ChungDoiDemo({
     openingRef.current = false;
     setOpening(false);
     setOpened(true);
-    autoScrollTimerRef.current = window.setTimeout(() => {
-      if (!previewMode) setAutoScrolling(true);
-    }, 2000);
-  }, [content, isPhysicalExperience, previewMode]);
+    if (!isPaginatedExperience) {
+      autoScrollTimerRef.current = window.setTimeout(() => {
+        if (!previewMode) setAutoScrolling(true);
+      }, 2000);
+    }
+  }, [
+    content,
+    isPaginatedExperience,
+    isPhysicalExperience,
+    previewMode,
+  ]);
 
   if (!content || !tokens) {
     return (
@@ -1602,6 +1689,9 @@ export function ChungDoiDemo({
     setAutoScrolling(false);
     setOpening(false);
     setOpened(false);
+    if (isDetectiveConanCasebookExperience) {
+      setPhysicalReplayVersion((version) => version + 1);
+    }
     window.scrollTo({ behavior: "auto", top: 0 });
   }
 
@@ -1617,13 +1707,28 @@ export function ChungDoiDemo({
     <main
       id="top"
       data-capture-mode={captureMode ? "true" : undefined}
-      className="relative min-h-screen bg-white"
-      onClick={toggleAutoScroll}
+      className={
+        isPaginatedExperience
+          ? "relative h-[100dvh] overflow-hidden bg-[#111820]"
+          : "relative min-h-screen bg-white"
+      }
+      onClick={isPaginatedExperience ? undefined : toggleAutoScroll}
     >
       <h1 className="sr-only">{semanticHeading}</h1>
       {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
 
-      {!opened && !captureMode ? (
+      {isDetectiveConanCasebookExperience
+        && !captureMode
+        && !previewMode ? (
+          <DetectiveConanCasebookLab
+            key={physicalReplayVersion}
+            content={content}
+            lockDocument={false}
+            onStateChange={handlePhysicalExperienceStateChange}
+            showControls={false}
+            muted={audioMuted}
+          />
+        ) : !opened && !captureMode ? (
         isGatefoldExperience && !previewMode ? (
           <LongPhungGatefoldLab
             content={content}
@@ -1661,7 +1766,9 @@ export function ChungDoiDemo({
 
       {opened ? (
         <>
-          {isGatefoldExperience ? (
+          {isDetectiveConanCasebookExperience
+            && !captureMode
+            && !previewMode ? null : isGatefoldExperience ? (
         <div className="contents" data-template-renderer={content.slug}>
           <LongPhungGatefoldInvitation content={content} />
         </div>
@@ -1737,13 +1844,27 @@ export function ChungDoiDemo({
 
       {opened && !captureMode ? (
         <>
-          <PublicRsvpDialog />
-          <div className="fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:right-6">
+          <PublicRsvpDialog
+            triggerClassName={
+              isPaginatedExperience
+                ? "bottom-auto left-3 top-3 sm:left-4"
+                : undefined
+            }
+          />
+          <div
+            className={
+              isPaginatedExperience
+                ? "fixed right-3 top-20 z-40 flex flex-col items-end gap-3 sm:right-4"
+                : "fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:right-6"
+            }
+          >
             {isPhysicalExperience && !previewMode ? (
               <button
                 type="button"
                 data-testid={
-                  isGatefoldExperience
+                  isDetectiveConanCasebookExperience
+                    ? "detective-conan-casebook-replay-cover"
+                    : isGatefoldExperience
                     ? "long-phung-gatefold-replay-cover"
                     : isSleeveExperience
                       ? "nguyet-anh-sleeve-replay-cover"
@@ -1751,21 +1872,27 @@ export function ChungDoiDemo({
                 }
                 onClick={replayPhysicalCover}
                 aria-label={
-                  isGatefoldExperience
+                  isDetectiveConanCasebookExperience
+                    ? detectiveConanCasebookT("replayCover")
+                    : isGatefoldExperience
                     ? gatefoldT("replayCover")
                     : isSleeveExperience
                       ? sleeveT("replayCover")
                       : doraemonDoorT("replayCover")
                 }
                 title={
-                  isGatefoldExperience
+                  isDetectiveConanCasebookExperience
+                    ? detectiveConanCasebookT("replayCover")
+                    : isGatefoldExperience
                     ? gatefoldT("replayCover")
                     : isSleeveExperience
                       ? sleeveT("replayCover")
                       : doraemonDoorT("replayCover")
                 }
                 className={
-                  isGatefoldExperience
+                  isDetectiveConanCasebookExperience
+                    ? "flex size-12 items-center justify-center rounded-full border border-[#B43A42]/70 bg-[#111820]/92 text-[#F1E9D8] shadow-lg shadow-black/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B43A42] active:translate-y-px"
+                    : isGatefoldExperience
                     ? "flex size-12 items-center justify-center rounded-full border border-[#B58A3A]/55 bg-[#17110F]/88 text-[#EAD9B8] shadow-lg shadow-[#17110F]/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B58A3A] active:translate-y-px"
                     : isSleeveExperience
                       ? "flex size-12 items-center justify-center border border-[#78C7D7]/70 bg-[#0B1116]/90 text-[#D7E4EA] shadow-lg shadow-black/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#78C7D7] active:translate-y-px"
@@ -1778,7 +1905,11 @@ export function ChungDoiDemo({
             <button
               type="button"
               onClick={toggleMusic}
-              aria-label={playing ? "Tạm dừng nhạc" : "Phát nhạc"}
+              aria-label={
+                playing
+                  ? invitationControlsT("pauseMusic")
+                  : invitationControlsT("playMusic")
+              }
               aria-pressed={playing}
               className="flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 sm:right-6"
               style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}

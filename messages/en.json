@@ -88,6 +88,338 @@
     "pause": "Pause",
     "reset": "Reset"
   },
+  "flowDemoLab": {
+    "metaTitle": "Invitation motion engine lab",
+    "metaDescription": "A private lab comparing four motion choreographies across CSS, WAAPI, GSAP, Canvas 2D and WebGL.",
+    "title": "One motion frame, five rendering paths",
+    "subtitle": "The layout, duration and transition intent stay fixed. Only the rendering technology changes, so you can choose a foundation before adding an invitation theme.",
+    "mobilePriority": "Absolute priority: stable, smooth motion on ordinary phones.",
+    "controlsLabel": "Motion Lab controls",
+    "viewLabel": "View",
+    "viewFocus": "Focus",
+    "viewCompare": "Compare",
+    "choreographyLabel": "Choreography",
+    "engineLabel": "Technology",
+    "replay": "Replay",
+    "reducedMotion": "Reduced motion",
+    "previewLabel": "Motion preview",
+    "compareHint": "All five engines run together on the same beat for visual comparison.",
+    "webglLoading": "Preparing WebGL",
+    "webglUnavailable": "WebGL is unavailable on this device or browser.",
+    "stage": {
+      "kicker": "Content frame",
+      "title": "Lorem & Ipsum",
+      "body": "Neutral content keeps motion and layout at the center of the review.",
+      "date": "00 · 00 · 0000"
+    },
+    "choreographies": {
+      "splitGate": {
+        "label": "Split Gate",
+        "description": "Two surfaces separate to clear the center; they can later become curtains, doors, leaves, clouds or glass."
+      },
+      "irisBloom": {
+        "label": "Iris Bloom",
+        "description": "Concentric layers bloom from the center, ready to become a flower, sun, moon, drum, lace or halo."
+      },
+      "depthPortal": {
+        "label": "Depth Portal",
+        "description": "Layered planes move through depth into a reveal surface, suited to arches, forests, cinema, cities or galaxies."
+      },
+      "ribbonSweep": {
+        "label": "Ribbon Sweep",
+        "description": "One curved band crosses and clears the frame; it can become silk, ink, a wave, smoke, light or film."
+      }
+    },
+    "engines": {
+      "css": {
+        "label": "CSS Keyframes",
+        "description": "The lightest baseline: small, maintainable and friendly to the browser compositor."
+      },
+      "waapi": {
+        "label": "Web Animations API",
+        "description": "Native DOM timelines without updating React on every animation frame."
+      },
+      "gsap": {
+        "label": "GSAP",
+        "description": "A choreography-rich timeline used as the enhanced reference for more complex beats."
+      },
+      "canvas": {
+        "label": "Canvas 2D",
+        "description": "All geometry is drawn into one surface with a finite RAF loop and capped pixel density."
+      },
+      "webgl": {
+        "label": "R3F / WebGL",
+        "description": "Basic meshes move through depth with demand rendering and no idle render loop."
+      }
+    },
+    "guardrailsTitle": "Comparison conditions",
+    "guardrailsBody": "Every version uses the same geometric actors, duration and destination. This lab evaluates motion direction, not invitation content.",
+    "guardrailTransform": "DOM engines animate transform and opacity only—no blur, shadow or layout changes.",
+    "guardrailFinite": "Every timeline and RAF loop stops completely after handoff.",
+    "guardrailDpr": "Canvas and WebGL use DPR 1 on mobile and at most 1.25 on desktop.",
+    "compareWarning": "Compare is for visual review only; it is not a valid FPS benchmark."
+  },
+  "dalatJourneyLab": {
+    "metaTitle": "Misty Dalat Garden — Journey Lab",
+    "metaDescription": "A first-person immersive journey through five checkpoints in a dreamlike Dalat garden.",
+    "entryKicker": "A journey through the mist",
+    "entryTitle": "Misty Dalat Garden",
+    "entryBody": "Swipe to walk. Drag sideways to look around. Each stop holds a piece of the story.",
+    "enter": "Step in",
+    "previous": "Back",
+    "next": "Forward",
+    "loading": "Opening a path through the mist",
+    "fallbackNotice": "Your device is using a lighter version of the scene.",
+    "reducedMotion": "Reduce motion",
+    "gestureHint": "Swipe vertically to move · drag horizontally to look around",
+    "checkpointStatus": "{current} of {total}: {name}",
+    "checkpoints": {
+      "mistGate": {
+        "name": "Mist Gate",
+        "kicker": "Before dawn",
+        "title": "00 · 00 · 0000",
+        "body": "A gate opens into the misted forest. The journey begins here.",
+        "detail": "Mist Gate — where the journey begins."
+      },
+      "memoryPines": {
+        "name": "Memory Pines",
+        "kicker": "Light through the pines",
+        "title": "00 · 00 · 0000",
+        "body": "Faint memory panes hang between the pines.",
+        "detail": "Memory Pines — drag sideways to look around."
+      },
+      "timeGlasshouse": {
+        "name": "Time Glasshouse",
+        "kicker": "Inside the glasshouse",
+        "title": "00 · 00 · 0000",
+        "body": "Time blooms into rings of flowers on the glass walls.",
+        "detail": "Time Glasshouse — the date rests here."
+      },
+      "lakePavilion": {
+        "name": "Lake Pavilion",
+        "kicker": "Golden hour",
+        "title": "00 · 00 · 0000",
+        "body": "The path is reflected in the still lake.",
+        "detail": "Lake Pavilion — directions lie at your feet."
+      },
+      "wishValley": {
+        "name": "Wish Valley",
+        "kicker": "Blue hour falls",
+        "title": "00 · 00 · 0000",
+        "body": "The valley lights up with every wish.",
+        "detail": "Wish Valley — your message rests on the stone desk."
+      }
+    },
+    "invitation": {
+      "cover": "Invitation details",
+      "album": "Wedding album",
+      "albumIntro": "{count} moments kept from the couple's journey.",
+      "bride": "Bride",
+      "schedule": "Wedding-day schedule",
+      "map": "Venue & map",
+      "mapUnavailable": "The address is being updated.",
+      "wishes": "Wishes",
+      "gift": "Wedding envelope",
+      "wishesIntro": "Leave a wish for the couple to keep from their wedding day.",
+      "giftIntro": "If you would like to send a gift, the digital envelope is ready.",
+      "giftUnavailable": "The envelope will appear after the bride's or groom's account details are verified.",
+      "groom": "Groom",
+      "calendar": "Our day",
+      "directions": "Get directions",
+      "addToCalendar": "Add to calendar",
+      "openGift": "Open wedding envelope",
+      "wishNamePlaceholder": "Your name",
+      "wishPlaceholder": "Write a wish for the couple…",
+      "wishSubmit": "Send your wish",
+      "wishSuccess": "Thank you for your wish!"
+    }
+  },
+  "forestWeddingJourneyLab": {
+    "metaTitle": "Forest Wedding Journey — 3D Lab",
+    "metaDescription": "A 3D wedding invitation that leads guests through each functional area in a gentle daytime forest.",
+    "entryKicker": "A wedding is being prepared",
+    "entryBody": "Swipe to walk · drag sideways to look around",
+    "enter": "Step in",
+    "previous": "Back",
+    "next": "Continue",
+    "loading": "Preparing the flower gate",
+    "fallbackNotice": "Your device is using a lighter forest version.",
+    "reducedMotion": "Reduce motion",
+    "gestureHint": "Swipe vertically to move · drag horizontally to look around",
+  "sceneStatus": "{current} of {total}: {name}",
+  "demoContent": {
+    "ceremonyHeader": "The wedding ceremony will be celebrated with the joy of both families.",
+    "openingMessage": "Together with their families, the couple joyfully invites you to celebrate their wedding.",
+    "families": {
+      "brideParentTitle": "Parents",
+      "groomParentTitle": "Parents"
+    },
+    "schedule": {
+      "guestWelcome": "Guest welcome",
+      "banquetOpening": "Reception begins",
+      "toastAndCake": "Toast and cake cutting",
+      "mainCourse": "Main course",
+      "farewell": "Farewell"
+    },
+    "wishes": {
+      "first": "Wishing you a lifetime of happiness and a beautiful journey together!",
+      "second": "May love, understanding, and laughter always fill your home."
+    }
+  },
+  "longCopy": {
+    "familyParentTitle": "AnExtremelyLongFamilyRepresentativeName together with every loved one sharing the joy of this wonderful day",
+    "venueAddress": "AnExtraordinarilyLongOutdoorGuestWelcomeArea, the woodland reception hall reached through the summer garden, 25 Phan Chu Trinh Street, Da Lat, Lam Dong",
+    "labels": {
+      "rsvpAttendance": "Please let us know whether you and all the loved ones joining your party will be able to attend the celebration.",
+      "rsvpNotes": "A detailed note for the couple, including anything they should know while preparing the celebration",
+      "wishText": "Write a thoughtful and wonderfully detailed wish for the couple as they begin their new journey"
+    }
+  },
+  "sceneNames": {
+      "coverGate": "Flower gate",
+      "families": "Our families",
+      "openingMessage": "Welcome message",
+      "calendar": "Wedding calendar",
+      "schedule": "Schedule",
+      "galleryPhoto": "A shared moment",
+      "dressCode": "Dress code",
+      "venue": "Venue",
+      "map": "Map",
+      "rsvp": "RSVP",
+      "wishes": "Wishes",
+      "gift": "Wedding gift",
+      "finale": "Thank you"
+    },
+    "labels": {
+      "brideFamily": "Bride's family",
+      "groomFamily": "Groom's family",
+      "invitation": "Invitation",
+      "ceremony": "Ceremony",
+      "reception": "Reception",
+      "date": "Date",
+      "time": "Time",
+      "addToCalendar": "Add to calendar",
+      "directions": "Get directions",
+      "photoAlt": "Wedding memory",
+      "rsvpName": "Your name",
+      "rsvpAttendance": "Will you attend?",
+      "attendingYes": "Yes, I will attend",
+      "attendingNo": "Sorry, I cannot attend",
+      "rsvpGuests": "Number of guests",
+      "rsvpNotes": "A note",
+      "rsvpSubmit": "Send RSVP",
+      "rsvpSuccess": "Thank you for your response.",
+      "rsvpNameRequired": "Please enter your name.",
+      "rsvpGuestsInvalid": "Please enter a valid number of guests.",
+      "wishName": "Your name",
+      "wishText": "Your wish",
+      "wishSubmit": "Send a wish",
+      "wishSuccess": "Thank you for your wish.",
+      "wishRequired": "Please write a wish.",
+      "formError": "We could not submit the form right now. Please try again.",
+      "openGift": "Open wedding gift",
+      "closeGift": "Close wedding gift",
+      "bankName": "Bank",
+      "accountHolder": "Account holder",
+      "accountNumber": "Account number",
+      "giftUnavailable": "Gift details are being updated.",
+      "mapUnavailable": "The map is being updated.",
+      "photoUnavailable": "Photos are being updated.",
+      "thankYou": "Thank you for sharing this day with us."
+    }
+  },
+  "detectiveConanCasebookLab": {
+    "metaTitle": "Wedding Case File 4869 lab",
+    "metaDescription": "A private lab for the Three.js casebook cover, page turn and DOM reader handoff.",
+    "title": "Wedding Case File 4869",
+    "caseLabel": "Wedding case file 4869",
+    "coverKicker": "The final case: our wedding day",
+    "backTitle": "Confidential details",
+    "and": "and",
+    "loading": "Preparing the case file",
+    "open": "Open case file",
+    "viewBack": "View back cover",
+    "viewFront": "Return to front",
+    "replayCover": "Replay casebook cover",
+    "closedHint": "Drag to inspect the casebook. Use the separate button to open it.",
+    "stateClosed": "The case file is closed.",
+    "stateOpening": "The casebook cover is opening.",
+    "stateHandoff": "Moving to the reading page.",
+    "stateOpened": "The wedding case file is open.",
+    "forceReducedMotion": "Force reduced motion",
+    "reducedMotionActive": "Reduced motion is active",
+    "fullMotionActive": "Full motion is active",
+    "timeline": "Timeline progress: {progress}%",
+    "play": "Play",
+    "pause": "Pause",
+    "reset": "Reset"
+  },
+  "detectiveConanCasebook": {
+    "readerLabel": "Wedding Case File 4869 reader",
+    "chapterNavigation": "Chapter navigation",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "chapterProgress": "{current}/{total} · {title}",
+    "goToChapter": "Go to chapter {title}",
+    "introEyebrow": "Opening file",
+    "introTitle": "Invitation confirmed",
+    "and": "and",
+    "dateTime": "{date} · {time}",
+    "shinichiRanAlt": "Shinichi and Ran in wedding attire",
+    "castShinichiRan": "Shinichi Kudo · Ran Mouri",
+    "familiesTitle": "The two families",
+    "brideFamily": "Bride's family",
+    "groomFamily": "Groom's family",
+    "parents": "Parents",
+    "conanKogoroAlt": "Conan and Kogoro Mouri",
+    "castConanKogoro": "Conan Edogawa · Kogoro Mouri",
+    "ceremonyTitle": "Ceremony time",
+    "receptionLabel": "Wedding reception",
+    "detectiveBoysAlt": "Ayumi, Genta, Haibara and Professor Agasa",
+    "castDetectiveBoys": "Detective Boys · Agasa · Haibara",
+    "scheduleTitle": "Wedding day timeline",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "seconds": "seconds",
+    "calendarTitle": "{month}/{year}",
+    "addToCalendar": "Add to calendar",
+    "calendarUnavailable": "The wedding date is being updated.",
+    "galleryTitle": "Captured moments",
+    "galleryAlt": "Wedding photograph {index}",
+    "galleryEmpty": "The photo album is being prepared.",
+    "morePhotos": "{count} more photos in the file",
+    "heijiFriendsAlt": "Heiji, Kazuha, Sonoko and Masumi",
+    "castHeijiFriends": "Heiji · Kazuha · Sonoko · Masumi",
+    "mapEyebrow": "Scene coordinates",
+    "mapTitle": "Reception location",
+    "mapFrameTitle": "Wedding venue map",
+    "directionsAction": "Open directions",
+    "dressCodeTitle": "Suggested dress colors",
+    "dressColorAlt": "Dress color {color}",
+    "akaiFuruyaAlt": "Shuichi Akai and Rei Furuya",
+    "castAkaiFuruya": "Shuichi Akai · Rei Furuya",
+    "guestbookTitle": "Leave a wish",
+    "guestbookHint": "Every wish becomes a treasured witness statement in our wedding case file.",
+    "wishesTitle": "Witness statements",
+    "wishesEmpty": "Be the first to leave a wedding wish.",
+    "wishName": "Your name",
+    "wishText": "Write your wish",
+    "wishSubmit": "Send wish",
+    "wishPending": "Sending...",
+    "wishSuccess": "Your wish has been added to the case file.",
+    "giftTitle": "Wedding gift",
+    "giftHint": "If you would like to send a gift from afar, you can use the details below.",
+    "giftNote": "Your presence remains the most precious gift.",
+    "giftEmpty": "Gift details have not been added yet.",
+    "bankDetails": "Bank details",
+    "saveQr": "Save QR code",
+    "finaleEyebrow": "Case conclusion",
+    "finaleTitle": "The answer is us",
+    "finaleMessage": "After every clue and every year of waiting, the final answer is a lifetime together.",
+    "presenceHonor": "We would be honored to see you when this joyful case is officially closed.",
+    "momentsTitle": "Guest moments"
+  },
   "doraemonDoor": {
     "heroKicker": "A door opens onto our wedding day",
     "invitationTitle": "Step through this door with us",
@@ -397,6 +729,10 @@
   },
   "demoCta": {
     "useTemplate": "Use this invitation"
+  },
+  "invitationControls": {
+    "playMusic": "Play music",
+    "pauseMusic": "Pause music"
   },
   "templateDemoSeo": {
     "metaTitle": "{name} Wedding Invitation Template | Thiệp Mừng Online",

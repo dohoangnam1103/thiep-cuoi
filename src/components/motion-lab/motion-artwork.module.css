@@ -1,0 +1,327 @@
+.stage {
+  --motion-accent: #ef6f61;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 23rem;
+  overflow: hidden;
+  color: #f7f4ec;
+  background: #080b12;
+  isolation: isolate;
+  perspective: 1000px;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.frame {
+  position: absolute;
+  inset: 9%;
+  z-index: 2;
+  border: 1px solid rgb(239 111 97 / 54%);
+  border-radius: 1.4rem;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 4%);
+}
+
+.accent {
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  z-index: 3;
+  width: 51%;
+  opacity: 0.94;
+  background: #101827;
+  border: 1px solid rgb(255 255 255 / 5%);
+}
+
+.accentLeft {
+  left: -1%;
+  transform-origin: left center;
+}
+
+.accentRight {
+  right: -1%;
+  transform-origin: right center;
+}
+
+.hero {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  width: min(30vw, 9rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(239 111 97 / 62%);
+  border-radius: 50%;
+  background: #111a2a;
+  transform: translate(-50%, -50%);
+}
+
+.hero span {
+  width: 42%;
+  aspect-ratio: 1;
+  border: 1px solid rgb(247 244 236 / 70%);
+  transform: rotate(45deg);
+}
+
+.ribbon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 6;
+  width: 125%;
+  overflow: visible;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+.ribbon path {
+  fill: none;
+  stroke: var(--motion-accent);
+  stroke-linecap: round;
+  stroke-width: 58;
+}
+
+.reveal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: min(76%, 31rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
+  color: #171a21;
+  text-align: center;
+  background: #f4f0e7;
+  border: 1px solid rgb(18 22 31 / 12%);
+  border-radius: 1.2rem;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.92);
+}
+
+.kicker,
+.date {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  color: #a43d36;
+}
+
+.title {
+  margin: 0.8rem 0 0;
+  font-size: clamp(1.75rem, 7vw, 3.4rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.body {
+  max-width: 34ch;
+  margin: 1rem auto 0;
+  color: rgb(23 26 33 / 66%);
+  font-size: clamp(0.8rem, 2.4vw, 1rem);
+  line-height: 1.55;
+}
+
+.date {
+  margin-top: 1.2rem;
+  color: rgb(23 26 33 / 46%);
+}
+
+.cssRun {
+  --motion-duration: 1100ms;
+}
+
+.cssRun[data-stage-choreography="splitGate"] [data-motion-actor="accentLeft"] {
+  animation: splitLeft var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="splitGate"] [data-motion-actor="accentRight"] {
+  animation: splitRight var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="splitGate"] [data-motion-actor="hero"] {
+  animation: heroClear var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="splitGate"] [data-motion-actor="reveal"] {
+  animation: revealSurface var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="irisBloom"] [data-motion-actor="frame"] {
+  animation: irisFrame var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="irisBloom"] [data-motion-actor="hero"] {
+  animation: irisHero var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="irisBloom"] [data-motion-actor="accentLeft"] {
+  animation: irisLeft var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="irisBloom"] [data-motion-actor="accentRight"] {
+  animation: irisRight var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="irisBloom"] [data-motion-actor="reveal"] {
+  animation: revealSurface var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="depthPortal"] [data-motion-actor="frame"] {
+  animation: portalFrame var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="depthPortal"] [data-motion-actor="hero"] {
+  animation: portalHero var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="depthPortal"] [data-motion-actor="accentLeft"],
+.cssRun[data-stage-choreography="depthPortal"] [data-motion-actor="accentRight"] {
+  animation: portalAccent var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="depthPortal"] [data-motion-actor="reveal"] {
+  animation: portalReveal var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="ribbonSweep"] [data-motion-actor="ribbon"] {
+  animation: ribbonSweep var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="ribbonSweep"] [data-motion-actor="accentLeft"] {
+  animation: ribbonLeft var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="ribbonSweep"] [data-motion-actor="accentRight"] {
+  animation: ribbonRight var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="ribbonSweep"] [data-motion-actor="hero"] {
+  animation: heroClear var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.cssRun[data-stage-choreography="ribbonSweep"] [data-motion-actor="reveal"] {
+  animation: revealSurface var(--motion-duration) cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+[data-reduced-motion="true"] .cssRun {
+  --motion-duration: 150ms;
+}
+
+[data-reduced-motion="true"] .cssRun [data-motion-actor]:not([data-motion-actor="reveal"]):not([data-motion-actor="backdrop"]) {
+  animation: none;
+  opacity: 0;
+}
+
+[data-reduced-motion="true"] .stage [data-motion-actor="reveal"] {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+[data-reduced-motion="true"] .cssRun [data-motion-actor="reveal"] {
+  animation: reducedReveal var(--motion-duration) linear both;
+}
+
+@keyframes reducedReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes splitLeft {
+  0%, 16% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-108%); }
+}
+
+@keyframes splitRight {
+  0%, 16% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(108%); }
+}
+
+@keyframes heroClear {
+  0%, 20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  72%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.45); }
+}
+
+@keyframes revealSurface {
+  0%, 45% { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes irisFrame {
+  0%, 12% { opacity: 1; transform: scale(0.72) rotate(-7deg); }
+  75%, 100% { opacity: 0; transform: scale(1.45) rotate(0); }
+}
+
+@keyframes irisHero {
+  0% { opacity: 0.25; transform: translate(-50%, -50%) scale(0.3); }
+  38% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.1); }
+}
+
+@keyframes irisLeft {
+  0% { opacity: 0; transform: translate(-42%, 25%) rotate(-28deg) scale(0.3); }
+  45% { opacity: 0.8; transform: translate(-18%, 0) rotate(-12deg) scale(0.72); }
+  100% { opacity: 0; transform: translate(-74%, -22%) rotate(-40deg) scale(1.15); }
+}
+
+@keyframes irisRight {
+  0% { opacity: 0; transform: translate(42%, 25%) rotate(28deg) scale(0.3); }
+  45% { opacity: 0.8; transform: translate(18%, 0) rotate(12deg) scale(0.72); }
+  100% { opacity: 0; transform: translate(74%, -22%) rotate(40deg) scale(1.15); }
+}
+
+@keyframes portalFrame {
+  0% { opacity: 0.35; transform: scale(0.56); }
+  66% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.75); }
+}
+
+@keyframes portalHero {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+  72%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.7); }
+}
+
+@keyframes portalAccent {
+  0% { opacity: 0.65; transform: scale(0.45); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+@keyframes portalReveal {
+  0%, 44% { opacity: 0; transform: translate(-50%, -50%) scale(0.62); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes ribbonSweep {
+  0% { opacity: 0; transform: translate(-125%, -50%) rotate(-8deg); }
+  16%, 70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%, -50%) rotate(-8deg); }
+}
+
+@keyframes ribbonLeft {
+  0%, 22% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-72%); }
+}
+
+@keyframes ribbonRight {
+  0%, 22% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(72%); }
+}
+
+@media (max-width: 767px) {
+  .stage { min-height: 20rem; }
+  .frame { inset: 8%; }
+  .reveal { width: 82%; }
+}

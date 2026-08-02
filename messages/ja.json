@@ -88,6 +88,338 @@
     "pause": "一時停止",
     "reset": "リセット"
   },
+  "flowDemoLab": {
+    "metaTitle": "招待状モーションエンジン・ラボ",
+    "metaDescription": "CSS、WAAPI、GSAP、Canvas 2D、WebGLで4種類のモーションを比較する内部ラボです。",
+    "title": "一つのモーション、五つの描画方式",
+    "subtitle": "レイアウト、時間、切り替えの意図は同一です。描画技術だけを変え、テーマを載せる前に最適な土台を選べます。",
+    "mobilePriority": "最優先は、一般的なスマートフォンで安定して滑らかに動くことです。",
+    "controlsLabel": "モーションラボの操作",
+    "viewLabel": "表示",
+    "viewFocus": "フォーカス",
+    "viewCompare": "比較",
+    "choreographyLabel": "モーション",
+    "engineLabel": "技術",
+    "replay": "リプレイ",
+    "reducedMotion": "動きを減らす",
+    "previewLabel": "モーションプレビュー",
+    "compareHint": "5つのエンジンを同じタイミングで動かし、見た目を比較します。",
+    "webglLoading": "WebGLを準備中",
+    "webglUnavailable": "この端末またはブラウザではWebGLを利用できません。",
+    "stage": {
+      "kicker": "コンテンツ枠",
+      "title": "Lorem & Ipsum",
+      "body": "中立的な内容で、動きとレイアウトだけを確認します。",
+      "date": "00 · 00 · 0000"
+    },
+    "choreographies": {
+      "splitGate": {
+        "label": "Split Gate",
+        "description": "左右の面が分かれて中央を開きます。後からカーテン、扉、葉、雲、ガラスに置き換えられます。"
+      },
+      "irisBloom": {
+        "label": "Iris Bloom",
+        "description": "同心円状の層が中央から開き、花、太陽、月、太鼓、レース、光輪に展開できます。"
+      },
+      "depthPortal": {
+        "label": "Depth Portal",
+        "description": "複数の面が奥行きを進んで内容を見せます。アーチ、森、映画、都市、銀河向けです。"
+      },
+      "ribbonSweep": {
+        "label": "Ribbon Sweep",
+        "description": "一本の曲線が横切って画面を開き、絹、墨、波、煙、光、フィルムに応用できます。"
+      }
+    },
+    "engines": {
+      "css": {
+        "label": "CSS Keyframes",
+        "description": "最も軽い基準。コードが少なく保守しやすく、コンポジターにも適しています。"
+      },
+      "waapi": {
+        "label": "Web Animations API",
+        "description": "Reactを毎フレーム更新せず、DOMをネイティブのタイムラインで動かします。"
+      },
+      "gsap": {
+        "label": "GSAP",
+        "description": "複雑な演出を組みやすい、拡張版の比較基準となるタイムラインです。"
+      },
+      "canvas": {
+        "label": "Canvas 2D",
+        "description": "有限のRAFループと制限した画素密度で、一つの面に形状を描画します。"
+      },
+      "webgl": {
+        "label": "R3F / WebGL",
+        "description": "基本メッシュを奥行き方向に動かし、必要な時だけ描画します。"
+      }
+    },
+    "guardrailsTitle": "比較条件",
+    "guardrailsBody": "すべて同じ形状、時間、到達点を使用します。ここでは招待状の内容ではなく、動きの方向性を評価します。",
+    "guardrailTransform": "DOMはtransformとopacityだけを動かし、ぼかし、影、レイアウト変更は行いません。",
+    "guardrailFinite": "タイムラインとRAFループは切り替え後に完全停止します。",
+    "guardrailDpr": "CanvasとWebGLはモバイルでDPR 1、デスクトップでも最大1.25です。",
+    "compareWarning": "比較表示は目視確認専用で、FPSベンチマークではありません。"
+  },
+  "dalatJourneyLab": {
+    "metaTitle": "霧のダラットガーデン — Journey Lab",
+    "metaDescription": "幻想的なダラットの庭園にある五つのチェックポイントをめぐる、一人称視点の没入体験。",
+    "entryKicker": "霧をぬけた旅",
+    "entryTitle": "霧のダラットガーデン",
+    "entryBody": "縦にスワイプして歩き、横にドラッグして見回します。どの立ち寄り先にも物語の一片があります。",
+    "enter": "入る",
+    "previous": "戻る",
+    "next": "進む",
+    "loading": "霧の中に道を開いています",
+    "fallbackNotice": "お使いの端末では、より軽い映像モードで表示しています。",
+    "reducedMotion": "動きを減らす",
+    "gestureHint": "縦スワイプで移動 · 横ドラッグで見回す",
+    "checkpointStatus": "{current} / {total}: {name}",
+    "checkpoints": {
+      "mistGate": {
+        "name": "霧の門",
+        "kicker": "夜明け前",
+        "title": "00 · 00 · 0000",
+        "body": "霧に包まれた森へと開く門。ここから旅が始まります。",
+        "detail": "霧の門 — 旅の始まり。"
+      },
+      "memoryPines": {
+        "name": "記憶の森",
+        "kicker": "松を抜ける光",
+        "title": "00 · 00 · 0000",
+        "body": "松の間にかすかな記憶の板が浮かんでいます。",
+        "detail": "記憶の森 — 横にドラッグして見回す。"
+      },
+      "timeGlasshouse": {
+        "name": "時の温室",
+        "kicker": "温室の中で",
+        "title": "00 · 00 · 0000",
+        "body": "ガラスの壁に時間が花の環となって咲きます。",
+        "detail": "時の温室 — 日付はここにあります。"
+      },
+      "lakePavilion": {
+        "name": "湖畔のパビリオン",
+        "kicker": "黄金の時間",
+        "title": "00 · 00 · 0000",
+        "body": "静かな湖面に道が映り込みます。",
+        "detail": "湖畔のパビリオン — 道案内は足元にあります。"
+      },
+      "wishValley": {
+        "name": "願いの谷",
+        "kicker": "暮れゆく空",
+        "title": "00 · 00 · 0000",
+        "body": "願いがひとつ叶うたび、谷がやわらかく光ります。",
+        "detail": "願いの谷 — 石の机に伝えたい言葉を。"
+      }
+    },
+    "invitation": {
+      "cover": "招待状の詳細",
+      "album": "ウェディングアルバム",
+      "albumIntro": "ふたりの旅に残した{count}枚の思い出。",
+      "bride": "新婦",
+      "schedule": "当日のスケジュール",
+      "map": "会場と地図",
+      "mapUnavailable": "会場の住所を更新中です。",
+      "wishes": "お祝いメッセージ",
+      "gift": "お祝いの封筒",
+      "wishesIntro": "ふたりの門出に、心からのメッセージをお寄せください。",
+      "giftIntro": "お祝いを贈りたい方は、こちらのデジタル封筒をご利用ください。",
+      "giftUnavailable": "新郎または新婦の口座情報が確認されると封筒が表示されます。",
+      "groom": "新郎",
+      "calendar": "大切な日",
+      "directions": "道順を見る",
+      "addToCalendar": "カレンダーに追加",
+      "openGift": "お祝いの封筒を開く",
+      "wishNamePlaceholder": "お名前",
+      "wishPlaceholder": "ふたりへのメッセージ…",
+      "wishSubmit": "メッセージを送る",
+      "wishSuccess": "メッセージをありがとうございます！"
+    }
+  },
+  "forestWeddingJourneyLab": {
+    "metaTitle": "森のウェディング・ジャーニー — 3Dラボ",
+    "metaDescription": "やわらかな昼の森を舞台に、各機能エリアへ案内する3Dウェディング招待状です。",
+    "entryKicker": "結婚式の準備が進んでいます",
+    "entryBody": "スワイプで進む · 横にドラッグして見回す",
+    "enter": "入る",
+    "previous": "戻る",
+    "next": "次へ",
+    "loading": "花の門を準備しています",
+    "fallbackNotice": "お使いの端末では軽量版の森を表示しています。",
+    "reducedMotion": "動きを減らす",
+    "gestureHint": "縦にスワイプして移動 · 横にドラッグして見回す",
+  "sceneStatus": "{current}/{total}: {name}",
+  "demoContent": {
+    "ceremonyHeader": "両家の喜びとともに結婚式を執り行います。",
+    "openingMessage": "両家とともに、ふたりの結婚式へ心よりご招待いたします。",
+    "families": {
+      "brideParentTitle": "ご両親",
+      "groomParentTitle": "ご両親"
+    },
+    "schedule": {
+      "guestWelcome": "ゲストのお迎え",
+      "banquetOpening": "披露宴開宴",
+      "toastAndCake": "乾杯・ケーキカット",
+      "mainCourse": "メイン料理",
+      "farewell": "お見送り"
+    },
+    "wishes": {
+      "first": "末永く幸せに、笑顔あふれる人生を歩まれますように。",
+      "second": "いつまでも愛と理解を大切に、温かな家庭を築いてください。"
+    }
+  },
+  "longCopy": {
+    "familyParentTitle": "とても長いご家族代表者名と大切な皆さまがこの佳き日の喜びをともに分かち合います",
+    "venueAddress": "とても長い名前の屋外ゲスト受付エリア、夏の庭を抜けた森の披露宴会場、ダラット市ファン・チュー・チン通り25番地",
+    "labels": {
+      "rsvpAttendance": "ご本人とご一緒にお越しになる大切な皆さまが披露宴へご出席いただけるかお知らせください。",
+      "rsvpNotes": "結婚式の準備にあたり新郎新婦へ伝えておきたいことを詳しくご記入ください",
+      "wishText": "新しい人生を歩み始めるおふたりへ心のこもった長いお祝いの言葉をお寄せください"
+    }
+  },
+  "sceneNames": {
+      "coverGate": "花の門",
+      "families": "両家のご紹介",
+      "openingMessage": "ごあいさつ",
+      "calendar": "ウェディングカレンダー",
+      "schedule": "当日の予定",
+      "galleryPhoto": "思い出の一枚",
+      "dressCode": "ドレスコード",
+      "venue": "会場",
+      "map": "地図",
+      "rsvp": "出欠確認",
+      "wishes": "お祝いの言葉",
+      "gift": "ご祝儀",
+      "finale": "感謝を込めて"
+    },
+    "labels": {
+      "brideFamily": "新婦家",
+      "groomFamily": "新郎家",
+      "invitation": "招待状",
+      "ceremony": "挙式",
+      "reception": "披露宴",
+      "date": "日付",
+      "time": "時間",
+      "addToCalendar": "カレンダーに追加",
+      "directions": "道順を見る",
+      "photoAlt": "結婚式の思い出",
+      "rsvpName": "お名前",
+      "rsvpAttendance": "ご出席いただけますか？",
+      "attendingYes": "はい、出席します",
+      "attendingNo": "申し訳ありませんが、欠席します",
+      "rsvpGuests": "同伴者の人数",
+      "rsvpNotes": "メッセージ",
+      "rsvpSubmit": "出欠を送信",
+      "rsvpSuccess": "ご回答ありがとうございます。",
+      "rsvpNameRequired": "お名前を入力してください。",
+      "rsvpGuestsInvalid": "有効な同伴者数を入力してください。",
+      "wishName": "お名前",
+      "wishText": "お祝いの言葉",
+      "wishSubmit": "お祝いを送る",
+      "wishSuccess": "お祝いの言葉をありがとうございます。",
+      "wishRequired": "お祝いの言葉を入力してください。",
+      "formError": "現在フォームを送信できません。もう一度お試しください。",
+      "openGift": "ご祝儀を開く",
+      "closeGift": "ご祝儀を閉じる",
+      "bankName": "銀行名",
+      "accountHolder": "口座名義",
+      "accountNumber": "口座番号",
+      "giftUnavailable": "ご祝儀の情報を準備中です。",
+      "mapUnavailable": "地図を準備中です。",
+      "photoUnavailable": "写真を準備中です。",
+      "thankYou": "私たちの大切な一日を共にしてくださり、ありがとうございます。"
+    }
+  },
+  "detectiveConanCasebookLab": {
+    "metaTitle": "ウェディング事件簿4869 ラボ",
+    "metaDescription": "Three.js事件簿の表紙、ページめくり、DOMリーダーへの引き継ぎを確認する内部ラボです。",
+    "title": "ウェディング事件簿4869",
+    "caseLabel": "ウェディング事件簿4869",
+    "coverKicker": "最後の事件：ふたりの結婚式",
+    "backTitle": "極秘情報",
+    "and": "と",
+    "loading": "事件簿を準備中",
+    "open": "事件簿を開く",
+    "viewBack": "裏表紙を見る",
+    "viewFront": "表紙に戻る",
+    "replayCover": "表紙をもう一度見る",
+    "closedHint": "ドラッグして角度を変え、専用ボタンで事件簿を開いてください。",
+    "stateClosed": "事件簿は閉じています。",
+    "stateOpening": "事件簿の表紙を開いています。",
+    "stateHandoff": "閲覧ページへ移動しています。",
+    "stateOpened": "ウェディング事件簿が開きました。",
+    "forceReducedMotion": "動きを減らす設定を強制",
+    "reducedMotionActive": "動きを減らす設定が有効です",
+    "fullMotionActive": "通常の動きが有効です",
+    "timeline": "タイムライン進行: {progress}%",
+    "play": "再生",
+    "pause": "一時停止",
+    "reset": "リセット"
+  },
+  "detectiveConanCasebook": {
+    "readerLabel": "ウェディング事件簿4869 リーダー",
+    "chapterNavigation": "章のナビゲーション",
+    "previousPage": "前のページ",
+    "nextPage": "次のページ",
+    "chapterProgress": "{current}/{total} · {title}",
+    "goToChapter": "{title}の章へ移動",
+    "introEyebrow": "捜査開始",
+    "introTitle": "招待状を確認しました",
+    "and": "と",
+    "dateTime": "{date} · {time}",
+    "shinichiRanAlt": "ウェディング姿の新一と蘭",
+    "castShinichiRan": "工藤新一 · 毛利蘭",
+    "familiesTitle": "両家のご紹介",
+    "brideFamily": "新婦家",
+    "groomFamily": "新郎家",
+    "parents": "ご両親",
+    "conanKogoroAlt": "コナンと毛利小五郎",
+    "castConanKogoro": "江戸川コナン · 毛利小五郎",
+    "ceremonyTitle": "挙式のお時間",
+    "receptionLabel": "披露宴",
+    "detectiveBoysAlt": "歩美、元太、灰原、阿笠博士",
+    "castDetectiveBoys": "少年探偵団 · 阿笠博士 · 灰原",
+    "scheduleTitle": "当日のスケジュール",
+    "days": "日",
+    "hours": "時間",
+    "minutes": "分",
+    "seconds": "秒",
+    "calendarTitle": "{year}年{month}月",
+    "addToCalendar": "カレンダーに追加",
+    "calendarUnavailable": "挙式日を更新中です。",
+    "galleryTitle": "大切な瞬間",
+    "galleryAlt": "ウェディング写真 {index}",
+    "galleryEmpty": "アルバムを準備中です。",
+    "morePhotos": "事件簿にあと{count}枚",
+    "heijiFriendsAlt": "平次、和葉、園子、世良",
+    "castHeijiFriends": "平次 · 和葉 · 園子 · 世良",
+    "mapEyebrow": "現場座標",
+    "mapTitle": "披露宴会場",
+    "mapFrameTitle": "会場の地図",
+    "directionsAction": "経路を開く",
+    "dressCodeTitle": "おすすめのドレスカラー",
+    "dressColorAlt": "ドレスカラー {color}",
+    "akaiFuruyaAlt": "赤井秀一と降谷零",
+    "castAkaiFuruya": "赤井秀一 · 降谷零",
+    "guestbookTitle": "お祝いを送る",
+    "guestbookHint": "一つひとつの言葉が、幸せな事件簿の大切な証言になります。",
+    "wishesTitle": "目撃者の証言",
+    "wishesEmpty": "最初のお祝いメッセージをお寄せください。",
+    "wishName": "お名前",
+    "wishText": "お祝いメッセージ",
+    "wishSubmit": "送信する",
+    "wishPending": "送信中...",
+    "wishSuccess": "メッセージを事件簿に記録しました。",
+    "giftTitle": "お祝いについて",
+    "giftHint": "遠方からお祝いを贈る場合は、以下の情報をご利用ください。",
+    "giftNote": "ご出席いただけることが、何よりの贈り物です。",
+    "giftEmpty": "お祝い情報はまだ登録されていません。",
+    "bankDetails": "口座情報",
+    "saveQr": "QRコードを保存",
+    "finaleEyebrow": "事件の結論",
+    "finaleTitle": "答えは、ふたり",
+    "finaleMessage": "すべての手がかりと待ち続けた年月の先にあった答えは、共に歩む人生でした。",
+    "presenceHonor": "幸せな事件簿が完結する日に、お会いできることを心より願っています。",
+    "momentsTitle": "ゲストの思い出"
+  },
   "doraemonDoor": {
     "heroKicker": "結婚式の日へ続くドア",
     "invitationTitle": "このドアを一緒にくぐってください",
@@ -397,6 +729,10 @@
   },
   "demoCta": {
     "useTemplate": "この招待状を使う"
+  },
+  "invitationControls": {
+    "playMusic": "音楽を再生",
+    "pauseMusic": "音楽を一時停止"
   },
   "templateDemoSeo": {
     "metaTitle": "{name} 結婚式招待状テンプレート | Thiệp Mừng Online",

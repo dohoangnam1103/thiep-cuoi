@@ -1,0 +1,1574 @@
+.stage {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 14%, rgb(255 251 235 / 88%), transparent 34%),
+    linear-gradient(145deg, #213b2c 0%, #426145 48%, #d8d8b7 100%);
+  color: #1d3124;
+  display: flex;
+  min-height: 100dvh;
+  overflow: clip;
+  padding: 1.5rem;
+  position: relative;
+  touch-action: auto;
+  width: 100%;
+}
+
+.stage::before,
+.stage::after {
+  border: 1px solid rgb(255 255 238 / 42%);
+  border-radius: 999px;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+}
+
+.stage::before {
+  height: 25rem;
+  left: -12rem;
+  top: -8rem;
+  width: 25rem;
+}
+
+.stage::after {
+  bottom: -18rem;
+  height: 32rem;
+  right: -14rem;
+  width: 32rem;
+}
+
+.entry {
+  display: grid;
+  inset: 0;
+  padding: 1.5rem;
+  place-items: center;
+  pointer-events: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.entryVoile {
+  align-items: center;
+  aspect-ratio: 344 / 432;
+  background:
+    linear-gradient(90deg, rgb(255 255 248 / 8%), rgb(255 255 248 / 46%) 48%, rgb(218 213 193 / 14%)),
+    repeating-linear-gradient(92deg, rgb(255 255 255 / 7%) 0 1px, transparent 1px 17px),
+    rgb(244 240 226 / 62%);
+  border-block: 1px solid rgb(255 253 240 / 58%);
+  box-sizing: border-box;
+  box-shadow:
+    0 1.2rem 2.8rem rgb(22 51 31 / 16%),
+    inset 0 0 2rem rgb(255 255 248 / 32%);
+  clip-path: polygon(1.5% 0, 98.8% 0.7%, 100% 98.8%, 1% 100%, 0 35%);
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  justify-content: center;
+  max-width: 344px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 1.5rem 1.25rem;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  transform-origin: 50% 0;
+  transition:
+    opacity 650ms ease,
+    transform 650ms cubic-bezier(0.22, 0.72, 0.24, 1);
+  width: min(344px, calc(100vw - 48px), calc((100dvh - 48px) * 344 / 432));
+}
+
+.entryVoile::before,
+.entryVoile::after {
+  background: linear-gradient(180deg, transparent, rgb(118 129 103 / 14%), transparent);
+  content: "";
+  inset-block: 5%;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
+}
+
+.entryVoile::before {
+  left: 17%;
+}
+
+.entryVoile::after {
+  right: 13%;
+}
+
+.entryVoile[data-departing="true"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-48%) scaleY(0.82);
+}
+
+.kicker {
+  color: #5b765b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.names {
+  color: #25432e;
+  display: flex;
+  flex-direction: column;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.75rem, 7vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.02;
+  margin: 1rem 0;
+}
+
+.dates {
+  color: #527057;
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  justify-content: center;
+  letter-spacing: 0.035em;
+}
+
+.body {
+  color: #3f5742;
+  line-height: 1.6;
+  margin: 1.5rem auto 0;
+  max-width: 31ch;
+}
+
+.loading {
+  color: #6a7d61;
+  font-size: 0.875rem;
+  margin: 1.5rem 0 0;
+}
+
+.enter {
+  background: #35563b;
+  border: 1px solid #29462f;
+  border-radius: 999px;
+  color: #fffdf0;
+  font: inherit;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  min-height: 2.75rem;
+  min-width: 9rem;
+  padding: 0.625rem 1.25rem;
+}
+
+.enter:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.enter:focus-visible {
+  outline: 3px solid #d99d56;
+  outline-offset: 3px;
+}
+
+.fallbackShell {
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.canvasShell {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.fallbackStage {
+  --fallback-far-x: 0px;
+  --fallback-far-y: 0px;
+  --fallback-mid-x: 0px;
+  --fallback-mid-y: 0px;
+  --fallback-grass-x: 0px;
+  --fallback-grass-y: 0px;
+  --fallback-near-x: 0px;
+  --fallback-near-y: 0px;
+
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 18%, rgb(255 253 226 / 92%), transparent 38%),
+    linear-gradient(180deg, #b8d7bd 0%, #dce6bc 58%, #667b4e 100%);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5rem 1.25rem 8rem;
+  position: relative;
+  transition: opacity 650ms ease, filter 650ms ease;
+  width: 100%;
+}
+
+.fallbackStage[data-reduced-motion="true"] {
+  transition: opacity 180ms ease;
+  transition-duration: 180ms !important;
+}
+
+.fallbackResidentScenes {
+  display: grid;
+  inset: 5rem 1.25rem 8rem;
+  place-items: center;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.fallbackResidentScenes > * {
+  grid-area: 1 / 1;
+  pointer-events: auto;
+}
+
+.fallbackFarTrees,
+.fallbackMidTrees,
+.fallbackGrass,
+.fallbackNearFoliage {
+  inset: -3rem;
+  pointer-events: none;
+  position: absolute;
+  will-change: transform;
+}
+
+.fallbackFarTrees {
+  background-image: none;
+  background-repeat: no-repeat;
+  bottom: 28%;
+  opacity: 0.46;
+  transform: translate3d(var(--fallback-far-x), var(--fallback-far-y), 0);
+}
+
+.fallbackMidTrees {
+  background-image: none;
+  background-repeat: no-repeat;
+  opacity: 0.64;
+  transform: translate3d(var(--fallback-mid-x), var(--fallback-mid-y), 0);
+}
+
+.fallbackGrass {
+  background-image: url("/chungdoi/labs/forest-wedding-journey/materials/ground-detail.webp");
+  background-position: center bottom;
+  background-repeat: repeat;
+  background-size: 26rem auto;
+  opacity: 0.74;
+  top: 54%;
+  transform: translate3d(var(--fallback-grass-x), var(--fallback-grass-y), 0);
+}
+
+.fallbackNearFoliage {
+  background-image: none;
+  background-repeat: no-repeat;
+  opacity: 0.76;
+  transform: translate3d(var(--fallback-near-x), var(--fallback-near-y), 0);
+}
+
+.fallbackFoliageSprite,
+.fallbackWildflowerSprite,
+.fallbackPetalSprite {
+  background-repeat: no-repeat;
+  display: block;
+  pointer-events: none;
+  position: absolute;
+}
+
+.fallbackFoliageSprite {
+  aspect-ratio: 2 / 1;
+  background-image: url("/chungdoi/labs/forest-wedding-journey/materials/foliage-atlas.webp");
+  background-size: 200% 400%;
+  filter: drop-shadow(0 0.8rem 1.1rem rgb(26 58 37 / 18%));
+}
+
+.fallbackWildflowerSprite {
+  aspect-ratio: 3 / 4;
+  background-image: url("/chungdoi/labs/forest-wedding-journey/materials/wildflower-atlas.webp");
+  background-size: 400% 300%;
+  filter: drop-shadow(0 0.35rem 0.45rem rgb(31 63 37 / 18%));
+  width: clamp(3.75rem, 13vw, 7rem);
+}
+
+.fallbackPetalSprite {
+  aspect-ratio: 1;
+  background-image: url("/chungdoi/labs/forest-wedding-journey/materials/petal-atlas.webp");
+  background-size: 400% 400%;
+  filter: drop-shadow(0 0.3rem 0.35rem rgb(43 65 45 / 14%));
+  width: clamp(1.5rem, 4.5vw, 3rem);
+}
+
+.fallbackFoliageSprite[data-atlas-cell="0"] {
+  background-position: 0% 0%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="1"] {
+  background-position: 100% 0%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="2"] {
+  background-position: 0% 33.333%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="3"] {
+  background-position: 100% 33.333%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="4"] {
+  background-position: 0% 66.667%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="5"] {
+  background-position: 100% 66.667%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="6"] {
+  background-position: 0% 100%;
+}
+
+.fallbackFoliageSprite[data-atlas-cell="7"] {
+  background-position: 100% 100%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="0"],
+.fallbackPetalSprite[data-atlas-cell="0"] {
+  background-position: 0% 0%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="1"],
+.fallbackPetalSprite[data-atlas-cell="1"] {
+  background-position: 33.333% 0%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="2"],
+.fallbackPetalSprite[data-atlas-cell="2"] {
+  background-position: 66.667% 0%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="3"],
+.fallbackPetalSprite[data-atlas-cell="3"] {
+  background-position: 100% 0%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="4"] {
+  background-position: 0% 50%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="5"] {
+  background-position: 33.333% 50%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="6"] {
+  background-position: 66.667% 50%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="7"] {
+  background-position: 100% 50%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="8"] {
+  background-position: 0% 100%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="9"] {
+  background-position: 33.333% 100%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="10"] {
+  background-position: 66.667% 100%;
+}
+
+.fallbackWildflowerSprite[data-atlas-cell="11"] {
+  background-position: 100% 100%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="4"] {
+  background-position: 0% 33.333%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="5"] {
+  background-position: 33.333% 33.333%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="6"] {
+  background-position: 66.667% 33.333%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="7"] {
+  background-position: 100% 33.333%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="8"] {
+  background-position: 0% 66.667%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="9"] {
+  background-position: 33.333% 66.667%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="10"] {
+  background-position: 66.667% 66.667%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="11"] {
+  background-position: 100% 66.667%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="12"] {
+  background-position: 0% 100%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="13"] {
+  background-position: 33.333% 100%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="14"] {
+  background-position: 66.667% 100%;
+}
+
+.fallbackPetalSprite[data-atlas-cell="15"] {
+  background-position: 100% 100%;
+}
+
+.fallbackFarTrees .fallbackFoliageSprite {
+  width: clamp(13rem, 36vw, 25rem);
+}
+
+.fallbackFarTrees .fallbackFoliageSprite:nth-child(1) {
+  bottom: 2%;
+  left: -4%;
+}
+
+.fallbackFarTrees .fallbackFoliageSprite:nth-child(2) {
+  bottom: 13%;
+  left: 19%;
+  width: clamp(10rem, 29vw, 20rem);
+}
+
+.fallbackFarTrees .fallbackFoliageSprite:nth-child(3) {
+  bottom: 6%;
+  right: 31%;
+  width: clamp(11rem, 31vw, 21rem);
+}
+
+.fallbackFarTrees .fallbackFoliageSprite:nth-child(4) {
+  bottom: 15%;
+  right: 8%;
+}
+
+.fallbackFarTrees .fallbackFoliageSprite:nth-child(5) {
+  bottom: 1%;
+  right: -8%;
+  width: clamp(12rem, 34vw, 23rem);
+}
+
+.fallbackMidTrees .fallbackFoliageSprite {
+  width: clamp(16rem, 45vw, 31rem);
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(1) {
+  left: -11%;
+  top: 4%;
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(2) {
+  left: -5%;
+  top: 32%;
+  width: clamp(13rem, 38vw, 26rem);
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(3) {
+  left: 17%;
+  top: -5%;
+  width: clamp(12rem, 34vw, 24rem);
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(4) {
+  right: 20%;
+  top: -4%;
+  width: clamp(12rem, 36vw, 25rem);
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(5) {
+  right: -7%;
+  top: 8%;
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(6) {
+  right: -4%;
+  top: 38%;
+  width: clamp(14rem, 40vw, 28rem);
+}
+
+.fallbackMidTrees .fallbackFoliageSprite:nth-child(7) {
+  bottom: 10%;
+  left: 4%;
+  width: clamp(12rem, 35vw, 24rem);
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(1) {
+  bottom: 20%;
+  left: 6%;
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(2) {
+  bottom: 7%;
+  left: 22%;
+  width: clamp(3rem, 10vw, 5.5rem);
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(3) {
+  bottom: 22%;
+  left: 37%;
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(4) {
+  bottom: 10%;
+  right: 38%;
+  width: clamp(3.25rem, 11vw, 6rem);
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(5) {
+  bottom: 24%;
+  right: 23%;
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(6) {
+  bottom: 5%;
+  right: 10%;
+  width: clamp(3rem, 10vw, 5.5rem);
+}
+
+.fallbackGrass .fallbackWildflowerSprite:nth-child(7) {
+  bottom: 31%;
+  right: 2%;
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(1) {
+  left: 8%;
+  top: 11%;
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(2) {
+  left: 23%;
+  top: 27%;
+  transform: rotate(24deg) scale(0.72);
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(3) {
+  left: 12%;
+  top: 61%;
+  transform: rotate(-18deg) scale(1.08);
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(4) {
+  right: 34%;
+  top: 8%;
+  transform: rotate(32deg) scale(0.82);
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(5) {
+  right: 19%;
+  top: 25%;
+  transform: rotate(-27deg) scale(1.12);
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(6) {
+  right: 7%;
+  top: 48%;
+  transform: rotate(16deg) scale(0.76);
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(7) {
+  bottom: 14%;
+  left: 28%;
+  transform: rotate(-35deg) scale(0.9);
+}
+
+.fallbackNearFoliage .fallbackPetalSprite:nth-child(8) {
+  bottom: 10%;
+  right: 24%;
+  transform: rotate(21deg) scale(1.04);
+}
+
+.fallbackGestureSurface {
+  inset: 0;
+  position: absolute;
+  touch-action: auto;
+  z-index: 1;
+}
+
+.fallbackGestureSurfaceActive {
+  touch-action: none;
+}
+
+.physicalSurface {
+  --forest-dress-color-1: #1e3d2f;
+  --forest-dress-color-2: #f1ede0;
+  --forest-dress-color-3: #c9a24a;
+  --forest-dress-color-4: #708465;
+  --forest-dress-color-5: #d9d0bc;
+
+  background:
+    linear-gradient(92deg, rgb(108 86 58 / 6%), transparent 12% 88%, rgb(108 86 58 / 7%)),
+    #fff9e8;
+  border: 1px solid rgb(82 65 43 / 26%);
+  box-shadow:
+    0 0.12rem 0 rgb(113 87 58 / 26%),
+    0 0.8rem 1.8rem rgb(36 54 38 / 22%);
+  box-sizing: border-box;
+  color: #29462f;
+  max-height: 25rem;
+  overflow: auto;
+  padding: 1rem;
+  text-align: center;
+  touch-action: auto;
+  width: 20rem;
+}
+
+.physicalSurface[data-forest-visible="false"] {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.physicalSurface h2 {
+  color: #284a32;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.65rem;
+  font-weight: 500;
+  line-height: 1.08;
+  margin: 0 0 0.75rem;
+}
+
+.physicalSurface h2:focus {
+  outline: 3px solid #a8612f;
+  outline-offset: 0.3rem;
+}
+
+.physicalSurface p,
+.physicalSurface address,
+.physicalSurface dd,
+.physicalSurface dt {
+  margin-block: 0.25rem;
+}
+
+.physicalSurface address {
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.familyPapers {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.physicalSurface[data-forest-scene-type="families"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  width: 26rem;
+}
+
+.physicalSurface[data-forest-scene-type="families"] > h2 {
+  background: #f6eedc;
+  border-block: 1px solid rgb(78 61 40 / 26%);
+  box-shadow: 0 0.45rem 1rem rgb(39 57 40 / 18%);
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+}
+
+.familyPaper {
+  background:
+    linear-gradient(88deg, rgb(122 94 61 / 7%), transparent 18% 84%, rgb(122 94 61 / 6%)),
+    #fff9e8;
+  border-block: 1px solid rgb(92 68 43 / 24%);
+  box-shadow: 0 0.6rem 1.2rem rgb(43 60 43 / 20%);
+  min-height: 9.4rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 0.9rem 0.7rem;
+}
+
+.familyPaper h3 {
+  color: #56715a;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.familyPaper p,
+.familyPaper address {
+  font-size: 0.78rem;
+}
+
+.invitationPaper {
+  border-block: 1px solid rgb(100 76 47 / 23%);
+  line-height: 1.55;
+  padding: 0.65rem 0.45rem;
+  white-space: pre-line;
+}
+
+.paperLabel {
+  color: #6d795b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.calendarPaper dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.calendarPaper dl > div {
+  border-bottom: 1px solid rgb(82 65 43 / 18%);
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: minmax(4.6rem, 0.7fr) 1.3fr;
+  padding-bottom: 0.35rem;
+}
+
+.calendarPaper dt {
+  color: #65755d;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.calendarPaper dd {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.calendarPaper dd time {
+  display: block;
+}
+
+.calendarPaper dd time + time {
+  color: #5d715a;
+  font-size: 0.78rem;
+  margin-top: 0.18rem;
+}
+
+.calendarPaper a {
+  color: #35563b;
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 0.8rem;
+  text-underline-offset: 0.2rem;
+}
+
+.physicalSurface[data-forest-scene-type="schedule"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  max-height: none;
+  overflow: visible;
+  width: 30rem;
+}
+
+.physicalSurface[data-forest-scene-type="schedule"] > h2 {
+  background: #f8f1df;
+  border-block: 1px solid rgb(82 65 43 / 24%);
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+}
+
+.scheduleCards {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style-position: inside;
+  margin: 0;
+  padding: 0;
+}
+
+.scheduleCards li {
+  background: #fff9e8;
+  border-block: 1px solid rgb(92 68 43 / 23%);
+  box-shadow: 0 0.4rem 0.8rem rgb(43 60 43 / 16%);
+  font-size: 0.62rem;
+  min-height: 5.2rem;
+  padding: 0.55rem 0.3rem;
+}
+
+.scheduleCards time,
+.scheduleCards span {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.scheduleCards time {
+  color: #5a745c;
+  font-weight: 800;
+}
+
+.physicalSurface[data-forest-scene-type="gallery-photo"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  height: 24rem;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  width: 17rem;
+}
+
+.physicalSurface[data-forest-scene-type="gallery-photo"] > h2 {
+  background: #fff9e8;
+  border-block: 1px solid rgb(92 68 43 / 24%);
+  bottom: 0.3rem;
+  box-shadow: 0 0.45rem 0.8rem rgb(39 57 40 / 18%);
+  font-size: 1.2rem;
+  left: 50%;
+  margin: 0;
+  padding: 0.32rem 0.7rem;
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.gallerySemanticEasel {
+  height: 100%;
+  margin: 0;
+  position: relative;
+  width: 100%;
+}
+
+.fallbackGalleryScaffold {
+  inset: 0.75rem 0.35rem 2.7rem;
+  pointer-events: none;
+  position: absolute;
+}
+
+.fallbackGalleryScaffold::before,
+.fallbackGalleryScaffold::after {
+  background: linear-gradient(90deg, #b98754, #d9b47c 48%, #ae7747);
+  bottom: 0.55rem;
+  box-shadow: 0 0.2rem 0.35rem rgb(43 57 39 / 22%);
+  content: "";
+  height: 76%;
+  position: absolute;
+  width: 0.48rem;
+  z-index: 0;
+}
+
+.fallbackGalleryScaffold::before {
+  left: 23%;
+  transform: rotate(5deg);
+}
+
+.fallbackGalleryScaffold::after {
+  right: 23%;
+  transform: rotate(-5deg);
+}
+
+.fallbackGalleryContact {
+  background: radial-gradient(ellipse, rgb(29 53 34 / 34%), transparent 70%);
+  bottom: -0.25rem;
+  height: 1.25rem;
+  left: 8%;
+  position: absolute;
+  width: 84%;
+}
+
+.fallbackGalleryCrossbar {
+  background: linear-gradient(#d9b47c, #b98250);
+  bottom: 22%;
+  box-shadow: 0 0.15rem 0.3rem rgb(43 57 39 / 18%);
+  height: 0.45rem;
+  left: 17%;
+  position: absolute;
+  width: 66%;
+  z-index: 1;
+}
+
+.fallbackGalleryFrame {
+  background: #fff9e8;
+  border: 0.45rem solid #c89a64;
+  box-shadow:
+    inset 0 0 0 0.22rem #f5eddc,
+    0 0.65rem 1.15rem rgb(38 55 39 / 23%);
+  display: block;
+  height: 78%;
+  left: 14%;
+  overflow: hidden;
+  padding: 0.22rem;
+  position: absolute;
+  top: 0;
+  width: 72%;
+  z-index: 2;
+}
+
+.fallbackGalleryWildflowers {
+  background-image: url("/chungdoi/labs/forest-wedding-journey/materials/wildflower-atlas.webp");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: 400% 300%;
+  bottom: -0.15rem;
+  filter: drop-shadow(0 0.2rem 0.22rem rgb(32 52 36 / 20%));
+  height: 4rem;
+  left: 5%;
+  position: absolute;
+  width: 4rem;
+  z-index: 3;
+}
+
+.photoUnavailable {
+  align-items: center;
+  background:
+    linear-gradient(95deg, rgb(116 89 57 / 7%), transparent 18% 86%, rgb(116 89 57 / 6%)),
+    #f3ecda;
+  border: 1px solid rgb(92 68 43 / 22%);
+  display: flex;
+  inset: 1.2rem 0.45rem 2.8rem;
+  justify-content: center;
+  line-height: 1.45;
+  padding: 1rem;
+  position: absolute;
+  z-index: 4;
+}
+
+.visuallyHidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.physicalSurface[data-forest-scene-type="dress-code"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  width: 24rem;
+}
+
+.physicalSurface[data-forest-scene-type="dress-code"] > h2 {
+  background: #f8f1df;
+  border-block: 1px solid rgb(82 65 43 / 24%);
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+}
+
+.dressFabricStrips {
+  display: grid;
+  gap: 0.38rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dressFabricStrips li {
+  background: #fff9e8;
+  border-block: 1px solid rgb(82 65 43 / 18%);
+  box-shadow: 0 0.35rem 0.7rem rgb(39 57 40 / 16%);
+  padding: 0.35rem;
+}
+
+.dressFabricStrips span {
+  box-shadow: inset 0 0 0 1px rgb(39 52 39 / 12%);
+  display: block;
+  height: 5.8rem;
+}
+
+.dressFabricStrips li:nth-child(1) span {
+  background: var(--forest-dress-color-1);
+}
+
+.dressFabricStrips li:nth-child(2) span {
+  background: var(--forest-dress-color-2);
+}
+
+.dressFabricStrips li:nth-child(3) span {
+  background: var(--forest-dress-color-3);
+}
+
+.dressFabricStrips li:nth-child(4) span {
+  background: var(--forest-dress-color-4);
+}
+
+.dressFabricStrips li:nth-child(5) span {
+  background: var(--forest-dress-color-5);
+}
+
+.dressFabricStrips code {
+  color: #405342;
+  display: block;
+  font-family: inherit;
+  font-size: 0.55rem;
+  margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.venueAddressPaper {
+  background: #fff9e8;
+  border-block: 1px solid rgb(94 70 44 / 24%);
+  box-shadow: inset 0 0 1.2rem rgb(130 99 63 / 7%);
+  line-height: 1.5;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 0.8rem;
+}
+
+.venueAddressPaper p {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 0.7rem;
+}
+
+.venueAddressPaper p span {
+  color: #60745d;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.physicalSurface[data-forest-scene-type="map"] {
+  width: min(27rem, calc(100vw - 3rem));
+}
+
+.mapPaper {
+  background:
+    linear-gradient(23deg, transparent 47%, rgb(104 127 92 / 16%) 48% 51%, transparent 52%),
+    #f6efd9;
+  border: 1px solid rgb(90 69 44 / 24%);
+  box-shadow: inset 0 0 1.2rem rgb(94 75 48 / 8%);
+  padding: 0.75rem;
+  touch-action: auto;
+}
+
+.mapPaper summary {
+  color: #35563b;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.45;
+  min-height: 2.75rem;
+  overflow-wrap: anywhere;
+  padding: 0.45rem;
+}
+
+.localMapDrawing {
+  background:
+    radial-gradient(circle at 22% 65%, #b96e55 0 0.28rem, transparent 0.32rem),
+    radial-gradient(circle at 72% 26%, #688063 0 0.36rem, transparent 0.4rem),
+    linear-gradient(148deg, transparent 43%, #b99d75 44% 48%, transparent 49%),
+    linear-gradient(38deg, transparent 50%, #d0b587 51% 55%, transparent 56%),
+    #ede2c5;
+  border: 1px solid rgb(83 73 52 / 18%);
+  height: 7rem;
+  margin-block: 0.45rem 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.localMapDrawing span {
+  background: #6f8768;
+  border-radius: 50% 45% 55% 40%;
+  height: 1.6rem;
+  position: absolute;
+  width: 2.2rem;
+}
+
+.localMapDrawing span:nth-child(1) {
+  left: 10%;
+  top: 14%;
+}
+
+.localMapDrawing span:nth-child(2) {
+  right: 12%;
+  top: 54%;
+}
+
+.localMapDrawing span:nth-child(3) {
+  bottom: 8%;
+  left: 46%;
+  transform: scale(0.75);
+}
+
+.mapPaper a {
+  background: #35563b;
+  border-radius: 999px;
+  color: #fffdf0;
+  display: inline-grid;
+  font-size: 0.78rem;
+  font-weight: 700;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  place-items: center;
+}
+
+.physicalSurface[data-forest-scene-type="rsvp"] {
+  max-height: 30rem;
+  width: min(25rem, calc(100vw - 3rem));
+}
+
+.rsvpForm {
+  display: grid;
+  gap: 0.6rem;
+  text-align: left;
+  touch-action: auto;
+}
+
+.rsvpForm label {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.rsvpForm label > span {
+  color: #526b54;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rsvpForm input,
+.rsvpForm select,
+.rsvpForm textarea {
+  background: rgb(255 253 244 / 92%);
+  border: 1px solid rgb(59 82 61 / 28%);
+  border-radius: 0.35rem;
+  color: #29462f;
+  font: inherit;
+  font-size: 1rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.65rem;
+  width: 100%;
+}
+
+.rsvpForm textarea {
+  min-height: 4rem;
+  resize: vertical;
+}
+
+.rsvpForm button {
+  background: #35563b;
+  border: 1px solid #29462f;
+  border-radius: 999px;
+  color: #fffdf0;
+  font: inherit;
+  font-weight: 700;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+}
+
+.rsvpForm [role="status"] {
+  color: #5b674d;
+  min-height: 1.25rem;
+  text-align: center;
+}
+
+.physicalSurface[data-forest-scene-type="wishes"] {
+  width: min(28rem, calc(100vw - 3rem));
+}
+
+.wishesGuestbook {
+  display: grid;
+  gap: 0.75rem;
+  touch-action: auto;
+}
+
+.wishNotes {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: 8rem;
+  overscroll-behavior: contain;
+  overflow-y: auto;
+  padding: 0.25rem;
+  touch-action: pan-y;
+}
+
+.wishNotes article {
+  background: #f2e8cb;
+  border: 1px solid rgb(93 72 46 / 18%);
+  box-shadow: 0 0.3rem 0.55rem rgb(48 59 43 / 14%);
+  min-width: 0;
+  padding: 0.55rem;
+}
+
+.wishNotes article:nth-child(even) {
+  background: #f8efdc;
+  transform: rotate(0.8deg);
+}
+
+.wishNotes p {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.wishNotes cite {
+  color: #58705a;
+  display: block;
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+.wishForm {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  text-align: left;
+}
+
+.wishForm label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.wishForm label > span {
+  color: #526b54;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.wishForm input,
+.wishForm textarea {
+  background: rgb(255 253 244 / 92%);
+  border: 1px solid rgb(59 82 61 / 28%);
+  border-radius: 0.35rem;
+  color: #29462f;
+  font: inherit;
+  font-size: 1rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.6rem;
+  width: 100%;
+}
+
+.wishForm textarea {
+  min-height: 3.5rem;
+  resize: vertical;
+}
+
+.wishForm button {
+  background: #35563b;
+  border: 1px solid #29462f;
+  border-radius: 999px;
+  color: #fffdf0;
+  font: inherit;
+  font-weight: 700;
+  grid-column: 1 / -1;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+}
+
+.wishForm [role="status"] {
+  grid-column: 1 / -1;
+  min-height: 1.25rem;
+  text-align: center;
+}
+
+.physicalSurface[data-forest-scene-type="gift"] {
+  width: min(27rem, calc(100vw - 3rem));
+}
+
+.giftEnvelopes {
+  display: grid;
+  gap: 0.75rem;
+  touch-action: auto;
+}
+
+.giftEnvelopeButtons {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.giftEnvelopeButtons > button {
+  background:
+    linear-gradient(145deg, transparent 48%, rgb(156 116 73 / 20%) 49% 51%, transparent 52%),
+    #f3e3c6;
+  border: 1px solid rgb(98 73 44 / 28%);
+  box-shadow: 0 0.45rem 0.8rem rgb(48 59 43 / 16%);
+  color: #35563b;
+  font: inherit;
+  min-height: 5rem;
+  padding: 0.65rem;
+}
+
+.giftEnvelopeButtons span,
+.giftEnvelopeButtons strong {
+  display: block;
+}
+
+.giftEnvelopeButtons span {
+  font-size: 0.7rem;
+}
+
+.giftEnvelopeButtons strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+}
+
+.giftDetails {
+  background: #fffdf3;
+  border: 1px solid rgb(95 71 43 / 22%);
+  padding: 0.75rem;
+}
+
+.giftDetails dl {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.giftDetails dl > div {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(5rem, 0.8fr) minmax(0, 1.2fr);
+}
+
+.giftDetails dt {
+  color: #60745d;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.giftDetails dd {
+  overflow-wrap: anywhere;
+  text-align: right;
+  user-select: text;
+}
+
+.giftDetails button {
+  background: #35563b;
+  border: 1px solid #29462f;
+  border-radius: 999px;
+  color: #fffdf0;
+  font: inherit;
+  font-weight: 700;
+  margin-top: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+}
+
+.physicalSurface[data-forest-scene-type="finale"] {
+  background: rgb(255 249 232 / 92%);
+  clip-path: polygon(2% 0, 98% 1%, 100% 96%, 4% 100%, 0 12%);
+  width: 20rem;
+}
+
+.thankYouPaper {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.fallbackPhysicalSurface {
+  filter: drop-shadow(0 1.2rem 1.7rem rgb(31 54 36 / 28%));
+  max-height: min(62dvh, 38rem);
+  max-width: 100%;
+  min-height: 12rem;
+  min-width: 0;
+  perspective: 50rem;
+  position: relative;
+  text-align: center;
+  touch-action: auto;
+  width: min(100%, 30rem);
+  z-index: 2;
+}
+
+.fallbackPhysicalSurface[data-forest-visible="false"] {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.fallbackPhysicalSurface::after {
+  background: radial-gradient(ellipse, rgb(30 51 34 / 30%), transparent 68%);
+  bottom: -1.1rem;
+  content: "";
+  height: 1.5rem;
+  left: 8%;
+  pointer-events: none;
+  position: absolute;
+  width: 84%;
+  z-index: -1;
+}
+
+.fallbackPhysicalSurface > .physicalSurface {
+  max-height: min(62dvh, 38rem);
+  width: min(100%, 30rem);
+}
+
+.fallbackPhysicalSurface[data-scene-type="families"] {
+  width: min(100%, 34rem);
+}
+
+.fallbackPhysicalSurface[data-scene-type="gallery-photo"] {
+  max-width: min(24rem, calc(100vw - 3rem));
+  min-height: 0;
+}
+
+.fallbackPhysicalSurface[data-scene-type="gallery-photo"] > .physicalSurface {
+  height: min(24rem, 58dvh);
+  margin-inline: auto;
+  position: relative;
+  width: min(100%, 17rem);
+}
+
+.fallbackStage[data-travelling="true"] .fallbackPhysicalSurface {
+  animation: fallbackSceneTravel 650ms cubic-bezier(0.22, 0.72, 0.24, 1) both;
+}
+
+.fallbackStage[data-reduced-motion="true"]
+  .fallbackPhysicalSurface[data-forest-visible="true"] {
+  animation: fallbackSceneFade 180ms ease-out both !important;
+}
+
+@keyframes fallbackSceneTravel {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fallbackSceneFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fallbackPhoto {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.sceneStatus {
+  background: rgb(28 56 36 / 82%);
+  border-radius: 999px;
+  color: #fffdec;
+  font-size: 0.75rem;
+  left: 50%;
+  margin: 0;
+  max-width: calc(100% - 2rem);
+  padding: 0.5rem 0.875rem;
+  position: absolute;
+  text-align: center;
+  top: 1rem;
+  transform: translateX(-50%);
+  z-index: 12;
+}
+
+.controls {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  left: 50%;
+  max-width: calc(100% - 2rem);
+  position: absolute;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 12;
+}
+
+.controlButton {
+  background: rgb(255 253 237 / 94%);
+  border: 1px solid rgb(41 70 47 / 34%);
+  border-radius: 999px;
+  color: #29462f;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.625rem 0.875rem;
+}
+
+.controlButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.controlButton:focus-visible {
+  outline: 3px solid #d99d56;
+  outline-offset: 3px;
+}
+
+@media (min-width: 640px) {
+  .stage {
+    padding: 2rem;
+  }
+
+  .entryVoile {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+  .entryVoile {
+    padding: 0.625rem 1rem;
+  }
+
+  .kicker {
+    font-size: 0.625rem;
+    line-height: 1.2;
+  }
+
+  .names {
+    font-size: clamp(1.25rem, 3.6vw, 1.65rem);
+    line-height: 0.98;
+    margin: 0.4rem 0;
+  }
+
+  .dates {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .body {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    margin-top: 0.625rem;
+  }
+
+  .enter {
+    margin-top: 0.625rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entryVoile {
+    transition-duration: 180ms;
+  }
+
+  .entryVoile[data-departing="true"] {
+    transform: none;
+  }
+}

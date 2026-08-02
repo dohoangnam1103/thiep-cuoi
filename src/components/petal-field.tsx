@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 export function PetalField() {
+  const pathname = usePathname();
   const petals = useMemo(
     () =>
       Array.from({ length: 12 }).map((_, i) => ({
@@ -14,6 +16,8 @@ export function PetalField() {
       })),
     [],
   );
+
+  if (/\/lab\/(?:flow-demo|dalat-journey|forest-wedding-journey)\/?$/.test(pathname)) return null;
 
   return (
     <div className="petal-field pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>

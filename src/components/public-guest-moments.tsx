@@ -449,7 +449,10 @@ function GuestMediaLightbox({
   useEffect(() => {
     if (index === null) return;
     const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const ownsOverflowLock = originalOverflow !== "hidden";
+    if (ownsOverflowLock) {
+      document.body.style.overflow = "hidden";
+    }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
       if (event.key === "ArrowLeft") navigate(-1);
@@ -457,7 +460,12 @@ function GuestMediaLightbox({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = originalOverflow;
+      if (
+        ownsOverflowLock
+        && document.body.style.overflow === "hidden"
+      ) {
+        document.body.style.overflow = originalOverflow;
+      }
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [close, index, navigate]);
@@ -753,22 +761,48 @@ function ActiveGuestMomentsPortal({ templateSlug }: { templateSlug: string }) {
   useEffect(() => {
     let portalHost: HTMLDivElement | null = null;
     let observer: MutationObserver | null = null;
+    let mountedInExplicitSlot = false;
 
     const mountBeforeFooter = () => {
+      if (portalHost?.isConnected) {
+        return mountedInExplicitSlot ? "slot" : "footer";
+      }
+
+      if (portalHost) {
+        portalHost = null;
+        setHost(null);
+      }
+
+      const explicitSlot = document.querySelector<HTMLElement>(
+        "[data-guest-moments-slot]",
+      );
+      if (explicitSlot) {
+        portalHost = document.createElement("div");
+        portalHost.dataset.guestMomentsHost = templateSlug;
+        portalHost.className = "h-full w-full";
+        explicitSlot.replaceChildren(portalHost);
+        mountedInExplicitSlot = true;
+        setHost(portalHost);
+        return "slot";
+      }
+
       const footer = document.querySelector<HTMLElement>("[data-template-footer]");
-      if (!footer?.parentElement) return false;
+      if (!footer?.parentElement) return null;
 
       portalHost = document.createElement("div");
       portalHost.dataset.guestMomentsHost = templateSlug;
       portalHost.className = "w-full shrink-0";
       footer.parentElement.insertBefore(portalHost, footer);
+      mountedInExplicitSlot = false;
       setHost(portalHost);
-      return true;
+      return "footer";
     };
 
-    if (!mountBeforeFooter()) {
+    const initialMount = mountBeforeFooter();
+    if (initialMount !== "footer") {
       observer = new MutationObserver(() => {
-        if (mountBeforeFooter()) observer?.disconnect();
+        const nextMount = mountBeforeFooter();
+        if (nextMount === "footer") observer?.disconnect();
       });
       observer.observe(document.body, { childList: true, subtree: true });
     }

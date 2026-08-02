@@ -1,0 +1,31 @@
+.line {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+}
+
+.text {
+  display: block;
+  width: max-content;
+  max-width: none;
+  white-space: nowrap;
+  transform-origin: center;
+}
+
+.scale100 { transform: scaleX(1); }
+.scale95 { transform: scaleX(0.95); }
+.scale90 { transform: scaleX(0.9); }
+.scale85 { transform: scaleX(0.85); }
+.scale80 { transform: scaleX(0.8); }
+.scale75 { transform: scaleX(0.75); }
+.scale70 { transform: scaleX(0.7); }
+.scale65 { transform: scaleX(0.65); }
+.scale60 { transform: scaleX(0.6); }
+.scale55 { transform: scaleX(0.55); }
+.scale50 { transform: scaleX(0.5); }
+.scale45 { transform: scaleX(0.45); }
+.scale40 { transform: scaleX(0.4); }
+.scale35 { transform: scaleX(0.35); }
+.scale30 { transform: scaleX(0.3); }
+.scale25 { transform: scaleX(0.25); }

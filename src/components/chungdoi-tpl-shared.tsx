@@ -1,10 +1,9 @@
 "use client";
 
-import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, useCallback, useEffect, useRef, useState } from "react";
+import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 
-import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { AlbumLayout } from "@/lib/album-layout";
 
 const CoverflowGallery = dynamic(() => import("./album-coverflow"), { ssr: false });
@@ -25,10 +24,10 @@ import {
 } from "@/lib/google-maps";
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
-import { orderedCouple } from "@/lib/invitation-display";
 import { cn } from "@/lib/utils";
 
 export { buildVietQrImageUrl } from "@/lib/vietqr";
+export { googleCalendarUrl } from "@/lib/google-calendar-url";
 
 export const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 export const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -211,21 +210,6 @@ export function Lightbox({
   ), document.body);
 }
 
-export function googleCalendarUrl(content: ChungDoiDemoContent) {
-  const { date, time } = content.couple;
-  const people = orderedCouple(content);
-  const title = `Đám cưới ${people[0].shortName} & ${people[1].shortName}`;
-  const start = `${date.replace(/-/g, "")}T${(time || "18:00").replace(":", "")}00`;
-  const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: title,
-    dates: `${start}/${start}`,
-    location: content.venue.mapAddress || content.venue.address,
-    details: content.venue.address,
-  });
-  return `https://www.google.com/calendar/render?${params.toString()}`;
-}
-
 export function mapEmbedUrl(query: string) {
   const trimmed = query.trim();
   if (isGoogleMapsUrl(trimmed)) {
@@ -346,7 +330,9 @@ export function FitText({
 }
 
 type SharedWishFormLabels = {
+  nameLabel?: string;
   namePlaceholder?: string;
+  textLabel?: string;
   textPlaceholder?: string;
   success?: string;
   submit?: string;
@@ -364,6 +350,8 @@ export function SharedWishForm({
   labels?: SharedWishFormLabels;
 }) {
   const { formProps, pending, state } = useWishFormBinding();
+  const nameId = useId();
+  const textId = useId();
   const copy = {
     namePlaceholder: "Tên của bạn",
     textPlaceholder: "Lời chúc của bạn",
@@ -376,8 +364,10 @@ export function SharedWishForm({
   return (
     <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
-        <input name="name" required maxLength={120} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
-        <textarea name="text" rows={3} required maxLength={1000} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] outline-none", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
+        <label className="sr-only" htmlFor={nameId}>{labels?.nameLabel ?? copy.namePlaceholder}</label>
+        <input id={nameId} name="name" required maxLength={120} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
+        <label className="sr-only" htmlFor={textId}>{labels?.textLabel ?? copy.textPlaceholder}</label>
+        <textarea id={textId} name="text" rows={3} required maxLength={1000} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
         {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{copy.success}</p> : null}
         <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
@@ -579,6 +569,7 @@ export function GiftEnvelope({
   cardBg,
   heading = "Phong Bao Mừng Cưới",
   labelColor,
+  openLabel = "Nhấn để mở",
 }: {
   templateSlug: string;
   banks: GiftBank[];
@@ -587,6 +578,7 @@ export function GiftEnvelope({
   cardBg: string;
   heading?: string;
   labelColor?: string;
+  openLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -608,7 +600,7 @@ export function GiftEnvelope({
         data-gift-visual-kind={visual.kind}
         data-gift-visual-slug={templateSlug}
         type="button"
-        aria-label={`Mở ${heading.toLowerCase()}`}
+        aria-label={openLabel}
         onClick={() => setOpen(true)}
         className={cn(
           "group relative cursor-pointer border-none bg-transparent outline-none",
@@ -655,7 +647,7 @@ export function GiftEnvelope({
           </div>
         </div>
         )}
-        <p className={`${visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>Nhấn để mở</p>
+        <p className={`${visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>{openLabel}</p>
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>

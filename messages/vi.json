@@ -88,6 +88,338 @@
     "pause": "Tạm dừng",
     "reset": "Đặt lại"
   },
+  "flowDemoLab": {
+    "metaTitle": "Motion Lab cho khung thiệp",
+    "metaDescription": "Lab nội bộ so sánh bốn kiểu chuyển động trên CSS, WAAPI, GSAP, Canvas 2D và WebGL.",
+    "title": "Một khung chuyển động, năm cách dựng",
+    "subtitle": "Cùng bố cục, cùng thời lượng và cùng ý đồ chuyển cảnh. Chỉ công nghệ dựng hình thay đổi để bạn chọn nền tảng phù hợp trước khi lắp chủ đề thiệp.",
+    "mobilePriority": "Ưu tiên tuyệt đối: ổn định và mượt trên điện thoại phổ thông.",
+    "controlsLabel": "Bộ điều khiển Motion Lab",
+    "viewLabel": "Cách xem",
+    "viewFocus": "Tập trung",
+    "viewCompare": "So sánh",
+    "choreographyLabel": "Chuyển động",
+    "engineLabel": "Công nghệ",
+    "replay": "Chạy lại",
+    "reducedMotion": "Giảm chuyển động",
+    "previewLabel": "Vùng xem trước chuyển động",
+    "compareHint": "Năm engine sẽ chạy đồng thời theo cùng một nhịp để so sánh trực quan.",
+    "webglLoading": "Đang chuẩn bị WebGL",
+    "webglUnavailable": "Thiết bị hoặc trình duyệt này không cung cấp WebGL.",
+    "stage": {
+      "kicker": "Khung nội dung",
+      "title": "Lorem & Ipsum",
+      "body": "Nội dung trung tính để chuyển động và bố cục giữ vai trò chính.",
+      "date": "00 · 00 · 0000"
+    },
+    "choreographies": {
+      "splitGate": {
+        "label": "Split Gate",
+        "description": "Hai mảng tách sang hai bên để mở tâm khung; có thể thay bằng rèm, cửa, lá, mây hoặc kính."
+      },
+      "irisBloom": {
+        "label": "Iris Bloom",
+        "description": "Các lớp đồng tâm nở từ giữa; phù hợp với hoa, mặt trời, mặt trăng, trống đồng, ren hoặc hào quang."
+      },
+      "depthPortal": {
+        "label": "Depth Portal",
+        "description": "Nhiều lớp tiến qua chiều sâu để lộ mặt nội dung; hợp với vòm, rừng, điện ảnh, đô thị hoặc thiên hà."
+      },
+      "ribbonSweep": {
+        "label": "Ribbon Sweep",
+        "description": "Một dải cong quét ngang rồi dọn khung; có thể mang hình lụa, mực, sóng, khói, ánh sáng hoặc phim."
+      }
+    },
+    "engines": {
+      "css": {
+        "label": "CSS Keyframes",
+        "description": "Mốc chuẩn nhẹ nhất: ít mã, dễ duy trì và thân thiện với compositor."
+      },
+      "waapi": {
+        "label": "Web Animations API",
+        "description": "Điều khiển timeline native trên các phần tử DOM mà không cập nhật React theo từng frame."
+      },
+      "gsap": {
+        "label": "GSAP",
+        "description": "Timeline giàu khả năng biên đạo, dùng làm mốc enhanced cho các nhịp phức tạp hơn."
+      },
+      "canvas": {
+        "label": "Canvas 2D",
+        "description": "Vẽ toàn bộ hình học trong một surface với vòng RAF hữu hạn và mật độ điểm ảnh bị giới hạn."
+      },
+      "webgl": {
+        "label": "R3F / WebGL",
+        "description": "Các mesh cơ bản trong không gian chiều sâu, render theo yêu cầu và không có vòng lặp nền."
+      }
+    },
+    "guardrailsTitle": "Điều kiện so sánh",
+    "guardrailsBody": "Mỗi bản dùng cùng diễn viên hình học, thời lượng và điểm kết thúc. Lab này chỉ đánh giá hướng chuyển động, không phải nội dung thiệp.",
+    "guardrailTransform": "DOM chỉ chuyển transform và opacity; không blur, shadow hay thay đổi layout.",
+    "guardrailFinite": "Mọi timeline và vòng RAF dừng hoàn toàn sau khi handoff.",
+    "guardrailDpr": "Canvas và WebGL dùng DPR 1 trên mobile, tối đa 1.25 trên desktop.",
+    "compareWarning": "Compare chỉ để nhìn đối chiếu; không dùng nó làm benchmark FPS."
+  },
+  "dalatJourneyLab": {
+    "metaTitle": "Vườn sương Đà Lạt — Journey Lab",
+    "metaDescription": "Một hành trình nhập vai góc nhìn thứ nhất qua năm checkpoint trong khu vườn Đà Lạt huyền ảo.",
+    "entryKicker": "Một hành trình qua sương",
+    "entryTitle": "Vườn sương Đà Lạt",
+    "entryBody": "Vuốt để bước đi. Kéo ngang để nhìn quanh. Mỗi điểm dừng giữ một phần câu chuyện.",
+    "enter": "Bước vào",
+    "previous": "Quay lại",
+    "next": "Đi tiếp",
+    "loading": "Đang mở lối qua màn sương",
+    "fallbackNotice": "Thiết bị đang dùng phiên bản cảnh nhẹ hơn.",
+    "reducedMotion": "Giảm chuyển động",
+    "gestureHint": "Vuốt dọc để di chuyển · kéo ngang để nhìn quanh",
+    "checkpointStatus": "{current} trên {total}: {name}",
+    "checkpoints": {
+      "mistGate": {
+        "name": "Cổng sương",
+        "kicker": "Trước bình minh",
+        "title": "00 · 00 · 0000",
+        "body": "Một cánh cổng mở vào khu rừng phủ sương. Hành trình bắt đầu từ đây.",
+        "detail": "Cổng sương — nơi khởi đầu."
+      },
+      "memoryPines": {
+        "name": "Rừng ký ức",
+        "kicker": "Nắng xuyên tán thông",
+        "title": "00 · 00 · 0000",
+        "body": "Những tấm ký ức mờ ảo treo giữa hàng thông.",
+        "detail": "Rừng ký ức — kéo ngang để nhìn quanh."
+      },
+      "timeGlasshouse": {
+        "name": "Nhà kính thời gian",
+        "kicker": "Giữa nhà kính",
+        "title": "00 · 00 · 0000",
+        "body": "Thời gian nở thành những vòng hoa trên vách kính.",
+        "detail": "Nhà kính thời gian — ngày giờ nằm ở đây."
+      },
+      "lakePavilion": {
+        "name": "Pavilion bên hồ",
+        "kicker": "Giờ vàng",
+        "title": "00 · 00 · 0000",
+        "body": "Con đường soi bóng xuống mặt hồ phẳng lặng.",
+        "detail": "Pavilion bên hồ — chỉ đường nằm dưới chân."
+      },
+      "wishValley": {
+        "name": "Thung lũng nguyện ước",
+        "kicker": "Hoàng hôn chuyển tối",
+        "title": "00 · 00 · 0000",
+        "body": "Thung lũng sáng lên cùng những lời nguyện ước.",
+        "detail": "Thung lũng nguyện ước — lời chúc nằm trên bàn đá."
+      }
+    },
+    "invitation": {
+      "cover": "Thông tin thiệp",
+      "album": "Album ảnh cưới",
+      "albumIntro": "{count} khoảnh khắc được giữ lại trong hành trình của hai bạn.",
+      "bride": "Cô dâu",
+      "schedule": "Lịch trình ngày cưới",
+      "map": "Địa điểm & bản đồ",
+      "mapUnavailable": "Địa chỉ đang được cập nhật.",
+      "wishes": "Lời chúc",
+      "gift": "Phong bao mừng cưới",
+      "wishesIntro": "Gửi một lời chúc để cùng hai bạn lưu lại ngày vui.",
+      "giftIntro": "Nếu bạn muốn gửi quà mừng, phong bao điện tử luôn sẵn sàng.",
+      "giftUnavailable": "Phong bao sẽ hiển thị sau khi thông tin tài khoản của cô dâu hoặc chú rể được xác nhận.",
+      "groom": "Chú rể",
+      "calendar": "Lịch ngày vui",
+      "directions": "Chỉ đường",
+      "addToCalendar": "Thêm vào lịch",
+      "openGift": "Mở phong bao",
+      "wishNamePlaceholder": "Tên của bạn",
+      "wishPlaceholder": "Viết lời chúc của bạn…",
+      "wishSubmit": "Gửi lời chúc",
+      "wishSuccess": "Cảm ơn lời chúc của bạn!"
+    }
+  },
+  "forestWeddingJourneyLab": {
+    "metaTitle": "Hành trình rừng cưới — 3D Lab",
+    "metaDescription": "Thiệp cưới 3D dẫn người xem qua từng khu vực chức năng giữa một khu rừng ban ngày dịu nhẹ.",
+    "entryKicker": "Một lễ cưới đang được chuẩn bị",
+    "entryBody": "Vuốt để bước đi · kéo ngang để nhìn quanh",
+    "enter": "Bước vào",
+    "previous": "Quay lại",
+    "next": "Đi tiếp",
+    "loading": "Đang chuẩn bị cổng hoa",
+    "fallbackNotice": "Thiết bị đang dùng phiên bản khu rừng nhẹ hơn.",
+    "reducedMotion": "Giảm chuyển động",
+    "gestureHint": "Vuốt dọc để di chuyển · kéo ngang để nhìn quanh",
+  "sceneStatus": "{current} trên {total}: {name}",
+  "demoContent": {
+    "ceremonyHeader": "Lễ thành hôn được cử hành trong niềm vui của hai gia đình.",
+    "openingMessage": "Cùng gia đình hai bên, chúng tôi trân trọng mời bạn đến chung vui trong ngày cưới.",
+    "families": {
+      "brideParentTitle": "Ông bà",
+      "groomParentTitle": "Ông bà"
+    },
+    "schedule": {
+      "guestWelcome": "Đón khách",
+      "banquetOpening": "Khai tiệc",
+      "toastAndCake": "Rót rượu và cắt bánh",
+      "mainCourse": "Phục vụ món chính",
+      "farewell": "Kết thúc tiệc"
+    },
+    "wishes": {
+      "first": "Chúc hai bạn trăm năm hạnh phúc và cùng nhau đi qua một hành trình thật đẹp!",
+      "second": "Mong hai bạn luôn yêu thương, thấu hiểu và gìn giữ niềm vui trong mái ấm của mình."
+    }
+  },
+  "longCopy": {
+    "familyParentTitle": "ChuỗiTênĐạiDiệnGiaĐìnhRấtDài cùng toàn thể những người thân yêu chung niềm vui trong ngày trọng đại",
+    "venueAddress": "KhuVựcĐónKháchNgoàiTrờiCóTênRấtDài, sảnh tiệc bên rừng với lối vào qua khu vườn mùa hạ, số 25 đường Phan Chu Trinh, thành phố Đà Lạt, tỉnh Lâm Đồng",
+    "labels": {
+      "rsvpAttendance": "Xin vui lòng cho chúng tôi biết bạn và nhiều người đồng hành thân yêu có thể tham dự buổi tiệc hay không?",
+      "rsvpNotes": "Lời nhắn dành cho cô dâu chú rể, bao gồm mọi lưu ý cần thiết cho ngày tổ chức tiệc",
+      "wishText": "Hãy viết một lời chúc thật dài và đầy đủ ý nghĩa dành cho hành trình mới của cô dâu chú rể"
+    }
+  },
+  "sceneNames": {
+      "coverGate": "Cổng hoa",
+      "families": "Hai bên gia đình",
+      "openingMessage": "Lời ngỏ",
+      "calendar": "Lịch ngày vui",
+      "schedule": "Lịch trình",
+      "galleryPhoto": "Khoảnh khắc",
+      "dressCode": "Trang phục",
+      "venue": "Địa điểm",
+      "map": "Bản đồ",
+      "rsvp": "Xác nhận tham dự",
+      "wishes": "Lời chúc",
+      "gift": "Phong bao mừng cưới",
+      "finale": "Lời cảm ơn"
+    },
+    "labels": {
+      "brideFamily": "Nhà gái",
+      "groomFamily": "Nhà trai",
+      "invitation": "Thiệp mời",
+      "ceremony": "Lễ cưới",
+      "reception": "Tiệc cưới",
+      "date": "Ngày",
+      "time": "Thời gian",
+      "addToCalendar": "Thêm vào lịch",
+      "directions": "Chỉ đường",
+      "photoAlt": "Khoảnh khắc cưới",
+      "rsvpName": "Tên của bạn",
+      "rsvpAttendance": "Bạn sẽ tham dự chứ?",
+      "attendingYes": "Có, tôi sẽ đến",
+      "attendingNo": "Rất tiếc, tôi không thể đến",
+      "rsvpGuests": "Số khách đi cùng",
+      "rsvpNotes": "Lời nhắn",
+      "rsvpSubmit": "Gửi xác nhận",
+      "rsvpSuccess": "Cảm ơn bạn đã xác nhận.",
+      "rsvpNameRequired": "Vui lòng nhập tên của bạn.",
+      "rsvpGuestsInvalid": "Vui lòng nhập số khách hợp lệ.",
+      "wishName": "Tên của bạn",
+      "wishText": "Lời chúc của bạn",
+      "wishSubmit": "Gửi lời chúc",
+      "wishSuccess": "Cảm ơn lời chúc của bạn.",
+      "wishRequired": "Vui lòng viết lời chúc.",
+      "formError": "Không thể gửi biểu mẫu lúc này. Vui lòng thử lại.",
+      "openGift": "Mở phong bao",
+      "closeGift": "Đóng phong bao",
+      "bankName": "Ngân hàng",
+      "accountHolder": "Chủ tài khoản",
+      "accountNumber": "Số tài khoản",
+      "giftUnavailable": "Thông tin phong bao đang được cập nhật.",
+      "mapUnavailable": "Bản đồ đang được cập nhật.",
+      "photoUnavailable": "Ảnh đang được cập nhật.",
+      "thankYou": "Cảm ơn bạn đã đồng hành cùng chúng tôi."
+    }
+  },
+  "detectiveConanCasebookLab": {
+    "metaTitle": "Lab Hồ Sơ Hôn Lễ 4869",
+    "metaDescription": "Lab nội bộ để kiểm tra bìa casebook Three.js, lật trang và handoff sang trình đọc DOM.",
+    "title": "Hồ Sơ Hôn Lễ 4869",
+    "caseLabel": "Hồ sơ hôn lễ 4869",
+    "coverKicker": "Vụ án cuối cùng: ngày chung đôi",
+    "backTitle": "Thông tin tuyệt mật",
+    "and": "và",
+    "loading": "Đang chuẩn bị hồ sơ",
+    "open": "Mở hồ sơ",
+    "viewBack": "Xem bìa sau",
+    "viewFront": "Về bìa trước",
+    "replayCover": "Xem lại bìa hồ sơ",
+    "closedHint": "Kéo để xem nhiều góc. Dùng nút riêng để mở hồ sơ.",
+    "stateClosed": "Hồ sơ đang đóng.",
+    "stateOpening": "Bìa hồ sơ đang mở.",
+    "stateHandoff": "Đang chuyển sang trang đọc.",
+    "stateOpened": "Hồ sơ hôn lễ đã mở.",
+    "forceReducedMotion": "Buộc dùng reduced motion",
+    "reducedMotionActive": "Reduced motion đang hoạt động",
+    "fullMotionActive": "Full motion đang hoạt động",
+    "timeline": "Tiến trình timeline: {progress}%",
+    "play": "Chạy",
+    "pause": "Tạm dừng",
+    "reset": "Đặt lại"
+  },
+  "detectiveConanCasebook": {
+    "readerLabel": "Trình đọc Hồ Sơ Hôn Lễ 4869",
+    "chapterNavigation": "Điều hướng các chương",
+    "previousPage": "Trang trước",
+    "nextPage": "Trang sau",
+    "chapterProgress": "{current}/{total} · {title}",
+    "goToChapter": "Đi đến chương {title}",
+    "introEyebrow": "Hồ sơ mở đầu",
+    "introTitle": "Lời mời đã được xác nhận",
+    "and": "và",
+    "dateTime": "{date} · {time}",
+    "shinichiRanAlt": "Shinichi và Ran trong trang phục cưới",
+    "castShinichiRan": "Shinichi Kudo · Ran Mouri",
+    "familiesTitle": "Gia đình hai phía",
+    "brideFamily": "Nhà gái",
+    "groomFamily": "Nhà trai",
+    "parents": "Song thân",
+    "conanKogoroAlt": "Conan và Kogoro Mouri",
+    "castConanKogoro": "Conan Edogawa · Kogoro Mouri",
+    "ceremonyTitle": "Thời gian thành hôn",
+    "receptionLabel": "Tiệc cưới",
+    "detectiveBoysAlt": "Ayumi, Genta, Haibara và tiến sĩ Agasa",
+    "castDetectiveBoys": "Đội thám tử nhí · Agasa · Haibara",
+    "scheduleTitle": "Lịch trình ngày vui",
+    "days": "ngày",
+    "hours": "giờ",
+    "minutes": "phút",
+    "seconds": "giây",
+    "calendarTitle": "Tháng {month}, {year}",
+    "addToCalendar": "Thêm vào lịch",
+    "calendarUnavailable": "Ngày cưới đang được cập nhật.",
+    "galleryTitle": "Những khoảnh khắc",
+    "galleryAlt": "Ảnh cưới số {index}",
+    "galleryEmpty": "Album ảnh đang được hoàn thiện.",
+    "morePhotos": "Còn {count} ảnh trong hồ sơ",
+    "heijiFriendsAlt": "Heiji, Kazuha, Sonoko và Masumi",
+    "castHeijiFriends": "Heiji · Kazuha · Sonoko · Masumi",
+    "mapEyebrow": "Tọa độ hiện trường",
+    "mapTitle": "Địa điểm buổi tiệc",
+    "mapFrameTitle": "Bản đồ địa điểm tổ chức",
+    "directionsAction": "Mở chỉ đường",
+    "dressCodeTitle": "Màu trang phục gợi ý",
+    "dressColorAlt": "Màu trang phục {color}",
+    "akaiFuruyaAlt": "Shuichi Akai và Rei Furuya",
+    "castAkaiFuruya": "Shuichi Akai · Rei Furuya",
+    "guestbookTitle": "Gửi lời chúc",
+    "guestbookHint": "Mỗi lời chúc là một lời khai đẹp trong hồ sơ ngày vui của chúng mình.",
+    "wishesTitle": "Lời khai nhân chứng",
+    "wishesEmpty": "Hãy là người đầu tiên để lại lời chúc.",
+    "wishName": "Tên của bạn",
+    "wishText": "Viết lời chúc",
+    "wishSubmit": "Gửi lời chúc",
+    "wishPending": "Đang gửi...",
+    "wishSuccess": "Lời chúc đã được ghi vào hồ sơ.",
+    "giftTitle": "Mừng ngày chung đôi",
+    "giftHint": "Nếu muốn gửi quà mừng từ xa, bạn có thể dùng thông tin dưới đây.",
+    "giftNote": "Sự hiện diện của bạn vẫn là món quà quý nhất.",
+    "giftEmpty": "Thông tin quà mừng chưa được cập nhật.",
+    "bankDetails": "Thông tin tài khoản",
+    "saveQr": "Lưu mã QR",
+    "finaleEyebrow": "Kết luận hồ sơ",
+    "finaleTitle": "Đáp án là chúng mình",
+    "finaleMessage": "Sau mọi manh mối và những năm tháng chờ đợi, câu trả lời cuối cùng là một đời bên nhau.",
+    "presenceHonor": "Chúng mình rất mong được gặp bạn trong ngày hồ sơ hạnh phúc này chính thức khép lại.",
+    "momentsTitle": "Khoảnh khắc của khách mời"
+  },
   "doraemonDoor": {
     "heroKicker": "Cánh cửa mở đến ngày chung đôi",
     "invitationTitle": "Mời bạn bước qua cánh cửa này",
@@ -531,6 +863,10 @@
   },
   "demoCta": {
     "useTemplate": "Sử dụng thiệp này"
+  },
+  "invitationControls": {
+    "playMusic": "Phát nhạc",
+    "pauseMusic": "Tạm dừng nhạc"
   },
   "templateDemoSeo": {
     "metaTitle": "Mẫu thiệp cưới {name} | Thiệp Mừng Online",
