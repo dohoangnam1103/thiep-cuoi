@@ -33,7 +33,6 @@ const ENTRY_DECODED_BUDGET = 18_175_312;
 const BRANCH_CELL_SIZE = 256;
 const BRANCH_CELL_PADDING = 12;
 const BRANCH_REQUIRED_GUTTER = 8;
-const BRANCH_SUBJECT_ALPHA_THRESHOLD = 8;
 
 const POLY_HAVEN_SOURCES = Object.freeze({
   groundArm: {
@@ -152,6 +151,7 @@ async function resizeAsPng(sourcePath) {
 }
 
 function getBranchCellBounds(data, info, cellX, cellY) {
+  const BRANCH_SUBJECT_ALPHA_THRESHOLD = 8;
   const sourceCellWidth = info.width / 2;
   const sourceCellHeight = info.height / 2;
   const sourceLeft = cellX * sourceCellWidth;
@@ -246,11 +246,10 @@ async function createBranchColor(branchSource) {
     offset += branchAtlas.info.channels
   ) {
     const alpha = branchAtlas.data[offset + 3];
-    if (alpha <= BRANCH_SUBJECT_ALPHA_THRESHOLD) {
+    if (alpha === 0) {
       branchAtlas.data[offset] = 0;
       branchAtlas.data[offset + 1] = 0;
       branchAtlas.data[offset + 2] = 0;
-      branchAtlas.data[offset + 3] = 0;
       continue;
     }
     const green = branchAtlas.data[offset + 1];

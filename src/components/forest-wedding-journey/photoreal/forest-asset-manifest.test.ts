@@ -106,6 +106,7 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
     .toBuffer({ resolveWithObject: true });
   const alphaAt = (x: number, y: number) =>
     data[(y * info.width + x) * info.channels + 3];
+  let antialiasedSubjectPixels = 0;
 
   for (let cellY = 0; cellY < 2; cellY += 1) {
     for (let cellX = 0; cellX < 2; cellX += 1) {
@@ -121,6 +122,9 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
           const inGutter =
             x < left + 8 || x >= left + 248 ||
             y < top + 8 || y >= top + 248;
+          if (!inGutter && alpha > 0 && alpha <= 8) {
+            antialiasedSubjectPixels += 1;
+          }
           if (inGutter) {
             maximumGutterAlpha = Math.max(maximumGutterAlpha, alpha);
           }
@@ -135,6 +139,10 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
       );
     }
   }
+  assert.ok(
+    antialiasedSubjectPixels > 0,
+    "branch cards must preserve low-alpha antialias coverage outside gutters",
+  );
 
   let opaqueBarkPixels = 0;
   const barkPixels = 512 * 512;
@@ -144,6 +152,27 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
     }
   }
   assert.ok(opaqueBarkPixels / barkPixels >= 0.99);
+});
+
+test("preparation scopes the alpha threshold to source subject bounds", () => {
+  const preparationScript = readFileSync(
+    resolve(process.cwd(), "scripts/prepare-forest-photoreal-assets.mjs"),
+    "utf8",
+  );
+  const boundsStart = preparationScript.indexOf(
+    "function getBranchCellBounds",
+  );
+  const boundsEnd = preparationScript.indexOf(
+    "async function createBranchColor",
+    boundsStart,
+  );
+  assert.ok(boundsStart >= 0 && boundsEnd > boundsStart);
+  const boundsSection = preparationScript.slice(boundsStart, boundsEnd);
+  const outsideBounds =
+    preparationScript.slice(0, boundsStart) + preparationScript.slice(boundsEnd);
+
+  assert.match(boundsSection, /BRANCH_SUBJECT_ALPHA_THRESHOLD/);
+  assert.doesNotMatch(outsideBounds, /BRANCH_SUBJECT_ALPHA_THRESHOLD/);
 });
 
 test("preparation rejects every nonzero decoded conifer gutter alpha", () => {

@@ -91,7 +91,7 @@ const FOREST_PHOTOREAL_COMPRESSED_BYTES: Readonly<Record<string, number>> =
   Object.freeze({
     backdrop: 166_970,
     coniferArm: 49_748,
-    coniferColor: 151_924,
+    coniferColor: 165_896,
     coniferNormal: 99_428,
     groundArm: 84_238,
     groundColor: 99_956,

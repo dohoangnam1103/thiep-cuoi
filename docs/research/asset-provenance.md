@@ -395,8 +395,9 @@ The accepted alpha master has SHA-256
 The preparation script splits the master into four source cells, uses alpha
 greater than 8 only to find each cell's subject bounds, fits each bounded
 subject independently inside a 232-by-232 box, and centers it in its own
-256-by-256 destination cell. Source-edge alpha values at or below 8 and their
-RGB are cleared, as is hidden RGB in fully transparent pixels. A deterministic
+256-by-256 destination cell. After resizing and compositing, hidden RGB is
+cleared only where alpha is exactly 0; every nonzero alpha value, including
+antialiased edge coverage from 1 through 8, is retained. A deterministic
 residual-magenta cleanup clamps blue to green when it exceeds green and caps
 only pink-biased red pixels at 1.25 times green. Separately, the final
 production WebP is decoded and verified to have alpha exactly 0 in every pixel
@@ -453,12 +454,12 @@ processing and uses Sharp with Lanczos3 resize kernels.
 | `photoreal/ground-color.webp` | 512x512 | 99,956 | `4638b029cbc3b3c59aa9e19befbc5537a33ca9c4015713678fa471e026805d65` |
 | `photoreal/ground-normal.webp` | 512x512 | 139,296 | `ecd5ec2089e18a458d53948034ce70f0d586aae129190388ec531d86fd70c2d2` |
 | `photoreal/ground-arm.webp` | 512x512 | 84,238 | `cc24d93d9900047cb337d74bd0dacd36a64e0c5ffed3f551b5e6847d3bce1134` |
-| `photoreal/conifer-color.webp` | 1024x512 | 151,924 | `75bbcfc3aec1d259438cdbc38af109f1ce270c87b71925eed81b4540c7914f8a` |
+| `photoreal/conifer-color.webp` | 1024x512 | 165,896 | `76ec25516baac91d1562f9a8e8dfddd8971e627fa0b2f552151491cc9f6a3a0f` |
 | `photoreal/conifer-normal.webp` | 1024x512 | 99,428 | `9bac84fbc4ac6959a9dda9d940374bed037d0d74a3a79d046db88d74b0227ca9` |
 | `photoreal/conifer-arm.webp` | 1024x512 | 49,748 | `55dd8c1d36760e7f632f6b21e96fddf38261229e357dd9a98389397a2b4d1ce4` |
 | `photoreal/backdrop.webp` | 1024x512 | 166,970 | `41da10c0b3e78cdca6502458700ed6a99cbdb21bac3808a8bf352dda17aa2cbb` |
 | `photoreal/wildlife.webp` | 960x640 | 62,566 | `b71fa8625ff8dc2c78b34774777d9e1e1e5feb660328eefed1c246aee4f07814` |
 
-The seven blocking files total 791,560 compressed bytes and have a conservative
+The seven blocking files total 805,532 compressed bytes and have a conservative
 RGBA-plus-mip decode estimate of 15,379,118 bytes. Including optional wildlife,
-the shared pack totals 854,126 compressed bytes.
+the shared pack totals 868,098 compressed bytes.
