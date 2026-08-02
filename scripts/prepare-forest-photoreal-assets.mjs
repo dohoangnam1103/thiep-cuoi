@@ -30,6 +30,10 @@ const DEFAULT_CONIFER_BRANCH_SOURCE = path.join(
 const ENTRY_COMPRESSED_BUDGET = 4_000_000;
 const SHARED_COMPRESSED_BUDGET = 12_000_000;
 const ENTRY_DECODED_BUDGET = 18_175_312;
+const BRANCH_CELL_SIZE = 256;
+const BRANCH_CELL_PADDING = 12;
+const BRANCH_REQUIRED_GUTTER = 8;
+const BRANCH_ALPHA_THRESHOLD = 8;
 
 const POLY_HAVEN_SOURCES = Object.freeze({
   groundArm: {
@@ -147,35 +151,125 @@ async function resizeAsPng(sourcePath) {
     .toBuffer();
 }
 
-async function createBranchColor(branchSource) {
-  const { data, info } = await sharp(branchSource)
-    .resize(512, 512, { fit: "fill", kernel: sharp.kernel.lanczos3 })
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+function getBranchCellBounds(data, info, cellX, cellY) {
+  const sourceCellWidth = info.width / 2;
+  const sourceCellHeight = info.height / 2;
+  const sourceLeft = cellX * sourceCellWidth;
+  const sourceTop = cellY * sourceCellHeight;
+  let minimumX = sourceLeft + sourceCellWidth;
+  let minimumY = sourceTop + sourceCellHeight;
+  let maximumX = -1;
+  let maximumY = -1;
 
-  for (let offset = 0; offset < data.length; offset += info.channels) {
-    const alpha = data[offset + 3];
-    if (alpha === 0) {
-      data[offset] = 0;
-      data[offset + 1] = 0;
-      data[offset + 2] = 0;
-      continue;
-    }
-    const green = data[offset + 1];
-    if (data[offset + 2] > green) {
-      data[offset + 2] = green;
-    }
-    if (data[offset] > green * 1.35 && data[offset + 2] > green * 0.75) {
-      data[offset] = Math.round(green * 1.25);
+  for (let y = sourceTop; y < sourceTop + sourceCellHeight; y += 1) {
+    for (let x = sourceLeft; x < sourceLeft + sourceCellWidth; x += 1) {
+      const alpha = data[(y * info.width + x) * info.channels + 3];
+      if (alpha <= BRANCH_ALPHA_THRESHOLD) continue;
+      minimumX = Math.min(minimumX, x);
+      minimumY = Math.min(minimumY, y);
+      maximumX = Math.max(maximumX, x);
+      maximumY = Math.max(maximumY, y);
     }
   }
 
-  return sharp(data, {
+  if (maximumX < minimumX || maximumY < minimumY) {
+    throw new Error(`Generated branch cell ${cellX},${cellY} is empty`);
+  }
+
+  return {
+    height: maximumY - minimumY + 1,
+    left: minimumX,
+    top: minimumY,
+    width: maximumX - minimumX + 1,
+  };
+}
+
+async function createBranchColor(branchSource) {
+  const source = await sharp(branchSource)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  if (source.info.width % 2 !== 0 || source.info.height % 2 !== 0) {
+    throw new Error("Generated branch atlas dimensions must be divisible by two");
+  }
+
+  const maximumSubjectSize =
+    BRANCH_CELL_SIZE - BRANCH_CELL_PADDING * 2;
+  const composites = [];
+
+  for (let cellY = 0; cellY < 2; cellY += 1) {
+    for (let cellX = 0; cellX < 2; cellX += 1) {
+      const bounds = getBranchCellBounds(
+        source.data,
+        source.info,
+        cellX,
+        cellY,
+      );
+      const resized = await sharp(branchSource)
+        .extract(bounds)
+        .resize({
+          fit: "inside",
+          height: maximumSubjectSize,
+          kernel: sharp.kernel.lanczos3,
+          width: maximumSubjectSize,
+        })
+        .ensureAlpha()
+        .png()
+        .toBuffer({ resolveWithObject: true });
+      composites.push({
+        input: resized.data,
+        left:
+          cellX * BRANCH_CELL_SIZE +
+          Math.floor((BRANCH_CELL_SIZE - resized.info.width) / 2),
+        top:
+          cellY * BRANCH_CELL_SIZE +
+          Math.floor((BRANCH_CELL_SIZE - resized.info.height) / 2),
+      });
+    }
+  }
+
+  const branchAtlas = await sharp({
+    create: {
+      background: { alpha: 0, b: 0, g: 0, r: 0 },
+      channels: 4,
+      height: BRANCH_CELL_SIZE * 2,
+      width: BRANCH_CELL_SIZE * 2,
+    },
+  })
+    .composite(composites)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  for (
+    let offset = 0;
+    offset < branchAtlas.data.length;
+    offset += branchAtlas.info.channels
+  ) {
+    const alpha = branchAtlas.data[offset + 3];
+    if (alpha <= BRANCH_ALPHA_THRESHOLD) {
+      branchAtlas.data[offset] = 0;
+      branchAtlas.data[offset + 1] = 0;
+      branchAtlas.data[offset + 2] = 0;
+      branchAtlas.data[offset + 3] = 0;
+      continue;
+    }
+    const green = branchAtlas.data[offset + 1];
+    if (branchAtlas.data[offset + 2] > green) {
+      branchAtlas.data[offset + 2] = green;
+    }
+    if (
+      branchAtlas.data[offset] > green * 1.35 &&
+      branchAtlas.data[offset + 2] > green * 0.75
+    ) {
+      branchAtlas.data[offset] = Math.round(green * 1.25);
+    }
+  }
+
+  return sharp(branchAtlas.data, {
     raw: {
-      channels: info.channels,
-      height: info.height,
-      width: info.width,
+      channels: branchAtlas.info.channels,
+      height: branchAtlas.info.height,
+      width: branchAtlas.info.width,
     },
   })
     .png()
@@ -294,6 +388,38 @@ async function validateOutputs(outputDir) {
       throw new Error(`${expected.filename} exceeds the 4 MB per-asset ceiling`);
     }
     assets.push({ ...expected, bytes: file.size });
+  }
+
+  const coniferColorPath = path.join(outputDir, "conifer-color.webp");
+  const decodedConifer = await sharp(coniferColorPath)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  for (let cellY = 0; cellY < 2; cellY += 1) {
+    for (let cellX = 0; cellX < 2; cellX += 1) {
+      const left = cellX * BRANCH_CELL_SIZE;
+      const top = cellY * BRANCH_CELL_SIZE;
+      for (let y = top; y < top + BRANCH_CELL_SIZE; y += 1) {
+        for (let x = left; x < left + BRANCH_CELL_SIZE; x += 1) {
+          const inGutter =
+            x < left + BRANCH_REQUIRED_GUTTER ||
+            x >= left + BRANCH_CELL_SIZE - BRANCH_REQUIRED_GUTTER ||
+            y < top + BRANCH_REQUIRED_GUTTER ||
+            y >= top + BRANCH_CELL_SIZE - BRANCH_REQUIRED_GUTTER;
+          if (!inGutter) continue;
+          const alpha = decodedConifer.data[
+            (y * decodedConifer.info.width + x) *
+              decodedConifer.info.channels +
+              3
+          ];
+          if (alpha > BRANCH_ALPHA_THRESHOLD) {
+            throw new Error(
+              `conifer-color.webp cell ${cellX},${cellY} gutter alpha is ${alpha}`,
+            );
+          }
+        }
+      }
+    }
   }
 
   const entryAssets = assets.filter(({ blocking }) => blocking);

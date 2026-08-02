@@ -112,8 +112,7 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
       const left = cellX * 256;
       const top = cellY * 256;
       let subjectPixels = 0;
-      let gutterPixels = 0;
-      let transparentGutterPixels = 0;
+      let maximumGutterAlpha = 0;
 
       for (let y = top; y < top + 256; y += 1) {
         for (let x = left; x < left + 256; x += 1) {
@@ -123,16 +122,15 @@ test("conifer color uses four padded alpha branch cards beside opaque bark", asy
             x < left + 8 || x >= left + 248 ||
             y < top + 8 || y >= top + 248;
           if (inGutter) {
-            gutterPixels += 1;
-            if (alpha <= 8) transparentGutterPixels += 1;
+            maximumGutterAlpha = Math.max(maximumGutterAlpha, alpha);
           }
         }
       }
 
       assert.ok(subjectPixels >= 2_500, `branch cell ${cellX},${cellY} is empty`);
       assert.ok(
-        transparentGutterPixels / gutterPixels >= 0.98,
-        `branch cell ${cellX},${cellY} must have a transparent gutter`,
+        maximumGutterAlpha <= 8,
+        `branch cell ${cellX},${cellY} gutter alpha is ${maximumGutterAlpha}`,
       );
     }
   }
