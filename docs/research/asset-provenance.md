@@ -259,3 +259,200 @@ horizontal/vertical flip MAE is 14.42/14.40, close to unrelated toroidal shifts
 at 14.50/14.46. The four final files total 845,260 bytes.
 
 “user reference used for mood only; no pixels copied”
+
+## Forest Wedding Journey photoreal entry pack (2026-08-03)
+
+The production WebPs under
+`public/chungdoi/labs/forest-wedding-journey/photoreal/` combine original
+built-in-image-generation outputs with 1K CC0 texture maps from Poly Haven.
+The pack is fully self-hosted; no runtime request goes to Poly Haven or another
+CDN. OpenAI's built-in `image_gen` tool created all three original masters and
+did not expose a model name.
+
+> reference images used for mood only; no pixels copied
+
+### Mood-reference audit
+
+The two local Harmony Studio photographs were passed only as mood references
+for evergreen density, emerald color and natural daylight in the original
+backdrop generation. People, furniture, flowers, typography, logos, framing
+and all other source-image pixels were explicitly excluded. Neither image was
+passed to the wildlife generation.
+
+| Reference-only input | SHA-256 |
+| --- | --- |
+| `/Users/namdo/Documents/724937614_1068896902463928_5863343670164935302_n.jpeg` | `3b72ca83c6a4becb7d8c7815a08ad04a5250d18569d64fcd388925fdd6b546ae` |
+| `/Users/namdo/Documents/723137482_1882634189078434_5633222113408269822_n.jpeg` | `ca11262fa6ada7386cdf477fd2de02992390d98298d7b4042a6893cd95e8996b` |
+
+### Original generated backdrop
+
+The accepted 1774-by-887 RGB master was saved by the built-in tool at
+`/Users/namdo/.codex/generated_images/019fc46c-edee-7433-a3b2-f4b36fa31860/exec-796c3349-0bcd-4bcf-bd56-231b5de283db.png`
+(SHA-256
+`240c3c0981785cd2cf79fb433989a59042be371e7aa48b573cdbff1734395b9b`).
+Its exact prompt was:
+
+```text
+Use case: photorealistic-natural
+Asset type: original far-field forest panorama for a real-time 3D wedding journey
+Input images: Image 1 and Image 2 are mood references only for the dense emerald evergreen atmosphere and bright natural daylight; do not copy, trace, composite, reproduce, or retain any source pixels, people, staging, props, text, logos, watermark, or exact composition.
+Primary request: create a wholly original 2:1 photographic panorama of a dense emerald evergreen forest wall suitable as a distant curved 3D backdrop.
+Scene/backdrop: continuous irregular layers of mature conifers and woodland understory, deep forest depth, moss and ferns at the base, no pale gaps and almost no visible sky.
+Style/medium: convincing natural location photography, restrained cinematic realism, physically plausible botanical detail, subtle natural lens depth, no illustration or low-poly look.
+Composition/framing: exact wide 2:1 landscape intent; eye-level forest view; edge-to-edge foliage; balanced density across the full width; no central landmark, no path, no symmetrical tree rows, no obvious repeating elements; safe to crop and tile as a far panorama.
+Lighting/mood: warm directional morning daylight grazing selected branch tips over deep cool green ambient shade; rich but natural emerald color; controlled highlights; no artificial glow or heavy grading.
+Materials/textures: real conifer needles, layered branches, bark glimpses, moss, ferns, leaf litter and soft atmospheric depth.
+Constraints: entirely original output; no people, animals, wedding furniture, flowers, petals, tables, lamps, cameras, buildings, typography, letters, numbers, logos, signatures, watermarks, borders, frames, or copied pixels from either reference.
+Avoid: recognizable reference composition, empty sky, manicured hedge shapes, evenly spaced rows, fantasy effects, bloom, fisheye, painterly rendering, CGI plasticity, oversharpening.
+```
+
+### Original generated wildlife atlas
+
+The accepted 1536-by-1024 RGB chroma master was saved by the built-in tool at
+`/Users/namdo/.codex/generated_images/019fc46c-edee-7433-a3b2-f4b36fa31860/exec-4247d684-2def-4550-bd9b-6c0404324c21.png`
+(SHA-256
+`9a7f672e6f1bbc68583ab01baa7bc3790846cd0f55cc7c9c58b5b8c27e58a58b`).
+Its exact prompt was:
+
+```text
+Use case: photorealistic-natural
+Asset type: original photographic wildlife texture atlas chroma master for alpha-tested impostor actors in a real-time 3D forest
+Primary request: create exactly six isolated, full-body woodland-animal poses in one 3-column by 2-row atlas: top row from left to right is a small European rabbit sitting quietly in an idle pose, a white dove perched in side profile with folded wings, and a red squirrel running in side profile; bottom row from left to right is the same kind of small rabbit captured mid-hop in side profile, a white dove flying in side profile with wings fully spread, and a red squirrel climbing upward in side profile.
+Scene/backdrop: one perfectly flat, exact solid #00ff00 chroma-key field from edge to edge for local background removal; uniform and unlit with no floor, horizon, shadow, gradient, texture, reflection, vignette, glow, or lighting variation.
+Style/medium: convincing natural wildlife photography with realistic anatomy, fur and feather detail, restrained clean game-asset finish, consistent scale within each species.
+Composition/framing: strict 3 columns by 2 rows without visible cell borders; each pose centered in its own equal cell; clearly separated and non-overlapping; generous empty #00ff00 padding around every silhouette and the outer canvas; every ear, paw, tail, wing tip, and feather fully contained; side profiles face right except the perched dove may angle slightly toward camera.
+Lighting/mood: neutral soft overcast daylight on subjects only; consistent light direction, color, exposure and camera height across all six cells; no colored rim light.
+Critical chroma constraints: razor-clean opaque subject boundaries with zero green reflection, spill, rim, halo, outline or embedded green gaps; preserve natural brown, red, gray and white subject edge colors; #00ff00 may occur only in removable background and nowhere in an animal.
+Constraints: exactly six animal poses and no additional animals; no branch, perch, nest, ground, grass, leaves, flowers, props, people, letters, numbers, symbols, labels, text, logos, signatures, watermarks, cast shadows, contact shadows, borders, frames, grid lines, clipping or overlap.
+Avoid: colored edge highlights, illustration, painting, cartoon, low-poly style, taxidermy stiffness, fantasy glow, motion blur, depth-of-field blur, aggressive sharpening, malformed anatomy, cropped extremities.
+```
+
+The bundled imagegen helper converted that master to alpha with border-key
+sampling, soft matte, transparent threshold 12, opaque threshold 220, despill,
+and the required one-pixel contraction after full-resolution fringe review:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/imagegen/scripts/remove_chroma_key.py" \
+  --input tmp/forest-photoreal-sources/wildlife-chroma-master-v2.png \
+  --out tmp/forest-photoreal-sources/wildlife-alpha-v2-contracted.png \
+  --auto-key border \
+  --soft-matte \
+  --transparent-threshold 12 \
+  --opaque-threshold 220 \
+  --despill \
+  --edge-contract 1
+```
+
+The accepted alpha master has SHA-256
+`613852f17adb5702cf86f824c6d239d505351fb431d225c694d81808061b5c35`;
+all four corners are transparent. An earlier magenta-key master at
+`/Users/namdo/.codex/generated_images/019fc46c-edee-7433-a3b2-f4b36fa31860/exec-44c7f0bb-05d7-4f5f-8eba-81755591df23.png`
+(SHA-256
+`26daf3585267a72ed9c8ddef1dbf20e802102a514694a375c002ec42d36bcd93`)
+was rejected after the same full-resolution workflow because visible magenta
+fringe remained; no shipped asset was derived from it. No CLI image-generation
+fallback was used.
+
+### Original generated conifer branch cards
+
+The built-in tool created a 1254-by-1254 RGB chroma master at
+`/Users/namdo/.codex/generated_images/019fc46c-edee-7433-a3b2-f4b36fa31860/exec-9105a592-3474-404e-acf3-9be569fd37e6.png`
+(SHA-256
+`a4e50061766bd4c480826e976bd53ca4b3156fd35c0d863c6a82b8661913d34a`).
+No input or reference image was passed to this generation. Its exact prompt
+was:
+
+```text
+Use case: photorealistic-natural
+Asset type: original conifer branch-card texture atlas chroma master for alpha-tested real-time 3D foliage
+Primary request: create exactly four isolated dense evergreen conifer branch clusters in a strict 2-column by 2-row atlas, each a different natural silhouette suitable for a crossed billboard card: one broad horizontal fir spray, one gently upward-angled pine spray, one compact drooping spruce spray, and one irregular layered evergreen bough.
+Scene/backdrop: one perfectly flat exact solid #ff00ff chroma-key field from edge to edge for local background removal; uniform and unlit with no floor, horizon, shadow, gradient, texture, reflection, vignette, glow, or lighting variation.
+Style/medium: convincing botanical location photography with realistic deep-green needles, fine twig and bark detail, restrained clean game-asset finish, physically plausible anatomy.
+Composition/framing: strict 2 columns by 2 rows without visible cell borders; each branch cluster centered in its own equal square cell; clearly separated and non-overlapping; generous empty #ff00ff padding of at least 8 percent of each cell around every silhouette; every needle tip and twig fully contained; no subject may cross a cell boundary or canvas edge.
+Lighting/mood: neutral soft overcast daylight on branches only with restrained warm highlights and deep emerald shade; consistent light direction, color and exposure across all cells; no colored rim light.
+Critical chroma constraints: crisp opaque subject boundaries with zero magenta reflection, spill, rim, halo, outline or embedded magenta gaps; natural green and brown must continue to the outermost subject pixels; #ff00ff may occur only in removable background and nowhere in a branch.
+Constraints: exactly four branch clusters; no pine cones, fruit, flowers, roots, whole trees, trunk sections, animals, people, props, letters, numbers, symbols, labels, text, logos, signatures, watermarks, cast shadows, contact shadows, borders, frames, grid lines, clipping or overlap.
+Avoid: UV unwraps, texture-sheet distortion, stretched strips, kaleidoscopic fragments, isolated needles, low-poly forms, illustration, painting, plastic CGI, fantasy glow, motion blur, depth-of-field blur, malformed branching.
+```
+
+The bundled helper performed the required border sampling, soft matte,
+thresholds, despill and one-pixel contraction:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/imagegen/scripts/remove_chroma_key.py" \
+  --input tmp/forest-photoreal-sources/conifer-branches-chroma-master.png \
+  --out tmp/forest-photoreal-sources/conifer-branches-alpha-contracted.png \
+  --auto-key border \
+  --soft-matte \
+  --transparent-threshold 12 \
+  --opaque-threshold 220 \
+  --despill \
+  --edge-contract 1
+```
+
+The accepted alpha master has SHA-256
+`ec37c286f0acb74b57d9f97cdc1621a1f83e3f92d0514893f50f8bde6b07d095`.
+The preparation script fits it to the left 512-square conifer region, clears
+hidden RGB in transparent pixels, and applies a deterministic residual-magenta
+cleanup: blue is clamped to green when it exceeds green, and only pink-biased
+red pixels are capped at 1.25 times green. The resulting four cells each keep
+at least an eight-pixel transparent gutter at production resolution.
+
+### Poly Haven CC0 sources
+
+Leafy Grass is documented at `https://polyhaven.com/a/leafy_grass`; Pine Tree
+01 is documented at `https://polyhaven.com/a/pine_tree_01`. Only three 1K bark
+maps were downloaded from Pine Tree 01; its 570 MB/949 MB-class Blender or
+geometry downloads and its model-specific UV-unwrapped twig maps were never
+used for the shipped pack. Poly Haven states that all assets are CC0 at
+`https://polyhaven.com/license`.
+
+| Input | Exact download URL | Poly Haven MD5 | Downloaded SHA-256 |
+| --- | --- | --- | --- |
+| Leafy Grass diffuse | `https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_diff_1k.jpg` | `0dbc071e91d6905edfcfbe8eb785a1ab` | `cfa40bc9d9417d1852db8753a8d5917f110c40101179f63543c382e39bc05e4a` |
+| Leafy Grass OpenGL normal | `https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_nor_gl_1k.jpg` | `8279e096e204ea326d57a318869f99df` | `832328216adc0a7e1f70a31d5ee48c9ab7f2152d83816122736cf42ac4b2ebd6` |
+| Leafy Grass ARM | `https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_arm_1k.jpg` | `44fb4e40ef0f3425a7d1a14bc328e4d8` | `95432451cb2693794459fe7ea339ea9ffdb5959c40373740f80a4aa1703f089d` |
+| Pine Tree 01 bark diffuse | `https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_bark_diff_1k.jpg` | `7d3a558ed614c7e75594c7be3bf80311` | `5c76836b01c3536fa0e24207b67bf4f3315b53ebe2b4ecc6f08dfcf3f8d74929` |
+| Pine Tree 01 bark OpenGL normal | `https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_bark_nor_gl_1k.jpg` | `bb6e3a6eea777d992cef48fabfdc538c` | `05c46455531781b6cf18cae0648cf627f60ee942adaa8bcbfd1592fc2506a9e0` |
+| Pine Tree 01 bark ARM | `https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/pine_tree_01/pine_tree_01_bark_arm_1k.jpg` | `21d1abd15e40951825a4f3da110b20ea` | `336a4680cd571b6076b67afee2310b290b8900d9d126eb39ec1ae92e95be2ea9` |
+
+### Deterministic project conversion
+
+Run `node scripts/prepare-forest-photoreal-assets.mjs` after placing the
+accepted generated masters at the script's documented default temp paths, or
+pass `--backdrop-source`, `--wildlife-source` and
+`--conifer-branch-source`. The script verifies every Poly Haven MD5 before
+processing and uses Sharp with Lanczos3 resize kernels.
+
+- Leafy Grass color, OpenGL normal and ARM become 512-by-512 WebPs. Color is
+  shifted toward the approved emerald ground with per-channel multipliers
+  `[0.78, 1.04, 0.85]`, then uses quality 84, the `picture` preset, smart
+  subsampling and effort 6. Both data maps use quality 90, the default preset,
+  no smart subsampling and effort 6.
+- Conifer outputs are 1024 by 512, with the original 2-by-2 branch-card atlas
+  on the left and Poly Haven bark on the right. The color atlas keeps branch
+  alpha and bark opaque, then uses quality 86, `alphaQuality: 100`, the
+  `picture` preset, no smart subsampling and effort 6. The branch side uses a
+  compatible flat OpenGL normal `(128, 128, 255)` and ARM default
+  `(255, 190, 0)`; the bark side uses the downloaded PBR maps. Both data
+  atlases use quality 90, the default preset, no smart subsampling and effort 6.
+- The generated backdrop is cropped/resized to 1024 by 512 and encoded with
+  quality 82, the `picture` preset, smart subsampling and effort 6.
+- The accepted alpha wildlife atlas is resized to a strict 3-by-2 grid at 960
+  by 640 and encoded with quality 84, `alphaQuality: 100`, the `picture` preset,
+  no smart subsampling and effort 6.
+
+| Production file | Dimensions | Bytes | SHA-256 |
+| --- | ---: | ---: | --- |
+| `photoreal/ground-color.webp` | 512x512 | 99,956 | `4638b029cbc3b3c59aa9e19befbc5537a33ca9c4015713678fa471e026805d65` |
+| `photoreal/ground-normal.webp` | 512x512 | 139,296 | `ecd5ec2089e18a458d53948034ce70f0d586aae129190388ec531d86fd70c2d2` |
+| `photoreal/ground-arm.webp` | 512x512 | 84,238 | `cc24d93d9900047cb337d74bd0dacd36a64e0c5ffed3f551b5e6847d3bce1134` |
+| `photoreal/conifer-color.webp` | 1024x512 | 155,656 | `3ef3c9a193ecca5b11923c32c9570dbb6ccc71a6da3d118a98cb521170db0021` |
+| `photoreal/conifer-normal.webp` | 1024x512 | 99,428 | `9bac84fbc4ac6959a9dda9d940374bed037d0d74a3a79d046db88d74b0227ca9` |
+| `photoreal/conifer-arm.webp` | 1024x512 | 49,748 | `55dd8c1d36760e7f632f6b21e96fddf38261229e357dd9a98389397a2b4d1ce4` |
+| `photoreal/backdrop.webp` | 1024x512 | 166,970 | `41da10c0b3e78cdca6502458700ed6a99cbdb21bac3808a8bf352dda17aa2cbb` |
+| `photoreal/wildlife.webp` | 960x640 | 62,566 | `b71fa8625ff8dc2c78b34774777d9e1e1e5feb660328eefed1c246aee4f07814` |
+
+The seven blocking files total 795,292 compressed bytes and have a conservative
+RGBA-plus-mip decode estimate of 15,379,118 bytes. Including optional wildlife,
+the shared pack totals 857,858 compressed bytes.
