@@ -2,6 +2,16 @@ import { expect, test } from "@playwright/test";
 import sharp from "sharp";
 
 const LAB_PATH = "/lab/forest-wedding-journey";
+/**
+ * Hybrid mode blocks entry on the photoreal PBR set, so readiness and
+ * blocking-failure contracts have to intercept those requests rather than the
+ * legacy `materials/` atlases, which only load once the photoreal boundary
+ * falls back to the textured world.
+ */
+const FOREST_PHOTOREAL_BLOCKING_ASSET_GLOB =
+  "**/chungdoi/labs/forest-wedding-journey/photoreal/ground-color.webp";
+const FOREST_LEGACY_BLOCKING_ASSET_GLOB =
+  "**/chungdoi/labs/forest-wedding-journey/materials/foliage-atlas.webp";
 const FOREST_RUNTIME_DIAGNOSTICS_ENABLED = process.env.FOREST_RUNTIME_DIAGNOSTICS === "1";
 const TASK_TEN_PHYSICAL_SCENES = [
   { id: "families", name: "Hai bên gia đình", type: "families" },
@@ -73,9 +83,24 @@ type ForestCameraSample = {
 type ForestRuntimeDiagnosticsSnapshot = {
   readonly adaptiveReductionCount: number;
   readonly ambientCount: number;
+  readonly assets: {
+    readonly entryCompressedBytes: number;
+    readonly entryDecodedRgbaMipBytes: number;
+    readonly sharedCompressedBytes: number;
+    readonly sharedDecodedRgbaMipBytes: number;
+  };
+  readonly chunks: {
+    readonly count: number;
+    readonly lodTreeCounts: {
+      readonly hero: number;
+      readonly impostor: number;
+      readonly mid: number;
+    };
+    readonly residentIndices: readonly number[];
+  };
   readonly environment: {
     readonly decodedRgbaMipBytes: number;
-    readonly mode: "procedural" | "textured";
+    readonly mode: "hybrid" | "procedural" | "textured";
     readonly textures: readonly {
       readonly decodedRgbaMipBytes: number;
       readonly height: number;
@@ -85,6 +110,10 @@ type ForestRuntimeDiagnosticsSnapshot = {
     }[];
   };
   readonly hiddenAmbientCount: number;
+  readonly petals: {
+    readonly instanceCount: number;
+    readonly transformHash: string;
+  };
   readonly photos: {
     readonly activeLeases: number;
     readonly decodedRgbaMipBytes: number;
@@ -119,8 +148,21 @@ type ForestRuntimeDiagnosticsSnapshot = {
   };
   readonly totalEstimatedDecodedRgbaMipBytes: number;
   readonly viewport: "desktop" | "mobile";
-  readonly worldMode: "procedural" | "textured";
+  readonly wildlife: {
+    readonly optionalActorCount: number;
+  };
+  readonly worldMode: "hybrid" | "loading" | "procedural" | "textured";
 };
+
+/** Hybrid entry pack: seven PBR/backdrop textures, exact mip summation. */
+const HYBRID_ENVIRONMENT_DECODED_BYTES = 15_379_116;
+/** Three live gallery photos, measured from the decoded texture cache. */
+const GALLERY_PHOTO_DECODED_BYTES = 44_649_828;
+/** Manifest-estimated ceilings from the design spec. */
+const ENTRY_PAYLOAD_COMPRESSED_CEILING = 4_000_000;
+const SHARED_PAYLOAD_COMPRESSED_CEILING = 12_000_000;
+/** Ambient roster (5) plus the scripted rabbits and doves (7). */
+const WILDLIFE_ACTOR_COUNT = 12;
 
 async function readForestRuntimeDiagnostics(
   page: import("@playwright/test").Page,
@@ -154,10 +196,56 @@ function expectForestRuntimeBudget(
   expect(snapshot.renderer.textures).toBeGreaterThan(0);
   expect(snapshot.photos.retainedCount).toBeLessThanOrEqual(3);
   expect(snapshot.photos.liveCount).toBeLessThanOrEqual(3);
-  expect(snapshot.environment.textures).toHaveLength(4);
+  expect(snapshot.worldMode).toBe("hybrid");
+  expect(snapshot.environment.mode).toBe("hybrid");
+  expect(snapshot.environment.textures).toHaveLength(7);
   expect(snapshot.environment.textures.every(({ height, width }) => (
     height <= 1_024 && width <= 1_024
   ))).toBe(true);
+
+  // Only the entry group may block readiness, so its payload carries the
+  // tighter ceiling; the optional wildlife atlas rides in the shared total.
+  expect(snapshot.assets.entryCompressedBytes).toBeLessThanOrEqual(
+    ENTRY_PAYLOAD_COMPRESSED_CEILING,
+  );
+  expect(snapshot.assets.sharedCompressedBytes).toBeLessThanOrEqual(
+    SHARED_PAYLOAD_COMPRESSED_CEILING,
+  );
+  expect(snapshot.assets.sharedCompressedBytes).toBeGreaterThan(
+    snapshot.assets.entryCompressedBytes,
+  );
+  expect(snapshot.assets.sharedDecodedRgbaMipBytes).toBeGreaterThan(
+    snapshot.assets.entryDecodedRgbaMipBytes,
+  );
+
+  // Chunk residency is what bounds alpha-foliage fill rate. Trees carry a
+  // wider window than undergrowth so the corridor stays closed past the
+  // impostor band — desktop keeps three chunks either side, mobile two — and a
+  // hop long enough to separate the two neighbourhoods keeps `radius + 1`
+  // chunks at each end instead of the whole rail between them.
+  expect(snapshot.chunks.count).toBeGreaterThan(0);
+  expect(snapshot.chunks.residentIndices.length).toBeGreaterThan(0);
+  expect(snapshot.chunks.residentIndices.length).toBeLessThanOrEqual(
+    mobile ? 6 : 8,
+  );
+  expect(snapshot.chunks.residentIndices).toEqual(
+    [...snapshot.chunks.residentIndices].sort((first, second) => first - second),
+  );
+  expect(snapshot.chunks.residentIndices.every((index) => (
+    index >= 0 && index < snapshot.chunks.count
+  ))).toBe(true);
+  const treeTotal = snapshot.chunks.lodTreeCounts.hero
+    + snapshot.chunks.lodTreeCounts.impostor
+    + snapshot.chunks.lodTreeCounts.mid;
+  expect(treeTotal).toBeGreaterThan(0);
+
+  expect(snapshot.petals.instanceCount).toBeGreaterThan(0);
+  expect(snapshot.petals.transformHash).toMatch(/^[0-9a-f]{8}$/);
+  // Five ambient actors plus the seven scripted ones (two rabbits, two gate
+  // doves, three finale doves) that replaced the sphere-built animals. This is a
+  // live census of what is mounted, so a failed atlas reports zero.
+  expect(snapshot.wildlife.optionalActorCount).toBe(WILDLIFE_ACTOR_COUNT);
+
   if (mobile) {
     expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBeLessThanOrEqual(
       64_000_000,
@@ -180,7 +268,7 @@ async function captureForestRuntimeBudgetJourney(
   await navigateToForestScene(page, "gallery-photo:memory-02");
   await expect.poll(async () => (
     await readForestRuntimeDiagnostics(page)
-  ).photos.decodedRgbaMipBytes).toBe(44_649_828);
+  ).photos.decodedRgbaMipBytes).toBe(GALLERY_PHOTO_DECODED_BYTES);
   const gallery = await readForestRuntimeDiagnostics(page);
 
   await navigateToForestScene(page, "gift");
@@ -982,7 +1070,7 @@ test("entry waits for runtime and world readiness", async ({ page }) => {
     markTextureRequested = resolve;
   });
 
-  await page.route("**/chungdoi/labs/forest-wedding-journey/materials/foliage-atlas.webp", async (route) => {
+  await page.route(FOREST_PHOTOREAL_BLOCKING_ASSET_GLOB, async (route) => {
     markTextureRequested();
     await textureRelease;
     await route.continue();
@@ -1004,11 +1092,12 @@ test("entry waits for runtime and world readiness", async ({ page }) => {
   await expect(entry).toBeEnabled();
 });
 
-test("the WebGL forest keeps its daylight skin and readiness across entry", async ({ page }) => {
+test("the WebGL forest keeps its photoreal skin and readiness across entry", async ({ page }) => {
   await page.goto(LAB_PATH);
 
   const canvasBoundary = page.getByTestId("forest-journey-canvas");
-  await expect(canvasBoundary).toHaveAttribute("data-world-skin", "forest-wedding-daylight");
+  await expect(canvasBoundary).toHaveAttribute("data-world-mode", "hybrid");
+  await expect(canvasBoundary).toHaveAttribute("data-world-skin", "forest-wedding-photoreal");
   await expect(canvasBoundary).toHaveAttribute("data-quality-tier", "desktop");
   await expect(canvasBoundary).toHaveAttribute("data-scene-total", "15");
   await expect(canvasBoundary).toHaveAttribute("data-runtime-ready", "true");
@@ -1387,10 +1476,42 @@ test("development exposes one on-demand renderer snapshot without render data at
   expect(snapshot.renderer.calls).toBeGreaterThan(0);
   expect(snapshot.renderer.triangles).toBeGreaterThan(0);
   expect(snapshot.renderer.frame).toBeGreaterThan(0);
-  expect(snapshot.worldMode).toBe("textured");
-  expect(snapshot.environment.decodedRgbaMipBytes).toBe(18_175_312);
+  expect(snapshot.worldMode).toBe("hybrid");
+  expect(snapshot.environment.mode).toBe("hybrid");
+  expect(snapshot.environment.decodedRgbaMipBytes).toBe(
+    HYBRID_ENVIRONMENT_DECODED_BYTES,
+  );
   expect(snapshot.photos.retainedCount).toBe(0);
-  expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBe(18_175_312);
+  expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBe(
+    HYBRID_ENVIRONMENT_DECODED_BYTES,
+  );
+
+  // Manifest estimates are static, so they pin the exact download and decode
+  // cost the hybrid boundary commits to before it reports readiness. The
+  // compressed figures fell when the asset pack was regenerated — most of it
+  // from `backdrop.webp` (166_970 -> 33_682 bytes), where baking in aerial
+  // perspective lifted the tonal floor and removed the noisy near-black region
+  // WebP had been spending bits on. Decode cost is unchanged because it follows
+  // dimensions, not entropy. `forest-asset-manifest.test.ts` is what holds these
+  // totals to the bytes actually on disk; this only pins what the reader reports.
+  expect(snapshot.assets).toEqual({
+    entryCompressedBytes: 719_946,
+    entryDecodedRgbaMipBytes: 15_379_118,
+    sharedCompressedBytes: 809_070,
+    sharedDecodedRgbaMipBytes: 18_655_918,
+  });
+  expect(snapshot.wildlife.optionalActorCount).toBe(WILDLIFE_ACTOR_COUNT);
+
+  // At the gate the window is clamped to the start of the rail, so chunk 0 plus
+  // the three ahead of it are resident, and the near band is still
+  // hero-quality.
+  expect(snapshot.chunks.residentIndices).toEqual([0, 1, 2, 3]);
+  expect(snapshot.chunks.lodTreeCounts.hero).toBeGreaterThan(0);
+  expect(snapshot.petals.instanceCount).toBe(72);
+  const petalHash = snapshot.petals.transformHash;
+  expect(petalHash).toMatch(/^[0-9a-f]{8}$/);
+  expect((await readForestRuntimeDiagnostics(page)).petals.transformHash)
+    .toBe(petalHash);
 
   await page.getByTestId("forest-journey-enter").click();
   await expect(page.getByTestId("forest-journey-stage")).toHaveAttribute(
@@ -1431,11 +1552,10 @@ test("development removes the on-demand diagnostics reader after WebGL fallback"
   ).__forestWeddingJourneyDiagnostics)).toBe("undefined");
 });
 
-test("production omits the forest runtime diagnostics API", async ({ page }, testInfo) => {
+test("the default suite omits the forest runtime diagnostics API", async ({ page }) => {
   test.skip(
-    FOREST_RUNTIME_DIAGNOSTICS_ENABLED
-      || testInfo.project.metadata.forestProductionBuild !== true,
-    "this negative contract runs only in the production-build suite",
+    FOREST_RUNTIME_DIAGNOSTICS_ENABLED,
+    "this negative contract runs only when diagnostics are not opted in",
   );
   await page.goto(LAB_PATH);
   await expect(page.getByTestId("forest-journey-enter")).toBeEnabled();
@@ -1457,6 +1577,9 @@ test.describe("desktop forest runtime budgets", () => {
       !FOREST_RUNTIME_DIAGNOSTICS_ENABLED,
       "development runtime diagnostics run only in the explicit diagnostic suite",
     );
+    // Walking the whole rail to the finale costs one settle per scene, so this
+    // budget sweep needs more than the suite-wide 60s allowance.
+    test.setTimeout(180_000);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     const snapshots = await captureForestRuntimeBudgetJourney(page);
 
@@ -1464,7 +1587,9 @@ test.describe("desktop forest runtime budgets", () => {
     expect(snapshots.gate.photos.activeLeases).toBe(0);
     expect(snapshots.gate.photos.liveCount).toBe(0);
     expect(snapshots.gate.photos.decodedRgbaMipBytes).toBe(0);
-    expect(snapshots.gate.totalEstimatedDecodedRgbaMipBytes).toBe(18_175_312);
+    expect(snapshots.gate.totalEstimatedDecodedRgbaMipBytes).toBe(
+      HYBRID_ENVIRONMENT_DECODED_BYTES,
+    );
     for (const [sceneId, snapshot] of [
       ["gallery-photo:memory-02", snapshots.gallery],
       ["gift", snapshots.gift],
@@ -1472,9 +1597,11 @@ test.describe("desktop forest runtime budgets", () => {
     ] as const) {
       expect(snapshot.scene.id).toBe(sceneId);
       expect(snapshot.photos.retainedCount).toBe(3);
-      expect(snapshot.photos.decodedRgbaMipBytes).toBe(44_649_828);
+      expect(snapshot.photos.decodedRgbaMipBytes).toBe(GALLERY_PHOTO_DECODED_BYTES);
       expect(snapshot.photos.unmeasuredCount).toBe(0);
-      expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBe(62_825_140);
+      expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBe(
+        HYBRID_ENVIRONMENT_DECODED_BYTES + GALLERY_PHOTO_DECODED_BYTES,
+      );
     }
     expect(snapshots.gallery.photos.activeLeases).toBe(3);
     expect(snapshots.gallery.photos.liveCount).toBe(3);
@@ -1501,6 +1628,8 @@ test.describe("mobile forest runtime budgets", () => {
       !FOREST_RUNTIME_DIAGNOSTICS_ENABLED,
       "development runtime diagnostics run only in the explicit diagnostic suite",
     );
+    // Same rail walk as the desktop sweep, so it needs the same extended budget.
+    test.setTimeout(180_000);
     await page.emulateMedia({ reducedMotion: "no-preference" });
     const snapshots = await captureForestRuntimeBudgetJourney(page);
 
@@ -1508,7 +1637,9 @@ test.describe("mobile forest runtime budgets", () => {
     expect(snapshots.gate.photos.activeLeases).toBe(0);
     expect(snapshots.gate.photos.liveCount).toBe(0);
     expect(snapshots.gate.photos.decodedRgbaMipBytes).toBe(0);
-    expect(snapshots.gate.totalEstimatedDecodedRgbaMipBytes).toBe(18_175_312);
+    expect(snapshots.gate.totalEstimatedDecodedRgbaMipBytes).toBe(
+      HYBRID_ENVIRONMENT_DECODED_BYTES,
+    );
     for (const [sceneId, snapshot] of [
       ["gallery-photo:memory-02", snapshots.gallery],
       ["gift", snapshots.gift],
@@ -1516,9 +1647,11 @@ test.describe("mobile forest runtime budgets", () => {
     ] as const) {
       expect(snapshot.scene.id).toBe(sceneId);
       expect(snapshot.photos.retainedCount).toBe(3);
-      expect(snapshot.photos.decodedRgbaMipBytes).toBe(44_649_828);
+      expect(snapshot.photos.decodedRgbaMipBytes).toBe(GALLERY_PHOTO_DECODED_BYTES);
       expect(snapshot.photos.unmeasuredCount).toBe(0);
-      expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBe(62_825_140);
+      expect(snapshot.totalEstimatedDecodedRgbaMipBytes).toBe(
+        HYBRID_ENVIRONMENT_DECODED_BYTES + GALLERY_PHOTO_DECODED_BYTES,
+      );
     }
     expect(snapshots.gallery.photos.activeLeases).toBe(3);
     expect(snapshots.gallery.photos.liveCount).toBe(3);
@@ -1636,7 +1769,7 @@ test.describe("mobile WebGL quality", () => {
     await page.goto(LAB_PATH);
 
     const canvasBoundary = page.getByTestId("forest-journey-canvas");
-    await expect(canvasBoundary).toHaveAttribute("data-world-skin", "forest-wedding-daylight");
+    await expect(canvasBoundary).toHaveAttribute("data-world-skin", "forest-wedding-photoreal");
     await expect(canvasBoundary).toHaveAttribute("data-quality-tier", "mobile");
     await expect(canvasBoundary).toHaveAttribute("data-scene-total", "15");
     await expect(canvasBoundary).toHaveAttribute("data-world-ready", "true");
@@ -1669,10 +1802,12 @@ test.describe("mobile WebGL quality", () => {
 });
 
 test("failed blocking materials choose terminal procedural WebGL", async ({ page }) => {
-  await page.route(
-    "**/chungdoi/labs/forest-wedding-journey/materials/foliage-atlas.webp",
-    (route) => route.abort("failed"),
-  );
+  for (const glob of [
+    FOREST_PHOTOREAL_BLOCKING_ASSET_GLOB,
+    FOREST_LEGACY_BLOCKING_ASSET_GLOB,
+  ]) {
+    await page.route(glob, (route) => route.abort("failed"));
+  }
   await page.goto(LAB_PATH);
 
   const canvasBoundary = page.getByTestId("forest-journey-canvas");
@@ -1686,6 +1821,43 @@ test("failed blocking materials choose terminal procedural WebGL", async ({ page
   await expect(canvasBoundary).toHaveAttribute("data-active-petal-instances", "72");
   await expect(page.getByTestId("forest-journey-voile")).toBeVisible();
   await expect(page.getByTestId("forest-journey-enter")).toBeEnabled();
+});
+
+test("failed photoreal materials fall back to legacy textured WebGL", async ({ page }) => {
+  await page.route(
+    FOREST_PHOTOREAL_BLOCKING_ASSET_GLOB,
+    (route) => route.abort("failed"),
+  );
+  await page.goto(LAB_PATH);
+
+  const canvasBoundary = page.getByTestId("forest-journey-canvas");
+  await expect(canvasBoundary).toHaveAttribute("data-world-mode", "textured");
+  await expect(canvasBoundary).toHaveAttribute("data-world-skin", "forest-wedding-daylight");
+  await expect(canvasBoundary).toHaveAttribute("data-world-ready", "true");
+  await expect(page.getByTestId("forest-journey-fallback")).toHaveCount(0);
+  await expect(page.getByTestId("forest-journey-enter")).toBeEnabled();
+});
+
+test("a failed optional wildlife atlas keeps the photoreal world ready", async ({ page }) => {
+  await page.route(
+    "**/chungdoi/labs/forest-wedding-journey/photoreal/wildlife.webp",
+    (route) => route.abort("failed"),
+  );
+  await page.goto(LAB_PATH);
+
+  const canvasBoundary = page.getByTestId("forest-journey-canvas");
+  await expect(canvasBoundary).toHaveAttribute("data-world-mode", "hybrid");
+  await expect(canvasBoundary).toHaveAttribute("data-world-skin", "forest-wedding-photoreal");
+  await expect(canvasBoundary).toHaveAttribute("data-world-ready", "true");
+  await expect(page.getByTestId("forest-journey-fallback")).toHaveCount(0);
+  await expect(page.getByTestId("forest-journey-enter")).toBeEnabled();
+
+  // The census counts mounted layers, so a rejected atlas must report nothing —
+  // both the ambient sightings and the scripted rabbits and doves ride on it.
+  // While this number came from a module constant it read 5 here regardless,
+  // which made everything above the only thing this test really checked.
+  expect((await readForestRuntimeDiagnostics(page)).wildlife.optionalActorCount)
+    .toBe(0);
 });
 
 test("reduced WebGL freezes every threshold cue and keeps deterministic petals", async ({ page }) => {
@@ -1770,13 +1942,22 @@ test("non-loader world render failures switch to the DOM fallback", async ({ pag
     const nativeIterator = Array.prototype[Symbol.iterator];
     Object.defineProperty(Array.prototype, Symbol.iterator, {
       configurable: true,
+      /**
+       * Every world variant iterates a small array of loaded textures while
+       * building its materials: the hybrid photoreal terrain walks its three
+       * PBR maps, and the legacy textured world destructures its four atlases.
+       * Throwing there injects a render-time failure that is not an asset load
+       * error, so no asset boundary may absorb it.
+       */
       value: function forestTextureIterator(this: unknown[]) {
-        const isLoadedGateTextureSet = this.length === 4 && this.every((item) => (
-          typeof item === "object"
-          && item !== null
-          && (item as { isTexture?: unknown }).isTexture === true
-        ));
-        if (isLoadedGateTextureSet) {
+        const isLoadedForestTextureSet = this.length >= 3
+          && this.length <= 4
+          && this.every((item) => (
+            typeof item === "object"
+            && item !== null
+            && (item as { isTexture?: unknown }).isTexture === true
+          ));
+        if (isLoadedForestTextureSet) {
           faultWindow.__forestForcedWorldRenderError = true;
           throw new Error("forced non-loader forest world render failure");
         }
