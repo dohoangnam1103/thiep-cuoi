@@ -1,0 +1,1355 @@
+.stage {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 14%, rgb(255 246 224 / 88%), transparent 34%),
+    linear-gradient(145deg, #1f4a63 0%, #4f93b2 48%, #f0dcb8 100%);
+  color: #1d3a44;
+  display: flex;
+  min-height: 100dvh;
+  overflow: clip;
+  padding: 1.5rem;
+  position: relative;
+  touch-action: auto;
+  width: 100%;
+}
+
+.stage::before,
+.stage::after {
+  border: 1px solid rgb(255 255 238 / 42%);
+  border-radius: 999px;
+  content: "";
+  pointer-events: none;
+  position: absolute;
+}
+
+.stage::before {
+  height: 25rem;
+  left: -12rem;
+  top: -8rem;
+  width: 25rem;
+}
+
+.stage::after {
+  bottom: -18rem;
+  height: 32rem;
+  right: -14rem;
+  width: 32rem;
+}
+
+.entry {
+  display: grid;
+  inset: 0;
+  padding: 1.5rem;
+  place-items: center;
+  pointer-events: none;
+  position: absolute;
+  z-index: 10;
+}
+
+.entryVoile {
+  align-items: center;
+  aspect-ratio: 344 / 432;
+  background:
+    linear-gradient(90deg, rgb(255 255 248 / 8%), rgb(255 255 248 / 46%) 48%, rgb(232 214 182 / 16%)),
+    repeating-linear-gradient(92deg, rgb(255 255 255 / 7%) 0 1px, transparent 1px 17px),
+    rgb(250 242 226 / 64%);
+  border-block: 1px solid rgb(255 253 240 / 58%);
+  box-sizing: border-box;
+  box-shadow:
+    0 1.2rem 2.8rem rgb(24 58 74 / 18%),
+    inset 0 0 2rem rgb(255 255 248 / 32%);
+  clip-path: polygon(1.5% 0, 98.8% 0.7%, 100% 98.8%, 1% 100%, 0 35%);
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  justify-content: center;
+  max-width: 344px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 1.5rem 1.25rem;
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  transform-origin: 50% 0;
+  transition:
+    opacity 650ms ease,
+    transform 650ms cubic-bezier(0.22, 0.72, 0.24, 1);
+  width: min(344px, calc(100vw - 48px), calc((100dvh - 48px) * 344 / 432));
+}
+
+.entryVoile::before,
+.entryVoile::after {
+  background: linear-gradient(180deg, transparent, rgb(131 118 96 / 16%), transparent);
+  content: "";
+  inset-block: 5%;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
+}
+
+.entryVoile::before {
+  left: 17%;
+}
+
+.entryVoile::after {
+  right: 13%;
+}
+
+.entryVoile[data-departing="true"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-48%) scaleY(0.82);
+}
+
+.kicker {
+  color: #4d7182;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.names {
+  color: #1e4356;
+  display: flex;
+  flex-direction: column;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.75rem, 7vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.02;
+  margin: 1rem 0;
+}
+
+.dates {
+  color: #4a6f80;
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  justify-content: center;
+  letter-spacing: 0.035em;
+}
+
+.body {
+  color: #3a5b68;
+  line-height: 1.6;
+  margin: 1.5rem auto 0;
+  max-width: 31ch;
+}
+
+.loading {
+  color: #63808c;
+  font-size: 0.875rem;
+  margin: 1.5rem 0 0;
+}
+
+.enter {
+  background: #23566b;
+  border: 1px solid #1a4353;
+  border-radius: 999px;
+  color: #fdf6e6;
+  font: inherit;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  min-height: 2.75rem;
+  min-width: 9rem;
+  padding: 0.625rem 1.25rem;
+}
+
+.enter:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.enter:focus-visible {
+  outline: 3px solid #e8a24f;
+  outline-offset: 3px;
+}
+
+.fallbackShell {
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.canvasShell {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.fallbackStage {
+  --fallback-far-x: 0px;
+  --fallback-far-y: 0px;
+  --fallback-mid-x: 0px;
+  --fallback-mid-y: 0px;
+  --fallback-sand-x: 0px;
+  --fallback-sand-y: 0px;
+  --fallback-near-x: 0px;
+  --fallback-near-y: 0px;
+
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 18%, rgb(255 248 222 / 92%), transparent 38%),
+    linear-gradient(180deg, #a8cfe0 0%, #e6dcc0 58%, #c9a97e 100%);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5rem 1.25rem 8rem;
+  position: relative;
+  transition: opacity 650ms ease, filter 650ms ease;
+  width: 100%;
+}
+
+.fallbackStage[data-reduced-motion="true"] {
+  transition: opacity 180ms ease;
+  transition-duration: 180ms !important;
+}
+
+.fallbackResidentScenes {
+  display: grid;
+  inset: 5rem 1.25rem 8rem;
+  place-items: center;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.fallbackResidentScenes > * {
+  grid-area: 1 / 1;
+  pointer-events: auto;
+}
+
+/*
+ * Shore bands for the DOM fallback.
+ *
+ * The forest twin paints these four bands from a foliage, wildflower and petal
+ * sprite atlas. This lab has no sprite atlas and cannot get one: the decoded
+ * texture ceiling for the WebGL world is already at 62.9 MiB of its 64 MiB
+ * budget, and an atlas the fallback alone would use is not worth a byte of it.
+ * The bands are therefore drawn entirely in CSS — a sky and sea gradient, a
+ * horizon line, a wet-sand sheen and a dune-grass silhouette — which costs no
+ * download and no decode, and reads as a shoreline rather than as a forest with
+ * missing images.
+ */
+.fallbackSky,
+.fallbackSea,
+.fallbackWetSand,
+.fallbackDuneGrass {
+  inset: -3rem;
+  pointer-events: none;
+  position: absolute;
+  will-change: transform;
+}
+
+.fallbackSky {
+  background:
+    linear-gradient(
+      180deg,
+      #7fb4d8 0%,
+      #b9d4e4 34%,
+      #f4d9b2 68%,
+      #f8c98d 100%
+    );
+  bottom: 46%;
+  transform: translate3d(var(--fallback-far-x), var(--fallback-far-y), 0);
+}
+
+.fallbackSky::after {
+  background: radial-gradient(
+    circle at 68% 88%,
+    rgb(255 236 196 / 92%) 0 12%,
+    rgb(255 224 168 / 46%) 12% 26%,
+    transparent 42%
+  );
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.fallbackSea {
+  background:
+    linear-gradient(
+      180deg,
+      #3f7fa4 0%,
+      #4f93b2 26%,
+      #74b3c6 62%,
+      #a8cfd4 100%
+    ),
+    repeating-linear-gradient(
+      179deg,
+      rgb(255 255 255 / 10%) 0 1px,
+      transparent 1px 9px
+    );
+  bottom: 34%;
+  opacity: 0.94;
+  top: 54%;
+  transform: translate3d(var(--fallback-mid-x), var(--fallback-mid-y), 0);
+}
+
+.fallbackSea::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 244 214 / 72%) 46% 74%,
+    transparent
+  );
+  content: "";
+  height: 2px;
+  inset-inline: 0;
+  position: absolute;
+  top: 0;
+}
+
+.fallbackWetSand {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(196 176 146 / 88%) 0%,
+      rgb(224 205 172 / 82%) 22%,
+      rgb(238 223 194 / 76%) 100%
+    ),
+    repeating-linear-gradient(
+      96deg,
+      rgb(255 255 255 / 6%) 0 2px,
+      transparent 2px 14px
+    );
+  opacity: 0.88;
+  top: 62%;
+  transform: translate3d(var(--fallback-sand-x), var(--fallback-sand-y), 0);
+}
+
+.fallbackWetSand::before {
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 52%),
+    transparent
+  );
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  content: "";
+  height: 1.4rem;
+  inset-inline: -6%;
+  position: absolute;
+  top: -0.7rem;
+}
+
+.fallbackDuneGrass {
+  background: repeating-linear-gradient(
+    84deg,
+    rgb(140 148 96 / 62%) 0 2px,
+    transparent 2px 12px
+  );
+  clip-path: polygon(0 46%, 12% 8%, 23% 52%, 37% 12%, 51% 48%, 66% 6%, 79% 50%, 92% 14%, 100% 46%, 100% 100%, 0 100%);
+  opacity: 0.72;
+  top: 84%;
+  transform: translate3d(var(--fallback-near-x), var(--fallback-near-y), 0);
+}
+
+
+.fallbackGestureSurface {
+  inset: 0;
+  position: absolute;
+  touch-action: auto;
+  z-index: 1;
+}
+
+.fallbackGestureSurfaceActive {
+  touch-action: none;
+}
+
+.physicalSurface {
+  --beach-dress-color-1: #1d3b4e;
+  --beach-dress-color-2: #f1ede0;
+  --beach-dress-color-3: #c9a24a;
+  --beach-dress-color-4: #7f9aa1;
+  --beach-dress-color-5: #d9d0bc;
+
+  background:
+    linear-gradient(92deg, rgb(108 86 58 / 6%), transparent 12% 88%, rgb(108 86 58 / 7%)),
+    #fff9e8;
+  border: 1px solid rgb(82 65 43 / 26%);
+  box-shadow:
+    0 0.12rem 0 rgb(113 87 58 / 26%),
+    0 0.8rem 1.8rem rgb(30 58 72 / 22%);
+  box-sizing: border-box;
+  color: #1f4555;
+  max-height: 25rem;
+  overflow: auto;
+  padding: 1rem;
+  text-align: center;
+  touch-action: auto;
+  width: 20rem;
+}
+
+.physicalSurface[data-beach-visible="false"] {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.physicalSurface h2 {
+  color: #204656;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.65rem;
+  font-weight: 500;
+  line-height: 1.08;
+  margin: 0 0 0.75rem;
+}
+
+.physicalSurface h2:focus {
+  outline: 3px solid #a8612f;
+  outline-offset: 0.3rem;
+}
+
+.physicalSurface p,
+.physicalSurface address,
+.physicalSurface dd,
+.physicalSurface dt {
+  margin-block: 0.25rem;
+}
+
+.physicalSurface address {
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.familyPapers {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.physicalSurface[data-beach-scene-type="families"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  width: 26rem;
+}
+
+.physicalSurface[data-beach-scene-type="families"] > h2 {
+  background: #f6eedc;
+  border-block: 1px solid rgb(78 61 40 / 26%);
+  box-shadow: 0 0.45rem 1rem rgb(32 60 74 / 18%);
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+}
+
+.familyPaper {
+  background:
+    linear-gradient(88deg, rgb(122 94 61 / 7%), transparent 18% 84%, rgb(122 94 61 / 6%)),
+    #fff9e8;
+  border-block: 1px solid rgb(92 68 43 / 24%);
+  box-shadow: 0 0.6rem 1.2rem rgb(34 62 76 / 20%);
+  min-height: 9.4rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 0.9rem 0.7rem;
+}
+
+.familyPaper h3 {
+  color: #4c6f80;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.familyPaper p,
+.familyPaper address {
+  font-size: 0.78rem;
+}
+
+.invitationPaper {
+  border-block: 1px solid rgb(100 76 47 / 23%);
+  line-height: 1.55;
+  padding: 0.65rem 0.45rem;
+  white-space: pre-line;
+}
+
+.paperLabel {
+  color: #6c7f88;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.calendarPaper dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.calendarPaper dl > div {
+  border-bottom: 1px solid rgb(82 65 43 / 18%);
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: minmax(4.6rem, 0.7fr) 1.3fr;
+  padding-bottom: 0.35rem;
+}
+
+.calendarPaper dt {
+  color: #637c88;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.calendarPaper dd {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.calendarPaper dd time {
+  display: block;
+}
+
+.calendarPaper dd time + time {
+  color: #5a7381;
+  font-size: 0.78rem;
+  margin-top: 0.18rem;
+}
+
+.calendarPaper a {
+  color: #23566b;
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 0.8rem;
+  text-underline-offset: 0.2rem;
+}
+
+.physicalSurface[data-beach-scene-type="schedule"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  max-height: none;
+  overflow: visible;
+  width: 30rem;
+}
+
+.physicalSurface[data-beach-scene-type="schedule"] > h2 {
+  background: #f8f1df;
+  border-block: 1px solid rgb(82 65 43 / 24%);
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+}
+
+.scheduleCards {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style-position: inside;
+  margin: 0;
+  padding: 0;
+}
+
+.scheduleCards li {
+  background: #fff9e8;
+  border-block: 1px solid rgb(92 68 43 / 23%);
+  box-shadow: 0 0.4rem 0.8rem rgb(34 62 76 / 16%);
+  font-size: 0.62rem;
+  min-height: 5.2rem;
+  padding: 0.55rem 0.3rem;
+}
+
+.scheduleCards time,
+.scheduleCards span {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.scheduleCards time {
+  color: #557784;
+  font-weight: 800;
+}
+
+.physicalSurface[data-beach-scene-type="gallery-photo"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  height: 24rem;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  width: 17rem;
+}
+
+.physicalSurface[data-beach-scene-type="gallery-photo"] > h2 {
+  background: #fff9e8;
+  border-block: 1px solid rgb(92 68 43 / 24%);
+  bottom: 0.3rem;
+  box-shadow: 0 0.45rem 0.8rem rgb(30 58 72 / 18%);
+  font-size: 1.2rem;
+  left: 50%;
+  margin: 0;
+  padding: 0.32rem 0.7rem;
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.gallerySemanticEasel {
+  height: 100%;
+  margin: 0;
+  position: relative;
+  width: 100%;
+}
+
+/*
+ * The fallback gallery: a frame hung from a line between two driftwood posts.
+ *
+ * The forest twin draws a standing easel with a wildflower cluster from the
+ * sprite atlas. This lab hangs its frames — that is the 3D scene's contract, so
+ * the fallback has to read the same way — and it has no atlas, so the posts, the
+ * catenary line and the sand shadow are drawn in CSS. `--beach-fallback-tilt`
+ * gives each hung frame the same slight, deliberate lean the instanced frames
+ * carry in the world.
+ */
+.fallbackGalleryScaffold {
+  inset: 0.75rem 0.35rem 2.7rem;
+  pointer-events: none;
+  position: absolute;
+}
+
+.fallbackGalleryScaffold::before,
+.fallbackGalleryScaffold::after {
+  background: linear-gradient(90deg, #9c8264, #c2a982 46%, #8a7154);
+  bottom: 0.55rem;
+  box-shadow: 0 0.2rem 0.35rem rgb(74 66 48 / 26%);
+  content: "";
+  height: 88%;
+  position: absolute;
+  width: 0.42rem;
+  z-index: 0;
+}
+
+.fallbackGalleryScaffold::before {
+  left: 4%;
+  transform: rotate(-3deg);
+}
+
+.fallbackGalleryScaffold::after {
+  right: 4%;
+  transform: rotate(4deg);
+}
+
+.fallbackGalleryContact {
+  background: radial-gradient(ellipse, rgb(122 104 74 / 30%), transparent 70%);
+  bottom: -0.25rem;
+  height: 1.25rem;
+  left: 8%;
+  position: absolute;
+  width: 84%;
+}
+
+/* The hanging line: a shallow catenary between the two posts. */
+.fallbackGalleryCrossbar {
+  border-bottom: 0.14rem solid rgb(240 232 210 / 82%);
+  border-radius: 0 0 48% 48% / 0 0 100% 100%;
+  box-shadow: 0 0.14rem 0.28rem rgb(74 66 48 / 18%);
+  height: 1.5rem;
+  left: 5%;
+  position: absolute;
+  top: 5%;
+  width: 90%;
+  z-index: 1;
+}
+
+.fallbackGalleryFrame {
+  background: #fffaf0;
+  border: 0.42rem solid #b08e63;
+  box-shadow:
+    inset 0 0 0 0.2rem #f6efdd,
+    0 0.7rem 1.2rem rgb(74 66 48 / 26%);
+  display: block;
+  height: 74%;
+  left: 15%;
+  overflow: hidden;
+  padding: 0.22rem;
+  position: absolute;
+  top: 13%;
+  transform: rotate(var(--beach-fallback-tilt, -1.4deg));
+  transform-origin: 50% 0;
+  width: 70%;
+  z-index: 2;
+}
+
+/* Two short cords from the line down to the frame's top corners. */
+.fallbackGalleryCords::before,
+.fallbackGalleryCords::after {
+  background: rgb(240 232 210 / 76%);
+  content: "";
+  height: 9%;
+  position: absolute;
+  top: 6%;
+  width: 0.1rem;
+  z-index: 3;
+}
+
+.fallbackGalleryCords::before {
+  left: 26%;
+  transform: rotate(9deg);
+}
+
+.fallbackGalleryCords::after {
+  right: 26%;
+  transform: rotate(-9deg);
+}
+
+.photoUnavailable {
+  align-items: center;
+  background:
+    linear-gradient(95deg, rgb(116 89 57 / 7%), transparent 18% 86%, rgb(116 89 57 / 6%)),
+    #f3ecda;
+  border: 1px solid rgb(92 68 43 / 22%);
+  display: flex;
+  inset: 1.2rem 0.45rem 2.8rem;
+  justify-content: center;
+  line-height: 1.45;
+  padding: 1rem;
+  position: absolute;
+  z-index: 4;
+}
+
+.visuallyHidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.physicalSurface[data-beach-scene-type="dress-code"] {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  width: 24rem;
+}
+
+.physicalSurface[data-beach-scene-type="dress-code"] > h2 {
+  background: #f8f1df;
+  border-block: 1px solid rgb(82 65 43 / 24%);
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+}
+
+.dressFabricStrips {
+  display: grid;
+  gap: 0.38rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dressFabricStrips li {
+  background: #fff9e8;
+  border-block: 1px solid rgb(82 65 43 / 18%);
+  box-shadow: 0 0.35rem 0.7rem rgb(30 58 72 / 16%);
+  padding: 0.35rem;
+}
+
+.dressFabricStrips span {
+  box-shadow: inset 0 0 0 1px rgb(32 54 66 / 12%);
+  display: block;
+  height: 5.8rem;
+}
+
+.dressFabricStrips li:nth-child(1) span {
+  background: var(--beach-dress-color-1);
+}
+
+.dressFabricStrips li:nth-child(2) span {
+  background: var(--beach-dress-color-2);
+}
+
+.dressFabricStrips li:nth-child(3) span {
+  background: var(--beach-dress-color-3);
+}
+
+.dressFabricStrips li:nth-child(4) span {
+  background: var(--beach-dress-color-4);
+}
+
+.dressFabricStrips li:nth-child(5) span {
+  background: var(--beach-dress-color-5);
+}
+
+.dressFabricStrips code {
+  color: #3b5563;
+  display: block;
+  font-family: inherit;
+  font-size: 0.55rem;
+  margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.venueAddressPaper {
+  background: #fff9e8;
+  border-block: 1px solid rgb(94 70 44 / 24%);
+  box-shadow: inset 0 0 1.2rem rgb(130 99 63 / 7%);
+  line-height: 1.5;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 0.8rem;
+}
+
+.venueAddressPaper p {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-top: 0.7rem;
+}
+
+.venueAddressPaper p span {
+  color: #5b7784;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.physicalSurface[data-beach-scene-type="map"] {
+  width: min(27rem, calc(100vw - 3rem));
+}
+
+.mapPaper {
+  background:
+    linear-gradient(23deg, transparent 47%, rgb(96 124 138 / 16%) 48% 51%, transparent 52%),
+    #f6efd9;
+  border: 1px solid rgb(90 69 44 / 24%);
+  box-shadow: inset 0 0 1.2rem rgb(94 75 48 / 8%);
+  padding: 0.75rem;
+  touch-action: auto;
+}
+
+.mapPaper summary {
+  color: #23566b;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.45;
+  min-height: 2.75rem;
+  overflow-wrap: anywhere;
+  padding: 0.45rem;
+}
+
+.localMapDrawing {
+  background:
+    radial-gradient(circle at 22% 65%, #b96e55 0 0.28rem, transparent 0.32rem),
+    radial-gradient(circle at 72% 26%, #5f8494 0 0.36rem, transparent 0.4rem),
+    linear-gradient(148deg, transparent 43%, #b99d75 44% 48%, transparent 49%),
+    linear-gradient(38deg, transparent 50%, #d0b587 51% 55%, transparent 56%),
+    #ede2c5;
+  border: 1px solid rgb(83 73 52 / 18%);
+  height: 7rem;
+  margin-block: 0.45rem 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.localMapDrawing span {
+  background: #64899a;
+  border-radius: 50% 45% 55% 40%;
+  height: 1.6rem;
+  position: absolute;
+  width: 2.2rem;
+}
+
+.localMapDrawing span:nth-child(1) {
+  left: 10%;
+  top: 14%;
+}
+
+.localMapDrawing span:nth-child(2) {
+  right: 12%;
+  top: 54%;
+}
+
+.localMapDrawing span:nth-child(3) {
+  bottom: 8%;
+  left: 46%;
+  transform: scale(0.75);
+}
+
+.mapPaper a {
+  background: #23566b;
+  border-radius: 999px;
+  color: #fdf6e6;
+  display: inline-grid;
+  font-size: 0.78rem;
+  font-weight: 700;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  place-items: center;
+}
+
+.physicalSurface[data-beach-scene-type="rsvp"] {
+  max-height: 30rem;
+  width: min(25rem, calc(100vw - 3rem));
+}
+
+.rsvpForm {
+  display: grid;
+  gap: 0.6rem;
+  text-align: left;
+  touch-action: auto;
+}
+
+.rsvpForm label {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.rsvpForm label > span {
+  color: #4d6b7a;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rsvpForm input,
+.rsvpForm select,
+.rsvpForm textarea {
+  background: rgb(255 253 244 / 92%);
+  border: 1px solid rgb(52 82 98 / 28%);
+  border-radius: 0.35rem;
+  color: #1f4555;
+  font: inherit;
+  font-size: 1rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.65rem;
+  width: 100%;
+}
+
+.rsvpForm textarea {
+  min-height: 4rem;
+  resize: vertical;
+}
+
+.rsvpForm button {
+  background: #23566b;
+  border: 1px solid #1a4353;
+  border-radius: 999px;
+  color: #fdf6e6;
+  font: inherit;
+  font-weight: 700;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+}
+
+.rsvpForm [role="status"] {
+  color: #566f7c;
+  min-height: 1.25rem;
+  text-align: center;
+}
+
+.physicalSurface[data-beach-scene-type="wishes"] {
+  width: min(28rem, calc(100vw - 3rem));
+}
+
+.wishesGuestbook {
+  display: grid;
+  gap: 0.75rem;
+  touch-action: auto;
+}
+
+.wishNotes {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: 8rem;
+  overscroll-behavior: contain;
+  overflow-y: auto;
+  padding: 0.25rem;
+  touch-action: pan-y;
+}
+
+.wishNotes article {
+  background: #f2e8cb;
+  border: 1px solid rgb(93 72 46 / 18%);
+  box-shadow: 0 0.3rem 0.55rem rgb(38 60 72 / 14%);
+  min-width: 0;
+  padding: 0.55rem;
+}
+
+.wishNotes article:nth-child(even) {
+  background: #f8efdc;
+  transform: rotate(0.8deg);
+}
+
+.wishNotes p {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.wishNotes cite {
+  color: #52717f;
+  display: block;
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+.wishForm {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  text-align: left;
+}
+
+.wishForm label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.wishForm label > span {
+  color: #4d6b7a;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.wishForm input,
+.wishForm textarea {
+  background: rgb(255 253 244 / 92%);
+  border: 1px solid rgb(52 82 98 / 28%);
+  border-radius: 0.35rem;
+  color: #1f4555;
+  font: inherit;
+  font-size: 1rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.6rem;
+  width: 100%;
+}
+
+.wishForm textarea {
+  min-height: 3.5rem;
+  resize: vertical;
+}
+
+.wishForm button {
+  background: #23566b;
+  border: 1px solid #1a4353;
+  border-radius: 999px;
+  color: #fdf6e6;
+  font: inherit;
+  font-weight: 700;
+  grid-column: 1 / -1;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+}
+
+.wishForm [role="status"] {
+  grid-column: 1 / -1;
+  min-height: 1.25rem;
+  text-align: center;
+}
+
+.physicalSurface[data-beach-scene-type="gift"] {
+  width: min(27rem, calc(100vw - 3rem));
+}
+
+.giftEnvelopes {
+  display: grid;
+  gap: 0.75rem;
+  touch-action: auto;
+}
+
+.giftEnvelopeButtons {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.giftEnvelopeButtons > button {
+  background:
+    linear-gradient(145deg, transparent 48%, rgb(156 116 73 / 20%) 49% 51%, transparent 52%),
+    #f3e3c6;
+  border: 1px solid rgb(98 73 44 / 28%);
+  box-shadow: 0 0.45rem 0.8rem rgb(38 60 72 / 16%);
+  color: #23566b;
+  font: inherit;
+  min-height: 5rem;
+  padding: 0.65rem;
+}
+
+.giftEnvelopeButtons span,
+.giftEnvelopeButtons strong {
+  display: block;
+}
+
+.giftEnvelopeButtons span {
+  font-size: 0.7rem;
+}
+
+.giftEnvelopeButtons strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+}
+
+.giftDetails {
+  background: #fffdf3;
+  border: 1px solid rgb(95 71 43 / 22%);
+  padding: 0.75rem;
+}
+
+.giftDetails dl {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.giftDetails dl > div {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(5rem, 0.8fr) minmax(0, 1.2fr);
+}
+
+.giftDetails dt {
+  color: #5b7784;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.giftDetails dd {
+  overflow-wrap: anywhere;
+  text-align: right;
+  user-select: text;
+}
+
+.giftDetails button {
+  background: #23566b;
+  border: 1px solid #1a4353;
+  border-radius: 999px;
+  color: #fdf6e6;
+  font: inherit;
+  font-weight: 700;
+  margin-top: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 1rem;
+}
+
+.physicalSurface[data-beach-scene-type="finale"] {
+  background: rgb(255 249 232 / 92%);
+  clip-path: polygon(2% 0, 98% 1%, 100% 96%, 4% 100%, 0 12%);
+  width: 20rem;
+}
+
+.thankYouPaper {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.fallbackPhysicalSurface {
+  filter: drop-shadow(0 1.2rem 1.7rem rgb(26 56 70 / 28%));
+  max-height: min(62dvh, 38rem);
+  max-width: 100%;
+  min-height: 12rem;
+  min-width: 0;
+  perspective: 50rem;
+  position: relative;
+  text-align: center;
+  touch-action: auto;
+  width: min(100%, 30rem);
+  z-index: 2;
+}
+
+.fallbackPhysicalSurface[data-beach-visible="false"] {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.fallbackPhysicalSurface::after {
+  background: radial-gradient(ellipse, rgb(25 53 66 / 30%), transparent 68%);
+  bottom: -1.1rem;
+  content: "";
+  height: 1.5rem;
+  left: 8%;
+  pointer-events: none;
+  position: absolute;
+  width: 84%;
+  z-index: -1;
+}
+
+.fallbackPhysicalSurface > .physicalSurface {
+  max-height: min(62dvh, 38rem);
+  width: min(100%, 30rem);
+}
+
+.fallbackPhysicalSurface[data-scene-type="families"] {
+  width: min(100%, 34rem);
+}
+
+.fallbackPhysicalSurface[data-scene-type="gallery-photo"] {
+  max-width: min(24rem, calc(100vw - 3rem));
+  min-height: 0;
+}
+
+.fallbackPhysicalSurface[data-scene-type="gallery-photo"] > .physicalSurface {
+  height: min(24rem, 58dvh);
+  margin-inline: auto;
+  position: relative;
+  width: min(100%, 17rem);
+}
+
+.fallbackStage[data-travelling="true"] .fallbackPhysicalSurface {
+  animation: fallbackSceneTravel 650ms cubic-bezier(0.22, 0.72, 0.24, 1) both;
+}
+
+.fallbackStage[data-reduced-motion="true"]
+  .fallbackPhysicalSurface[data-beach-visible="true"] {
+  animation: fallbackSceneFade 180ms ease-out both !important;
+}
+
+@keyframes fallbackSceneTravel {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fallbackSceneFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fallbackPhoto {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.sceneStatus {
+  background: rgb(23 58 72 / 82%);
+  border-radius: 999px;
+  color: #fffdec;
+  font-size: 0.75rem;
+  left: 50%;
+  margin: 0;
+  max-width: calc(100% - 2rem);
+  padding: 0.5rem 0.875rem;
+  position: absolute;
+  text-align: center;
+  top: 1rem;
+  transform: translateX(-50%);
+  z-index: 12;
+}
+
+.controls {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  left: 50%;
+  max-width: calc(100% - 2rem);
+  position: absolute;
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 12;
+}
+
+.controlButton {
+  background: rgb(255 253 237 / 94%);
+  border: 1px solid rgb(34 72 90 / 34%);
+  border-radius: 999px;
+  color: #1f4555;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0.625rem 0.875rem;
+}
+
+.controlButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.controlButton:focus-visible {
+  outline: 3px solid #e8a24f;
+  outline-offset: 3px;
+}
+
+@media (min-width: 640px) {
+  .stage {
+    padding: 2rem;
+  }
+
+  .entryVoile {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+  .entryVoile {
+    padding: 0.625rem 1rem;
+  }
+
+  .kicker {
+    font-size: 0.625rem;
+    line-height: 1.2;
+  }
+
+  .names {
+    font-size: clamp(1.25rem, 3.6vw, 1.65rem);
+    line-height: 0.98;
+    margin: 0.4rem 0;
+  }
+
+  .dates {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .body {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    margin-top: 0.625rem;
+  }
+
+  .enter {
+    margin-top: 0.625rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entryVoile {
+    transition-duration: 180ms;
+  }
+
+  .entryVoile[data-departing="true"] {
+    transform: none;
+  }
+}

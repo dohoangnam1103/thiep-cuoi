@@ -328,6 +328,100 @@
       "thankYou": "소중한 하루를 함께해 주셔서 감사합니다."
     }
   },
+  "beachWeddingJourneyLab": {
+    "metaTitle": "해변 웨딩 여정 — 3D 랩",
+    "metaDescription": "노을빛 해변을 따라 걸으며 각 기능 공간으로 하객을 안내하는 3D 청첩장입니다.",
+    "entryKicker": "오후 햇살이 바다 위로 내려앉습니다",
+    "entryBody": "스와이프하여 모래 위를 걷기 · 가로로 드래그하여 바다 바라보기",
+    "enter": "해변으로",
+    "previous": "뒤로",
+    "next": "계속",
+    "loading": "물결이 잦아들기를 기다리고 있습니다",
+    "fallbackNotice": "기기에서 더 가벼운 해변 버전을 사용하고 있습니다.",
+    "reducedMotion": "동작 줄이기",
+    "gestureHint": "세로로 스와이프하여 모래 위를 걷기 · 가로로 드래그하여 바다 바라보기",
+    "sceneStatus": "{current}/{total}: {name}",
+    "demoContent": {
+      "ceremonyHeader": "바닷가에서 양가의 기쁨 속에 예식을 올립니다.",
+      "openingMessage": "양가 가족과 함께, 바닷가에서 열리는 두 사람의 결혼식에 기쁜 마음으로 초대합니다.",
+      "families": {
+        "brideParentTitle": "부모님",
+        "groomParentTitle": "부모님"
+      },
+      "schedule": {
+        "guestWelcome": "모래밭에서 하객 맞이",
+        "banquetOpening": "피로연 시작",
+        "toastAndCake": "축배와 케이크 커팅",
+        "mainCourse": "메인 코스 서빙",
+        "farewell": "해 질 무렵 배웅"
+      },
+      "wishes": {
+        "first": "두 분의 백년해로와, 어느 항해에서나 순풍이 함께하기를 기원합니다!",
+        "second": "언제나 사랑하고 서로를 이해하며 가정의 기쁨을 지켜가시길 바랍니다."
+      }
+    },
+    "longCopy": {
+      "familyParentTitle": "이름이아주긴가족대표성명과 이 기쁜 날을 함께하는 모든 사랑하는 분들",
+      "venueAddress": "이름이아주긴해변하객맞이공간, 야자수 길을 따라 만나는 바다 전망 피로연장, 냐짱시 쩐푸 거리 12번지",
+      "labels": {
+        "rsvpAttendance": "귀하와 함께 오실 여러 소중한 분들이 이번 잔치에 참석하실 수 있는지 알려주시겠습니까?",
+        "rsvpNotes": "신랑 신부에게 전하는 메시지와 예식 당일 알아두어야 할 모든 사항",
+        "wishText": "두 사람의 새로운 여정을 위해 길고 진심 어린 축하 글을 남겨주세요"
+      }
+    },
+    "sceneNames": {
+      "coverGate": "해변 입구",
+      "families": "양가 소개",
+      "openingMessage": "인사말",
+      "calendar": "웨딩 캘린더",
+      "schedule": "일정",
+      "galleryPhoto": "소중한 순간",
+      "dressCode": "드레스 코드",
+      "venue": "예식 장소",
+      "map": "지도",
+      "rsvp": "참석 여부",
+      "wishes": "축하 메시지",
+      "gift": "축의금",
+      "finale": "감사 인사"
+    },
+    "labels": {
+      "brideFamily": "신부 측",
+      "groomFamily": "신랑 측",
+      "invitation": "청첩장",
+      "ceremony": "결혼식",
+      "reception": "피로연",
+      "date": "날짜",
+      "time": "시간",
+      "addToCalendar": "캘린더에 추가",
+      "directions": "길찾기",
+      "photoAlt": "바닷가 결혼식의 순간",
+      "rsvpName": "이름",
+      "rsvpAttendance": "참석하시겠습니까?",
+      "attendingYes": "네, 참석합니다",
+      "attendingNo": "죄송하지만 참석하지 못합니다",
+      "rsvpGuests": "동반 인원",
+      "rsvpNotes": "메시지",
+      "rsvpSubmit": "참석 여부 보내기",
+      "rsvpSuccess": "응답해 주셔서 감사합니다.",
+      "rsvpNameRequired": "이름을 입력해 주세요.",
+      "rsvpGuestsInvalid": "유효한 동반 인원 수를 입력해 주세요.",
+      "wishName": "이름",
+      "wishText": "축하 메시지",
+      "wishSubmit": "축하 메시지 보내기",
+      "wishSuccess": "축하 메시지를 보내주셔서 감사합니다.",
+      "wishRequired": "축하 메시지를 입력해 주세요.",
+      "formError": "지금은 양식을 보낼 수 없습니다. 다시 시도해 주세요.",
+      "openGift": "축의금 열기",
+      "closeGift": "축의금 닫기",
+      "bankName": "은행",
+      "accountHolder": "예금주",
+      "accountNumber": "계좌번호",
+      "giftUnavailable": "축의금 정보를 준비하고 있습니다.",
+      "mapUnavailable": "지도를 준비하고 있습니다.",
+      "photoUnavailable": "사진을 준비하고 있습니다.",
+      "thankYou": "소중한 하루를 함께해 주셔서 감사합니다."
+    }
+  },
   "detectiveConanCasebookLab": {
     "metaTitle": "웨딩 사건 파일 4869 랩",
     "metaDescription": "Three.js 사건 수첩 표지, 페이지 전환, DOM 리더 연결을 점검하는 내부 랩입니다.",
@@ -1142,5 +1236,12 @@
     "wishSubmit": "메시지 보내기",
     "wishPending": "보내는 중...",
     "saveQr": "QR 저장"
+  },
+  "errorBoundary": {
+    "title": "페이지를 불러오지 못했습니다",
+    "description": "이 부분을 표시하는 중 오류가 발생했습니다. 다시 시도해 주세요. 계속 실패하면 시크릿 창에서 열거나 브라우저 확장 프로그램을 잠시 사용 중지해 보세요.",
+    "retry": "다시 시도",
+    "home": "홈으로",
+    "digest": "오류 코드: {digest}"
   }
 }

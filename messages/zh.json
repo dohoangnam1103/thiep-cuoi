@@ -328,6 +328,100 @@
       "thankYou": "感谢您与我们共度这特别的一天。"
     }
   },
+  "beachWeddingJourneyLab": {
+    "metaTitle": "海边婚礼旅程 — 3D 实验室",
+    "metaDescription": "一封 3D 婚礼请柬，带领宾客沿着夕照海岸漫步，走过各个功能区域。",
+    "entryKicker": "午后的阳光正落在海面上",
+    "entryBody": "滑动以漫步沙滩 · 横向拖动远眺海面",
+    "enter": "走向海边",
+    "previous": "返回",
+    "next": "继续",
+    "loading": "正在等待潮水平静",
+    "fallbackNotice": "您的设备正在使用较轻量的海岸版本。",
+    "reducedMotion": "减少动态效果",
+    "gestureHint": "纵向滑动漫步沙滩 · 横向拖动远眺海面",
+    "sceneStatus": "{current}/{total}: {name}",
+    "demoContent": {
+      "ceremonyHeader": "婚礼在海边举行，承载着双方家庭的喜悦。",
+      "openingMessage": "谨与双方家人诚挚邀请您来到海边，共同见证我们的婚礼。",
+      "families": {
+        "brideParentTitle": "父母",
+        "groomParentTitle": "父母"
+      },
+      "schedule": {
+        "guestWelcome": "沙滩迎宾",
+        "banquetOpening": "婚宴开席",
+        "toastAndCake": "敬酒与切蛋糕",
+        "mainCourse": "主菜上桌",
+        "farewell": "日落送客"
+      },
+      "wishes": {
+        "first": "祝二位百年好合，此后每一段航程都一帆风顺！",
+        "second": "愿你们始终相爱、彼此理解，守住家中的这份欢喜。"
+      }
+    },
+    "longCopy": {
+      "familyParentTitle": "名称非常长的家庭代表姓名，以及所有共享这一喜悦之日的亲友",
+      "venueAddress": "名称非常长的沙滩宾客接待区，沿椰林步道即可抵达的海景婚宴厅，芽庄市陈富街12号",
+      "labels": {
+        "rsvpAttendance": "请告知您以及诸位同行的亲友是否能够出席这场喜宴？",
+        "rsvpNotes": "给新人的留言，包括当天需要知会的所有事项",
+        "wishText": "请为新人的新旅程写下一段长而真挚的祝福"
+      }
+    },
+    "sceneNames": {
+      "coverGate": "沙滩入口",
+      "families": "双方家庭",
+      "openingMessage": "欢迎辞",
+      "calendar": "婚礼日历",
+      "schedule": "流程安排",
+      "galleryPhoto": "共同瞬间",
+      "dressCode": "着装要求",
+      "venue": "场地",
+      "map": "地图",
+      "rsvp": "出席回复",
+      "wishes": "祝福",
+      "gift": "婚礼礼金",
+      "finale": "感谢"
+    },
+    "labels": {
+      "brideFamily": "新娘家庭",
+      "groomFamily": "新郎家庭",
+      "invitation": "请柬",
+      "ceremony": "婚礼仪式",
+      "reception": "婚宴",
+      "date": "日期",
+      "time": "时间",
+      "addToCalendar": "添加到日历",
+      "directions": "获取路线",
+      "photoAlt": "海边婚礼的瞬间",
+      "rsvpName": "您的姓名",
+      "rsvpAttendance": "您会出席吗？",
+      "attendingYes": "是的，我会出席",
+      "attendingNo": "抱歉，我无法出席",
+      "rsvpGuests": "随行人数",
+      "rsvpNotes": "留言",
+      "rsvpSubmit": "提交回复",
+      "rsvpSuccess": "感谢您的回复。",
+      "rsvpNameRequired": "请输入您的姓名。",
+      "rsvpGuestsInvalid": "请输入有效的随行人数。",
+      "wishName": "您的姓名",
+      "wishText": "您的祝福",
+      "wishSubmit": "发送祝福",
+      "wishSuccess": "感谢您的祝福。",
+      "wishRequired": "请填写祝福语。",
+      "formError": "暂时无法提交表单，请重试。",
+      "openGift": "打开礼金",
+      "closeGift": "关闭礼金",
+      "bankName": "银行",
+      "accountHolder": "账户名",
+      "accountNumber": "账号",
+      "giftUnavailable": "礼金信息正在更新。",
+      "mapUnavailable": "地图正在更新。",
+      "photoUnavailable": "照片正在更新。",
+      "thankYou": "感谢您与我们共度这特别的一天。"
+    }
+  },
   "detectiveConanCasebookLab": {
     "metaTitle": "婚礼档案4869实验室",
     "metaDescription": "用于检查 Three.js 案件簿封面、翻页与 DOM 阅读器衔接的内部实验室。",
@@ -1142,5 +1236,12 @@
     "wishSubmit": "发送祝福",
     "wishPending": "发送中...",
     "saveQr": "保存二维码"
+  },
+  "errorBoundary": {
+    "title": "页面未能加载完成",
+    "description": "在您的设备上呈现此部分时出错。请重试 — 如果仍然失败，请使用隐私窗口打开，或暂时停用浏览器扩展程序。",
+    "retry": "重试",
+    "home": "返回首页",
+    "digest": "错误代码：{digest}"
   }
 }

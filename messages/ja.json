@@ -328,6 +328,100 @@
       "thankYou": "私たちの大切な一日を共にしてくださり、ありがとうございます。"
     }
   },
+  "beachWeddingJourneyLab": {
+    "metaTitle": "海辺のウェディング・ジャーニー — 3Dラボ",
+    "metaDescription": "夕暮れの海辺を歩きながら、各機能エリアへ案内する3Dウェディング招待状です。",
+    "entryKicker": "午後の光が海に降りてきます",
+    "entryBody": "スワイプして砂浜を歩く · 横にドラッグして沖を眺める",
+    "enter": "海辺へ",
+    "previous": "戻る",
+    "next": "次へ",
+    "loading": "波がおさまるのを待っています",
+    "fallbackNotice": "お使いの端末では軽量版の海辺を表示しています。",
+    "reducedMotion": "動きを減らす",
+    "gestureHint": "縦にスワイプして砂浜を歩く · 横にドラッグして沖を眺める",
+    "sceneStatus": "{current}/{total}: {name}",
+    "demoContent": {
+      "ceremonyHeader": "海辺で、両家の喜びに包まれて挙式いたします。",
+      "openingMessage": "両家とともに、海辺で行うふたりの結婚式へ心よりご招待いたします。",
+      "families": {
+        "brideParentTitle": "ご両親",
+        "groomParentTitle": "ご両親"
+      },
+      "schedule": {
+        "guestWelcome": "砂浜でお出迎え",
+        "banquetOpening": "披露宴開始",
+        "toastAndCake": "乾杯とケーキカット",
+        "mainCourse": "メインコースのご提供",
+        "farewell": "日没のお見送り"
+      },
+      "wishes": {
+        "first": "おふたりの末永いお幸せと、どの航路にも順風が吹くことをお祈りします！",
+        "second": "いつも愛し合い、理解し合い、ご家庭の喜びを守っていかれますように。"
+      }
+    },
+    "longCopy": {
+      "familyParentTitle": "とても長い名前のご家族代表者名と、この喜びの日を分かち合うすべての大切な方々",
+      "venueAddress": "とても長い名前の砂浜ゲスト受付エリア、ヤシ並木を抜けた海に面した披露宴会場、ニャチャン市チャン・フー通り12番地",
+      "labels": {
+        "rsvpAttendance": "あなたさまと、ご同行される大切な皆さまがご出席いただけるかどうかお知らせいただけますでしょうか。",
+        "rsvpNotes": "新郎新婦へのメッセージ、および当日に関してお伝えいただきたいことすべて",
+        "wishText": "おふたりの新しい旅立ちに向けて、長く心のこもったお祝いのことばをお書きください"
+      }
+    },
+    "sceneNames": {
+      "coverGate": "浜の入り口",
+      "families": "両家のご紹介",
+      "openingMessage": "ごあいさつ",
+      "calendar": "ウェディングカレンダー",
+      "schedule": "当日の予定",
+      "galleryPhoto": "思い出の一枚",
+      "dressCode": "ドレスコード",
+      "venue": "会場",
+      "map": "地図",
+      "rsvp": "出欠確認",
+      "wishes": "お祝いの言葉",
+      "gift": "ご祝儀",
+      "finale": "感謝を込めて"
+    },
+    "labels": {
+      "brideFamily": "新婦家",
+      "groomFamily": "新郎家",
+      "invitation": "招待状",
+      "ceremony": "挙式",
+      "reception": "披露宴",
+      "date": "日付",
+      "time": "時間",
+      "addToCalendar": "カレンダーに追加",
+      "directions": "道順を見る",
+      "photoAlt": "海辺の結婚式のひととき",
+      "rsvpName": "お名前",
+      "rsvpAttendance": "ご出席いただけますか？",
+      "attendingYes": "はい、出席します",
+      "attendingNo": "申し訳ありませんが、欠席します",
+      "rsvpGuests": "同伴者の人数",
+      "rsvpNotes": "メッセージ",
+      "rsvpSubmit": "出欠を送信",
+      "rsvpSuccess": "ご回答ありがとうございます。",
+      "rsvpNameRequired": "お名前を入力してください。",
+      "rsvpGuestsInvalid": "有効な同伴者数を入力してください。",
+      "wishName": "お名前",
+      "wishText": "お祝いの言葉",
+      "wishSubmit": "お祝いを送る",
+      "wishSuccess": "お祝いの言葉をありがとうございます。",
+      "wishRequired": "お祝いの言葉を入力してください。",
+      "formError": "現在フォームを送信できません。もう一度お試しください。",
+      "openGift": "ご祝儀を開く",
+      "closeGift": "ご祝儀を閉じる",
+      "bankName": "銀行名",
+      "accountHolder": "口座名義",
+      "accountNumber": "口座番号",
+      "giftUnavailable": "ご祝儀の情報を準備中です。",
+      "mapUnavailable": "地図を準備中です。",
+      "photoUnavailable": "写真を準備中です。",
+      "thankYou": "私たちの大切な一日を共にしてくださり、ありがとうございます。"
+    }
+  },
   "detectiveConanCasebookLab": {
     "metaTitle": "ウェディング事件簿4869 ラボ",
     "metaDescription": "Three.js事件簿の表紙、ページめくり、DOMリーダーへの引き継ぎを確認する内部ラボです。",
@@ -1142,5 +1236,12 @@
     "wishSubmit": "メッセージを送る",
     "wishPending": "送信中...",
     "saveQr": "QRを保存"
+  },
+  "errorBoundary": {
+    "title": "ページを読み込めませんでした",
+    "description": "お使いの端末でこの部分を表示する際にエラーが発生しました。もう一度お試しください。解決しない場合は、シークレットウィンドウで開くか、ブラウザの拡張機能を一時的に無効にしてください。",
+    "retry": "再試行",
+    "home": "ホームに戻る",
+    "digest": "エラーコード: {digest}"
   }
 }

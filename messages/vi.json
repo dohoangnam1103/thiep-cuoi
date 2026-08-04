@@ -328,6 +328,100 @@
       "thankYou": "Cảm ơn bạn đã đồng hành cùng chúng tôi."
     }
   },
+  "beachWeddingJourneyLab": {
+    "metaTitle": "Hành trình biển cưới — 3D Lab",
+    "metaDescription": "Thiệp cưới 3D dẫn người xem dạo dọc bờ biển lúc nắng chiều, qua từng khu vực chức năng.",
+    "entryKicker": "Nắng chiều đang hạ xuống mặt biển",
+    "entryBody": "Vuốt để dạo bước trên cát · kéo ngang để ngắm ra khơi",
+    "enter": "Ra bờ biển",
+    "previous": "Quay lại",
+    "next": "Đi tiếp",
+    "loading": "Đang chờ thuỷ triều lặng",
+    "fallbackNotice": "Thiết bị đang dùng phiên bản bờ biển nhẹ hơn.",
+    "reducedMotion": "Giảm chuyển động",
+    "gestureHint": "Vuốt dọc để dạo bước · kéo ngang để ngắm ra khơi",
+    "sceneStatus": "{current} trên {total}: {name}",
+    "demoContent": {
+      "ceremonyHeader": "Lễ thành hôn được cử hành bên bờ biển, trong niềm vui của hai gia đình.",
+      "openingMessage": "Cùng gia đình hai bên, chúng tôi trân trọng mời bạn ra biển chung vui trong ngày cưới.",
+      "families": {
+        "brideParentTitle": "Ông bà",
+        "groomParentTitle": "Ông bà"
+      },
+      "schedule": {
+        "guestWelcome": "Đón khách trên cát",
+        "banquetOpening": "Khai tiệc",
+        "toastAndCake": "Rót rượu và cắt bánh",
+        "mainCourse": "Phục vụ món chính",
+        "farewell": "Tiễn khách khi trời tắt nắng"
+      },
+      "wishes": {
+        "first": "Chúc hai bạn trăm năm hạnh phúc, thuận buồm xuôi gió trên mọi chặng đường!",
+        "second": "Mong hai bạn luôn yêu thương, thấu hiểu và gìn giữ niềm vui trong mái ấm của mình."
+      }
+    },
+    "longCopy": {
+      "familyParentTitle": "ChuỗiTênĐạiDiệnGiaĐìnhRấtDài cùng toàn thể những người thân yêu chung niềm vui trong ngày trọng đại",
+      "venueAddress": "KhuVựcĐónKháchTrênBãiCátCóTênRấtDài, sảnh tiệc hướng biển với lối đi qua rặng dừa, số 12 đường Trần Phú, thành phố Nha Trang, tỉnh Khánh Hoà",
+      "labels": {
+        "rsvpAttendance": "Xin vui lòng cho chúng tôi biết bạn và nhiều người đồng hành thân yêu có thể tham dự buổi tiệc hay không?",
+        "rsvpNotes": "Lời nhắn dành cho cô dâu chú rể, bao gồm mọi lưu ý cần thiết cho ngày tổ chức tiệc",
+        "wishText": "Hãy viết một lời chúc thật dài và đầy đủ ý nghĩa dành cho hành trình mới của cô dâu chú rể"
+      }
+    },
+    "sceneNames": {
+      "coverGate": "Đầu bãi biển",
+      "families": "Hai bên gia đình",
+      "openingMessage": "Lời ngỏ",
+      "calendar": "Lịch ngày vui",
+      "schedule": "Lịch trình",
+      "galleryPhoto": "Khoảnh khắc",
+      "dressCode": "Trang phục",
+      "venue": "Địa điểm",
+      "map": "Bản đồ",
+      "rsvp": "Xác nhận tham dự",
+      "wishes": "Lời chúc",
+      "gift": "Phong bao mừng cưới",
+      "finale": "Lời cảm ơn"
+    },
+    "labels": {
+      "brideFamily": "Nhà gái",
+      "groomFamily": "Nhà trai",
+      "invitation": "Thiệp mời",
+      "ceremony": "Lễ cưới",
+      "reception": "Tiệc cưới",
+      "date": "Ngày",
+      "time": "Thời gian",
+      "addToCalendar": "Thêm vào lịch",
+      "directions": "Chỉ đường",
+      "photoAlt": "Khoảnh khắc cưới bên biển",
+      "rsvpName": "Tên của bạn",
+      "rsvpAttendance": "Bạn sẽ tham dự chứ?",
+      "attendingYes": "Có, tôi sẽ đến",
+      "attendingNo": "Rất tiếc, tôi không thể đến",
+      "rsvpGuests": "Số khách đi cùng",
+      "rsvpNotes": "Lời nhắn",
+      "rsvpSubmit": "Gửi xác nhận",
+      "rsvpSuccess": "Cảm ơn bạn đã xác nhận.",
+      "rsvpNameRequired": "Vui lòng nhập tên của bạn.",
+      "rsvpGuestsInvalid": "Vui lòng nhập số khách hợp lệ.",
+      "wishName": "Tên của bạn",
+      "wishText": "Lời chúc của bạn",
+      "wishSubmit": "Gửi lời chúc",
+      "wishSuccess": "Cảm ơn lời chúc của bạn.",
+      "wishRequired": "Vui lòng viết lời chúc.",
+      "formError": "Không thể gửi biểu mẫu lúc này. Vui lòng thử lại.",
+      "openGift": "Mở phong bao",
+      "closeGift": "Đóng phong bao",
+      "bankName": "Ngân hàng",
+      "accountHolder": "Chủ tài khoản",
+      "accountNumber": "Số tài khoản",
+      "giftUnavailable": "Thông tin phong bao đang được cập nhật.",
+      "mapUnavailable": "Bản đồ đang được cập nhật.",
+      "photoUnavailable": "Ảnh đang được cập nhật.",
+      "thankYou": "Cảm ơn bạn đã đồng hành cùng chúng tôi."
+    }
+  },
   "detectiveConanCasebookLab": {
     "metaTitle": "Lab Hồ Sơ Hôn Lễ 4869",
     "metaDescription": "Lab nội bộ để kiểm tra bìa casebook Three.js, lật trang và handoff sang trình đọc DOM.",
@@ -1901,5 +1995,12 @@
     "wishSubmit": "Gửi lời chúc",
     "wishPending": "Đang gửi...",
     "saveQr": "Lưu QR"
+  },
+  "errorBoundary": {
+    "title": "Trang chưa tải xong",
+    "description": "Đã có lỗi khi hiển thị phần này trên máy của bạn. Bạn thử lại giúp chúng tôi nhé — nếu vẫn chưa được, hãy mở lại bằng cửa sổ ẩn danh hoặc tạm tắt các tiện ích mở rộng của trình duyệt.",
+    "retry": "Thử lại",
+    "home": "Về trang chủ",
+    "digest": "Mã lỗi: {digest}"
   }
 }

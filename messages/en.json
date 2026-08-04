@@ -328,6 +328,100 @@
       "thankYou": "Thank you for sharing this day with us."
     }
   },
+  "beachWeddingJourneyLab": {
+    "metaTitle": "Beach Wedding Journey — 3D Lab",
+    "metaDescription": "A 3D wedding invitation that walks guests along a golden-hour shoreline, through each functional area.",
+    "entryKicker": "The afternoon sun is settling on the water",
+    "entryBody": "Swipe to walk the sand · drag sideways to look out to sea",
+    "enter": "Walk out",
+    "previous": "Back",
+    "next": "Continue",
+    "loading": "Waiting for the tide to settle",
+    "fallbackNotice": "Your device is using a lighter shoreline version.",
+    "reducedMotion": "Reduce motion",
+    "gestureHint": "Swipe vertically to walk the sand · drag horizontally to look out to sea",
+    "sceneStatus": "{current} of {total}: {name}",
+    "demoContent": {
+      "ceremonyHeader": "The ceremony is held by the sea, in the joy of both families.",
+      "openingMessage": "Together with their families, the couple joyfully invites you to the shore to celebrate their wedding.",
+      "families": {
+        "brideParentTitle": "Mr. & Mrs.",
+        "groomParentTitle": "Mr. & Mrs."
+      },
+      "schedule": {
+        "guestWelcome": "Welcome on the sand",
+        "banquetOpening": "Banquet opens",
+        "toastAndCake": "Toast and cake",
+        "mainCourse": "Main course served",
+        "farewell": "Farewell at sundown"
+      },
+      "wishes": {
+        "first": "Wishing you both a lifetime of happiness and fair winds on every crossing!",
+        "second": "May you always love, understand each other, and keep the joy in your home."
+      }
+    },
+    "longCopy": {
+      "familyParentTitle": "AnExtraordinarilyLongFamilyRepresentativeName together with all the loved ones sharing this joyful day",
+      "venueAddress": "AnExtraordinarilyLongBeachsideGuestWelcomeArea, the seafront reception hall reached along the coconut walk, 12 Tran Phu Street, Nha Trang, Khanh Hoa",
+      "labels": {
+        "rsvpAttendance": "Please let us know whether you and your many dear companions will be able to join the celebration?",
+        "rsvpNotes": "A note for the couple, including anything they should know about the day of the celebration",
+        "wishText": "Please write a long and heartfelt wish for the couple's new journey together"
+      }
+    },
+    "sceneNames": {
+      "coverGate": "Top of the beach",
+      "families": "Our families",
+      "openingMessage": "Welcome message",
+      "calendar": "Wedding calendar",
+      "schedule": "Schedule",
+      "galleryPhoto": "A shared moment",
+      "dressCode": "Dress code",
+      "venue": "Venue",
+      "map": "Map",
+      "rsvp": "RSVP",
+      "wishes": "Wishes",
+      "gift": "Wedding gift",
+      "finale": "Thank you"
+    },
+    "labels": {
+      "brideFamily": "Bride's family",
+      "groomFamily": "Groom's family",
+      "invitation": "Invitation",
+      "ceremony": "Ceremony",
+      "reception": "Reception",
+      "date": "Date",
+      "time": "Time",
+      "addToCalendar": "Add to calendar",
+      "directions": "Get directions",
+      "photoAlt": "A seaside wedding moment",
+      "rsvpName": "Your name",
+      "rsvpAttendance": "Will you attend?",
+      "attendingYes": "Yes, I will attend",
+      "attendingNo": "Sorry, I cannot attend",
+      "rsvpGuests": "Number of guests",
+      "rsvpNotes": "A note",
+      "rsvpSubmit": "Send RSVP",
+      "rsvpSuccess": "Thank you for your response.",
+      "rsvpNameRequired": "Please enter your name.",
+      "rsvpGuestsInvalid": "Please enter a valid number of guests.",
+      "wishName": "Your name",
+      "wishText": "Your wish",
+      "wishSubmit": "Send a wish",
+      "wishSuccess": "Thank you for your wish.",
+      "wishRequired": "Please write a wish.",
+      "formError": "We could not submit the form right now. Please try again.",
+      "openGift": "Open wedding gift",
+      "closeGift": "Close wedding gift",
+      "bankName": "Bank",
+      "accountHolder": "Account holder",
+      "accountNumber": "Account number",
+      "giftUnavailable": "Gift details are being updated.",
+      "mapUnavailable": "The map is being updated.",
+      "photoUnavailable": "Photos are being updated.",
+      "thankYou": "Thank you for sharing this day with us."
+    }
+  },
   "detectiveConanCasebookLab": {
     "metaTitle": "Wedding Case File 4869 lab",
     "metaDescription": "A private lab for the Three.js casebook cover, page turn and DOM reader handoff.",
@@ -1359,5 +1453,12 @@
     "wishSubmit": "Send wishes",
     "wishPending": "Sending...",
     "saveQr": "Save QR"
+  },
+  "errorBoundary": {
+    "title": "This page didn't finish loading",
+    "description": "Something went wrong while rendering this section on your device. Please try again — if it still fails, open the page in a private window or temporarily disable your browser extensions.",
+    "retry": "Try again",
+    "home": "Back to home",
+    "digest": "Error code: {digest}"
   }
 }
