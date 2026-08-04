@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import path from "node:path";
 import { test } from "node:test";
+
+import sharp from "sharp";
 
 import {
   beachWeddingJourneyDemoContent,
@@ -8,6 +11,7 @@ import {
   type BeachJourneyScene,
 } from "@/data/beach-wedding-journey";
 import { getBeachFrameGeometry } from "@/components/beach-wedding-journey/beach-frame-geometry";
+import { getBeachPhotorealAssetEstimate } from "@/components/beach-wedding-journey/photoreal/beach-asset-manifest";
 import {
   BEACH_FRAME_MOULDING_DEPTH_METRES,
   BEACH_FRAME_MOULDING_FACE_METRES,
@@ -16,11 +20,13 @@ import {
   BEACH_FRAME_SWAY_RATE,
   BEACH_FRAME_SWAY_WIND_GAIN_RADIANS,
   BEACH_FRAME_VARIANT_COUNT,
+  BEACH_PHOTO_MAX_EDGE_PIXELS,
   beachFrameSwayRadians,
   createBeachFrameMouldingGeometry,
   createBeachFramePrintGeometry,
   getBeachFrameHangerRise,
   getBeachFrameVariantIndex,
+  getBeachPhotoUploadSize,
   measureBeachPhotoTextures,
   resolveBeachFramePlacements,
 } from "@/components/beach-wedding-journey/photoreal/beach-photo-frames";
@@ -32,6 +38,15 @@ import {
  */
 const PRINT_WIDTH_METRES = 0.68;
 const PRINT_HEIGHT_METRES = 0.96;
+
+/**
+ * The Global Constraints ceiling, in bytes.
+ *
+ * The plan writes it as "≤64 MB" and `beach-asset-manifest.test.ts` reads that
+ * as 64 MiB; the stricter decimal reading is used here so a total that passes
+ * this test passes under either.
+ */
+const DECODED_TEXTURE_CEILING = 64_000_000;
 
 /**
  * Task 1 shipped two frame map sets — `frame-01-*` and `frame-02-*` — so the
@@ -362,4 +377,92 @@ test("measuring no photographs reports nothing rather than throwing", () => {
     textureCount: 0,
     unmeasuredCount: 0,
   });
+});
+
+// The tests above measure whatever size a photograph arrives at. The ones below
+// pin the size it is allowed to arrive at: the demo gallery's own sources are
+// 1363x2048, and uploaded at native size three of them decode to 44,649,828
+// bytes, which on top of the shared pack's 46,137,353 puts a gallery scene at
+// 90,787,181 — 42% over the 64MB ceiling the manifest is measured against.
+
+test("an oversized photograph is capped on its longest edge, keeping aspect", () => {
+  // The exact dimensions of the qasr-green demo gallery photographs.
+  assert.deepEqual(getBeachPhotoUploadSize(1_363, 2_048), {
+    height: 1_024,
+    width: 681,
+  });
+  // Landscape caps on width, and the ratio survives: 2048/1363 = 1.5026,
+  // 1024/681 = 1.5037, inside a floored pixel of each other.
+  assert.deepEqual(getBeachPhotoUploadSize(2_048, 1_363), {
+    height: 681,
+    width: 1_024,
+  });
+  assert.deepEqual(getBeachPhotoUploadSize(4_096, 4_096), {
+    height: 1_024,
+    width: 1_024,
+  });
+});
+
+test("a photograph already inside the cap is not resampled", () => {
+  // Upsampling costs memory and adds no detail, so a small photograph passes
+  // through untouched rather than being stretched to the cap.
+  assert.deepEqual(getBeachPhotoUploadSize(512, 384), {
+    height: 384,
+    width: 512,
+  });
+  assert.deepEqual(
+    getBeachPhotoUploadSize(BEACH_PHOTO_MAX_EDGE_PIXELS, 8),
+    { height: 8, width: BEACH_PHOTO_MAX_EDGE_PIXELS },
+  );
+});
+
+test("an extreme aspect ratio cannot cap to a zero-sized texture", () => {
+  // 4 * (1024/8192) floors to 0; a zero-width upload would throw in
+  // `estimateExactRgbaMipBytes` and upload nothing to the GPU.
+  const upload = getBeachPhotoUploadSize(8_192, 4);
+  assert.equal(upload.width, BEACH_PHOTO_MAX_EDGE_PIXELS);
+  assert.equal(upload.height, 1);
+});
+
+test("three capped photographs leave the shared pack inside the 64MB ceiling", async () => {
+  const shared = getBeachPhotorealAssetEstimate("shared");
+  const scenes = buildBeachJourneyScenes(
+    beachWeddingJourneyDemoContent,
+    beachWeddingJourneyFeatures,
+  );
+  const placements = resolveBeachFramePlacements(scenes);
+  assert.equal(placements.length, 3);
+
+  // Measured from the files the lab actually serves, not from declared numbers,
+  // so re-exporting the demo gallery at a new size re-runs this budget.
+  let cappedBytes = 0;
+  let uncappedBytes = 0;
+  for (const { photoSrc } of placements) {
+    const { height, width } = await sharp(
+      path.join(process.cwd(), "public", photoSrc),
+    ).metadata();
+    assert.ok(
+      typeof width === "number" && typeof height === "number",
+      `${photoSrc} has no readable dimensions`,
+    );
+    const upload = getBeachPhotoUploadSize(width, height);
+    assert.ok(
+      Math.max(upload.width, upload.height) <= BEACH_PHOTO_MAX_EDGE_PIXELS,
+      `${photoSrc} caps to ${upload.width}x${upload.height}`,
+    );
+    cappedBytes += expectedMipBytes(upload.width, upload.height);
+    uncappedBytes += expectedMipBytes(width, height);
+  }
+
+  assert.ok(
+    shared.decodedRgbaMipBytes + cappedBytes <= DECODED_TEXTURE_CEILING,
+    `capped gallery total ${shared.decodedRgbaMipBytes + cappedBytes} exceeds 64MB`,
+  );
+
+  // Without the cap the same three photographs breach it, which is the
+  // regression this pair of assertions exists to hold shut.
+  assert.ok(
+    shared.decodedRgbaMipBytes + uncappedBytes > DECODED_TEXTURE_CEILING,
+    "the demo gallery no longer needs a cap — re-check whether this test still earns its keep",
+  );
 });

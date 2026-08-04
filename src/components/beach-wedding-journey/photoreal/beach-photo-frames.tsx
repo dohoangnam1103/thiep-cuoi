@@ -222,12 +222,80 @@ export function createBeachFramePrintGeometry(
 }
 
 /**
- * Loads the couple's photographs as sRGB colour.
+ * Longest edge a photograph is uploaded at, in pixels.
  *
- * A subclass rather than a post-load fixup: the colour space has to be set on
- * the texture before it is first uploaded, and a separate loader class also gives
- * the photographs their own `useLoader` cache entry, so they are never sharing a
- * failure or a cache slot with the shore's wood maps.
+ * `beach-asset-manifest.test.ts` budgets the decoded ceiling against "three
+ * 1024x1024 RGBA photos with mips, the worst case the lab ever holds" — 5.6MB
+ * each on top of the shared pack's 46.1MB, which fits inside 64MB. The demo
+ * gallery's own sources are 1363x2048, and uploaded at native size they decode
+ * to 14.9MB each: three of them put a gallery scene at 90.8MB, 42% over the
+ * ceiling. So the cap the budget already assumed is enforced here, on load.
+ *
+ * A print is `BEACH_GALLERY_PRINT_SIZE` = 0.68x0.96m viewed from
+ * `FRAME_CAMERA_DISTANCE` = 2.8m, so it spans well under a quarter of the
+ * viewport's height; 1024 on the long edge is more texels than that projection
+ * can resolve, and the excess was only ever costing memory.
+ */
+export const BEACH_PHOTO_MAX_EDGE_PIXELS = 1_024;
+
+/**
+ * The size a photograph is uploaded at, preserving aspect ratio.
+ *
+ * Images already inside the cap are returned untouched rather than scaled up —
+ * upsampling a small photograph would cost memory and add no detail. The
+ * rounding floors and then clamps to 1, so a extremely narrow source cannot
+ * produce a zero-width texture.
+ */
+export function getBeachPhotoUploadSize(
+  width: number,
+  height: number,
+): { readonly height: number; readonly width: number } {
+  const longestEdge = Math.max(width, height);
+  if (longestEdge <= BEACH_PHOTO_MAX_EDGE_PIXELS) return { height, width };
+
+  const scale = BEACH_PHOTO_MAX_EDGE_PIXELS / longestEdge;
+  return {
+    height: Math.max(1, Math.floor(height * scale)),
+    width: Math.max(1, Math.floor(width * scale)),
+  };
+}
+
+/**
+ * Redraws an oversized photograph at `getBeachPhotoUploadSize`.
+ *
+ * A canvas rather than `createImageBitmap`, because the resize has to be done
+ * before three first uploads the texture and `TextureLoader`'s `onLoad` is
+ * synchronous — an async bitmap resize would upload the full-size image first
+ * and defeat the point. Returns the original image when a 2D context is
+ * unavailable: a photograph at native size costs memory, but no photograph at
+ * all is the one outcome the frames must never produce.
+ */
+function downscalePhotoImage(
+  image: HTMLImageElement,
+): HTMLImageElement | HTMLCanvasElement {
+  const width = image.naturalWidth || image.width;
+  const height = image.naturalHeight || image.height;
+  const upload = getBeachPhotoUploadSize(width, height);
+  if (upload.width === width && upload.height === height) return image;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = upload.width;
+  canvas.height = upload.height;
+  const context = canvas.getContext("2d");
+  if (!context) return image;
+
+  context.drawImage(image, 0, 0, upload.width, upload.height);
+  return canvas;
+}
+
+/**
+ * Loads the couple's photographs as sRGB colour, capped at
+ * `BEACH_PHOTO_MAX_EDGE_PIXELS`.
+ *
+ * A subclass rather than a post-load fixup: the colour space and the image size
+ * both have to be set on the texture before it is first uploaded, and a separate
+ * loader class also gives the photographs their own `useLoader` cache entry, so
+ * they are never sharing a failure or a cache slot with the shore's wood maps.
  */
 class BeachPhotoTextureLoader extends TextureLoader {
   override load(
@@ -241,6 +309,13 @@ class BeachPhotoTextureLoader extends TextureLoader {
       (texture) => {
         texture.colorSpace = SRGBColorSpace;
         texture.anisotropy = 4;
+        // `image` is the decoded source; swapping it for a downscaled canvas
+        // here means the oversized bitmap is never uploaded to the GPU.
+        const downscaled = downscalePhotoImage(texture.image);
+        if (downscaled !== texture.image) {
+          texture.image = downscaled as HTMLImageElement;
+          texture.needsUpdate = true;
+        }
         onLoad?.(texture);
       },
       onProgress,
