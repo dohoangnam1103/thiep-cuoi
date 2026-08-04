@@ -37,6 +37,7 @@ import {
   getForestBakedAoFactor,
   getForestEnvironmentLayerContract,
   getForestAtlasUvRect,
+  type ForestEnvironmentLayerStyle,
   type ForestMaterialAtlasName,
   type ForestPathSample,
   type ForestWorldPlacement,
@@ -81,6 +82,27 @@ type GeometryKind =
   | "shrub"
   | "stone"
   | "trunk";
+
+/**
+ * The layer contract also describes the hybrid photoreal world, whose branch
+ * cards and panorama impostor are built by the photoreal renderer instead of
+ * `createGeometry`. This renderer is only mounted for the textured and
+ * procedural modes, so those members are unreachable here; map them to their
+ * closest legacy primitive rather than widening `GeometryKind`.
+ */
+function legacyGeometryKind(
+  style: ForestEnvironmentLayerStyle,
+): GeometryKind {
+  switch (style.geometry) {
+    case "branch-card-lod0":
+    case "branch-card-lod1":
+      return "atlas-card";
+    case "panorama-impostor":
+      return "far-trunk";
+    default:
+      return style.geometry;
+  }
+}
 
 const ATLAS_VERTEX_SHADER = `
   attribute vec4 instanceAtlasRect;
@@ -380,6 +402,9 @@ export function ForestEnvironment({
     [placements.pathCenterline],
   );
 
+  // The ribbon geometries below bake ambient occlusion into a real `color`
+  // attribute, so `vertexColors` is correct here — unlike the instanced props,
+  // which tint through `instanceColor` and carry no such attribute.
   const groundMaterial = useMemo(() => new MeshStandardMaterial({
     color: texturePack ? 0xffffff : 0x718558,
     emissive: texturePack ? 0x526747 : 0x000000,
@@ -396,22 +421,25 @@ export function ForestEnvironment({
     roughness: 1,
     vertexColors: true,
   }), [texturePack]);
+  // No `vertexColors` on the instanced props: three.js already defines
+  // `USE_COLOR` for an InstancedMesh carrying an `instanceColor`, and the flag
+  // additionally emits `vColor.rgb *= color` against the geometry's `color`
+  // attribute. Cylinders and dodecahedra declare no such attribute, so WebGL
+  // supplies the default (0,0,0) and multiplies every trunk, stem and stone to
+  // pure black.
   const woodMaterial = useMemo(() => new MeshStandardMaterial({
     color: 0xfff1df,
     emissive: 0x513828,
     emissiveIntensity: 0.3,
     roughness: 0.94,
-    vertexColors: true,
   }), []);
   const stemMaterial = useMemo(() => new MeshStandardMaterial({
     color: 0xffffff,
     roughness: 0.88,
-    vertexColors: true,
   }), []);
   const stoneMaterial = useMemo(() => new MeshStandardMaterial({
     color: 0xffffff,
     roughness: 1,
-    vertexColors: true,
   }), []);
   const contactMaterial = useMemo(() => new MeshBasicMaterial({
     color: 0x263a27,
@@ -635,7 +663,7 @@ export function ForestEnvironment({
       <ForestInstances kind="trunk" material={woodMaterial} placements={heroTrunks} />
       <ForestInstances kind="branch" material={woodMaterial} placements={heroBranches} />
       <ForestInstances
-        kind={layerContract.heroCanopies.geometry}
+        kind={legacyGeometryKind(layerContract.heroCanopies)}
         material={canopyMaterial}
         placements={heroCanopies}
         shaderAttributes
@@ -644,7 +672,7 @@ export function ForestEnvironment({
       <ForestInstances kind="trunk" material={woodMaterial} placements={midTrunks} />
       <ForestInstances
         atlasName={layerContract.midCanopies.atlasName}
-        kind={layerContract.midCanopies.geometry}
+        kind={legacyGeometryKind(layerContract.midCanopies)}
         material={texturePack ? foliageMaterial : canopyMaterial}
         placements={midCanopies}
         shaderAttributes
@@ -672,7 +700,7 @@ export function ForestEnvironment({
       <ForestInstances kind="flower-stem" material={stemMaterial} placements={flowerStems} />
       <ForestInstances
         atlasName={layerContract.wildflowerHeads.atlasName}
-        kind={texturePack ? "flower-head" : layerContract.wildflowerHeads.geometry}
+        kind={texturePack ? "flower-head" : legacyGeometryKind(layerContract.wildflowerHeads)}
         material={flowerMaterial}
         placements={flowerHeads}
         shaderAttributes

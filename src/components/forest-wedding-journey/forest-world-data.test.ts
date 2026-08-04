@@ -74,23 +74,23 @@ test("environment runtime estimates describe bounded textured and procedural wor
 
 const EXPECTED_DENSITIES = {
   desktop: {
-    farTrees: 112,
+    farTrees: 300,
     grass: 1_200,
-    midTrees: 82,
+    midTrees: 260,
     petals: 72,
     wildflowers: 260,
   },
   mobile: {
-    farTrees: 72,
+    farTrees: 200,
     grass: 720,
-    midTrees: 52,
+    midTrees: 170,
     petals: 42,
     wildflowers: 150,
   },
   reduced: {
-    farTrees: 42,
+    farTrees: 120,
     grass: 420,
-    midTrees: 32,
+    midTrees: 90,
     petals: 18,
     wildflowers: 90,
   },
@@ -236,9 +236,9 @@ test("near mid and three far forest bands remain populated on mobile", () => {
     getForestWorldDensity("mobile", "mobile"),
   );
 
-  assert.ok(placements.heroTrees.length >= 20);
-  assert.ok(placements.midTrees.length >= 48);
-  assert.ok(placements.farTrees.length >= 64);
+  assert.ok(placements.heroTrees.length >= 60);
+  assert.ok(placements.midTrees.length >= 150);
+  assert.ok(placements.farTrees.length >= 180);
   assert.ok(new Set(placements.farTrees.map(({ depthBand }) => depthBand)).size >= 3);
   assert.equal(placements.grass.length, EXPECTED_DENSITIES.mobile.grass);
   assert.equal(placements.wildflowers.length, EXPECTED_DENSITIES.mobile.wildflowers);
@@ -249,10 +249,10 @@ test("fifteen-scene desktop and mobile placements keep exact runtime budgets", (
   const expected = {
     desktop: {
       clearings: 15,
-      farTrees: 112,
+      farTrees: 300,
       grass: 1_200,
-      heroTrees: 30,
-      midTrees: 82,
+      heroTrees: 90,
+      midTrees: 260,
       pathCenterline: 129,
       petals: 72,
       roots: 30,
@@ -262,10 +262,10 @@ test("fifteen-scene desktop and mobile placements keep exact runtime budgets", (
     },
     mobile: {
       clearings: 15,
-      farTrees: 72,
+      farTrees: 200,
       grass: 720,
-      heroTrees: 30,
-      midTrees: 52,
+      heroTrees: 90,
+      midTrees: 170,
       pathCenterline: 129,
       petals: 42,
       roots: 30,
@@ -466,6 +466,40 @@ test("textured mid canopies and petals use atlas cards while hero canopies stay 
   });
 });
 
+test("hybrid conifers use branch-card LODs and a panorama far field", () => {
+  const hybrid = getForestEnvironmentLayerContract("hybrid");
+
+  assert.deepEqual(hybrid.heroCanopies, {
+    atlasName: "conifer",
+    geometry: "branch-card-lod0",
+  });
+  assert.deepEqual(hybrid.midCanopies, {
+    atlasName: "conifer",
+    geometry: "branch-card-lod1",
+  });
+  assert.deepEqual(hybrid.farForest, {
+    atlasName: "backdrop",
+    geometry: "panorama-impostor",
+  });
+  assert.deepEqual(hybrid.petals, {
+    atlasName: "petal",
+    geometry: "atlas-card",
+  });
+  assert.deepEqual(hybrid.wildflowerHeads, {
+    atlasName: "wildflower",
+    geometry: "atlas-card",
+  });
+});
+
+test("legacy modes keep a procedural far field instead of a panorama", () => {
+  for (const mode of ["procedural", "textured"] as const) {
+    assert.deepEqual(getForestEnvironmentLayerContract(mode).farForest, {
+      atlasName: null,
+      geometry: "far-trunk",
+    });
+  }
+});
+
 test("localized contacts cover hero and mid trees plus near shrubs roots and stones", () => {
   const placements = createForestWorldPlacements(
     13,
@@ -545,6 +579,20 @@ test("corridor diagnostics are calculated from the placements that feed the rend
 
 test("atlas UV rectangles respect the authored grid bounds and gutters", () => {
   assert.deepEqual(FOREST_MATERIAL_ATLAS_SPECS, {
+    backdrop: {
+      cellBoundsX: [0, 1_024],
+      cellBoundsY: [0, 512],
+      gutter: 0,
+      height: 512,
+      width: 1_024,
+    },
+    conifer: {
+      cellBoundsX: [0, 256, 512],
+      cellBoundsY: [0, 256, 512],
+      gutter: 8,
+      height: 512,
+      width: 1_024,
+    },
     foliage: {
       cellBoundsX: [0, 512, 1_024],
       cellBoundsY: [0, 256, 512, 768, 1_024],
@@ -566,11 +614,20 @@ test("atlas UV rectangles respect the authored grid bounds and gutters", () => {
       height: 1_024,
       width: 1_024,
     },
+    wildlife: {
+      cellBoundsX: [0, 320, 640, 960],
+      cellBoundsY: [0, 320, 640],
+      gutter: 8,
+      height: 640,
+      width: 960,
+    },
   });
 
   for (const [atlas, count] of [
+    ["conifer", 4],
     ["foliage", 8],
     ["wildflower", 12],
+    ["wildlife", 6],
     ["petal", 16],
   ] as const) {
     const rects = Array.from({ length: count }, (_, cell) => getForestAtlasUvRect(atlas, cell));
@@ -629,5 +686,41 @@ test("visibility resets and isolated stalls cannot trigger degradation", () => {
   assert.equal(reductions, 0);
 
   for (let timestamp = 12_525; timestamp <= 14_000; timestamp += 25) sampler.sample(timestamp);
+  assert.equal(reductions, 0);
+});
+
+test("a device too slow to clear 250ms frames still reduces", () => {
+  // Every frame being an outlier used to reset the accumulator on every sample,
+  // so the slowest hardware — the only hardware the reduction exists for — was
+  // the one case that could never reduce. A sustained streak of quarter-second
+  // frames is a slow renderer, not a deschedule: a real deschedule flips
+  // `visibilityState` and the caller resets the sampler instead.
+  let reductions = 0;
+  const sampler = createForestAdaptiveQualitySampler(() => {
+    reductions += 1;
+  });
+
+  for (let timestamp = 0; timestamp <= 3_600; timestamp += 600) {
+    sampler.sample(timestamp);
+  }
+  assert.equal(reductions, 1);
+});
+
+test("a single stall between healthy frames never accumulates", () => {
+  let reductions = 0;
+  const sampler = createForestAdaptiveQualitySampler(() => {
+    reductions += 1;
+  });
+
+  // Alternating one 600ms stall with fast frames must stay quiet forever: the
+  // streak resets before it reaches the limit, and the fast frame clears the
+  // accumulator.
+  let timestamp = 0;
+  for (let cycle = 0; cycle < 40; cycle += 1) {
+    timestamp += 600;
+    sampler.sample(timestamp);
+    timestamp += 16;
+    sampler.sample(timestamp);
+  }
   assert.equal(reductions, 0);
 });

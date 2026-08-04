@@ -94,8 +94,10 @@ function parseIsoDate(value: string): Date | null {
 }
 
 export function ForestWeddingJourneyLab({
+  diagnosticsEnabled = false,
   fixture = "default",
 }: {
+  readonly diagnosticsEnabled?: boolean;
   readonly fixture?: ForestWeddingJourneyFixture;
 }) {
   const format = useFormatter();
@@ -504,6 +506,7 @@ export function ForestWeddingJourneyLab({
         <ForestJourneyCanvas
           activeIndex={state.currentIndex}
           content={content}
+          diagnosticsEnabled={diagnosticsEnabled}
           interactions={interactions}
           labels={labels}
           lookRef={liveLookRef}

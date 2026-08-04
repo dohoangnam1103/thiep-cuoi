@@ -41,11 +41,16 @@ import {
 } from "./forest-scene-content";
 import type { ForestJourneyLocalInteractions } from "./forest-interactive-scenes";
 import { residentSceneIndices } from "./forest-scene-residency";
+import { useForestSceneAtmosphere } from "./forest-scene-atmosphere";
 import { ForestStaticScene } from "./forest-static-scenes";
 import type { ForestPhotoTextureCacheDiagnostics } from "./forest-photo-texture-cache";
+import { ForestPhotorealAssetBoundary } from "./photoreal/forest-photoreal-assets";
+import { ForestPhotorealWorld } from "./photoreal/forest-photoreal-world";
+import { ForestPhotorealWildlife } from "./photoreal/forest-wildlife";
 import {
   FOREST_ENVIRONMENT_RUNTIME_TEXTURE_SPECS,
   type ForestWorldPlacements,
+  type ForestWorldQualityTier,
 } from "./forest-world-data";
 
 export const FOREST_MATERIAL_PATHS: string[] = [
@@ -55,7 +60,7 @@ export const FOREST_MATERIAL_PATHS: string[] = [
   FOREST_ENVIRONMENT_RUNTIME_TEXTURE_SPECS.ground.src,
 ];
 
-export type ForestWeddingWorldMode = "procedural" | "textured";
+export type ForestWeddingWorldMode = "hybrid" | "procedural" | "textured";
 
 export type ForestWeddingWorldProps = {
   readonly activeIndex: number;
@@ -71,6 +76,7 @@ export type ForestWeddingWorldProps = {
   readonly onReady: (mode: ForestWeddingWorldMode) => void;
   readonly phase: ForestJourneyPhase;
   readonly placements: ForestWorldPlacements;
+  readonly qualityTier: ForestWorldQualityTier;
   readonly reducedMotion: boolean;
   readonly sceneNames: ForestJourneySceneNames;
   readonly scenes: readonly ForestJourneyScene[];
@@ -202,6 +208,7 @@ function ForestThresholdActors({
   gateDepartedRef,
   placements,
   reducedMotion,
+  sphereAnimals,
   texturePack,
 }: Pick<
   ForestWeddingWorldProps,
@@ -212,6 +219,13 @@ function ForestThresholdActors({
   | "placements"
   | "reducedMotion"
 > & {
+  /**
+   * Whether to mount the sphere-built animals. The photoreal world renders the
+   * same beats from the wildlife atlas instead (`ForestPhotorealWildlife`), and
+   * mounting both would put faceted spheres beside photographic cards — exactly
+   * the "sphere animals" the photoreal upgrade set out to retire.
+   */
+  readonly sphereAnimals: boolean;
   readonly texturePack: ForestMaterialTexturePack | null;
 }) {
   return (
@@ -228,12 +242,14 @@ function ForestThresholdActors({
         reducedMotion={reducedMotion}
         texture={texturePack?.petals ?? null}
       />
-      <ForestAnimals
-        cueRef={cueRef}
-        finaleCueActive={finaleCueActive}
-        gateDepartedRef={gateDepartedRef}
-        reducedMotion={reducedMotion}
-      />
+      {sphereAnimals ? (
+        <ForestAnimals
+          cueRef={cueRef}
+          finaleCueActive={finaleCueActive}
+          gateDepartedRef={gateDepartedRef}
+          reducedMotion={reducedMotion}
+        />
+      ) : null}
     </>
   );
 }
@@ -241,12 +257,31 @@ function ForestThresholdActors({
 function ProvisionalProceduralWorld(props: ForestWeddingWorldProps) {
   return (
     <group>
+      <LegacyForestLighting />
       <mesh position={[0, -0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[14, 32]} />
         <meshStandardMaterial color="#70845a" roughness={1} />
       </mesh>
-      <ForestThresholdActors {...props} texturePack={null} />
+      <ForestThresholdActors {...props} sphereAnimals texturePack={null} />
     </group>
+  );
+}
+
+const LEGACY_FOREST_ATMOSPHERE = {
+  color: "#c9ddbd",
+  far: 112,
+  near: 24,
+} as const;
+
+function LegacyForestLighting() {
+  useForestSceneAtmosphere(LEGACY_FOREST_ATMOSPHERE);
+
+  return (
+    <>
+      <hemisphereLight args={["#fff5cf", "#596f54", 1.22]} />
+      <ambientLight color="#fff3d4" intensity={0.42} />
+      <directionalLight color="#fff2c5" intensity={1.55} position={[7, 11, 5]} />
+    </>
   );
 }
 
@@ -254,13 +289,14 @@ function TerminalProceduralWorld(props: ForestWeddingWorldProps) {
   const { onReady, placements, reducedMotion } = props;
   return (
     <group>
+      <LegacyForestLighting />
       <ForestEnvironment
         cueRef={props.cueRef}
         placements={placements}
         reducedMotion={reducedMotion}
         texturePack={null}
       />
-      <ForestThresholdActors {...props} texturePack={null} />
+      <ForestThresholdActors {...props} sphereAnimals texturePack={null} />
       <WorldReadyReporter mode="procedural" onReady={onReady} />
     </group>
   );
@@ -287,14 +323,58 @@ function TexturedForestWorld(props: ForestWeddingWorldProps) {
 
   return (
     <group>
+      <LegacyForestLighting />
       <ForestEnvironment
         cueRef={props.cueRef}
         placements={placements}
         reducedMotion={reducedMotion}
         texturePack={texturePack}
       />
-      <ForestThresholdActors {...props} texturePack={texturePack} />
+      <ForestThresholdActors
+        {...props}
+        sphereAnimals
+        texturePack={texturePack}
+      />
       <WorldReadyReporter mode="textured" onReady={onReady} />
+    </group>
+  );
+}
+
+function HybridPhotorealWorld(props: ForestWeddingWorldProps) {
+  const {
+    activeIndex,
+    cueRef,
+    finaleCueActive,
+    gateDepartedRef,
+    onReady,
+    placements,
+    qualityTier,
+    reducedMotion,
+    targetIndex,
+  } = props;
+
+  return (
+    <group>
+      <ForestPhotorealWorld
+        activeIndex={activeIndex}
+        cueRef={cueRef}
+        placements={placements}
+        qualityTier={qualityTier}
+        reducedMotion={reducedMotion}
+        targetIndex={targetIndex}
+      />
+      <ForestThresholdActors
+        {...props}
+        sphereAnimals={false}
+        texturePack={null}
+      />
+      <ForestPhotorealWildlife
+        cueRef={cueRef}
+        finaleCueActive={finaleCueActive}
+        gateDepartedRef={gateDepartedRef}
+        reducedMotion={reducedMotion}
+      />
+      <WorldReadyReporter mode="hybrid" onReady={onReady} />
     </group>
   );
 }
@@ -378,19 +458,22 @@ export function ForestWeddingWorld(props: ForestWeddingWorldProps) {
 
   return (
     <>
-      <color args={["#c9ddbd"]} attach="background" />
-      <fog attach="fog" args={["#c9ddbd", 24, 112]} />
-      <hemisphereLight args={["#fff5cf", "#596f54", 1.22]} />
-      <ambientLight color="#fff3d4" intensity={0.42} />
-      <directionalLight color="#fff2c5" intensity={1.55} position={[7, 11, 5]} />
       <group>
-        <MaterialAssetBoundary
-          fallback={<TerminalProceduralWorld {...props} />}
+        <ForestPhotorealAssetBoundary
+          fallback={
+            <MaterialAssetBoundary
+              fallback={<TerminalProceduralWorld {...props} />}
+            >
+              <Suspense fallback={<ProvisionalProceduralWorld {...props} />}>
+                <TexturedForestWorld {...props} />
+              </Suspense>
+            </MaterialAssetBoundary>
+          }
         >
           <Suspense fallback={<ProvisionalProceduralWorld {...props} />}>
-            <TexturedForestWorld {...props} />
+            <HybridPhotorealWorld {...props} />
           </Suspense>
-        </MaterialAssetBoundary>
+        </ForestPhotorealAssetBoundary>
       </group>
       {props.phase !== "threshold" ? (
         <ForestSceneAssemblies

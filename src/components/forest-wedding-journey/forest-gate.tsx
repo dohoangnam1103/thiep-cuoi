@@ -4,7 +4,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import {
   CircleGeometry,
   Color,
-  CylinderGeometry,
   DodecahedronGeometry,
   DoubleSide,
   DynamicDrawUsage,
@@ -28,6 +27,9 @@ import {
 } from "react";
 
 import type { ForestJourneyCueState } from "./forest-cue-state";
+import { createForestTaperedWoodGeometry } from "./forest-prop-geometry";
+import { forestPropMaterial } from "./forest-prop-material";
+import { getForestWoodTaper } from "./photoreal/forest-prop-material-policy";
 import { FOREST_GATE_CENTER } from "./forest-world-data";
 
 export const FOREST_GATE_ASSEMBLIES = [{ id: "opening-floral-gate" }] as const;
@@ -87,6 +89,48 @@ export const FOREST_GATE_WOOD_SEGMENTS: readonly GateSegment[] = [
   { start: [1.35, 1.08, 3.5], end: [1.57, 1.45, 3.5], radius: 0.035 },
   { start: [-1.37, 0.48, 3.5], end: [-1.52, 0.79, 3.5], radius: 0.035 },
 ] as const;
+
+/**
+ * Taper is quantised so the twelve members collapse into a handful of shared
+ * geometries: one instanced draw per bucket instead of one per member, while
+ * long posts still narrow visibly more than short braces.
+ */
+const WOOD_TAPER_BUCKET = 0.02;
+
+type GateWoodGroup = {
+  readonly segments: readonly GateSegment[];
+  readonly taper: number;
+};
+
+function getGateSegmentLength(segment: GateSegment): number {
+  return Math.hypot(
+    segment.end[0] - segment.start[0],
+    segment.end[1] - segment.start[1],
+    segment.end[2] - segment.start[2],
+  );
+}
+
+function groupGateWoodByTaper(
+  segments: readonly GateSegment[],
+): readonly GateWoodGroup[] {
+  const buckets = new Map<number, GateSegment[]>();
+
+  for (const segment of segments) {
+    const taper = getForestWoodTaper(getGateSegmentLength(segment));
+    const bucket = Math.round(taper / WOOD_TAPER_BUCKET) * WOOD_TAPER_BUCKET;
+    const existing = buckets.get(bucket);
+    if (existing) existing.push(segment);
+    else buckets.set(bucket, [segment]);
+  }
+
+  return [...buckets.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([taper, bucketSegments]) => ({ segments: bucketSegments, taper }));
+}
+
+export const FOREST_GATE_WOOD_GROUPS = groupGateWoodByTaper(
+  FOREST_GATE_WOOD_SEGMENTS,
+);
 
 function cluster(
   center: readonly [number, number, number],
@@ -223,6 +267,58 @@ export type ForestGateProps = {
   readonly reducedMotion: boolean;
 };
 
+type GateWoodGroupMeshProps = {
+  readonly group: GateWoodGroup;
+  readonly material: MeshStandardMaterial;
+  readonly scratch: GateScratch;
+};
+
+function GateWoodGroupMesh({
+  group,
+  material,
+  scratch,
+}: GateWoodGroupMeshProps) {
+  const meshRef = useRef<InstancedMesh | null>(null);
+  // Radius arrives through the instance scale, so one unit-radius geometry per
+  // taper bucket covers every member in that bucket.
+  const geometry = useMemo(
+    () => createForestTaperedWoodGeometry(1, group.taper, 7),
+    [group.taper],
+  );
+
+  useLayoutEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+
+    group.segments.forEach((segment, index) => {
+      scratch.start.set(...segment.start);
+      scratch.end.set(...segment.end);
+      scratch.direction.subVectors(scratch.end, scratch.start);
+      const length = scratch.direction.length();
+      scratch.midpoint.addVectors(scratch.start, scratch.end).multiplyScalar(0.5);
+      scratch.instanceObject.position.copy(scratch.midpoint);
+      scratch.instanceObject.quaternion.setFromUnitVectors(
+        scratch.yAxis,
+        scratch.direction.multiplyScalar(1 / length),
+      );
+      scratch.instanceObject.scale.set(segment.radius, length, segment.radius);
+      scratch.instanceObject.updateMatrix();
+      mesh.setMatrixAt(index, scratch.instanceObject.matrix);
+    });
+
+    mesh.instanceMatrix.setUsage(DynamicDrawUsage);
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [group, scratch]);
+
+  return (
+    <instancedMesh
+      args={[geometry, material, group.segments.length]}
+      ref={meshRef}
+    />
+  );
+}
+
 export function ForestGate({
   cueRef,
   departedRef,
@@ -231,7 +327,6 @@ export function ForestGate({
 }: ForestGateProps) {
   const camera = useThree(({ camera: activeCamera }) => activeCamera);
   const size = useThree(({ size: viewportSize }) => viewportSize);
-  const woodRef = useRef<InstancedMesh | null>(null);
   const foliageRef = useRef<InstancedMesh | null>(null);
   const flowerRef = useRef<InstancedMesh | null>(null);
   const contactRef = useRef<InstancedMesh | null>(null);
@@ -264,29 +359,30 @@ export function ForestGate({
     viewportHeight: Number.NaN,
     viewportWidth: Number.NaN,
   });
-  const woodGeometry = useMemo(() => new CylinderGeometry(1, 1, 1, 7), []);
   const foliageGeometry = useMemo(() => new SphereGeometry(0.5, 6, 4), []);
   const flowerGeometry = useMemo(() => new DodecahedronGeometry(0.5, 0), []);
   const contactGeometry = useMemo(() => new CircleGeometry(1, 12), []);
   const voileGeometry = useMemo(() => new PlaneGeometry(1, 1, 1, 1), []);
-  const woodMaterial = useMemo(() => new MeshStandardMaterial({
-    color: 0x80664f,
-    roughness: 0.9,
-  }), []);
-  const foliageMaterial = useMemo(() => new MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: 0x436949,
-    emissiveIntensity: 0.65,
-    roughness: 0.88,
-    vertexColors: true,
-  }), []);
-  const flowerMaterial = useMemo(() => new MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: 0x3a392f,
-    emissiveIntensity: 0.18,
-    roughness: 0.78,
-    vertexColors: true,
-  }), []);
+  const woodMaterial = useMemo(
+    () => new MeshStandardMaterial(forestPropMaterial("wood", "#80664f")),
+    [],
+  );
+  // Instance colours carry the leaf and petal tints, so the shared policy only
+  // supplies roughness and metalness here; white keeps the tint unmodulated.
+  //
+  // No `vertexColors`: three.js already defines `USE_COLOR` for an InstancedMesh
+  // carrying an `instanceColor`, and the flag additionally emits
+  // `vColor.rgb *= color` against the geometry's `color` attribute. These
+  // primitives ship no such attribute, so WebGL supplies the default (0,0,0) and
+  // every instance multiplies down to pure black.
+  const foliageMaterial = useMemo(
+    () => new MeshStandardMaterial(forestPropMaterial("foliage", "#ffffff")),
+    [],
+  );
+  const flowerMaterial = useMemo(
+    () => new MeshStandardMaterial(forestPropMaterial("blossom", "#ffffff")),
+    [],
+  );
   const contactMaterial = useMemo(() => new MeshBasicMaterial({
     color: 0x243a2a,
     depthWrite: false,
@@ -315,28 +411,6 @@ export function ForestGate({
   });
 
   useLayoutEffect(() => {
-    const wood = woodRef.current;
-    if (wood) {
-      FOREST_GATE_WOOD_SEGMENTS.forEach((segment, index) => {
-        scratch.start.set(...segment.start);
-        scratch.end.set(...segment.end);
-        scratch.direction.subVectors(scratch.end, scratch.start);
-        const length = scratch.direction.length();
-        scratch.midpoint.addVectors(scratch.start, scratch.end).multiplyScalar(0.5);
-        scratch.instanceObject.position.copy(scratch.midpoint);
-        scratch.instanceObject.quaternion.setFromUnitVectors(
-          scratch.yAxis,
-          scratch.direction.multiplyScalar(1 / length),
-        );
-        scratch.instanceObject.scale.set(segment.radius, length, segment.radius);
-        scratch.instanceObject.updateMatrix();
-        wood.setMatrixAt(index, scratch.instanceObject.matrix);
-      });
-      wood.instanceMatrix.setUsage(DynamicDrawUsage);
-      wood.instanceMatrix.needsUpdate = true;
-      wood.computeBoundingSphere();
-    }
-
     const foliage = foliageRef.current;
     if (foliage) {
       for (let index = 0; index < FOREST_GATE_FOLIAGE.length; index += 1) {
@@ -394,7 +468,6 @@ export function ForestGate({
   }, [camera, scratch, voileSize.height, voileSize.width]);
 
   useEffect(() => () => {
-    woodGeometry.dispose();
     foliageGeometry.dispose();
     flowerGeometry.dispose();
     contactGeometry.dispose();
@@ -413,7 +486,6 @@ export function ForestGate({
     foliageMaterial,
     voileGeometry,
     voileMaterial,
-    woodGeometry,
     woodMaterial,
   ]);
 
@@ -511,10 +583,14 @@ export function ForestGate({
 
   return (
     <group name="forest-authored-floral-gate">
-      <instancedMesh
-        args={[woodGeometry, woodMaterial, FOREST_GATE_WOOD_SEGMENTS.length]}
-        ref={woodRef}
-      />
+      {FOREST_GATE_WOOD_GROUPS.map((group) => (
+        <GateWoodGroupMesh
+          group={group}
+          key={group.taper}
+          material={woodMaterial}
+          scratch={scratch}
+        />
+      ))}
       <instancedMesh
         args={[foliageGeometry, foliageMaterial, FOREST_GATE_FOLIAGE.length]}
         ref={foliageRef}

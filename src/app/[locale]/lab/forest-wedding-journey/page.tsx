@@ -20,6 +20,15 @@ function isLabEnabled(): boolean {
     || process.env.FOREST_WEDDING_JOURNEY_LAB_ENABLED === "1";
 }
 
+/**
+ * Resolved per request rather than inlined at build time, so the diagnostic E2E
+ * suite can opt a production build in while real visitors never receive the
+ * `window.__forestWeddingJourneyDiagnostics` reader.
+ */
+function areRuntimeDiagnosticsEnabled(): boolean {
+  return process.env.FOREST_RUNTIME_DIAGNOSTICS === "1";
+}
+
 const forestLabMessages = {
   en: enMessages.forestWeddingJourneyLab,
   ja: jaMessages.forestWeddingJourneyLab,
@@ -83,7 +92,10 @@ export default async function ForestWeddingJourneyLabPage({
       locale={locale}
       messages={{ forestWeddingJourneyLab: forestLabMessages[locale] }}
     >
-      <ForestWeddingJourneyLab fixture={fixture} />
+      <ForestWeddingJourneyLab
+        diagnosticsEnabled={areRuntimeDiagnosticsEnabled()}
+        fixture={fixture}
+      />
     </NextIntlClientProvider>
   );
 }

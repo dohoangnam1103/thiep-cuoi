@@ -10,6 +10,10 @@ import {
 import { getForestGalleryGeometry } from "./forest-gallery-geometry";
 import { createForestCameraScenes } from "./forest-scene-framing";
 import {
+  FOREST_GALLERY_EASEL,
+  FOREST_GALLERY_MOUNT_SIZE,
+} from "./forest-gallery-scene-geometry";
+import {
   createForestWorldPlacements,
   getForestWorldDensity,
 } from "./forest-world-data";
@@ -79,4 +83,20 @@ test("authored gallery views keep the complete easel inside a 390 by 844 mobile 
       `${scene.id} must fit the mobile horizontal field of view`,
     );
   }
+});
+
+test("the upgraded easel keeps the projected mount and print footprint", () => {
+  // The 0.76 metre mount width is what the mobile framing test above budgets
+  // for, so a richer easel silhouette must not widen it.
+  assert.deepEqual(FOREST_GALLERY_MOUNT_SIZE, [0.76, 1.06]);
+  assert.ok(FOREST_GALLERY_EASEL.mountDepth > 0.06);
+  assert.ok(
+    FOREST_GALLERY_EASEL.legOuterX * 2 + FOREST_GALLERY_EASEL.legThickness
+      <= FOREST_GALLERY_MOUNT_SIZE[0],
+    "easel legs must stay inside the mount footprint",
+  );
+  assert.ok(
+    FOREST_GALLERY_EASEL.printOffsetZ > FOREST_GALLERY_EASEL.mountDepth / 2,
+    "the print must sit in front of the mount, not inside it",
+  );
 });

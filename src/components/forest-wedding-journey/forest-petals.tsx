@@ -25,6 +25,8 @@ import {
 } from "react";
 
 import type { ForestJourneyCueState } from "./forest-cue-state";
+import { composeForestPetalInstance } from "./photoreal/forest-petal-instances";
+import { sampleForestPetalMotion } from "./photoreal/forest-petal-motion";
 import {
   getForestAtlasUvRect,
   type ForestPetalPlacement,
@@ -88,10 +90,6 @@ function createPetalGeometry(
   return geometry;
 }
 
-function wrap(value: number, length: number): number {
-  return ((value % length) + length) % length;
-}
-
 type PetalScratch = {
   readonly color: Color;
   readonly object: Object3D;
@@ -107,39 +105,18 @@ function updatePetalMatrices(
 ): void {
   if (!mesh) return;
   const { color, object } = scratch;
-  const gust = reducedMotion ? 0 : cue.petalGust;
-  const wind = reducedMotion ? 0 : cue.windStrength;
 
   for (let index = 0; index < placements.length; index += 1) {
     const petal = placements[index]!;
-    const time = reducedMotion ? 0 : elapsedTime;
-    const fallSpan = 4.15;
-    const fallingY = reducedMotion
-      ? petal.position[1]
-      : 0.5 + wrap(petal.position[1] - 0.5 - time * petal.fallSpeed, fallSpan);
-    const driftAmplitude = 0.045 + wind * 0.1 + gust * (0.12 + (index % 4) * 0.018);
-    const drift = reducedMotion
-      ? 0
-      : Math.sin(time * 0.54 + petal.phase) * driftAmplitude;
-    const depthDrift = reducedMotion
-      ? 0
-      : Math.cos(time * 0.37 + petal.phase * 0.73) * driftAmplitude * 0.35;
-    const densityScale = 1 + gust * (0.04 + (index % 3) * 0.035);
-    object.position.set(
-      petal.position[0] + drift,
-      fallingY - gust * 0.055 * (index % 3),
-      petal.position[2] + depthDrift,
+    const instance = composeForestPetalInstance(
+      petal,
+      sampleForestPetalMotion(index, elapsedTime, cue, reducedMotion),
+      reducedMotion,
     );
-    object.rotation.set(
-      petal.rotation[0] + time * petal.fallSpeed * 0.72,
-      petal.rotation[1] + time * petal.fallSpeed * 0.46,
-      petal.rotation[2] + Math.sin(time * 0.68 + petal.phase) * 0.42,
-    );
-    object.scale.set(
-      0.22 * petal.scale * densityScale,
-      0.34 * petal.scale * densityScale,
-      1,
-    );
+
+    object.position.set(...instance.position);
+    object.rotation.set(...instance.rotation);
+    object.scale.set(instance.scale[0], instance.scale[1], 1);
     object.updateMatrix();
     mesh.setMatrixAt(index, object.matrix);
     if (!(mesh.material instanceof ShaderMaterial)) {
@@ -175,11 +152,14 @@ export function ForestPetals({
   );
   const material = useMemo<Material>(() => texture
     ? createTexturedPetalMaterial(texture)
+    // No `vertexColors`: the tints ride on `instanceColor`, for which three.js
+    // already defines `USE_COLOR`. Setting the flag as well emits
+    // `vColor.rgb *= color` against a geometry `color` attribute this circle
+    // never declares, so the default (0,0,0) blacks out every petal.
     : new MeshStandardMaterial({
         color: 0xffffff,
         roughness: 0.82,
         side: DoubleSide,
-        vertexColors: true,
       }), [texture]);
 
   useLayoutEffect(() => {

@@ -1,5 +1,7 @@
 import { CatmullRomCurve3, Vector3 } from "three";
 
+import { FOREST_PHOTOREAL_ASSETS } from "./photoreal/forest-asset-manifest";
+
 export type ForestWorldViewport = "desktop" | "mobile";
 export type ForestWorldQualityTier = ForestWorldViewport | "reduced";
 
@@ -76,7 +78,10 @@ export type ForestContactCue = {
   readonly source: ForestContactSource;
 };
 
-export type ForestEnvironmentMaterialMode = "procedural" | "textured";
+export type ForestEnvironmentMaterialMode =
+  | "hybrid"
+  | "procedural"
+  | "textured";
 
 export type ForestRuntimeTextureSpec = {
   readonly height: number;
@@ -86,7 +91,7 @@ export type ForestRuntimeTextureSpec = {
 
 export type ForestRuntimeTextureEstimate = ForestRuntimeTextureSpec & {
   readonly decodedRgbaMipBytes: number;
-  readonly id: keyof typeof FOREST_ENVIRONMENT_RUNTIME_TEXTURE_SPECS;
+  readonly id: string;
 };
 
 export type ForestEnvironmentRuntimeEstimate = {
@@ -97,10 +102,19 @@ export type ForestEnvironmentRuntimeEstimate = {
 
 export type ForestEnvironmentLayerStyle = {
   readonly atlasName: ForestMaterialAtlasName | null;
-  readonly geometry: "atlas-card" | "canopy" | "flower-bud" | "petal";
+  readonly geometry:
+    | "atlas-card"
+    | "branch-card-lod0"
+    | "branch-card-lod1"
+    | "canopy"
+    | "far-trunk"
+    | "flower-bud"
+    | "panorama-impostor"
+    | "petal";
 };
 
 export type ForestEnvironmentLayerContract = {
+  readonly farForest: ForestEnvironmentLayerStyle;
   readonly heroCanopies: ForestEnvironmentLayerStyle;
   readonly midCanopies: ForestEnvironmentLayerStyle;
   readonly petals: ForestEnvironmentLayerStyle;
@@ -115,23 +129,23 @@ export type ForestWorldDiagnostics = {
 
 const DENSITIES = {
   desktop: {
-    farTrees: 112,
+    farTrees: 300,
     grass: 1_200,
-    midTrees: 82,
+    midTrees: 260,
     petals: 72,
     wildflowers: 260,
   },
   mobile: {
-    farTrees: 72,
+    farTrees: 200,
     grass: 720,
-    midTrees: 52,
+    midTrees: 170,
     petals: 42,
     wildflowers: 150,
   },
   reduced: {
-    farTrees: 42,
+    farTrees: 120,
     grass: 420,
-    midTrees: 32,
+    midTrees: 90,
     petals: 18,
     wildflowers: 90,
   },
@@ -196,11 +210,32 @@ export function getForestEnvironmentRuntimeEstimate(
     };
   }
 
+  if (mode === "hybrid") {
+    const textures = FOREST_PHOTOREAL_ASSETS.filter(
+      (asset) => asset.group === "entry",
+    ).map((asset): ForestRuntimeTextureEstimate => ({
+      decodedRgbaMipBytes: estimateExactRgbaMipBytes(asset.width, asset.height),
+      height: asset.height,
+      id: asset.id,
+      src: asset.src,
+      width: asset.width,
+    }));
+
+    return {
+      decodedRgbaMipBytes: textures.reduce(
+        (total, texture) => total + texture.decodedRgbaMipBytes,
+        0,
+      ),
+      mode,
+      textures,
+    };
+  }
+
   const textures = Object.entries(FOREST_ENVIRONMENT_RUNTIME_TEXTURE_SPECS).map(
     ([id, spec]): ForestRuntimeTextureEstimate => ({
       ...spec,
       decodedRgbaMipBytes: estimateExactRgbaMipBytes(spec.width, spec.height),
-      id: id as keyof typeof FOREST_ENVIRONMENT_RUNTIME_TEXTURE_SPECS,
+      id,
     }),
   );
   return {
@@ -222,6 +257,20 @@ type ForestMaterialAtlasSpec = {
 };
 
 export const FOREST_MATERIAL_ATLAS_SPECS = {
+  backdrop: {
+    cellBoundsX: [0, 1_024],
+    cellBoundsY: [0, 512],
+    gutter: 0,
+    height: 512,
+    width: 1_024,
+  },
+  conifer: {
+    cellBoundsX: [0, 256, 512],
+    cellBoundsY: [0, 256, 512],
+    gutter: 8,
+    height: 512,
+    width: 1_024,
+  },
   foliage: {
     cellBoundsX: [0, 512, 1_024],
     cellBoundsY: [0, 256, 512, 768, 1_024],
@@ -242,6 +291,13 @@ export const FOREST_MATERIAL_ATLAS_SPECS = {
     gutter: 10,
     height: 1_024,
     width: 1_024,
+  },
+  wildlife: {
+    cellBoundsX: [0, 320, 640, 960],
+    cellBoundsY: [0, 320, 640],
+    gutter: 8,
+    height: 640,
+    width: 960,
   },
 } as const satisfies Record<string, ForestMaterialAtlasSpec>;
 
@@ -410,7 +466,36 @@ export function getForestAtlasUvRect(
 export function getForestEnvironmentLayerContract(
   materialMode: ForestEnvironmentMaterialMode,
 ): ForestEnvironmentLayerContract {
+  if (materialMode === "hybrid") {
+    return {
+      farForest: {
+        atlasName: "backdrop",
+        geometry: "panorama-impostor",
+      },
+      heroCanopies: {
+        atlasName: "conifer",
+        geometry: "branch-card-lod0",
+      },
+      midCanopies: {
+        atlasName: "conifer",
+        geometry: "branch-card-lod1",
+      },
+      petals: {
+        atlasName: "petal",
+        geometry: "atlas-card",
+      },
+      wildflowerHeads: {
+        atlasName: "wildflower",
+        geometry: "atlas-card",
+      },
+    };
+  }
+
   return {
+    farForest: {
+      atlasName: null,
+      geometry: "far-trunk",
+    },
     heroCanopies: {
       atlasName: null,
       geometry: "canopy",
@@ -601,7 +686,7 @@ export function createForestWorldPlacements(
   const shrubRandom = seededCategoryRandom("shrubs", sceneCount);
   const rootRandom = seededCategoryRandom("roots", sceneCount);
   const stoneRandom = seededCategoryRandom("stones", sceneCount);
-  const heroCount = Math.max(20, sceneCount * 2);
+  const heroCount = Math.max(60, sceneCount * 6);
 
   const heroTrees = createAvoidingPlacements(
     heroCount,
@@ -868,16 +953,50 @@ export type ForestAdaptiveQualitySampler = {
   readonly sample: (timestampMs: number) => boolean;
 };
 
+/**
+ * A frame slower than this is treated as the tab having been descheduled — a
+ * background throttle, a GC pause, a blocking asset decode — rather than as the
+ * renderer's steady cost, and so cannot on its own accumulate towards a
+ * reduction.
+ */
+const ADAPTIVE_OUTLIER_FRAME_MS = 250;
+
+/**
+ * How many consecutive outlier frames still count as a genuinely slow device.
+ *
+ * A single stall says nothing about steady cost, but a device that cannot clear
+ * one frame in a quarter second, repeatedly, is exactly the hardware the
+ * reduction exists for. Treating every outlier as a deschedule made the
+ * accumulator reset on every frame there, so the slowest devices — a low-end
+ * phone, or a desktop on a software rasteriser — were the only ones that could
+ * never reduce. Three in a row is ~0.75s of continuous stall, long enough that a
+ * deschedule would have flipped `visibilityState` and reset the sampler instead.
+ */
+const ADAPTIVE_OUTLIER_STREAK_LIMIT = 3;
+
+/**
+ * Ceiling on how much one frame contributes to the sustained-slow total.
+ *
+ * The total is real time spent slow, so a frame contributes its own duration;
+ * the cap only bounds a pathological reading. It has to sit above
+ * `ADAPTIVE_OUTLIER_FRAME_MS`, or a confirmed-slow device would contribute a
+ * token amount per frame and take tens of seconds to cross a two-second
+ * threshold — at the old 50ms cap, 600ms frames needed 24 seconds.
+ */
+const ADAPTIVE_SLOW_FRAME_CREDIT_CEILING_MS = 500;
+
 export function createForestAdaptiveQualitySampler(
   onReduce: () => void,
 ): ForestAdaptiveQualitySampler {
   let accumulatedSlowMs = 0;
+  let outlierStreak = 0;
   let previousTimestampMs: number | null = null;
   let reduced = false;
 
   return {
     reset() {
       accumulatedSlowMs = 0;
+      outlierStreak = 0;
       previousTimestampMs = null;
     },
     sample(timestampMs) {
@@ -889,17 +1008,30 @@ export function createForestAdaptiveQualitySampler(
 
       const deltaMs = timestampMs - previousTimestampMs;
       previousTimestampMs = timestampMs;
-      if (deltaMs <= 0 || deltaMs > 250) {
+      if (deltaMs <= 0) {
         accumulatedSlowMs = 0;
+        outlierStreak = 0;
         return false;
       }
 
-      if (deltaMs <= 24) {
-        accumulatedSlowMs = 0;
-        return false;
+      if (deltaMs > ADAPTIVE_OUTLIER_FRAME_MS) {
+        outlierStreak += 1;
+        if (outlierStreak < ADAPTIVE_OUTLIER_STREAK_LIMIT) {
+          accumulatedSlowMs = 0;
+          return false;
+        }
+      } else {
+        outlierStreak = 0;
+        if (deltaMs <= 24) {
+          accumulatedSlowMs = 0;
+          return false;
+        }
       }
 
-      accumulatedSlowMs += Math.min(deltaMs, 50);
+      accumulatedSlowMs += Math.min(
+        deltaMs,
+        ADAPTIVE_SLOW_FRAME_CREDIT_CEILING_MS,
+      );
       if (reduced || accumulatedSlowMs < 2_000) return false;
 
       reduced = true;

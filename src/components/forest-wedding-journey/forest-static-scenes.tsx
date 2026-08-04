@@ -15,6 +15,9 @@ import {
   ForestInteractiveSceneContent,
   type ForestJourneyLocalInteractions,
 } from "./forest-interactive-scenes";
+import { createForestBevelledBoxGeometry } from "./forest-prop-geometry";
+import { forestPropMaterial } from "./forest-prop-material";
+import { getForestClothDrape } from "./photoreal/forest-prop-material-policy";
 import type { ForestClearingSlot } from "./forest-world-data";
 
 export type ForestStaticSceneProps = {
@@ -98,6 +101,104 @@ function SceneContentHtml({
   );
 }
 
+type DrapedClothProps = {
+  readonly color: string;
+  readonly depth: number;
+  readonly frontDrapeName?: string;
+  readonly sideDrapeName?: string;
+  readonly tableHeight: number;
+  readonly topName?: string;
+  readonly topThickness: number;
+  readonly topY: number;
+  readonly width: number;
+};
+
+/**
+ * A cloth laid over a table: a padded top slab plus hanging panels on the front
+ * and both sides, each closed by a hem. Without shadow maps the hem is what
+ * separates fabric from a painted-on lid, so it is not decoration.
+ */
+function DrapedCloth({
+  color,
+  depth,
+  frontDrapeName,
+  sideDrapeName,
+  tableHeight,
+  topName,
+  topThickness,
+  topY,
+  width,
+}: DrapedClothProps) {
+  const drape = getForestClothDrape(tableHeight);
+  const drapeTop = topY - topThickness / 2;
+  const panelY = drapeTop - drape.dropMetres / 2;
+  const hemY = drapeTop - drape.dropMetres + drape.hemMetres / 2;
+  const hemThickness = drape.thicknessMetres * 1.7;
+  const material = forestPropMaterial("cloth", color);
+
+  return (
+    <>
+      <mesh
+        geometry={createForestBevelledBoxGeometry(width, topThickness, depth)}
+        name={topName}
+        position={[0, topY, 0]}
+      >
+        <meshStandardMaterial {...material} />
+      </mesh>
+      <mesh
+        geometry={createForestBevelledBoxGeometry(
+          width,
+          drape.dropMetres,
+          drape.thicknessMetres,
+        )}
+        name={frontDrapeName}
+        position={[0, panelY, depth / 2]}
+      >
+        <meshStandardMaterial {...material} />
+      </mesh>
+      <mesh
+        geometry={createForestBevelledBoxGeometry(
+          width,
+          drape.hemMetres,
+          hemThickness,
+        )}
+        position={[0, hemY, depth / 2]}
+      >
+        <meshStandardMaterial {...material} />
+      </mesh>
+      {[-1, 1].map((side) => (
+        <group
+          key={side}
+          position={[(side * width) / 2, 0, 0]}
+          rotation={[0, Math.PI / 2, 0]}
+        >
+          <mesh
+            geometry={createForestBevelledBoxGeometry(
+              depth,
+              drape.dropMetres,
+              drape.thicknessMetres,
+            )}
+            name={sideDrapeName}
+            position={[0, panelY, 0]}
+          >
+            <meshStandardMaterial {...material} />
+          </mesh>
+          <mesh
+            geometry={createForestBevelledBoxGeometry(
+              depth,
+              drape.hemMetres,
+              hemThickness,
+            )}
+            position={[0, hemY, 0]}
+          >
+            <meshStandardMaterial {...material} />
+          </mesh>
+        </group>
+      ))}
+    </>
+  );
+}
+
 function FamilyClothTable({
   clothColor,
   x,
@@ -107,31 +208,23 @@ function FamilyClothTable({
 }) {
   return (
     <group position={[x, 0, 0]}>
-      <mesh position={[0, 0.23, 0]}>
-        <boxGeometry args={[0.64, 0.44, 0.48]} />
-        <meshStandardMaterial color="#765b43" roughness={0.92} />
-      </mesh>
-      <mesh name="forest-family-table-cloth-top" position={[0, 0.49, 0]}>
-        <boxGeometry args={[0.78, 0.09, 0.6]} />
-        <meshStandardMaterial color={clothColor} roughness={0.98} />
-      </mesh>
       <mesh
-        name="forest-family-table-front-drape"
-        position={[0, 0.27, 0.29]}
+        geometry={createForestBevelledBoxGeometry(0.64, 0.44, 0.48)}
+        position={[0, 0.23, 0]}
       >
-        <boxGeometry args={[0.78, 0.44, 0.035]} />
-        <meshStandardMaterial color={clothColor} roughness={0.98} />
+        <meshStandardMaterial {...forestPropMaterial("wood", "#765b43")} />
       </mesh>
-      {[-0.375, 0.375].map((sideX) => (
-        <mesh
-          key={sideX}
-          name="forest-family-table-side-drape"
-          position={[sideX, 0.27, 0]}
-        >
-          <boxGeometry args={[0.035, 0.44, 0.58]} />
-          <meshStandardMaterial color={clothColor} roughness={0.98} />
-        </mesh>
-      ))}
+      <DrapedCloth
+        color={clothColor}
+        depth={0.6}
+        frontDrapeName="forest-family-table-front-drape"
+        sideDrapeName="forest-family-table-side-drape"
+        tableHeight={0.45}
+        topName="forest-family-table-cloth-top"
+        topThickness={0.09}
+        topY={0.49}
+        width={0.78}
+      />
     </group>
   );
 }
@@ -157,17 +250,22 @@ function OpeningMessageScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue />
-      <mesh position={[0, 0.44, 0]} rotation={[-0.18, 0, 0]}>
-        <boxGeometry args={[1.05, 0.06, 0.72]} />
-        <meshStandardMaterial color="#e6d5b8" roughness={0.94} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.05, 0.06, 0.72)}
+        position={[0, 0.44, 0]}
+        rotation={[-0.18, 0, 0]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#e6d5b8")} />
       </mesh>
       <mesh position={[-0.35, 0.64, -0.12]} rotation={[-0.82, 0, -0.18]}>
         <planeGeometry args={[0.72, 0.58]} />
-        <meshStandardMaterial color="#d6bc93" roughness={0.96} />
+        <meshStandardMaterial {...forestPropMaterial("paper", "#d6bc93")} />
       </mesh>
-      <mesh position={[0, 1.02, 0]}>
-        <boxGeometry args={[0.88, 1.08, 0.045]} />
-        <meshStandardMaterial color="#fff9e8" roughness={0.9} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(0.88, 1.08, 0.045)}
+        position={[0, 1.02, 0]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("paper", "#fff9e8")} />
       </mesh>
       <SceneContentHtml
         {...props}
@@ -183,13 +281,17 @@ function CalendarScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={0.82} />
-      <mesh position={[0, 0.78, -0.045]}>
-        <boxGeometry args={[1.32, 1.46, 0.12]} />
-        <meshStandardMaterial color="#846247" roughness={0.9} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.32, 1.46, 0.12)}
+        position={[0, 0.78, -0.045]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#846247")} />
       </mesh>
-      <mesh position={[0, 0.78, 0.03]}>
-        <boxGeometry args={[1.18, 1.3, 0.045]} />
-        <meshStandardMaterial color="#fff9e8" roughness={0.93} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.18, 1.3, 0.045)}
+        position={[0, 0.78, 0.03]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("paper", "#fff9e8")} />
       </mesh>
       <SceneContentHtml
         {...props}
@@ -205,14 +307,20 @@ function ScheduleScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={1.05} />
-      <mesh position={[0, 0.26, -0.08]}>
-        <boxGeometry args={[1.58, 0.48, 0.48]} />
-        <meshStandardMaterial color="#785b42" roughness={0.94} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.58, 0.48, 0.48)}
+        position={[0, 0.26, -0.08]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#785b42")} />
       </mesh>
-      <mesh position={[0, 0.54, 0]}>
-        <boxGeometry args={[1.78, 0.1, 0.66]} />
-        <meshStandardMaterial color="#c9c7ad" roughness={0.98} />
-      </mesh>
+      <DrapedCloth
+        color="#c9c7ad"
+        depth={0.66}
+        tableHeight={0.5}
+        topThickness={0.1}
+        topY={0.54}
+        width={1.78}
+      />
       <SceneContentHtml
         {...props}
         contentPosition={[0, 0.82, 0.36]}
@@ -227,13 +335,17 @@ function DressCodeScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={0.88} />
-      <mesh position={[0, 0.32, -0.1]}>
-        <boxGeometry args={[1.35, 0.56, 0.38]} />
-        <meshStandardMaterial color="#765a43" roughness={0.95} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.35, 0.56, 0.38)}
+        position={[0, 0.32, -0.1]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#765a43")} />
       </mesh>
-      <mesh position={[0, 1.22, 0]}>
-        <boxGeometry args={[1.55, 0.07, 0.07]} />
-        <meshStandardMaterial color="#87664a" roughness={0.9} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.55, 0.07, 0.07)}
+        position={[0, 1.22, 0]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#87664a")} />
       </mesh>
       <SceneContentHtml
         {...props}
@@ -250,14 +362,19 @@ function VenueScene(props: ForestStaticSceneProps) {
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={0.78} />
       {[-0.52, 0.52].map((x) => (
-        <mesh key={x} position={[x, 0.64, -0.08]}>
-          <boxGeometry args={[0.09, 1.28, 0.09]} />
-          <meshStandardMaterial color="#76583e" roughness={0.93} />
+        <mesh
+          geometry={createForestBevelledBoxGeometry(0.09, 1.28, 0.09)}
+          key={x}
+          position={[x, 0.64, -0.08]}
+        >
+          <meshStandardMaterial {...forestPropMaterial("wood", "#76583e")} />
         </mesh>
       ))}
-      <mesh position={[0, 1.05, 0]}>
-        <boxGeometry args={[1.36, 0.72, 0.12]} />
-        <meshStandardMaterial color="#8a6749" roughness={0.9} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.36, 0.72, 0.12)}
+        position={[0, 1.05, 0]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#8a6749")} />
       </mesh>
       <SceneContentHtml
         {...props}
@@ -273,17 +390,20 @@ function MapScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={0.94} />
-      <mesh name="forest-map-table" position={[0, 0.32, -0.08]}>
-        <boxGeometry args={[1.62, 0.58, 0.78]} />
-        <meshStandardMaterial color="#795b40" roughness={0.94} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.62, 0.58, 0.78)}
+        name="forest-map-table"
+        position={[0, 0.32, -0.08]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#795b40")} />
       </mesh>
       <mesh
+        geometry={createForestBevelledBoxGeometry(1.45, 0.055, 0.78)}
         name="forest-map-paper"
         position={[0, 0.68, 0.05]}
         rotation={[-0.24, 0, 0]}
       >
-        <boxGeometry args={[1.45, 0.055, 0.78]} />
-        <meshStandardMaterial color="#f6efd9" roughness={0.96} />
+        <meshStandardMaterial {...forestPropMaterial("paper", "#f6efd9")} />
       </mesh>
       <SceneContentHtml
         {...props}
@@ -299,21 +419,29 @@ function RsvpScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={0.92} />
-      <mesh name="forest-rsvp-ledger-table" position={[0, 0.3, -0.08]}>
-        <boxGeometry args={[1.55, 0.54, 0.68]} />
-        <meshStandardMaterial color="#795b40" roughness={0.94} />
-      </mesh>
-      <mesh name="forest-rsvp-white-cloth" position={[0, 0.58, -0.02]}>
-        <boxGeometry args={[1.68, 0.1, 0.78]} />
-        <meshStandardMaterial color="#fffdf4" roughness={0.98} />
-      </mesh>
       <mesh
+        geometry={createForestBevelledBoxGeometry(1.55, 0.54, 0.68)}
+        name="forest-rsvp-ledger-table"
+        position={[0, 0.3, -0.08]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#795b40")} />
+      </mesh>
+      <DrapedCloth
+        color="#fffdf4"
+        depth={0.78}
+        tableHeight={0.55}
+        topName="forest-rsvp-white-cloth"
+        topThickness={0.1}
+        topY={0.58}
+        width={1.68}
+      />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.08, 0.06, 0.68)}
         name="forest-rsvp-clipboard"
         position={[0, 0.72, 0.04]}
         rotation={[-0.18, 0, 0]}
       >
-        <boxGeometry args={[1.08, 0.06, 0.68]} />
-        <meshStandardMaterial color="#b98a59" roughness={0.9} />
+        <meshStandardMaterial {...forestPropMaterial("wood", "#b98a59")} />
       </mesh>
       <SceneContentHtml
         {...props}
@@ -329,30 +457,38 @@ function WishesScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={1.02} />
-      <mesh name="forest-wishes-book-table" position={[0, 0.3, -0.08]}>
-        <boxGeometry args={[1.72, 0.54, 0.74]} />
-        <meshStandardMaterial color="#7f6044" roughness={0.94} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.72, 0.54, 0.74)}
+        name="forest-wishes-book-table"
+        position={[0, 0.3, -0.08]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#7f6044")} />
       </mesh>
       {[-0.36, 0.36].map((x, index) => (
         <mesh
+          geometry={createForestBevelledBoxGeometry(0.72, 0.045, 0.72)}
           key={x}
           name="forest-wishes-open-book-page"
           position={[x, 0.65, 0.04]}
           rotation={[-0.2, index === 0 ? 0.05 : -0.05, index === 0 ? -0.04 : 0.04]}
         >
-          <boxGeometry args={[0.72, 0.045, 0.72]} />
-          <meshStandardMaterial color="#fff8e4" roughness={0.97} />
+          <meshStandardMaterial {...forestPropMaterial("paper", "#fff8e4")} />
         </mesh>
       ))}
       {[-0.72, 0.7].map((x, index) => (
         <mesh
+          geometry={createForestBevelledBoxGeometry(0.38, 0.035, 0.32)}
           key={x}
           name="forest-wishes-paper-note"
           position={[x, 0.72, 0.3]}
           rotation={[-0.32, 0, index === 0 ? -0.14 : 0.12]}
         >
-          <boxGeometry args={[0.38, 0.035, 0.32]} />
-          <meshStandardMaterial color={index === 0 ? "#f0dfb8" : "#f6ead0"} roughness={0.98} />
+          <meshStandardMaterial
+            {...forestPropMaterial(
+              "paper",
+              index === 0 ? "#f0dfb8" : "#f6ead0",
+            )}
+          />
         </mesh>
       ))}
       <SceneContentHtml
@@ -369,19 +505,29 @@ function GiftScene(props: ForestStaticSceneProps) {
   return (
     <group position={props.clearing.position} rotation={[0, rotationY, 0]}>
       <ContactCue radius={0.9} />
-      <mesh name="forest-gift-table" position={[0, 0.3, -0.08]}>
-        <boxGeometry args={[1.5, 0.54, 0.68]} />
-        <meshStandardMaterial color="#76583f" roughness={0.94} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(1.5, 0.54, 0.68)}
+        name="forest-gift-table"
+        position={[0, 0.3, -0.08]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#76583f")} />
       </mesh>
       {[-0.4, 0.4].map((x, index) => (
         <group key={x} position={[x, 0.7, 0.03]} rotation={[-0.18, 0, index ? 0.08 : -0.08]}>
-          <mesh name="forest-gift-envelope">
-            <boxGeometry args={[0.62, 0.055, 0.42]} />
-            <meshStandardMaterial color={index === 0 ? "#efddbc" : "#f5e7cc"} roughness={0.96} />
+          <mesh
+            geometry={createForestBevelledBoxGeometry(0.62, 0.055, 0.42)}
+            name="forest-gift-envelope"
+          >
+            <meshStandardMaterial
+              {...forestPropMaterial(
+                "paper",
+                index === 0 ? "#efddbc" : "#f5e7cc",
+              )}
+            />
           </mesh>
           <mesh name="forest-gift-envelope-seal" position={[0, 0.04, 0]}>
             <cylinderGeometry args={[0.08, 0.08, 0.025, 16]} />
-            <meshStandardMaterial color="#a7644d" roughness={0.88} />
+            <meshStandardMaterial {...forestPropMaterial("paper", "#a7644d")} />
           </mesh>
         </group>
       ))}
@@ -401,31 +547,33 @@ function FinaleScene(props: ForestStaticSceneProps) {
       <ContactCue radius={1.22} />
       {[-0.72, 0.72].map((x) => (
         <group key={x} position={[x, 0, 0]}>
-          <mesh position={[0, 0.35, 0]}>
-            <boxGeometry args={[0.42, 0.68, 0.48]} />
-            <meshStandardMaterial color="#8b6b50" roughness={0.94} />
+          <mesh
+            geometry={createForestBevelledBoxGeometry(0.42, 0.68, 0.48)}
+            position={[0, 0.35, 0]}
+          >
+            <meshStandardMaterial {...forestPropMaterial("wood", "#8b6b50")} />
           </mesh>
-          <mesh position={[0, 0.78, -0.16]} rotation={[0.12, 0, 0]}>
-            <boxGeometry args={[0.42, 0.58, 0.08]} />
-            <meshStandardMaterial color="#f1ead8" roughness={0.96} />
+          <mesh
+            geometry={createForestBevelledBoxGeometry(0.42, 0.58, 0.08)}
+            position={[0, 0.78, -0.16]}
+            rotation={[0.12, 0, 0]}
+          >
+            <meshStandardMaterial {...forestPropMaterial("cloth", "#f1ead8")} />
           </mesh>
         </group>
       ))}
       <mesh position={[0, 1.1, -0.24]}>
         <planeGeometry args={[0.78, 1.62]} />
-        <meshStandardMaterial
-          color="#f4f0e2"
-          opacity={0.72}
-          roughness={0.9}
-          transparent
-        />
+        <meshStandardMaterial {...forestPropMaterial("cloth", "#f4f0e2", 0.72)} />
       </mesh>
       {[-0.22, 0, 0.22].map((x, index) => (
         <mesh key={x} position={[x, 0.38 + index * 0.04, 0.02]}>
           <dodecahedronGeometry args={[0.13, 0]} />
           <meshStandardMaterial
-            color={index === 1 ? "#f8f2df" : "#dfe2c9"}
-            roughness={0.88}
+            {...forestPropMaterial(
+              "blossom",
+              index === 1 ? "#f8f2df" : "#dfe2c9",
+            )}
           />
         </mesh>
       ))}

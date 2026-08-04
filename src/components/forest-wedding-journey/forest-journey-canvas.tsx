@@ -50,8 +50,20 @@ import {
   getForestWorldDensity,
   getForestWorldDiagnostics,
   getInitialForestWorldQualityTier,
+  type ForestWorldPlacements,
   type ForestWorldQualityTier,
 } from "./forest-world-data";
+import { getForestPhotorealAssetEstimate } from "./photoreal/forest-asset-manifest";
+import {
+  countForestConiferLodTrees,
+  planForestConiferChunks,
+  type ForestConiferLodTreeCounts,
+} from "./photoreal/forest-chunk-plan";
+import {
+  FOREST_PETAL_CALM_CUE,
+  hashForestPetalInstances,
+} from "./photoreal/forest-petal-instances";
+import { getForestPhotorealWildlifeMountedActorCount } from "./photoreal/forest-wildlife";
 import type { ForestPhotoTextureCacheDiagnostics } from "./forest-photo-texture-cache";
 import { createForestCameraScenes } from "./forest-scene-framing";
 import {
@@ -61,7 +73,6 @@ import {
 import styles from "./forest-wedding-journey.module.css";
 
 const MOBILE_QUERY = "(max-width: 767px)";
-const FOREST_RUNTIME_DIAGNOSTICS_ENABLED = process.env.NODE_ENV !== "production";
 
 type ForestRuntimeDiagnosticCounters = {
   adaptiveReductionCount: number;
@@ -72,8 +83,23 @@ type ForestRuntimeDiagnosticCounters = {
 export type ForestRuntimeDiagnosticsSnapshot = {
   readonly adaptiveReductionCount: number;
   readonly ambientCount: number;
+  readonly assets: {
+    readonly entryCompressedBytes: number;
+    readonly entryDecodedRgbaMipBytes: number;
+    readonly sharedCompressedBytes: number;
+    readonly sharedDecodedRgbaMipBytes: number;
+  };
+  readonly chunks: {
+    readonly count: number;
+    readonly lodTreeCounts: ForestConiferLodTreeCounts;
+    readonly residentIndices: readonly number[];
+  };
   readonly environment: ReturnType<typeof getForestEnvironmentRuntimeEstimate>;
   readonly hiddenAmbientCount: number;
+  readonly petals: {
+    readonly instanceCount: number;
+    readonly transformHash: string;
+  };
   readonly photos: ForestPhotoTextureCacheDiagnostics;
   readonly qualityTier: ForestWorldQualityTier;
   readonly renderer: {
@@ -94,6 +120,9 @@ export type ForestRuntimeDiagnosticsSnapshot = {
   };
   readonly totalEstimatedDecodedRgbaMipBytes: number;
   readonly viewport: "desktop" | "mobile";
+  readonly wildlife: {
+    readonly optionalActorCount: number;
+  };
   readonly worldMode: ForestWeddingWorldMode | "loading";
 };
 
@@ -141,6 +170,12 @@ function useMobileViewport(): boolean {
 export type ForestJourneyCanvasProps = {
   readonly activeIndex: number;
   readonly content: ForestJourneyContent;
+  /**
+   * Publishes the on-demand runtime snapshot reader. Resolved on the server so
+   * a production build can still opt in for the diagnostic E2E suite, and stays
+   * absent for real visitors.
+   */
+  readonly diagnosticsEnabled: boolean;
   readonly interactions: ForestJourneyLocalInteractions;
   readonly labels: ForestSceneLabels;
   readonly lookRef: MutableRefObject<{
@@ -344,7 +379,9 @@ function JourneyRuntimeDiagnostics({
   isMobile,
   phase,
   photoDiagnosticsReaderRef,
+  placements,
   qualityTier,
+  reducedMotion,
   scenes,
   targetIndex,
   worldMode,
@@ -356,7 +393,9 @@ function JourneyRuntimeDiagnostics({
   readonly photoDiagnosticsReaderRef: MutableRefObject<
     (() => ForestPhotoTextureCacheDiagnostics) | null
   >;
+  readonly placements: ForestWorldPlacements;
   readonly qualityTier: ForestWorldQualityTier;
+  readonly reducedMotion: boolean;
   readonly scenes: readonly ForestJourneyScene[];
   readonly targetIndex: number | null;
   readonly worldMode: ForestWeddingWorldMode | "loading";
@@ -373,17 +412,53 @@ function JourneyRuntimeDiagnostics({
         ? null
         : scenes[targetIndex] ?? null;
       const environment = getForestEnvironmentRuntimeEstimate(
-        worldMode === "textured" ? "textured" : "procedural",
+        worldMode === "loading" ? "procedural" : worldMode,
       );
       const photos = photoDiagnosticsReaderRef.current?.()
         ?? EMPTY_PHOTO_DIAGNOSTICS;
       const counters = countersRef.current;
+      const chunkCount = placements.clearings.length;
+      // Re-deriving the plan here is cheap and keeps the report honest: the
+      // renderer resolves residency from the same pure function.
+      const chunkPlans = planForestConiferChunks({
+        activeIndex,
+        chunkCount,
+        farTrees: placements.farTrees,
+        heroTrees: placements.heroTrees,
+        midTrees: placements.midTrees,
+        targetIndex,
+        tier: qualityTier,
+      });
+      const entryAssets = getForestPhotorealAssetEstimate("entry");
+      const sharedAssets = getForestPhotorealAssetEstimate("shared");
 
       return {
         adaptiveReductionCount: counters?.adaptiveReductionCount ?? 0,
         ambientCount: counters?.ambientCount ?? 0,
+        assets: {
+          entryCompressedBytes: entryAssets.compressedBytes,
+          entryDecodedRgbaMipBytes: entryAssets.decodedRgbaMipBytes,
+          sharedCompressedBytes: sharedAssets.compressedBytes,
+          sharedDecodedRgbaMipBytes: sharedAssets.decodedRgbaMipBytes,
+        },
+        chunks: {
+          count: chunkCount,
+          lodTreeCounts: countForestConiferLodTrees(chunkPlans),
+          residentIndices: chunkPlans.map(({ index }) => index),
+        },
         environment,
         hiddenAmbientCount: counters?.hiddenAmbientCount ?? 0,
+        petals: {
+          instanceCount: placements.petals.length,
+          // Fingerprinted at t=0 under the calm cue so the hash describes the
+          // authored field rather than whichever frame the reader landed on.
+          transformHash: hashForestPetalInstances(
+            placements.petals,
+            0,
+            FOREST_PETAL_CALM_CUE,
+            reducedMotion,
+          ),
+        },
         photos,
         qualityTier,
         renderer: {
@@ -405,6 +480,9 @@ function JourneyRuntimeDiagnostics({
         totalEstimatedDecodedRgbaMipBytes:
           environment.decodedRgbaMipBytes + photos.decodedRgbaMipBytes,
         viewport: isMobile ? "mobile" : "desktop",
+        wildlife: {
+          optionalActorCount: getForestPhotorealWildlifeMountedActorCount(),
+        },
         worldMode,
       };
     };
@@ -421,7 +499,9 @@ function JourneyRuntimeDiagnostics({
     isMobile,
     phase,
     photoDiagnosticsReaderRef,
+    placements,
     qualityTier,
+    reducedMotion,
     renderer,
     scenes,
     targetIndex,
@@ -515,6 +595,7 @@ function JourneyCueDiagnostics({
 export function ForestJourneyCanvas({
   activeIndex,
   content,
+  diagnosticsEnabled,
   interactions,
   labels,
   lookRef,
@@ -541,7 +622,7 @@ export function ForestJourneyCanvas({
     (() => ForestPhotoTextureCacheDiagnostics) | null
   >(null);
   const diagnosticCountersRef = useRef<ForestRuntimeDiagnosticCounters | null>(
-    FOREST_RUNTIME_DIAGNOSTICS_ENABLED
+    diagnosticsEnabled
       ? {
           adaptiveReductionCount: 0,
           ambientCount: 0,
@@ -668,7 +749,11 @@ export function ForestJourneyCanvas({
       data-voile-count={1}
       data-world-mode={worldMode}
       data-world-ready={worldReady ? "true" : "false"}
-      data-world-skin="forest-wedding-daylight"
+      data-world-skin={
+        worldMode === "hybrid"
+          ? "forest-wedding-photoreal"
+          : "forest-wedding-daylight"
+      }
       ref={wrapperRef}
       role="group"
     >
@@ -714,6 +799,7 @@ export function ForestJourneyCanvas({
             phase={phase}
             onPhotoDiagnosticsReaderChange={handlePhotoDiagnosticsReaderChange}
             placements={worldPlacements}
+            qualityTier={qualityTier}
             reducedMotion={reducedMotion}
             labels={labels}
             sceneNames={sceneNames}
@@ -731,14 +817,16 @@ export function ForestJourneyCanvas({
             reducedMotion={reducedMotion}
             wrapperRef={wrapperRef}
           />
-          {FOREST_RUNTIME_DIAGNOSTICS_ENABLED ? (
+          {diagnosticsEnabled ? (
             <JourneyRuntimeDiagnostics
               activeIndex={activeIndex}
               countersRef={diagnosticCountersRef}
               isMobile={isMobile}
               phase={phase}
               photoDiagnosticsReaderRef={photoDiagnosticsReaderRef}
+              placements={worldPlacements}
               qualityTier={qualityTier}
+              reducedMotion={reducedMotion}
               scenes={scenes}
               targetIndex={targetIndex}
               worldMode={worldMode}

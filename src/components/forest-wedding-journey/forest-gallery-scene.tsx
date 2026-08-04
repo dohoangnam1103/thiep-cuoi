@@ -15,6 +15,16 @@ import type {
 
 import { getForestGalleryGeometry } from "./forest-gallery-geometry";
 import {
+  FOREST_GALLERY_EASEL,
+  FOREST_GALLERY_MOUNT_SIZE,
+} from "./forest-gallery-scene-geometry";
+import {
+  createForestBevelledBoxGeometry,
+  createForestTaperedWoodGeometry,
+} from "./forest-prop-geometry";
+import { forestPropMaterial } from "./forest-prop-material";
+import { getForestWoodTaper } from "./photoreal/forest-prop-material-policy";
+import {
   ForestSceneContent,
   type ForestSceneLabels,
 } from "./forest-scene-content";
@@ -149,34 +159,61 @@ export function ForestGalleryScene({
           transparent
         />
       </mesh>
-      {[-0.27, 0.27].map((x) => (
-        <mesh key={x} position={[x, 0.57, -0.04]} rotation={[0, 0, x * -0.18]}>
-          <boxGeometry args={[0.055, 1.14, 0.055]} />
-          <meshStandardMaterial color="#c79a65" roughness={0.88} />
-        </mesh>
-      ))}
-      <mesh position={[0, 0.48, -0.035]}>
-        <boxGeometry args={[0.62, 0.055, 0.055]} />
-        <meshStandardMaterial color="#bd8e5b" roughness={0.9} />
+      {[-FOREST_GALLERY_EASEL.legOuterX, FOREST_GALLERY_EASEL.legOuterX].map(
+        (x) => (
+          <mesh
+            geometry={createForestTaperedWoodGeometry(
+              FOREST_GALLERY_EASEL.legThickness / 2,
+              getForestWoodTaper(FOREST_GALLERY_EASEL.legHeight),
+              7,
+            )}
+            key={x}
+            position={[x, FOREST_GALLERY_EASEL.legHeight / 2, -0.04]}
+            rotation={[0, 0, x * -FOREST_GALLERY_EASEL.legTilt]}
+            scale={[1, FOREST_GALLERY_EASEL.legHeight, 1]}
+          >
+            <meshStandardMaterial {...forestPropMaterial("wood", "#c79a65")} />
+          </mesh>
+        ),
+      )}
+      <mesh
+        geometry={createForestBevelledBoxGeometry(
+          FOREST_GALLERY_EASEL.braceWidth,
+          FOREST_GALLERY_EASEL.braceThickness,
+          FOREST_GALLERY_EASEL.braceThickness,
+        )}
+        position={[0, FOREST_GALLERY_EASEL.braceHeight, -0.035]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("wood", "#bd8e5b")} />
       </mesh>
-      <mesh position={[0, 1.02, 0]}>
-        <boxGeometry args={[0.76, 1.06, 0.06]} />
-        <meshStandardMaterial color="#fff9e8" roughness={0.9} />
+      <mesh
+        geometry={createForestBevelledBoxGeometry(
+          FOREST_GALLERY_MOUNT_SIZE[0],
+          FOREST_GALLERY_MOUNT_SIZE[1],
+          FOREST_GALLERY_EASEL.mountDepth,
+        )}
+        position={[0, FOREST_GALLERY_EASEL.mountHeight, 0]}
+      >
+        <meshStandardMaterial {...forestPropMaterial("paper", "#fff9e8")} />
       </mesh>
-      <mesh position={[0, 1.02, 0.036]}>
+      <mesh
+        position={[
+          0,
+          FOREST_GALLERY_EASEL.mountHeight,
+          FOREST_GALLERY_EASEL.printOffsetZ,
+        ]}
+      >
         <planeGeometry args={geometry.printSize} />
         {textureState.status === "ready" ? (
           <meshStandardMaterial
-            color="#ffffff"
             key="forest-gallery-photo-ready"
             map={textureState.texture}
-            roughness={0.88}
+            {...forestPropMaterial("paper", "#ffffff")}
           />
         ) : (
           <meshStandardMaterial
-            color="#eee7d4"
             key="forest-gallery-photo-placeholder"
-            roughness={0.98}
+            {...forestPropMaterial("paper", "#eee7d4")}
           />
         )}
       </mesh>
@@ -184,8 +221,10 @@ export function ForestGalleryScene({
         <mesh key={x} position={[x, 0.1 + (index % 2) * 0.035, 0.12]}>
           <dodecahedronGeometry args={[0.065 + (index % 3) * 0.008, 0]} />
           <meshStandardMaterial
-            color={index % 2 === 0 ? "#f8f3df" : "#cfd9bc"}
-            roughness={0.9}
+            {...forestPropMaterial(
+              "blossom",
+              index % 2 === 0 ? "#f8f3df" : "#cfd9bc",
+            )}
           />
         </mesh>
       ))}

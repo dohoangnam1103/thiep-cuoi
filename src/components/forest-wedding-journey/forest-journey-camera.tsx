@@ -319,6 +319,16 @@ export function ForestJourneyCamera({
     lookRef.current = { ...ZERO_LOOK };
     cueRef.current.travelProgress = 0;
 
+    /**
+     * Diagnostics are published from a frame loop, so on slow hardware the
+     * previous rail's final progress stays readable while the recenter pose
+     * below is already live, and the pose cache would swallow the handoff frame
+     * because the settled loop published those exact values. Republishing the
+     * pose and zeroing progress here keeps the handoff frame self-consistent.
+     */
+    diagnosticsCacheRef.current.element = null;
+    if (diagnosticsElement) diagnosticsElement.dataset.travelProgress = "0";
+
     const requestInvalidation = () => {
       (invalidateBridgeRef.current ?? invalidate)();
     };
@@ -336,18 +346,29 @@ export function ForestJourneyCamera({
     };
 
     const snapReducedPose = () => {
-      if (reducedPoseSnapped) return;
+      if (reducedPoseSnapped) return false;
       reducedPoseSnapped = true;
       camera.position.copy(targetPosition);
       camera.quaternion.copy(targetQuaternion);
       camera.updateMatrixWorld(true);
+      return true;
     };
 
     const updateTravel = () => {
       if (!active) return;
 
+      /**
+       * Reduced motion freezes the cues and holds a single pose until the
+       * midpoint snap, so only the frames that actually change the 3D scene are
+       * worth a render. The crossfade itself is a DOM opacity animation on the
+       * diagnostics wrapper, and requesting a photoreal render for every ticker
+       * tick would starve the rAF loop that drives the timeline.
+       */
+      let sceneChanged = !reducedMotion;
+
       if (reducedMotion) {
-        if (proxy.handoffProgress >= 0.5) snapReducedPose();
+        if (proxy.handoffProgress === 0) sceneChanged = true;
+        if (proxy.handoffProgress >= 0.5 && snapReducedPose()) sceneChanged = true;
         evaluateCue(0);
         cueRef.current.sceneTime = startSceneTime
           + totalDuration * proxy.handoffProgress;
@@ -404,7 +425,7 @@ export function ForestJourneyCamera({
         renderedLook,
         diagnosticsCacheRef.current,
       );
-      requestInvalidation();
+      if (sceneChanged) requestInvalidation();
     };
 
     const timeline = gsap.timeline({

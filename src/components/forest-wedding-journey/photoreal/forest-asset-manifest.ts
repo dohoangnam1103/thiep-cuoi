@@ -89,14 +89,14 @@ export const FOREST_PHOTOREAL_ASSETS = Object.freeze([
 
 const FOREST_PHOTOREAL_COMPRESSED_BYTES: Readonly<Record<string, number>> =
   Object.freeze({
-    backdrop: 166_970,
+    backdrop: 33_682,
     coniferArm: 49_748,
-    coniferColor: 165_896,
+    coniferColor: 213_598,
     coniferNormal: 99_428,
     groundArm: 84_238,
     groundColor: 99_956,
     groundNormal: 139_296,
-    wildlife: 62_566,
+    wildlife: 89_124,
   });
 
 function getDecodedRgbaMipBytes(asset: ForestPhotorealAsset) {

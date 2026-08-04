@@ -222,9 +222,14 @@ test("families scene authors two white or ivory cloth tables with draped depth a
   );
   assert.match(staticSceneSource, /clothColor="#fffdf4"/);
   assert.match(staticSceneSource, /clothColor="#eee5d0"/);
-  assert.match(staticSceneSource, /name="forest-family-table-cloth-top"/);
-  assert.match(staticSceneSource, /name="forest-family-table-front-drape"/);
-  assert.match(staticSceneSource, /name="forest-family-table-side-drape"/);
+  // The three cloth meshes are named through the shared DrapedCloth assembly,
+  // so the guard checks both the authored names and the wiring that applies them.
+  assert.match(staticSceneSource, /"forest-family-table-cloth-top"/);
+  assert.match(staticSceneSource, /"forest-family-table-front-drape"/);
+  assert.match(staticSceneSource, /"forest-family-table-side-drape"/);
+  assert.match(staticSceneSource, /name=\{topName\}/);
+  assert.match(staticSceneSource, /name=\{frontDrapeName\}/);
+  assert.match(staticSceneSource, /name=\{sideDrapeName\}/);
   assert.match(staticSceneSource, /<ContactCue radius=\{1\.02\}/);
   assert.equal(
     sceneContentSource.match(/<FamilyPaper\b/g)?.length ?? 0,
@@ -348,7 +353,6 @@ test("each interactive scene has an authored physical clearing assembly", () => 
   for (const authoredProp of [
     "forest-map-table",
     "forest-map-paper",
-    "forest-rsvp-white-cloth",
     "forest-rsvp-clipboard",
     "forest-wishes-open-book-page",
     "forest-wishes-paper-note",
@@ -357,6 +361,10 @@ test("each interactive scene has an authored physical clearing assembly", () => 
   ]) {
     assert.match(staticSceneSource, new RegExp(`name=["']${authoredProp}["']`));
   }
+
+  // The RSVP cloth is named through the shared DrapedCloth assembly rather than
+  // inline, so it is asserted on the prop that carries the name.
+  assert.match(staticSceneSource, /topName="forest-rsvp-white-cloth"/);
 });
 
 test("gallery descriptors trim IDs and keep only the first valid occurrence", () => {
