@@ -48,6 +48,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report tests/e2e/.report",
     "audit:assets": "node scripts/dedupe-public-assets.mjs",
+    "beach:prepare-assets": "node scripts/prepare-beach-photoreal-assets.mjs",
     "screenshots:templates": "node scripts/capture-template-previews.mjs",
     "templates:register": "tsx scripts/register-template-manifests.ts",
     "templates:prepare-opening-assets": "tsx scripts/prepare-opening-assets.ts",
