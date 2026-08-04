@@ -5,6 +5,7 @@ import {
   beachWeddingJourneyDefinition,
   beachWeddingJourneyDemoContent,
   beachWeddingJourneyFeatures,
+  buildBeachCalendarEvents,
   buildBeachJourneyScenes,
   orderBeachFamilySides,
   BEACH_SHORE_SETBACK_METRES,
@@ -173,6 +174,12 @@ test("the shore setback is the documented 7 metres and at least one pose sits on
 });
 
 test("consecutive scenes are a full stride of shoreline apart", () => {
+  assertMetresEqual(
+    demoScenes[0]!.cameraPosition[0],
+    -8,
+    "the rail is anchored in world space; shoreline geometry is authored around this origin",
+  );
+
   for (let index = 1; index < demoScenes.length; index += 1) {
     assertMetresEqual(
       demoScenes[index]!.cameraPosition[0] - demoScenes[index - 1]!.cameraPosition[0],
@@ -209,7 +216,6 @@ test("interior scenes drift inland so the walk reads as a stroll, not a rail", (
 
 test("each camera looks ahead down the beach and slightly seaward", () => {
   for (const scene of demoScenes) {
-    assert.ok(scene.lookTarget.every(Number.isFinite), `${scene.id} look target must be finite`);
     assertMetresEqual(
       scene.lookTarget[0] - scene.cameraPosition[0],
       4.5,
@@ -252,7 +258,11 @@ test("each midpoint sits halfway along its leg", () => {
       `${scene.id} waypoint must lie strictly between the two scenes, not on top of one`,
     );
     assertMetresEqual(midpoint[2], 7.45, `${scene.id} waypoint holds the mid-drift line`);
-    assert.ok(midpoint.every(Number.isFinite));
+    assertMetresEqual(
+      midpoint[1],
+      1.72,
+      `${scene.id} waypoint must hold eye height mid-travel, not dip underground or climb into the sky`,
+    );
   }
 });
 
@@ -297,6 +307,7 @@ test("an account whose owner does not match its side does not add a gift scene",
     !buildBeachJourneyScenes(content, beachWeddingJourneyFeatures).some(
       (scene) => scene.type === "gift",
     ),
+    "an account naming someone other than the bride or groom must suppress the gift scene entirely",
   );
 });
 
@@ -318,11 +329,48 @@ test("a mixed-validity gift account list does not add a gift scene", () => {
     !buildBeachJourneyScenes(content, beachWeddingJourneyFeatures).some(
       (scene) => scene.type === "gift",
     ),
+    "one account with a blank number must suppress the gift scene even though the others are valid",
   );
 });
 
 test("valid demo accounts do keep the gift scene", () => {
-  assert.ok(demoScenes.some((scene) => scene.type === "gift"));
+  assert.ok(
+    demoScenes.some((scene) => scene.type === "gift"),
+    "the demo's fully valid accounts must still produce a gift scene, or the validity gate is rejecting everything",
+  );
+});
+
+test("calendar event rows distinguish localized ceremony and reception values on different dates", () => {
+  assert.deepEqual(
+    buildBeachCalendarEvents(
+      {
+        ceremonyDate: "2026-08-02",
+        ceremonyTime: "09:00",
+        receptionDate: "2026-08-03",
+        receptionTime: "18:30",
+      },
+      {
+        ceremony: "Ceremony",
+        formattedCeremonyDate: "August 2, 2026",
+        formattedReceptionDate: "August 3, 2026",
+        reception: "Reception",
+      },
+    ),
+    [
+      {
+        date: "2026-08-02",
+        formattedDate: "August 2, 2026",
+        label: "Ceremony",
+        time: "09:00",
+      },
+      {
+        date: "2026-08-03",
+        formattedDate: "August 3, 2026",
+        label: "Reception",
+        time: "18:30",
+      },
+    ],
+  );
 });
 
 test("family side ordering follows brideFirst in both orientations", () => {
@@ -336,13 +384,7 @@ test("the journey definition keeps a usable camera frustum and look angle", () =
   assert.equal(camera.near, 0.1);
   assert.equal(camera.far, 320);
   assert.equal(camera.fovDegrees, 50);
-  assert.ok(camera.near < camera.far, "near plane must sit in front of the far plane");
-  assert.ok(
-    camera.far >= 200,
-    `the far plane must reach the horizon; ${camera.far}m clips the sea away`,
-  );
-  assert.ok(camera.fovDegrees >= 40 && camera.fovDegrees <= 70);
   assert.equal(look.pitchDegrees, 8);
   assert.equal(look.yawDegrees, 20);
-  assert.ok(reducedDurationMs > 0 && reducedDurationMs <= 250);
+  assert.equal(reducedDurationMs, 180);
 });
