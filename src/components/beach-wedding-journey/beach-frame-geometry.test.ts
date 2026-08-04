@@ -102,6 +102,19 @@ test("frame geometry is deterministic for a given scene", () => {
   }
 });
 
+test("the returned camera position is the scene's own, not a placeholder", () => {
+  // Consumers aim the frame from this field, so an unasserted passthrough would
+  // let a wrong value face every frame at a point the camera never occupies.
+  // The forest twin covered this incidentally through its `side` sign assertion,
+  // which went away with the field.
+  for (const scene of galleryScenes()) {
+    assert.deepEqual(
+      getBeachFrameGeometry(scene).cameraPosition,
+      scene.cameraPosition,
+    );
+  }
+});
+
 test("a pose with no horizontal look direction is rejected", () => {
   assert.throws(
     () => getBeachFrameGeometry({
