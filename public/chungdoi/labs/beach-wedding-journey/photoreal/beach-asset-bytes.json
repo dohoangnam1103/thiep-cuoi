@@ -7,12 +7,12 @@
   "pierPlanksColor": 240960,
   "pierPlanksNormal": 349958,
   "pierPlanksArm": 149712,
-  "frame01Color": 44838,
-  "frame01Normal": 20008,
-  "frame01Arm": 39538,
-  "frame02Color": 83172,
-  "frame02Normal": 24640,
-  "frame02Arm": 45444,
+  "frame01Color": 13108,
+  "frame01Normal": 4630,
+  "frame01Arm": 13518,
+  "frame02Color": 24276,
+  "frame02Normal": 6598,
+  "frame02Arm": 14638,
   "sources": {
     "frame01Arm": {
       "filename": "hanging_picture_frame_01_arm_1k.jpg",

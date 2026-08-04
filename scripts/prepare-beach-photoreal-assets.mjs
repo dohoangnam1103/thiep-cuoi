@@ -98,8 +98,22 @@ const ENTRY_COMPRESSED_BUDGET = 4_000_000;
 const SHARED_COMPRESSED_BUDGET = 12_000_000;
 const SAND_TEXTURE_SIZE = 1_024;
 const WATER_NORMAL_SIZE = 512;
-/** Pier and frame maps ship at the same 1k tile size as the sand. */
-const PROP_TEXTURE_SIZE = 1_024;
+/**
+ * Pier planks ship at 1k: the deck is a large tiled surface the camera walks
+ * along, so halving it reads as mush underfoot.
+ */
+const PIER_TEXTURE_SIZE = 1_024;
+/**
+ * Frame maps ship at 512, forced by the 64MB decoded-texture ceiling.
+ *
+ * Nine prop maps at 1k decode to 50.3MB, which with the 21.0MB entry group and
+ * the 16.8MB worst case of three live 1k gallery photos totals 88.1MB — 21.0MB
+ * over. Frames are narrow mouldings around the photos, so they lose the least
+ * from 512; the ceiling is a hard constraint and is never the thing that moves.
+ * This leaves 4.2MB (6%) of headroom, so any later task adding a texture must
+ * recompute the decoded total rather than assume room exists.
+ */
+const FRAME_TEXTURE_SIZE = 512;
 /**
  * Golden-hour warm-up applied to colour/diffuse maps only.
  *
@@ -124,15 +138,15 @@ const OUTPUTS = Object.freeze([
   { blocking: true, filename: "sand-arm.webp", group: "entry", height: SAND_TEXTURE_SIZE, id: "sandArm", width: SAND_TEXTURE_SIZE },
   { blocking: true, filename: "water-normal.webp", group: "entry", height: WATER_NORMAL_SIZE, id: "waterNormal", width: WATER_NORMAL_SIZE },
   { blocking: true, filename: "sky.hdr", group: "entry", height: HDRI_DIMENSIONS.height, id: "sky", radiance: true, width: HDRI_DIMENSIONS.width },
-  { blocking: false, filename: "pier-planks-color.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "pierPlanksColor", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "pier-planks-normal.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "pierPlanksNormal", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "pier-planks-arm.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "pierPlanksArm", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "frame-01-color.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "frame01Color", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "frame-01-normal.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "frame01Normal", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "frame-01-arm.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "frame01Arm", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "frame-02-color.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "frame02Color", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "frame-02-normal.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "frame02Normal", width: PROP_TEXTURE_SIZE },
-  { blocking: false, filename: "frame-02-arm.webp", group: "props", height: PROP_TEXTURE_SIZE, id: "frame02Arm", width: PROP_TEXTURE_SIZE },
+  { blocking: false, filename: "pier-planks-color.webp", group: "props", height: PIER_TEXTURE_SIZE, id: "pierPlanksColor", width: PIER_TEXTURE_SIZE },
+  { blocking: false, filename: "pier-planks-normal.webp", group: "props", height: PIER_TEXTURE_SIZE, id: "pierPlanksNormal", width: PIER_TEXTURE_SIZE },
+  { blocking: false, filename: "pier-planks-arm.webp", group: "props", height: PIER_TEXTURE_SIZE, id: "pierPlanksArm", width: PIER_TEXTURE_SIZE },
+  { blocking: false, filename: "frame-01-color.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame01Color", width: FRAME_TEXTURE_SIZE },
+  { blocking: false, filename: "frame-01-normal.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame01Normal", width: FRAME_TEXTURE_SIZE },
+  { blocking: false, filename: "frame-01-arm.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame01Arm", width: FRAME_TEXTURE_SIZE },
+  { blocking: false, filename: "frame-02-color.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame02Color", width: FRAME_TEXTURE_SIZE },
+  { blocking: false, filename: "frame-02-normal.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame02Normal", width: FRAME_TEXTURE_SIZE },
+  { blocking: false, filename: "frame-02-arm.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame02Arm", width: FRAME_TEXTURE_SIZE },
 ]);
 
 function getArgument(name, fallback) {
@@ -528,19 +542,19 @@ await Promise.all([
   encodeWaterNormal(path.join(outputDir, "water-normal.webp")),
   copyRadianceHdri(sourcePaths.hdri, path.join(outputDir, "sky.hdr")),
   ...[
-    { dataMap: false, filename: "pier-planks-color.webp", source: "pierPlanksColor" },
-    { dataMap: true, filename: "pier-planks-normal.webp", source: "pierPlanksNormal" },
-    { dataMap: true, filename: "pier-planks-arm.webp", source: "pierPlanksArm" },
-    { dataMap: false, filename: "frame-01-color.webp", source: "frame01Color" },
-    { dataMap: true, filename: "frame-01-normal.webp", source: "frame01Normal" },
-    { dataMap: true, filename: "frame-01-arm.webp", source: "frame01Arm" },
-    { dataMap: false, filename: "frame-02-color.webp", source: "frame02Color" },
-    { dataMap: true, filename: "frame-02-normal.webp", source: "frame02Normal" },
-    { dataMap: true, filename: "frame-02-arm.webp", source: "frame02Arm" },
-  ].map(({ dataMap, filename, source }) =>
+    { dataMap: false, filename: "pier-planks-color.webp", size: PIER_TEXTURE_SIZE, source: "pierPlanksColor" },
+    { dataMap: true, filename: "pier-planks-normal.webp", size: PIER_TEXTURE_SIZE, source: "pierPlanksNormal" },
+    { dataMap: true, filename: "pier-planks-arm.webp", size: PIER_TEXTURE_SIZE, source: "pierPlanksArm" },
+    { dataMap: false, filename: "frame-01-color.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Color" },
+    { dataMap: true, filename: "frame-01-normal.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Normal" },
+    { dataMap: true, filename: "frame-01-arm.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Arm" },
+    { dataMap: false, filename: "frame-02-color.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Color" },
+    { dataMap: true, filename: "frame-02-normal.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Normal" },
+    { dataMap: true, filename: "frame-02-arm.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Arm" },
+  ].map(({ dataMap, filename, size, source }) =>
     encodeTexture(sourcePaths[source].path, path.join(outputDir, filename), {
       dataMap,
-      size: PROP_TEXTURE_SIZE,
+      size,
     }),
   ),
 ]);
