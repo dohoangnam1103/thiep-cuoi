@@ -13,13 +13,16 @@ import {
 } from "three";
 import { Water } from "three/examples/jsm/objects/Water.js";
 
-import { BEACH_WATER_LEVEL_Y } from "../beach-shoreline";
+import {
+  BEACH_SHORE_CURVE_AMPLITUDE_METRES,
+  BEACH_WATER_LEVEL_Y,
+} from "../beach-shoreline";
 import type { BeachWorldQualityTier } from "../beach-world-data";
 import { BEACH_PHOTOREAL_ASSETS } from "./beach-asset-manifest";
+import { BEACH_SUN_TINT } from "./beach-lighting";
 import {
   BEACH_SAND_X_MAX_METRES,
   BEACH_SAND_X_MIN_METRES,
-  BEACH_SAND_Z_MIN_METRES,
 } from "./beach-terrain";
 
 /**
@@ -39,14 +42,28 @@ if (!WATER_NORMAL_ASSET) {
 
 const WATER_NORMAL_SRC = WATER_NORMAL_ASSET.src;
 
-/** How far seaward of the sand's near edge the water plane runs. */
-const WATER_SEAWARD_REACH_METRES = 900;
+/** How far seaward the water plane runs from its landward edge. */
+export const WATER_SEAWARD_REACH_METRES = 900;
 
-/** Along-shore overhang, so the plane never ends inside the frustum. */
-const WATER_ALONGSHORE_MARGIN_METRES = 400;
+/**
+ * How far landward of the *furthest landward* point of the waterline the plane
+ * still runs.
+ *
+ * The waterline is a curve, not a line: `shorelineOffsetAt` swings across
+ * +/-`BEACH_SHORE_CURVE_AMPLITUDE_METRES`, so the plane has to reach past the
+ * whole swing or the submerged foreshore between the plane's edge and the
+ * waterline is left dry and the edge cuts a hard seam. The extra overlap buys
+ * margin for the swash, and it is hidden because the sand rises above
+ * `BEACH_WATER_LEVEL_Y` everywhere landward of the waterline.
+ */
+export const WATER_LANDWARD_OVERLAP_METRES = 6;
 
-/** Metres of world space per tile of the wave normal map. */
-const WATER_NORMAL_TILE_METRES = 6;
+/**
+ * Feeds `material.uniforms.size`, which three 0.185.1's `Water` shader uses as
+ * `getNoise( worldPosition.xz * size )` — a *frequency multiplier* on world
+ * space, not a tile size. Larger values mean more wave detail per metre.
+ */
+export const WATER_NORMAL_FREQUENCY = 6;
 
 /** Wave crawl speed. The swell is a scroll of the normal map, not geometry. */
 const WATER_TIME_SCALE = 0.35;
@@ -66,33 +83,99 @@ const DISTORTION_BY_TIER: Record<BeachWorldQualityTier, number> = {
   reduced: WATER_DISTORTION_SCALE * 0.5,
 };
 
-function useWaterNormalTexture(): Texture {
-  const texture = useLoader(TextureLoader, WATER_NORMAL_SRC) as Texture;
+/** Along-shore overhang, so the plane never ends inside the frustum. */
+const WATER_ALONGSHORE_MARGIN_METRES = 400;
 
-  return useMemo(() => {
-    // Same in-place texture configuration the sand terrain and the forest
-    // scene use: three owns the object and expects the flags set on it.
-    /* eslint-disable react-hooks/immutability */
-    texture.wrapS = RepeatWrapping;
-    texture.wrapT = RepeatWrapping;
-    texture.needsUpdate = true;
-    /* eslint-enable react-hooks/immutability */
-    return texture;
-  }, [texture]);
+/**
+ * Applies the wrap modes the wave normal map needs.
+ *
+ * Exported and kept free of React, mirroring `configureBeachSandTextures`, so
+ * the wrap modes can be asserted on a real `Texture`; the hook below is only
+ * the `useLoader` plumbing around it.
+ *
+ * Both axes repeat: `Water`'s shader scrolls the sampled coordinate without
+ * bound, so clamping either axis would smear one edge texel across the sea.
+ * `repeat` stays at 1 because that shader samples `normalSampler` directly and
+ * never applies the texture matrix — the tiling frequency lives in
+ * `WATER_NORMAL_FREQUENCY` instead.
+ */
+export function configureBeachWaterNormalTexture(texture: Texture): Texture {
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  texture.repeat.set(1, 1);
+  texture.needsUpdate = true;
+  return texture;
 }
 
-function createWaterGeometry(): PlaneGeometry {
+/**
+ * The sea plane.
+ *
+ * Anchored on the waterline, not on the sand's seaward edge: the sea bed is
+ * modelled all the way up to `shorelineOffsetAt`, so a plane that stopped at
+ * `BEACH_SAND_Z_MIN_METRES` would leave the whole submerged foreshore dry.
+ */
+export function createWaterGeometry(): PlaneGeometry {
   const width = BEACH_SAND_X_MAX_METRES
     - BEACH_SAND_X_MIN_METRES
     + WATER_ALONGSHORE_MARGIN_METRES * 2;
+  const landwardEdgeZ = BEACH_SHORE_CURVE_AMPLITUDE_METRES
+    + WATER_LANDWARD_OVERLAP_METRES;
+
   const geometry = new PlaneGeometry(width, WATER_SEAWARD_REACH_METRES);
   geometry.rotateX(-Math.PI / 2);
   geometry.translate(
     (BEACH_SAND_X_MIN_METRES + BEACH_SAND_X_MAX_METRES) / 2,
     BEACH_WATER_LEVEL_Y,
-    BEACH_SAND_Z_MIN_METRES - WATER_SEAWARD_REACH_METRES / 2,
+    landwardEdgeZ - WATER_SEAWARD_REACH_METRES / 2,
   );
   return geometry;
+}
+
+export type CreateBeachWaterOptions = {
+  readonly distortionScale: number;
+  readonly geometry: PlaneGeometry;
+  readonly sunDirection: readonly [number, number, number];
+  readonly waterNormals: Texture;
+};
+
+/**
+ * Builds the `Water` instance.
+ *
+ * Exported so the options that are easy to get silently wrong — the fog opt-in,
+ * the sun tint shared with the lighting rig, the reflection target size and the
+ * normal frequency — can be asserted on a real instance under node.
+ */
+export function createBeachWater({
+  distortionScale,
+  geometry,
+  sunDirection,
+  waterNormals,
+}: CreateBeachWaterOptions): Water {
+  const instance = new Water(geometry, {
+    alpha: 1,
+    distortionScale,
+    // Water builds with `options.fog` false unless told otherwise, and a
+    // default-built plane would cut a hard seam across a hazed horizon.
+    fog: true,
+    // The same measured HDRI sun tint the directional light uses; a separate
+    // literal here would let the specular highlight drift off the key light.
+    sunColor: new Color(BEACH_SUN_TINT).getHex(),
+    sunDirection: new Vector3(...sunDirection).normalize(),
+    textureHeight: BEACH_WATER_REFLECTION_SIZE,
+    textureWidth: BEACH_WATER_REFLECTION_SIZE,
+    waterColor: new Color(WATER_COLOR).getHex(),
+    waterNormals,
+  });
+  instance.material.uniforms.size.value = WATER_NORMAL_FREQUENCY;
+  return instance;
+}
+
+function useWaterNormalTexture(): Texture {
+  const texture = useLoader(TextureLoader, WATER_NORMAL_SRC) as Texture;
+
+  // Configured in place: three owns the object and expects the flags set on
+  // it, the same way the sand terrain and the forest scene do it.
+  return useMemo(() => configureBeachWaterNormalTexture(texture), [texture]);
 }
 
 export type BeachWaterProps = {
@@ -116,21 +199,12 @@ export function BeachWater({
   const water = useMemo(() => {
     if (!reflectionEnabled) return null;
 
-    const instance = new Water(geometry, {
-      alpha: 1,
+    return createBeachWater({
       distortionScale: DISTORTION_BY_TIER[qualityTier],
-      // Water builds with `options.fog` false unless told otherwise, and a
-      // default-built plane would cut a hard seam across a hazed horizon.
-      fog: true,
-      sunColor: 0xff8e1b,
-      sunDirection: new Vector3(...sunDirection).normalize(),
-      textureHeight: BEACH_WATER_REFLECTION_SIZE,
-      textureWidth: BEACH_WATER_REFLECTION_SIZE,
-      waterColor: new Color(WATER_COLOR).getHex(),
+      geometry,
+      sunDirection,
       waterNormals: normalTexture,
     });
-    instance.material.uniforms.size.value = WATER_NORMAL_TILE_METRES;
-    return instance;
   }, [
     geometry,
     normalTexture,
@@ -142,11 +216,12 @@ export function BeachWater({
   useEffect(() => {
     if (!water) return;
     return () => {
-      // The mirror camera's WebGLRenderTarget is closure-private on the Water
-      // class in this three version, so the only handle on it is the texture
-      // bound to the mirrorSampler uniform, which keeps a `renderTarget`
-      // back-reference. Guarded because that back-reference is an
-      // implementation detail and may not survive a three upgrade.
+      // The mirror camera's WebGLRenderTarget is not exposed as a property of
+      // the Water instance, but three 0.185's RenderTarget.js sets a
+      // `renderTarget` back-reference on each of the target's textures, so the
+      // texture bound to the mirrorSampler uniform reaches it. Optional-chained
+      // because that back-reference is a three implementation detail, not part
+      // of the documented Water API, and may not survive an upgrade.
       water.material.uniforms.mirrorSampler.value.renderTarget?.dispose();
       water.material.dispose();
     };
@@ -176,19 +251,19 @@ export function BeachWater({
     return () => fallbackMaterial.dispose();
   }, [fallbackMaterial]);
 
+  // Exactly one of the two is non-null: both branch on `reflectionEnabled`.
   return (
     <group data-beach-photoreal-water>
-      {water
-        ? <primitive object={water} />
-        : fallbackMaterial
-          ? (
-            <mesh
-              args={[geometry, fallbackMaterial]}
-              castShadow={false}
-              receiveShadow={false}
-            />
-          )
-          : null}
+      {water ? <primitive object={water} /> : null}
+      {fallbackMaterial
+        ? (
+          <mesh
+            args={[geometry, fallbackMaterial]}
+            castShadow={false}
+            receiveShadow={false}
+          />
+        )
+        : null}
     </group>
   );
 }

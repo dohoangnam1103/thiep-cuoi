@@ -4,8 +4,8 @@ import { useLoader } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
 import {
   ClampToEdgeWrapping,
-  DoubleSide,
   Float32BufferAttribute,
+  FrontSide,
   MeshStandardMaterial,
   NoColorSpace,
   PlaneGeometry,
@@ -25,9 +25,10 @@ import type { BeachWorldQualityTier } from "../beach-world-data";
 import { BEACH_PHOTOREAL_ASSETS } from "./beach-asset-manifest";
 
 /**
- * The walked rail sits at z 7 to 7.9 and the scenes run x -8 to about 94, so
- * the sand has to cover that strip plus enough sea to reach full depth and
- * enough backshore that the dunes read as a horizon rather than a wall.
+ * The walked rail sits at z 7 to 7.9 and the scenes run x -8 to 111 (see
+ * `resolveScenePose` in `src/data/beach-wedding-journey.ts`), so the sand has
+ * to cover that strip plus enough sea to reach full depth and enough backshore
+ * that the dunes read as a horizon rather than a wall.
  */
 export const BEACH_SAND_X_MIN_METRES = -26;
 export const BEACH_SAND_X_MAX_METRES = 116;
@@ -156,6 +157,14 @@ export function beachGroundHeightAt(x: number, z: number): number {
  * `BEACH_SWASH_LANDWARD_METRES` behind the waterline and continuing down into
  * the dry part of the tile inland. It is clamped at 0 rather than wrapped, so
  * the deep backshore reads the driest row instead of wrapping back into wet.
+ *
+ * The clamp saturates roughly 13.7m landward of the waterline, so everything
+ * behind that samples one constant texel row of the colour and ARM maps. That
+ * is intentional: V carries only the wet-to-dry gradient, and past the swash
+ * there is no gradient left to carry. Grain variation in the backshore comes
+ * from the tiled `uv` channel (normal map) and the dune swell, not from V, so
+ * the constant row shows up as uniform dry albedo rather than as a visible
+ * stripe. The maps' V wrap is ClampToEdge for the same reason.
  */
 export function beachShoreBandV(x: number, z: number): number {
   const seawardMetres = shorelineOffsetAt(x) - z;
@@ -218,11 +227,22 @@ export function createBeachSandGeometry(
 
 const SAND_ASSET_IDS = ["sandColor", "sandNormal", "sandArm"] as const;
 
-const SAND_ASSET_SRCS = SAND_ASSET_IDS.map((id) => {
+function resolveSandAssetSrc(id: (typeof SAND_ASSET_IDS)[number]): string {
   const asset = BEACH_PHOTOREAL_ASSETS.find((entry) => entry.id === id);
   if (!asset) throw new Error(`Beach sand asset "${id}" is missing`);
   return asset.src;
-});
+}
+
+/**
+ * Written as a tuple literal rather than `SAND_ASSET_IDS.map(...)` so its length
+ * is part of the type: `useLoader` returns one texture per source, and the
+ * destructuring below is then checked by the compiler instead of asserted.
+ */
+const SAND_ASSET_SRCS: [string, string, string] = [
+  resolveSandAssetSrc(SAND_ASSET_IDS[0]),
+  resolveSandAssetSrc(SAND_ASSET_IDS[1]),
+  resolveSandAssetSrc(SAND_ASSET_IDS[2]),
+];
 
 /**
  * `channel` selects which UV attribute a map reads: 0 is `uv`, 1 is `uv1`.
@@ -272,15 +292,41 @@ export function configureBeachSandTextures(set: {
   }
 }
 
+/**
+ * Narrows `useLoader`'s `Texture[]` to a fixed triple.
+ *
+ * `useLoader`'s signature returns `LoaderResult<L>[]` for an array input, so the
+ * width of the result is not in the type even though it always matches
+ * `SAND_ASSET_SRCS`. Checking the length at runtime turns the destructuring
+ * below from an unchecked `as` into a narrowing that would throw loudly if the
+ * source list and the destructuring ever disagreed.
+ */
+function asTextureTriple(
+  textures: readonly Texture[],
+): readonly [Texture, Texture, Texture] {
+  const [color, normal, arm] = textures;
+  if (
+    textures.length !== SAND_ASSET_SRCS.length
+    || !color
+    || !normal
+    || !arm
+  ) {
+    throw new Error(
+      `Expected ${SAND_ASSET_SRCS.length} sand textures, got ${textures.length}`,
+    );
+  }
+  return [color, normal, arm];
+}
+
 function useBeachSandTextures(): {
   readonly arm: Texture;
   readonly color: Texture;
   readonly normal: Texture;
 } {
-  const textures = useLoader(TextureLoader, SAND_ASSET_SRCS) as Texture[];
+  const textures = useLoader(TextureLoader, SAND_ASSET_SRCS);
 
   return useMemo(() => {
-    const [color, normal, arm] = textures as [Texture, Texture, Texture];
+    const [color, normal, arm] = asTextureTriple(textures);
     const set = { arm, color, normal };
 
     // Textures come back from `useLoader`'s cache uninitialised; configuring
@@ -290,6 +336,35 @@ function useBeachSandTextures(): {
 
     return set;
   }, [textures]);
+}
+
+/**
+ * Sand material for a configured texture set.
+ *
+ * Exported and React-free so the map wiring and the face-culling choice can be
+ * asserted on a real `MeshStandardMaterial`.
+ */
+export function createBeachSandMaterial(set: {
+  readonly arm: Texture;
+  readonly color: Texture;
+  readonly normal: Texture;
+}): MeshStandardMaterial {
+  return new MeshStandardMaterial({
+    aoMap: set.arm,
+    map: set.color,
+    // Dry sand is a dielectric, so metalness is 0 everywhere. Passing a
+    // metalnessMap alongside it would only be multiplied by 0 — an extra
+    // texture fetch per fragment for a channel that cannot contribute.
+    metalness: 0,
+    normalMap: set.normal,
+    roughness: 1,
+    roughnessMap: set.arm,
+    // FrontSide, not DoubleSide: the plane is built facing up (+y) and the
+    // camera eye is 1.62m above ground on a rail that never dips below the
+    // sand, so no back face is ever inside the frustum. Drawing both faces
+    // would double the fragment work on the largest mesh in the scene.
+    side: FrontSide,
+  });
 }
 
 export type BeachTerrainProps = {
@@ -304,20 +379,7 @@ export function BeachTerrain({ qualityTier }: BeachTerrainProps) {
   );
 
   const material = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        aoMap: arm,
-        map: color,
-        metalness: 0,
-        metalnessMap: arm,
-        normalMap: normal,
-        roughness: 1,
-        roughnessMap: arm,
-        // The sea bed is seen through the water plane from above the surface,
-        // but the shore also rises past the camera at the frame edges; drawing
-        // both faces avoids a hole where the dunes cut the near plane.
-        side: DoubleSide,
-      }),
+    () => createBeachSandMaterial({ arm, color, normal }),
     [arm, color, normal],
   );
 

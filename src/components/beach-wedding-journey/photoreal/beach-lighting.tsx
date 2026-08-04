@@ -19,8 +19,8 @@ export const BEACH_SKY_SRC = SKY_ASSET.src;
  * elevation +1.652deg, azimuth +36.176deg. Unit length.
  *
  * This is the *map-space* measurement. The environment is rotated (see
- * `BEACH_ENVIRONMENT_ROTATION_Y`), so the vector to actually place a light on
- * is `BEACH_SUN_WORLD_DIRECTION`.
+ * `BEACH_ENVIRONMENT_ROTATION_Y_DEGREES`), so the vector to actually place a
+ * light on is `BEACH_SUN_WORLD_DIRECTION`.
  */
 export const BEACH_SUN_DIRECTION: readonly [number, number, number] = [
   0.8069, 0.0288, 0.5900,
@@ -55,6 +55,11 @@ export const BEACH_ENVIRONMENT_ROTATION_Y_DEGREES = 145;
  * describes the same sun measured before the rotation; rotating the sky
  * without rotating the light is what would make the specular highlight and the
  * sky disagree, so both move together.
+ *
+ * TODO(Task 10): 95.1deg is close to a pure cross-light, which is the one
+ * geometry that can leave faces edge-lit and the frames rim-lit on one side
+ * only. The relationship is pinned by test so it cannot drift silently, but
+ * whether it *reads* well needs confirming on real frames in the visual pass.
  */
 export const BEACH_SUN_WORLD_DIRECTION: readonly [number, number, number] = [
   -0.3225, 0.0288, -0.9461,
@@ -69,11 +74,14 @@ export const BEACH_SUN_TINT = "#ff8e1b";
 /** Sampled below the horizon; stands in for bounce off wet sand and water. */
 const BEACH_BOUNCE_TINT = "#9e8a7f";
 
-const SUN_INTENSITY: Record<BeachWorldQualityTier, number> = {
-  desktop: 2.4,
-  mobile: 2.4,
-  reduced: 2.4,
-};
+/**
+ * Key-light intensity, tier-independent.
+ *
+ * The sun is the same physical light on every tier — only the environment mip
+ * budget and the fill below it change — so this is one constant rather than a
+ * per-tier record that pretended to vary.
+ */
+const SUN_INTENSITY = 2.4;
 
 /**
  * The HDRI already carries the ambient term, so the hemisphere light only
@@ -132,7 +140,7 @@ export function BeachLighting({ qualityTier }: BeachLightingProps) {
       <directionalLight
         castShadow={false}
         color={BEACH_SUN_TINT}
-        intensity={SUN_INTENSITY[qualityTier]}
+        intensity={SUN_INTENSITY}
         position={sunPosition}
       />
       <hemisphereLight

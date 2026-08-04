@@ -47,6 +47,31 @@ const RAIL_EYE_HEIGHT_METRES = 1.62;
 /** The height above which sand would read as a bank beside the walker. */
 const RAIL_CLEARANCE_LIMIT_METRES = 0.5;
 
+/**
+ * The x range the journey's cameras occupy, from `resolveScenePose` in
+ * `src/data/beach-wedding-journey.ts`: `x = -8 + ordinal * 8.5` over 15 scenes.
+ * Written as literals on purpose — the point of the extent test is that the
+ * sand covers *this requirement*, so it must not be derived from the extent
+ * constants it is checking.
+ */
+const JOURNEY_CAMERA_X_MIN_METRES = -8;
+const JOURNEY_CAMERA_X_MAX_METRES = 111;
+
+/** Sand has to run past the last camera, or the walker sees the mesh end. */
+const REQUIRED_X_MARGIN_METRES = 4;
+
+/** Along-shore run needed for the beach to read as a coast, not a sandbox. */
+const REQUIRED_SHORE_SPAN_METRES = 130;
+
+/** Coarsest acceptable grain tile: past this the 1024px maps read as mush. */
+const COARSEST_SAND_TILE_METRES = 5;
+
+/** Finest acceptable grain tile: below this the tiling pattern becomes visible. */
+const FINEST_SAND_TILE_METRES = 1.5;
+
+/** Grazing-angle minimum; 1 (the three default) visibly blurs the foreshore. */
+const REQUIRED_SAND_ANISOTROPY = 4;
+
 const TIERS: readonly BeachWorldQualityTier[] = ["desktop", "mobile", "reduced"];
 
 const EXPECTED_VERTEX_COUNTS: Record<BeachWorldQualityTier, number> = {
@@ -91,9 +116,12 @@ test("each quality tier gets the vertex count its subdivision implies", () => {
   );
 });
 
-test("every sand position is finite and inside the declared extent", () => {
+test("the sand is finite and actually covers the walked journey", () => {
   const geometry = createBeachSandGeometry("reduced");
   const positions = geometry.getAttribute("position");
+
+  let observedXMin = Infinity;
+  let observedXMax = -Infinity;
 
   for (let index = 0; index < positions.count; index += 1) {
     const x = positions.getX(index);
@@ -114,7 +142,29 @@ test("every sand position is finite and inside the declared extent", () => {
         && z <= BEACH_SAND_Z_MAX_METRES + 1e-3,
       `vertex ${index} z ${z} escaped the extent`,
     );
+
+    observedXMin = Math.min(observedXMin, x);
+    observedXMax = Math.max(observedXMax, x);
   }
+
+  // Measured off the built geometry against the journey's own literals, not
+  // against the extent constants: a mesh that agrees with a shrunken extent is
+  // still a mesh that ends inside the frame.
+  assert.ok(
+    observedXMin <= JOURNEY_CAMERA_X_MIN_METRES - REQUIRED_X_MARGIN_METRES,
+    `the sand starts at x ${observedXMin}, inside the ${REQUIRED_X_MARGIN_METRES}m `
+      + `margin before the first camera at x ${JOURNEY_CAMERA_X_MIN_METRES}`,
+  );
+  assert.ok(
+    observedXMax >= JOURNEY_CAMERA_X_MAX_METRES + REQUIRED_X_MARGIN_METRES,
+    `the sand ends at x ${observedXMax}, inside the ${REQUIRED_X_MARGIN_METRES}m `
+      + `margin past the last camera at x ${JOURNEY_CAMERA_X_MAX_METRES}`,
+  );
+  assert.ok(
+    observedXMax - observedXMin >= REQUIRED_SHORE_SPAN_METRES,
+    `the beach runs only ${(observedXMax - observedXMin).toFixed(2)}m along shore, `
+      + `under the ${REQUIRED_SHORE_SPAN_METRES}m needed to read as a coast`,
+  );
 
   geometry.dispose();
 });
@@ -219,9 +269,22 @@ test("the sand carries both a tiled and a shore-relative UV set", () => {
     shoreVMax = Math.max(shoreVMax, shore.getY(index));
   }
 
-  // The tiled set must actually tile, or the 1024px maps stretch over 142m.
+  // The tile size itself is the requirement, so it is checked against the
+  // acceptable window rather than inferred from the UVs it generates.
   assert.ok(
-    tiledVMax - tiledVMin > spanZ / BEACH_SAND_TILE_METRES - 1,
+    BEACH_SAND_TILE_METRES >= FINEST_SAND_TILE_METRES
+      && BEACH_SAND_TILE_METRES <= COARSEST_SAND_TILE_METRES,
+    `the grain tile is ${BEACH_SAND_TILE_METRES}m, outside the `
+      + `${FINEST_SAND_TILE_METRES}..${COARSEST_SAND_TILE_METRES}m window: below `
+      + "it the repeat patterns, above it the 1024px maps read as mush",
+  );
+
+  // The tiled set must actually tile, or the 1024px maps stretch over 142m.
+  // Compared against the coarsest acceptable tile, not against
+  // `BEACH_SAND_TILE_METRES` — both sides of that comparison would scale
+  // together and a coarsened tile would pass.
+  assert.ok(
+    tiledVMax - tiledVMin > spanZ / COARSEST_SAND_TILE_METRES - 1,
     `the detail UV does not tile: V spans only ${(tiledVMax - tiledVMin).toFixed(2)}`,
   );
   assert.ok(
@@ -229,7 +292,7 @@ test("the sand carries both a tiled and a shore-relative UV set", () => {
     "the detail UV must repeat more than twice across the beach",
   );
   assert.ok(
-    spanX / BEACH_SAND_TILE_METRES > 2,
+    spanX / COARSEST_SAND_TILE_METRES > 2,
     "the extent must be wide enough for the detail UV to repeat",
   );
 
@@ -381,6 +444,12 @@ test("the banded maps read the clamped shore UV set and only the normal map tile
       `wrapping V would stripe the beach with a second damp band from the ${name} map`,
     );
   }
+
+  assert.ok(
+    BEACH_SAND_ANISOTROPY >= REQUIRED_SAND_ANISOTROPY,
+    `sand is walked past at a grazing angle; anisotropy ${BEACH_SAND_ANISOTROPY} `
+      + `is below the ${REQUIRED_SAND_ANISOTROPY} the foreshore needs to stay sharp`,
+  );
 
   for (const [name, texture] of [
     ["colour", color],
