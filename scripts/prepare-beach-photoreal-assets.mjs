@@ -258,8 +258,36 @@ const WATER_NOISE_OCTAVES = Object.freeze([
   { amplitude: 0.5, period: 32 },
   { amplitude: 0.25, period: 16 },
 ]);
-/** Normal-map slope strength. `Water` wants long swell, not choppy detail. */
-const WATER_NORMAL_STRENGTH = 1.35;
+/**
+ * Normal-map slope strength, sized against the *corrected* tiling generator.
+ *
+ * The plan's 1.35 was tuned while `tilingValueNoise` still computed `scale =
+ * period / size`, which produced white noise whose central-difference gradients
+ * were roughly 10x larger. On the fixed smooth field those gradients measure max
+ * 0.053 / mean 0.015, so 1.35 encoded a near-mirror: max surface tilt 4.27deg,
+ * only 18 of 256 byte levels used in X and in Y, and a Z channel pinned at a
+ * constant 255 — zero information, with 20px constant runs along a 512px row.
+ * Quantisation is baked into the texture, so no runtime distortion multiplier
+ * recovers it; amplifying a quantised map only amplifies its banding, which
+ * water shows off in its specular highlights.
+ *
+ * Measured at 10 (this value): max tilt 27.88deg, byte levels X 112 / Y 111 /
+ * Z 16, min Z byte 240, every normal unit length (max error 0.0052), none
+ * inverted or degenerate, and all 262,144 still Z-dominant — long swell, not
+ * choppy detail. Reference points from the same harness: 1.35 -> 4.27deg / X 18,
+ * 8 -> 23.26deg / X 94, 14 -> 36.74deg / X 144, 20 -> 46.60deg / X 177 but 43
+ * pixels lose Z-dominance, which is where the slope stops reading as swell.
+ */
+const WATER_NORMAL_STRENGTH = 10;
+/**
+ * Max per-channel delta allowed between opposite tile edges.
+ *
+ * The wrapping lattice makes the tile seamless by construction, so this only
+ * ever trips when the generator itself breaks — which is exactly how the white
+ * noise field shipped: the seam check lived in a manual verification step
+ * outside the script instead of in this path.
+ */
+const WATER_SEAM_TOLERANCE = 12;
 
 /** Deterministic integer hash — no Math.random, so output is reproducible. */
 function hashLattice(x, y, seed) {
@@ -316,6 +344,29 @@ function sampleWaterHeight(x, y, size) {
   return height / total;
 }
 
+/**
+ * Largest per-channel difference between the tile's opposite edges.
+ *
+ * Read off the raw RGB the encoder is about to hand to Sharp: the WebP is
+ * lossless, so the buffer and the file agree byte for byte.
+ */
+function maxOppositeEdgeDelta(rgb, size) {
+  let columns = 0;
+  let rows = 0;
+  for (let index = 0; index < size; index += 1) {
+    for (let channel = 0; channel < 3; channel += 1) {
+      const lastColumn = (index * size + size - 1) * 3 + channel;
+      const firstColumn = index * size * 3 + channel;
+      columns = Math.max(columns, Math.abs(rgb[lastColumn] - rgb[firstColumn]));
+
+      const lastRow = ((size - 1) * size + index) * 3 + channel;
+      const firstRow = index * 3 + channel;
+      rows = Math.max(rows, Math.abs(rgb[lastRow] - rgb[firstRow]));
+    }
+  }
+  return { columns, rows };
+}
+
 async function encodeWaterNormal(destination) {
   const size = WATER_NORMAL_SIZE;
   const heights = new Float32Array(size * size);
@@ -344,9 +395,24 @@ async function encodeWaterNormal(destination) {
     }
   }
 
+  // Assert before writing: a tile that does not wrap must not reach the output
+  // directory, and the failure has to name the axis so the generator is the
+  // first place to look.
+  const seam = maxOppositeEdgeDelta(rgb, size);
+  const worstDelta = Math.max(seam.columns, seam.rows);
+  if (worstDelta > WATER_SEAM_TOLERANCE) {
+    throw new Error(
+      `water-normal tile is not seamless: max opposite-edge delta ${worstDelta} (columns ${seam.columns}, rows ${seam.rows}) exceeds ${WATER_SEAM_TOLERANCE} — the noise lattice is not wrapping`,
+    );
+  }
+
   await sharp(rgb, { raw: { channels: 3, height: size, width: size } })
     .webp({ effort: 6, lossless: true })
     .toFile(destination);
+
+  console.log(
+    `water-normal seam delta ${worstDelta} / ${WATER_SEAM_TOLERANCE} (columns ${seam.columns}, rows ${seam.rows})`,
+  );
 }
 
 /**
