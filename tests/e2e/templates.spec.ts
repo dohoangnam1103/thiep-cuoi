@@ -5,7 +5,11 @@ import { getVietnameseTemplateSlug } from "@/data/template-route-slugs";
 
 import { loginAsUser } from "./helpers/auth";
 import { getDb } from "./helpers/db";
-import { createUser, cleanupUser } from "./helpers/fixtures";
+import {
+  createInvitation,
+  createUser,
+  cleanupUser,
+} from "./helpers/fixtures";
 
 // Template gallery + detail + demo coverage.
 //
@@ -684,6 +688,171 @@ test.describe("templates — demo pages", () => {
       await expect(image).toHaveCSS("animation-name", "demo-dragon-fly");
     }
     await expect(stage).toHaveCSS("animation-name", "demo-envelope-away");
+  });
+
+  test("zodiac cover resolves selected masks, clips them, and preserves the fly-on-open contract", async ({
+    page,
+  }) => {
+    await page.goto("/mau-thiep/thap-nhi-chi-do/demo", { timeout: 60_000 });
+
+    const capture = page.locator('[data-envelope-capture-root="responsive-natural"]');
+    await expect(capture).toHaveCount(1, { timeout: 45_000 });
+    const clippedDecor = capture.locator('[data-envelope-decor-overflow="clip"]');
+    await expect(clippedDecor).toHaveCount(1);
+    await expect(clippedDecor).toHaveCSS("overflow", "hidden");
+
+    const coverMasks = clippedDecor.locator("[data-zodiac-artwork]");
+    await expect(coverMasks).toHaveCount(2);
+    expect(await coverMasks.evaluateAll((nodes) => (
+      nodes.map((node) => node.getAttribute("data-zodiac-artwork"))
+    ))).toEqual([
+      "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-meo.webp",
+      "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong.webp",
+    ]);
+
+    await page.locator("[data-open-invitation-control]").evaluate((button) => {
+      (button as HTMLButtonElement).click();
+    });
+    const flyingMasks = page.locator("[data-envelope-opening-fly]");
+    await expect(flyingMasks).toHaveCount(2);
+    for (const mask of await flyingMasks.all()) {
+      await expect(mask).toHaveCSS("animation-name", "demo-dragon-fly");
+    }
+    await flyingMasks.evaluateAll((nodes) => {
+      for (const node of nodes) {
+        const animation = node.getAnimations()[0];
+        if (!animation) continue;
+        animation.pause();
+        animation.currentTime = 720;
+      }
+    });
+    const cardBounds = await capture.boundingBox();
+    const flyingBounds = await Promise.all(
+      (await flyingMasks.all()).map((mask) => mask.boundingBox()),
+    );
+    expect(cardBounds).not.toBeNull();
+    expect(flyingBounds.some((bounds) => (
+      bounds !== null && cardBounds !== null && (
+        bounds.x < cardBounds.x - 1 ||
+        bounds.y < cardBounds.y - 1 ||
+        bounds.x + bounds.width > cardBounds.x + cardBounds.width + 1 ||
+        bounds.y + bounds.height > cardBounds.y + cardBounds.height + 1
+      )
+    ))).toBe(true);
+
+    const renderer = page.locator('[data-template-renderer="thap-nhi-chi-do"]');
+    await expect(renderer).toBeAttached({ timeout: 30_000 });
+    const openedMasks = renderer.locator("[data-zodiac-artwork]");
+    await expect(openedMasks).toHaveCount(4);
+    expect(await openedMasks.evaluateAll((nodes) => (
+      nodes.map((node) => node.getAttribute("data-zodiac-artwork"))
+    ))).toEqual([
+      "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-meo-line.webp",
+      "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong-line.webp",
+      "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-meo.webp",
+      "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong.webp",
+    ]);
+  });
+
+  test("blank zodiac values fall back to the traditional phoenix and dragon pair", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    try {
+      const invitation = createInvitation(user.id, { templateId: "thap-nhi-chi-do" });
+      await loginAsUser(context, user.id);
+      await page.goto(`/editor/${invitation.id}`, { timeout: 60_000 });
+      await expect(page.locator("#brideZodiac")).toHaveValue("");
+      await expect(page.locator("#groomZodiac")).toHaveValue("");
+      await page.getByRole("button", { name: "Xem trước", exact: true }).click();
+
+      const renderer = page.locator('[data-template-renderer="thap-nhi-chi-do"]');
+      await expect(renderer).toBeAttached({ timeout: 30_000 });
+      const masks = renderer.locator("[data-zodiac-artwork]");
+      await expect(masks).toHaveCount(4);
+      expect(await masks.evaluateAll((nodes) => (
+        nodes.map((node) => node.getAttribute("data-zodiac-artwork"))
+      ))).toEqual([
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-phuong-line.webp",
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong-line.webp",
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-phuong.webp",
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong.webp",
+      ]);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("zodiac invitation is overflow-safe and disables parallax motion at 390px", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/mau-thiep/thap-nhi-chi-do/demo", { timeout: 60_000 });
+    await expect(
+      page.locator('[data-envelope-capture-root="responsive-natural"]'),
+    ).toHaveCount(1, { timeout: 45_000 });
+    await page.locator("[data-open-invitation-control]").evaluate((button) => {
+      (button as HTMLButtonElement).click();
+    });
+    const reducedMotionFly = page.locator("[data-envelope-opening-fly]");
+    await expect(reducedMotionFly).toHaveCount(2);
+    for (const mask of await reducedMotionFly.all()) {
+      await expect(mask).toHaveCSS("animation-name", "none");
+      await expect(mask).toHaveCSS("transform", "none");
+      await expect(mask).toHaveCSS("filter", "none");
+    }
+
+    await page.goto("/mau-thiep/thap-nhi-chi-do/demo?capture=1", { timeout: 60_000 });
+
+    const renderer = page.locator('[data-template-renderer="thap-nhi-chi-do"]');
+    await expect(renderer).toBeAttached({ timeout: 30_000 });
+    const parallax = renderer.locator("[data-parallax]");
+    await expect(parallax.first()).toBeAttached();
+    const transforms = await parallax.evaluateAll((nodes) => (
+      nodes.map((node) => getComputedStyle(node).transform)
+    ));
+    expect(transforms.length).toBeGreaterThan(0);
+    expect(transforms.every((transform) => transform === "none")).toBe(true);
+
+    const hasHorizontalOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth + 1,
+    );
+    expect(hasHorizontalOverflow).toBe(false);
+  });
+
+  test("zodiac line art and foreground move at visibly different parallax rates", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/mau-thiep/thap-nhi-chi-do/demo?capture=1", { timeout: 60_000 });
+    const renderer = page.locator('[data-template-renderer="thap-nhi-chi-do"]');
+    await expect(renderer).toBeAttached({ timeout: 30_000 });
+
+    await page.evaluate(() => {
+      window.scrollTo(0, 900);
+      window.dispatchEvent(new Event("scroll"));
+    });
+    const readTransforms = () => renderer.evaluate((root) => {
+      const line = root.querySelector<HTMLElement>(
+        '[data-zodiac-artwork$="-line.webp"]',
+      )?.closest<HTMLElement>("[data-parallax]");
+      const foreground = root.querySelector<HTMLElement>(
+        '[data-zodiac-artwork$="zodiac-meo.webp"]',
+      )?.closest<HTMLElement>("[data-parallax]");
+      return {
+        line: line ? getComputedStyle(line).transform : "none",
+        foreground: foreground ? getComputedStyle(foreground).transform : "none",
+      };
+    });
+    await expect.poll(async () => {
+      const transforms = await readTransforms();
+      return transforms.line !== "none" && transforms.line !== transforms.foreground;
+    }).toBe(true);
+
+    const transforms = await readTransforms();
+    expect(transforms.line).not.toBe(transforms.foreground);
   });
 
   test("isolated art opening layers replace the WebGL decor without removing the 3D stage", async ({ page }) => {

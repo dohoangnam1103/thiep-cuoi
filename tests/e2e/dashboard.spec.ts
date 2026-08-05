@@ -121,7 +121,7 @@ test.describe("dashboard — create", () => {
       await expect(page.getByRole("heading", { name: "Chọn mẫu thiệp" })).toBeVisible();
       // Each completed template is its own <form> with a submit button.
       const submits = page.locator('div.fixed form button[type="submit"]');
-      await expect(submits).toHaveCount(39);
+      await expect(submits).toHaveCount(71);
     } finally {
       cleanupUser(user.id);
     }

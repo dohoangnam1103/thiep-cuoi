@@ -12,6 +12,8 @@ export type DemoContentFields = {
   groomShortName: string;
   brideBirthOrder: string;
   groomBirthOrder: string;
+  brideZodiac: string;
+  groomZodiac: string;
   brideFirst: boolean;
   date: string;
   time: string;
@@ -70,6 +72,8 @@ export function fromDemoContent(demo: ChungDoiDemoContent): DemoSeed {
       groomShortName: couple.groomShortName ?? "",
       brideBirthOrder: couple.brideBirthOrder ?? "",
       groomBirthOrder: couple.groomBirthOrder ?? "",
+      brideZodiac: couple.brideZodiac ?? "",
+      groomZodiac: couple.groomZodiac ?? "",
       brideFirst: couple.brideFirst ?? true,
       date: couple.date ?? "",
       time: couple.time ?? "",

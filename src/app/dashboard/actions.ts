@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { templates } from "@/data/chungdoi";
 import { getOrCreateUserId } from "@/lib/dal";
+import { zodiacTemplatePrimaryColor } from "@/lib/zodiac";
 
 const DEFAULT_TEMPLATE_ID = "song-hy-red";
 
@@ -23,13 +24,20 @@ export async function createInvitation(formData?: FormData): Promise<void> {
 
   const groomShortName = readName(formData?.get("groomShortName"));
   const brideShortName = readName(formData?.get("brideShortName"));
+  const primaryColor = zodiacTemplatePrimaryColor(templateId);
 
   const invitation = await prisma.invitation.create({
     data: {
       userId,
       templateId,
       status: "draft",
-      content: { create: { groomShortName, brideShortName } },
+      content: {
+        create: {
+          groomShortName,
+          brideShortName,
+          ...(primaryColor ? { primaryColor } : {}),
+        },
+      },
     },
   });
   redirect(`/editor/${invitation.id}`);

@@ -1236,6 +1236,7 @@
       "Royal": "Hoàng gia",
       "Modern": "Hiện đại",
       "Vietnamese Heritage": "Di sản Việt",
+      "Vietnamese Zodiac": "Con giáp Việt",
       "Botanical": "Cỏ cây",
       "Minimal": "Tối giản",
       "Destination": "Điểm đến",
@@ -1256,7 +1257,8 @@
       "Ochre": "Vàng đất",
       "Orange": "Cam",
       "Bronze": "Đồng",
-      "Silver": "Bạc"
+      "Silver": "Bạc",
+      "Lacquer Red": "Đỏ sơn son"
     },
     "templates": {
       "song-hy-red": {
@@ -1851,6 +1853,26 @@
     "payNow": "Thanh toán ngay"
   },
   "editor": {
+    "zodiac": {
+      "brideLabel": "Con giáp cô dâu",
+      "groomLabel": "Con giáp chú rể",
+      "placeholder": "— Chọn con giáp —",
+      "hint": "Dùng để hiển thị họa tiết trên bìa và thiệp.",
+      "options": {
+        "chuot": "Tý — con Chuột",
+        "trau": "Sửu — con Trâu",
+        "ho": "Dần — con Hổ",
+        "meo": "Mão — con Mèo",
+        "rong": "Thìn — con Rồng",
+        "tran": "Tỵ — con Trăn",
+        "ngua": "Ngọ — con Ngựa",
+        "de": "Mùi — con Dê",
+        "khi": "Thân — con Khỉ",
+        "ga": "Dậu — con Gà",
+        "cho": "Tuất — con Chó",
+        "lon": "Hợi — con Lợn"
+      }
+    },
     "venue": {
       "title": "Nơi tổ chức",
       "addressLabel": "Địa chỉ nơi tổ chức",

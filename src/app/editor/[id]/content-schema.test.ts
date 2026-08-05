@@ -40,3 +40,38 @@ test("parseCeremonies keeps aligned ceremony rows and skips fully empty rows", (
     { title: "Lễ thành hôn", date: "2026-08-29", time: "10:30" },
   ]);
 });
+
+test("contentSchema accepts persisted zodiac IDs and keeps the selected pair", () => {
+  const result = contentSchema.parse({
+    templateId: "song-hy-red",
+    brideZodiac: "meo",
+    groomZodiac: "rong",
+  });
+
+  assert.equal(result.brideZodiac, "meo");
+  assert.equal(result.groomZodiac, "rong");
+});
+
+test("contentSchema accepts empty or omitted zodiac fields", () => {
+  const empty = contentSchema.parse({
+    templateId: "song-hy-red",
+    brideZodiac: "",
+    groomZodiac: "",
+  });
+  const omitted = contentSchema.parse({ templateId: "song-hy-red" });
+
+  assert.equal(empty.brideZodiac, "");
+  assert.equal(empty.groomZodiac, "");
+  assert.equal(omitted.brideZodiac, "");
+  assert.equal(omitted.groomZodiac, "");
+});
+
+test("contentSchema rejects zodiac values outside the twelve-ID whitelist", () => {
+  const result = contentSchema.safeParse({
+    templateId: "song-hy-red",
+    brideZodiac: "../../rong",
+    groomZodiac: "dragon",
+  });
+
+  assert.equal(result.success, false);
+});

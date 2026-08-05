@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
+import { pathToFileURL } from "node:url";
+
+import sharp from "sharp";
 
 import {
   completedTemplateSlugs,
@@ -14,12 +17,16 @@ import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { heroImageCount } from "@/data/editor-template-capabilities";
 import { vietnameseTemplateSlugs } from "@/data/template-route-slugs";
 import { AUDITED_TEMPLATE_SLUGS } from "@/lib/audited-template-renderers";
+import { ZODIAC_IDS, zodiacArtworkPath } from "@/lib/zodiac";
 import {
   generatedListingMessages,
   generatedTemplateManifests,
   generatedTemplateSlugs,
 } from "./generated-data";
-import { TEMPLATE_MANIFEST_LOCALES } from "./template-manifest";
+import {
+  TEMPLATE_MANIFEST_LOCALES,
+  type TemplateManifest,
+} from "./template-manifest";
 
 const NEW_ART_TEMPLATE_SLUGS = [
   "dong-ho-folk",
@@ -95,6 +102,127 @@ const NEW_ART_TEMPLATE_FONTS = {
   "chim-lac-ivory": ["Fz Qellia", "font-art-qellia"],
   "ivory-signature": ["1FTV VIP Signora", "font-art-signora"],
 } as const satisfies Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], readonly [string, string]>;
+
+const ZODIAC_TEMPLATE_SLUG = "thap-nhi-chi-do";
+const ZODIAC_ARTWORK_IDS = [...ZODIAC_IDS, "phuong"] as const;
+const ZODIAC_ARTWORK_ASSETS = ZODIAC_ARTWORK_IDS.flatMap((id) => [
+  zodiacArtworkPath(id),
+  zodiacArtworkPath(id, "line"),
+]);
+const ZODIAC_SHARED_ASSETS = [
+  "/chungdoi/images/themes/songphung-red/NENGIAY.jpg",
+  "/chungdoi/images/themes/songphung-red/HOA.webp",
+  "/chungdoi/images/themes/songphung-red/CHU HY.webp",
+  "/chungdoi/images/themes/_decor/songphung-red/HOA.webp",
+  "/chungdoi/music/double-phoenix-red.mp3",
+] as const;
+
+async function loadZodiacTemplateManifest(): Promise<TemplateManifest> {
+  const manifestPath = path.join(
+    process.cwd(),
+    "src",
+    "data",
+    "templates",
+    `${ZODIAC_TEMPLATE_SLUG}.manifest.ts`,
+  );
+  assert.equal(existsSync(manifestPath), true, `${ZODIAC_TEMPLATE_SLUG}: manifest`);
+  const loaded = (await import(pathToFileURL(manifestPath).href)) as {
+    manifest?: TemplateManifest;
+  };
+  assert.ok(loaded.manifest, `${ZODIAC_TEMPLATE_SLUG}: manifest export`);
+  return loaded.manifest;
+}
+
+test("thap-nhi-chi-do manifest preserves the Phoenix envelope with dynamic zodiac artwork", async () => {
+  const manifest = await loadZodiacTemplateManifest();
+
+  assert.equal(manifest.slug, ZODIAC_TEMPLATE_SLUG);
+  assert.equal(manifest.viRouteSlug, ZODIAC_TEMPLATE_SLUG);
+  assert.equal(manifest.rendererExport, "ThapNhiChiInvitation");
+  assert.equal(manifest.heroImageCount, 0);
+  assert.equal(manifest.catalog.category, "Vietnamese Zodiac");
+  assert.equal(manifest.catalog.color, "Lacquer Red");
+  assert.equal(manifest.catalog.isNew, true);
+  assert.equal(new Set<string>(NEW_ART_TEMPLATE_SLUGS).has(manifest.slug), false);
+  assert.deepEqual(Object.keys(manifest.i18n).sort(), [...TEMPLATE_MANIFEST_LOCALES].sort());
+  for (const locale of TEMPLATE_MANIFEST_LOCALES) {
+    assert.ok(manifest.i18n[locale].name, `${locale}: name`);
+    assert.ok(manifest.i18n[locale].description, `${locale}: description`);
+  }
+
+  assert.deepEqual(manifest.theme.decorations.cardImages, [
+    {
+      src: "{{brideZodiac}}",
+      className:
+        "w-[112px] md:w-[170px] top-[8px] left-[8px] md:top-[20px] md:left-[20px] opacity-90 rotate-3",
+      flyOnOpen: true,
+    },
+    {
+      src: "{{groomZodiac}}",
+      className:
+        "w-[112px] md:w-[170px] bottom-[8px] right-[8px] md:bottom-[20px] md:right-[20px] opacity-90 -scale-x-100 -rotate-3",
+      flyOnOpen: true,
+    },
+    {
+      src: "/chungdoi/images/themes/_decor/songphung-red/HOA.webp",
+      className:
+        "w-[120px] md:w-[160px] -bottom-[20px] -left-[20px] md:-bottom-[30px] md:-left-[30px] opacity-60",
+      flyOnOpen: false,
+    },
+    {
+      src: "/chungdoi/images/themes/_decor/songphung-red/HOA.webp",
+      className:
+        "w-[100px] md:w-[140px] -top-[15px] -right-[15px] md:-top-[20px] md:-right-[20px] opacity-60 rotate-180",
+      flyOnOpen: false,
+    },
+  ]);
+
+  const declaredZodiacAssets = manifest.assets.filter((asset) =>
+    asset.startsWith("/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-"),
+  );
+  assert.equal(declaredZodiacAssets.length, 26);
+  assert.deepEqual(declaredZodiacAssets, ZODIAC_ARTWORK_ASSETS);
+  assert.deepEqual(manifest.assets, [
+    ...ZODIAC_ARTWORK_ASSETS,
+    ...ZODIAC_SHARED_ASSETS,
+  ]);
+  assert.equal(manifest.demoContent.couple.brideZodiac, "meo");
+  assert.equal(manifest.demoContent.couple.groomZodiac, "rong");
+});
+
+test("thap-nhi-chi-do has dimensioned alpha masks and all three captured previews", async () => {
+  await loadZodiacTemplateManifest();
+
+  for (const asset of ZODIAC_ARTWORK_ASSETS) {
+    const absolutePath = path.join(process.cwd(), "public", asset.slice(1));
+    assert.equal(existsSync(absolutePath), true, `${asset}: exists`);
+    const metadata = await sharp(absolutePath).metadata();
+    const isLine = asset.endsWith("-line.webp");
+    assert.equal(metadata.width, isLine ? 1966 : 1952, `${asset}: width`);
+    assert.equal(metadata.height, isLine ? 4119 : 4105, `${asset}: height`);
+    assert.equal(metadata.hasAlpha, true, `${asset}: alpha`);
+  }
+
+  const previewStem = ZODIAC_TEMPLATE_SLUG.replaceAll("-", "_");
+  for (const [kind, minimumBytes] of [
+    ["listing", 20_000],
+    ["portrait", 10_000],
+    ["landscape", 10_000],
+  ] as const) {
+    const previewPath = path.join(
+      process.cwd(),
+      "public",
+      "chungdoi",
+      "images",
+      "template-previews",
+      "en",
+      kind,
+      `${previewStem}.webp`,
+    );
+    assert.equal(existsSync(previewPath), true, `${kind}: preview`);
+    assert.ok(statSync(previewPath).size >= minimumBytes, `${kind}: preview size`);
+  }
+});
 
 test("generated template manifests are wired through every public data registry", () => {
   const catalogSlugs = new Set(templates.map((template) => template.slug));

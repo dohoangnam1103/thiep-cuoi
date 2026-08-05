@@ -463,3 +463,34 @@ processing and uses Sharp with Lanczos3 resize kernels.
 The seven blocking files total 805,532 compressed bytes and have a conservative
 RGBA-plus-mip decode estimate of 15,379,118 bytes. Including optional wildlife,
 the shared pack totals 868,098 compressed bytes.
+
+## Thập Nhị Chi Đỏ zodiac artwork (2026-08-05)
+
+The twelve animal masters in
+`public/chungdoi/images/themes/_decor/thap-nhi-chi-do/source/` were generated
+with the built-in ImageGen tool specifically for this repository. Each animal
+was generated separately while visually referencing the in-repo Song Phụng
+artwork (`songphung-red/Phuong 2.webp` and the accepted dragon master) so the
+set shares the invitation's tall Vietnamese lacquer and paper-cut silhouette.
+
+Prompt family: one full-body animal in a narrow vertical composition; flat
+Vietnamese lacquer/paper-cut ornament; ivory subject with crisp internal
+cut-outs on a uniform `#00ff00` chroma background; generous edge padding; no
+text, watermark, frame, flowers, clouds, ground, shadow, gradient, crop, or
+additional creature. Species-specific anatomy was reinforced for every prompt,
+including Vietnamese water-buffalo horns, a cat rather than a rabbit for Mão,
+and a legless python for Tỵ.
+
+`scripts/generate-zodiac-artwork.mjs` keys those accepted local PNG masters,
+normalizes them to the two legacy Song Phụng canvas sizes, and writes 24 alpha
+WebP masks. The same script derives the Rồng/Phượng fallback pair and both line
+variants, yielding 26 masks in total. RGB is normalized to `#d4a24a`, but the
+runtime uses the alpha as a CSS mask so `--zodiac-art-color` can recolor every
+animal without regenerating files.
+
+The fallback phoenix alpha comes from the existing self-hosted
+`public/chungdoi/images/themes/songphung-red/Phuong.webp` and
+`Phuong line.webp`. The flower copied by the generator comes from
+`public/chungdoi/images/themes/_decor/songphung-red/HOA.webp`; opened-invitation
+paper, flower, and happiness artwork remain the existing self-hosted Song Phụng
+assets. No runtime request leaves the application origin.

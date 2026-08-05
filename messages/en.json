@@ -1309,6 +1309,26 @@
     "payNow": "Pay now"
   },
   "editor": {
+    "zodiac": {
+      "brideLabel": "Bride's zodiac animal",
+      "groomLabel": "Groom's zodiac animal",
+      "placeholder": "— Select a zodiac animal —",
+      "hint": "Used for the artwork on the cover and invitation.",
+      "options": {
+        "chuot": "Tý — Rat",
+        "trau": "Sửu — Water Buffalo",
+        "ho": "Dần — Tiger",
+        "meo": "Mão — Cat",
+        "rong": "Thìn — Dragon",
+        "tran": "Tỵ — Python",
+        "ngua": "Ngọ — Horse",
+        "de": "Mùi — Goat",
+        "khi": "Thân — Monkey",
+        "ga": "Dậu — Rooster",
+        "cho": "Tuất — Dog",
+        "lon": "Hợi — Pig"
+      }
+    },
     "venue": {
       "title": "Venue",
       "addressLabel": "Venue address",

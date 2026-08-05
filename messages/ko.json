@@ -1092,6 +1092,26 @@
     "payNow": "지금 결제"
   },
   "editor": {
+    "zodiac": {
+      "brideLabel": "신부의 띠 동물",
+      "groomLabel": "신랑의 띠 동물",
+      "placeholder": "— 띠 동물 선택 —",
+      "hint": "표지와 청첩장의 장식에 사용됩니다.",
+      "options": {
+        "chuot": "자 — 쥐",
+        "trau": "축 — 물소",
+        "ho": "인 — 호랑이",
+        "meo": "묘 — 고양이",
+        "rong": "진 — 용",
+        "tran": "사 — 비단뱀",
+        "ngua": "오 — 말",
+        "de": "미 — 염소",
+        "khi": "신 — 원숭이",
+        "ga": "유 — 닭",
+        "cho": "술 — 개",
+        "lon": "해 — 돼지"
+      }
+    },
     "venue": {
       "title": "예식 장소",
       "addressLabel": "장소 주소",

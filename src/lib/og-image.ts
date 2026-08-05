@@ -1,4 +1,5 @@
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
+import { resolveZodiacCardImages } from "@/lib/zodiac-decor";
 
 export type OgCoupleContent = {
   brideShortName: string;
@@ -67,13 +68,14 @@ export type OgTheme = {
 export function resolveOgTheme(templateId: string, primaryColor: string): OgTheme {
   const cfg = chungdoiThemeConfig[templateId];
   if (cfg) {
+    const cardImages = resolveZodiacCardImages(cfg.decorations.cardImages);
     return {
       background: cfg.theme.background,
       cardBg: cfg.theme.cardBg,
       textPrimary: cfg.theme.textPrimary,
       textSecondary: cfg.theme.textSecondary,
       accent: cfg.theme.accent,
-      decor: cfg.decorations.cardImages.map((img) => ({
+      decor: cardImages.map((img) => ({
         src: img.src,
         className: img.className,
       })),

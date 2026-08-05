@@ -5,6 +5,7 @@ import {
   capitalizeVietnameseSentences,
   titleCaseVietnameseName,
 } from "@/lib/text-case";
+import { ZODIAC_IDS } from "@/lib/zodiac";
 
 const ALL_TEMPLATE_SLUGS = new Set(templates.map((t) => t.slug));
 
@@ -47,6 +48,8 @@ export const contentSchema = z.object({
   groomShortName: optionalName(60),
   groomBirthOrder: optionalSentence(40),
   brideBirthOrder: optionalSentence(40),
+  brideZodiac: z.enum(ZODIAC_IDS).or(z.literal("")).optional().default(""),
+  groomZodiac: z.enum(ZODIAC_IDS).or(z.literal("")).optional().default(""),
   brideFirst: formBoolean(true),
   date: z.string().max(20).optional().default(""),
   time: z.string().max(20).optional().default(""),

@@ -20,6 +20,8 @@ export type ChungDoiDemoContent = {
     groomShortName: string;
     brideBirthOrder?: string;
     groomBirthOrder?: string;
+    brideZodiac?: string;
+    groomZodiac?: string;
     brideFirst: boolean;
     date: string;
     time: string;

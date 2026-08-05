@@ -1,4 +1,5 @@
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
+import { resolveZodiacCardImages } from "@/lib/zodiac-decor";
 
 export type DashboardCardTheme = {
   background: string;
@@ -85,10 +86,11 @@ export function resolveDashboardCardTheme(
 ): DashboardCardTheme | null {
   const config = chungdoiThemeConfig[templateId];
   if (!config) return null;
+  const cardImages = resolveZodiacCardImages(config.decorations.cardImages);
   return {
     background: config.theme.background,
     textColor: pickReadableColor(config.theme.textPrimary, NEUTRAL_TEXT),
     mutedTextColor: pickReadableColor(config.theme.textSecondary, NEUTRAL_MUTED),
-    decorations: uniqueDecorations(config.decorations.cardImages, MAX_DECORATIONS),
+    decorations: uniqueDecorations(cardImages, MAX_DECORATIONS),
   };
 }

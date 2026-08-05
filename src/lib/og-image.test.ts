@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
+import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import {
   resolveCoupleNames,
   resolveOgDate,
@@ -104,6 +105,46 @@ test("resolveOgTheme lấy token từ config (double-phoenix-red)", () => {
   assert.equal(t.cardBg, "rgba(255, 240, 231, 0.95)");
   assert.ok(t.background.startsWith("linear-gradient"));
   assert.ok(Array.isArray(t.decor));
+});
+
+test("resolveOgTheme replaces zodiac placeholders with safe fallback artwork", () => {
+  const slug = "test-zodiac-placeholder-og";
+  const base = chungdoiThemeConfig["double-phoenix-red"];
+  if (!base) throw new Error("expected the double-phoenix-red fixture");
+  chungdoiThemeConfig[slug] = {
+    ...base,
+    decorations: {
+      cardImages: [
+        {
+          src: "{{brideZodiac}}",
+          className: "left-slot",
+          flyOnOpen: true,
+        },
+        {
+          src: "{{groomZodiac}}",
+          className: "right-slot",
+          flyOnOpen: true,
+        },
+      ],
+    },
+  };
+
+  try {
+    const theme = resolveOgTheme(slug, "#710001");
+    assert.deepEqual(theme.decor, [
+      {
+        src: "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-phuong.webp",
+        className: "left-slot",
+      },
+      {
+        src: "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong.webp",
+        className: "right-slot",
+      },
+    ]);
+    assert.equal(theme.decor.some(({ src }) => src.includes("{{")), false);
+  } finally {
+    delete chungdoiThemeConfig[slug];
+  }
 });
 
 test("resolveOgTheme fallback theo primaryColor khi không có config", () => {

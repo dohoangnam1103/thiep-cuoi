@@ -24,6 +24,10 @@ export function templateSupportsHeroImage(templateSlug: string): boolean {
   return heroImageCount(templateSlug) > 0;
 }
 
+export function templateSupportsZodiac(templateSlug: string): boolean {
+  return templateSlug === "thap-nhi-chi-do";
+}
+
 export function heroImageCount(templateSlug: string): 0 | 1 | 2 {
   const generatedCount = (generatedTemplateManifests as readonly TemplateManifest[])
     .find((manifest) => manifest.slug === templateSlug)

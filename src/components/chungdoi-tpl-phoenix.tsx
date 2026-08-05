@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
+import { ZodiacMaskArtwork } from "@/components/zodiac-mask-artwork";
 import {
   buildCalendar,
   GiftEnvelope,
@@ -18,6 +19,8 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import type { ZodiacInvitationArtwork } from "@/lib/zodiac-invitation-artwork";
+import { cn } from "@/lib/utils";
 
 function PhoenixWishForm({ M }: { M: string }) {
   const { formProps, pending, state } = useWishFormBinding();
@@ -37,12 +40,66 @@ function PhoenixWishForm({ M }: { M: string }) {
   );
 }
 
+type PhoenixInvitationProps = {
+  content: ChungDoiDemoContent;
+  artwork?: ZodiacInvitationArtwork;
+  artworkColor?: string;
+  invitationColor?: string;
+};
+
+type ZodiacColorStyle = CSSProperties & {
+  "--zodiac-art-color"?: string;
+};
+
+type ZodiacHeroPairProps = {
+  heroLeft: string;
+  heroRight: string;
+};
+
+export function ZodiacHeroPair({ heroLeft, heroRight }: ZodiacHeroPairProps) {
+  return (
+    <>
+      <div
+        data-parallax="-0.15"
+        data-zodiac-hero-contained="true"
+        data-zodiac-hero-slot="left"
+        className="pointer-events-none absolute left-[8px] top-[6px] z-10 h-[248px] w-[118px] md:left-[24px] md:top-[14px] md:h-[460px] md:w-[219px]"
+        style={{ willChange: "transform", backfaceVisibility: "hidden" }}
+      >
+        <ZodiacMaskArtwork
+          src={heroLeft}
+          data-zodiac-hero-facing="right"
+          className="size-full"
+        />
+      </div>
+      <div
+        data-parallax="0.15"
+        data-zodiac-hero-contained="true"
+        data-zodiac-hero-slot="right"
+        className="pointer-events-none absolute right-[8px] top-[6px] z-10 h-[248px] w-[118px] md:right-[24px] md:top-[14px] md:h-[460px] md:w-[219px]"
+        style={{ willChange: "transform", backfaceVisibility: "hidden" }}
+      >
+        <ZodiacMaskArtwork
+          src={heroRight}
+          data-zodiac-hero-facing="left"
+          className="size-full -scale-x-100"
+        />
+      </div>
+    </>
+  );
+}
+
 /** Faithful rebuild of the Double Phoenix Red (song-phung-do) opened invitation. */
-export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent }) {
+export function PhoenixInvitation({
+  content,
+  artwork,
+  artworkColor,
+  invitationColor,
+}: PhoenixInvitationProps) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const SONGPHUNG = `/chungdoi/images/themes/${content.theme.assetFolder || "songphung-red"}`;
-  const M = content.theme.primaryColor || "#710001";
+  const M = invitationColor || content.theme.primaryColor || "#710001";
   const CREAM = "#ffffff";
   const headerNames = people.map((person) => person.shortName);
   const ceremony = formatDate(couple.ceremonyDate);
@@ -59,6 +116,13 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
     { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
     couple.brideFirst,
   ).filter((q) => q.bank);
+  const rootStyle: ZodiacColorStyle = {
+    backgroundColor: CREAM,
+    color: M,
+    ...(artwork
+      ? { "--zodiac-art-color": artworkColor || "#d4a24a" }
+      : {}),
+  };
 
   const parallaxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -82,17 +146,29 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
   }, []);
 
   return (
-    <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: CREAM, color: M }}>
+    <div
+      className={cn("flex w-full justify-center overflow-x-clip", artwork && "zodiac-invitation")}
+      data-zodiac-invitation={artwork ? "true" : undefined}
+      style={rootStyle}
+    >
       <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ borderColor: "#71000122" }}>
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{ backgroundImage: `url("${SONGPHUNG}/NENGIAY.jpg")`, backgroundSize: "100%", backgroundRepeat: "repeat-y", backgroundPosition: "center top", opacity: 0.3 }}
         />
         <div data-parallax="0.25" className="pointer-events-none absolute right-[50%] top-[800px] z-[5] overflow-hidden opacity-10 md:top-[1150px] lg:top-[1200px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }}>
-          <img src={`${SONGPHUNG}/Phuong line.webp`} alt="" className="h-[850px] w-auto object-contain md:h-[1594px]" style={{ objectPosition: "right top", maxWidth: "none" }} />
+          {artwork ? (
+            <ZodiacMaskArtwork src={artwork.parallaxRight} className="aspect-[1966/4119] h-[850px] md:h-[1594px]" />
+          ) : (
+            <img src={`${SONGPHUNG}/Phuong line.webp`} alt="" className="h-[850px] w-auto object-contain md:h-[1594px]" style={{ objectPosition: "right top", maxWidth: "none" }} />
+          )}
         </div>
-        <div data-parallax="0.25" data-flip="1" className="pointer-events-none absolute left-[50%] top-[2000px] z-[5] overflow-hidden opacity-10 md:top-[2050px] lg:top-[2100px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }}>
-          <img src={`${SONGPHUNG}/Phuong line.webp`} alt="" className="h-[850px] w-auto object-contain md:h-[1594px]" style={{ objectPosition: "left top", maxWidth: "none" }} />
+        <div data-parallax="0.25" data-flip={artwork ? undefined : "1"} className="pointer-events-none absolute left-[50%] top-[2000px] z-[5] overflow-hidden opacity-10 md:top-[2050px] lg:top-[2100px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }}>
+          {artwork ? (
+            <ZodiacMaskArtwork src={artwork.parallaxLeft} className="aspect-[1966/4119] h-[850px] -scale-x-100 md:h-[1594px]" />
+          ) : (
+            <img src={`${SONGPHUNG}/Phuong line.webp`} alt="" className="h-[850px] w-auto object-contain md:h-[1594px]" style={{ objectPosition: "left top", maxWidth: "none" }} />
+          )}
         </div>
         <div data-parallax="0.35" data-flip="1" className="pointer-events-none absolute left-[50%] top-[1050px] z-[5] overflow-hidden opacity-10 md:top-[1200px] lg:top-[1250px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }}>
           <img src={`${SONGPHUNG}/HOA.webp`} alt="" className="h-[390px] w-auto object-contain md:h-[731px]" style={{ objectPosition: "left top", maxWidth: "none" }} />
@@ -106,17 +182,29 @@ export function PhoenixInvitation({ content }: { content: ChungDoiDemoContent })
             <div className="ml-[15px]">{headerNames[0]}</div>
             <div className="ml-[50px] mt-[10px]">{headerNames[1]}</div>
           </div>
-          <div className="relative flex h-[260px] w-full items-center justify-center md:h-[488px]">
+          <div
+            className="relative flex h-[260px] w-full items-center justify-center md:h-[488px]"
+            data-zodiac-hero-frame={artwork ? "true" : undefined}
+          >
             <div className="absolute left-0 z-0 h-[110px] w-full md:h-[206px]" style={{ backgroundColor: M, top: "50%" }} />
-            <div data-parallax="-0.15" className="absolute left-[-90px] top-0 z-10 h-[480px] w-[230px] md:left-[-169px] md:h-[900px] md:w-[431px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }}>
-              <img src={`${SONGPHUNG}/Phuong 2.webp`} alt="Phoenix Left" className="h-full w-full object-contain" style={{ objectPosition: "left center" }} />
-            </div>
+            {artwork ? (
+              <ZodiacHeroPair
+                heroLeft={artwork.heroLeft}
+                heroRight={artwork.heroRight}
+              />
+            ) : (
+              <div data-parallax="-0.15" className="absolute left-[-90px] top-0 z-10 h-[480px] w-[230px] md:left-[-169px] md:h-[900px] md:w-[431px]" style={{ willChange: "transform", backfaceVisibility: "hidden" }}>
+                <img src={`${SONGPHUNG}/Phuong 2.webp`} alt="Phoenix Left" className="h-full w-full object-contain" style={{ objectPosition: "left center" }} />
+              </div>
+            )}
             <div className="relative z-20 h-[155px] w-[155px] md:h-[291px] md:w-[291px]">
               <img src={`${SONGPHUNG}/CHU HY.webp`} alt="囍" className="h-full w-full object-contain" />
             </div>
-            <div data-parallax="0.15" data-flip="1" className="absolute top-[-120px] z-10 h-[320px] w-[155px] md:top-[-225px] md:h-[600px] md:w-[291px]" style={{ left: "calc(50% + 77.5px)", transform: "scaleX(-1)", willChange: "transform", backfaceVisibility: "hidden" }}>
-              <img src={`${SONGPHUNG}/Phuong.webp`} alt="Phoenix Right" className="h-full w-full object-contain" style={{ objectPosition: "right center" }} />
-            </div>
+            {!artwork ? (
+              <div data-parallax="0.15" data-flip="1" className="absolute top-[-120px] z-10 h-[320px] w-[155px] md:top-[-225px] md:h-[600px] md:w-[291px]" style={{ left: "calc(50% + 77.5px)", transform: "scaleX(-1)", willChange: "transform", backfaceVisibility: "hidden" }}>
+                <img src={`${SONGPHUNG}/Phuong.webp`} alt="Phoenix Right" className="h-full w-full object-contain" style={{ objectPosition: "right center" }} />
+              </div>
+            ) : null}
           </div>
         </header>
 

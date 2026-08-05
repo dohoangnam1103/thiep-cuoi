@@ -129,7 +129,7 @@ test.describe("invitation editor", () => {
 
     const picker = page.getByTestId("editor-template-picker");
     const cards = picker.locator("button[data-template-id]");
-    await expect(cards).toHaveCount(39);
+    await expect(cards).toHaveCount(71);
 
     const firstCard = cards.first();
     const preview = firstCard.locator("img");
@@ -139,6 +139,71 @@ test.describe("invitation editor", () => {
     await expect
       .poll(() => preview.evaluate((image) => getComputedStyle(image).objectPosition))
       .not.toBe("50% 0%");
+  });
+
+  test("zodiac selectors are template-gated and drive the ordered preview artwork", async ({
+    page,
+    context,
+  }) => {
+    const user = newUser();
+    const inv = createInvitation(user.id);
+    await loginAsUser(context, user.id);
+
+    await page.goto(`/editor/${inv.id}`);
+    await expect(page.locator("#brideZodiac")).toHaveCount(0);
+    await expect(page.locator("#groomZodiac")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Mẫu thiệp" }).click();
+    const picker = page.getByTestId("editor-template-picker");
+    await picker.locator('button[data-template-id="thap-nhi-chi-do"]').click();
+    await expect(page.locator("#primaryColor")).toHaveValue("#d4a24a");
+
+    const brideZodiac = page.locator("#brideZodiac");
+    const groomZodiac = page.locator("#groomZodiac");
+    await expect(brideZodiac).toBeVisible();
+    await expect(groomZodiac).toBeVisible();
+    await expect(brideZodiac.locator("option")).toHaveCount(13);
+    await expect(groomZodiac.locator("option")).toHaveCount(13);
+    await brideZodiac.selectOption("meo");
+    await groomZodiac.selectOption("rong");
+    await page.getByRole("button", { name: "Nhà trai trước" }).click();
+    await page.getByRole("button", { name: "Màu chủ đạo" }).click();
+    await page.locator("#primaryColor").fill("#0f766e");
+
+    await page.locator("#editor-form").evaluate((form: HTMLFormElement) => {
+      form.requestSubmit();
+    });
+    await expect(page.getByText("Đã lưu bản nháp")).toBeVisible();
+    await expect.poll(() => readContent(inv.id, "brideZodiac")).toBe("meo");
+    await expect.poll(() => readContent(inv.id, "groomZodiac")).toBe("rong");
+    await expect.poll(() => readContent(inv.id, "primaryColor")).toBe("#0f766e");
+
+    await page.reload();
+    await expect(page.locator("#brideZodiac")).toHaveValue("meo");
+    await expect(page.locator("#groomZodiac")).toHaveValue("rong");
+
+    await page.getByRole("button", { name: "Xem trước", exact: true }).click();
+    const renderer = page.locator('[data-template-renderer="thap-nhi-chi-do"]');
+    await expect(renderer).toBeAttached({ timeout: 30_000 });
+    const artwork = renderer.locator("[data-zodiac-artwork]");
+    await expect(artwork).toHaveCount(4);
+    await expect(artwork.first()).toHaveCSS("background-color", "rgb(15, 118, 110)");
+    await expect
+      .poll(() => artwork.evaluateAll((nodes) => (
+        nodes.map((node) => node.getAttribute("data-zodiac-artwork"))
+      )))
+      .toEqual([
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong-line.webp",
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-meo-line.webp",
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong.webp",
+        "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-meo.webp",
+      ]);
+
+    await page.getByRole("button", { name: "Chỉnh sửa", exact: true }).click();
+    await page.getByRole("button", { name: "Mẫu thiệp" }).click();
+    await picker.locator('button[data-template-id="song-hy-red"]').click();
+    await expect(page.locator("#brideZodiac")).toHaveCount(0);
+    await expect(page.locator("#groomZodiac")).toHaveCount(0);
   });
 
   test("music search accepts Vietnamese composition without triggering editor autosave", async ({

@@ -23,12 +23,13 @@ import { manifest as manifest20 } from "./riso-duotone.manifest";
 import { manifest as manifest21 } from "./sen-monoline.manifest";
 import { manifest as manifest22 } from "./son-mai-lacquer.manifest";
 import { manifest as manifest23 } from "./swiss-brutalist.manifest";
-import { manifest as manifest24 } from "./tho-cam-highland.manifest";
-import { manifest as manifest25 } from "./ticket-terracotta.manifest";
-import { manifest as manifest26 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest27 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest28 } from "./y2k-chrome.manifest";
-import { manifest as manifest29 } from "./zen-sand.manifest";
+import { manifest as manifest24 } from "./thap-nhi-chi-do.manifest";
+import { manifest as manifest25 } from "./tho-cam-highland.manifest";
+import { manifest as manifest26 } from "./ticket-terracotta.manifest";
+import { manifest as manifest27 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest28 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest29 } from "./y2k-chrome.manifest";
+import { manifest as manifest30 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
@@ -66,6 +67,7 @@ export const generatedTemplateManifests = [
   manifest27,
   manifest28,
   manifest29,
+  manifest30,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];

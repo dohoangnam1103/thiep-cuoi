@@ -5,7 +5,7 @@ import { Pause, Play, RotateCcw } from "lucide-react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { type ComponentType, type Dispatch, type MouseEvent, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentType, type CSSProperties, type Dispatch, type MouseEvent, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -30,6 +30,7 @@ import {
 } from "@/components/lightbox-zoom";
 import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { OpeningEffectArtwork } from "@/components/chungdoi-opening-effect";
+import { ZodiacMaskArtwork } from "@/components/zodiac-mask-artwork";
 import { GENERATED_TEMPLATE_RENDERERS } from "@/components/generated/template-renderers";
 import { LongPhungGatefoldLab } from "@/components/chungdoi-long-phung-gatefold-lab";
 import { NguyetAnhSleeveLab } from "@/components/chungdoi-nguyet-anh-sleeve-lab";
@@ -43,6 +44,12 @@ import {
 } from "@/lib/audited-template-renderers";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { DEFAULT_INVITATION_MUSIC } from "@/lib/invitation-music";
+import { resolveZodiacCardImages } from "@/lib/zodiac-decor";
+import {
+  DEFAULT_ZODIAC_ART_COLOR,
+  ZODIAC_TEMPLATE_SLUG,
+  isZodiacArtworkPath,
+} from "@/lib/zodiac";
 import {
   invitationCeremonies,
   invitationCeremonyMessage,
@@ -447,7 +454,7 @@ function resolveTokens(content: ChungDoiDemoContent): Tokens {
     particleType: t.particleType,
     coupleFont: cfg.fonts.couple ?? crawledFont,
     sealType: cfg.sealType,
-    cardImages: cfg.decorations.cardImages,
+    cardImages: resolveZodiacCardImages(cfg.decorations.cardImages, content),
     openingEffect: cfg.openingEffect,
   };
 }
@@ -624,19 +631,60 @@ function OpeningFlyDecor({
             key={`${image.src}-${index}`}
             className={`pointer-events-none absolute ${image.className}`}
           >
-            {/* Asset decor cần giữ kích thước class động của theme khi phóng ra. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <EnvelopeDecorationArtwork
               src={image.src}
-              alt=""
-              data-envelope-opening-fly
               className="block h-auto w-full"
-              style={{ animation: "demo-dragon-fly 1.2s ease-in forwards" }}
+              openingFly
+              animateFly
             />
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function EnvelopeDecorationArtwork({
+  src,
+  className,
+  openingFly = false,
+  animateFly = false,
+  hidden = false,
+}: {
+  src: string;
+  className: string;
+  openingFly?: boolean;
+  animateFly?: boolean;
+  hidden?: boolean;
+}) {
+  const style: CSSProperties | undefined = animateFly
+    ? { animation: "demo-dragon-fly 1.2s ease-in forwards" }
+    : hidden
+      ? { opacity: 0 }
+      : undefined;
+
+  if (isZodiacArtworkPath(src)) {
+    return (
+      <ZodiacMaskArtwork
+        src={src}
+        data-envelope-opening-fly={openingFly || undefined}
+        className={`aspect-[1952/4105] ${className}`}
+        style={style}
+      />
+    );
+  }
+
+  return (
+    // Asset decor cần giữ kích thước class động của theme khi phóng ra.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      data-envelope-opening-fly={openingFly || undefined}
+      className={className}
+      style={style}
+    />
   );
 }
 
@@ -700,12 +748,10 @@ function CoverCard({
             .filter((img) => img.flyOnOpen)
             .map((img, i) => (
               <div key={i} className={`pointer-events-none absolute ${img.className}`}>
-                <img
+                <EnvelopeDecorationArtwork
                   src={img.src}
-                  alt=""
-                  aria-hidden="true"
                   className="block h-auto w-full"
-                  style={{ animation: "demo-dragon-fly 1.2s ease-in forwards" }}
+                  animateFly
                 />
               </div>
             ))}
@@ -737,13 +783,11 @@ function CoverCard({
           data-envelope-decor-overflow={decorOverflow}
         >
           {tokens.cardImages.map((img, i) => (
-            <img
+            <EnvelopeDecorationArtwork
               key={i}
               src={img.src}
-              alt=""
-              aria-hidden="true"
               className={`pointer-events-none absolute ${img.className}`}
-              style={img.flyOnOpen && opening ? { opacity: 0 } : undefined}
+              hidden={img.flyOnOpen && opening}
             />
           ))}
         </div>
@@ -929,16 +973,20 @@ function EnvelopeCover({
       return nextSize;
     });
   }, []);
+  const coverStyle: CSSProperties & { "--zodiac-art-color"?: string } = {
+    background: tokens.background,
+    animation: opening
+      ? `${openingEffect ? "demo-art-cover-out" : "demo-cover-out"} ${openingDuration}ms linear forwards`
+      : undefined,
+    ...(content.slug === ZODIAC_TEMPLATE_SLUG
+      ? { "--zodiac-art-color": content.theme.primaryColor || DEFAULT_ZODIAC_ART_COLOR }
+      : {}),
+  };
 
   return (
     <div
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
-      style={{
-        background: tokens.background,
-        animation: opening
-          ? `${openingEffect ? "demo-art-cover-out" : "demo-cover-out"} ${openingDuration}ms linear forwards`
-          : undefined,
-      }}
+      style={coverStyle}
     >
       <button
         type="button"
@@ -1024,11 +1072,9 @@ function EnvelopeCover({
                         <OpeningEffectArtwork effect={openingEffect} />
                       ) : (
                         tokens.cardImages.map((img, i) => (
-                          <img
+                          <EnvelopeDecorationArtwork
                             key={i}
                             src={img.src}
-                            alt=""
-                            aria-hidden="true"
                             className={`pointer-events-none absolute ${img.className}`}
                           />
                         ))

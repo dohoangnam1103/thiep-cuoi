@@ -68,6 +68,8 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       groomShortName: clean(c?.groomShortName) ?? shortNameFromFullName(c?.groomFullName ?? ""),
       brideBirthOrder: normalizeBirthOrder(c?.brideBirthOrder),
       groomBirthOrder: normalizeBirthOrder(c?.groomBirthOrder),
+      brideZodiac: c?.brideZodiac ?? "",
+      groomZodiac: c?.groomZodiac ?? "",
       brideFirst: c?.brideFirst ?? true,
       date: c?.date ?? "",
       time: c?.time ?? "",

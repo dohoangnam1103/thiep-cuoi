@@ -1092,6 +1092,26 @@
     "payNow": "今すぐ支払う"
   },
   "editor": {
+    "zodiac": {
+      "brideLabel": "花嫁の十二支",
+      "groomLabel": "花婿の十二支",
+      "placeholder": "— 十二支を選択 —",
+      "hint": "表紙と招待状の装飾に使用されます。",
+      "options": {
+        "chuot": "子 — ネズミ",
+        "trau": "丑 — 水牛",
+        "ho": "寅 — トラ",
+        "meo": "卯 — ネコ",
+        "rong": "辰 — 龍",
+        "tran": "巳 — ニシキヘビ",
+        "ngua": "午 — ウマ",
+        "de": "未 — ヤギ",
+        "khi": "申 — サル",
+        "ga": "酉 — ニワトリ",
+        "cho": "戌 — イヌ",
+        "lon": "亥 — ブタ"
+      }
+    },
     "venue": {
       "title": "開催場所",
       "addressLabel": "会場の住所",

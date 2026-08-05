@@ -1092,6 +1092,26 @@
     "payNow": "立即付款"
   },
   "editor": {
+    "zodiac": {
+      "brideLabel": "新娘生肖",
+      "groomLabel": "新郎生肖",
+      "placeholder": "— 选择生肖 —",
+      "hint": "用于封面和请柬中的生肖装饰。",
+      "options": {
+        "chuot": "子 — 鼠",
+        "trau": "丑 — 水牛",
+        "ho": "寅 — 虎",
+        "meo": "卯 — 猫",
+        "rong": "辰 — 龙",
+        "tran": "巳 — 蟒蛇",
+        "ngua": "午 — 马",
+        "de": "未 — 羊",
+        "khi": "申 — 猴",
+        "ga": "酉 — 鸡",
+        "cho": "戌 — 狗",
+        "lon": "亥 — 猪"
+      }
+    },
     "venue": {
       "title": "举办地点",
       "addressLabel": "场地地址",

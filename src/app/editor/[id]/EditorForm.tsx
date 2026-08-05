@@ -54,7 +54,10 @@ import { BankCombobox } from "@/components/ui/bank-combobox";
 import { Combobox } from "@/components/ui/combobox";
 import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { heroImageCount } from "@/data/editor-template-capabilities";
+import {
+  heroImageCount,
+  templateSupportsZodiac,
+} from "@/data/editor-template-capabilities";
 import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
 import type { MusicPickerMessages } from "@/lib/music-picker";
@@ -71,6 +74,11 @@ import { normalizeAlbumLayout, type AlbumLayout } from "@/lib/album-layout";
 import { trialExpiresAt } from "@/lib/trial";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
+import {
+  DEFAULT_ZODIAC_ART_COLOR,
+  ZODIAC,
+  ZODIAC_TEMPLATE_SLUG,
+} from "@/lib/zodiac";
 import {
   saveDraft,
   publish,
@@ -240,6 +248,8 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
       groomShortName,
       brideBirthOrder: normalizeBirthOrder(read("brideBirthOrder")),
       groomBirthOrder: normalizeBirthOrder(read("groomBirthOrder")),
+      brideZodiac: read("brideZodiac"),
+      groomZodiac: read("groomZodiac"),
       brideFirst,
       date: read("date"),
       time: read("time"),
@@ -810,6 +820,40 @@ function BirthOrderField({
   );
 }
 
+function ZodiacField({
+  name,
+  label,
+  defaultValue,
+  placeholder,
+  hint,
+  options,
+}: {
+  name: "brideZodiac" | "groomZodiac";
+  label: string;
+  defaultValue: string;
+  placeholder: string;
+  hint: string;
+  options: readonly SelectOption[];
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className={labelClass}>{label}</label>
+      <select
+        id={name}
+        name={name}
+        defaultValue={defaultValue}
+        className={inputClass}
+      >
+        <option value="">{placeholder}</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>{option.label}</option>
+        ))}
+      </select>
+      <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
+    </div>
+  );
+}
+
 /** Chọn mẫu thiệp bằng lưới thumbnail thay cho <select>. */
 function TemplatePicker({
   value,
@@ -1192,8 +1236,17 @@ function HeroImageUploader({
   );
 }
 
-function ColorField({ name, label, defaultValue }: { name: string; label: string; defaultValue: string }) {
-  const [value, setValue] = useState(defaultValue || "#c8102e");
+function ColorField({
+  name,
+  label,
+  value,
+  onChange,
+}: {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
   const valid = /^#[0-9a-fA-F]{6}$/.test(value);
   return (
     <div>
@@ -1204,7 +1257,7 @@ function ColorField({ name, label, defaultValue }: { name: string; label: string
         <input
           type="color"
           value={valid ? value : "#c8102e"}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           className="h-9 w-12 shrink-0 cursor-pointer rounded-lg border border-input bg-background"
           aria-label={`${label} - bảng màu`}
         />
@@ -1212,7 +1265,7 @@ function ColorField({ name, label, defaultValue }: { name: string; label: string
           id={name}
           name={name}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder="#c8102e"
           className={inputClass}
         />
@@ -1511,6 +1564,7 @@ function EditorFormContent({
 }: EditorFormProps & { restoredDraft: Draft | null }) {
   const venueT = useTranslations("editor.venue");
   const ceremonyT = useTranslations("editor.ceremonies");
+  const zodiacT = useTranslations("editor.zodiac");
   const saveAction = (saveActionProp ?? saveDraft).bind(null, invitationId);
   const publishAction = publish.bind(null, invitationId);
   const [saveState, saveFormAction, saving] = useActionState<EditorState, FormData>(saveAction, undefined);
@@ -1539,6 +1593,9 @@ function EditorFormContent({
   const derivedGroomShortName = shortNameFromFullName(initialGroomFullName);
 
   const [selectedTemplateId, setSelectedTemplateId] = useState(seed("templateId", templateId));
+  const [primaryColor, setPrimaryColor] = useState(
+    seed("primaryColor", field(content, "primaryColor")) || "#c8102e",
+  );
   const [brideFullName, setBrideFullName] = useState(initialBrideFullName);
   const [groomFullName, setGroomFullName] = useState(initialGroomFullName);
   const [weddingDate, setWeddingDate] = useState(seed("date", field(content, "date")));
@@ -1551,6 +1608,10 @@ function EditorFormContent({
     Boolean(storedGroomShortName && storedGroomShortName !== derivedGroomShortName),
   );
   const [brideFirst, setBrideFirst] = useState(seedBool("brideFirst", content?.brideFirst ?? true));
+  const zodiacOptions = ZODIAC.map((item) => ({
+    value: item.id,
+    label: zodiacT(`options.${item.id}`),
+  }));
   const [ceremonyRows, setCeremonyRows] = useState<CeremonyRow[]>(() => {
     const draftTitles = Array.isArray(activeDraft?.ceremonyItemTitle)
       ? activeDraft.ceremonyItemTitle
@@ -1589,6 +1650,17 @@ function EditorFormContent({
     }];
   });
   const [ceremonyDeleteId, setCeremonyDeleteId] = useState<string | null>(null);
+
+  function onTemplateChange(nextTemplateId: string) {
+    if (
+      nextTemplateId === ZODIAC_TEMPLATE_SLUG &&
+      selectedTemplateId !== ZODIAC_TEMPLATE_SLUG &&
+      primaryColor.toLowerCase() === "#c8102e"
+    ) {
+      setPrimaryColor(DEFAULT_ZODIAC_ART_COLOR);
+    }
+    setSelectedTemplateId(nextTemplateId);
+  }
 
   const [scheduleRows, setScheduleRows] = useState(() => {
     const dTime = Array.isArray(draft?.scheduleTime) ? (draft!.scheduleTime as string[]) : null;
@@ -1965,6 +2037,26 @@ function EditorFormContent({
               birthOrderOptions={GROOM_BIRTH_ORDER_OPTIONS}
               customPlaceholder="VD: Con trai thứ tư"
             />
+            {templateSupportsZodiac(selectedTemplateId) ? (
+              <>
+                <ZodiacField
+                  name="brideZodiac"
+                  label={zodiacT("brideLabel")}
+                  defaultValue={seed("brideZodiac", field(content, "brideZodiac"))}
+                  placeholder={zodiacT("placeholder")}
+                  hint={zodiacT("hint")}
+                  options={zodiacOptions}
+                />
+                <ZodiacField
+                  name="groomZodiac"
+                  label={zodiacT("groomLabel")}
+                  defaultValue={seed("groomZodiac", field(content, "groomZodiac"))}
+                  placeholder={zodiacT("placeholder")}
+                  hint={zodiacT("hint")}
+                  options={zodiacOptions}
+                />
+              </>
+            ) : null}
             <div className="sm:col-span-2">
               <span className={labelClass}>Thứ tự hiển thị toàn thiệp</span>
               <input type="hidden" name="brideFirst" value={brideFirst ? "true" : "false"} />
@@ -2249,7 +2341,12 @@ function EditorFormContent({
 
         <Accordion title="Màu chủ đạo" icon="🎨" defaultOpen={false}>
           <Grid>
-            <ColorField name="primaryColor" label="Màu chủ đạo" defaultValue={seed("primaryColor", field(content, "primaryColor"))} />
+            <ColorField
+              name="primaryColor"
+              label="Màu chủ đạo"
+              value={primaryColor}
+              onChange={setPrimaryColor}
+            />
           </Grid>
         </Accordion>
 
@@ -2282,7 +2379,7 @@ function EditorFormContent({
         <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
           <TemplatePicker
             value={selectedTemplateId}
-            onChange={setSelectedTemplateId}
+            onChange={onTemplateChange}
             labels={templateLabels}
           />
         </Accordion>
