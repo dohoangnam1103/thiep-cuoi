@@ -2,11 +2,12 @@ import { createHmac, randomUUID } from "node:crypto";
 
 import { test, expect, type BrowserContext } from "@playwright/test";
 
+import { loginAsUser } from "./helpers/auth";
 import { getDb } from "./helpers/db";
-import { cleanupUser } from "./helpers/fixtures";
+import { cleanupUser, createUser } from "./helpers/fixtures";
 
 const CASSO_CHECKSUM_KEY = "e2e-casso-token";
-const TEMPLATE_NAME = "Double Happiness Red";
+const TEMPLATE_NAME = "Song Hỷ Đỏ";
 const TEMPLATE_ID = "song-hy-red";
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
@@ -72,6 +73,7 @@ function paidState(invitationId: string): { invitationPaid: number; paymentStatu
 
 test("real user creates, publishes, pays for, and shares an invitation", async ({
   page,
+  context,
   request,
   browser,
 }) => {
@@ -87,30 +89,27 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
   let guestContext: BrowserContext | undefined;
 
   try {
-    await test.step("sign up through the UI", async () => {
-      await page.goto("/signup");
-      await page.locator("#email").fill(email);
-      await page.locator("#password").fill("golden-path-123");
-      await page.locator('button[type="submit"]').click();
-
-      await page.waitForURL("**/dashboard");
+    await test.step("sign in", async () => {
+      // Auth is Google-SSO only, so the browser cannot complete a real sign-up.
+      // Seed the account and forge its session cookie, as the other specs do.
+      userId = createUser({ email }).id;
+      await loginAsUser(context, userId);
+      await page.goto("/dashboard");
       await expect(page.getByRole("heading", { name: "Thiệp của tôi" })).toBeVisible();
-      userId = findUserId(email);
-      expect(userId).toBeTruthy();
     });
 
     let invitationId = "";
     await test.step("choose a template and open its editor", async () => {
-      await page.goto("/vi/templates");
+      await page.goto("/mau-thiep");
       const templateCard = page.locator("main article").filter({
         has: page.getByRole("heading", { name: TEMPLATE_NAME, exact: true }),
       });
       await expect(templateCard).toHaveCount(1);
-      await templateCard.getByRole("button", { name: "Xem trước" }).click();
+      await templateCard.getByRole("button", { name: "CHỌN THIỆP" }).click();
 
       const dialog = page.getByRole("dialog");
-      await expect(dialog.getByRole("heading", { name: "Xem trước mẫu thiệp" })).toBeVisible();
-      await dialog.getByRole("button", { name: "Dùng mẫu này" }).click();
+      await expect(dialog.getByRole("heading", { name: TEMPLATE_NAME, exact: true })).toBeVisible();
+      await dialog.getByRole("button", { name: "TẠO THIỆP" }).click();
 
       await page.waitForURL("**/editor/**");
       invitationId = new URL(page.url()).pathname.split("/").filter(Boolean).at(-1) ?? "";
@@ -129,8 +128,23 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
       await page.locator("#slug").fill(slug);
 
       await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+
+      // Publishing opens a success dialog instead of redirecting; follow its
+      // "Xem thiệp" link to reach the public page.
+      const publishedDialog = page.getByRole("dialog").filter({
+        has: page.getByRole("heading", { name: "Thiệp đã xuất bản!" }),
+      });
+      await expect(publishedDialog).toBeVisible();
+      await publishedDialog.getByRole("link", { name: "Xem thiệp" }).click();
       await page.waitForURL(`**/thiep/${slug}`);
       await expect(page.locator("main#top")).toBeVisible();
+      // The cover only shows the short names; the full names live inside the
+      // invitation body, which mounts after "Mở thiệp".
+      // The 3D envelope canvas sits over the button, so dispatch the click
+      // directly instead of a real pointer press.
+      await page.locator("[data-open-invitation-control]").evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
       await expect(page.getByText(brideName).first()).toBeAttached();
       await expect(page.getByText(groomName).first()).toBeAttached();
     });
@@ -139,7 +153,7 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
       await page.goto("/dashboard");
       const invitationCard = page.locator("main li").filter({ hasText: groomName }).filter({ hasText: brideName });
       await expect(invitationCard).toHaveCount(1);
-      await invitationCard.getByRole("link", { name: "Thanh toán", exact: true }).click();
+      await invitationCard.getByRole("link", { name: "Thanh toán ngay" }).click();
 
       await expect(page.getByRole("heading", { name: "Thanh toán" })).toBeVisible();
       await expect(page.getByAltText("Mã QR chuyển khoản VietQR")).toBeVisible();
@@ -179,8 +193,14 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
       const response = await guestPage.goto(publicPath ?? "");
 
       expect(response?.ok()).toBeTruthy();
-      expect(await guestContext.cookies()).toHaveLength(0);
+      // Google Analytics sets its own `_ga*` cookies; what matters is that the
+      // guest carries no auth session.
+      const guestCookies = await guestContext.cookies();
+      expect(guestCookies.map((cookie) => cookie.name)).not.toContain("session");
       await expect(guestPage.locator("main#top")).toBeVisible();
+      await guestPage.locator("[data-open-invitation-control]").evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
       await expect(guestPage.getByText(brideName).first()).toBeAttached();
       await expect(guestPage.getByText(groomName).first()).toBeAttached();
       await expect(guestPage.getByText(address).first()).toBeAttached();

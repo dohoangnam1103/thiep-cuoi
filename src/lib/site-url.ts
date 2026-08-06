@@ -38,10 +38,15 @@ export function resolveSiteUrl(
 }
 
 export const SITE_URL = resolveSiteUrl();
-export const SITE_LOGO_PATH = "/thiepmungonline/logo-thiep-mung-online-transparent.png";
-export const SITE_SOCIAL_IMAGE_PATH = "/images/og-thiep-cuoi-online.jpg";
-export const SITE_SOCIAL_IMAGE_WIDTH = 1200;
-export const SITE_SOCIAL_IMAGE_HEIGHT = 630;
+
+// Re-exported for existing server-side importers. Client components must import
+// these from "@/lib/site-assets" directly — see the note in that file.
+export {
+  SITE_LOGO_PATH,
+  SITE_SOCIAL_IMAGE_PATH,
+  SITE_SOCIAL_IMAGE_WIDTH,
+  SITE_SOCIAL_IMAGE_HEIGHT,
+} from "./site-assets";
 
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;

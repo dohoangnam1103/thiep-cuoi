@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { SITE_LOGO_PATH } from "@/lib/site-url";
+import { SITE_LOGO_PATH } from "@/lib/site-assets";
 
 type LogoMarkProps = {
   className?: string;
