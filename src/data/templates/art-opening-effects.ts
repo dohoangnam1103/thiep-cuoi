@@ -29,6 +29,7 @@ import swissBrutalistAssets from "../../../public/chungdoi/images/themes/_decor/
 import thoCamHighlandAssets from "../../../public/chungdoi/images/themes/_decor/tho-cam-highland/opening-assets.json";
 import trongDongDongSonAssets from "../../../public/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-assets.json";
 import trucChiMinimalAssets from "../../../public/chungdoi/images/themes/_decor/truc-chi-minimal/opening-assets.json";
+import thanhDuongAnhSangAssets from "../../../public/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-assets.json";
 import y2kChromeAssets from "../../../public/chungdoi/images/themes/_decor/y2k-chrome/opening-assets.json";
 
 import {
@@ -289,6 +290,12 @@ const effectInputs = {
     exits: { "wave-wash": [0, 86, 2.6, -4, 8], "swallow-pair": [78, -82, 3.2, -12, 9], "spray-dots": [0, -58, 3.4, 6, 10] },
     peaks: { "swallow-pair": { xPercent: 6, yPercent: -6, brightness: 1.26 }, "wave-wash": { yPercent: 4 } },
     origins: { "wave-wash": "50% 100%", "swallow-pair": "40% 60%", "spray-dots": "50% 50%" },
+  }],
+  "thanh-duong-anh-sang": [thanhDuongAnhSangAssets, {
+    durationMs: 1400,
+    exits: { "rose-glow": [0, -90, 3.2, 0, 10], "dove-pair": [60, -75, 2.8, -8, 9], "light-shaft": [5, -80, 2.4, -5, 8] },
+    peaks: { "rose-glow": { yPercent: -10, brightness: 1.4 }, "dove-pair": { xPercent: 8, yPercent: -8, brightness: 1.2 }, "light-shaft": { yPercent: -6 } },
+    origins: { "rose-glow": "50% 10%", "dove-pair": "40% 20%", "light-shaft": "50% 7%" },
   }],
   ...phongThuMotions,
   ...hoaThuMotions,
