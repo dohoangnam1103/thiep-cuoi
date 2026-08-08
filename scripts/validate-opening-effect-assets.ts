@@ -39,6 +39,7 @@ const ART_OPENING_THEME_SLUGS = [
   "hoa-thu-xanh-la",
   "hoa-thu-hong",
   "hoa-thu-xanh-duong",
+  "thanh-duong-anh-sang",
 ] as const;
 
 export async function assertOpeningForegroundAsset(filePath: string): Promise<void> {
