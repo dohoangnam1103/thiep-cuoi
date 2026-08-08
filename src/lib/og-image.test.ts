@@ -26,6 +26,7 @@ const ART_OG_FONTS = {
   "coastal-mediterranean": ["SVN-HC Pacifico", "SVN-HC-Pacifico.otf"],
   "swiss-brutalist": ["HelveticaNeue", "HelveticaNeueLight.otf"],
   "riso-duotone": ["SVN-HC Marvin Visions", "SVN-HC-Marvin-Visions.otf"],
+  "thanh-duong-anh-sang": ["Fz Qellia", "Fz_Qellia_Fix.ttf"],
 } as const;
 
 test("all art invitation families resolve to local OG font files", () => {

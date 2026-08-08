@@ -61,6 +61,7 @@ const NEW_ART_TEMPLATE_SLUGS = [
   "hoa-thu-xanh-la",
   "hoa-thu-hong",
   "hoa-thu-xanh-duong",
+  "thanh-duong-anh-sang",
 ] as const;
 
 const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], 1 | 2> = {
@@ -96,6 +97,7 @@ const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[numbe
   "hoa-thu-xanh-la": 1,
   "hoa-thu-hong": 1,
   "hoa-thu-xanh-duong": 1,
+  "thanh-duong-anh-sang": 1,
 };
 
 const NEW_ART_TEMPLATE_FONTS = {
@@ -131,6 +133,7 @@ const NEW_ART_TEMPLATE_FONTS = {
   "hoa-thu-xanh-la": ["Fz Qellia", "font-art-qellia"],
   "hoa-thu-hong": ["Fz Qellia", "font-art-qellia"],
   "hoa-thu-xanh-duong": ["Fz Qellia", "font-art-qellia"],
+  "thanh-duong-anh-sang": ["Fz Qellia", "font-art-qellia"],
 } as const satisfies Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], readonly [string, string]>;
 
 const ZODIAC_TEMPLATE_SLUG = "thap-nhi-chi-do";

@@ -33,13 +33,14 @@ import { manifest as manifest30 } from "./riso-duotone.manifest";
 import { manifest as manifest31 } from "./sen-monoline.manifest";
 import { manifest as manifest32 } from "./son-mai-lacquer.manifest";
 import { manifest as manifest33 } from "./swiss-brutalist.manifest";
-import { manifest as manifest34 } from "./thap-nhi-chi-do.manifest";
-import { manifest as manifest35 } from "./tho-cam-highland.manifest";
-import { manifest as manifest36 } from "./ticket-terracotta.manifest";
-import { manifest as manifest37 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest38 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest39 } from "./y2k-chrome.manifest";
-import { manifest as manifest40 } from "./zen-sand.manifest";
+import { manifest as manifest34 } from "./thanh-duong-anh-sang.manifest";
+import { manifest as manifest35 } from "./thap-nhi-chi-do.manifest";
+import { manifest as manifest36 } from "./tho-cam-highland.manifest";
+import { manifest as manifest37 } from "./ticket-terracotta.manifest";
+import { manifest as manifest38 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest39 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest40 } from "./y2k-chrome.manifest";
+import { manifest as manifest41 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
@@ -88,6 +89,7 @@ export const generatedTemplateManifests = [
   manifest38,
   manifest39,
   manifest40,
+  manifest41,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];
