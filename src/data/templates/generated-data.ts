@@ -13,23 +13,33 @@ import { manifest as manifest10 } from "./detective-conan-casebook.manifest";
 import { manifest as manifest11 } from "./dong-ho-folk.manifest";
 import { manifest as manifest12 } from "./doraemon-door.manifest";
 import { manifest as manifest13 } from "./editorial-noir.manifest";
-import { manifest as manifest14 } from "./hang-trong-folk.manifest";
-import { manifest as manifest15 } from "./ivory-signature.manifest";
-import { manifest as manifest16 } from "./long-phung-deco.manifest";
-import { manifest as manifest17 } from "./long-phung-gatefold.manifest";
-import { manifest as manifest18 } from "./nguyet-anh-sleeve.manifest";
-import { manifest as manifest19 } from "./rap-hy-sai-gon.manifest";
-import { manifest as manifest20 } from "./riso-duotone.manifest";
-import { manifest as manifest21 } from "./sen-monoline.manifest";
-import { manifest as manifest22 } from "./son-mai-lacquer.manifest";
-import { manifest as manifest23 } from "./swiss-brutalist.manifest";
-import { manifest as manifest24 } from "./thap-nhi-chi-do.manifest";
-import { manifest as manifest25 } from "./tho-cam-highland.manifest";
-import { manifest as manifest26 } from "./ticket-terracotta.manifest";
-import { manifest as manifest27 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest28 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest29 } from "./y2k-chrome.manifest";
-import { manifest as manifest30 } from "./zen-sand.manifest";
+import { manifest as manifest14 } from "./hai-yen-thanh-thu.manifest";
+import { manifest as manifest15 } from "./hang-trong-folk.manifest";
+import { manifest as manifest16 } from "./hoa-thu-do-ruou-vang.manifest";
+import { manifest as manifest17 } from "./hoa-thu-hong.manifest";
+import { manifest as manifest18 } from "./hoa-thu-xanh-duong.manifest";
+import { manifest as manifest19 } from "./hoa-thu-xanh-la.manifest";
+import { manifest as manifest20 } from "./ivory-signature.manifest";
+import { manifest as manifest21 } from "./long-phung-deco.manifest";
+import { manifest as manifest22 } from "./long-phung-gatefold.manifest";
+import { manifest as manifest23 } from "./nguyet-anh-sleeve.manifest";
+import { manifest as manifest24 } from "./phong-thu-be.manifest";
+import { manifest as manifest25 } from "./phong-thu-do-pastel.manifest";
+import { manifest as manifest26 } from "./phong-thu-hong-pastel.manifest";
+import { manifest as manifest27 } from "./phong-thu-lam-pastel.manifest";
+import { manifest as manifest28 } from "./phong-thu-luc-pastel.manifest";
+import { manifest as manifest29 } from "./rap-hy-sai-gon.manifest";
+import { manifest as manifest30 } from "./riso-duotone.manifest";
+import { manifest as manifest31 } from "./sen-monoline.manifest";
+import { manifest as manifest32 } from "./son-mai-lacquer.manifest";
+import { manifest as manifest33 } from "./swiss-brutalist.manifest";
+import { manifest as manifest34 } from "./thap-nhi-chi-do.manifest";
+import { manifest as manifest35 } from "./tho-cam-highland.manifest";
+import { manifest as manifest36 } from "./ticket-terracotta.manifest";
+import { manifest as manifest37 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest38 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest39 } from "./y2k-chrome.manifest";
+import { manifest as manifest40 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
@@ -68,6 +78,16 @@ export const generatedTemplateManifests = [
   manifest28,
   manifest29,
   manifest30,
+  manifest31,
+  manifest32,
+  manifest33,
+  manifest34,
+  manifest35,
+  manifest36,
+  manifest37,
+  manifest38,
+  manifest39,
+  manifest40,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];

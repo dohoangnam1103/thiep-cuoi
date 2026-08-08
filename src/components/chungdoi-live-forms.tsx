@@ -137,3 +137,38 @@ export function useWishFormBinding(): WishBinding {
     state,
   };
 }
+
+type RsvpBinding = WishBinding & {
+  guest: GuestPrefill;
+  questions: PublicRsvpQuestion[];
+  labels: PublicRsvpLabels | null;
+};
+
+/**
+ * Binds a template's inline RSVP block to the real submitRsvp action. Mirrors
+ * `useWishFormBinding` but also hands back the guest prefill, the invitation's
+ * custom questions and the localized labels so a template can render the form
+ * in its own visual language instead of the floating dialog.
+ */
+export function useRsvpFormBinding(): RsvpBinding {
+  const live = useLiveForms();
+  const router = useRouter();
+  const [state, formAction, pending] = useActionState<PublicState, FormData>(live?.rsvpAction ?? noop, undefined);
+
+  useEffect(() => {
+    if (live && state?.ok) {
+      trackEvent("submit_rsvp");
+      router.refresh();
+    }
+  }, [live, router, state]);
+
+  return {
+    isLive: Boolean(live),
+    formProps: live ? { action: formAction } : { onSubmit: preventDefault },
+    pending,
+    state,
+    guest: live?.guest ?? null,
+    questions: live?.questions ?? [],
+    labels: live?.rsvpLabels ?? null,
+  };
+}

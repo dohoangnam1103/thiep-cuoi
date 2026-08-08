@@ -9,12 +9,15 @@ import {
   DressCode,
   formatDate,
   formatWishTime,
+  GiftFlipCard,
   GiftQrGrid,
   googleCalendarUrl,
   InvitationMap,
   MapDirectionsButton,
   SharedCountdown,
+  SharedRsvpForm,
   SharedWishForm,
+  SharedWishList,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import {
@@ -56,6 +59,14 @@ export type InvitationTranslationKey =
   | "dressCode"
   | "guestbook"
   | "gift"
+  | "rsvpHeading"
+  | "copyAccount"
+  | "accountCopied"
+  | "showAllWishes"
+  | "collapseWishes"
+  | "giftFlipFront"
+  | "giftFlipHint"
+  | "giftFlipBack"
   | "presenceHonor"
   | "weddingPhotoAlt";
 
@@ -84,6 +95,9 @@ export type ArtInvitationConfig = {
   radiusClass: string;
   accentHex: string;
   inkHex: string;
+  /** `"flip"` renders the gift section as two-sided cards instead of the flat
+   * QR grid. Defaults to `"grid"` so existing templates are untouched. */
+  giftLayout?: "grid" | "flip";
 };
 
 function contentRadiusClass() {
@@ -469,28 +483,64 @@ export function ArtInvitation({
           </section>
         ) : null}
 
+        <SharedRsvpForm
+          accent={config.accentHex}
+          centered
+          className="mt-20"
+          heading={<SectionHeading config={effectiveConfig}>{t("rsvpHeading")}</SectionHeading>}
+        />
+
         <section className="mt-20">
           <SectionHeading config={effectiveConfig}>{t("guestbook")}</SectionHeading>
           <SharedWishForm accent={config.accentHex} centered />
-          <div className="mt-8 grid gap-4">
-            {wishes.slice(0, 4).map((wish) => (
-              <blockquote key={`${wish.name}-${wish.time}`} className={cn("border p-6", config.surfaceClass, config.borderClass, contentRadiusClass())}>
+          <SharedWishList
+            wishes={wishes}
+            accent={config.accentHex}
+            className="mt-8"
+            showAllLabel={t("showAllWishes")}
+            collapseLabel={t("collapseWishes")}
+            renderWish={(wish) => (
+              <blockquote className={cn("border p-6", config.surfaceClass, config.borderClass, contentRadiusClass())}>
                 <p className={cn("leading-7", config.inkClass)}>{wish.text}</p>
                 <footer className={cn("mt-4 text-xs", config.mutedClass)}>{wish.name} / {formatWishTime(wish.time)}</footer>
               </blockquote>
-            ))}
-          </div>
+            )}
+          />
         </section>
 
         {banks.length ? (
           <section className="mt-20">
-            <GiftQrGrid
-              banks={banks}
-              heading={t("gift")}
-              accent={config.accentHex}
-              radiusClass={contentRadiusClass()}
-              headingClassName={effectiveConfig.displayFontClass}
-            />
+            {config.giftLayout === "flip" ? (
+              <>
+                <SectionHeading config={effectiveConfig}>{t("gift")}</SectionHeading>
+                <div className="mt-8 flex flex-wrap items-start justify-center gap-6">
+                  {banks.map((gift) => (
+                    <GiftFlipCard
+                      key={gift.label}
+                      bank={gift}
+                      accent={config.accentHex}
+                      dark={config.inkHex}
+                      faceClassName={config.surfaceClass}
+                      frontTitle={t("giftFlipFront")}
+                      frontHint={t("giftFlipHint")}
+                      backHint={t("giftFlipBack")}
+                      copyNumberLabel={t("copyAccount")}
+                      numberCopiedLabel={t("accountCopied")}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <GiftQrGrid
+                banks={banks}
+                heading={t("gift")}
+                accent={config.accentHex}
+                radiusClass={contentRadiusClass()}
+                copyNumberLabel={t("copyAccount")}
+                numberCopiedLabel={t("accountCopied")}
+                headingClassName={effectiveConfig.displayFontClass}
+              />
+            )}
           </section>
         ) : null}
 

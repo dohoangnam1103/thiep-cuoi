@@ -1176,6 +1176,64 @@ html.lenis body {
   animation: igbHintPulse 2s ease-in-out infinite;
 }
 
+/* Two-sided gift card used by GiftFlipCard. */
+.gift-flip-scene {
+  perspective: 1200px;
+}
+
+.gift-flip-card {
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gift-flip-card[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+
+.gift-flip-card:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 4px;
+}
+
+.gift-flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.gift-flip-face-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-flip-card,
+  .gift-flip-card[data-flipped="true"] {
+    transform: none;
+    transition: none;
+  }
+
+  .gift-flip-face {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition: opacity 180ms ease;
+  }
+
+  .gift-flip-face-back {
+    transform: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gift-flip-card[data-flipped="true"] .gift-flip-face {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gift-flip-card[data-flipped="true"] .gift-flip-face-back {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 .group:hover .igb-decor-1, .group:focus-visible .igb-decor-1 { animation: igbDecorFlyUp1 1.6s ease-in-out infinite; }
 .group:hover .igb-decor-2, .group:focus-visible .igb-decor-2 { animation: igbDecorFlyUp2 1.8s ease-in-out 0.15s infinite; }
 .group:hover .igb-decor-3, .group:focus-visible .igb-decor-3 { animation: igbDecorFlyUp3 1.4s ease-in-out 0.3s infinite; }

@@ -1472,7 +1472,15 @@
     "wishSuccess": "Thank you for your kind wishes!",
     "wishSubmit": "Send wishes",
     "wishPending": "Sending...",
-    "saveQr": "Save QR"
+    "saveQr": "Save QR",
+    "rsvpHeading": "RSVP",
+    "copyAccount": "Copy account",
+    "accountCopied": "Copied",
+    "showAllWishes": "Show all",
+    "collapseWishes": "Show less",
+    "giftFlipFront": "Thank you for celebrating with us",
+    "giftFlipHint": "Tap to see the QR code",
+    "giftFlipBack": "Tap to flip back"
   },
   "errorBoundary": {
     "title": "This page didn't finish loading",

@@ -42,6 +42,16 @@ const artThemeDurations = {
   "trong-dong-dong-son": 1470,
   "chim-lac-ivory": 1320,
   "ivory-signature": 1420,
+  "hai-yen-thanh-thu": 1400,
+  "phong-thu-be": 1440,
+  "phong-thu-luc-pastel": 1440,
+  "phong-thu-do-pastel": 1440,
+  "phong-thu-lam-pastel": 1440,
+  "phong-thu-hong-pastel": 1440,
+  "hoa-thu-do-ruou-vang": 1470,
+  "hoa-thu-xanh-la": 1470,
+  "hoa-thu-hong": 1470,
+  "hoa-thu-xanh-duong": 1470,
 } as const;
 
 function createEffect(): ArtOpeningEffect {

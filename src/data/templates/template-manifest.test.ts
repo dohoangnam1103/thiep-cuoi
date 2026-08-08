@@ -51,6 +51,16 @@ const NEW_ART_TEMPLATE_SLUGS = [
   "trong-dong-dong-son",
   "chim-lac-ivory",
   "ivory-signature",
+  "hai-yen-thanh-thu",
+  "phong-thu-be",
+  "phong-thu-luc-pastel",
+  "phong-thu-do-pastel",
+  "phong-thu-lam-pastel",
+  "phong-thu-hong-pastel",
+  "hoa-thu-do-ruou-vang",
+  "hoa-thu-xanh-la",
+  "hoa-thu-hong",
+  "hoa-thu-xanh-duong",
 ] as const;
 
 const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], 1 | 2> = {
@@ -76,6 +86,16 @@ const NEW_ART_TEMPLATE_HERO_COUNTS: Record<(typeof NEW_ART_TEMPLATE_SLUGS)[numbe
   "trong-dong-dong-son": 2,
   "chim-lac-ivory": 1,
   "ivory-signature": 1,
+  "hai-yen-thanh-thu": 1,
+  "phong-thu-be": 1,
+  "phong-thu-luc-pastel": 1,
+  "phong-thu-do-pastel": 1,
+  "phong-thu-lam-pastel": 1,
+  "phong-thu-hong-pastel": 1,
+  "hoa-thu-do-ruou-vang": 1,
+  "hoa-thu-xanh-la": 1,
+  "hoa-thu-hong": 1,
+  "hoa-thu-xanh-duong": 1,
 };
 
 const NEW_ART_TEMPLATE_FONTS = {
@@ -101,6 +121,16 @@ const NEW_ART_TEMPLATE_FONTS = {
   "trong-dong-dong-son": ["UNI Chu truyen thong", "font-art-uni"],
   "chim-lac-ivory": ["Fz Qellia", "font-art-qellia"],
   "ivory-signature": ["1FTV VIP Signora", "font-art-signora"],
+  "hai-yen-thanh-thu": ["Alex Brush", "font-art-alex"],
+  "phong-thu-be": ["The Nautigal", "font-art-nautigal"],
+  "phong-thu-luc-pastel": ["Lora", "font-art-lora"],
+  "phong-thu-do-pastel": ["1FTV VIP Signora", "font-art-signora"],
+  "phong-thu-lam-pastel": ["Alex Brush", "font-art-alex"],
+  "phong-thu-hong-pastel": ["Fz Aghita", "font-art-aghita"],
+  "hoa-thu-do-ruou-vang": ["Fz Qellia", "font-art-qellia"],
+  "hoa-thu-xanh-la": ["Fz Qellia", "font-art-qellia"],
+  "hoa-thu-hong": ["Fz Qellia", "font-art-qellia"],
+  "hoa-thu-xanh-duong": ["Fz Qellia", "font-art-qellia"],
 } as const satisfies Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], readonly [string, string]>;
 
 const ZODIAC_TEMPLATE_SLUG = "thap-nhi-chi-do";

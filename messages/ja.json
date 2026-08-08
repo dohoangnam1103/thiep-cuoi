@@ -1255,7 +1255,15 @@
     "wishSuccess": "お祝いのメッセージをありがとうございます！",
     "wishSubmit": "メッセージを送る",
     "wishPending": "送信中...",
-    "saveQr": "QRを保存"
+    "saveQr": "QRを保存",
+    "rsvpHeading": "出欠のご連絡",
+    "copyAccount": "口座番号をコピー",
+    "accountCopied": "コピーしました",
+    "showAllWishes": "すべて見る",
+    "collapseWishes": "閉じる",
+    "giftFlipFront": "私たちと一緒にお祝いいただきありがとうございます",
+    "giftFlipHint": "タップしてQRコードを表示",
+    "giftFlipBack": "タップして戻る"
   },
   "errorBoundary": {
     "title": "ページを読み込めませんでした",

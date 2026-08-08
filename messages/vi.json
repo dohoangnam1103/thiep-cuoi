@@ -2016,7 +2016,15 @@
     "wishSuccess": "Cảm ơn lời chúc của bạn!",
     "wishSubmit": "Gửi lời chúc",
     "wishPending": "Đang gửi...",
-    "saveQr": "Lưu QR"
+    "saveQr": "Lưu QR",
+    "rsvpHeading": "Xác nhận tham dự",
+    "copyAccount": "Sao chép STK",
+    "accountCopied": "Đã sao chép",
+    "showAllWishes": "Xem tất cả",
+    "collapseWishes": "Thu gọn",
+    "giftFlipFront": "Cảm ơn bạn đã đến chung vui cùng chúng mình",
+    "giftFlipHint": "Nhấn để xem mã QR",
+    "giftFlipBack": "Nhấn để quay lại"
   },
   "errorBoundary": {
     "title": "Trang chưa tải xong",

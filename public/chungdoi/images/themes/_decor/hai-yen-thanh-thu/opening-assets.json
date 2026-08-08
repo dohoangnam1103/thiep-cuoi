@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/hai-yen-thanh-thu/opening-plate.webp",
+  "layers": [
+    {
+      "id": "wave-wash",
+      "src": "/chungdoi/images/themes/_decor/hai-yen-thanh-thu/opening-wave-wash.webp",
+      "rect": {
+        "x": 86,
+        "y": 428,
+        "width": 852,
+        "height": 149
+      }
+    },
+    {
+      "id": "swallow-pair",
+      "src": "/chungdoi/images/themes/_decor/hai-yen-thanh-thu/opening-swallow-pair.webp",
+      "rect": {
+        "x": 253,
+        "y": 191,
+        "width": 526,
+        "height": 113
+      }
+    },
+    {
+      "id": "spray-dots",
+      "src": "/chungdoi/images/themes/_decor/hai-yen-thanh-thu/opening-spray-dots.webp",
+      "rect": {
+        "x": 144,
+        "y": 431,
+        "width": 758,
+        "height": 49
+      }
+    }
+  ]
+}

@@ -7,7 +7,12 @@ import dynamic from "next/dynamic";
 import type { AlbumLayout } from "@/lib/album-layout";
 
 const CoverflowGallery = dynamic(() => import("./album-coverflow"), { ssr: false });
-import { useWishFormBinding } from "@/components/chungdoi-live-forms";
+import {
+  useRsvpFormBinding,
+  useWishFormBinding,
+  type PublicRsvpLabels,
+  type PublicRsvpQuestion,
+} from "@/components/chungdoi-live-forms";
 import {
   GiftboxArtwork,
   LayeredGiftArtwork,
@@ -378,6 +383,175 @@ export function SharedWishForm({
   );
 }
 
+/**
+ * Inline RSVP block bound to the live-forms provider. Templates that want the
+ * confirmation form inside the invitation body (rather than the floating
+ * dialog) render this next to `SharedWishForm`. Falls back to `null` when the
+ * template is previewed outside a published page.
+ */
+export function SharedRsvpForm({
+  accent,
+  centered = false,
+  className,
+  heading,
+}: {
+  accent: string;
+  centered?: boolean;
+  className?: string;
+  /** Rendered above the fields, inside the same null-check, so templates never
+   * leave an orphan section heading when the form is hidden in preview. */
+  heading?: ReactNode;
+}) {
+  const { isLive, formProps, pending, state, guest, questions, labels } = useRsvpFormBinding();
+  const nameId = useId();
+  const attendingId = useId();
+  const guestsId = useId();
+  const sideId = useId();
+  const messageId = useId();
+
+  if (!isLive || !labels) return null;
+
+  const fieldClass = cn(
+    "w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]",
+    centered && "text-center",
+  );
+  const fieldStyle = { borderColor: hexToRgba(accent, 0.3) };
+  const labelClass = cn("text-[11px] font-semibold uppercase tracking-wide", centered && "text-center");
+
+  return (
+    <div className={cn("w-full", className)}>
+      {heading}
+      <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+        <div className="flex flex-col gap-3">
+          {guest ? <input type="hidden" name="guestId" value={guest.token} /> : null}
+
+          <label className={labelClass} htmlFor={nameId} style={{ color: accent }}>{labels.name}</label>
+          <input
+            id={nameId}
+            name="name"
+            required
+            maxLength={120}
+            defaultValue={guest?.name ?? ""}
+            className={fieldClass}
+            style={fieldStyle}
+            placeholder={labels.name}
+          />
+
+          <label className={labelClass} htmlFor={attendingId} style={{ color: accent }}>{labels.attending}</label>
+          <select id={attendingId} name="attending" defaultValue="yes" className={fieldClass} style={fieldStyle}>
+            <option value="yes">{labels.attendingYes}</option>
+            <option value="no">{labels.attendingNo}</option>
+          </select>
+
+          <label className={labelClass} htmlFor={guestsId} style={{ color: accent }}>{labels.guestCount}</label>
+          <input
+            id={guestsId}
+            name="guests"
+            type="number"
+            min={0}
+            max={guest?.maxGuests && guest.maxGuests > 0 ? guest.maxGuests : 50}
+            defaultValue={1}
+            className={fieldClass}
+            style={fieldStyle}
+          />
+
+          <label className={labelClass} htmlFor={sideId} style={{ color: accent }}>{labels.side}</label>
+          <select id={sideId} name="side" defaultValue={guest?.side ?? ""} className={fieldClass} style={fieldStyle}>
+            <option value="">{labels.sideEmpty}</option>
+            <option value="Nhà trai">{labels.groomSide}</option>
+            <option value="Nhà gái">{labels.brideSide}</option>
+          </select>
+
+          {questions.map((question) => (
+            <RsvpCustomQuestion
+              key={question.id}
+              question={question}
+              labels={labels}
+              fieldClass={fieldClass}
+              fieldStyle={fieldStyle}
+              labelClass={labelClass}
+              accent={accent}
+            />
+          ))}
+
+          <label className={labelClass} htmlFor={messageId} style={{ color: accent }}>{labels.message}</label>
+          <textarea
+            id={messageId}
+            name="message"
+            rows={3}
+            maxLength={1000}
+            className={fieldClass}
+            style={fieldStyle}
+            placeholder={labels.message}
+          />
+
+          {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
+          {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{labels.success}</p> : null}
+          <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
+            <button
+              type="submit"
+              disabled={pending}
+              className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60"
+              style={{ backgroundColor: accent, color: "#fff" }}
+            >
+              {pending ? labels.submitting : labels.submit}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function RsvpCustomQuestion({
+  question,
+  labels,
+  fieldClass,
+  fieldStyle,
+  labelClass,
+  accent,
+}: {
+  question: PublicRsvpQuestion;
+  labels: PublicRsvpLabels;
+  fieldClass: string;
+  fieldStyle: CSSProperties;
+  labelClass: string;
+  accent: string;
+}) {
+  const fieldId = useId();
+  const name = `question:${question.id}`;
+
+  return (
+    <>
+      <label className={labelClass} htmlFor={fieldId} style={{ color: accent }}>{question.label}</label>
+      {question.type === "boolean" ? (
+        <select id={fieldId} name={name} required={question.required} defaultValue="" className={fieldClass} style={fieldStyle}>
+          <option value="">{labels.selectPlaceholder}</option>
+          <option value="yes">{labels.answerYes}</option>
+          <option value="no">{labels.answerNo}</option>
+        </select>
+      ) : question.type === "select" ? (
+        <select id={fieldId} name={name} required={question.required} defaultValue="" className={fieldClass} style={fieldStyle}>
+          <option value="">{labels.selectPlaceholder}</option>
+          {question.options.map((option) => (
+            <option key={option} value={option}>{option}</option>
+          ))}
+        </select>
+      ) : (
+        <input
+          id={fieldId}
+          name={name}
+          required={question.required}
+          maxLength={200}
+          className={fieldClass}
+          style={fieldStyle}
+          placeholder={question.label}
+        />
+      )}
+    </>
+  );
+}
+
 /** Đếm ngược tới `target` (ISO "YYYY-MM-DDTHH:mm"). Màu do wrapper set qua className/style. */
 export function SharedCountdown({
   target,
@@ -505,12 +679,72 @@ export function DressCode({
 
 export type GiftBank = { label: string; bank: string; num: string; name: string };
 
+/**
+ * Copies a value (account number, address…) to the clipboard and flips its own
+ * label to a confirmation for ~1.8s. Silently no-ops when the Clipboard API is
+ * unavailable (insecure origin, old in-app browsers) instead of throwing.
+ */
+export function CopyValueButton({
+  value,
+  accent,
+  label,
+  copiedLabel,
+  className,
+  testId,
+}: {
+  value: string;
+  accent: string;
+  label: string;
+  copiedLabel: string;
+  className?: string;
+  testId?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1800);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  const copy = async () => {
+    if (!navigator.clipboard?.writeText) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      data-testid={testId}
+      onClick={copy}
+      aria-label={`${label}: ${value}`}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition-opacity hover:opacity-80",
+        className,
+      )}
+      style={{ borderColor: hexToRgba(accent, 0.35), color: accent }}
+    >
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        {copied ? <path d="M20 6 9 17l-5-5" /> : <><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15V5a2 2 0 0 1 2-2h10" /></>}
+      </svg>
+      {copied ? copiedLabel : label}
+    </button>
+  );
+}
+
 export function GiftQrGrid({
   banks,
   heading = "Hộp Quà Mừng",
   accent,
   radiusClass = "rounded-xl",
   saveQrLabel = "Lưu QR",
+  copyNumberLabel = "Sao chép STK",
+  numberCopiedLabel = "Đã sao chép",
   headingClassName,
 }: {
   banks: GiftBank[];
@@ -518,6 +752,8 @@ export function GiftQrGrid({
   accent: string;
   radiusClass?: string;
   saveQrLabel?: string;
+  copyNumberLabel?: string;
+  numberCopiedLabel?: string;
   headingClassName?: string;
 }) {
   if (banks.length === 0) return null;
@@ -542,11 +778,157 @@ export function GiftQrGrid({
               <p className="mt-2 text-[13px] font-semibold" style={{ color: accent }}>{gift.bank}</p>
               <p className="font-mono text-[13px]" style={{ color: accent }}>{gift.num}</p>
               <p className="text-[13px]" style={{ color: accent }}>{gift.name}</p>
-              <a href={`${qr}&download=1`} download className="mt-3 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>{saveQrLabel}</a>
+              <CopyValueButton
+                testId="gift-copy-account"
+                value={gift.num}
+                accent={accent}
+                label={copyNumberLabel}
+                copiedLabel={numberCopiedLabel}
+                className="mt-2"
+              />
+              <a href={`${qr}&download=1`} download className="mt-2 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase" style={{ borderColor: accent, color: accent }}>{saveQrLabel}</a>
             </div>
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Two-sided gift card: the front shows the couple's thank-you, the back the
+ * bank details + QR. Click, Enter or Space flips it. `prefers-reduced-motion`
+ * users get a cross-fade instead of the 3D rotation (see `.gift-flip-*` in
+ * globals.css).
+ */
+export function GiftFlipCard({
+  bank,
+  accent,
+  dark,
+  faceClassName,
+  frontTitle,
+  frontHint,
+  backHint,
+  saveQrLabel = "Lưu QR",
+  copyNumberLabel = "Sao chép STK",
+  numberCopiedLabel = "Đã sao chép",
+  className,
+}: {
+  bank: GiftBank;
+  accent: string;
+  dark: string;
+  /** Surface class for both faces so the card inherits the template palette. */
+  faceClassName?: string;
+  frontTitle: string;
+  frontHint: string;
+  backHint: string;
+  saveQrLabel?: string;
+  copyNumberLabel?: string;
+  numberCopiedLabel?: string;
+  className?: string;
+}) {
+  const [flipped, setFlipped] = useState(false);
+  const qr = buildVietQrImageUrl({ bank: bank.bank, accountNumber: bank.num, accountName: bank.name });
+
+  return (
+    <div className={cn("gift-flip-scene w-full max-w-[280px]", className)}>
+      <div
+        data-testid="gift-flip-card"
+        data-flipped={flipped ? "true" : "false"}
+        role="button"
+        tabIndex={0}
+        aria-pressed={flipped}
+        aria-label={flipped ? backHint : frontHint}
+        onClick={() => setFlipped((value) => !value)}
+        onKeyDown={(event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          setFlipped((value) => !value);
+        }}
+        className="gift-flip-card relative h-[360px] w-full cursor-pointer outline-none"
+      >
+        <div
+          className={cn("gift-flip-face absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-[1.5rem] border p-6 text-center", faceClassName)}
+          style={{ borderColor: hexToRgba(accent, 0.28) }}
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full text-2xl" style={{ backgroundColor: hexToRgba(accent, 0.12), color: accent }}>♡</span>
+          <p className="text-[15px] font-semibold leading-6" style={{ color: dark }}>{frontTitle}</p>
+          <p className="text-[11px] uppercase tracking-wide" style={{ color: hexToRgba(dark, 0.6) }}>{frontHint}</p>
+        </div>
+
+        <div
+          className={cn("gift-flip-face gift-flip-face-back absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-[1.5rem] border p-5 text-center", faceClassName)}
+          style={{ borderColor: hexToRgba(accent, 0.28) }}
+        >
+          <div className="size-28 rounded-xl bg-white p-1.5 shadow-sm">
+            <img src={qr} alt={`QR - ${bank.label}`} className="h-full w-full object-contain" />
+          </div>
+          <p className="text-[12px] font-semibold" style={{ color: dark }}>{bank.bank}</p>
+          <p className="font-mono text-[12px]" style={{ color: dark }}>{bank.num}</p>
+          <p className="text-[11px]" style={{ color: hexToRgba(dark, 0.7) }}>{bank.name}</p>
+          <div className="mt-1 flex flex-wrap items-center justify-center gap-2" onClick={(event) => event.stopPropagation()}>
+            <CopyValueButton value={bank.num} accent={accent} label={copyNumberLabel} copiedLabel={numberCopiedLabel} />
+            <a href={`${qr}&download=1`} download className="inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide" style={{ borderColor: hexToRgba(accent, 0.35), color: accent }}>{saveQrLabel}</a>
+          </div>
+          <p className="mt-1 text-[10px] uppercase tracking-wide" style={{ color: hexToRgba(dark, 0.55) }}>{backHint}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export type SharedWish = { name: string; time: string; text: string };
+
+/**
+ * Wish list capped at `initialCount` with a "show all" toggle. Templates own the
+ * card markup through `renderWish` so each theme keeps its own surface, border
+ * and radius; this component only owns the collapse behaviour.
+ */
+export function SharedWishList({
+  wishes,
+  renderWish,
+  accent,
+  initialCount = 4,
+  showAllLabel = "Xem tất cả",
+  collapseLabel = "Thu gọn",
+  className,
+  listClassName,
+}: {
+  wishes: SharedWish[];
+  renderWish: (wish: SharedWish) => ReactNode;
+  accent: string;
+  initialCount?: number;
+  showAllLabel?: string;
+  collapseLabel?: string;
+  className?: string;
+  listClassName?: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  if (wishes.length === 0) return null;
+
+  const hidden = wishes.length - initialCount;
+  const visible = expanded ? wishes : wishes.slice(0, initialCount);
+
+  return (
+    <div className={className}>
+      <div data-testid="wish-list" className={cn("grid gap-4", listClassName)}>
+        {visible.map((wish) => (
+          <div key={`${wish.name}-${wish.time}`}>{renderWish(wish)}</div>
+        ))}
+      </div>
+      {hidden > 0 ? (
+        <div className="mt-6 flex justify-center">
+          <button
+            type="button"
+            data-testid="wish-list-toggle"
+            onClick={() => setExpanded((value) => !value)}
+            className="rounded-full border px-5 py-2 text-[11px] font-semibold uppercase tracking-wide transition-opacity hover:opacity-80"
+            style={{ borderColor: hexToRgba(accent, 0.35), color: accent }}
+          >
+            {expanded ? collapseLabel : `${showAllLabel} (${wishes.length})`}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -29,6 +29,16 @@ const ART_OPENING_THEME_SLUGS = [
   "trong-dong-dong-son",
   "chim-lac-ivory",
   "ivory-signature",
+  "hai-yen-thanh-thu",
+  "phong-thu-be",
+  "phong-thu-luc-pastel",
+  "phong-thu-do-pastel",
+  "phong-thu-lam-pastel",
+  "phong-thu-hong-pastel",
+  "hoa-thu-do-ruou-vang",
+  "hoa-thu-xanh-la",
+  "hoa-thu-hong",
+  "hoa-thu-xanh-duong",
 ] as const;
 
 export async function assertOpeningForegroundAsset(filePath: string): Promise<void> {

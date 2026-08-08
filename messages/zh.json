@@ -1255,7 +1255,15 @@
     "wishSuccess": "感谢您的祝福！",
     "wishSubmit": "发送祝福",
     "wishPending": "发送中...",
-    "saveQr": "保存二维码"
+    "saveQr": "保存二维码",
+    "rsvpHeading": "确认出席",
+    "copyAccount": "复制账号",
+    "accountCopied": "已复制",
+    "showAllWishes": "查看全部",
+    "collapseWishes": "收起",
+    "giftFlipFront": "感谢你与我们一同庆祝",
+    "giftFlipHint": "点击查看二维码",
+    "giftFlipBack": "点击返回"
   },
   "errorBoundary": {
     "title": "页面未能加载完成",

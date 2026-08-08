@@ -6,6 +6,16 @@ import botanicalLavenderAssets from "../../../public/chungdoi/images/themes/_dec
 import rapHySaiGonAssets from "../../../public/chungdoi/images/themes/_decor/rap-hy-sai-gon/opening-assets.json";
 import celestialMapAssets from "../../../public/chungdoi/images/themes/_decor/celestial-map/opening-assets.json";
 import chimLacIvoryAssets from "../../../public/chungdoi/images/themes/_decor/chim-lac-ivory/opening-assets.json";
+import haiYenThanhThuAssets from "../../../public/chungdoi/images/themes/_decor/hai-yen-thanh-thu/opening-assets.json";
+import phongThuBeAssets from "../../../public/chungdoi/images/themes/_decor/phong-thu-be/opening-assets.json";
+import phongThuLucPastelAssets from "../../../public/chungdoi/images/themes/_decor/phong-thu-luc-pastel/opening-assets.json";
+import phongThuDoPastelAssets from "../../../public/chungdoi/images/themes/_decor/phong-thu-do-pastel/opening-assets.json";
+import phongThuLamPastelAssets from "../../../public/chungdoi/images/themes/_decor/phong-thu-lam-pastel/opening-assets.json";
+import phongThuHongPastelAssets from "../../../public/chungdoi/images/themes/_decor/phong-thu-hong-pastel/opening-assets.json";
+import hoaThuDoRuouVangAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-do-ruou-vang/opening-assets.json";
+import hoaThuXanhLaAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-xanh-la/opening-assets.json";
+import hoaThuHongAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-hong/opening-assets.json";
+import hoaThuXanhDuongAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-xanh-duong/opening-assets.json";
 import ivorySignatureAssets from "../../../public/chungdoi/images/themes/_decor/ivory-signature/opening-assets.json";
 import cinemaCreditAssets from "../../../public/chungdoi/images/themes/_decor/cinema-credit/opening-assets.json";
 import coastalMediterraneanAssets from "../../../public/chungdoi/images/themes/_decor/coastal-mediterranean/opening-assets.json";
@@ -117,6 +127,57 @@ function createArtOpeningEffect(
   return effect;
 }
 
+// Both cloned families ship one motion per family: every colourway uses the same
+// four layer ids, so the timing is declared once and reused across the variants.
+const phongThuMotion = {
+  durationMs: 1440,
+  exits: {
+    "envelope-flap": [0, -94, 2.9, -8, 9],
+    "envelope-body": [0, 82, 2.7, 4, 8],
+    "wax-seal": [0, -30, 3.8, 16, 12],
+    "petal-drift": [0, -66, 3.2, 6, 10],
+  },
+  peaks: { "envelope-flap": { yPercent: -8 }, "wax-seal": { brightness: 1.32 } },
+  origins: {
+    "envelope-body": "50% 100%",
+    "envelope-flap": "50% 0%",
+    "wax-seal": "50% 50%",
+    "petal-drift": "50% 50%",
+  },
+} as const;
+
+const hoaThuMotion = {
+  durationMs: 1470,
+  exits: {
+    "arch-frame": [0, 0, 3.4, 0, 10],
+    "crown-blooms": [0, -92, 3, -6, 9],
+    "side-garland": [0, 76, 3.1, 4, 9],
+    "petal-fall": [0, -56, 3.4, 10, 11],
+  },
+  peaks: { "crown-blooms": { yPercent: -8, brightness: 1.28 } },
+  origins: {
+    "arch-frame": "50% 100%",
+    "crown-blooms": "50% 0%",
+    "side-garland": "50% 50%",
+    "petal-fall": "50% 50%",
+  },
+} as const;
+
+const phongThuMotions = {
+  "phong-thu-be": [phongThuBeAssets, phongThuMotion],
+  "phong-thu-luc-pastel": [phongThuLucPastelAssets, phongThuMotion],
+  "phong-thu-do-pastel": [phongThuDoPastelAssets, phongThuMotion],
+  "phong-thu-lam-pastel": [phongThuLamPastelAssets, phongThuMotion],
+  "phong-thu-hong-pastel": [phongThuHongPastelAssets, phongThuMotion],
+} as const;
+
+const hoaThuMotions = {
+  "hoa-thu-do-ruou-vang": [hoaThuDoRuouVangAssets, hoaThuMotion],
+  "hoa-thu-xanh-la": [hoaThuXanhLaAssets, hoaThuMotion],
+  "hoa-thu-hong": [hoaThuHongAssets, hoaThuMotion],
+  "hoa-thu-xanh-duong": [hoaThuXanhDuongAssets, hoaThuMotion],
+} as const;
+
 const effectInputs = {
   "dong-ho-folk": [dongHoFolkAssets, {
     durationMs: 1420,
@@ -223,6 +284,14 @@ const effectInputs = {
     peaks: { "ivory-card": { yPercent: -8 }, "champagne-seal": { brightness: 1.4 } },
     origins: { "navy-liner": "50% 0%", "ivory-card": "50% 100%", "olive-pocket": "50% 100%", "champagne-seal": "50% 50%" },
   }],
+  "hai-yen-thanh-thu": [haiYenThanhThuAssets, {
+    durationMs: 1400,
+    exits: { "wave-wash": [0, 86, 2.6, -4, 8], "swallow-pair": [78, -82, 3.2, -12, 9], "spray-dots": [0, -58, 3.4, 6, 10] },
+    peaks: { "swallow-pair": { xPercent: 6, yPercent: -6, brightness: 1.26 }, "wave-wash": { yPercent: 4 } },
+    origins: { "wave-wash": "50% 100%", "swallow-pair": "40% 60%", "spray-dots": "50% 50%" },
+  }],
+  ...phongThuMotions,
+  ...hoaThuMotions,
 } as const;
 
 export type ArtOpeningEffectSlug = keyof typeof effectInputs;
