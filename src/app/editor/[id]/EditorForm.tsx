@@ -296,7 +296,7 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
 }
 
 const inputClass =
-  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-ring";
+  "w-full min-w-0 rounded-lg border border-input bg-background px-3 py-2 text-base text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-ring sm:text-sm";
 const labelClass = "mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground";
 
 function Accordion({
@@ -2287,13 +2287,26 @@ function EditorFormContent({
             </div>
             <div className="space-y-3">
               {scheduleRows.map((row, index) => (
-                <div key={index} className="flex gap-3">
-                  <input name="scheduleTime" type="time" defaultValue={row.time} className={`${inputClass} w-32`} />
-                  <input name="scheduleLabel" defaultValue={row.label} placeholder="VD: Đón khách" className={inputClass} />
+                <div
+                  key={index}
+                  className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-3 sm:grid-cols-[8rem_minmax(0,1fr)_auto]"
+                >
+                  <input
+                    name="scheduleTime"
+                    type="time"
+                    defaultValue={row.time}
+                    className={`${inputClass} col-start-1 row-start-1 sm:w-32`}
+                  />
+                  <input
+                    name="scheduleLabel"
+                    defaultValue={row.label}
+                    placeholder="VD: Đón khách"
+                    className={`${inputClass} col-span-2 row-start-2 sm:col-span-1 sm:col-start-2 sm:row-start-1`}
+                  />
                   <button
                     type="button"
                     onClick={() => setScheduleRows((rows) => rows.filter((_, rowIndex) => rowIndex !== index))}
-                    className="shrink-0 rounded-lg border border-border px-3 text-sm text-muted-foreground transition hover:border-destructive/40 hover:text-destructive"
+                    className="col-start-2 row-start-1 min-h-11 rounded-lg border border-border px-3 text-sm text-muted-foreground transition hover:border-destructive/40 hover:text-destructive sm:col-start-3"
                     aria-label={`Xoá mốc ${index + 1}`}
                   >
                     ✕
@@ -2404,7 +2417,7 @@ function EditorFormContent({
           <label htmlFor="slug" className={labelClass}>
             Đường dẫn công khai
           </label>
-          <div className="flex items-center gap-2">
+          <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[auto_minmax(0,1fr)_auto]">
             <span className="text-sm text-muted-foreground">/thiep/</span>
             <input
               id="slug"
@@ -2422,7 +2435,7 @@ function EditorFormContent({
               type="button"
               onClick={onCheckSlug}
               disabled={checking || saving || publishing}
-              className="shrink-0 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground hover:bg-muted disabled:opacity-60"
+              className="col-span-2 min-h-11 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground hover:bg-muted disabled:opacity-60 sm:col-span-1"
             >
               {checking ? "..." : "Kiểm tra"}
             </button>
