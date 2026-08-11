@@ -1,0 +1,17 @@
+/*
+ * iOS Safari tự phóng viewport khi focus form control nhỏ hơn 16px. Editor có
+ * nhiều field text-sm, nên sau khi gõ trang trông như bị rộng ra và có thể pan
+ * ngang. Giữ cỡ chữ desktop hiện tại, nhưng dùng 16px cho mọi control mobile
+ * trong editor (kể cả input nội bộ của react-select).
+ *
+ * Tách rule vào entry CSS riêng của editor để production build luôn phát hành
+ * đúng chunk khi editor thay đổi, không phụ thuộc cache của globals.css dùng chung.
+ */
+@media (max-width: 639px), (hover: none) and (pointer: coarse) {
+  .editor-page input:not([type="hidden"]),
+  .editor-page textarea,
+  .editor-page select {
+    /* react-select đặt font shorthand inline cho input nội bộ. */
+    font-size: 1rem !important;
+  }
+}
