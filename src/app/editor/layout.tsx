@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 
 import viMessages from "../../../messages/vi.json";
 import "../globals.css";
+import "./editor-mobile.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 import { appFontVariables } from "@/lib/fonts";
