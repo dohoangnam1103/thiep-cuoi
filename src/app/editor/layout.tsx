@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function EditorLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
-      <body className="min-h-full bg-background text-foreground">
+      <body className="editor-page min-h-full overflow-x-hidden bg-background text-foreground">
         <PetalField />
         <NextIntlClientProvider
           locale="vi"

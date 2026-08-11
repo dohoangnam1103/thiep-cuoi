@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFile, unlink } from "node:fs/promises";
 import path from "node:path";
 
-import { test, expect } from "@playwright/test";
+import { devices, test, expect } from "@playwright/test";
 
 import { loginAsUser } from "./helpers/auth";
 import { getDb, prismaNow } from "./helpers/db";
@@ -10,6 +10,14 @@ import { createUser, createInvitation, cleanupUser } from "./helpers/fixtures";
 
 const EDITOR_UPLOAD_DIR = path.join(process.cwd(), "tests", "e2e", ".data", "editor-uploads");
 const VALID_PNG_PATH = path.join(process.cwd(), "public", "chungdoi", "icon.png");
+const IPHONE_13 = devices["iPhone 13"];
+const MOBILE_EDITOR_DEVICE = {
+  userAgent: IPHONE_13.userAgent,
+  viewport: IPHONE_13.viewport,
+  deviceScaleFactor: IPHONE_13.deviceScaleFactor,
+  isMobile: IPHONE_13.isMobile,
+  hasTouch: IPHONE_13.hasTouch,
+};
 
 // Track every user a test creates so afterEach can tear them down (FK cascade
 // removes their invitations + content rows).
@@ -559,5 +567,116 @@ test.describe("invitation editor", () => {
     await page.goto(`/editor/${inv.id}/preview`);
     await page.waitForURL("**/login**");
     expect(page.url()).toContain("/login");
+  });
+
+  test.describe("mobile editor layout", () => {
+    test.use(MOBILE_EDITOR_DEVICE);
+
+    test("never zooms form controls or creates horizontal document overflow", async ({
+      page,
+      context,
+    }) => {
+      const user = newUser();
+      const inv = createInvitation(user.id, {
+        templateId: "thap-nhi-chi-do",
+        status: "published",
+        paid: true,
+        slug: `mobile-editor-${randomUUID().slice(0, 8)}`,
+        publishedAt: new Date(),
+      });
+      setContent(inv.id, {
+        brideFullName: "Nguyễn Quỳnh Anh",
+        groomFullName: "Trần Gia Khánh",
+        date: "2026-11-11",
+        time: "18:00",
+      });
+      getDb()
+        .prepare(
+          `INSERT INTO ScheduleItem (id, invitationId, time, label, sortOrder)
+           VALUES (?, ?, ?, ?, ?)`,
+        )
+        .run(`schedule-${randomUUID()}`, inv.id, "17:30", "Đón khách", 0);
+      await loginAsUser(context, user.id);
+
+      const assertNoHorizontalOverflow = async (state: string) => {
+        const measurement = await page.evaluate(() => {
+          const viewportWidth = document.documentElement.clientWidth;
+          const scrollWidth = document.scrollingElement?.scrollWidth
+            ?? document.documentElement.scrollWidth;
+          const offenders = [...document.querySelectorAll<HTMLElement>("body *")]
+            .map((element) => {
+              const rect = element.getBoundingClientRect();
+              return {
+                tag: element.tagName.toLowerCase(),
+                id: element.id,
+                className: element.className.toString().slice(0, 180),
+                left: Math.round(rect.left),
+                right: Math.round(rect.right),
+              };
+            })
+            .filter((item) => item.left < -1 || item.right > viewportWidth + 1)
+            .slice(0, 12);
+          return { viewportWidth, scrollWidth, offenders };
+        });
+
+        expect(
+          measurement.scrollWidth,
+          `${state}: ${JSON.stringify(measurement.offenders)}`,
+        ).toBeLessThanOrEqual(measurement.viewportWidth + 1);
+      };
+
+      const assertControlsCannotTriggerIosZoom = async (state: string) => {
+        const controlsUnder16px = await page
+          .locator('input:not([type="hidden"]), textarea, select')
+          .evaluateAll((controls) => controls.map((control) => {
+            const element = control as HTMLInputElement;
+            return {
+              id: element.id,
+              name: element.name,
+              type: element.type,
+              fontSize: Number.parseFloat(getComputedStyle(element).fontSize),
+            };
+          }).filter((control) => control.fontSize < 16));
+
+        expect(controlsUnder16px, state).toEqual([]);
+      };
+
+      await page.goto(`/editor/${inv.id}`);
+      await expect(page.locator("body")).toHaveClass(/editor-page/);
+      await page.locator("#brideFullName").focus();
+      await assertControlsCannotTriggerIosZoom("portrait editor controls");
+      await assertNoHorizontalOverflow("portrait editor");
+      expect(await page.evaluate(() => window.visualViewport?.scale ?? 1)).toBe(1);
+
+      for (const width of [320, 360, 390, 412]) {
+        await page.setViewportSize({ width, height: 844 });
+        await assertNoHorizontalOverflow(`${width}px editor`);
+      }
+
+      await page.setViewportSize({ width: 844, height: 390 });
+      await assertControlsCannotTriggerIosZoom("landscape editor controls");
+      await assertNoHorizontalOverflow("landscape editor");
+
+      await page.setViewportSize({ width: 320, height: 844 });
+      await page.getByRole("button", { name: "Thông tin chuyển khoản" }).click();
+      const bankCombobox = page.getByRole("combobox", { name: "Ngân hàng chú rể" });
+      await bankCombobox.click();
+      await expect(page.getByRole("listbox")).toBeVisible();
+      await assertControlsCannotTriggerIosZoom("bank combobox");
+      await assertNoHorizontalOverflow("bank combobox");
+      await page.keyboard.press("Escape");
+
+      await page.getByRole("button", { name: "Xem trước", exact: true }).click();
+      await expect(page.locator('[data-template-renderer="thap-nhi-chi-do"]')).toBeAttached({
+        timeout: 30_000,
+      });
+      await assertNoHorizontalOverflow("invitation preview");
+
+      await page.getByRole("button", { name: "Chỉnh sửa", exact: true }).click();
+      await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
+      await expect(page.getByRole("dialog", { name: "Chia sẻ thiệp" })).toBeVisible();
+      await assertControlsCannotTriggerIosZoom("share dialog");
+      await assertNoHorizontalOverflow("share dialog");
+    });
   });
 });
