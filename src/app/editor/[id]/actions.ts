@@ -8,14 +8,8 @@ import { isGoogleMapsUrl } from "@/lib/google-maps";
 import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
 import { publicationIssue, validateInvitationSlug } from "@/lib/invitation-editor-rules";
 import { prepareInvitationDraft, writeInvitationDraft } from "@/lib/invitation-editor-store";
-import { type EditorState } from "./content-schema";
+import { type EditorState, type SlugCheckResult } from "./content-schema";
 import { slugFromFormFields } from "./slug";
-
-const SLUG_REASON_TEXT = {
-  slugMissing: "Chưa nhập đường dẫn",
-  slugMalformed: "Chỉ dùng chữ thường, số và dấu gạch ngang",
-  slugTaken: "Đường dẫn đã được dùng",
-} as const;
 
 async function requireOwnedInvitation(id: string) {
   const { userId } = await verifySession();
@@ -44,11 +38,11 @@ export async function resolveGoogleMapsLink(value: string): Promise<{
 
 export async function saveDraft(id: string, _prev: EditorState, formData: FormData): Promise<EditorState> {
   const access = await requireOwnedInvitation(id);
-  if (!access) return { errorCode: "invitationNotFound", error: "Không tìm thấy thiệp" };
+  if (!access) return { errorCode: "invitationNotFound" };
 
   const prepared = await prepareInvitationDraft(formData);
   if ("errorCode" in prepared) {
-    return { errorCode: prepared.errorCode, error: "Dữ liệu không hợp lệ" };
+    return { errorCode: prepared.errorCode };
   }
 
   await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
@@ -75,30 +69,30 @@ export async function autosaveDraft(id: string, formData: FormData): Promise<boo
 export async function checkSlug(
   slug: string,
   invitationId: string,
-): Promise<{ available: boolean; reason?: string }> {
+): Promise<SlugCheckResult> {
   const access = await requireOwnedInvitation(invitationId);
   if (!access) {
-    return { available: false, reason: "Không tìm thấy thiệp" };
+    return { available: false, reasonCode: "invitationNotFound" };
   }
   const normalized = slug.trim().toLowerCase();
   const syntax = validateInvitationSlug(normalized);
   if (!syntax.available) {
-    return { available: false, reason: SLUG_REASON_TEXT[syntax.reasonCode] };
+    return syntax;
   }
   const existing = await prisma.invitation.findUnique({ where: { slug: normalized } });
   if (existing && existing.id !== invitationId) {
-    return { available: false, reason: SLUG_REASON_TEXT.slugTaken };
+    return { available: false, reasonCode: "slugTaken" };
   }
   return { available: true };
 }
 
 export async function publish(id: string, _prev: EditorState, formData: FormData): Promise<EditorState> {
   const access = await requireOwnedInvitation(id);
-  if (!access) return { errorCode: "invitationNotFound", error: "Không tìm thấy thiệp" };
+  if (!access) return { errorCode: "invitationNotFound" };
 
   const prepared = await prepareInvitationDraft(formData);
   if ("errorCode" in prepared) {
-    return { errorCode: prepared.errorCode, error: "Dữ liệu không hợp lệ" };
+    return { errorCode: prepared.errorCode };
   }
 
   await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
@@ -108,14 +102,8 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
 
   const issue = publicationIssue(prepared.data.persistedData);
   if (issue) {
-    const issueText = {
-      coupleRequired: "Cần tên cô dâu và chú rể trước khi xuất bản",
-      dateRequired: "Cần ngày cưới trước khi xuất bản",
-      timeRequired: "Cần giờ tiệc cưới trước khi xuất bản",
-    } as const;
     return {
       errorCode: issue.errorCode,
-      error: issueText[issue.errorCode],
       focusField: issue.focusField,
       persisted: true,
     };
@@ -124,18 +112,13 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
   const formSlug = String(formData.get("slug") ?? "").trim().toLowerCase();
   const baseSlug = formSlug || slugFromFormFields(prepared.data.persistedData);
   if (!baseSlug) {
-    return {
-      errorCode: "slugMissing",
-      error: "Chưa có tên cô dâu/chú rể để tạo đường dẫn",
-      persisted: true,
-    };
+    return { errorCode: "slugMissing", persisted: true };
   }
 
   const syntax = validateInvitationSlug(baseSlug);
   if (!syntax.available) {
     return {
       errorCode: syntax.reasonCode,
-      error: SLUG_REASON_TEXT[syntax.reasonCode],
       focusField: "slug",
       persisted: true,
     };
@@ -163,10 +146,6 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
   if ("errorCode" in published) {
     return {
       errorCode: published.errorCode,
-      error:
-        published.errorCode === "slugTaken"
-          ? SLUG_REASON_TEXT.slugTaken
-          : "Không tìm thấy thiệp",
       focusField: published.errorCode === "slugTaken" ? "slug" : undefined,
       persisted: true,
     };

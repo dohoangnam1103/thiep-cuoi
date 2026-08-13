@@ -85,8 +85,8 @@ export const contentSchema = z.object({
 });
 
 export type EditorErrorCode =
-  | "invitationNotFound"
   | "invalidData"
+  | "invitationNotFound"
   | "slugMissing"
   | "slugMalformed"
   | "slugTaken"
@@ -94,15 +94,26 @@ export type EditorErrorCode =
   | "dateRequired"
   | "timeRequired";
 
-export type EditorState = {
-  error?: string;
-  errorCode?: EditorErrorCode;
-  focusField?: string;
-  ok?: boolean;
-  persisted?: boolean;
-  publishedSlug?: string;
-  publishedAt?: string;
-} | undefined;
+export type EditorState =
+  | {
+      errorCode?: EditorErrorCode;
+      focusField?: string;
+      ok?: boolean;
+      persisted?: boolean;
+      publishedSlug?: string;
+      publishedAt?: string;
+    }
+  | undefined;
+
+export type SlugCheckResult =
+  | { available: true }
+  | {
+      available: false;
+      reasonCode: Extract<
+        EditorErrorCode,
+        "invitationNotFound" | "slugMissing" | "slugMalformed" | "slugTaken"
+      >;
+    };
 
 export function parseSchedule(formData: FormData) {
   const times = formData.getAll("scheduleTime").map(String);

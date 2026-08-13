@@ -43,7 +43,7 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
       </Link>
       <NextIntlClientProvider locale="vi" messages={{ editor: viMessages.editor }}>
         <EditorForm
-          adminMode
+          mode="demo-admin"
           saveAction={saveDemo}
           invitationId={invitation.id}
           status={invitation.status}

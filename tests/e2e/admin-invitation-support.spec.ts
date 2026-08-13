@@ -1,4 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { randomUUID } from "node:crypto";
+
+import { test, expect, type Page } from "@playwright/test";
 
 import { getDb, prismaNow } from "./helpers/db";
 import {
@@ -18,6 +20,103 @@ import {
   deleteAdmin,
 } from "./helpers/fixtures";
 import { loginAsAdmin, loginAsUser } from "./helpers/auth";
+
+type ContentSnapshot = Record<string, string | number | null>;
+type InvitationSnapshot = Record<string, unknown>;
+type AuditRow = {
+  adminId: string | null;
+  action: string;
+  targetUserId: string | null;
+  invitationId: string | null;
+};
+
+function invitationSnapshot(invitationId: string): InvitationSnapshot | undefined {
+  return getDb()
+    .prepare("SELECT * FROM Invitation WHERE id = ?")
+    .get(invitationId) as InvitationSnapshot | undefined;
+}
+
+function contentSnapshot(invitationId: string): ContentSnapshot {
+  const row = getDb()
+    .prepare("SELECT * FROM InvitationContent WHERE invitationId = ?")
+    .get(invitationId) as ContentSnapshot | undefined;
+  return row ?? {};
+}
+
+function readContent(invitationId: string, column: string): string | null {
+  const row = getDb()
+    .prepare(`SELECT "${column}" AS value FROM InvitationContent WHERE invitationId = ?`)
+    .get(invitationId) as { value: string | null } | undefined;
+  return row?.value ?? null;
+}
+
+function auditRowsFor(invitationId: string): AuditRow[] {
+  return getDb()
+    .prepare(
+      `SELECT adminId, action, targetUserId, invitationId FROM AdminAuditLog
+       WHERE invitationId = ? ORDER BY createdAt, id`,
+    )
+    .all(invitationId) as AuditRow[];
+}
+
+function auditCount(invitationId: string): number {
+  return (
+    getDb()
+      .prepare("SELECT COUNT(*) AS count FROM AdminAuditLog WHERE invitationId = ?")
+      .get(invitationId) as { count: number }
+  ).count;
+}
+
+function clearAuditFor(user: { id: string; email: string }): void {
+  getDb()
+    .prepare("DELETE FROM AdminAuditLog WHERE targetUserId = ? OR targetUserEmail = ?")
+    .run(user.id, user.email);
+}
+
+async function fillPublishableDraft(page: Page): Promise<string> {
+  const slug = `support-${randomUUID().slice(0, 8)}`;
+  await page.locator("#brideFullName").fill("Nguyễn Mai");
+  await page.locator("#groomFullName").fill("Trần Nam");
+  await page.locator("#date").fill("2026-12-20");
+  await page.locator("#time").fill("18:00");
+  await page.locator("#slug").fill(slug);
+  return slug;
+}
+
+/**
+ * The editor binds every support action to the route invitation id. React
+ * ships that bound id inside the multipart flight payload (field "0", e.g.
+ * ["<id>","$undefined","$K1"]), so rewriting the POST body simulates a
+ * tampered bound invocation against another invitation while the submitted
+ * form still belongs to the opened one.
+ */
+function installBoundIdRewrite(page: Page, fromId: string, toId: string): Promise<{
+  hits: () => number;
+  uninstall: () => Promise<void>;
+}> {
+  let hits = 0;
+  const pattern = "**/admin/invitations/*/edit";
+  return page.route(pattern, async (route) => {
+    const request = route.request();
+    if (request.method() !== "POST") {
+      await route.continue();
+      return;
+    }
+    const body = request.postDataBuffer();
+    const text = body?.toString("utf8") ?? "";
+    if (!text.includes(`"${fromId}"`)) {
+      await route.continue();
+      return;
+    }
+    hits += 1;
+    await route.continue({
+      postData: Buffer.from(text.split(`"${fromId}"`).join(`"${toId}"`), "utf8"),
+    });
+  }).then(() => ({
+    hits: () => hits,
+    uninstall: () => page.unroute(pattern),
+  }));
+}
 
 test.describe("admin: user invitation support", () => {
   test("non-super admin can search users and open a support profile", async ({ page, context }) => {
@@ -373,4 +472,307 @@ test.describe("admin: user invitation support", () => {
       }
     });
   }
+
+  for (const isSuperAdmin of [false, true] as const) {
+    test(`${isSuperAdmin ? "super" : "non-super"} admin edits and publishes a customer invitation through the support editor`, async ({
+      page,
+      context,
+    }) => {
+      const user = createUser();
+      const admin = seedAdmin(isSuperAdmin);
+      const invitation = createInvitation(user.id);
+      try {
+        await loginAsAdmin(context, admin.id);
+        await page.goto(`/admin/invitations/${invitation.id}/edit`);
+        await expect(page.getByText(`Đang hỗ trợ tài khoản ${user.email}`)).toBeVisible();
+        const userCookie = (await context.cookies()).find((cookie) => cookie.name === "session");
+        expect(userCookie).toBeUndefined();
+
+        const slug = await fillPublishableDraft(page);
+        await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+
+        await expect.poll(() => getInvitation(invitation.id).status).toBe("published");
+        expect(getInvitation(invitation.id).slug).toBe(slug);
+        expect(
+          await page.evaluate(
+            (id) => localStorage.getItem(`chungdoi:draft:${id}`),
+            invitation.id,
+          ),
+        ).toBeNull();
+        const audit = getLatestAudit(invitation.id);
+        expect(audit?.adminId).toBe(admin.id);
+        expect(audit?.action).toBe("INVITATION_PUBLISHED_BY_ADMIN");
+      } finally {
+        clearAuditFor(user);
+        deleteAdmin(admin.id);
+        cleanupUser(user.id);
+      }
+    });
+  }
+
+  test("support editor rejects demo and unknown invitation ids", async ({ page, context }) => {
+    const user = createUser();
+    const demo = createInvitation(user.id, { isDemo: true });
+    try {
+      await loginAsAdmin(context, seededAdminId());
+      for (const id of [demo.id, `missing-${randomUUID()}`]) {
+        const response = await page.goto(`/admin/invitations/${id}/edit`);
+        expect(response?.status()).toBe(404);
+        await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+      }
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("unauthenticated support save keeps invitation content and audit unchanged", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const admin = seedAdmin(false);
+    const invitation = createInvitation(user.id);
+    const invitationBefore = invitationSnapshot(invitation.id);
+    const contentBefore = contentSnapshot(invitation.id);
+    const auditBefore = auditCount(invitation.id);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/invitations/${invitation.id}/edit`);
+      await expect(page.locator("#brideFullName")).toBeVisible();
+      await page.locator("#brideFullName").fill("Nguyễn Mai");
+      await page.locator("#groomFullName").fill("Trần Nam");
+      await context.clearCookies();
+      await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+      await page.waitForURL("**/admin/login");
+      expect(invitationSnapshot(invitation.id)).toEqual(invitationBefore);
+      expect(contentSnapshot(invitation.id)).toEqual(contentBefore);
+      expect(auditCount(invitation.id)).toBe(auditBefore);
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("unauthenticated support publish keeps slug, status, content and audit unchanged", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const admin = seedAdmin(false);
+    const invitation = createInvitation(user.id);
+    const invitationBefore = invitationSnapshot(invitation.id);
+    const contentBefore = contentSnapshot(invitation.id);
+    const auditBefore = auditCount(invitation.id);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/invitations/${invitation.id}/edit`);
+      await expect(page.locator("#brideFullName")).toBeVisible();
+      await fillPublishableDraft(page);
+      await context.clearCookies();
+      await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+      await page.waitForURL("**/admin/login");
+      expect(invitationSnapshot(invitation.id)).toEqual(invitationBefore);
+      expect(contentSnapshot(invitation.id)).toEqual(contentBefore);
+      expect(auditCount(invitation.id)).toBe(auditBefore);
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("tampered hidden templateId is rejected without writes or audit", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const admin = seedAdmin(false);
+    const invitation = createInvitation(user.id);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/invitations/${invitation.id}/edit`);
+      await expect(page.locator("#brideFullName")).toBeVisible();
+      await page.locator("#brideFullName").fill("Nguyễn Mai");
+      // The templateId hidden input is React-controlled, so tamper the wire:
+      // rewrite the submitted template slug to a non-allowlist value.
+      await page.route("**/admin/invitations/*/edit", async (route) => {
+        const request = route.request();
+        if (request.method() !== "POST") {
+          await route.continue();
+          return;
+        }
+        const body = request.postDataBuffer();
+        const text = body?.toString("utf8") ?? "";
+        if (!text.includes("song-hy-red")) {
+          await route.continue();
+          return;
+        }
+        await route.continue({
+          postData: Buffer.from(text.split("song-hy-red").join("not-a-template"), "utf8"),
+        });
+      });
+      const invitationBefore = invitationSnapshot(invitation.id);
+      const contentBefore = contentSnapshot(invitation.id);
+      const auditBefore = auditCount(invitation.id);
+      await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+      await expect(page.getByText("Dữ liệu không hợp lệ.")).toBeVisible();
+      expect(invitationSnapshot(invitation.id)).toEqual(invitationBefore);
+      expect(contentSnapshot(invitation.id)).toEqual(contentBefore);
+      expect(auditCount(invitation.id)).toBe(auditBefore);
+      expect(getInvitation(invitation.id).templateId).toBe("song-hy-red");
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("slug and map wrappers re-authenticate at invocation time", async ({ page, context }) => {
+    const user = createUser();
+    const admin = seedAdmin(false);
+    const invitation = createInvitation(user.id);
+    const invitationBefore = invitationSnapshot(invitation.id);
+    const contentBefore = contentSnapshot(invitation.id);
+    const auditBefore = auditCount(invitation.id);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/invitations/${invitation.id}/edit`);
+      await expect(page.locator("#slug")).toBeVisible();
+      await page.locator("#slug").fill("duong-dan-kiem-tra");
+      await context.clearCookies();
+      await page.getByRole("button", { name: "Kiểm tra" }).click();
+      await page.waitForURL("**/admin/login");
+
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/invitations/${invitation.id}/edit`);
+      await expect(page.locator("#mapAddress")).toBeAttached();
+      await page
+        .getByRole("button", { name: "Vị trí trên bản đồ chưa đúng?" })
+        .click();
+      await page.locator("#mapAddress").fill("https://maps.app.goo.gl/e2eshort");
+      await context.clearCookies();
+      await page.locator("#mapAddress").blur();
+      await page.waitForURL("**/admin/login");
+
+      expect(invitationSnapshot(invitation.id)).toEqual(invitationBefore);
+      expect(contentSnapshot(invitation.id)).toEqual(contentBefore);
+      expect(auditCount(invitation.id)).toBe(auditBefore);
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("support editor cross-binding re-derives user from invitation", async ({
+    page,
+    context,
+  }) => {
+    const userA = createUser();
+    const userB = createUser();
+    const invitationA = createInvitation(userA.id);
+    const invitationB = createInvitation(userB.id);
+    const admin = seedAdmin(false);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/invitations/${invitationA.id}/edit`);
+      await expect(page.getByText(`Đang hỗ trợ tài khoản ${userA.email}`)).toBeVisible();
+
+      const invitationABefore = invitationSnapshot(invitationA.id);
+      const invitationBBefore = invitationSnapshot(invitationB.id);
+      const contentABefore = contentSnapshot(invitationA.id);
+      const contentBBefore = contentSnapshot(invitationB.id);
+
+      // Tamper the bound route id to invitation B while keeping form state from A.
+      const rewrite = await installBoundIdRewrite(page, invitationA.id, invitationB.id);
+      await page.locator("#brideFullName").fill("Nguyễn Mai");
+      await page.locator("#groomFullName").fill("Trần Nam");
+      await page.locator("#date").fill("2026-12-20");
+      await page.locator("#time").fill("18:00");
+      await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+      await expect.poll(() => readContent(invitationB.id, "brideFullName")).toBe("Nguyễn Mai");
+
+      // A is untouched; B received the submitted draft and the B/B audit pair.
+      expect(invitationSnapshot(invitationA.id)).toEqual(invitationABefore);
+      expect(contentSnapshot(invitationA.id)).toEqual(contentABefore);
+      expect(auditCount(invitationA.id)).toBe(0);
+      expect(readContent(invitationB.id, "groomFullName")).toBe("Trần Nam");
+      expect(readContent(invitationB.id, "date")).toBe("2026-12-20");
+      expect(readContent(invitationB.id, "time")).toBe("18:00");
+      expect(auditRowsFor(invitationB.id)).toEqual([
+        {
+          adminId: admin.id,
+          action: "INVITATION_UPDATED_BY_ADMIN",
+          targetUserId: userB.id,
+          invitationId: invitationB.id,
+        },
+      ]);
+
+      const invitationAAfterSave = invitationSnapshot(invitationA.id);
+      const invitationBAfterSave = invitationSnapshot(invitationB.id);
+      const contentAAfterSave = contentSnapshot(invitationA.id);
+      const contentBAfterSave = contentSnapshot(invitationB.id);
+
+      // Tamper again for the publish invocation.
+      const slugB = `support-cross-${randomUUID().slice(0, 8)}`;
+      await page.locator("#slug").fill(slugB);
+      await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+      await expect.poll(() => getInvitation(invitationB.id).status).toBe("published");
+
+      // A kept its save-time state; B carries the publication metadata.
+      expect(invitationSnapshot(invitationA.id)).toEqual(invitationAAfterSave);
+      expect(contentSnapshot(invitationA.id)).toEqual(contentAAfterSave);
+      expect(invitationSnapshot(invitationB.id)).not.toEqual(invitationBAfterSave);
+      expect(contentSnapshot(invitationB.id)).toEqual(contentBAfterSave);
+      expect(getInvitation(invitationB.id)).toMatchObject({
+        status: "published",
+        slug: slugB,
+        userId: userB.id,
+      });
+      expect(auditCount(invitationA.id)).toBe(0);
+      expect(auditRowsFor(invitationB.id)).toEqual([
+        {
+          adminId: admin.id,
+          action: "INVITATION_UPDATED_BY_ADMIN",
+          targetUserId: userB.id,
+          invitationId: invitationB.id,
+        },
+        {
+          adminId: admin.id,
+          action: "INVITATION_PUBLISHED_BY_ADMIN",
+          targetUserId: userB.id,
+          invitationId: invitationB.id,
+        },
+      ]);
+
+      // No audit row may pair one user with another user's invitation.
+      const mismatchedAuditCount = (
+        getDb()
+          .prepare(`
+            SELECT COUNT(*) AS count FROM AdminAuditLog
+            WHERE (targetUserId = ? AND invitationId = ?)
+               OR (targetUserId = ? AND invitationId = ?)
+          `)
+          .get(userA.id, invitationB.id, userB.id, invitationA.id) as { count: number }
+      ).count;
+      expect(mismatchedAuditCount).toBe(0);
+
+      // Both tampered submissions actually crossed the rewrite.
+      expect(rewrite.hits()).toBeGreaterThanOrEqual(2);
+      await rewrite.uninstall();
+
+      // Baseline sanity: the pre-tamper rows were distinct real invitations and
+      // B started with empty content.
+      expect(invitationBBefore?.userId).toBe(userB.id);
+      expect(invitationABefore?.id).toBe(invitationA.id);
+      expect(contentBBefore.brideFullName ?? "").toBe("");
+    } finally {
+      clearAuditFor(userA);
+      clearAuditFor(userB);
+      deleteAdmin(admin.id);
+      cleanupUser(userA.id);
+      cleanupUser(userB.id);
+    }
+  });
 });

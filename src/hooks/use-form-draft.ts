@@ -184,9 +184,11 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     (draft: Draft) => {
       latestRef.current = draft;
       cleanRef.current = false;
-      return writeDraft(invitationId, draft);
+      // Non-owner modes (demo/support editor) serialize the form for submit
+      // but must never write the localStorage draft.
+      return enabled ? writeDraft(invitationId, draft) : false;
     },
-    [invitationId],
+    [enabled, invitationId],
   );
 
   const capture = useCallback(() => {
@@ -201,8 +203,8 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     savedDraftRef.current = latestRef.current;
     cleanRef.current = true;
     latestRef.current = null;
-    clearFormDraft(invitationId);
-  }, [invitationId]);
+    if (enabled) clearFormDraft(invitationId);
+  }, [enabled, invitationId]);
 
   const getLatest = useCallback(() => latestRef.current, []);
 
