@@ -27,6 +27,7 @@ export function createInvitation(
     templateId: string;
     status: string;
     paid: boolean;
+    complimentary: boolean;
     slug: string;
     isDemo: boolean;
     publishedAt: Date;
@@ -36,8 +37,8 @@ export function createInvitation(
   const invId = id("i");
   const now = prismaNow();
   db.prepare(
-    `INSERT INTO Invitation (id, userId, slug, templateId, status, paid, isDemo, publishedAt, createdAt, updatedAt)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO Invitation (id, userId, slug, templateId, status, paid, complimentary, isDemo, publishedAt, createdAt, updatedAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     invId,
     userId,
@@ -45,6 +46,7 @@ export function createInvitation(
     overrides?.templateId ?? "song-hy-red",
     overrides?.status ?? "draft",
     overrides?.paid ? 1 : 0,
+    overrides?.complimentary ? 1 : 0,
     overrides?.isDemo ? 1 : 0,
     overrides?.publishedAt ? prismaNow(overrides.publishedAt) : null,
     now,

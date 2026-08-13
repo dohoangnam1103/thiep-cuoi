@@ -109,6 +109,29 @@ test.describe("dashboard — list & auth", () => {
       cleanupUser(user.id);
     }
   });
+
+  test("complimentary invitation shows its badge without a trial countdown", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    createInvitation(user.id, {
+      slug: `complimentary-${user.id}`,
+      status: "published",
+      paid: false,
+      complimentary: true,
+      publishedAt: new Date("2020-01-01T00:00:00.000Z"),
+    });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto("/dashboard");
+      await expect(page.getByText("Được tặng miễn phí", { exact: true })).toBeVisible();
+      await expect(page.getByRole("region", { name: "Thời gian dùng thử" })).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Thanh toán ngay" })).toHaveCount(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
 });
 
 test.describe("dashboard — create", () => {

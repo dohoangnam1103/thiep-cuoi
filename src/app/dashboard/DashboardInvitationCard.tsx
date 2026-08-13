@@ -1,7 +1,9 @@
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { TrialCountdownBanner } from "@/components/trial-countdown-banner";
 import { resolveDashboardCardTheme } from "@/lib/dashboard-card-theme";
+import type { InvitationActivation } from "@/lib/invitation-entitlement";
 import { trialExpiresAt } from "@/lib/trial";
 
 export type DashboardInvitationCardProps = {
@@ -12,7 +14,7 @@ export type DashboardInvitationCardProps = {
   hasNames: boolean;
   status: string;
   slug: string | null;
-  paid: boolean;
+  activation: InvitationActivation;
   publishedAt: string | null;
   rsvpCount: number;
   wishCount: number;
@@ -26,11 +28,12 @@ export function DashboardInvitationCard({
   hasNames,
   status,
   slug,
-  paid,
+  activation,
   publishedAt,
   rsvpCount,
   wishCount,
 }: DashboardInvitationCardProps) {
+  const t = useTranslations("dashboardActivation");
   const theme = resolveDashboardCardTheme(templateId);
   const published = status === "published";
   // Card nền theme rất tương phản (nền hoa sáng, nền đỏ tối) nên chữ khó đọc.
@@ -40,7 +43,7 @@ export function DashboardInvitationCard({
   const textChipClass = theme
     ? "self-start rounded-xl bg-white/70 px-3 py-2 shadow-sm backdrop-blur-md"
     : "";
-  const showTrialBanner = Boolean(published && !paid && publishedAt);
+  const showTrialBanner = Boolean(published && activation === "trial" && publishedAt);
 
   return (
     <li
@@ -122,9 +125,14 @@ export function DashboardInvitationCard({
                 Xem thiệp
               </Link>
             ) : null}
-            {paid ? (
+            {activation === "paid" ? (
               <span className="rounded-full bg-green-500/15 px-4 py-1.5 font-medium text-green-700">
-                Đã thanh toán
+                {t("paid")}
+              </span>
+            ) : null}
+            {activation === "complimentary" ? (
+              <span className="rounded-full bg-green-500/15 px-4 py-1.5 font-medium text-green-700">
+                {t("complimentary")}
               </span>
             ) : null}
           </div>

@@ -60,6 +60,7 @@ import {
 } from "@/data/editor-template-capabilities";
 import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
+import type { InvitationActivation } from "@/lib/invitation-entitlement";
 import type { MusicPickerMessages } from "@/lib/music-picker";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -110,7 +111,7 @@ const MusicPicker = dynamic(() =>
 type EditorFormProps = {
   invitationId: string;
   status: string;
-  paid: boolean;
+  activation: InvitationActivation;
   publishedAt?: string | null;
   currentSlug: string | null;
   templateId: string;
@@ -1546,7 +1547,7 @@ function TabBar({
 function EditorFormContent({
   invitationId,
   status,
-  paid,
+  activation,
   publishedAt = null,
   currentSlug,
   templateId,
@@ -1565,6 +1566,8 @@ function EditorFormContent({
   const venueT = useTranslations("editor.venue");
   const ceremonyT = useTranslations("editor.ceremonies");
   const zodiacT = useTranslations("editor.zodiac");
+  const supportT = useTranslations("editor.support");
+  const activated = activation !== "trial";
   const saveAction = (saveActionProp ?? saveDraft).bind(null, invitationId);
   const publishAction = publish.bind(null, invitationId);
   const [saveState, saveFormAction, saving] = useActionState<EditorState, FormData>(saveAction, undefined);
@@ -1893,7 +1896,7 @@ function EditorFormContent({
             Trạng thái: {isPublished ? "Đã xuất bản" : "Bản nháp"}
           </p>
         </div>
-        {!adminMode && isPublished && !paid && activePublishedAt ? (
+        {!adminMode && isPublished && activation === "trial" && activePublishedAt ? (
           <TrialCountdownBanner
             invitationId={invitationId}
             expiresAt={trialExpiresAt(new Date(activePublishedAt)).getTime()}
@@ -2451,9 +2454,14 @@ function EditorFormContent({
           ) : null}
         </div>
 
-        {paid ? (
+        {activation === "paid" ? (
           <p className="mt-4 text-sm font-semibold text-emerald-700">
             Thiệp đã được kích hoạt vĩnh viễn.
+          </p>
+        ) : null}
+        {activation === "complimentary" ? (
+          <p className="mt-4 text-sm font-semibold text-emerald-700">
+            {supportT("complimentary")}
           </p>
         ) : null}
 
@@ -2482,7 +2490,7 @@ function EditorFormContent({
       {publishDialogSlug ? (
         <PublishSuccessDialog
           invitationId={invitationId}
-          paid={paid}
+          activated={activated}
           slug={publishDialogSlug}
           onClose={() => setPublishDialogSlug(null)}
         />

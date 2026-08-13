@@ -10,6 +10,7 @@ function candidate(overrides: Partial<ReminderCandidate> = {}): ReminderCandidat
   const publishedAt = new Date(now.getTime() + 12 * 60 * 60 * 1000 - FREE_TRIAL_MS);
   return {
     paid: false,
+    complimentary: false,
     publishedAt,
     reminderSentAt: null,
     email: "user@example.com",
@@ -27,6 +28,10 @@ test("REMINDER_WINDOW_MS là 24 giờ", () => {
 
 test("không gửi khi đã thanh toán", () => {
   assert.equal(shouldSendReminder(candidate({ paid: true }), now), false);
+});
+
+test("không gửi khi thiệp được tặng miễn phí", () => {
+  assert.equal(shouldSendReminder(candidate({ complimentary: true }), now), false);
 });
 
 test("không gửi khi chưa publish", () => {

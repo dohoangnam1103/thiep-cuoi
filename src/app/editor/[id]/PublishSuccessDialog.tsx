@@ -23,14 +23,14 @@ import { trackEvent } from "@/lib/analytics";
 
 type PublishSuccessDialogProps = {
   invitationId: string;
-  paid: boolean;
+  activated: boolean;
   slug: string;
   onClose: () => void;
 };
 
 export function PublishSuccessDialog({
   invitationId,
-  paid,
+  activated,
   slug,
   onClose,
 }: PublishSuccessDialogProps) {
@@ -182,7 +182,7 @@ export function PublishSuccessDialog({
                 <ArrowRight className="size-5 text-muted-foreground transition group-hover:translate-x-1" aria-hidden />
               </Link>
 
-              {!paid ? (
+              {!activated ? (
                 <Link
                   href={`/dashboard/${invitationId}/thanh-toan`}
                   className="group flex min-h-20 items-center gap-4 px-6 py-4 transition hover:bg-muted/50 sm:px-8"

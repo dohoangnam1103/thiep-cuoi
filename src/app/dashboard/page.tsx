@@ -1,4 +1,5 @@
 import { verifySession } from "@/lib/dal";
+import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels, labelFromMap } from "@/lib/template-labels";
 import { logout } from "../(auth)/actions";
@@ -57,7 +58,7 @@ export default async function DashboardPage() {
                 hasNames={Boolean(names)}
                 status={inv.status}
                 slug={inv.slug}
-                paid={inv.paid}
+                activation={getInvitationActivation(inv)}
                 publishedAt={inv.publishedAt?.toISOString() ?? null}
                 rsvpCount={inv._count.rsvps}
                 wishCount={inv._count.wishes}

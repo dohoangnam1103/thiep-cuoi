@@ -28,7 +28,12 @@ export async function POST(request: Request) {
 
   const now = new Date();
   const invitations = await prisma.invitation.findMany({
-    where: { paid: false, publishedAt: { not: null }, reminderSentAt: null },
+    where: {
+      paid: false,
+      complimentary: false,
+      publishedAt: { not: null },
+      reminderSentAt: null,
+    },
     include: {
       user: { select: { email: true } },
       content: { select: { brideShortName: true, groomShortName: true } },
@@ -43,6 +48,7 @@ export async function POST(request: Request) {
     const email = inv.user.email;
     const candidate: ReminderCandidate = {
       paid: inv.paid,
+      complimentary: inv.complimentary,
       publishedAt: inv.publishedAt,
       reminderSentAt: inv.reminderSentAt,
       email,
