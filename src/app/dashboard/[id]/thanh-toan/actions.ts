@@ -36,6 +36,7 @@ type CheckoutTxResult =
 export type CheckoutPreparation =
   | { kind: "not-found" }
   | { kind: "activated"; activation: "paid" | "complimentary" }
+  | { kind: "price-changed" }
   | { kind: "payment"; payment: PaymentInfo };
 
 function paymentExpiresAt(createdAt: Date): string {
@@ -113,6 +114,9 @@ export async function createOrGetPayment(
     return result;
   }
   const prepared = await preparePayment(result.payment);
+  if (prepared.status !== "pending") {
+    return { kind: "price-changed" };
+  }
   return {
     kind: "payment",
     payment: paymentInfo(prepared, result.voucherAllowed),

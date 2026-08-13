@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 
 import { test, expect } from "@playwright/test";
 
+import { loginAsUser } from "./helpers/auth";
 import { getDb, prismaNow } from "./helpers/db";
 import { createUser, createInvitation, createPayment, cleanupUser } from "./helpers/fixtures";
 
@@ -211,16 +212,66 @@ test.describe("Casso webhook", () => {
       cleanupUser(user.id);
     }
   });
+
+  test("superseded payment cannot activate an invitation", async ({ request }) => {
+    const user = createUser();
+    try {
+      const invitation = createInvitation(user.id);
+      const payment = createPayment(invitation.id, {
+        code: "CDSUPR22",
+        amount: 150_000,
+        status: "superseded",
+      });
+      const body = cassoBody(`thanh toan ${payment.code}`, 150_000);
+
+      const response = await request.post(WEBHOOK_PATH, {
+        headers: { "x-casso-signature": signCasso(body) },
+        data: body,
+      });
+
+      expect(response.status()).toBe(200);
+      expect(getPayment(payment.code)?.status).toBe("superseded");
+      expect(getInvitationPaid(invitation.id)).toBe(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("legacy voucher-cancelled Casso payment still settles", async ({ request }) => {
+    const user = createUser();
+    try {
+      const invitation = createInvitation(user.id);
+      const payment = createPayment(invitation.id, {
+        code: "CDCAN2EL",
+        amount: 130_000,
+        status: "cancelled",
+        voucherCode: "LEGACY20",
+      });
+      const body = cassoBody(`thanh toan ${payment.code}`, 130_000);
+
+      const response = await request.post(WEBHOOK_PATH, {
+        headers: { "x-casso-signature": signCasso(body) },
+        data: body,
+      });
+
+      expect(response.status()).toBe(200);
+      expect(getPayment(payment.code)?.status).toBe("paid");
+      expect(getInvitationPaid(invitation.id)).toBe(1);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
 });
 
 test.describe("Payment status polling", () => {
-  test("pending payment → { status: 'pending' }", async ({ request }) => {
+  test("pending payment → { status: 'pending' }", async ({ page, context }) => {
     const user = createUser();
     try {
       const inv = createInvitation(user.id);
       const { code } = createPayment(inv.id, { code: "CDSTAT23", status: "pending" });
 
-      const res = await request.get(`/api/payment/${code}/status`);
+      await loginAsUser(context, user.id);
+      const res = await page.request.get(`/api/payment/${code}/status`);
       expect(res.status()).toBe(200);
       expect(await res.json()).toEqual({ status: "pending" });
     } finally {
@@ -228,7 +279,7 @@ test.describe("Payment status polling", () => {
     }
   });
 
-  test("after webhook marks paid → { status: 'paid' }", async ({ request }) => {
+  test("after webhook marks paid → { status: 'paid' }", async ({ request, page, context }) => {
     const user = createUser();
     try {
       const inv = createInvitation(user.id);
@@ -241,7 +292,8 @@ test.describe("Payment status polling", () => {
       });
       expect(webhook.status()).toBe(200);
 
-      const res = await request.get(`/api/payment/${code}/status`);
+      await loginAsUser(context, user.id);
+      const res = await page.request.get(`/api/payment/${code}/status`);
       expect(res.status()).toBe(200);
       expect(await res.json()).toEqual({ status: "paid" });
     } finally {
@@ -249,7 +301,7 @@ test.describe("Payment status polling", () => {
     }
   });
 
-  test("expired pending payment → { status: 'expired' }", async ({ request }) => {
+  test("expired pending payment → { status: 'expired' }", async ({ page, context }) => {
     const user = createUser();
     try {
       const inv = createInvitation(user.id);
@@ -257,7 +309,8 @@ test.describe("Payment status polling", () => {
       const stale = new Date(Date.now() - 48 * 60 * 60 * 1000);
       getDb().prepare(`UPDATE Payment SET createdAt = ? WHERE id = ?`).run(prismaNow(stale), payId);
 
-      const res = await request.get(`/api/payment/${code}/status`);
+      await loginAsUser(context, user.id);
+      const res = await page.request.get(`/api/payment/${code}/status`);
       expect(res.status()).toBe(200);
       expect(await res.json()).toEqual({ status: "expired" });
     } finally {
@@ -265,9 +318,64 @@ test.describe("Payment status polling", () => {
     }
   });
 
-  test("unknown code → 404", async ({ request }) => {
-    const res = await request.get(`/api/payment/CDNOPE22/status`);
-    expect(res.status()).toBe(404);
-    expect(await res.json()).toEqual({ error: "not found" });
+  test("unknown code → 404", async ({ page, context }) => {
+    const user = createUser();
+    try {
+      await loginAsUser(context, user.id);
+      const res = await page.request.get(`/api/payment/CDNOPE22/status`);
+      expect(res.status()).toBe(404);
+      expect(await res.json()).toEqual({ error: "not found" });
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("payment status rejects unauthenticated GET", async ({ request }) => {
+    const response = await request.get("/api/payment/CDNOPE22/status", {
+      maxRedirects: 0,
+    });
+    expect(response.status()).toBe(307);
+    expect(response.headers().location).toContain("/login");
+  });
+
+  test("payment status hides another user's payment like an unknown code", async ({ page, context }) => {
+    const userA = createUser();
+    const userB = createUser();
+    const invitationA = createInvitation(userA.id);
+    const paymentA = createPayment(invitationA.id, {
+      code: "CDOWNER2",
+      status: "pending",
+    });
+    try {
+      await loginAsUser(context, userB.id);
+      const ownedByA = await page.request.get(`/api/payment/${paymentA.code}/status`);
+      const unknown = await page.request.get("/api/payment/CDNOPE22/status");
+      expect(ownedByA.status()).toBe(404);
+      expect(await ownedByA.json()).toEqual({ error: "not found" });
+      expect(unknown.status()).toBe(404);
+      expect(await unknown.json()).toEqual({ error: "not found" });
+    } finally {
+      cleanupUser(userA.id);
+      cleanupUser(userB.id);
+    }
+  });
+
+  test("payment status returns exact local superseded for its owner", async ({ page, context }) => {
+    const user = createUser();
+    const invitation = createInvitation(user.id);
+    const payment = createPayment(invitation.id, {
+      code: "CDSUPER2",
+      provider: "payos",
+      providerOrderCode: "987654398",
+      status: "superseded",
+    });
+    try {
+      await loginAsUser(context, user.id);
+      const response = await page.request.get(`/api/payment/${payment.code}/status`);
+      expect(response.status()).toBe(200);
+      expect(await response.json()).toEqual({ status: "superseded" });
+    } finally {
+      cleanupUser(user.id);
+    }
   });
 });

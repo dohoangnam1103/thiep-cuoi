@@ -20,6 +20,14 @@ async function main() {
     env,
   });
 
+  // WAL lets the Playwright workers read the db while the server writes it.
+  // In rollback-journal mode a settling webhook and a worker assertion fight
+  // over the single lock and the loser times out as P1008 (SQLITE_BUSY).
+  const Database = (await import("better-sqlite3")).default;
+  const raw = new Database(path.join(DATA_DIR, "test.db"));
+  raw.pragma("journal_mode = WAL");
+  raw.close();
+
   const { PrismaClient } = await import("../../src/generated/prisma/client");
   const { PrismaBetterSqlite3 } = await import("@prisma/adapter-better-sqlite3");
   const bcrypt = (await import("bcryptjs")).default;

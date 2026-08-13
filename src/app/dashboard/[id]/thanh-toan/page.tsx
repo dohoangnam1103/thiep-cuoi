@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { createOrGetPayment } from "./actions";
-import { PaymentPanel } from "./PaymentPanel";
+import { PaymentPanel, PaymentPriceChangedCard } from "./PaymentPanel";
 
 export default async function PaymentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -29,6 +29,8 @@ export default async function PaymentPage({ params }: { params: Promise<{ id: st
               : t("complimentaryDescription")}
           </p>
         </div>
+      ) : preparation.kind === "price-changed" ? (
+        <PaymentPriceChangedCard />
       ) : (
         <>
           <h1 className="mt-3 font-pattaya text-3xl text-foreground">Thanh toán</h1>
