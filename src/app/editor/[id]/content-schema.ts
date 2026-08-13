@@ -84,8 +84,19 @@ export const contentSchema = z.object({
   groomAccountName: optionalName(120),
 });
 
+export type EditorErrorCode =
+  | "invitationNotFound"
+  | "invalidData"
+  | "slugMissing"
+  | "slugMalformed"
+  | "slugTaken"
+  | "coupleRequired"
+  | "dateRequired"
+  | "timeRequired";
+
 export type EditorState = {
   error?: string;
+  errorCode?: EditorErrorCode;
   focusField?: string;
   ok?: boolean;
   persisted?: boolean;
