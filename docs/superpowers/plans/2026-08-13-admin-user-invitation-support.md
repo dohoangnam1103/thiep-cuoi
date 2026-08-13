@@ -613,6 +613,7 @@ git commit -m "feat(invitation): support complimentary activation"
 **Files:**
 - Create: `src/lib/invitation-pricing.ts`
 - Create: `src/lib/invitation-pricing.test.ts`
+- Create: `src/lib/payment-service.test.ts`
 - Modify: `src/lib/payment-config.ts`
 - Modify: `src/lib/payment-service.ts`
 - Modify: `src/app/dashboard/[id]/thanh-toan/actions.ts`
@@ -760,16 +761,89 @@ export async function getPriceForUser(
 }
 ```
 
+- [ ] **Step 4b: Chốt typed reason cho huỷ payOS ngay trong payment slice**
+
+Task 3 là nơi đầu tiên gọi `cancelPayosPayment(payment, reason)`, vì vậy contract
+hai tham số phải được triển khai tại đây, không trì hoãn sang Task 5. Trước khi
+sửa `src/lib/payment-service.ts`, tạo `src/lib/payment-service.test.ts`:
+
+```ts
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import type { Payment } from "@/generated/prisma/client";
+import {
+  cancelPayosPayment,
+  PAYOS_CANCELLATION_REASONS,
+  type PayosCancellationReason,
+} from "./payment-service";
+
+test("payOS cancellation uses the bounded support reason contract", () => {
+  assert.deepEqual(PAYOS_CANCELLATION_REASONS, [
+    "voucher_changed",
+    "provider_create_failed",
+    "admin_price_changed",
+  ]);
+  const typedCancel: (
+    payment: Payment,
+    reason?: PayosCancellationReason,
+  ) => Promise<void> = cancelPayosPayment;
+  assert.equal(typedCancel, cancelPayosPayment);
+});
+```
+
+Chạy RED:
+
+```bash
+npx tsx --test src/lib/payment-service.test.ts
+npm run typecheck:tests
+```
+
+Expected: FAIL vì constants/type và optional reason chưa tồn tại. Sau đó dùng
+implementation tối thiểu chính xác trong `src/lib/payment-service.ts`:
+
+```ts
+export const PAYOS_CANCELLATION_REASONS = [
+  "voucher_changed",
+  "provider_create_failed",
+  "admin_price_changed",
+] as const;
+
+export type PayosCancellationReason =
+  (typeof PAYOS_CANCELLATION_REASONS)[number];
+
+export async function cancelPayosPayment(
+  payment: Payment,
+  reason: PayosCancellationReason = "voucher_changed",
+): Promise<void> {
+  if (payment.provider !== "payos" || !payment.providerOrderCode) return;
+  try {
+    await cancelPayosPaymentRequest(payment.providerOrderCode, reason);
+  } catch (error) {
+    console.error("Không thể hủy link payOS cũ", {
+      paymentId: payment.id,
+      error: error instanceof Error ? error.message : "unknown",
+    });
+  }
+}
+```
+
+Chạy lại hai command trên và yêu cầu unit test cùng test typecheck PASS. Mọi call
+ở cuối Task 3 và Task 7 dùng đúng ba literal trong union này; Task 5 chỉ tái sử
+dụng contract, không được định nghĩa lại signature.
+
 - [ ] **Step 5: Viết checkout/voucher E2E đang đỏ trước implementation**
 
-Trong `tests/e2e/helpers/fixtures.ts`, mở rộng overrides:
+Task 2 đã thêm `complimentary` vào fixture và câu INSERT. Task 3 **chỉ** thêm
+`adminPriceOverride` vào override type, danh sách cột SQL và bind values; không
+lặp lại hoặc ghi đè phần `complimentary` đã có:
 
 ```ts
 adminPriceOverride: number | null;
-complimentary: boolean;
 ```
 
-và thêm các cột này vào câu INSERT Invitation. Trong `tests/e2e/dashboard-manage.spec.ts`, thêm hai test:
+và thêm cột này vào câu INSERT Invitation cùng một bind value nullable. Trong
+`tests/e2e/dashboard-manage.spec.ts`, thêm hai test:
 
 ```ts
 test("admin final price is used for the next payment", async ({ page, context }) => {
@@ -849,7 +923,7 @@ test("a regular voucher still applies and returns updated payment info", async (
     await loginAsUser(context, user.id);
     await page.goto(`/dashboard/${invitation.id}/thanh-toan`);
     await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
-    await page.getByRole("button", { name: "Áp dụng" }).click();
+    await page.getByRole("button", { name: "Áp mã" }).click();
     await expect(page.getByText("130.000đ")).toBeVisible();
     const latest = latestPaymentOf(invitation.id);
     expect(latest).toMatchObject({ amount: 130_000, voucherCode: voucher.code });
@@ -872,7 +946,7 @@ test("a stale voucher form rejects an admin final price without mutating payment
     ).run(prismaNow(), invitation.id);
 
     await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
-    await page.getByRole("button", { name: "Áp dụng" }).click();
+    await page.getByRole("button", { name: "Áp mã" }).click();
     await expect(page.getByText("Thiệp đã có giá ưu đãi riêng.")).toBeVisible();
     expect(latestPaymentOf(invitation.id)).toMatchObject({
       id: before.id,
@@ -890,10 +964,13 @@ test("a stale voucher form rejects an admin final price without mutating payment
 Chạy trước khi sửa action:
 
 ```bash
-npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation|regular voucher|stale voucher'
+npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation|regular voucher|stale voucher|non-owner cannot access payment page'
 ```
 
-Expected: FAIL vì override chưa điều khiển amount/visibility, activated invitation vẫn tạo payment hoặc stale voucher vẫn ghi đè giá.
+Expected: các case override/complimentary/stale voucher FAIL vì giá mới chưa điều
+khiển amount/visibility hoặc vẫn tạo payment; characterization voucher thường và
+`non-owner cannot access payment page (404)` tiếp tục PASS. Nếu non-owner không
+còn render 404 hoặc tạo payment, dừng và sửa ownership contract trước Step 6.
 
 - [ ] **Step 6: Làm checkout transaction-safe và định nghĩa result union đầy đủ**
 
@@ -901,10 +978,12 @@ Trong actions thanh toán, định nghĩa internal/public result riêng:
 
 ```ts
 type CheckoutTxResult =
+  | { kind: "not-found" }
   | { kind: "activated"; activation: "paid" | "complimentary" }
   | { kind: "payment"; payment: Payment; voucherAllowed: boolean };
 
 export type CheckoutPreparation =
+  | { kind: "not-found" }
   | { kind: "activated"; activation: "paid" | "complimentary" }
   | { kind: "payment"; payment: PaymentInfo };
 ```
@@ -943,7 +1022,7 @@ export async function createOrGetPayment(
       where: { id: invitationId, userId },
       select: { paid: true, complimentary: true, adminPriceOverride: true },
     });
-    if (!invitation) throw new Error("INVITATION_NOT_FOUND");
+    if (!invitation) return { kind: "not-found" };
 
     const activation = getInvitationActivation(invitation);
     if (activation !== "trial") return { kind: "activated", activation };
@@ -971,7 +1050,7 @@ export async function createOrGetPayment(
     return { kind: "payment", payment, voucherAllowed };
   });
 
-  if (result.kind === "activated") return result;
+  if (result.kind === "not-found" || result.kind === "activated") return result;
   const prepared = await preparePayment(result.payment);
   return {
     kind: "payment",
@@ -980,7 +1059,37 @@ export async function createOrGetPayment(
 }
 ```
 
-Nếu giá resolve `<= 0` trong một trial record, throw domain error `INVALID_COMPLIMENTARY_STATE`; không tạo payment 0 thay cho Admin entitlement. Sau commit, gọi `preparePayment`, rồi `paymentInfo(prepared, result.voucherAllowed)`. Page thanh toán bỏ query/guard `invitation.paid` riêng, gọi `createOrGetPayment(id)` đúng một lần, render activated state theo union và không mount `PaymentPanel` ở nhánh activated.
+Nếu giá resolve `<= 0` trong một trial record, throw domain error `INVALID_COMPLIMENTARY_STATE`; không tạo payment 0 thay cho Admin entitlement. Sau commit, gọi `preparePayment`, rồi `paymentInfo(prepared, result.voucherAllowed)`. Page thanh toán bỏ query/guard `invitation.paid` riêng, gọi `createOrGetPayment(id)` đúng một lần và chỉ map nhánh typed `not-found` sang `notFound()`:
+
+```ts
+const preparation = await createOrGetPayment(id);
+if (preparation.kind === "not-found") notFound();
+if (preparation.kind === "activated") {
+  const title = preparation.activation === "paid"
+    ? t("paidTitle")
+    : t("complimentaryTitle");
+  const description = preparation.activation === "paid"
+    ? t("paidDescription")
+    : t("complimentaryDescription");
+  return (
+    <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow">
+      <h1 className="font-heading text-2xl font-semibold text-foreground">{title}</h1>
+      <p className="mt-2 text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+return <PaymentPanel initial={preparation.payment} />;
+```
+
+Ở đây `t` là `await getTranslations("paymentActivation")`; các keys đã tồn tại
+từ Task 6 theo thứ tự thực thi bắt buộc. Giữ back link/page shell hiện có quanh
+ba nhánh, không tạo component giả hoặc thêm file ngoài file map.
+
+`verifySession()` và lookup ownership `{ id: invitationId, userId }` phải tiếp tục
+nằm trong action/transaction; page không được khôi phục pre-query riêng. Chỉ
+`not-found` được map thành 404, còn lỗi hạ tầng phải rethrow. Điều này bảo toàn
+test non-owner hiện có: User B thấy đúng UI 404 như ID lạ và không có payment nào
+được tạo cho thiệp của User A.
 
 - [ ] **Step 7: Viết voucher transaction tương tác, không nested transaction**
 
@@ -1083,15 +1192,19 @@ Expected: definition có hai parameters và mọi call có argument `voucherAllo
 ```bash
 npx tsx --test src/lib/invitation-pricing.test.ts
 npm run typecheck
-npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation|regular voucher|stale voucher'
+npm run typecheck:tests
+npx tsx --test src/lib/payment-service.test.ts
+npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation|regular voucher|stale voucher|non-owner cannot access payment page'
 ```
 
-Expected: unit tests PASS, typecheck exit 0; override, complimentary, voucher thường và stale-form E2E đều PASS.
+Expected: pricing/payment-service unit tests PASS, cả hai typecheck exit 0; override,
+complimentary, voucher thường, stale-form và non-owner 404 E2E đều PASS. Case
+non-owner vẫn không tạo payment.
 
 - [ ] **Step 9: Commit pricing/checkout slice**
 
 ```bash
-git add src/lib/invitation-pricing.ts src/lib/invitation-pricing.test.ts src/lib/payment-config.ts src/lib/payment-service.ts 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/helpers/fixtures.ts tests/e2e/dashboard-manage.spec.ts
+git add src/lib/invitation-pricing.ts src/lib/invitation-pricing.test.ts src/lib/payment-config.ts src/lib/payment-service.ts src/lib/payment-service.test.ts 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/helpers/fixtures.ts tests/e2e/dashboard-manage.spec.ts
 git commit -m "feat(payment): honor invitation final price overrides"
 ```
 
@@ -1109,6 +1222,7 @@ git commit -m "feat(payment): honor invitation final price overrides"
 - Modify: `src/app/dashboard/[id]/thanh-toan/actions.ts`
 - Modify: `src/app/dashboard/[id]/thanh-toan/page.tsx`
 - Modify: `src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx`
+- Modify: `tests/e2e/helpers/auth.ts`
 - Modify: `tests/e2e/payment-webhook.spec.ts`
 - Modify: `tests/e2e/payos-webhook.spec.ts`
 
@@ -1306,15 +1420,80 @@ test("legacy voucher-cancelled Casso payment still settles", async ({ request })
 });
 ```
 
-PayOS test dùng `provider:"payos"`, `status:"cancelled"`, signed `orderCode`/amount tương ứng và cùng assertions. Với superseded payment, gọi `GET /api/payment/${code}/status` bằng user session và assert JSON `status === "superseded"`.
+PayOS test dùng `provider:"payos"`, `status:"cancelled"`, signed `orderCode`/amount
+tương ứng và cùng assertions. Với superseded payment, gọi
+`GET /api/payment/${code}/status` bằng user session và assert JSON
+`status === "superseded"`.
 
-Chạy:
+Trong chính Step 4, trước mọi thay đổi route/service, thêm ba status-route tests
+vào `tests/e2e/payment-webhook.spec.ts`. Import `loginAsUser` và dùng
+`page.request` sau khi set cookie cho các request authenticated. Nếu cần request
+unauthenticated sau một login trong cùng test, thêm/export helper typed
+`logoutUser(context)` trong `tests/e2e/helpers/auth.ts` chỉ xoá cookie `session`.
+Các test phải mang tên chính xác và nằm trong file trước lần chạy RED:
 
-```bash
-npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium --grep 'superseded|legacy voucher-cancelled'
+```ts
+test("payment status rejects unauthenticated GET", async ({ request }) => {
+  const response = await request.get("/api/payment/CDNOPE22/status", {
+    maxRedirects: 0,
+  });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toContain("/login");
+});
+
+test("payment status hides another user's payment like an unknown code", async ({ page, context }) => {
+  const userA = createUser();
+  const userB = createUser();
+  const invitationA = createInvitation(userA.id);
+  const paymentA = createPayment(invitationA.id, {
+    code: "CDOWNER2",
+    status: "pending",
+  });
+  try {
+    await loginAsUser(context, userB.id);
+    const ownedByA = await page.request.get(`/api/payment/${paymentA.code}/status`);
+    const unknown = await page.request.get("/api/payment/CDNOPE22/status");
+    expect(ownedByA.status()).toBe(404);
+    expect(await ownedByA.json()).toEqual({ error: "not found" });
+    expect(unknown.status()).toBe(404);
+    expect(await unknown.json()).toEqual({ error: "not found" });
+  } finally {
+    cleanupUser(userA.id);
+    cleanupUser(userB.id);
+  }
+});
+
+test("payment status returns exact local superseded for its owner", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id);
+  const payment = createPayment(invitation.id, {
+    code: "CDSUPER2",
+    provider: "payos",
+    providerOrderCode: "987654321",
+    status: "superseded",
+  });
+  try {
+    await loginAsUser(context, user.id);
+    const response = await page.request.get(`/api/payment/${payment.code}/status`);
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual({ status: "superseded" });
+  } finally {
+    cleanupUser(user.id);
+  }
+});
 ```
 
-Expected: legacy Casso `cancelled` FAIL vì route hiện prefilter `pending`; superseded tests/status characterization không được bỏ dù đã xanh ở baseline.
+Test owner-superseded phải chạy với payOS provider và không mock provider; nếu
+route gọi remote reconciliation, test phải đỏ do network/provider error hoặc
+không trả exact local status. Chạy RED bao gồm cả ba title mới:
+
+```bash
+npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium --grep 'superseded|legacy voucher-cancelled|payment status rejects unauthenticated GET|payment status hides another user|payment status returns exact local superseded'
+```
+
+Expected: ít nhất unauthenticated và non-owner tests FAIL vì route hiện chưa gọi
+`verifySession()`/chưa bind ownership; legacy Casso `cancelled` cũng FAIL vì
+webhook hiện prefilter `pending`. Không được đổi expected thành public polling.
 
 - [ ] **Step 5: Siết conditional claim chống race**
 
@@ -1530,6 +1709,7 @@ Contract public sau Task 4 là:
 
 ```ts
 export type CheckoutPreparation =
+  | { kind: "not-found" }
   | { kind: "activated"; activation: "paid" | "complimentary" }
   | { kind: "price-changed" }
   | { kind: "payment"; payment: PaymentInfo };
@@ -1539,7 +1719,37 @@ Sau `preparePayment`, chỉ `prepared.status === "pending"` được chuyển th
 
 - [ ] **Step 8: Trả trạng thái superseded cho polling và UI**
 
-Status route đã trả `payment.status` ở cuối; giữ `superseded` nguyên trạng. Trong `PaymentPanel`, thay boolean expired đơn bằng state:
+Status route không được là endpoint public. Đầu `GET`, gọi `verifySession()` rồi
+query bằng code và ownership trong một query:
+
+```ts
+const { userId } = await verifySession();
+const payment = await prisma.payment.findFirst({
+  where: {
+    code,
+    invitation: { userId },
+  },
+});
+if (!payment) {
+  return Response.json({ error: "not found" }, { status: 404 });
+}
+```
+
+Query relation `invitation.userId = session.userId` (hoặc SQL/Prisma tương đương)
+là bắt buộc; không load theo code rồi trả lỗi quyền khác. Missing code và payment
+của user khác phải trả cùng status/body 404 để không lộ tồn tại. Chỉ gọi
+`reconcilePayosPayment` khi `payment.provider === "payos"` và local status là
+`pending` hoặc legacy voucher `cancelled` theo `isPaymentSettleable`; `superseded`
+trả nguyên local string ngay, không gọi provider.
+Giữ expiration mapping cho local pending sau nhánh reconciliation.
+
+Các characterization polling cũ cho pending, paid, expired và unknown code cũng
+phải dùng session: login owner trước ba request theo payment, và login một user
+fixture trước unknown-code request. Không xoá các assertions cũ; chỉ chuyển chúng
+từ public `request` sang authenticated `page.request` để toàn suite phản ánh
+contract mới.
+
+Trong `PaymentPanel`, thay boolean expired đơn bằng state:
 
 ```ts
 type PaymentTerminalState = "active" | "paid" | "expired" | "superseded";
@@ -1552,15 +1762,19 @@ Khi poll nhận `superseded`, dừng interval và render card có copy `paymentA
 ```bash
 npx tsx --test src/lib/payment-settlement.test.ts
 npm run typecheck
+npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium --grep 'superseded|legacy voucher-cancelled|payment status rejects unauthenticated GET|payment status hides another user|payment status returns exact local superseded'
 npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium
 ```
 
-Expected: unit/typecheck và toàn bộ Casso/payOS tests PASS, gồm pending, legacy cancelled settlement, structured reconciliation decision, exact superseded polling/status và superseded rejection.
+Expected: unit/typecheck, focused auth/ownership/status set và toàn bộ Casso/payOS
+tests PASS, gồm unauthenticated redirect theo session semantics, identical 404 cho
+missing/non-owner, pending và legacy cancelled settlement, structured reconciliation
+decision, exact owner superseded status không remote reconcile và superseded rejection.
 
 - [ ] **Step 10: Commit settlement hardening**
 
 ```bash
-git add src/lib/payment-settlement.ts src/lib/payment-settlement.test.ts src/lib/payment-service.ts src/app/api/casso/webhook/route.ts src/app/api/payos/webhook/route.ts 'src/app/api/payment/[code]/status/route.ts' 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts
+git add src/lib/payment-settlement.ts src/lib/payment-settlement.test.ts src/lib/payment-service.ts src/app/api/casso/webhook/route.ts src/app/api/payos/webhook/route.ts 'src/app/api/payment/[code]/status/route.ts' 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/helpers/auth.ts tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts
 git commit -m "fix(payment): reject superseded payment settlements"
 ```
 
@@ -1576,7 +1790,6 @@ git commit -m "fix(payment): reject superseded payment settlements"
 - Create: `src/lib/admin-support-input.ts`
 - Create: `src/lib/admin-support-input.test.ts`
 - Modify: `src/lib/admin-dal.ts`
-- Modify: `src/lib/payment-service.ts`
 
 - [ ] **Step 1: Viết audit unit tests đang đỏ**
 
@@ -1903,26 +2116,20 @@ export async function verifyAdmin(): Promise<{
 
 Đây là thay đổi additive; các caller hiện chỉ destructure `adminId` hoặc bỏ qua return nên không cần nới quyền.
 
-- [ ] **Step 6: Cho `cancelPayosPayment` nhận lý do cụ thể**
+- [ ] **Step 6: Tái sử dụng typed cancellation contract từ Task 3**
 
-Đổi signature:
+Không sửa hoặc định nghĩa lại `cancelPayosPayment` trong Task 5. Signature
+`(payment, reason?: PayosCancellationReason)` cùng ba reason literal đã được test
+và triển khai ở Task 3. Chỉ xác nhận primitives mới không tạo thêm wrapper hoặc
+signature cạnh tranh:
 
-```ts
-export async function cancelPayosPayment(
-  payment: Payment,
-  reason = "voucher_changed",
-): Promise<void> {
-  if (payment.provider !== "payos" || !payment.providerOrderCode) return;
-  try {
-    await cancelPayosPaymentRequest(payment.providerOrderCode, reason);
-  } catch (error) {
-    console.error("Không thể hủy link payOS cũ", {
-      paymentId: payment.id,
-      error: error instanceof Error ? error.message : "unknown",
-    });
-  }
-}
+```bash
+rg -n 'export async function cancelPayosPayment' src/lib
 ```
+
+Expected: đúng một definition tại `src/lib/payment-service.ts`; các call site dùng
+`voucher_changed`, `provider_create_failed` hoặc `admin_price_changed` theo typed
+union của Task 3.
 
 - [ ] **Step 7: Chạy unit và typecheck**
 
@@ -1936,7 +2143,7 @@ Expected: audit tests PASS; typecheck exit 0.
 - [ ] **Step 8: Commit primitive slice**
 
 ```bash
-git add src/lib/admin-audit.ts src/lib/admin-audit.test.ts src/lib/invitation-editor-audit.ts src/lib/invitation-editor-audit.test.ts src/lib/admin-support-input.ts src/lib/admin-support-input.test.ts src/lib/admin-dal.ts src/lib/payment-service.ts
+git add src/lib/admin-audit.ts src/lib/admin-audit.test.ts src/lib/invitation-editor-audit.ts src/lib/invitation-editor-audit.test.ts src/lib/admin-support-input.ts src/lib/admin-support-input.test.ts src/lib/admin-dal.ts
 git commit -m "feat(admin): add support audit primitives"
 ```
 
@@ -2372,13 +2579,89 @@ test("direct price action rejects an already-paid invitation without side effect
 
 Thêm và export các SQL helpers typed được gọi ở trên trong `tests/e2e/helpers/fixtures.ts`; mỗi helper chỉ SELECT/COUNT, không tự mutation ngoài fixture seed. Cũng thêm từ đầu các test mang tên chính xác: `non-super admin creates an invitation for the selected user with an audit log`, `admin final price supersedes pending payment and records the actor`, `admin grants complimentary access without creating revenue`, và hai cases `invalid admin price ... changes nothing`. Các test này assert DB, payment và audit đúng như test bodies bên dưới; tất cả đều tồn tại trước lần chạy đỏ ở Step 2.
 
+Trước implementation, thêm luôn test parameterized mang title chứa chính xác
+`admin role parity`. Nó phải chạy cùng chuỗi mutation với cả Admin thường và
+SuperAdmin, không chỉ kiểm tra quyền đọc:
+
+```ts
+for (const isSuperAdmin of [false, true] as const) {
+  test(`admin role parity (${isSuperAdmin ? "super" : "regular"}) creates and prices invitations identically`, async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const admin = seedAdmin(isSuperAdmin);
+    const db = getDb();
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/users/${user.id}`);
+      await page.getByRole("button", { name: "Tạo thiệp mới" }).click();
+      await page.locator('button[data-template-id="song-hy-red"]').click();
+      await expect(page).toHaveURL(/\/admin\/invitations\/[^/]+\/edit$/);
+
+      const invitation = db.prepare(`
+        SELECT id FROM Invitation
+        WHERE userId = ? ORDER BY createdAt DESC, id DESC LIMIT 1
+      `).get(user.id) as { id: string };
+
+      await page.goto(`/admin/users/${user.id}`);
+      await page.getByRole("button", { name: "Đặt giá" }).click();
+      await page.getByLabel("Giá cuối cùng (VND)").fill("79000");
+      await page.getByRole("button", { name: "Lưu giá" }).click();
+      await expect.poll(() => invitationPriceState(invitation.id)).toEqual({
+        adminPriceOverride: 79_000,
+        complimentary: 0,
+      });
+
+      await page.getByRole("button", { name: "Đặt giá" }).click();
+      await page.getByLabel("Giá cuối cùng (VND)").fill("0");
+      page.once("dialog", (dialog) => dialog.accept());
+      await page.getByRole("button", { name: "Lưu giá" }).click();
+      await expect.poll(() => invitationPriceState(invitation.id)).toEqual({
+        adminPriceOverride: 0,
+        complimentary: 1,
+      });
+
+      const audits = db.prepare(`
+        SELECT action, adminId, adminEmail
+        FROM AdminAuditLog WHERE invitationId = ?
+        ORDER BY createdAt, id
+      `).all(invitation.id) as {
+        action: string;
+        adminId: string | null;
+        adminEmail: string;
+      }[];
+      expect(audits.map((row) => row.action)).toEqual([
+        "INVITATION_CREATED_FOR_USER",
+        "PRICE_OVERRIDE_SET",
+        "PRICE_OVERRIDE_SET",
+        "COMPLIMENTARY_GRANTED",
+      ]);
+      expect(audits.every((row) => (
+        row.adminId === admin.id && row.adminEmail === admin.email
+      ))).toBe(true);
+    } finally {
+      db.prepare("DELETE FROM AdminAuditLog WHERE targetUserId = ? OR targetUserEmail = ?")
+        .run(user.id, user.email);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+}
+```
+
+Hai iterations phải có cùng final DB state và cùng action list; khác biệt duy nhất
+được phép là snapshot `adminId/adminEmail`, và mỗi row phải khớp actor đã login của
+iteration đó.
+
 - [ ] **Step 2: Chạy tests để xác nhận đỏ**
 
 ```bash
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|cannot open|system user|creates an invitation|final price|complimentary|invalid admin price|unauthenticated direct|cross-profile|payment race|already-paid'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|cannot open|system user|creates an invitation|final price|complimentary|invalid admin price|unauthenticated direct|cross-profile|payment race|already-paid|admin role parity'
 ```
 
-Expected: list/detail và mọi create/price mutation test FAIL vì route/action/UI chưa tồn tại. Ghi lại output đỏ trước Step 3.
+Expected: list/detail, mọi create/price mutation và cả hai `admin role parity`
+iterations FAIL vì route/action/UI chưa tồn tại. Ghi lại output đỏ trước Step 3.
 
 - [ ] **Step 3: Nâng `/admin/users` với search params Promise**
 
@@ -2724,10 +3007,12 @@ Không tin `userId`/paid/price từ hidden input. Direct action tests ở Step 1
 
 ```bash
 npm run typecheck
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|creates an invitation|final price|complimentary|invalid admin price|unauthenticated direct|cross-profile|payment race|already-paid'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|creates an invitation|final price|complimentary|invalid admin price|unauthenticated direct|cross-profile|payment race|already-paid|admin role parity'
 ```
 
-Expected: typecheck exit 0; selected tests PASS.
+Expected: typecheck exit 0; selected tests PASS, gồm cả Admin thường và SuperAdmin
+trong hai `admin role parity` iterations với cùng outcome/action list và đúng actor
+snapshot riêng.
 
 - [ ] **Step 9: Commit profile/UI slice**
 
@@ -3131,15 +3416,43 @@ Parameterize happy path bằng `for (const isSuperAdmin of [false, true] as cons
 
 Mỗi test snapshot `Invitation`, `InvitationContent` và `COUNT(AdminAuditLog)` trước submit, rồi deep-compare sau failure. Không chỉ assert UI error.
 
-Thêm test cross-binding riêng: tạo User A/B và thiệp A/B; mở support editor A, tamper invocation của `saveSupportedInvitation` và `publishSupportedInvitation` lần lượt sang ID thiệp B nhưng giữ form/state A. Mỗi action chỉ có một bound `invitationId`, nên kết quả an toàn phải là hoặc cập nhật đúng thiệp B sau khi action re-query B (không bao giờ dùng user/context A), hoặc `invitationNotFound` nếu fixture đánh dấu B demo/missing. Assert thiệp A tuyệt đối không đổi, audit mới nếu có chỉ mang đồng thời `targetUserId=userB.id` và `invitationId=invitationB.id`; không được tạo row ghép User A với thiệp B. Test này khóa A/B isolation cho cả ownership snapshot lẫn audit, không dựa vào hidden `userId`.
+Thêm test mang title chính xác
+`support editor cross-binding re-derives user from invitation`: tạo User A/B và
+hai thiệp thật A/B; mở support editor A, rồi tamper bound invocation của
+`saveSupportedInvitation` và `publishSupportedInvitation` lần lượt sang ID thiệp
+B trong khi giữ submitted form/state từ A. Vì B là thiệp thật, cả action phải
+re-query B và derive `targetUserId/targetUserEmail` từ `invitationB.user`, không
+dùng profile/context A và không nhận hidden `userId`.
+
+Test snapshot cả A/B trước invocation. Sau save, A phải giữ nguyên toàn bộ
+content/status; B nhận đúng submitted content và audit save chỉ có cặp
+`targetUserId=userB.id, invitationId=invitationB.id`. Sau publish, A vẫn giữ
+nguyên; B có status/slug/content published đúng và audit publish cũng chỉ có cặp
+B/B. Cuối test query trực tiếp invariant âm:
+
+```ts
+const mismatchedAuditCount = (getDb().prepare(`
+  SELECT COUNT(*) AS count FROM AdminAuditLog
+  WHERE (targetUserId = ? AND invitationId = ?)
+     OR (targetUserId = ? AND invitationId = ?)
+`).get(userA.id, invitationB.id, userB.id, invitationA.id) as { count: number }).count;
+expect(mismatchedAuditCount).toBe(0);
+```
+
+Nếu variant riêng dùng B demo/missing, action phải trả `invitationNotFound`, cả
+A/B và audit giữ nguyên; không thay thế golden real-B cross-binding case ở trên.
 
 - [ ] **Step 2: Chạy tests để xác nhận đỏ**
 
 ```bash
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo|unauthenticated support|invalid template|slug wrapper|map wrapper'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo|unauthenticated support|invalid template|slug wrapper|map wrapper|cross-binding'
 ```
 
 Expected: route 404 và mọi happy/security path FAIL trước support route/actions.
+Case `cross-binding` phải đỏ và phơi bày việc bảo vệ A/B chưa tồn tại: một
+implementation không re-query invitation B có thể ghi content vào sai thiệp hoặc
+tạo audit ghép `targetUserId=A` với `invitationId=B`; không được chấp nhận test
+xanh nếu chỉ kiểm UI mà bỏ qua hai DB snapshot và mismatch count.
 
 - [ ] **Step 3: Viết support actions với auth riêng**
 
@@ -3490,11 +3803,15 @@ Support page link/back context chỉ lấy `invitation.user.id/email` từ query
 
 ```bash
 npm run typecheck
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo|unauthenticated support|invalid template|slug wrapper|map wrapper'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo|unauthenticated support|invalid template|slug wrapper|map wrapper|cross-binding'
 npx playwright test tests/e2e/editor.spec.ts tests/e2e/admin.spec.ts --project=chromium --grep 'owner opens editor|demo edit page loads'
 ```
 
-Expected: typecheck exit 0; support happy path cho Admin/SuperAdmin, demo/unknown rejection, mọi direct-action auth/invalid-data zero-write/zero-audit regression, owner và demo tests đều PASS.
+Expected: typecheck exit 0; support happy path cho Admin/SuperAdmin, demo/unknown
+rejection, mọi direct-action auth/invalid-data zero-write/zero-audit regression,
+owner và demo tests đều PASS. `cross-binding` xác nhận A không đổi, B nhận đúng
+save/publish state sau khi action re-derive owner từ B, audit chỉ có cặp B/B và
+`mismatchedAuditCount === 0`.
 
 - [ ] **Step 7: Commit support editor slice**
 
@@ -4081,15 +4398,27 @@ Nếu mục nào FAIL, ghi route, viewport, bước tái hiện và sửa trong 
 
 - [ ] **Step 7: Ghi kết quả và bàn giao, không tự deploy**
 
-Tạo handoff trong final response theo mẫu thực tế (không tạo file mới):
+Tạo handoff trong final response bằng dữ liệu thật của lần chạy này, không tạo
+file mới và không để template token. Handoff bắt buộc chứa:
 
-```text
-Migration rehearsal: <command> — PASS/FAIL
-Quality gates: <command + số pass thực tế cho từng suite>
-Feature commits: <git log --oneline "$feature_base"..HEAD>
-Preserved overlaps: <danh sách file + commit/patch tiền đề>
-Manual QA: <6 dòng PASS/FAIL từ Step 6>
-Deployment: NOT RUN — chờ yêu cầu riêng
-```
+1. `Migration rehearsal`: paste nguyên các command deploy/SQLite verification đã
+   chạy ở Step 2, exit status và output xác nhận `quick_check=ok`, số foreign-key
+   rows và legacy defaults; kết luận rõ `PASS` hoặc `FAIL`.
+2. `Quality gates`: liệt kê từng command thực tế ở Steps 3–5 cùng exit status.
+   Với `npm run test:unit` và từng Playwright invocation, paste summary có số test
+   pass/fail/skipped thực tế; không viết chung chung “tests pass”. Với build,
+   typecheck, typecheck tests, lint, Prisma validate/generate, ghi output kết luận
+   thực tế tương ứng.
+3. `Feature commits`: paste nguyên output thực tế của
+   `git log --oneline "$feature_base"..HEAD`; không tóm tắt hoặc thay bằng tên
+   command.
+4. `Preserved overlaps`: liệt kê từng file overlap tiền đề thực tế cùng commit SHA
+   hoặc patch nguồn đã được giữ lại. Nếu scan xác minh không có overlap, ghi rõ
+   `None` và command đã dùng để xác minh; không để mục trống.
+5. `Manual QA`: paste đúng sáu entry của Step 6, mỗi entry có literal `PASS` hoặc
+   `FAIL` và quan sát thực tế. Sáu entry phải lần lượt cover desktop search,
+   mobile overflow, keyboard/focus, support banner/back link, full golden path và
+   dashboard paid-versus-complimentary; không gộp hoặc bỏ entry nào.
+6. `Deployment`: ghi nguyên `NOT RUN — chờ yêu cầu riêng`.
 
 Nếu người dùng yêu cầu deploy sau đó, dùng đúng runbook Mini PC, backup SQLite trước migration và deploy từ một source tree chỉ chứa feature đã duyệt.
