@@ -1,5 +1,10 @@
 import "server-only";
 
+import type { Prisma } from "@/generated/prisma/client";
+import {
+  resolveEffectiveInvitationPrice,
+  resolveSystemInvitationPrice,
+} from "@/lib/invitation-pricing";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_PRODUCT_PRICE, DEFAULT_REPEAT_CUSTOMER_PRICE } from "@/lib/payment";
 
@@ -9,6 +14,11 @@ export type PaymentPrices = {
   productPrice: number;
   repeatCustomerPrice: number;
 };
+
+type PaymentPriceClient = Pick<
+  Prisma.TransactionClient,
+  "appConfig" | "invitation" | "payment"
+>;
 
 export async function getPaymentPrices(): Promise<PaymentPrices> {
   const config = await prisma.appConfig.findUnique({
@@ -27,19 +37,49 @@ export async function getProductPrice(): Promise<number> {
   return productPrice;
 }
 
-export async function getPriceForUser(userId: string, currentInvitationId: string): Promise<number> {
-  const [{ productPrice, repeatCustomerPrice }, paidCount] = await Promise.all([
-    getPaymentPrices(),
-    prisma.payment.count({
+export async function getPriceForInvitation(
+  db: PaymentPriceClient,
+  userId: string,
+  invitationId: string,
+): Promise<number> {
+  const [config, invitation, paidCount] = await Promise.all([
+    db.appConfig.findUnique({
+      where: { id: APP_CONFIG_ID },
+      select: { productPrice: true, repeatCustomerPrice: true },
+    }),
+    db.invitation.findFirst({
+      where: { id: invitationId, userId },
+      select: { adminPriceOverride: true },
+    }),
+    db.payment.count({
       where: {
         status: "paid",
-        invitationId: { not: currentInvitationId },
+        invitationId: { not: invitationId },
         invitation: { userId },
       },
     }),
   ]);
+  if (!invitation) throw new Error("Không tìm thấy thiệp");
 
-  return paidCount > 0 ? repeatCustomerPrice : productPrice;
+  const productPrice = config?.productPrice ?? DEFAULT_PRODUCT_PRICE;
+  const repeatCustomerPrice =
+    config?.repeatCustomerPrice ?? DEFAULT_REPEAT_CUSTOMER_PRICE;
+  const systemPrice = resolveSystemInvitationPrice(
+    productPrice,
+    repeatCustomerPrice,
+    paidCount,
+  );
+  return resolveEffectiveInvitationPrice(
+    invitation.adminPriceOverride,
+    systemPrice,
+  );
+}
+
+export async function getPriceForUser(
+  userId: string,
+  currentInvitationId: string,
+): Promise<number> {
+  return getPriceForInvitation(prisma, userId, currentInvitationId);
 }
 
 export async function updatePaymentPrices({ productPrice, repeatCustomerPrice }: PaymentPrices): Promise<void> {

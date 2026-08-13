@@ -14,7 +14,13 @@ import {
 } from "./helpers/fixtures";
 
 type GuestRow = { id: string; token: string; name: string };
-type PaymentRow = { id: string; code: string; amount: number; status: string };
+type PaymentRow = {
+  id: string;
+  code: string;
+  amount: number;
+  status: string;
+  voucherCode: string | null;
+};
 
 function seedRsvp(
   invitationId: string,
@@ -53,8 +59,46 @@ function guestsOf(invitationId: string): GuestRow[] {
 
 function paymentsOf(invitationId: string): PaymentRow[] {
   return getDb()
-    .prepare(`SELECT id, code, amount, status FROM Payment WHERE invitationId = ?`)
+    .prepare(`SELECT id, code, amount, status, voucherCode FROM Payment WHERE invitationId = ?`)
     .all(invitationId) as PaymentRow[];
+}
+
+function createVoucher(input: {
+  amountOff: number;
+  active: boolean;
+}): { id: string; code: string } {
+  const id = `v-${randomUUID()}`;
+  const code = `E2E${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+  getDb()
+    .prepare(
+      `INSERT INTO Voucher (id, code, amountOff, active, usedCount, createdAt)
+       VALUES (?, ?, ?, ?, 0, ?)`,
+    )
+    .run(id, code, input.amountOff, input.active ? 1 : 0, prismaNow());
+  return { id, code };
+}
+
+function cleanupVoucher(code: string): void {
+  getDb().prepare(`DELETE FROM Voucher WHERE code = ?`).run(code);
+}
+
+function latestPaymentOf(invitationId: string): {
+  id: string;
+  amount: number;
+  voucherCode: string | null;
+  status: string;
+} {
+  return getDb()
+    .prepare(
+      `SELECT id, amount, voucherCode, status FROM Payment
+       WHERE invitationId = ? ORDER BY createdAt DESC, id DESC LIMIT 1`,
+    )
+    .get(invitationId) as {
+    id: string;
+    amount: number;
+    voucherCode: string | null;
+    status: string;
+  };
 }
 
 test.describe("dashboard guests", () => {
@@ -280,6 +324,102 @@ test.describe("dashboard thanh-toan (payment)", () => {
       expect(paymentsOf(inv.id).length).toBe(1);
     } finally {
       cleanup(user.id);
+    }
+  });
+
+  test("admin final price is used for the next payment", async ({ page, context }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id, { adminPriceOverride: 79_000 });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+
+      await expect(page.getByText("79.000đ", { exact: true })).toBeVisible();
+      await expect(page.getByPlaceholder("Mã giảm giá")).toHaveCount(0);
+      await expect.poll(() => paymentsOf(inv.id).length).toBe(1);
+      expect(paymentsOf(inv.id).at(-1)?.amount).toBe(79_000);
+    } finally {
+      cleanup(user.id);
+    }
+  });
+
+  test("complimentary invitation creates no payment", async ({ page, context }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id, {
+      paid: false,
+      adminPriceOverride: 0,
+      complimentary: true,
+    });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+
+      await expect(
+        page.getByRole("heading", { name: "Được tặng miễn phí", exact: true }),
+      ).toBeVisible();
+      expect(paymentsOf(inv.id).length).toBe(0);
+    } finally {
+      cleanup(user.id);
+    }
+  });
+
+  test("a regular voucher still applies and returns updated payment info", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id);
+    const voucher = createVoucher({ amountOff: 20_000, active: true });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+      await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
+      await page.getByRole("button", { name: "Áp mã", exact: true }).click();
+
+      await expect(page.getByText("130.000đ", { exact: true })).toBeVisible();
+      expect(latestPaymentOf(inv.id)).toMatchObject({
+        amount: 130_000,
+        voucherCode: voucher.code,
+      });
+    } finally {
+      cleanup(user.id);
+      cleanupVoucher(voucher.code);
+    }
+  });
+
+  test("a stale voucher form rejects an admin final price without mutating payment", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id);
+    const voucher = createVoucher({ amountOff: 20_000, active: true });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+      await expect(page.getByPlaceholder("Mã giảm giá")).toBeVisible();
+      const before = latestPaymentOf(inv.id);
+
+      getDb()
+        .prepare(
+          `UPDATE Invitation SET adminPriceOverride = ?, updatedAt = ? WHERE id = ?`,
+        )
+        .run(79_000, prismaNow(), inv.id);
+      await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
+      await page.getByRole("button", { name: "Áp mã", exact: true }).click();
+
+      await expect(
+        page.getByText("Thiệp đã có giá ưu đãi riêng.", { exact: true }),
+      ).toBeVisible();
+      expect(latestPaymentOf(inv.id)).toMatchObject({
+        id: before.id,
+        amount: before.amount,
+        status: "pending",
+        voucherCode: null,
+      });
+    } finally {
+      cleanup(user.id);
+      cleanupVoucher(voucher.code);
     }
   });
 

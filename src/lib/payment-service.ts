@@ -23,6 +23,15 @@ function payosFields(data: PayosPaymentRequest) {
   };
 }
 
+export const PAYOS_CANCELLATION_REASONS = [
+  "voucher_changed",
+  "provider_create_failed",
+  "admin_price_changed",
+] as const;
+
+export type PayosCancellationReason =
+  (typeof PAYOS_CANCELLATION_REASONS)[number];
+
 export async function ensurePayosPaymentRequest(payment: Payment): Promise<Payment> {
   if (payment.provider !== "payos") return payment;
   if (!payment.providerOrderCode) {
@@ -58,13 +67,13 @@ export async function ensurePayosPaymentRequest(payment: Payment): Promise<Payme
   });
 }
 
-export async function cancelPayosPayment(payment: Payment): Promise<void> {
+export async function cancelPayosPayment(
+  payment: Payment,
+  reason: PayosCancellationReason = "voucher_changed",
+): Promise<void> {
   if (payment.provider !== "payos" || !payment.providerOrderCode) return;
   try {
-    await cancelPayosPaymentRequest(
-      payment.providerOrderCode,
-      "Thay đổi mã giảm giá",
-    );
+    await cancelPayosPaymentRequest(payment.providerOrderCode, reason);
   } catch (error) {
     console.error("Không thể hủy link payOS cũ", {
       paymentId: payment.id,

@@ -2,10 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { trackEvent } from "@/lib/analytics";
 import { BANK, buildVietQrUrl } from "@/lib/payment";
-import { applyVoucherToPayment, type PaymentInfo } from "./actions";
+import {
+  applyVoucherToPayment,
+  type PaymentInfo,
+  type VoucherErrorCode,
+} from "./actions";
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + "đ";
@@ -17,9 +22,10 @@ function formatDateTime(date: Date): string {
 
 export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
   const router = useRouter();
+  const t = useTranslations("paymentActivation");
   const [payment, setPayment] = useState(initial);
   const [voucherInput, setVoucherInput] = useState("");
-  const [voucherError, setVoucherError] = useState<string | null>(null);
+  const [voucherError, setVoucherError] = useState<VoucherErrorCode | null>(null);
   const [applying, setApplying] = useState(false);
   const [paid, setPaid] = useState(initial.status === "paid");
   const [expired, setExpired] = useState(() => Date.now() >= new Date(initial.expiresAt).getTime());
@@ -94,7 +100,7 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
         router.refresh();
       }
     } else {
-      setVoucherError(result.error);
+      setVoucherError(result.errorCode);
     }
   }
 
@@ -167,7 +173,7 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
         <div className="mt-5">
           {payment.voucherCode ? (
             <p className="text-sm text-green-700">Đã áp mã <span className="font-semibold">{payment.voucherCode}</span></p>
-          ) : (
+          ) : payment.voucherAllowed ? (
             <div className="flex gap-2">
               <input
                 value={voucherInput}
@@ -184,8 +190,12 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
                 {applying ? "Đang áp…" : "Áp mã"}
               </button>
             </div>
-          )}
-          {voucherError ? <p className="mt-2 text-sm text-red-600">{voucherError}</p> : null}
+          ) : null}
+          {voucherError ? (
+            <p className="mt-2 text-sm text-red-600">
+              {t(`errors.${voucherError}`)}
+            </p>
+          ) : null}
         </div>
 
         <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
