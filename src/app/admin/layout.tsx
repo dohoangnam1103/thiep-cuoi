@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 
+import viMessages from "../../../messages/vi.json";
 import "../globals.css";
 import { PetalField } from "@/components/petal-field";
 import { getCurrentAdmin } from "@/lib/admin-dal";
@@ -36,26 +38,34 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
       <body className="min-h-full bg-muted/20 text-foreground">
         <PetalField />
-        {admin ? (
-          <header className="border-b border-border bg-background">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-              <span className="font-heading text-lg text-primary">Quản trị</span>
-              <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                {nav.map((item) => (
-                  <Link key={item.href} href={item.href} className="text-muted-foreground hover:text-foreground">
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-              <form action={adminLogout} className="ml-auto">
-                <button type="submit" className="text-sm text-muted-foreground hover:text-destructive">
-                  Đăng xuất
-                </button>
-              </form>
-            </div>
-          </header>
-        ) : null}
-        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+        <NextIntlClientProvider
+          locale="vi"
+          messages={{
+            adminSupport: viMessages.adminSupport,
+            editor: { support: viMessages.editor.support },
+          }}
+        >
+          {admin ? (
+            <header className="border-b border-border bg-background">
+              <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+                <span className="font-heading text-lg text-primary">Quản trị</span>
+                <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                  {nav.map((item) => (
+                    <Link key={item.href} href={item.href} className="text-muted-foreground hover:text-foreground">
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+                <form action={adminLogout} className="ml-auto">
+                  <button type="submit" className="text-sm text-muted-foreground hover:text-destructive">
+                    Đăng xuất
+                  </button>
+                </form>
+              </div>
+            </header>
+          ) : null}
+          <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
