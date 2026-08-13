@@ -14,29 +14,34 @@ model User {
   createdAt           DateTime             @default(now())
   invitations         Invitation[]
   templateSuggestions TemplateSuggestion[]
+  adminAuditLogs      AdminAuditLog[]      @relation("AuditTargetUser")
 }
 
 model Admin {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String          @id @default(cuid())
+  email        String          @unique
   passwordHash String
-  isSuperAdmin Boolean  @default(false)
-  createdAt    DateTime @default(now())
+  isSuperAdmin Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  auditLogs    AdminAuditLog[]
 }
 
 model Invitation {
-  id                String    @id @default(cuid())
-  userId            String
-  slug              String?   @unique
-  templateId        String
-  status            String    @default("draft")
-  paid              Boolean   @default(false)
-  isDemo            Boolean   @default(false)
-  guestManagerToken String?   @unique
-  publishedAt       DateTime?
-  reminderSentAt    DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  userId             String
+  slug               String?   @unique
+  templateId         String
+  status             String    @default("draft")
+  paid               Boolean   @default(false)
+  isDemo             Boolean   @default(false)
+  adminPriceOverride Int?
+  complimentary      Boolean   @default(false)
+  complimentaryAt    DateTime?
+  guestManagerToken  String?   @unique
+  publishedAt        DateTime?
+  reminderSentAt     DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   content       InvitationContent?
@@ -49,9 +54,30 @@ model Invitation {
   guests        Guest[]
   rsvpQuestions RsvpQuestion[]
   payments      Payment[]
+  adminAuditLogs AdminAuditLog[] @relation("AuditInvitation")
 
   @@index([userId])
   @@index([isDemo])
+}
+
+model AdminAuditLog {
+  id              String   @id @default(cuid())
+  adminId         String?
+  adminEmail      String
+  targetUserId    String?
+  targetUserEmail String?
+  invitationId    String?
+  action          String
+  details         String?
+  createdAt       DateTime @default(now())
+
+  admin      Admin?      @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  targetUser User?       @relation("AuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  invitation Invitation? @relation("AuditInvitation", fields: [invitationId], references: [id], onDelete: SetNull)
+
+  @@index([targetUserId, createdAt])
+  @@index([invitationId, createdAt])
+  @@index([adminId, createdAt])
 }
 
 model Payment {
