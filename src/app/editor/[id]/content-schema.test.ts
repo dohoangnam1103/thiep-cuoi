@@ -23,6 +23,17 @@ test("contentSchema keeps the selected ceremony type", () => {
   assert.equal(result.ceremonyType, "vu-quy");
 });
 
+test("contentSchema keeps the selected album layout", () => {
+  const selected = contentSchema.parse({
+    templateId: "song-hy-red",
+    albumLayout: "coverflow",
+  });
+  const omitted = contentSchema.parse({ templateId: "song-hy-red" });
+
+  assert.equal(selected.albumLayout, "coverflow");
+  assert.equal(omitted.albumLayout, "grid");
+});
+
 test("parseCeremonies keeps aligned ceremony rows and skips fully empty rows", () => {
   const formData = new FormData();
   formData.append("ceremonyItemTitle", " Lễ vu quy ");

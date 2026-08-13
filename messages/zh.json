@@ -1001,8 +1001,6 @@
     "postCount": "{count} 篇文章",
     "empty": "尚无已发布的文章。",
     "backToBlog": "← 返回博客",
-    "cloneNote1": "这是 Thiệp Mừng Online 的界面克隆。原文的完整内容发布于 thiepmungonline.com。此副本保留文章结构、摘要和布局，仅供设计参考。",
-    "cloneNote2": "您可以通过上方导航栏，在此克隆中浏览所有在线婚礼请柬模板、辅助工具和价格。",
     "related": "相关文章"
   },
   "help": {

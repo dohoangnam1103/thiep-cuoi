@@ -1423,6 +1423,151 @@
       }
     }
   },
+  "templateSeoFacets": {
+    "eyebrow": "Bộ sưu tập thiệp cưới",
+    "faqTitle": "Câu hỏi thường gặp",
+    "resultsTitle": "Các mẫu thiệp trong bộ sưu tập này",
+    "socialImageAlt": "Ảnh xem trước mẫu thiệp cưới {name}",
+    "breadcrumb": {
+      "ariaLabel": "Đường dẫn trang",
+      "home": "Trang chủ",
+      "templates": "Mẫu thiệp"
+    },
+    "navigation": {
+      "title": "Khám phá mẫu thiệp theo phong cách và màu sắc",
+      "description": "Chọn bộ sưu tập phù hợp với concept ngày cưới, sau đó mở demo để xem đầy đủ hiệu ứng, ảnh, bản đồ và RSVP.",
+      "styleTitle": "Theo phong cách",
+      "colorTitle": "Theo màu sắc"
+    },
+    "items": {
+      "style-traditional": {
+        "linkLabel": "Truyền thống",
+        "metaTitle": "Mẫu thiệp cưới truyền thống đẹp | Thiệp Mừng Online",
+        "metaDescription": "Khám phá {count} mẫu thiệp cưới truyền thống với họa tiết Song Hỷ, long phụng và sắc màu trang trọng. Xem demo và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới truyền thống",
+        "subtitle": "{count} mẫu thiệp trang trọng cho lễ vu quy, thành hôn và báo hỷ.",
+        "intro": "Bộ sưu tập kết hợp biểu tượng cát tường với trải nghiệm thiệp online dễ xem trên điện thoại.",
+        "guideTitle": "Cách chọn thiệp cưới truyền thống",
+        "guide": "Hãy ưu tiên họa tiết phù hợp nghi thức gia đình: Song Hỷ cho vẻ trang trọng, long phụng cho không khí cổ điển, hoặc hoa văn Việt để tạo dấu ấn văn hóa.",
+        "faq1Question": "Thiệp truyền thống phù hợp lễ vu quy hay thành hôn?",
+        "faq1Answer": "Phù hợp cả hai. Bạn có thể thay tiêu đề nghi lễ, thông tin hai gia đình, ngày giờ và địa điểm trong trình chỉnh sửa.",
+        "faq2Question": "Thiệp cưới truyền thống có bắt buộc dùng màu đỏ không?",
+        "faq2Answer": "Không. Bộ sưu tập còn có các lựa chọn xanh, lam và đen, trong khi vẫn giữ họa tiết truyền thống."
+      },
+      "style-floral": {
+        "linkLabel": "Hoa lá",
+        "metaTitle": "Mẫu thiệp cưới hoa lá lãng mạn | Thiệp Mừng Online",
+        "metaDescription": "Khám phá {count} mẫu thiệp cưới hoa lá với hoa màu nước, lá xanh và bảng màu lãng mạn. Xem demo, thay ảnh và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới hoa lá",
+        "subtitle": "{count} mẫu thiệp mềm mại, lãng mạn cho tiệc sân vườn và lễ cưới trong nhà.",
+        "intro": "Hoa màu nước, cành lá và bảng màu tự nhiên giúp ảnh cặp đôi trở thành điểm nhấn chính.",
+        "guideTitle": "Cách phối mẫu hoa lá với concept cưới",
+        "guide": "Chọn màu hoa đồng điệu với concept cưới và trang phục. Nền sáng giúp ảnh cặp đôi nổi bật; nền đậm tạo cảm giác ấm áp và trang trọng hơn.",
+        "faq1Question": "Thiệp hoa lá hợp với đám cưới nào?",
+        "faq1Answer": "Phong cách này phù hợp tiệc sân vườn, lễ cưới lãng mạn, boho hoặc không gian nhiều ánh sáng tự nhiên.",
+        "faq2Question": "Có thể thay ảnh mà vẫn giữ khung hoa không?",
+        "faq2Answer": "Có. Bạn thay ảnh và nội dung cá nhân, còn hệ thống trang trí của mẫu vẫn được giữ nguyên."
+      },
+      "style-modern": {
+        "linkLabel": "Hiện đại",
+        "metaTitle": "Mẫu thiệp cưới hiện đại, độc đáo | Thiệp Mừng Online",
+        "metaDescription": "Xem {count} mẫu thiệp cưới hiện đại với kiểu chữ mới, bố cục độc đáo và hiệu ứng mở thiệp. Chọn mẫu và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới hiện đại",
+        "subtitle": "{count} thiết kế mới dành cho các cặp đôi thích trải nghiệm khác biệt.",
+        "intro": "Bộ sưu tập nổi bật với kiểu chữ, chuyển động và cách kể câu chuyện cưới sáng tạo.",
+        "guideTitle": "Điều cần chú ý khi chọn thiết kế hiện đại",
+        "guide": "Ưu tiên mẫu có nhịp đọc rõ trên điện thoại, độ tương phản tốt và hiệu ứng hỗ trợ nội dung thay vì che khuất thông tin quan trọng.",
+        "faq1Question": "Điểm khác biệt của thiệp cưới hiện đại là gì?",
+        "faq1Answer": "Các mẫu sử dụng kiểu chữ, bố cục và hiệu ứng chuyển động mới, nhưng vẫn giữ đầy đủ thông tin cần thiết cho khách mời.",
+        "faq2Question": "Thiệp hiện đại có dễ xem trên điện thoại không?",
+        "faq2Answer": "Có. Mỗi demo ưu tiên trải nghiệm trên điện thoại để tên, ngày giờ, bản đồ và phần xác nhận tham dự dễ sử dụng."
+      },
+      "style-vietnamese-heritage": {
+        "linkLabel": "Di sản Việt",
+        "metaTitle": "Mẫu thiệp cưới di sản Việt | Thiệp Mừng Online",
+        "metaDescription": "Khám phá {count} mẫu thiệp cưới di sản Việt lấy cảm hứng từ Đông Sơn, Bát Tràng, áo dài và mỹ thuật dân gian. Xem demo và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới di sản Việt",
+        "subtitle": "{count} thiết kế chuyển hóa chất liệu văn hóa Việt thành thiệp cưới online hiện đại.",
+        "intro": "Mỗi mẫu khai thác một câu chuyện riêng từ thủ công, trang phục và mỹ thuật truyền thống Việt Nam.",
+        "guideTitle": "Chọn chất liệu văn hóa phù hợp",
+        "guide": "Chọn họa tiết gắn với vùng miền, trang phục hoặc câu chuyện gia đình; sau đó giữ bảng màu và kiểu chữ nhất quán để thiệp trang trọng mà không nặng nề.",
+        "faq1Question": "Bộ sưu tập di sản Việt có những cảm hứng nào?",
+        "faq1Answer": "Các mẫu hiện có cảm hứng từ trống đồng, gốm Bát Tràng, tranh dân gian, áo dài, thổ cẩm và nghệ thuật sơn mài.",
+        "faq2Question": "Có thể cá nhân hóa mà vẫn giữ họa tiết di sản không?",
+        "faq2Answer": "Có. Ảnh, tên, lịch trình, địa điểm và nhạc được thay đổi riêng; ngôn ngữ thiết kế đặc trưng của mẫu vẫn được giữ lại."
+      },
+      "style-minimal": {
+        "linkLabel": "Tối giản",
+        "metaTitle": "Mẫu thiệp cưới tối giản, thanh lịch | Thiệp Mừng Online",
+        "metaDescription": "Xem {count} mẫu thiệp cưới tối giản với bố cục thoáng, chữ dễ đọc và màu sắc tinh tế. Thay ảnh, xem demo và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới tối giản",
+        "subtitle": "{count} mẫu thiệp tinh tế, tập trung vào ảnh cặp đôi và thông tin quan trọng.",
+        "intro": "Bố cục thoáng và màu sắc tiết chế phù hợp những lễ cưới hiện đại, nhẹ nhàng.",
+        "guideTitle": "Làm thiệp tối giản nhưng không đơn điệu",
+        "guide": "Chọn một màu chủ đạo, ảnh có ánh sáng sạch và nội dung ngắn gọn. Khoảng trắng hợp lý sẽ giúp tên, ngày giờ và địa điểm nổi bật hơn.",
+        "faq1Question": "Thiệp tối giản có bị đơn điệu không?",
+        "faq1Answer": "Không. Sự khác biệt nằm ở kiểu chữ, khoảng trắng, chất liệu nền và cách đặt ảnh thay vì dùng quá nhiều chi tiết trang trí.",
+        "faq2Question": "Phong cách tối giản nên dùng bao nhiêu ảnh?",
+        "faq2Answer": "Một vài ảnh chọn lọc, đồng nhất màu sắc thường hiệu quả hơn một album quá dài."
+      },
+      "style-royal": {
+        "linkLabel": "Hoàng gia",
+        "metaTitle": "Mẫu thiệp cưới sang trọng, hoàng gia | Thiệp Mừng Online",
+        "metaDescription": "Khám phá {count} mẫu thiệp cưới hoàng gia với sắc vàng, xanh đậm, cung điện và hoa văn sang trọng. Xem demo và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới phong cách hoàng gia",
+        "subtitle": "{count} mẫu thiệp trang trọng với bảng màu sâu, ánh kim và kiến trúc cổ điển.",
+        "intro": "Bộ sưu tập dành cho concept dạ tiệc, sảnh tiệc lớn và những không gian cưới sang trọng.",
+        "guideTitle": "Phối thiệp hoàng gia hài hòa",
+        "guide": "Phong cách này hợp sảnh tiệc lớn và concept dạ tiệc. Nên phối tối đa hai màu chính để họa tiết sang trọng nhưng thông tin vẫn dễ đọc.",
+        "faq1Question": "Thiệp hoàng gia hợp với không gian cưới nào?",
+        "faq1Answer": "Phong cách này đặc biệt phù hợp khách sạn, sảnh tiệc lớn, nhà hàng hoặc lễ cưới có quy định trang phục trang trọng.",
+        "faq2Question": "Thiệp nhiều họa tiết có khó xem trên điện thoại không?",
+        "faq2Answer": "Các mẫu vẫn dành vùng đọc riêng cho tên, lịch trình, bản đồ và phần xác nhận tham dự để nội dung không bị chìm trong trang trí."
+      },
+      "color-red": {
+        "linkLabel": "Màu đỏ",
+        "metaTitle": "Mẫu thiệp cưới màu đỏ đẹp | Thiệp Mừng Online",
+        "metaDescription": "Xem {count} mẫu thiệp cưới màu đỏ từ Song Hỷ truyền thống đến hoa lá và hiện đại. Xem demo, chọn mẫu và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới màu đỏ",
+        "subtitle": "{count} mẫu thiệp mang sắc màu hỷ sự, từ truyền thống đến hiện đại.",
+        "intro": "Sắc đỏ tượng trưng cho may mắn và tạo điểm nhấn mạnh ngay từ khi khách mời mở thiệp.",
+        "guideTitle": "Chọn sắc đỏ phù hợp ngày cưới",
+        "guide": "Đỏ son tạo cảm giác tươi vui, đỏ đô trang trọng hơn, còn đỏ kết hợp kem hoặc vàng giúp chữ và ảnh dễ đọc.",
+        "faq1Question": "Thiệp màu đỏ chỉ dành cho phong cách truyền thống?",
+        "faq1Answer": "Không. Bộ sưu tập có cả mẫu hoa lá, tối giản, hoàng gia và hiện đại sử dụng màu đỏ.",
+        "faq2Question": "Nên phối màu đỏ với màu nào?",
+        "faq2Answer": "Kem, trắng, vàng nhạt và xanh trầm thường giúp cân bằng sắc đỏ và tăng độ tương phản."
+      },
+      "color-green": {
+        "linkLabel": "Màu xanh lá",
+        "metaTitle": "Mẫu thiệp cưới màu xanh lá | Thiệp Mừng Online",
+        "metaDescription": "Khám phá {count} mẫu thiệp cưới màu xanh lá với sắc xanh xám, xanh rừng và hoa lá tự nhiên. Xem demo và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới màu xanh lá",
+        "subtitle": "{count} mẫu thiệp tươi mới dành cho concept sân vườn, thiên nhiên và thanh lịch.",
+        "intro": "Xanh lá mang cảm giác bình yên và dùng được từ thiết kế hoa lá tự nhiên đến thiệp truyền thống.",
+        "guideTitle": "Phối sắc xanh lá và ảnh cưới",
+        "guide": "Xanh xám hợp nền kem và ảnh sáng; xanh rừng tạo chiều sâu khi đi cùng chữ trắng hoặc vàng nhạt.",
+        "faq1Question": "Thiệp xanh lá hợp với mùa cưới nào?",
+        "faq1Answer": "Màu xanh dùng tốt quanh năm, đặc biệt phù hợp lễ cưới ngoài trời, mùa xuân hoặc concept hoa lá tự nhiên.",
+        "faq2Question": "Xanh lá có phù hợp thiệp truyền thống không?",
+        "faq2Answer": "Có. Một số mẫu kết hợp xanh với Song Hỷ, long phụng hoặc kiến trúc cổ điển để tạo lựa chọn trang trọng hơn."
+      },
+      "color-blue": {
+        "linkLabel": "Màu xanh dương",
+        "metaTitle": "Mẫu thiệp cưới màu xanh dương | Thiệp Mừng Online",
+        "metaDescription": "Xem {count} mẫu thiệp cưới màu xanh dương từ xanh lam dịu đến xanh đậm sang trọng. Chọn mẫu, xem demo và dùng thử miễn phí 3 ngày.",
+        "title": "Mẫu thiệp cưới màu xanh dương",
+        "subtitle": "{count} mẫu thiệp xanh lam và xanh đậm cho phong cách biển, hiện đại và hoàng gia.",
+        "intro": "Xanh dương tạo cảm giác bình tĩnh, tin cậy và dễ kết hợp với ảnh cưới tông sáng hoặc ấm.",
+        "guideTitle": "Chọn tông xanh dương phù hợp",
+        "guide": "Xanh lam nhạt hợp ảnh sáng và concept ngoài trời; xanh đậm tạo vẻ trang trọng khi kết hợp kem, trắng hoặc vàng.",
+        "faq1Question": "Thiệp xanh dương phù hợp concept nào?",
+        "faq1Answer": "Màu xanh phù hợp lễ cưới biển, tiệc tối, sảnh tiệc lớn, phong cách gốm sứ hoặc thiết kế hiện đại.",
+        "faq2Question": "Có thể dùng ảnh màu ấm với nền xanh không?",
+        "faq2Answer": "Có. Ảnh có ánh sáng vàng nhẹ hoặc tông da ấm thường tạo tương phản đẹp với nền xanh."
+      }
+    }
+  },
   "pricing": {
     "metaTitle": "Bảng giá | Thiệp Mừng Online",
     "metaDescription": "Bảng giá thiệp cưới online Thiệp Mừng Online: thanh toán một lần, không phí ẩn, dùng thử miễn phí 3 ngày.",
@@ -1544,8 +1689,6 @@
     "postCount": "{count} bài viết",
     "empty": "Chưa có bài viết nào được xuất bản.",
     "backToBlog": "← Quay lại Blog",
-    "cloneNote1": "Đây là bản clone giao diện của Thiệp Mừng Online. Nội dung đầy đủ của bài viết gốc được xuất bản tại thiepmungonline.com. Bản sao này giữ nguyên cấu trúc bài viết, phần tóm tắt và bố cục để phục vụ mục đích tham khảo thiết kế.",
-    "cloneNote2": "Bạn có thể xem toàn bộ các mẫu thiệp cưới online, công cụ hỗ trợ và bảng giá ngay trong bản clone này thông qua thanh điều hướng phía trên.",
     "related": "Bài viết liên quan"
   },
   "help": {

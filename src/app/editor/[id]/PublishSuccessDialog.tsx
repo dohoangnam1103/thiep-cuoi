@@ -91,7 +91,7 @@ export function PublishSuccessDialog({
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-[2px] transition-opacity data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-        <Dialog.Viewport className="fixed inset-0 z-[150] flex items-end justify-center overflow-y-auto sm:items-center sm:p-4">
+        <Dialog.Viewport className="fixed inset-0 z-[150] flex items-end justify-center overflow-y-auto px-4 sm:items-center sm:p-4">
           <Dialog.Popup className="relative max-h-[96dvh] w-full max-w-xl overflow-y-auto rounded-t-[2rem] border border-border bg-card text-foreground shadow-2xl outline-none transition data-[ending-style]:translate-y-4 data-[ending-style]:opacity-0 data-[starting-style]:translate-y-4 data-[starting-style]:opacity-0 sm:rounded-[2rem]">
             <Dialog.Close
               aria-label={t("close")}

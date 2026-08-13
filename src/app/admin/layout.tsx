@@ -19,7 +19,6 @@ const NAV = [
   { href: "/admin/users", label: "Người dùng" },
   { href: "/admin/demos", label: "Thiệp demo" },
   { href: "/admin/blogs", label: "Bài viết" },
-  { href: "/admin/template-studio", label: "AI Studio" },
   { href: "/admin/template-suggestions", label: "Gợi ý mẫu thiệp" },
   { href: "/admin/payments", label: "Giao dịch" },
   { href: "/admin/vouchers", label: "Voucher" },
