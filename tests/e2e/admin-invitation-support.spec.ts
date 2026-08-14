@@ -250,6 +250,37 @@ test.describe("admin: user invitation support", () => {
     }
   });
 
+  test("support dialogs close with Escape and restore focus to their triggers", async ({ page, context }) => {
+    const user = createUser();
+    const admin = seedAdmin(false);
+    createInvitation(user.id);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/users/${user.id}`);
+
+      const createTrigger = page.getByRole("button", { name: "Tạo thiệp mới", exact: true });
+      await createTrigger.click();
+      await expect(
+        page.getByRole("dialog", { name: "Chọn mẫu thiệp cho khách", exact: true }),
+      ).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(
+        page.getByRole("dialog", { name: "Chọn mẫu thiệp cho khách", exact: true }),
+      ).toHaveCount(0);
+      await expect(createTrigger).toBeFocused();
+
+      const priceTrigger = page.getByRole("button", { name: "Đặt giá", exact: true });
+      await priceTrigger.click();
+      await expect(page.getByRole("dialog", { name: "Đặt giá cuối cùng", exact: true })).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog", { name: "Đặt giá cuối cùng", exact: true })).toHaveCount(0);
+      await expect(priceTrigger).toBeFocused();
+    } finally {
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
   test("admin final price supersedes pending payment and records the actor", async ({ page, context }) => {
     const user = createUser();
     const admin = seedAdmin(false);

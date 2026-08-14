@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -23,9 +23,14 @@ type InvitationPriceDialogProps = {
 export function InvitationPriceDialog(props: InvitationPriceDialogProps) {
   const t = useTranslations("adminSupport");
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   // Each open mounts a fresh panel so a previous successful mutation does not
   // hide the dialog again the moment it reopens.
   const [generation, setGeneration] = useState(0);
+  const close = useCallback(() => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }, []);
 
   if (props.paid) {
     return <PaidPriceForm {...props} />;
@@ -34,16 +39,19 @@ export function InvitationPriceDialog(props: InvitationPriceDialogProps) {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => {
           setGeneration((value) => value + 1);
           setOpen(true);
         }}
+        aria-expanded={open}
+        aria-haspopup="dialog"
         className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition hover:bg-secondary"
       >
         {t("setPrice")}
       </button>
-      {open ? <PriceDialogPanel key={generation} {...props} /> : null}
+      {open ? <PriceDialogPanel key={generation} {...props} onClose={close} /> : null}
     </>
   );
 }
@@ -90,27 +98,38 @@ function PriceDialogPanel({
   systemPrice,
   currentOverride,
   complimentary,
-}: InvitationPriceDialogProps) {
+  onClose,
+}: InvitationPriceDialogProps & { onClose: () => void }) {
   const t = useTranslations("adminSupport");
   const router = useRouter();
-  const [dismissed, setDismissed] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const titleId = useId();
   const [state, formAction, pending] = useActionState<PriceMutationState, FormData>(
     updateInvitationPrice.bind(null, userId),
     undefined,
   );
 
-  // Success closes the panel by render derivation (state?.ok below) instead of
-  // a setState inside an effect; the effect only triggers revalidation.
   useEffect(() => {
-    if (state?.ok) router.refresh();
-  }, [state, router]);
+    if (!state?.ok) return;
+    router.refresh();
+    onClose();
+  }, [onClose, router, state]);
 
-  if (state?.ok) {
-    return (
-      <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">{t("priceSaved")}</p>
-    );
-  }
-  if (dismissed) return null;
+  useEffect(() => {
+    const focusFrame = window.requestAnimationFrame(() => inputRef.current?.focus());
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  if (state?.ok) return null;
 
   const inputId = `admin-price-${invitationId}`;
   const defaultValue = currentOverride !== null ? String(currentOverride) : String(systemPrice);
@@ -118,14 +137,17 @@ function PriceDialogPanel({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-      onClick={() => setDismissed(true)}
+      onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         className="w-full max-w-md space-y-4 rounded-2xl bg-card p-6"
         onClick={(event) => event.stopPropagation()}
       >
         <div>
-          <h2 className="font-heading text-lg font-semibold text-foreground">
+          <h2 id={titleId} className="font-heading text-lg font-semibold text-foreground">
             {t("priceDialogTitle")}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">{t("priceDialogDescription")}</p>
@@ -176,6 +198,7 @@ function PriceDialogPanel({
               {t("finalPriceLabel")}
             </label>
             <input
+              ref={inputRef}
               id={inputId}
               name="finalPrice"
               defaultValue={defaultValue}

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 
@@ -20,18 +20,44 @@ export function AdminCreateInvitationButton({
 }) {
   const t = useTranslations("adminSupport");
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
   const [state, formAction, pending] = useActionState<CreateInvitationState, FormData>(
     createInvitationForUser.bind(null, userId),
     undefined,
   );
 
   const label = (slug: string) => templateLabels[slug] ?? templateLabel(slug);
+  const close = useCallback(() => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      close();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [close, open]);
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
+        aria-expanded={open}
+        aria-haspopup="dialog"
         className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
       >
         {t("createInvitation")}
@@ -40,19 +66,23 @@ export function AdminCreateInvitationButton({
       {open ? (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
             className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-card p-6"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-4">
-              <h2 className="font-heading text-xl font-semibold text-foreground">
+              <h2 id={titleId} className="font-heading text-xl font-semibold text-foreground">
                 {t("chooseTemplate")}
               </h2>
               <button
+                ref={closeButtonRef}
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={close}
                 className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-secondary"
               >
                 {t("close")}
