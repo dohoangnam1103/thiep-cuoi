@@ -99,7 +99,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
             <div className="relative mt-24 w-[94%] max-w-[680px] border-[4px] border-[#17110d] bg-[#fff1cf] px-4 py-12 text-[#17110d] shadow-[12px_12px_0_#12b9c7] sm:px-9 sm:py-14">
               <span className="absolute -left-3 -top-3 size-6 border-[3px] border-[#17110d] bg-[#f5d83d]" aria-hidden="true" />
               <span className="absolute -bottom-3 -right-3 size-6 border-[3px] border-[#17110d] bg-[#d7192d]" aria-hidden="true" />
-              <h1 className="font-art-marvin break-words text-[clamp(3.7rem,15cqw,8.2rem)] font-normal uppercase leading-[0.82] tracking-[0.015em] [text-shadow:3px_3px_0_#d8b55f]">
+              <h1 className="font-art-marvin max-w-full whitespace-nowrap text-[clamp(2.7rem,15cqw,8.2rem)] font-normal uppercase leading-[0.82] tracking-[0.015em] [text-shadow:3px_3px_0_#d8b55f]">
                 {people[0].shortName}
               </h1>
               <div className="my-7 flex items-center justify-center gap-4">
@@ -107,7 +107,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
                 <span className="grid size-14 rotate-6 place-items-center rounded-full border-[3px] border-[#17110d] bg-[#12b9c7] font-art-marvin text-2xl text-[#17110d] shadow-[4px_4px_0_#17110d]">{t("and")}</span>
                 <span className="h-[3px] flex-1 bg-[#d7192d]" />
               </div>
-              <h1 className="font-art-marvin break-words text-[clamp(3.7rem,15cqw,8.2rem)] font-normal uppercase leading-[0.82] tracking-[0.015em] text-[#ad3f4a] [text-shadow:3px_3px_0_#d8b55f]">
+              <h1 className="font-art-marvin max-w-full whitespace-nowrap text-[clamp(2.7rem,15cqw,8.2rem)] font-normal uppercase leading-[0.82] tracking-[0.015em] text-[#ad3f4a] [text-shadow:3px_3px_0_#d8b55f]">
                 {people[1].shortName}
               </h1>
             </div>
@@ -257,7 +257,11 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
         <footer className="relative overflow-hidden bg-[#d7192d] px-6 py-24 text-center text-[#fff1cf]">
           <Image src={ARTWORK} alt="" fill sizes="900px" className="object-cover opacity-20" />
           <p className="relative mx-auto max-w-xl text-sm font-bold leading-7">{t("presenceHonor")}</p>
-          <p className="font-art-marvin relative mt-8 text-[clamp(3rem,12vw,6rem)] uppercase leading-[0.8] text-[#f5d83d] [text-shadow:5px_5px_0_#17110d]">{people[0].shortName} &amp; {people[1].shortName}</p>
+          <div className="font-art-marvin relative mt-8 text-[clamp(2.4rem,11vw,6rem)] uppercase leading-[0.8] text-[#f5d83d] [text-shadow:5px_5px_0_#17110d]">
+            <span className="block max-w-full whitespace-nowrap">{people[0].shortName}</span>
+            <span className="my-4 block text-[0.45em] leading-none text-[#fff1cf]">&amp;</span>
+            <span className="block max-w-full whitespace-nowrap">{people[1].shortName}</span>
+          </div>
         </footer>
       </div>
     </main>
