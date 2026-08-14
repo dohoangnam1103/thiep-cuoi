@@ -149,7 +149,9 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
           <div className="pointer-events-none absolute left-1/2 top-[50px] z-[20] -translate-x-1/2 text-center md:top-[100px] lg:top-[120px]" aria-hidden="true">
             <div className="inline-flex flex-col items-center">
               <p className="whitespace-nowrap" style={{ color: "#CD211C", fontFamily: COBA_MARVIN, fontSize: "clamp(31px, 5.5vw, 47px)", lineHeight: 1 }}>Thiệp mời</p>
-              <p className="whitespace-nowrap" style={{ marginTop: 4, marginLeft: "70%", color: "#2F6982", fontFamily: COBA_HAYDON, fontSize: "clamp(25px, 4.5vw, 40px)", lineHeight: 1 }}>Đám Cưới</p>
+              {/* Trên mobile căn giữa dưới "Thiệp mời"; từ md mới lệch phải như thiết kế gốc.
+                  Phải để bằng class vì inline style không có breakpoint. */}
+              <p className="ml-0 mt-1 whitespace-nowrap md:ml-[70%]" style={{ color: "#2F6982", fontFamily: COBA_HAYDON, fontSize: "clamp(25px, 4.5vw, 40px)", lineHeight: 1 }}>Đám Cưới</p>
             </div>
           </div>
           {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
@@ -181,20 +183,22 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             {/* Thông tin lễ cưới */}
             <CoBaHeading>Thông tin lễ cưới</CoBaHeading>
 
-            <div className="relative grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] items-start gap-3 py-[10px] text-center md:max-w-[520px] md:gap-6 md:py-[15px] lg:max-w-[600px] lg:py-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>
+            {/* Mobile: hai họ xếp thành hai dòng nên mỗi tên có trọn chiều rộng thẻ,
+                không còn bị cắt. Từ md trở lên mới về lại hai cột như thiết kế gốc. */}
+            <div className="relative grid w-full max-w-[366px] grid-cols-1 items-start gap-6 py-[10px] text-center md:max-w-[520px] md:grid-cols-[1fr_auto_1fr] md:gap-6 md:py-[15px] lg:max-w-[600px] lg:py-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>
               <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
                 <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[0].title}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[0].father}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[0].mother}</span>
+                <span className="text-[20px] font-bold">{familyColumns[0].father}</span>
+                <span className="text-[20px] font-bold">{familyColumns[0].mother}</span>
                 <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[0].address}</div>
               </div>
-              <div className="flex h-[50px] w-0 shrink-0 items-center justify-center self-stretch px-0 md:h-[64px]">
-                <div className="h-full w-px bg-[#542e08]" />
+              <div className="flex w-full items-center justify-center self-stretch md:h-[64px] md:w-0 md:shrink-0 md:px-0">
+                <div className="h-px w-16 bg-[#542e08] md:h-full md:w-px" />
               </div>
               <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
                 <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[1].title}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[1].father}</span>
-                <span className="whitespace-nowrap text-[20px] font-bold">{familyColumns[1].mother}</span>
+                <span className="text-[20px] font-bold">{familyColumns[1].father}</span>
+                <span className="text-[20px] font-bold">{familyColumns[1].mother}</span>
                 <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[1].address}</div>
               </div>
             </div>

@@ -281,8 +281,10 @@ export function FamilyColumn({ title, a, b, addr }: { title: string; a: string; 
   return (
     <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
       <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{title}</span>
-      <span className="whitespace-nowrap text-[20px] font-bold">{a}</span>
-      <span className="whitespace-nowrap text-[20px] font-bold">{b}</span>
+      {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài sẽ bị
+          cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên. */}
+      <span className="text-[20px] font-bold">{a}</span>
+      <span className="text-[20px] font-bold">{b}</span>
       {addr ? <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{addr}</div> : null}
     </div>
   );
