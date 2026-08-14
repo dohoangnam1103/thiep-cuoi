@@ -107,7 +107,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             <div className="rounded-[14px] border-2 border-[#ffbe89] px-5 py-2 md:px-7 md:py-3">
               <RedHeading>Thông Tin Lễ Cưới</RedHeading>
             </div>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">

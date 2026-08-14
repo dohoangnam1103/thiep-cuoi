@@ -79,8 +79,8 @@ function RoyalFamilyColumn({ title, a, b, addr }: { title: string; a: string; b:
   return (
     <div className="flex min-w-0 max-w-[170px] flex-1 flex-col items-center gap-1.5 text-center md:max-w-[280px]" style={{ color: ROYAL_GOLD, fontFamily: ROYAL_SERIF }}>
       <span className="text-[15px] md:text-[18px]">{title}</span>
-      <span className="whitespace-nowrap text-[18px] font-semibold md:text-[21px]">{a}</span>
-      <span className="whitespace-nowrap text-[18px] font-semibold md:text-[21px]">{b}</span>
+      <span className="text-[18px] font-semibold md:text-[21px]">{a}</span>
+      <span className="text-[18px] font-semibold md:text-[21px]">{b}</span>
       {addr ? <div className="mt-1 whitespace-pre-line text-[13px] leading-normal opacity-90 md:text-[15px]">{addr}</div> : null}
     </div>
   );
@@ -154,9 +154,9 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
           {/* CEREMONY INFO — families */}
           <div className="flex w-full flex-col items-center gap-8">
             <RoyalHeading>Thông tin lễ cưới</RoyalHeading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               <RoyalFamilyColumn {...familyColumns[0]} />
-              <div className="h-[70px] w-px self-center" style={{ backgroundColor: hexToRgba(ROYAL_GOLD, 0.4) }} />
+              <div className="h-px w-16 self-center md:h-[70px] md:w-px" style={{ backgroundColor: hexToRgba(ROYAL_GOLD, 0.4) }} />
               <RoyalFamilyColumn {...familyColumns[1]} />
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]" style={{ color: ROYAL_GOLD }}>

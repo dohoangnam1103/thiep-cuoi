@@ -105,7 +105,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
             <CherryHeading>Thông Tin Lễ Cưới</CherryHeading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="whitespace-pre-line text-center text-[15px] uppercase tracking-wide md:text-[18px]" style={{ color: PINK_MUTED }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>

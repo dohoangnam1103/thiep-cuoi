@@ -135,7 +135,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
         <div className="relative z-10 flex w-full flex-col items-center gap-12 px-4 pb-14 pt-12 md:px-10">
           <SectionCard className="flex flex-col items-center gap-8 text-center">
             <SpringHeading>Thông Tin Lễ Cưới</SpringHeading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="whitespace-pre-line text-[15px] uppercase leading-relaxed tracking-[0.12em] md:text-[19px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>

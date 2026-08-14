@@ -214,9 +214,9 @@ export function PhoenixInvitation({
           </div>
           <div className="mb-12 flex flex-col items-center gap-6 text-center md:mb-16 md:gap-8">
             <h2 className="relative z-10 text-[20px] font-bold uppercase md:text-[24px]">Thông Tin Lễ Cưới</h2>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-8">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-8">
               <FamilyColumn {...familyColumns[0]} />
-              <div className="h-[60px] w-px self-center" style={{ backgroundColor: hexToRgba(M, 0.4) }} />
+              <div className="h-px w-16 self-center md:h-[60px] md:w-px" style={{ backgroundColor: hexToRgba(M, 0.4) }} />
               <FamilyColumn {...familyColumns[1]} />
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[16px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
