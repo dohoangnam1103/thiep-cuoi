@@ -146,7 +146,7 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
         {hero ? (
           <div className="mt-12 flex justify-center md:mt-16">
             <Arch className="w-[240px] md:w-[320px]" bordered={false}>
-              <img src={hero} alt={t("weddingPhotoAlt", { couple: `${people[0].shortName} & ${people[1].shortName}` })} className="h-[330px] w-full object-cover md:h-[440px]" />
+              <img src={hero} alt={t("weddingPhotoAlt", { couple: `${people[0].shortName} ${t("and")} ${people[1].shortName}` })} className="h-[330px] w-full object-cover md:h-[440px]" />
             </Arch>
           </div>
         ) : null}

@@ -546,7 +546,12 @@ export function ArtInvitation({
 
         <footer className={cn("mt-24 border-t pt-10 text-center", config.borderClass)}>
           <p className={cn("text-sm leading-7", config.mutedClass)}>{t("presenceHonor")}</p>
-          <p className={cn("mt-4 text-lg font-semibold", config.inkClass)}>{people[0].shortName} &amp; {people[1].shortName}</p>
+          {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
+          <p className={cn("mt-4 flex flex-col items-center text-lg font-semibold leading-snug", config.inkClass)}>
+            <span className="block">{people[0].shortName}</span>
+            <span className={cn("block text-base font-normal", config.mutedClass)}>{t("and")}</span>
+            <span className="block">{people[1].shortName}</span>
+          </p>
         </footer>
         </div>
       </div>
