@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { verifyAdmin } from "@/lib/admin-dal";
+import { parseAuditDetailsForDisplay } from "@/lib/admin-audit-view";
 import { SYSTEM_EMAIL } from "@/lib/admin-support-input";
 import { getTemplateLabels } from "@/lib/template-labels";
 import { templateLabel } from "@/app/editor/[id]/templates";
@@ -116,6 +117,7 @@ export default async function AdminUserProfilePage({
               return (
                 <article
                   key={invitation.id}
+                  data-invitation-id={invitation.id}
                   className="space-y-3 rounded-2xl border border-border bg-background p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -191,12 +193,52 @@ export default async function AdminUserProfilePage({
         ) : (
           <ul className="divide-y divide-border rounded-2xl border border-border bg-background">
             {user.adminAuditLogs.map((entry) => {
-              const label = t.has(`audit.${entry.action}`)
-                ? t(`audit.${entry.action}`)
-                : entry.action;
+              const auditKey = `audit.${entry.action}` as Parameters<typeof t.has>[0];
+              const label = t.has(auditKey) ? t(auditKey) : entry.action;
+
+              // Only the allow-listed, typed fields are rendered; raw
+              // log.details (which may carry hashes/tokens/bank data) never is.
+              const details = parseAuditDetailsForDisplay(entry.details);
+              let priceLine: string | null = null;
+              let complimentaryLine: string | null = null;
+              let supersededLine: string | null = null;
+              if (details) {
+                if (details.beforePrice !== details.afterPrice) {
+                  priceLine = t("auditPriceChange", {
+                    before: details.beforePrice === null ? "—" : formatVnd(details.beforePrice),
+                    after: details.afterPrice === null ? "—" : formatVnd(details.afterPrice),
+                  });
+                }
+                if (details.beforeComplimentary !== details.afterComplimentary) {
+                  const boolText = (value: boolean | null): string =>
+                    value === null ? "—" : value ? t("auditBoolYes") : t("auditBoolNo");
+                  complimentaryLine = t("auditComplimentaryChange", {
+                    before: boolText(details.beforeComplimentary),
+                    after: boolText(details.afterComplimentary),
+                  });
+                }
+                if (
+                  details.supersededPaymentCount !== null &&
+                  details.supersededPaymentCount > 0
+                ) {
+                  supersededLine = t("auditSupersededPayments", {
+                    count: details.supersededPaymentCount,
+                  });
+                }
+              }
+
               return (
                 <li key={entry.id} className="space-y-1 px-4 py-3 text-sm">
                   <p className="text-foreground">{label}</p>
+                  {priceLine ? (
+                    <p className="text-xs text-muted-foreground">{priceLine}</p>
+                  ) : null}
+                  {complimentaryLine ? (
+                    <p className="text-xs text-muted-foreground">{complimentaryLine}</p>
+                  ) : null}
+                  {supersededLine ? (
+                    <p className="text-xs text-muted-foreground">{supersededLine}</p>
+                  ) : null}
                   <p className="text-xs text-muted-foreground">
                     {t("auditActor", {
                       admin: entry.adminEmail,

@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 
 import { test, expect, type Page } from "@playwright/test";
 
+import { parseAuditDetailsForDisplay } from "../../src/lib/admin-audit-view";
+import { FREE_TRIAL_MS } from "../../src/lib/trial";
 import { getDb, prismaNow } from "./helpers/db";
 import {
   createUser,
@@ -71,6 +73,73 @@ function clearAuditFor(user: { id: string; email: string }): void {
   getDb()
     .prepare("DELETE FROM AdminAuditLog WHERE targetUserId = ? OR targetUserEmail = ?")
     .run(user.id, user.email);
+}
+
+type AuditSnapshotRow = {
+  adminId: string | null;
+  adminEmail: string;
+  targetUserId: string | null;
+  targetUserEmail: string | null;
+  invitationId: string | null;
+  action: string;
+};
+
+const AUDIT_SNAPSHOT_COLUMNS =
+  "adminId, adminEmail, targetUserId, targetUserEmail, invitationId, action";
+
+function latestAuditByAction(action: string): AuditSnapshotRow | undefined {
+  return getDb()
+    .prepare(
+      `SELECT ${AUDIT_SNAPSHOT_COLUMNS} FROM AdminAuditLog
+       WHERE action = ? ORDER BY createdAt DESC, id DESC LIMIT 1`,
+    )
+    .get(action) as AuditSnapshotRow | undefined;
+}
+
+function auditById(id: string): AuditSnapshotRow | undefined {
+  return getDb()
+    .prepare(`SELECT ${AUDIT_SNAPSHOT_COLUMNS} FROM AdminAuditLog WHERE id = ?`)
+    .get(id) as AuditSnapshotRow | undefined;
+}
+
+function auditIdFor(invitationId: string, action: string): string | undefined {
+  return (
+    getDb()
+      .prepare(
+        `SELECT id FROM AdminAuditLog WHERE invitationId = ? AND action = ?
+         ORDER BY createdAt DESC, id DESC LIMIT 1`,
+      )
+      .get(invitationId, action) as { id: string } | undefined
+  )?.id;
+}
+
+function auditDetailsFor(invitationId: string, action: string): string | null {
+  return (
+    (
+      getDb()
+        .prepare(
+          `SELECT details FROM AdminAuditLog WHERE invitationId = ? AND action = ?
+           ORDER BY createdAt DESC, id DESC LIMIT 1`,
+        )
+        .get(invitationId, action) as { details: string | null } | undefined
+    )?.details ?? null
+  );
+}
+
+/** Open the price dialog for one invitation and store a final price. */
+async function setFinalPrice(
+  page: Page,
+  userId: string,
+  invitationId: string,
+  finalPrice: string,
+): Promise<void> {
+  await page.goto(`/admin/users/${userId}`);
+  await page
+    .locator(`[data-invitation-id="${invitationId}"]`)
+    .getByRole("button", { name: "Đặt giá" })
+    .click();
+  await page.getByLabel("Giá cuối cùng (VND)").fill(finalPrice);
+  await page.getByRole("button", { name: "Lưu giá" }).click();
 }
 
 async function fillPublishableDraft(page: Page): Promise<string> {
@@ -773,6 +842,193 @@ test.describe("admin: user invitation support", () => {
       deleteAdmin(admin.id);
       cleanupUser(userA.id);
       cleanupUser(userB.id);
+    }
+  });
+
+  test("audit history renders the price change without leaking raw details", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const invitation = createInvitation(user.id);
+    const admin = seedAdmin(false);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await setFinalPrice(page, user.id, invitation.id, "79000");
+      await expect
+        .poll(() => latestAuditByAction("PRICE_OVERRIDE_SET")?.adminId)
+        .toBe(admin.id);
+
+      // The audit row must carry the before/after price so the profile can
+      // describe the change; a shape the display parser cannot read would
+      // silently render an actionless entry.
+      const details = auditDetailsFor(invitation.id, "PRICE_OVERRIDE_SET");
+      expect(parseAuditDetailsForDisplay(details)).toEqual({
+        beforePrice: null,
+        afterPrice: 79_000,
+        beforeComplimentary: false,
+        afterComplimentary: false,
+        supersededPaymentCount: 0,
+      });
+
+      await page.goto(`/admin/users/${user.id}`);
+      await expect(page.getByText("Giá: — → 79.000đ")).toBeVisible();
+      // Raw JSON must never reach the page.
+      await expect(page.getByText(/"adminPriceOverride"/)).toHaveCount(0);
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("audit keeps the admin snapshot after the actor is deleted", async ({ page, context }) => {
+    const user = createUser();
+    const invitation = createInvitation(user.id);
+    const admin = seedAdmin(false);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await setFinalPrice(page, user.id, invitation.id, "79000");
+      await expect
+        .poll(() => latestAuditByAction("PRICE_OVERRIDE_SET")?.adminId)
+        .toBe(admin.id);
+
+      await context.clearCookies();
+      getDb().prepare("DELETE FROM Admin WHERE id = ?").run(admin.id);
+      const snapshot = latestAuditByAction("PRICE_OVERRIDE_SET");
+      expect(snapshot?.adminId).toBeNull();
+      expect(snapshot?.adminEmail).toBe(admin.email);
+      expect(snapshot?.targetUserEmail).toBe(user.email);
+
+      await loginAsAdmin(context, seededAdminId());
+      await page.goto(`/admin/users/${user.id}`);
+      await expect(page.getByText(admin.email)).toBeVisible();
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("audit keeps the invitation snapshot after the invitation is deleted", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const invitationA = createInvitation(user.id);
+    createInvitation(user.id);
+    const admin = seedAdmin(false);
+    try {
+      await loginAsAdmin(context, admin.id);
+      await setFinalPrice(page, user.id, invitationA.id, "79000");
+      await expect
+        .poll(() => auditIdFor(invitationA.id, "PRICE_OVERRIDE_SET"))
+        .not.toBeUndefined();
+      const auditId = auditIdFor(invitationA.id, "PRICE_OVERRIDE_SET") as string;
+
+      getDb().prepare("DELETE FROM Invitation WHERE id = ?").run(invitationA.id);
+      expect(auditById(auditId)).toEqual({
+        adminId: admin.id,
+        adminEmail: admin.email,
+        targetUserId: user.id,
+        targetUserEmail: user.email,
+        invitationId: null,
+        action: "PRICE_OVERRIDE_SET",
+      });
+
+      // The orphaned row still describes the action and the actor.
+      await page.goto(`/admin/users/${user.id}`);
+      await expect(page.getByText("Đã đặt giá riêng cho thiệp")).toBeVisible();
+      await expect(page.getByText(admin.email)).toBeVisible();
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("audit keeps the target-user snapshot after the user is deleted", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const invitation = createInvitation(user.id);
+    const admin = seedAdmin(false);
+    let auditId: string | undefined;
+    try {
+      await loginAsAdmin(context, admin.id);
+      await setFinalPrice(page, user.id, invitation.id, "79000");
+      await expect
+        .poll(() => auditIdFor(invitation.id, "PRICE_OVERRIDE_SET"))
+        .not.toBeUndefined();
+      auditId = auditIdFor(invitation.id, "PRICE_OVERRIDE_SET");
+
+      getDb().prepare("DELETE FROM User WHERE id = ?").run(user.id);
+      expect(auditById(auditId as string)).toEqual({
+        adminId: admin.id,
+        adminEmail: admin.email,
+        targetUserId: null,
+        targetUserEmail: user.email,
+        invitationId: null,
+        action: "PRICE_OVERRIDE_SET",
+      });
+    } finally {
+      if (auditId) getDb().prepare("DELETE FROM AdminAuditLog WHERE id = ?").run(auditId);
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+
+  test("resetting complimentary revokes activation and restores expiry", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const admin = seedAdmin(false);
+    const slug = `expired-${randomUUID().slice(0, 8)}`;
+    const invitation = createInvitation(user.id, {
+      adminPriceOverride: 0,
+      complimentary: true,
+      status: "published",
+      slug,
+      publishedAt: new Date(Date.now() - FREE_TRIAL_MS - 60_000),
+    });
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/users/${user.id}`);
+      await page
+        .locator(`[data-invitation-id="${invitation.id}"]`)
+        .getByRole("button", { name: "Đặt giá" })
+        .click();
+      page.once("dialog", (dialog) => dialog.accept());
+      await page.getByRole("button", { name: "Dùng lại giá hệ thống" }).click();
+
+      await expect
+        .poll(() =>
+          getDb()
+            .prepare("SELECT adminPriceOverride, complimentary FROM Invitation WHERE id = ?")
+            .get(invitation.id),
+        )
+        .toEqual({ adminPriceOverride: null, complimentary: 0 });
+
+      const actions = getDb()
+        .prepare(
+          "SELECT action, adminId FROM AdminAuditLog WHERE invitationId = ? ORDER BY createdAt, id",
+        )
+        .all(invitation.id) as { action: string; adminId: string | null }[];
+      expect(actions).toEqual([
+        { action: "PRICE_OVERRIDE_CLEARED", adminId: admin.id },
+        { action: "COMPLIMENTARY_REVOKED", adminId: admin.id },
+      ]);
+
+      // Losing complimentary puts the long-published invitation back past its trial.
+      await page.goto(`/thiep/${slug}`);
+      await expect(page.getByText(/đã hết 3 ngày dùng thử/i)).toBeVisible();
+    } finally {
+      clearAuditFor(user);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
     }
   });
 });

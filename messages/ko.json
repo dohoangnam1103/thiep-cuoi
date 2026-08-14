@@ -1138,6 +1138,11 @@
     "auditTitle": "지원 기록",
     "noAudit": "아직 지원 작업이 없습니다.",
     "auditActor": "{admin} · {time}",
+    "auditPriceChange": "가격: {before} → {after}",
+    "auditComplimentaryChange": "무료 제공: {before} → {after}",
+    "auditSupersededPayments": "대기 중 결제 {count}건을 교체했습니다",
+    "auditBoolYes": "예",
+    "auditBoolNo": "아니요",
     "audit": {
       "INVITATION_CREATED_FOR_USER": "사용자를 위해 청첩장을 만들었습니다",
       "INVITATION_UPDATED_BY_ADMIN": "청첩장을 수정했습니다",
@@ -1188,7 +1193,8 @@
       "banner": "{email} 계정 지원 중",
       "bannerDescription": "저장한 모든 변경 사항은 고객의 청첩장에 직접 반영됩니다.",
       "back": "사용자 프로필로 돌아가기",
-      "complimentary": "이 청첩장은 무료로 제공되며 영구적으로 활성화되었습니다."
+      "complimentary": "이 청첩장은 무료로 제공되며 영구적으로 활성화되었습니다.",
+      "publishToast": "청첩장을 성공적으로 게시했습니다."
     },
     "errors": {
       "invalidData": "올바르지 않은 데이터입니다.",

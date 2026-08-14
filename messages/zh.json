@@ -1138,6 +1138,11 @@
     "auditTitle": "支持记录",
     "noAudit": "暂无支持操作记录。",
     "auditActor": "{admin}，{time}",
+    "auditPriceChange": "价格：{before} → {after}",
+    "auditComplimentaryChange": "免费赠送：{before} → {after}",
+    "auditSupersededPayments": "已替换 {count} 笔待处理付款",
+    "auditBoolYes": "是",
+    "auditBoolNo": "否",
     "audit": {
       "INVITATION_CREATED_FOR_USER": "已为用户创建请柬",
       "INVITATION_UPDATED_BY_ADMIN": "已编辑请柬",
@@ -1188,7 +1193,8 @@
       "banner": "正在协助 {email}",
       "bannerDescription": "保存的所有更改都会直接影响客户的请柬。",
       "back": "返回用户资料",
-      "complimentary": "此请柬为免费赠送，并已永久激活。"
+      "complimentary": "此请柬为免费赠送，并已永久激活。",
+      "publishToast": "请柬已成功发布。"
     },
     "errors": {
       "invalidData": "数据无效。",

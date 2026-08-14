@@ -2044,6 +2044,11 @@
     "auditTitle": "Lịch sử hỗ trợ",
     "noAudit": "Chưa có thao tác hỗ trợ nào.",
     "auditActor": "{admin} lúc {time}",
+    "auditPriceChange": "Giá: {before} → {after}",
+    "auditComplimentaryChange": "Miễn phí: {before} → {after}",
+    "auditSupersededPayments": "Đã thay thế {count} thanh toán chờ",
+    "auditBoolYes": "Có",
+    "auditBoolNo": "Không",
     "audit": {
       "INVITATION_CREATED_FOR_USER": "Đã tạo thiệp cho người dùng",
       "INVITATION_UPDATED_BY_ADMIN": "Đã chỉnh sửa thiệp",
@@ -2094,7 +2099,8 @@
       "banner": "Đang hỗ trợ tài khoản {email}",
       "bannerDescription": "Mọi thay đổi đã lưu sẽ tác động trực tiếp tới thiệp của khách.",
       "back": "Quay lại hồ sơ người dùng",
-      "complimentary": "Thiệp được tặng miễn phí và đã kích hoạt vĩnh viễn."
+      "complimentary": "Thiệp được tặng miễn phí và đã kích hoạt vĩnh viễn.",
+      "publishToast": "Đã xuất bản thiệp thành công."
     },
     "errors": {
       "invalidData": "Dữ liệu không hợp lệ.",

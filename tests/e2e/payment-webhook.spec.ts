@@ -237,6 +237,44 @@ test.describe("Casso webhook", () => {
     }
   });
 
+  test("a webhook arriving after an admin price change cannot settle the old amount", async ({
+    request,
+  }) => {
+    const user = createUser();
+    try {
+      const inv = createInvitation(user.id);
+      const oldPayment = createPayment(inv.id, {
+        code: "CDLATE23",
+        amount: 150_000,
+        status: "pending",
+      });
+      // Mirror what the admin price mutation leaves behind: a cheaper invitation
+      // price and every prior pending payment marked superseded.
+      getDb().transaction(() => {
+        getDb()
+          .prepare(
+            `UPDATE Invitation
+             SET adminPriceOverride = 79000, complimentary = 0, complimentaryAt = NULL
+             WHERE id = ?`,
+          )
+          .run(inv.id);
+        getDb().prepare("UPDATE Payment SET status = 'superseded' WHERE id = ?").run(oldPayment.id);
+      })();
+
+      const body = cassoBody(`thanh toan ${oldPayment.code}`, 150_000);
+      const response = await request.post(WEBHOOK_PATH, {
+        headers: { "x-casso-signature": signCasso(body) },
+        data: body,
+      });
+
+      expect(response.status()).toBe(200);
+      expect(getPayment(oldPayment.code)?.status).toBe("superseded");
+      expect(getInvitationPaid(inv.id)).toBe(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
   test("legacy voucher-cancelled Casso payment still settles", async ({ request }) => {
     const user = createUser();
     try {

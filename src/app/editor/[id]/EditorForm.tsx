@@ -1931,6 +1931,7 @@ function EditorFormBody({
     if (publishState?.publishedSlug) {
       setPublishedSlug(publishState.publishedSlug);
       if (ownerMode) setPublishDialogSlug(publishState.publishedSlug);
+      else if (supportMode) toast.success(supportT("publishToast"));
       trackEvent("publish_invitation", { template_id: selectedTemplateId });
     }
     if (publishState?.publishedAt) {

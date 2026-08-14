@@ -205,10 +205,11 @@ export async function updateInvitationPrice(
           ? ADMIN_AUDIT_ACTIONS.priceOverrideCleared
           : ADMIN_AUDIT_ACTIONS.priceOverrideSet,
         details: {
-          beforePrice: invitation.adminPriceOverride,
-          beforeComplimentary: invitation.complimentary,
-          afterPrice: finalPrice,
-          afterComplimentary: complimentary,
+          before: {
+            adminPriceOverride: invitation.adminPriceOverride,
+            complimentary: invitation.complimentary,
+          },
+          after: { adminPriceOverride: finalPrice, complimentary },
           supersededPaymentCount: superseded.count,
         },
       });

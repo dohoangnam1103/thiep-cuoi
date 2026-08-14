@@ -1138,6 +1138,11 @@
     "auditTitle": "サポート履歴",
     "noAudit": "サポート操作はまだありません。",
     "auditActor": "{admin}、{time}",
+    "auditPriceChange": "価格: {before} → {after}",
+    "auditComplimentaryChange": "無料提供: {before} → {after}",
+    "auditSupersededPayments": "保留中の支払い {count} 件を差し替えました",
+    "auditBoolYes": "はい",
+    "auditBoolNo": "いいえ",
     "audit": {
       "INVITATION_CREATED_FOR_USER": "ユーザー用の招待状を作成しました",
       "INVITATION_UPDATED_BY_ADMIN": "招待状を編集しました",
@@ -1188,7 +1193,8 @@
       "banner": "{email} をサポート中",
       "bannerDescription": "保存した変更はすべて、お客様の招待状に直接反映されます。",
       "back": "ユーザープロフィールに戻る",
-      "complimentary": "この招待状は無料提供され、無期限で有効化されています。"
+      "complimentary": "この招待状は無料提供され、無期限で有効化されています。",
+      "publishToast": "招待状を正常に公開しました。"
     },
     "errors": {
       "invalidData": "データが無効です。",

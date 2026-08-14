@@ -1355,6 +1355,11 @@
     "auditTitle": "Support history",
     "noAudit": "No support actions yet.",
     "auditActor": "{admin} at {time}",
+    "auditPriceChange": "Price: {before} → {after}",
+    "auditComplimentaryChange": "Complimentary: {before} → {after}",
+    "auditSupersededPayments": "Superseded {count} pending payment(s)",
+    "auditBoolYes": "Yes",
+    "auditBoolNo": "No",
     "audit": {
       "INVITATION_CREATED_FOR_USER": "Created an invitation for the user",
       "INVITATION_UPDATED_BY_ADMIN": "Edited the invitation",
@@ -1405,7 +1410,8 @@
       "banner": "Editing for {email}",
       "bannerDescription": "Every saved change directly affects the customer's invitation.",
       "back": "Back to user profile",
-      "complimentary": "This invitation is complimentary and permanently activated."
+      "complimentary": "This invitation is complimentary and permanently activated.",
+      "publishToast": "Invitation published successfully."
     },
     "errors": {
       "invalidData": "Invalid data.",
