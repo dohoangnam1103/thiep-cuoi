@@ -110,8 +110,10 @@ test.describe("dashboard guests", () => {
       await loginAsUser(context, user.id);
       const res = await page.goto(`/dashboard/${inv.id}/guests`);
       expect(res?.ok()).toBeTruthy();
-      await expect(page.getByRole("heading", { name: "Khách mời" })).toBeVisible();
-      await expect(page.getByText("Tổng khách mời")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Quản lý khách mời", exact: true }),
+      ).toBeVisible();
+      await expect(page.getByText("Tổng số thiệp đã mời", { exact: true })).toBeVisible();
     } finally {
       cleanup(user.id);
     }
@@ -126,8 +128,9 @@ test.describe("dashboard guests", () => {
     try {
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/guests`);
-      await expect(page.getByText("Trần Thị Seed")).toBeVisible();
-      await expect(page.getByText("Lê Văn Seed")).toBeVisible();
+      const guestTable = page.getByRole("table");
+      await expect(guestTable.getByText("Trần Thị Seed", { exact: true })).toBeVisible();
+      await expect(guestTable.getByText("Lê Văn Seed", { exact: true })).toBeVisible();
     } finally {
       cleanup(user.id);
     }
@@ -156,19 +159,20 @@ test.describe("dashboard guests", () => {
     const user = createUser();
     const inv = createInvitation(user.id);
     publishInvitation(inv.id);
-    const name = `UI Khách ${randomUUID().slice(0, 6)}`;
+    const name = "Khách Tạo Mới";
     try {
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/guests`);
-      await page.getByPlaceholder("Tên khách*").fill(name);
-      await page.getByPlaceholder("Vai (anh, chị, bạn...)").fill("bạn");
-      await page.getByRole("button", { name: /Thêm khách/ }).click();
-
-      await expect(page.getByText(name)).toBeVisible();
+      await page.getByRole("button", { name: "Thêm khách", exact: true }).first().click();
+      const addDialog = page.getByRole("dialog");
+      await addDialog.getByLabel("Tên khách *", { exact: true }).fill(name);
+      await addDialog.getByRole("button", { name: "Thêm khách", exact: true }).click();
 
       await expect
         .poll(() => guestsOf(inv.id).some((g) => g.name === name))
         .toBeTruthy();
+      await page.reload();
+      await expect(page.getByRole("table").getByText(name, { exact: true })).toBeVisible();
       const row = guestsOf(inv.id).find((g) => g.name === name);
       expect(row?.token).toBeTruthy();
     } finally {
@@ -176,16 +180,20 @@ test.describe("dashboard guests", () => {
     }
   });
 
-  test("each guest has a unique share token surfaced as a link", async ({ page, context }) => {
+  test("each guest has a unique share token surfaced in its share dialog", async ({ page, context }) => {
     const user = createUser();
     const inv = createInvitation(user.id);
     publishInvitation(inv.id);
-    const g = createGuest(inv.id, "Token Khách");
+    const guestName = "Token Khách";
+    const g = createGuest(inv.id, guestName);
     try {
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/guests`);
-      // Zalo/Messenger anchors embed the per-guest link (…?g=<token>).
-      await expect(page.locator(`a[href*="${g.token}"]`).first()).toBeVisible();
+      await page
+        .getByRole("button", { name: `Chia sẻ thiệp cho ${guestName}`, exact: true })
+        .click();
+      // Zalo/Messenger anchors in the share dialog embed the per-guest link (…?g=<token>).
+      await expect(page.getByRole("dialog").locator(`a[href*="${g.token}"]`).first()).toBeVisible();
 
       const tokens = guestsOf(inv.id).map((r) => r.token);
       expect(new Set(tokens).size).toBe(tokens.length);
