@@ -246,8 +246,10 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
         savedDraftRef.current !== null &&
         draftsEqual(latest, savedDraftRef.current);
       latestRef.current = latest;
-      if (!unchangedSinceSave) persist(latest);
-      onFlushRef.current?.(latest);
+      if (!unchangedSinceSave) {
+        persist(latest);
+        onFlushRef.current?.(latest);
+      }
     };
 
     const onFieldBlur = (event: FocusEvent) => {

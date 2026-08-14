@@ -502,6 +502,12 @@ test.describe("invitation editor", () => {
       });
       await expect.poll(() => readContent(inv.id, "brideFullName")).toBe(name);
       await expect(page.getByText("Đã lưu bản nháp").first()).toBeVisible();
+      // Wait for the Server Action response to reconcile the matching recovery
+      // snapshot. A stale toast from the previous save is not proof that this
+      // save's client-side reconciliation has completed.
+      await expect
+        .poll(() => page.evaluate((id) => localStorage.getItem(`chungdoi:draft:${id}`), inv.id))
+        .toBeNull();
     }
 
     setContent(inv.id, { brideFullName: serverName });
