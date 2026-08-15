@@ -230,12 +230,14 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             <h2 className="text-center text-[26px] font-semibold uppercase md:text-[32px]" style={{ color: GOLD, fontFamily: LPD_BODY, letterSpacing: "0.04em" }}>
               Thông tin lễ cưới <span className="opacity-70">/ 婚禮資訊</span>
             </h2>
-            <div className="grid w-full max-w-[366px] grid-cols-2 items-start gap-6 text-center md:max-w-[560px] md:gap-10" style={{ color: GOLD, fontFamily: LPD_BODY }}>
+            {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng thẻ,
+                không bị cắt bởi overflow-hidden của khung ngoài. */}
+            <div className="grid w-full max-w-[366px] grid-cols-1 items-start gap-6 text-center md:max-w-[560px] md:grid-cols-2 md:gap-10" style={{ color: GOLD, fontFamily: LPD_BODY }}>
               {familyColumns.map((family) => (
                 <div key={`${family.father}-${family.mother}`} className="flex flex-col items-center gap-1.5">
                   <span className="text-[15px] md:text-[18px]">{family.title} <span className="opacity-70">/ 先生與女士</span></span>
-                  <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{family.father}</span>
-                  <span className="whitespace-nowrap text-[19px] font-semibold md:text-[21px]">{family.mother}</span>
+                  <span className="text-[19px] font-semibold md:text-[21px]">{family.father}</span>
+                  <span className="text-[19px] font-semibold md:text-[21px]">{family.mother}</span>
                   <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{family.address}</div>
                   <div className="text-[12px] opacity-60 md:text-[13px]">{family.translatedAddress}</div>
                 </div>
