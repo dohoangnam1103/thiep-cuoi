@@ -155,7 +155,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: INK_MUTED }}>{reception.lunar}</div> : null}
+            {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: INK_MUTED }}>{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <h3 className="text-[18px] uppercase tracking-wide md:text-[20px]" style={{ color: GOLD_DARK }}>Cùng đếm ngược</h3>

@@ -132,7 +132,7 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GREEN_MUTED }}>{reception.lunar}</div> : null}
+            {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: GREEN_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar framed by frame-lich */}
             {calendar ? (

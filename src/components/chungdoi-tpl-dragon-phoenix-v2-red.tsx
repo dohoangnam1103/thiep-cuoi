@@ -134,7 +134,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
+            {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar — bordered box (no frame image in this set) */}
             {calendar ? (
