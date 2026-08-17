@@ -354,14 +354,17 @@ test("the sun direction matches the measured HDRI sun", () => {
   );
   assert.deepEqual(
     [x, y, z],
-    [0.8069, 0.0288, 0.5900],
-    "measured from sky.hdr: elevation +1.652deg, azimuth +36.176deg",
+    [0.6346, 0.2221, 0.7402],
+    "measured from sky.hdr: elevation +12.832deg, azimuth +49.395deg",
   );
 
   const elevationDegrees = (Math.asin(y) * 180) / Math.PI;
+  // A sunrise sun has to be high enough to show a disk in frame but low enough
+  // to still rake the sand. The coastal HDRI this replaced sat at 1.652deg,
+  // which read as dim golden hour with no visible sun at all.
   assert.ok(
-    elevationDegrees > 0 && elevationDegrees < 4,
-    `golden hour needs a sun just above the horizon, got ${elevationDegrees.toFixed(3)}deg`,
+    elevationDegrees > 8 && elevationDegrees < 20,
+    `a bright sunrise needs a sun clear of the horizon, got ${elevationDegrees.toFixed(3)}deg`,
   );
 });
 
@@ -390,14 +393,26 @@ test("the world sun direction is the map sun rotated with the environment", () =
     "the world sun direction must stay unit length",
   );
 
-  // The smooth open-water sector of the HDRI is map azimuth +45 to +75deg, and
-  // the sea is at world azimuth -90deg. The rotation has to carry one onto the
-  // other or the scene faces the broken coastline.
-  const seawardMapAzimuth =
-    ((-90 + BEACH_ENVIRONMENT_ROTATION_Y_DEGREES) % 360 + 360) % 360;
+  // `table_mountain_1_puresky` has no horizon geography, so unlike the coastal
+  // HDRI it replaced there is no "smooth open-water sector" the rotation has to
+  // aim at — every azimuth is equally usable. What the rotation must now buy is
+  // a *visible* sun: the camera walks the rail looking down-shore at
+  // -13.74deg, and the horizontal half-FOV is 12.16deg on the authored 390x844
+  // mobile view, so the sun has to land inside that or "bright sunrise with a
+  // visible sun" is unmet on a phone.
+  const CAMERA_LOOK_AZIMUTH_DEGREES = -13.74;
+  const MOBILE_HORIZONTAL_HALF_FOV_DEGREES = 12.16;
+  const worldAzimuthDegrees = (Math.atan2(
+    BEACH_SUN_WORLD_DIRECTION[2]!,
+    BEACH_SUN_WORLD_DIRECTION[0]!,
+  ) * 180) / Math.PI;
+  const offAxisDegrees = Math.abs(
+    worldAzimuthDegrees - CAMERA_LOOK_AZIMUTH_DEGREES,
+  );
+
   assert.ok(
-    seawardMapAzimuth >= 45 && seawardMapAzimuth <= 75,
-    `seaward samples map azimuth ${seawardMapAzimuth}deg, outside the smooth sector`,
+    offAxisDegrees < MOBILE_HORIZONTAL_HALF_FOV_DEGREES,
+    `the sun sits ${offAxisDegrees.toFixed(2)}deg off the view axis, outside the ${MOBILE_HORIZONTAL_HALF_FOV_DEGREES}deg mobile half-FOV — it would never appear on screen`,
   );
 });
 

@@ -4,7 +4,12 @@ import test from "node:test";
 import { routing } from "@/i18n/routing";
 
 import { SITE_SOCIAL_IMAGE_PATH, SITE_URL } from "./site-url";
-import { pageSeo, staticAlternates, templateAlternates } from "./seo";
+import {
+  pageSeo,
+  staticAlternates,
+  templateAlternates,
+  templateFacetAlternates,
+} from "./seo";
 
 test("disables next-intl alternate headers so metadata is the single hreflang source", () => {
   assert.equal(routing.alternateLinks, false);
@@ -24,6 +29,18 @@ test("keeps localized template slugs in canonical and hreflang links", () => {
   assert.ok(alternates);
   assert.equal(alternates.canonical, "/mau-thiep/long-phung-v2-do/demo");
   assert.equal(alternates.languages.vi, "/mau-thiep/long-phung-v2-do/demo");
+});
+
+test("keeps curated style and color landing pages self-canonical", () => {
+  const style = templateFacetAlternates("style", "truyen-thong", "vi");
+  const color = templateFacetAlternates("color", "do", "vi");
+
+  assert.equal(style.canonical, "/mau-thiep/phong-cach/truyen-thong");
+  assert.equal(style.languages.vi, style.canonical);
+  assert.equal(style.languages["x-default"], style.canonical);
+  assert.equal(color.canonical, "/mau-thiep/mau-sac/do");
+  assert.equal(color.languages.vi, color.canonical);
+  assert.equal(color.languages["x-default"], color.canonical);
 });
 
 test("uses the branded social card by default without replacing page-specific images", () => {

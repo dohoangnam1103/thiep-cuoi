@@ -10,52 +10,49 @@ import {
   type BeachJourneyScene,
 } from "@/data/beach-wedding-journey";
 import { getBeachFrameGeometry } from "@/components/beach-wedding-journey/beach-frame-geometry";
-import { shorelineOffsetAt } from "@/components/beach-wedding-journey/beach-shoreline";
 import { getBeachWorldDensity } from "@/components/beach-wedding-journey/beach-world-data";
 import { BEACH_PHOTOREAL_ASSETS } from "@/components/beach-wedding-journey/photoreal/beach-asset-manifest";
 import {
-  BEACH_DUNE_GRASS_X_MAX_METRES,
-  BEACH_DUNE_GRASS_X_MIN_METRES,
-  BEACH_DUNE_GRASS_Z_MAX_METRES,
-  BEACH_DUNE_GRASS_Z_MIN_METRES,
-  BEACH_GRASS_BLADES_PER_TUFT,
-  BEACH_GRASS_WIND_BASE,
-  BEACH_GRASS_WIND_CUE_GAIN,
-  BEACH_GRASS_WIND_HEIGHT,
-  BEACH_PIER_DECK_HEIGHT_METRES,
-  BEACH_PIER_DECK_WIDTH_METRES,
-  BEACH_PIER_LANDWARD_REACH_METRES,
-  BEACH_PIER_PLANK_FILL,
-  BEACH_PIER_POLE_SPACING_METRES,
-  BEACH_PIER_POLES_PER_ROW,
-  BEACH_PIER_SEAWARD_REACH_METRES,
+  BEACH_FLOWER_BLOOMS_PER_CLUSTER,
+  BEACH_FLOWER_CLUSTER_RADIUS_METRES,
+  BEACH_FLOWER_HEIGHT_METRES,
+  BEACH_FLOWER_WIND_BASE,
+  BEACH_FLOWER_WIND_CUE_GAIN,
+  BEACH_FLOWER_WIND_HEIGHT,
   BEACH_POST_BASE_RADIUS_METRES,
   BEACH_POST_HEIGHT_METRES,
   BEACH_POST_LINE_MARGIN_METRES,
   BEACH_POST_TOP_RADIUS_METRES,
   BEACH_PROP_ASSETS,
   BEACH_PROP_ASSET_ERROR_MARKER,
+  BEACH_TABLE_HEIGHT_METRES,
+  BEACH_TABLE_HEM_FLARE_METRES,
+  BEACH_TABLE_LANDWARD_Z_MAX_METRES,
+  BEACH_TABLE_LANDWARD_Z_MIN_METRES,
+  BEACH_TABLE_RADIUS_METRES,
+  BEACH_TABLE_SEAWARD_Z_MAX_METRES,
+  BEACH_TABLE_SEAWARD_Z_MIN_METRES,
+  BEACH_TABLE_X_MAX_METRES,
+  BEACH_TABLE_X_MIN_METRES,
   attachBeachWind,
-  createBeachGrassTuftGeometry,
-  createBeachPierDeckGeometry,
-  createBeachPierPoleGeometry,
+  createBeachFlowerGeometry,
   createBeachPostGeometry,
   createBeachScatter,
+  createBeachTableGeometry,
   driveBeachWind,
-  getBeachPierLayout,
   groupBeachPropTextures,
   isBeachPropAssetError,
-  resolveBeachDuneGrassPlacements,
   resolveBeachPostPlacements,
+  resolveBeachTablePlacements,
 } from "@/components/beach-wedding-journey/photoreal/beach-props";
 import { beachGroundHeightAt } from "@/components/beach-wedding-journey/photoreal/beach-terrain";
 
 /**
  * The rail the camera walks, from `resolveScenePose` in
  * `src/data/beach-wedding-journey.ts`: z 7 with a 0.9m drift landward. Restated
- * as literals on purpose — the point of the dune-grass band test is that the
- * grass clears *this* rail, so it must not be derived from the band constants it
- * is checking.
+ * as literals on purpose — the point of the table band test is that the tables
+ * clear *this* rail, so it must not be derived from the band constants it is
+ * checking.
  */
 const RAIL_Z_MIN_METRES = 7;
 const RAIL_Z_MAX_METRES = 7.9;
@@ -64,14 +61,14 @@ const RAIL_Z_MAX_METRES = 7.9;
 const JOURNEY_CAMERA_X_MIN_METRES = -8;
 const JOURNEY_CAMERA_X_MAX_METRES = 111;
 
-/** Metres the shoreline curves alongshore, from `BEACH_SHORE_CURVE_AMPLITUDE_METRES`. */
+/** Metres the shoreline curves alongshore, from `SHORE_CURVE_AMPLITUDE_METRES`. */
 const SHORE_CURVE_AMPLITUDE_METRES = 2.4;
 
-/** The prop map ids Task 1 shipped: pier planks plus two frame sets, ×3 maps. */
+/** The prop map ids the props consume: driftwood plus two frame sets, ×3 maps. */
 const EXPECTED_PROP_ASSET_IDS = [
-  "pierPlanksColor",
-  "pierPlanksNormal",
-  "pierPlanksArm",
+  "driftwoodColor",
+  "driftwoodNormal",
+  "driftwoodArm",
   "frame01Color",
   "frame01Normal",
   "frame01Arm",
@@ -85,12 +82,6 @@ function demoScenes(): readonly BeachJourneyScene[] {
     beachWeddingJourneyDemoContent,
     beachWeddingJourneyFeatures,
   );
-}
-
-function finaleScene(): BeachJourneyScene {
-  const finale = demoScenes().find((scene) => scene.type === "finale");
-  assert.ok(finale, "the demo walk ends on a finale scene");
-  return finale;
 }
 
 function positionBounds(geometry: {
@@ -127,7 +118,7 @@ function positionBounds(geometry: {
 
 test("the beach wind program never collides with the forest's", () => {
   const material = new MeshStandardMaterial();
-  attachBeachWind(material, BEACH_GRASS_WIND_HEIGHT);
+  attachBeachWind(material, BEACH_FLOWER_WIND_HEIGHT);
 
   assert.equal(typeof material.customProgramCacheKey, "function");
   const key = material.customProgramCacheKey!();
@@ -138,9 +129,9 @@ test("the beach wind program never collides with the forest's", () => {
 
 test("the wind shader reads the per-instance phase and ramps by height", () => {
   const material = new MeshStandardMaterial();
-  const uniforms = attachBeachWind(material, BEACH_GRASS_WIND_HEIGHT);
+  const uniforms = attachBeachWind(material, BEACH_FLOWER_WIND_HEIGHT);
 
-  assert.equal(uniforms.uWindHeight.value, BEACH_GRASS_WIND_HEIGHT);
+  assert.equal(uniforms.uWindHeight.value, BEACH_FLOWER_WIND_HEIGHT);
   assert.ok(material.onBeforeCompile);
 
   const shader = {
@@ -165,7 +156,7 @@ test("the wind shader reads the per-instance phase and ramps by height", () => {
 
 test("reduced motion freezes both the wind clock and its strength", () => {
   const material = new MeshStandardMaterial();
-  const uniforms = attachBeachWind(material, BEACH_GRASS_WIND_HEIGHT);
+  const uniforms = attachBeachWind(material, BEACH_FLOWER_WIND_HEIGHT);
 
   driveBeachWind(uniforms, 41.5, 0.4, false);
   assert.equal(uniforms.uTime.value, 41.5);
@@ -182,23 +173,24 @@ test("a missing wind handle is a no-op rather than a crash", () => {
   assert.doesNotThrow(() => driveBeachWind(null, 3, 1, false));
 });
 
-test("the grass wind strength stays gentle across the whole cue range", () => {
+test("the flower wind strength stays gentle across the whole cue range", () => {
   // The cue is normalised 0..1 by `beach-cue-state.ts`.
-  const still = BEACH_GRASS_WIND_BASE + 0 * BEACH_GRASS_WIND_CUE_GAIN;
-  const gusting = BEACH_GRASS_WIND_BASE + 1 * BEACH_GRASS_WIND_CUE_GAIN;
+  const still = BEACH_FLOWER_WIND_BASE + 0 * BEACH_FLOWER_WIND_CUE_GAIN;
+  const gusting = BEACH_FLOWER_WIND_BASE + 1 * BEACH_FLOWER_WIND_CUE_GAIN;
 
-  assert.ok(still > 0, "marram is never perfectly still");
+  assert.ok(still > 0, "a centrepiece is never perfectly still");
   assert.ok(gusting > still);
   // Strength multiplies the wind height in the shader, so a value near 1 would
-  // lay the tufts flat on the sand.
-  assert.ok(gusting < 0.2);
+  // lay the blooms flat on the cloth. Cut stems in a vase travel less than the
+  // rooted marram this replaced, so the ceiling is tighter.
+  assert.ok(gusting < 0.08);
 });
 
 // ---------------------------------------------------------------------------
 // Prop assets
 // ---------------------------------------------------------------------------
 
-test("the prop maps are exactly the wood sets Task 1 shipped", () => {
+test("the prop maps are exactly the wood sets the props consume", () => {
   assert.deepEqual(
     BEACH_PROP_ASSETS.map(({ id }) => id),
     [...EXPECTED_PROP_ASSET_IDS],
@@ -216,7 +208,7 @@ test("the prop maps are exactly the wood sets Task 1 shipped", () => {
 
 test("a prop map failure is swallowed and a scene-graph bug is not", () => {
   const assetFailure = new Error(
-    `[${BEACH_PROP_ASSET_ERROR_MARKER}] /chungdoi/labs/beach-wedding-journey/pier-planks-color.webp: 404`,
+    `[${BEACH_PROP_ASSET_ERROR_MARKER}] /chungdoi/labs/beach-wedding-journey/driftwood-color.webp: 404`,
   );
 
   assert.equal(isBeachPropAssetError(assetFailure), true);
@@ -239,9 +231,9 @@ test("prop textures group into the sets each prop consumes", () => {
   assert.equal(grouped.frames.length, 2);
   assert.deepEqual(
     [
-      grouped.pier.color.name,
-      grouped.pier.normal.name,
-      grouped.pier.arm.name,
+      grouped.driftwood.color.name,
+      grouped.driftwood.normal.name,
+      grouped.driftwood.arm.name,
       grouped.frames[0].color.name,
       grouped.frames[0].normal.name,
       grouped.frames[0].arm.name,
@@ -250,9 +242,9 @@ test("prop textures group into the sets each prop consumes", () => {
       grouped.frames[1].arm.name,
     ],
     [
-      "pierPlanksColor",
-      "pierPlanksNormal",
-      "pierPlanksArm",
+      "driftwoodColor",
+      "driftwoodNormal",
+      "driftwoodArm",
       "frame01Color",
       "frame01Normal",
       "frame01Arm",
@@ -266,7 +258,7 @@ test("prop textures group into the sets each prop consumes", () => {
 test("a short texture list is rejected rather than silently mis-grouped", () => {
   assert.throws(
     () => groupBeachPropTextures(
-      [{ name: "pierPlanksColor" }] as unknown as Parameters<
+      [{ name: "driftwoodColor" }] as unknown as Parameters<
         typeof groupBeachPropTextures
       >[0],
     ),
@@ -308,8 +300,8 @@ test("the placements themselves are stable between calls", () => {
     resolveBeachPostPlacements(scenes, 18),
   );
   assert.deepEqual(
-    resolveBeachDuneGrassPlacements(240),
-    resolveBeachDuneGrassPlacements(240),
+    resolveBeachTablePlacements(12),
+    resolveBeachTablePlacements(12),
   );
 });
 
@@ -382,228 +374,153 @@ test("a post is pivoted at its base so the instance scale reads as height", () =
 });
 
 // ---------------------------------------------------------------------------
-// Dune grass
+// Reception tables
 // ---------------------------------------------------------------------------
 
-test("dune grass grows only landward of the walk and the hanging line", () => {
-  const placements = resolveBeachDuneGrassPlacements(900);
+test("tables never stand on the walk, in a frame, or in the sea", () => {
+  const placements = resolveBeachTablePlacements(18);
   const scenes = demoScenes();
   const frameZs = scenes.map((scene) => getBeachFrameGeometry(scene).position[2]);
-  const maxFrameZ = Math.max(...frameZs);
+  const minFrameZ = Math.min(...frameZs);
 
-  assert.equal(placements.length, 900);
-  assert.ok(BEACH_DUNE_GRASS_Z_MIN_METRES > RAIL_Z_MAX_METRES);
-  assert.ok(BEACH_DUNE_GRASS_Z_MIN_METRES > maxFrameZ);
+  assert.equal(placements.length, 18);
+  // The seaward band clears the frames, and the landward band clears the rail.
+  assert.ok(BEACH_TABLE_SEAWARD_Z_MAX_METRES < minFrameZ);
+  assert.ok(BEACH_TABLE_LANDWARD_Z_MIN_METRES > RAIL_Z_MAX_METRES);
 
-  for (const { position, rotationY, scale, windPhase } of placements) {
+  for (const { clothTint, flowerTint, position, rotationY, scale, windPhase } of placements) {
     const [x, y, z] = position;
-    assert.ok(z >= BEACH_DUNE_GRASS_Z_MIN_METRES, `tuft at z ${z} is landward`);
-    assert.ok(z <= BEACH_DUNE_GRASS_Z_MAX_METRES);
-    // Never between the camera and the sea, and never through a frame.
-    assert.ok(z > RAIL_Z_MIN_METRES);
-    assert.ok(x >= BEACH_DUNE_GRASS_X_MIN_METRES);
-    assert.ok(x <= BEACH_DUNE_GRASS_X_MAX_METRES);
+    const seaward = z <= BEACH_TABLE_SEAWARD_Z_MAX_METRES;
+
+    if (seaward) {
+      assert.ok(z >= BEACH_TABLE_SEAWARD_Z_MIN_METRES, `table at z ${z} is on sand`);
+      assert.ok(z < RAIL_Z_MIN_METRES, "seaward tables sit in front of the walk");
+    } else {
+      assert.ok(z >= BEACH_TABLE_LANDWARD_Z_MIN_METRES);
+      assert.ok(z <= BEACH_TABLE_LANDWARD_Z_MAX_METRES);
+      assert.ok(z > RAIL_Z_MAX_METRES, "landward tables sit behind the walk");
+    }
+
+    // Dry sand only: the waterline swings +/-2.4m about z 0, and ground height
+    // above the still water level is what says a point is not submerged.
+    assert.ok(z > SHORE_CURVE_AMPLITUDE_METRES, `table at z ${z} is out of the sea`);
+    assert.ok(y > 0, `table at z ${z} stands above the waterline`);
+
+    assert.ok(x >= BEACH_TABLE_X_MIN_METRES);
+    assert.ok(x <= BEACH_TABLE_X_MAX_METRES);
     assert.equal(y, beachGroundHeightAt(x, z));
     assert.ok(scale > 0);
     assert.ok(rotationY >= 0 && rotationY <= Math.PI * 2);
     assert.ok(windPhase >= 0 && windPhase <= Math.PI * 2);
+    // Linen is one bolt of cloth: the per-table tint may only shade it.
+    assert.ok(clothTint > 0.9 && clothTint <= 1);
+    assert.ok(Number.isInteger(flowerTint) && flowerTint > 0);
   }
 });
 
-test("the grass band covers the whole walk alongshore", () => {
-  assert.ok(BEACH_DUNE_GRASS_X_MIN_METRES < JOURNEY_CAMERA_X_MIN_METRES);
-  assert.ok(BEACH_DUNE_GRASS_X_MAX_METRES > JOURNEY_CAMERA_X_MAX_METRES);
+test("the tables are set along the whole walk, not clumped at one end", () => {
+  assert.ok(BEACH_TABLE_X_MIN_METRES < JOURNEY_CAMERA_X_MIN_METRES);
+  assert.ok(BEACH_TABLE_X_MAX_METRES > JOURNEY_CAMERA_X_MAX_METRES);
 
-  const placements = resolveBeachDuneGrassPlacements(900);
-  const xs = placements.map(({ position }) => position[0]);
-  assert.ok(Math.min(...xs) < JOURNEY_CAMERA_X_MIN_METRES + 6);
-  assert.ok(Math.max(...xs) > JOURNEY_CAMERA_X_MAX_METRES - 6);
+  const placements = resolveBeachTablePlacements(18);
+  const xs = placements.map(({ position }) => position[0]).sort((a, b) => a - b);
+  assert.ok(xs[0]! < JOURNEY_CAMERA_X_MIN_METRES + 12);
+  assert.ok(xs.at(-1)! > JOURNEY_CAMERA_X_MAX_METRES - 12);
+
+  // Stratified placement means no two tables may swap order or pile up: every
+  // gap is a real gap, so a reception never reads as a stack of furniture.
+  const span = BEACH_TABLE_X_MAX_METRES - BEACH_TABLE_X_MIN_METRES;
+  const slice = span / placements.length;
+  for (let index = 1; index < xs.length; index += 1) {
+    assert.ok(
+      xs[index]! - xs[index - 1]! > slice * 0.4,
+      `tables at x ${xs[index - 1]} and ${xs[index]} are too close together`,
+    );
+  }
 });
 
-test("tufts bias landward, so the band thins towards the walk", () => {
-  const placements = resolveBeachDuneGrassPlacements(900);
-  const midZ = (BEACH_DUNE_GRASS_Z_MIN_METRES + BEACH_DUNE_GRASS_Z_MAX_METRES) / 2;
-  const landward = placements.filter(({ position }) => position[2] > midZ).length;
+test("both bands are used, so the reception has depth", () => {
+  const placements = resolveBeachTablePlacements(18);
+  const seaward = placements.filter(
+    ({ position }) => position[2] <= BEACH_TABLE_SEAWARD_Z_MAX_METRES,
+  ).length;
 
-  // A uniform scatter would put half the tufts each side of the midpoint; the
-  // squared z fraction pushes clearly more of them towards the dune crest.
-  assert.ok(
-    landward > placements.length * 0.6,
-    `${landward} of ${placements.length} tufts sit landward of the band midpoint`,
-  );
+  assert.ok(seaward > 0, "some tables stand between the frames and the water");
+  assert.ok(seaward < placements.length, "some tables stand behind the walk");
 });
 
-test("asking for no grass leaves the dunes bare instead of throwing", () => {
-  assert.deepEqual(resolveBeachDuneGrassPlacements(0), []);
-  assert.deepEqual(resolveBeachDuneGrassPlacements(-10), []);
+test("asking for no tables leaves the shore bare instead of throwing", () => {
+  assert.deepEqual(resolveBeachTablePlacements(0), []);
+  assert.deepEqual(resolveBeachTablePlacements(-10), []);
 });
 
-test("a tuft is opaque tapered blades, pivoted at the sand", () => {
-  const geometry = createBeachGrassTuftGeometry();
+test("a table is a cloth over a top and down a flared skirt", () => {
+  const geometry = createBeachTableGeometry();
   const box = positionBounds(geometry);
-  const index = geometry.getIndex();
 
-  assert.ok(Math.abs(box.minY) < 1e-6, "blades start at the pivot");
-  assert.ok(box.maxY > 0.5 && box.maxY <= 1, "one unit tall before scaling");
+  // Pivoted at the sand so a placement can plant it on the terrain height.
+  assert.ok(Math.abs(box.minY) < 1e-6, "the hem reaches the sand");
+  assert.ok(
+    Math.abs(box.maxY - BEACH_TABLE_HEIGHT_METRES) < 1e-6,
+    "the cloth top is at table height",
+  );
 
-  // Four rings of two vertices per blade, six indices per quad, three quads.
-  assert.equal(box.vertexCount, BEACH_GRASS_BLADES_PER_TUFT * 4 * 2);
-  assert.ok(index);
-  assert.equal(index.count, BEACH_GRASS_BLADES_PER_TUFT * 3 * 6);
+  // The hem flares past the top, or the skirt reads as a drum rather than linen.
+  const hemReach = Math.max(box.maxX, box.maxZ);
+  assert.ok(hemReach > BEACH_TABLE_RADIUS_METRES);
+  assert.ok(
+    hemReach <= BEACH_TABLE_RADIUS_METRES + BEACH_TABLE_HEM_FLARE_METRES + 0.04,
+    `hem reaches ${hemReach}m, past the flare plus its scallop`,
+  );
 
-  // No alpha map exists to cut a card out of, so the geometry must be the shape.
+  assert.ok(geometry.getIndex());
   assert.ok(geometry.getAttribute("normal"));
-  assert.ok(geometry.getAttribute("uv"));
   assert.equal(geometry.getAttribute("uv"), geometry.getAttribute("uv1"));
   geometry.dispose();
 });
 
-test("a tuft's blade count follows its argument", () => {
-  const sparse = createBeachGrassTuftGeometry(2);
-  assert.equal(positionBounds(sparse).vertexCount, 2 * 4 * 2);
+test("a centrepiece is blooms over foliage, pivoted at the cloth", () => {
+  const geometry = createBeachFlowerGeometry();
+  const box = positionBounds(geometry);
+  const bloomMask = geometry.getAttribute("bloomMask");
+
+  assert.ok(Math.abs(box.minY) >= 0, "the collar sits at or above the cloth");
+  assert.ok(
+    box.maxY <= BEACH_FLOWER_HEIGHT_METRES + 1e-6,
+    "the arrangement stays within its authored height",
+  );
+  // Wide enough to read as an arrangement, not a stem.
+  assert.ok(Math.max(box.maxX, box.maxZ) > BEACH_FLOWER_CLUSTER_RADIUS_METRES * 0.5);
+
+  // The mask is what lets one material draw white petals and green leaves, so
+  // both values must actually be present — an all-1.0 mask is a bald bouquet.
+  assert.ok(bloomMask);
+  const values = new Set<number>();
+  for (let index = 0; index < bloomMask.count; index += 1) {
+    values.add(bloomMask.getX(index));
+  }
+  assert.deepEqual(values, new Set([0, 1]));
+  geometry.dispose();
+});
+
+test("a centrepiece's bloom count follows its argument", () => {
+  const sparse = createBeachFlowerGeometry(2);
+  const full = createBeachFlowerGeometry(BEACH_FLOWER_BLOOMS_PER_CLUSTER);
+
+  assert.ok(positionBounds(sparse).vertexCount < positionBounds(full).vertexCount);
   sparse.dispose();
+  full.dispose();
 });
 
-test("the wind ramp height covers a full-scale tuft", () => {
-  const geometry = createBeachGrassTuftGeometry();
+test("the wind ramp height covers a full-scale centrepiece", () => {
+  const geometry = createBeachFlowerGeometry();
   const { maxY } = positionBounds(geometry);
-  // Placement scales tufts up to 1.34, and the ramp saturates at
-  // `BEACH_GRASS_WIND_HEIGHT`; a ramp far below the tallest blade would leave
-  // its tip travelling at full amplitude with no falloff left.
-  assert.ok(BEACH_GRASS_WIND_HEIGHT >= maxY * 0.9);
-  assert.ok(BEACH_GRASS_WIND_HEIGHT <= maxY * 1.6);
+  // The ramp saturates at `BEACH_FLOWER_WIND_HEIGHT`; a ramp far below the
+  // tallest bloom would leave its tip travelling at full amplitude with no
+  // falloff left.
+  assert.ok(BEACH_FLOWER_WIND_HEIGHT >= maxY * 0.9);
+  assert.ok(BEACH_FLOWER_WIND_HEIGHT <= maxY * 1.6);
   geometry.dispose();
-});
-
-// ---------------------------------------------------------------------------
-// Pier
-// ---------------------------------------------------------------------------
-
-test("the pier reaches from behind the finale camera out past the waterline", () => {
-  const scene = finaleScene();
-  const layout = getBeachPierLayout(scene, 48);
-  const waterline = shorelineOffsetAt(layout.x);
-
-  // Landward end is behind the camera, so the guest stands on the deck.
-  assert.ok(layout.landwardZ > scene.cameraPosition[2]);
-  assert.ok(
-    Math.abs(
-      layout.landwardZ - (scene.cameraPosition[2] + BEACH_PIER_LANDWARD_REACH_METRES),
-    ) < 1e-9,
-  );
-
-  // Seaward end is measured from this x's own waterline, not from a fixed z.
-  assert.ok(layout.seawardZ < waterline, "the deck ends over water");
-  assert.ok(
-    Math.abs(layout.seawardZ - (waterline - BEACH_PIER_SEAWARD_REACH_METRES)) < 1e-9,
-  );
-  assert.ok(layout.deckLength > BEACH_PIER_SEAWARD_REACH_METRES);
-  assert.ok(
-    Math.abs(layout.deckCenterZ - (layout.landwardZ + layout.seawardZ) / 2) < 1e-9,
-  );
-  assert.equal(layout.deckWidth, BEACH_PIER_DECK_WIDTH_METRES);
-  assert.equal(layout.deckY, BEACH_PIER_DECK_HEIGHT_METRES);
-  assert.equal(layout.poleXOffsets.length, BEACH_PIER_POLES_PER_ROW);
-});
-
-test("the pier's seaward end follows the shoreline curve, not a fixed z", () => {
-  const scene = finaleScene();
-  const shifted = {
-    ...scene,
-    // Half the primary shoreline period away, where the curve is on its other
-    // side: a layout that ignored the curve would return the same seaward z.
-    cameraPosition: [
-      scene.cameraPosition[0] + 27,
-      scene.cameraPosition[1],
-      scene.cameraPosition[2],
-    ] as const,
-    lookTarget: [
-      scene.lookTarget[0] + 27,
-      scene.lookTarget[1],
-      scene.lookTarget[2],
-    ] as const,
-  };
-
-  const here = getBeachPierLayout(scene, 48);
-  const there = getBeachPierLayout(shifted, 48);
-
-  assert.notEqual(here.seawardZ, there.seawardZ);
-  assert.ok(Math.abs(here.seawardZ - there.seawardZ) <= SHORE_CURVE_AMPLITUDE_METRES * 2);
-});
-
-test("the pole rows are spaced at roughly the authored interval", () => {
-  const layout = getBeachPierLayout(finaleScene(), 48);
-  const spacing = layout.deckLength / (layout.poleRowCount - 1);
-
-  assert.ok(layout.poleRowCount >= 2, "a pier needs at least two rows");
-  assert.ok(
-    Math.abs(spacing - BEACH_PIER_POLE_SPACING_METRES) < BEACH_PIER_POLE_SPACING_METRES / 2,
-    `rows sit ${spacing}m apart`,
-  );
-});
-
-test("a zero plank request still lays a deck", () => {
-  const layout = getBeachPierLayout(finaleScene(), 0);
-  assert.equal(layout.plankCount, 1);
-});
-
-test("deck planks fill the pier with a gap between each", () => {
-  const layout = getBeachPierLayout(finaleScene(), 48);
-  const geometry = createBeachPierDeckGeometry(layout);
-  const box = positionBounds(geometry);
-  const slot = layout.deckLength / layout.plankCount;
-
-  // 48 planks, each a box of 24 vertices, merged into one draw call.
-  assert.equal(box.vertexCount, layout.plankCount * 24);
-  assert.equal(geometry.groups.length, 0);
-
-  // Local to the deck group at `deckCenterZ`, so the planks straddle z = 0.
-  assert.ok(box.minZ < 0 && box.maxZ > 0);
-  assert.ok(
-    Math.abs((box.maxZ - box.minZ) - (layout.deckLength - slot * (1 - BEACH_PIER_PLANK_FILL))) < 1e-5,
-  );
-  assert.ok(BEACH_PIER_PLANK_FILL < 1, "planks are separated, not a solid slab");
-  assert.ok(
-    Math.abs((box.maxX - box.minX) - BEACH_PIER_DECK_WIDTH_METRES) < 1e-5,
-  );
-  geometry.dispose();
-});
-
-test("every pole reaches the bed from under the deck", () => {
-  const layout = getBeachPierLayout(finaleScene(), 48);
-  const geometry = createBeachPierPoleGeometry(layout);
-  const box = positionBounds(geometry);
-
-  // Local to the deck, so the tops sit at y = 0 and the feet reach down to the
-  // bed — including the submerged part, which is what stops a floating pier.
-  assert.ok(box.maxY <= 1e-6, "no pole pokes above the deck");
-  assert.ok(box.minY < -layout.deckY, "the seaward poles reach below the water");
-
-  // Inset under the deck: a pole wider than the deck reads as a pillar the
-  // planks were dropped onto. The bound carries the pole's own radius, so it is
-  // compared against the deck edge rather than against the offset.
-  assert.ok(box.maxX < BEACH_PIER_DECK_WIDTH_METRES / 2);
-  assert.ok(box.minX > -BEACH_PIER_DECK_WIDTH_METRES / 2);
-  assert.ok(box.maxX > Math.max(...layout.poleXOffsets));
-  assert.ok(Math.abs(box.maxX + box.minX) < 1e-5, "the rows are symmetric");
-
-  // Poles span the deck's whole length and merge into one draw call.
-  assert.ok(box.minZ < -layout.deckLength / 2 + 1);
-  assert.ok(box.maxZ > layout.deckLength / 2 - 1);
-  assert.equal(geometry.groups.length, 0);
-  geometry.dispose();
-});
-
-test("a pier with no ground under it is an error, not an invisible pier", () => {
-  const layout = getBeachPierLayout(finaleScene(), 48);
-  assert.throws(
-    () => createBeachPierPoleGeometry({
-      ...layout,
-      // Deck below the bed everywhere: no pole can have positive height.
-      deckY: -50,
-    }),
-    /Beach pier has no poles above the bed/,
-  );
 });
 
 // ---------------------------------------------------------------------------
@@ -620,16 +537,14 @@ test("every tier's density resolves to a scene the props can build", () => {
       density.posts,
     );
     assert.equal(
-      resolveBeachDuneGrassPlacements(density.duneGrass).length,
-      density.duneGrass,
+      resolveBeachTablePlacements(density.tables).length,
+      density.tables,
     );
-    const layout = getBeachPierLayout(finaleScene(), density.pierPlanks);
-    assert.equal(layout.plankCount, density.pierPlanks);
     assert.doesNotThrow(() => {
-      const deck = createBeachPierDeckGeometry(layout);
-      const poles = createBeachPierPoleGeometry(layout);
-      deck.dispose();
-      poles.dispose();
+      const cloth = createBeachTableGeometry();
+      const flowers = createBeachFlowerGeometry();
+      cloth.dispose();
+      flowers.dispose();
     });
   }
 });

@@ -106,9 +106,9 @@ const EXPECTED_ASSET_IDS = [
   "sandArm",
   "waterNormal",
   "sky",
-  "pierPlanksColor",
-  "pierPlanksNormal",
-  "pierPlanksArm",
+  "driftwoodColor",
+  "driftwoodNormal",
+  "driftwoodArm",
   "frame01Color",
   "frame01Normal",
   "frame01Arm",
@@ -194,10 +194,15 @@ test("the estimate totals are the measured pack sizes", () => {
   const shared = getBeachPhotorealAssetEstimate("shared");
 
   assert.equal(entry.assets.length, 5);
-  assert.equal(entry.compressedBytes, 2_508_356);
+  assert.equal(entry.compressedBytes, 2_061_204);
   assert.equal(entry.decodedRgbaMipBytes, 20_971_523);
-  assert.equal(shared.compressedBytes, 3_325_754);
-  assert.equal(shared.decodedRgbaMipBytes, 46_137_353);
+  assert.equal(shared.compressedBytes, 2_325_222);
+  // 32.0 MiB, down from 44.0 MiB: the pier's three 1k plank maps became the
+  // driftwood posts' three 512s once the pier itself was removed. With three live
+  // 1k gallery photos the decoded total is 48.0 MiB of the 64 MiB ceiling, so the
+  // headroom is 16.0 MiB rather than the 4.2 MiB the frames were squeezed to 512
+  // to buy.
+  assert.equal(shared.decodedRgbaMipBytes, 33_554_441);
 });
 
 test("every asset points at a distinct file inside the beach photoreal pack", () => {

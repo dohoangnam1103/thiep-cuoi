@@ -28,9 +28,9 @@ test("exact RGBA mip estimates include every integer mip level", () => {
 });
 
 const EXPECTED_DENSITIES = {
-  desktop: { duneGrass: 900, frames: 3, pierPlanks: 48, posts: 24 },
-  mobile: { duneGrass: 520, frames: 3, pierPlanks: 36, posts: 18 },
-  reduced: { duneGrass: 240, frames: 3, pierPlanks: 24, posts: 12 },
+  desktop: { frames: 3, posts: 24, tables: 18 },
+  mobile: { frames: 3, posts: 18, tables: 12 },
+  reduced: { frames: 3, posts: 12, tables: 8 },
 } satisfies Record<string, BeachWorldDensity>;
 
 test("quality tiers expose the exact fixed density ceilings", () => {
@@ -43,23 +43,23 @@ test("quality tiers expose the exact fixed density ceilings", () => {
 });
 
 test("the couple's photographs are never what a reduction removes", () => {
-  // Dune grass, planks and posts are scenery and shrink with the tier; the
-  // frames hold the content, so their count is constant by design.
+  // Tables and posts are scenery and shrink with the tier; the frames hold the
+  // content, so their count is constant by design.
   const tiers = (["desktop", "mobile", "reduced"] as const)
     .map((tier) => getBeachWorldDensity("desktop", tier));
 
   assert.deepEqual(new Set(tiers.map(({ frames }) => frames)), new Set([3]));
-  for (const key of ["duneGrass", "pierPlanks", "posts"] as const) {
+  for (const key of ["posts", "tables"] as const) {
     assert.ok(tiers[0]![key] > tiers[1]![key]);
     assert.ok(tiers[1]![key] > tiers[2]![key]);
   }
 });
 
 test("density reads are defensive copies the caller cannot mutate", () => {
-  const first = getBeachWorldDensity("desktop", "desktop") as { duneGrass: number };
-  first.duneGrass = 1;
+  const first = getBeachWorldDensity("desktop", "desktop") as { tables: number };
+  first.tables = 1;
 
-  assert.equal(getBeachWorldDensity("desktop", "desktop").duneGrass, 900);
+  assert.equal(getBeachWorldDensity("desktop", "desktop").tables, 18);
 });
 
 test("adaptive quality reduces once only after two sustained slow seconds", () => {

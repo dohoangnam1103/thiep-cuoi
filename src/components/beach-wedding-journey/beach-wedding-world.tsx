@@ -41,6 +41,7 @@ import {
   type BeachPropTextures,
 } from "./photoreal/beach-props";
 import { BeachTerrain } from "./photoreal/beach-terrain";
+import { BeachSunRays } from "./photoreal/beach-sun-rays";
 import { BeachWater } from "./photoreal/beach-water";
 
 /**
@@ -56,9 +57,9 @@ import { BeachWater } from "./photoreal/beach-water";
 export type BeachWeddingWorldMode = "photoreal" | "simple";
 
 /** Colours for the simple mode, which has no maps and no HDRI to sample. */
-export const BEACH_SIMPLE_SKY_COLOR = "#f2c9a0";
-export const BEACH_SIMPLE_SAND_COLOR = "#d9bd94";
-export const BEACH_SIMPLE_WATER_COLOR = "#2f6a70";
+export const BEACH_SIMPLE_SKY_COLOR = "#bfdcf0";
+export const BEACH_SIMPLE_SAND_COLOR = "#ece4d6";
+export const BEACH_SIMPLE_WATER_COLOR = "#3f8a95";
 
 /** Light intensities for the simple mode, standing in for the missing HDRI. */
 const SIMPLE_AMBIENT_INTENSITY = 1.15;
@@ -168,13 +169,13 @@ export class BeachEntryAssetBoundary extends Component<
 }
 
 export type BeachWeddingWorldDiagnostics = {
-  readonly duneGrassInstanceCount: number;
   readonly frameInstanceCount: number;
   readonly framesWithoutWoodMaps: number;
   readonly photos: BeachPhotoDiagnostics | null;
   readonly postInstanceCount: number;
   readonly qualityTier: BeachWorldQualityTier;
   readonly reflectionEnabled: boolean;
+  readonly tableInstanceCount: number;
   readonly worldMode: BeachWeddingWorldMode;
 };
 
@@ -399,11 +400,10 @@ function BeachPropsWithoutMaps({
  * Terrain, water, lighting, frames and props at the photoreal tier.
  *
  * The prop maps load inside their own boundary because they are non-blocking: a
- * missing wood texture must degrade the moulding and the pier to flat colour
- * while the sand, sea, sky and — the point of the whole scene — the couple's
- * photographs stay. The photographs load in a third, separate `Suspense` for the
- * same reason: nothing about the shore furniture may hold them back or take them
- * away.
+ * missing wood texture must degrade the driftwood posts to flat colour while the
+ * sand, sea, sky and — the point of the whole scene — the couple's photographs
+ * stay. The photographs load in a third, separate `Suspense` for the same reason:
+ * nothing about the shore furniture may hold them back or take them away.
  */
 function PhotorealBeachWorld({
   cueRef,
@@ -439,6 +439,7 @@ function PhotorealBeachWorld({
     <>
       <BeachLighting qualityTier={qualityTier} />
       <BeachTerrain qualityTier={qualityTier} />
+      <BeachSunRays qualityTier={qualityTier} reducedMotion={reducedMotion} />
       <BeachWater
         qualityTier={qualityTier}
         reflectionEnabled={isBeachReflectionEnabled(qualityTier)}
@@ -518,7 +519,6 @@ export function BeachWeddingWorld({
 
   const readDiagnostics = useCallback(
     (): BeachWeddingWorldDiagnostics => ({
-      duneGrassInstanceCount: density.duneGrass,
       frameInstanceCount: worldMode === "photoreal" ? frameCount : 0,
       // Either every frame has the wood maps or none does — they load as one
       // group — so this is the frame count or zero, never a partial tally.
@@ -530,11 +530,12 @@ export function BeachWeddingWorld({
       qualityTier,
       reflectionEnabled: worldMode === "photoreal"
         && isBeachReflectionEnabled(qualityTier),
+      tableInstanceCount: density.tables,
       worldMode,
     }),
     [
-      density.duneGrass,
       density.posts,
+      density.tables,
       frameCount,
       propTextures,
       qualityTier,
@@ -547,7 +548,7 @@ export function BeachWeddingWorld({
     return () => onDiagnosticsReaderChange(null);
   }, [onDiagnosticsReaderChange, readDiagnostics]);
 
-  // The threshold shows the cover gate only. Mounting the grass, the pier and
+  // The threshold shows the cover gate only. Mounting the tables, the posts and
   // the frames behind it would pay for a world nobody has looked at yet, on the
   // one frame where the guest is waiting for a tap to respond.
   const worldMounted = phase !== "threshold";

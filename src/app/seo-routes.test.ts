@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { completedTemplates, getVietnameseTemplateSlug } from "@/data/chungdoi";
+import { templateSeoFacets } from "@/data/template-seo-facets";
 import { SITE_URL } from "@/lib/site-url";
 
 import robots from "./robots";
@@ -24,6 +25,11 @@ test("sitemap contains every canonical indexable Vietnamese page exactly once", 
     (template) =>
       `${SITE_URL}/mau-thiep/${getVietnameseTemplateSlug(template.slug)}/demo`,
   );
+  const facetUrls = templateSeoFacets.map((facet) =>
+    facet.kind === "style"
+      ? `${SITE_URL}/mau-thiep/phong-cach/${facet.slug}`
+      : `${SITE_URL}/mau-thiep/mau-sac/${facet.slug}`,
+  );
   const urls = entries.map((entry) => entry.url);
 
   assert.ok(entries.every((entry) => entry.url.startsWith("http")));
@@ -34,7 +40,8 @@ test("sitemap contains every canonical indexable Vietnamese page exactly once", 
   assert.ok(entries.every((entry) => entry.priority === undefined));
   assert.ok(entries.every((entry) => entry.alternates === undefined));
   assert.equal(new Set(urls).size, urls.length);
-  assert.deepEqual(urls, [...staticUrls, ...demoUrls]);
+  assert.ok(urls.every((url) => !url.includes("?")));
+  assert.deepEqual(urls, [...staticUrls, ...facetUrls, ...demoUrls]);
 });
 
 test("robots allows noindex pages to be crawled and blocks only APIs", () => {

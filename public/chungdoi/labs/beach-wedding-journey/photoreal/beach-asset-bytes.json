@@ -1,16 +1,16 @@
 {
-  "sandColor": 340406,
-  "sandNormal": 396396,
-  "sandArm": 80544,
+  "sandColor": 284316,
+  "sandNormal": 218418,
+  "sandArm": 63890,
   "waterNormal": 113206,
-  "sky": 1577804,
-  "pierPlanksColor": 240960,
-  "pierPlanksNormal": 349958,
-  "pierPlanksArm": 149712,
-  "frame01Color": 13108,
+  "sky": 1381374,
+  "driftwoodColor": 64118,
+  "driftwoodNormal": 85528,
+  "driftwoodArm": 38236,
+  "frame01Color": 12426,
   "frame01Normal": 4630,
   "frame01Arm": 13518,
-  "frame02Color": 24276,
+  "frame02Color": 24326,
   "frame02Normal": 6598,
   "frame02Arm": 14638,
   "sources": {
@@ -50,47 +50,47 @@
       "sha256": "79367cf9d7e4981263dd1439297585148d6c93500acaffa7afeb534351e68b86",
       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/hanging_picture_frame_02/hanging_picture_frame_02_nor_gl_1k.jpg"
     },
-    "hdri": {
-      "filename": "umhlanga_sunrise_1k.hdr",
-      "md5": "9fb1501bb5ec41e7909a8dc497638501",
-      "sha256": "5bbc697864531c5953e8f249dec85f7c3f4d585bbf6708105c0a4e5510c75c03",
-      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/umhlanga_sunrise_1k.hdr"
-    },
-    "pierPlanksArm": {
+    "driftwoodArm": {
       "filename": "modular_wooden_pier_planks_arm_1k.jpg",
       "md5": "e6ffdf7314cc015aaa5c0899326b42a7",
       "sha256": "4c03bcee7d0fb9708be5e5ebc4dd5fd73789f4eb24b6391dff6167f11c3ce95d",
       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_arm_1k.jpg"
     },
-    "pierPlanksColor": {
+    "driftwoodColor": {
       "filename": "modular_wooden_pier_planks_diff_1k.jpg",
       "md5": "f3fef39b0ec16e4006678c846d3601ab",
       "sha256": "2670a7eae2a3104e8537e61d90a8d8b169c7eb0f69b51622bec10e9472dc4573",
       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_diff_1k.jpg"
     },
-    "pierPlanksNormal": {
+    "driftwoodNormal": {
       "filename": "modular_wooden_pier_planks_nor_gl_1k.jpg",
       "md5": "b752108fe7504d5dd4ae0f4701b1218b",
       "sha256": "b23d7b0c23c9a41d50b7e1691e183902765aa4c21ac6ca6da678e874c4ddfb04",
       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_nor_gl_1k.jpg"
     },
+    "hdri": {
+      "filename": "table_mountain_1_puresky_1k.hdr",
+      "md5": "6c68d0e51d99c9a8a93438472ab8bc42",
+      "sha256": "ced63bc210a2cae807dd6aa6dbad28dd754f6e7caf0b3082da05ba7620fe033a",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/table_mountain_1_puresky_1k.hdr"
+    },
     "sandArm": {
-      "filename": "coast_sand_01_arm_1k.jpg",
-      "md5": "f044891a328d284c9e7cd46da12fa45d",
-      "sha256": "eeb552fb26de45ae5c52d3db6f96f8f0414fdbfa335c1d27ef5f59b6ef01a5c8",
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coast_sand_01/coast_sand_01_arm_1k.jpg"
+      "filename": "sand_03_arm_1k.jpg",
+      "md5": "2d69c938c9ce5d4ba41f4789eae3a9cb",
+      "sha256": "6b497a5f4aaa6b8a6ffc35eb840c2ca3050db17eec7980426c531355a84704fa",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_arm_1k.jpg"
     },
     "sandColor": {
-      "filename": "coast_sand_01_diff_1k.jpg",
-      "md5": "a1e243fc8635806381505c7dc44b192a",
-      "sha256": "58af2e40100f7f405703a86d593af64379f822c4786850def23ecfc921450d54",
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coast_sand_01/coast_sand_01_diff_1k.jpg"
+      "filename": "sand_03_diff_1k.jpg",
+      "md5": "84bde2b8bea6351805f67a15682b36b2",
+      "sha256": "e72144f9d7b81bdb7bbdb34222b53431738dcef79346dd89412d2abd541e4d30",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg"
     },
     "sandNormal": {
-      "filename": "coast_sand_01_nor_gl_1k.jpg",
-      "md5": "38bbe6863249a3d20d8417c9db207780",
-      "sha256": "fe4d045aec99e71e80f682fcf0ad958d2dff1fe614b73178b304d1bac047b54a",
-      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coast_sand_01/coast_sand_01_nor_gl_1k.jpg"
+      "filename": "sand_03_nor_gl_1k.jpg",
+      "md5": "ad8d6ce28344b1d8f241cbd7796243dc",
+      "sha256": "1bde5f49ea78f94bcad73592696bf3949711c4ac197133b710c0c8521b6e996b",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_nor_gl_1k.jpg"
     },
     "wetSandArm": {
       "filename": "damp_sand_arm_1k.jpg",

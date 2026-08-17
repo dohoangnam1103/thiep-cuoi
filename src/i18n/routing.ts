@@ -13,6 +13,8 @@ export const routing = defineRouting({
     "/templates": "/mau-thiep",
     "/templates/[slug]": "/mau-thiep/[slug]",
     "/templates/[slug]/demo": "/mau-thiep/[slug]/demo",
+    "/templates/style/[slug]": "/mau-thiep/phong-cach/[slug]",
+    "/templates/color/[slug]": "/mau-thiep/mau-sac/[slug]",
     "/pricing": "/bang-gia",
     "/create-wedding-invitation-online": "/tao-thiep-cuoi-online",
     "/tools": "/cong-cu",

@@ -6,8 +6,9 @@ import { routing } from "./i18n/routing";
 import { canonicalTemplatePath } from "./lib/seo-redirects";
 
 const handleI18nRouting = createMiddleware(routing);
+// Trang chỉ phục vụ tiếng Việt. Các tiền tố locale cũ vẫn được nhận rồi chuyển
+// hướng về đường dẫn tiếng Việt để URL cũ không trả về 404.
 const foreignLocalePrefix = /^\/(?:en|ko|ja|zh)(?=\/|$)/;
-const localizedForestLabPath = /^\/(?:en|ko|ja|zh)\/lab\/forest-wedding-journey\/?$/;
 const vietnamesePaths: Record<string, string> = {
   "/templates": "/mau-thiep",
   "/pricing": "/bang-gia",
@@ -24,10 +25,6 @@ export default function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = destination;
     return NextResponse.redirect(url, 308);
-  }
-
-  if (localizedForestLabPath.test(request.nextUrl.pathname)) {
-    return NextResponse.next();
   }
 
   if (foreignLocalePrefix.test(request.nextUrl.pathname)) {

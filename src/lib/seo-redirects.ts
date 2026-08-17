@@ -2,6 +2,7 @@ import {
   getSourceTemplateSlug,
   getVietnameseTemplateSlug,
 } from "../data/template-route-slugs";
+import { findTemplateSeoFacet } from "../data/template-seo-facet-definitions";
 
 type CanonicalRedirect = {
   source: string;
@@ -14,13 +15,32 @@ type CanonicalRedirect = {
 };
 
 export function canonicalTemplatePath(pathname: string): string | null {
+  const facetMatch = pathname.match(
+    /^\/(?:vi\/|(?:en|ko|ja|zh)\/)?templates\/(style|color)\/([^/]+)\/?$/,
+  );
+  if (facetMatch) {
+    const kind = facetMatch[1] as "style" | "color";
+    const facet = findTemplateSeoFacet(kind, facetMatch[2]);
+    if (!facet) return null;
+
+    const publicSegment = facet.kind === "style" ? "phong-cach" : "mau-sac";
+    return `/mau-thiep/${publicSegment}/${facet.slug}`;
+  }
+
   const vietnameseMatch = pathname.match(/^\/mau-thiep\/([^/]+)(?:\/demo)?\/?$/);
+  const internalVietnameseMatch = pathname.match(
+    /^\/(?:vi\/)?templates\/([^/]+)(?:\/demo)?\/?$/,
+  );
   const localizedMatch = pathname.match(
     /^\/(en|ko|ja|zh)\/templates\/([^/]+)(?:\/demo)?\/?$/,
   );
 
-  const locale = vietnameseMatch ? "vi" : localizedMatch?.[1];
-  const routeSlug = vietnameseMatch?.[1] ?? localizedMatch?.[2];
+  const locale = vietnameseMatch || internalVietnameseMatch
+    ? "vi"
+    : localizedMatch?.[1];
+  const routeSlug = vietnameseMatch?.[1]
+    ?? internalVietnameseMatch?.[1]
+    ?? localizedMatch?.[2];
   if (!locale || !routeSlug) return null;
 
   const sourceSlug = getSourceTemplateSlug(routeSlug);

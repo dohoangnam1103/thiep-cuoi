@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import type { TemplateSeoFacetKind } from "@/data/template-seo-facets";
 import { getPathname } from "@/i18n/navigation";
 import { indexableLocales, routing } from "@/i18n/routing";
 import { findTemplateByRouteSlug, getVietnameseTemplateSlug } from "@/data/chungdoi";
@@ -60,6 +61,24 @@ export function templateAlternates(routeSlug: string, locale: AppLocale): Altern
     pathname: "/templates/[slug]/demo",
     params: { slug: locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug },
   }), locale);
+}
+
+export function templateFacetAlternates(
+  kind: TemplateSeoFacetKind,
+  slug: string,
+  locale: AppLocale,
+): Alternates {
+  if (kind === "style") {
+    return staticAlternates({
+      pathname: "/templates/style/[slug]",
+      params: { slug },
+    }, locale);
+  }
+
+  return staticAlternates({
+    pathname: "/templates/color/[slug]",
+    params: { slug },
+  }, locale);
 }
 
 export function pageSeo({

@@ -17,6 +17,10 @@ import {
   templateColors,
   type ChungDoiTemplate,
 } from "@/data/chungdoi";
+import {
+  colorTemplateSeoFacets,
+  styleTemplateSeoFacets,
+} from "@/data/template-seo-facets";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 const listingImageHeights = {
@@ -66,7 +70,30 @@ function listingImageHeight(src: string) {
   return listingImageHeights[filename as keyof typeof listingImageHeights] ?? 768;
 }
 
-export function ChungDoiListing() {
+export type TemplateSeoFacetContent = {
+  facetId: string;
+  breadcrumbAriaLabel: string;
+  homeLabel: string;
+  templatesLabel: string;
+  currentLabel: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  intro: string;
+  resultsTitle: string;
+  guideTitle: string;
+  guide: string;
+  faqTitle: string;
+  faqs: ReadonlyArray<{ question: string; answer: string }>;
+};
+
+export function ChungDoiListing({
+  initialTemplates = completedTemplates,
+  facetContent,
+}: {
+  initialTemplates?: ChungDoiTemplate[];
+  facetContent?: TemplateSeoFacetContent;
+}) {
   const t = useTranslations("listing");
   const locale = useLocale();
   const [category, setCategory] = useState("All");
@@ -74,13 +101,16 @@ export function ChungDoiListing() {
   const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
 
   const filtered = useMemo(
-    () =>
-      completedTemplates.filter(
+    () => {
+      if (facetContent) return initialTemplates;
+
+      return initialTemplates.filter(
         (template) =>
           (category === "All" || template.category === category) &&
           (color === "All" || template.color === color),
-      ),
-    [category, color],
+      );
+    },
+    [category, color, facetContent, initialTemplates],
   );
 
   return (
@@ -92,21 +122,40 @@ export function ChungDoiListing() {
         <SiteHeader hideCreateButton />
         <section className="border-b border-border bg-background py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-primary">{t("eyebrow")}</p>
+            {facetContent ? (
+              <nav aria-label={facetContent.breadcrumbAriaLabel} className="mb-5 text-sm text-muted-foreground">
+                <ol className="flex flex-wrap items-center gap-2">
+                  <li><Link href="/" className="transition hover:text-primary">{facetContent.homeLabel}</Link></li>
+                  <li aria-hidden>/</li>
+                  <li><Link href="/templates" className="transition hover:text-primary">{facetContent.templatesLabel}</Link></li>
+                  <li aria-hidden>/</li>
+                  <li className="font-bold text-foreground" aria-current="page">{facetContent.currentLabel}</li>
+                </ol>
+              </nav>
+            ) : null}
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-primary">
+              {facetContent?.eyebrow ?? t("eyebrow")}
+            </p>
             <h1 className="mt-4 max-w-3xl font-heading text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-              {t("title")}
+              {facetContent?.title ?? t("title")}
             </h1>
-            <p className="mt-5 max-w-2xl text-lg font-normal leading-8 text-muted-foreground">{t("subtitle")}</p>
-            <p className="mt-2 max-w-2xl text-lg font-normal leading-8 text-muted-foreground">{t("editingHint")}</p>
+            <p className="mt-5 max-w-3xl text-lg font-normal leading-8 text-muted-foreground">
+              {facetContent?.subtitle ?? t("subtitle")}
+            </p>
+            <p className="mt-2 max-w-3xl text-base leading-7 text-muted-foreground">
+              {facetContent?.intro ?? t("editingHint")}
+            </p>
           </div>
         </section>
 
         <section className="py-12 sm:py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="sr-only">{t("title")}</h2>
+            <h2 className="sr-only">{facetContent?.resultsTitle ?? t("title")}</h2>
             <div className="inline-block rounded-full border border-border bg-card px-5 py-2 text-sm font-bold text-foreground">
-              {filtered.length} / {completedTemplates.length} {t("countSuffix")}
+              {facetContent ? filtered.length : `${filtered.length} / ${initialTemplates.length}`} {t("countSuffix")}
             </div>
+
+            <TemplateSeoFacetLinks currentFacetId={facetContent?.facetId} />
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filtered.map((template) => (
@@ -114,32 +163,116 @@ export function ChungDoiListing() {
               ))}
             </div>
 
-            <div className="mt-10 flex flex-col gap-4 rounded-[2rem] border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
-              <FilterPills
-                label={t("styleLabel")}
-                options={[...templateCategories]}
-                value={category}
-                onChange={setCategory}
-                getOptionLabel={(option) => (locale === "vi" ? t(`categories.${option}`) : option)}
-              />
-              <FilterPills
-                label={t("colorLabel")}
-                options={[...templateColors]}
-                value={color}
-                onChange={setColor}
-                getOptionLabel={(option) => (locale === "vi" ? t(`colors.${option}`) : option)}
-              />
-            </div>
+            {!facetContent ? (
+              <div className="mt-10 flex flex-col gap-4 rounded-[2rem] border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+                <FilterPills
+                  label={t("styleLabel")}
+                  options={[...templateCategories]}
+                  value={category}
+                  onChange={setCategory}
+                  getOptionLabel={(option) => (locale === "vi" ? t(`categories.${option}`) : option)}
+                />
+                <FilterPills
+                  label={t("colorLabel")}
+                  options={[...templateColors]}
+                  value={color}
+                  onChange={setColor}
+                  getOptionLabel={(option) => (locale === "vi" ? t(`colors.${option}`) : option)}
+                />
+              </div>
+            ) : null}
+            {facetContent ? <TemplateFacetEditorial content={facetContent} /> : null}
             <TemplateSuggestionCta />
           </div>
         </section>
 
-        <WeddingFaqSection />
+        {!facetContent ? <WeddingFaqSection /> : null}
         <SiteFooter />
       </div>
 
       {selected ? <TemplatePreviewModal template={selected} onClose={() => setSelected(null)} /> : null}
     </main>
+  );
+}
+
+function TemplateSeoFacetLinks({ currentFacetId }: { currentFacetId?: string }) {
+  const t = useTranslations("templateSeoFacets");
+
+  return (
+    <section className="mt-8 rounded-[2rem] border border-border bg-card p-5 sm:p-7" aria-labelledby="template-collections-title">
+      <h2 id="template-collections-title" className="font-heading text-2xl font-black text-foreground">
+        {t("navigation.title")}
+      </h2>
+      <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">{t("navigation.description")}</p>
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        <div>
+          <h3 className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">
+            {t("navigation.styleTitle")}
+          </h3>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {styleTemplateSeoFacets.map((facet) => (
+              <Link
+                key={facet.id}
+                href={{ pathname: "/templates/style/[slug]", params: { slug: facet.slug } }}
+                aria-current={currentFacetId === facet.id ? "page" : undefined}
+                className={`rounded-full border px-4 py-2 text-sm font-bold transition ${
+                  currentFacetId === facet.id
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-secondary text-foreground hover:border-primary/50 hover:text-primary"
+                }`}
+              >
+                {t(`items.${facet.id}.linkLabel`)}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 className="text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">
+            {t("navigation.colorTitle")}
+          </h3>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {colorTemplateSeoFacets.map((facet) => (
+              <Link
+                key={facet.id}
+                href={{ pathname: "/templates/color/[slug]", params: { slug: facet.slug } }}
+                aria-current={currentFacetId === facet.id ? "page" : undefined}
+                className={`rounded-full border px-4 py-2 text-sm font-bold transition ${
+                  currentFacetId === facet.id
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-secondary text-foreground hover:border-primary/50 hover:text-primary"
+                }`}
+              >
+                {t(`items.${facet.id}.linkLabel`)}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TemplateFacetEditorial({ content }: { content: TemplateSeoFacetContent }) {
+  return (
+    <section className="mt-12 grid gap-8 rounded-[2rem] border border-border bg-secondary p-6 sm:p-9 lg:grid-cols-[0.9fr_1.1fr]">
+      <div>
+        <h2 className="font-heading text-3xl font-black text-foreground">{content.guideTitle}</h2>
+        <p className="mt-4 text-base leading-8 text-muted-foreground">{content.guide}</p>
+      </div>
+      <div>
+        <h2 className="font-heading text-2xl font-black text-foreground">{content.faqTitle}</h2>
+        <div className="mt-4 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+          {content.faqs.map((item) => (
+            <details key={item.question} className="group p-5">
+              <summary className="cursor-pointer list-none font-black leading-6 text-foreground">
+                {item.question}
+              </summary>
+              <p className="mt-3 leading-7 text-muted-foreground">{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -187,6 +320,10 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
   );
   const description = isVietnamese ? t(`templates.${template.slug}.description`) : template.description;
   const category = isVietnamese ? t(`categories.${template.category}`) : template.category;
+  const demoHref = {
+    pathname: "/templates/[slug]/demo" as const,
+    params: { slug: demoSlug(template, locale) },
+  };
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-border bg-card shadow transition hover:-translate-y-1 hover:shadow-lg">
@@ -203,7 +340,7 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
             alt={name}
             width={768}
             height={listingImageHeight(template.listing)}
-            sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 290px"
+            sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 208px"
             loading="lazy"
             decoding="async"
             className="block h-auto w-full max-w-none transition-transform duration-[10000ms] ease-in-out group-hover:translate-y-[calc(460px_-_100%)]"
@@ -211,7 +348,11 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
         </div>
       </button>
       <div className="p-5">
-        <h3 className="font-heading text-xl font-black text-foreground">{name}</h3>
+        <h3 className="font-heading text-xl font-black text-foreground">
+          <Link href={demoHref} className="transition hover:text-primary">
+            {name}
+          </Link>
+        </h3>
         <p className="mt-2 text-sm text-muted-foreground">{category}</p>
         <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted-foreground">{description}</p>
         <div className="mt-5 grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-2">
@@ -225,7 +366,7 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
             {t("preview")}
           </button>
           <Link
-            href={{ pathname: "/templates/[slug]/demo", params: { slug: demoSlug(template, locale) } }}
+            href={demoHref}
             data-ga-event="open_template_demo"
             data-ga-param-template-id={template.slug}
             data-ga-param-source="listing_card"

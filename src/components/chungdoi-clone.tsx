@@ -437,7 +437,7 @@ function TemplateCarousel() {
                     onClick={() => setSelected(template)}
                     draggable={false}
                     aria-current={isActive ? "true" : undefined}
-                    className={`group relative block h-[520px] w-full overflow-hidden rounded-2xl border bg-card text-left transition-[border-color] duration-300 [will-change:transform] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
+                    className={`group relative block h-[520px] w-full overflow-hidden rounded-2xl border bg-card text-left transition-[border-color] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
                       isActive ? "border-primary/85" : "border-border/40"
                     }`}
                   >
@@ -446,7 +446,7 @@ function TemplateCarousel() {
                       alt={templateName(template.slug, template.name)}
                       width={768}
                       height={featuredListingImageHeight(template.listing)}
-                      sizes="266px"
+                      sizes="192px"
                       draggable={false}
                       loading="lazy"
                       decoding="async"

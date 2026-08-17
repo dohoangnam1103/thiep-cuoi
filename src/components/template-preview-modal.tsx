@@ -9,7 +9,7 @@ import { createInvitation } from "@/app/dashboard/actions";
 import { useTemplateName } from "@/components/template-name-overrides";
 import { Link } from "@/i18n/navigation";
 import { getVietnameseTemplateSlug, type ChungDoiTemplate } from "@/data/chungdoi";
-import { templatePreviewUrl } from "@/lib/template-preview-url";
+import { templatePreviewOptimizedUrl } from "@/lib/template-preview-url";
 
 export function demoSlug(template: ChungDoiTemplate, locale: string) {
   return locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
@@ -233,7 +233,7 @@ function TemplateQrCode({ demoPath, name }: { demoPath: string; name: string }) 
 function AutoScrollingPreview({ template, alt }: { template: ChungDoiTemplate; alt: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const source = templatePreviewUrl(template.listing);
+  const source = templatePreviewOptimizedUrl(template.listing, 384);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -321,6 +321,7 @@ function AutoScrollingPreview({ template, alt }: { template: ChungDoiTemplate; a
       <img
         ref={imageRef}
         src={source}
+        srcSet={`${source} 1x, ${templatePreviewOptimizedUrl(template.listing, 640)} 2x`}
         alt={alt}
         className="absolute inset-x-0 top-0 block h-auto w-full max-w-none will-change-transform"
       />

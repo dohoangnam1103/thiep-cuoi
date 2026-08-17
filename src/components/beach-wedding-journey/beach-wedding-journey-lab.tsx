@@ -102,9 +102,20 @@ function parseIsoDate(value: string): Date | null {
 export function BeachWeddingJourneyLab({
   diagnosticsEnabled = false,
   fixture = "default",
+  videoBackdrop = false,
 }: {
   readonly diagnosticsEnabled?: boolean;
   readonly fixture?: BeachWeddingJourneyFixture;
+  /**
+   * Runs the live-action ocean backdrop instead of the WebGL world.
+   *
+   * A prototype switch reached at `?backdrop=video`, so the video direction can be
+   * judged against the 3D scene on identical content before either is committed to.
+   * It forces the DOM renderer, because the video *is* the alternative to the 3D
+   * world rather than a layer inside it — the panels, the walk, the gestures and
+   * every test id are the fallback's, already built and already tested.
+   */
+  readonly videoBackdrop?: boolean;
 }) {
   const format = useFormatter();
   const t = useTranslations("beachWeddingJourneyLab");
@@ -427,6 +438,25 @@ export function BeachWeddingJourneyLab({
   useEffect(() => {
     let active = true;
     let completionFrame: number | null = null;
+
+    // The video prototype has no WebGL world to fall back *from*, so probing for a
+    // context would only race the renderer switch below. Reported through the same
+    // handler as a genuine failure, because "use the DOM renderer" is the identical
+    // outcome and duplicating the transition would let the two paths drift.
+    if (videoBackdrop) {
+      completionFrame = window.requestAnimationFrame(() => {
+        completionFrame = null;
+        if (active) handleRendererUnavailable();
+      });
+
+      return () => {
+        active = false;
+        if (completionFrame !== null) {
+          window.cancelAnimationFrame(completionFrame);
+        }
+      };
+    }
+
     const canvas = document.createElement("canvas");
     let contextAvailable = false;
 
@@ -454,7 +484,7 @@ export function BeachWeddingJourneyLab({
         window.cancelAnimationFrame(completionFrame);
       }
     };
-  }, [handleRendererUnavailable]);
+  }, [handleRendererUnavailable, videoBackdrop]);
 
   useEffect(() => {
     if (state.renderMode !== "fallback" || state.phase !== "travelling") return;
@@ -547,6 +577,7 @@ export function BeachWeddingJourneyLab({
             scenes={scenes}
             targetIndex={state.targetIndex}
             travelling={state.phase === "travelling"}
+            videoBackdrop={videoBackdrop}
           />
         </div>
       ) : null}

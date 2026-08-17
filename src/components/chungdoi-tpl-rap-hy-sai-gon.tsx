@@ -259,7 +259,12 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
         <footer className="relative overflow-hidden bg-[#d7192d] px-6 py-24 text-center text-[#fff1cf]">
           <Image src={ARTWORK} alt="" fill sizes="900px" className="object-cover opacity-20" />
           <p className="relative mx-auto max-w-xl text-sm font-bold leading-7">{t("presenceHonor")}</p>
-          <p className="font-art-marvin relative mt-8 text-[clamp(3rem,12vw,6rem)] uppercase leading-[0.8] text-[#f5d83d] [text-shadow:5px_5px_0_#17110d]">{people[0].shortName} &amp; {people[1].shortName}</p>
+          {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
+          <p className="font-art-marvin relative mt-8 flex flex-col items-center text-[clamp(3rem,12vw,6rem)] uppercase leading-[0.8] text-[#f5d83d] [text-shadow:5px_5px_0_#17110d]">
+            <span className="block">{people[0].shortName}</span>
+            <span className="block text-[0.55em] leading-none">&amp;</span>
+            <span className="block">{people[1].shortName}</span>
+          </p>
         </footer>
       </div>
     </main>

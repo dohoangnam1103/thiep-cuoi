@@ -4,6 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { FloralInvitation, type FloralPalette } from "@/components/chungdoi-tpl-floral-base";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { orderedCouple } from "@/lib/invitation-display";
 
 const scriptFont: CSSProperties = { fontFamily: '"Fz Aghita", "The Nautigal", cursive' };
 const serifFont: CSSProperties = { fontFamily: '"DFVN New Eddy", "Cormorant Garamond", serif' };
@@ -179,12 +180,13 @@ function ChibiHero({ content }: { content: ChungDoiDemoContent }) {
 
 function CherryHero({ content }: { content: ChungDoiDemoContent }) {
   const gallery = content.gallery;
+  const people = orderedCouple(content);
   return (
     <header className="relative z-20 min-h-[820px] overflow-hidden bg-[#fffdf9] px-5 pb-16 pt-10 text-[#d94866]">
       <img src="/chungdoi/images/themes/cherry-blossom-pink/2.webp" alt="" aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[520px] w-full object-cover object-top opacity-95" />
       {gallery[0] ? (
         <div className="relative z-10 mx-auto mt-24 w-[72%] -rotate-6 border-[9px] border-white bg-white shadow-[0_24px_55px_rgba(132,62,76,0.2)]">
-          <img src={gallery[0]} alt={`${content.couple.groomFullName} & ${content.couple.brideFullName}`} className="aspect-[4/5] w-full object-cover" />
+          <img src={gallery[0]} alt={`Ảnh cưới ${people[0].fullName} và ${people[1].fullName}`} className="aspect-[4/5] w-full object-cover" />
         </div>
       ) : null}
       <NameLockup content={content} className="mt-14 text-[48px]" font={scriptFont} />

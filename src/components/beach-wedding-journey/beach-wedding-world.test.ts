@@ -85,10 +85,9 @@ test("every resolved tier has a density and a reflection answer", () => {
         const tier = resolveBeachQualityTier(viewport, reducedMotion, deviceReduced);
         const density = getBeachWorldDensity(viewport, tier);
 
-        assert.ok(density.duneGrass > 0, `${tier} still grows grass`);
         assert.ok(density.frames > 0);
-        assert.ok(density.pierPlanks > 0);
         assert.ok(density.posts > 0);
+        assert.ok(density.tables > 0, `${tier} still sets tables`);
         assert.equal(typeof isBeachReflectionEnabled(tier), "boolean");
       }
     }
@@ -99,9 +98,8 @@ test("the reduced tier is lighter than the viewport it replaces", () => {
   const desktop = getBeachWorldDensity("desktop", "desktop");
   const reduced = getBeachWorldDensity("desktop", "reduced");
 
-  assert.ok(reduced.duneGrass < desktop.duneGrass);
-  assert.ok(reduced.pierPlanks < desktop.pierPlanks);
   assert.ok(reduced.posts < desktop.posts);
+  assert.ok(reduced.tables < desktop.tables);
   // Frames carry the couple's photographs — they are never thinned out.
   assert.equal(reduced.frames, desktop.frames);
 });

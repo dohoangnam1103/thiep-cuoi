@@ -503,8 +503,12 @@ async function syncProductionDemos() {
 
 async function serverIsReady(baseUrl) {
   try {
-    const response = await fetch(baseUrl, { signal: AbortSignal.timeout(2_000) });
-    return response.status < 500;
+    const response = await fetch(baseUrl, {
+      signal: AbortSignal.timeout(2_000),
+      redirect: "manual", // avoid throwing on redirect loops
+    });
+    // 3xx (opaque redirect) counts as server alive; only 5xx/network errors are not ready
+    return response.status < 500 || response.type === "opaqueredirect";
   } catch {
     return false;
   }

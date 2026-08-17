@@ -73,9 +73,11 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       brideFirst: c?.brideFirst ?? true,
       date: c?.date ?? "",
       time: c?.time ?? "",
-      ceremonyDate: firstCeremony?.date ?? "",
-      ceremonyTime: firstCeremony?.time ?? "",
-      ceremonyHeader: firstCeremony?.title ?? "",
+      // Fall back to the legacy columns: an invitation with no CeremonyItem row
+      // still carries its ceremony details on InvitationContent.
+      ceremonyDate: firstCeremony?.date ?? c?.ceremonyDate ?? "",
+      ceremonyTime: firstCeremony?.time ?? c?.ceremonyTime ?? "",
+      ceremonyHeader: firstCeremony?.title ?? c?.ceremonyHeader ?? "",
       ceremonyType: c?.ceremonyType === "vu-quy" ? "vu-quy" : "thanh-hon",
       openingMessage: clean(c?.openingMessage) ?? DEFAULT_OPENING_MESSAGE,
     },
@@ -94,7 +96,9 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       mapAddress: c?.mapAddress ?? "",
       banquetTime: clean(c?.time) ?? c?.banquetTime ?? "",
     },
-    ceremonies,
+    // No CeremonyItem row means "never set", not "explicitly cleared", so leave
+    // this undefined and let the legacy ceremony columns above drive the card.
+    ceremonies: ceremonies.length ? ceremonies : undefined,
     schedule: [...invitation.schedule]
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((s) => ({ time: s.time, label: s.label })),

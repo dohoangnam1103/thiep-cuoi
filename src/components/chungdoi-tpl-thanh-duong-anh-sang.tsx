@@ -20,7 +20,10 @@ const config = {
   displayFontClass: "font-art-qellia",
   coupleClass: "text-[clamp(3.4rem,11vw,7rem)] font-normal leading-[0.84] tracking-wide",
   headingClass: "text-4xl font-normal leading-none md:text-6xl",
-  imageClass: "saturate-[0.94]",
+  // Artwork 1024x1536 phủ vào hero gần vuông trên desktop nên object-cover cắt
+  // ~17% chiều cao. Neo lên trên để phần cắt dồn xuống vùng nền trơn, giữ nguyên
+  // vòm hoa hồng và đôi bồ câu ở dải 0-38% của canvas.
+  imageClass: "saturate-[0.94] object-top",
   radiusClass: "rounded-[999px]",
   giftLayout: "flip",
   accentHex: "#c9922f",

@@ -96,9 +96,6 @@ export type BeachRuntimeDiagnosticsSnapshot = {
     readonly sharedCompressedBytes: number;
     readonly sharedDecodedRgbaMipBytes: number;
   };
-  readonly duneGrass: {
-    readonly instanceCount: number;
-  };
   readonly frames: {
     readonly instanceCount: number;
     readonly modelFallbackCount: number;
@@ -121,6 +118,9 @@ export type BeachRuntimeDiagnosticsSnapshot = {
     readonly targetId: string | null;
     readonly targetIndex: number | null;
     readonly type: BeachJourneyScene["type"];
+  };
+  readonly tables: {
+    readonly instanceCount: number;
   };
   readonly totalEstimatedDecodedRgbaMipBytes: number;
   readonly viewport: BeachWorldViewport;
@@ -156,13 +156,13 @@ function getPendingWorldDiagnostics(
   reducedMotion: boolean,
 ): BeachWeddingWorldDiagnostics {
   return {
-    duneGrassInstanceCount: 0,
     frameInstanceCount: 0,
     framesWithoutWoodMaps: 0,
     photos: null,
     postInstanceCount: 0,
     qualityTier: reducedMotion ? "reduced" : viewport,
     reflectionEnabled: false,
+    tableInstanceCount: 0,
     worldMode: "photoreal",
   };
 }
@@ -450,9 +450,6 @@ function JourneyRuntimeDiagnostics({
           sharedCompressedBytes: sharedAssets.compressedBytes,
           sharedDecodedRgbaMipBytes: sharedAssets.decodedRgbaMipBytes,
         },
-        duneGrass: {
-          instanceCount: world.duneGrassInstanceCount,
-        },
         frames: {
           instanceCount: world.frameInstanceCount,
           modelFallbackCount: world.framesWithoutWoodMaps,
@@ -475,6 +472,9 @@ function JourneyRuntimeDiagnostics({
           targetId: targetScene?.id ?? null,
           targetIndex,
           type: scene.type,
+        },
+        tables: {
+          instanceCount: world.tableInstanceCount,
         },
         // The world's own textures are measured from the manifest rather than
         // from the live renderer, because `renderer.info.memory.textures` counts

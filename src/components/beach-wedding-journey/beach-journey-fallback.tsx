@@ -9,11 +9,11 @@
  * forest twin's, unchanged.
  *
  * What differs: the forest paints four depth bands from a foliage, wildflower
- * and petal sprite atlas. This lab paints a sky, a sea, a wet-sand sheen and a
- * dune-grass silhouette entirely in CSS gradients, because the WebGL world's
- * decoded-texture budget is already at 62.9 MiB of its 64 MiB ceiling and a
- * sprite atlas only the fallback would read is not worth a byte of it. So there
- * are no atlas-cell arrays here and each band is a single empty element.
+ * and petal sprite atlas. This lab paints a sunrise sky, a sea, a wet-sand sheen
+ * and a row of white reception tables entirely in CSS gradients, because a sprite
+ * atlas only the fallback would read is not worth a byte of the WebGL world's
+ * decoded-texture budget. So there are no atlas-cell arrays here and each band is
+ * a single empty element.
  */
 
 import Image from "next/image";
@@ -29,6 +29,7 @@ import {
   type BeachJourneyScene,
 } from "@/data/beach-wedding-journey";
 
+import { BeachVideoBackdrop } from "./beach-video-backdrop";
 import {
   BeachSceneContent,
   type BeachJourneySceneNames,
@@ -58,6 +59,15 @@ export type BeachJourneyFallbackProps = {
   readonly scenes: readonly BeachJourneyScene[];
   readonly targetIndex: number | null;
   readonly travelling: boolean;
+  /**
+   * Renders the live-action ocean loop behind the panels instead of the CSS bands.
+   *
+   * A prototype switch, not a shipped feature: it exists so the video direction can
+   * be judged against the 3D world on the same content, at `?backdrop=video`. The
+   * CSS bands stay the default and stay the no-video fallback, so nothing about the
+   * current lab changes while this is being evaluated.
+   */
+  readonly videoBackdrop?: boolean;
 };
 
 function FallbackPhysicalSurface({
@@ -136,6 +146,7 @@ export function BeachJourneyFallback({
   scenes,
   targetIndex,
   travelling,
+  videoBackdrop = false,
 }: BeachJourneyFallbackProps) {
   const stageRef = useRef<HTMLElement | null>(null);
   const reportedReadyRef = useRef(false);
@@ -188,26 +199,37 @@ export function BeachJourneyFallback({
       data-travelling={travelling ? "true" : "false"}
       ref={stageRef}
     >
-      <div
-        aria-hidden="true"
-        className={styles.fallbackSky}
-        data-fallback-band="sky"
-      />
-      <div
-        aria-hidden="true"
-        className={styles.fallbackSea}
-        data-fallback-band="sea"
-      />
-      <div
-        aria-hidden="true"
-        className={styles.fallbackWetSand}
-        data-fallback-band="wet-sand"
-      />
-      <div
-        aria-hidden="true"
-        className={styles.fallbackDuneGrass}
-        data-fallback-band="dune-grass"
-      />
+      {videoBackdrop ? (
+        <BeachVideoBackdrop
+          look={look}
+          reducedMotion={reducedMotion}
+          sceneType={displayedScene.type}
+          travelling={travelling}
+        />
+      ) : (
+        <>
+          <div
+            aria-hidden="true"
+            className={styles.fallbackSky}
+            data-fallback-band="sky"
+          />
+          <div
+            aria-hidden="true"
+            className={styles.fallbackSea}
+            data-fallback-band="sea"
+          />
+          <div
+            aria-hidden="true"
+            className={styles.fallbackWetSand}
+            data-fallback-band="wet-sand"
+          />
+          <div
+            aria-hidden="true"
+            className={styles.fallbackTables}
+            data-fallback-band="tables"
+          />
+        </>
+      )}
       <div
         aria-hidden="true"
         className={`${styles.fallbackGestureSurface}${

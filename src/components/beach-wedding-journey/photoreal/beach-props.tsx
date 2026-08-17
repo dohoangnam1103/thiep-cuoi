@@ -11,7 +11,6 @@ import {
   type ReactNode,
 } from "react";
 import {
-  BoxGeometry,
   BufferGeometry,
   Color,
   CylinderGeometry,
@@ -27,32 +26,29 @@ import {
   type InstancedMesh,
   type Texture,
 } from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 import type { BeachJourneyScene } from "@/data/beach-wedding-journey";
 
 import type { BeachJourneyCueState } from "../beach-cue-state";
 import { getBeachFrameGeometry } from "../beach-frame-geometry";
-import { shorelineOffsetAt } from "../beach-shoreline";
 import type { BeachWorldDensity } from "../beach-world-data";
 import { BEACH_PHOTOREAL_ASSETS } from "./beach-asset-manifest";
 import {
-  BEACH_SAND_Z_MAX_METRES,
+  BEACH_SAND_X_MAX_METRES,
   beachGroundHeightAt,
 } from "./beach-terrain";
 
 /**
- * Shore dressing: the driftwood posts the frames hang between, the pier at the
- * finale, and the marram grass on the backshore dunes.
+ * Shore dressing: the driftwood posts the frames hang between, and the
+ * white-clothed reception tables set out along the sand.
  *
  * Two constraints shaped this file. First, every prop map in
  * `beach-asset-manifest.ts` is `group: "props"` and non-blocking, so a load
  * failure here must degrade to flat colour instead of removing the shore
- * furniture. Second, there is no grass atlas in the manifest and the decoded
- * texture budget sits at roughly 6% headroom, so the grass cannot be alpha
- * cards — a crossed card without an atlas is an opaque rectangle. The tufts are
- * therefore built from tapered blades, which are geometrically opaque, need no
- * alpha test, and read as marram at walking distance.
+ * furniture. Second, the decoded texture budget is the binding limit, so the
+ * tables and their flowers are built from geometry and vertex colour and carry no
+ * maps at all: linen reads as an untextured white dielectric anyway, and the
+ * flowers are far too small on screen to resolve a petal texture.
  */
 
 /** Height of a driftwood post above the sand, in metres. */
@@ -68,56 +64,92 @@ const BEACH_POST_RADIAL_SEGMENTS = 8;
 /** How far the posts stand beyond the first and last frame, in metres. */
 export const BEACH_POST_LINE_MARGIN_METRES = 6;
 
-/** Deck height above the water level, in metres. */
-export const BEACH_PIER_DECK_HEIGHT_METRES = 1.15;
+/** Radius of a table's top, in metres. */
+export const BEACH_TABLE_RADIUS_METRES = 0.62;
 
-/** Deck width across the walk, in metres. */
-export const BEACH_PIER_DECK_WIDTH_METRES = 2.6;
+/** Height of a table's top above the sand, in metres. */
+export const BEACH_TABLE_HEIGHT_METRES = 0.74;
 
-/** How far landward of the finale pose the deck starts, in metres. */
-export const BEACH_PIER_LANDWARD_REACH_METRES = 1.5;
+/**
+ * How far the cloth's hem flares beyond the top, in metres.
+ *
+ * Linen over a round table does not fall vertically; the hem stands off the base.
+ * A straight cylinder skirt reads as a drum, so the hem is wider than the top.
+ */
+export const BEACH_TABLE_HEM_FLARE_METRES = 0.11;
 
-/** How far seaward of the shoreline the deck reaches, in metres. */
-export const BEACH_PIER_SEAWARD_REACH_METRES = 18;
+/** Radial segments per table. Twenty-four keeps the hem's curve smooth. */
+const BEACH_TABLE_RADIAL_SEGMENTS = 24;
 
-/** Spacing between pole rows along the deck, in metres. */
-export const BEACH_PIER_POLE_SPACING_METRES = 4;
+/**
+ * Seaward and landward edges of the band the tables stand in, in metres of z.
+ *
+ * The walked rail runs z 7 to 7.9 and the frames hang at roughly z 6.3 to 7.2,
+ * so the seaward band sits in front of both, between the frames and the water,
+ * where the camera's down-shore view actually looks. The waterline swings between
+ * z -2.4 and +2.4, so the seaward edge at 3.2 keeps every table on dry sand.
+ */
+export const BEACH_TABLE_SEAWARD_Z_MIN_METRES = 3.2;
+export const BEACH_TABLE_SEAWARD_Z_MAX_METRES = 5.6;
 
-/** Poles per row: one down each side of the deck. */
-export const BEACH_PIER_POLES_PER_ROW = 2;
+/** The second, landward band, set back behind the walk. */
+export const BEACH_TABLE_LANDWARD_Z_MIN_METRES = 9.6;
+export const BEACH_TABLE_LANDWARD_Z_MAX_METRES = 13.4;
 
-/** Fraction of a plank's slot filled by the plank; the rest is the gap. */
-export const BEACH_PIER_PLANK_FILL = 0.82;
+/** Fraction of the tables placed in the seaward band, nearest the camera. */
+export const BEACH_TABLE_SEAWARD_SHARE = 0.55;
 
-/** Plank thickness, in metres. */
-const BEACH_PIER_PLANK_THICKNESS_METRES = 0.06;
+/**
+ * Alongshore span the tables are scattered across, in metres of x.
+ *
+ * The seaward edge stops exactly at `BEACH_SAND_X_MAX_METRES`: a table past the
+ * terrain edge would stand on nothing. Reaching the edge rather than stopping
+ * short matters at the finale, whose camera sits at x 111 looking to x 115.5 —
+ * an earlier 114m limit put the last table behind that pose, so the closing
+ * scene showed an empty beach on the narrow mobile frustum.
+ */
+export const BEACH_TABLE_X_MIN_METRES = -14;
+export const BEACH_TABLE_X_MAX_METRES = BEACH_SAND_X_MAX_METRES;
 
-/** Pole radius, in metres. */
-const BEACH_PIER_POLE_RADIUS_METRES = 0.11;
+/** Radius of a centrepiece's bloom cluster, in metres. */
+export const BEACH_FLOWER_CLUSTER_RADIUS_METRES = 0.19;
 
-/** Landward edge of the dune-grass band, in metres of z. */
-export const BEACH_DUNE_GRASS_Z_MIN_METRES = 13;
+/** Height of a centrepiece above the cloth, in metres. */
+export const BEACH_FLOWER_HEIGHT_METRES = 0.23;
 
-/** Seaward edge of the dune-grass band, in metres of z. */
-export const BEACH_DUNE_GRASS_Z_MAX_METRES = BEACH_SAND_Z_MAX_METRES - 2;
+/** Blooms per centrepiece. */
+export const BEACH_FLOWER_BLOOMS_PER_CLUSTER = 9;
 
-/** Alongshore span of the dune-grass band, in metres of x. */
-export const BEACH_DUNE_GRASS_X_MIN_METRES = -22;
-export const BEACH_DUNE_GRASS_X_MAX_METRES = 118;
+/** Petals per bloom. */
+const BEACH_FLOWER_PETALS_PER_BLOOM = 5;
 
-/** Height a tuft ramps its sway over, in metres. */
-export const BEACH_GRASS_WIND_HEIGHT = 0.95;
+/** Height the centrepieces ramp their sway over, in metres. */
+export const BEACH_FLOWER_WIND_HEIGHT = BEACH_FLOWER_HEIGHT_METRES;
 
-/** Blades per tuft. */
-export const BEACH_GRASS_BLADES_PER_TUFT = 5;
-
-/** Base wind strength with no cue, and the gain at full cue. */
-export const BEACH_GRASS_WIND_BASE = 0.055;
-export const BEACH_GRASS_WIND_CUE_GAIN = 0.048;
+/**
+ * Base wind strength with no cue, and the gain at full cue.
+ *
+ * Weaker than the dune grass this replaced: a cut stem in a vase on a table has
+ * far less travel than a marram blade rooted in sand, and a centrepiece that
+ * swayed like grass would read as a rubber prop.
+ */
+export const BEACH_FLOWER_WIND_BASE = 0.022;
+export const BEACH_FLOWER_WIND_CUE_GAIN = 0.019;
 
 const POST_FALLBACK_COLOR = "#a08464";
-const PIER_FALLBACK_COLOR = "#8e7355";
-const GRASS_TINTS = [0x9fa06a, 0x8b9358, 0xb2ab72, 0x7f8c55] as const;
+
+/**
+ * Linen white, not paper white.
+ *
+ * Pure `#ffffff` under a 12.8deg sun and a high-key sky tone-maps to a flat
+ * clipped patch with no fold visible. A little under white leaves the ACES curve
+ * room to show the drape.
+ */
+const TABLE_CLOTH_COLOR = "#f4f1ea";
+
+/** Bloom tints, and the foliage the blooms sit in. */
+const FLOWER_TINTS = [0xffffff, 0xfdeaf0, 0xf7d9c4, 0xf6c9d4, 0xfff4d8] as const;
+const FOLIAGE_TINT = 0x6f7f5a;
 
 /** Wood UV repeats along a post's height, so the grain does not stretch. */
 const POST_UV_REPEAT_Y = 3;
@@ -210,16 +242,16 @@ export type BeachPropMapSet = {
 };
 
 export type BeachPropTextures = {
+  readonly driftwood: BeachPropMapSet;
   readonly frames: readonly [BeachPropMapSet, BeachPropMapSet];
-  readonly pier: BeachPropMapSet;
 };
 
 export const BEACH_PROP_ASSET_ERROR_MARKER = "beach-prop-asset-load";
 
 const PROP_ASSET_IDS = [
-  "pierPlanksColor",
-  "pierPlanksNormal",
-  "pierPlanksArm",
+  "driftwoodColor",
+  "driftwoodNormal",
+  "driftwoodArm",
   "frame01Color",
   "frame01Normal",
   "frame01Arm",
@@ -229,9 +261,9 @@ const PROP_ASSET_IDS = [
 ] as const;
 
 const COLOR_PROP_ASSET_IDS = new Set<string>([
+  "driftwoodColor",
   "frame01Color",
   "frame02Color",
-  "pierPlanksColor",
 ]);
 
 /** The prop assets, in `PROP_ASSET_IDS` order. */
@@ -360,6 +392,11 @@ export function groupBeachPropTextures(
   };
 
   return {
+    driftwood: {
+      arm: require("driftwoodArm"),
+      color: require("driftwoodColor"),
+      normal: require("driftwoodNormal"),
+    },
     frames: [
       {
         arm: require("frame01Arm"),
@@ -372,11 +409,6 @@ export function groupBeachPropTextures(
         normal: require("frame02Normal"),
       },
     ],
-    pier: {
-      arm: require("pierPlanksArm"),
-      color: require("pierPlanksColor"),
-      normal: require("pierPlanksNormal"),
-    },
   };
 }
 
@@ -463,98 +495,69 @@ export function resolveBeachPostPlacements(
   });
 }
 
-export type BeachGrassPlacement = {
+export type BeachTablePlacement = {
+  readonly clothTint: number;
+  readonly flowerTint: number;
   readonly position: readonly [number, number, number];
   readonly rotationY: number;
   readonly scale: number;
-  readonly tint: number;
   readonly windPhase: number;
 };
 
 /**
- * Marram tufts on the backshore.
+ * The reception tables, in two bands along the shore.
  *
- * The band starts at `BEACH_DUNE_GRASS_Z_MIN_METRES`, landward of both the
- * walked rail (z 7 to 7.9) and the hanging line, so no tuft can grow through a
- * frame or between the camera and the sea.
+ * Neither band crosses the walked rail (z 7 to 7.9): the seaward band stands
+ * between the frames and the water where the down-shore view looks, and the
+ * landward band sits behind the walk, so the guest never has a table growing
+ * through the pose or through a photograph. Both bands stay clear of the
+ * waterline's +/-2.4m swing, so no table stands in the sea.
+ *
+ * Placement is stratified rather than uniform — each table gets its own slice of
+ * the alongshore span and jitters inside it — because uniform hashing clumps, and
+ * a clump of banquet tables reads as a pile of furniture rather than as a set
+ * reception.
  */
-export function resolveBeachDuneGrassPlacements(
+export function resolveBeachTablePlacements(
   count: number,
-): readonly BeachGrassPlacement[] {
+): readonly BeachTablePlacement[] {
   if (count <= 0) return [];
 
-  const random = createBeachScatter(0x9d0e17);
-  const xSpan = BEACH_DUNE_GRASS_X_MAX_METRES - BEACH_DUNE_GRASS_X_MIN_METRES;
-  const zSpan = BEACH_DUNE_GRASS_Z_MAX_METRES - BEACH_DUNE_GRASS_Z_MIN_METRES;
+  const random = createBeachScatter(0x7ab1e5);
+  const xSpan = BEACH_TABLE_X_MAX_METRES - BEACH_TABLE_X_MIN_METRES;
+  const slice = xSpan / count;
 
-  return Array.from({ length: count }, () => {
-    const x = BEACH_DUNE_GRASS_X_MIN_METRES + random() * xSpan;
-    // Squaring the z fraction biases tufts landward, where the dune crest is,
-    // so the band thins out as it approaches the walk instead of ending on a
-    // straight edge.
-    const zFraction = random() ** 2;
-    const z = BEACH_DUNE_GRASS_Z_MAX_METRES - zFraction * zSpan;
-    const tint = GRASS_TINTS[Math.floor(random() * GRASS_TINTS.length)]
-      ?? GRASS_TINTS[0];
+  return Array.from({ length: count }, (_unused, index) => {
+    // 0.5 of a slice of jitter, so a table can drift within its own slice but
+    // never swap places with its neighbour.
+    const x = BEACH_TABLE_X_MIN_METRES
+      + slice * (index + 0.25 + random() * 0.5);
+
+    const seaward = random() < BEACH_TABLE_SEAWARD_SHARE;
+    const zMin = seaward
+      ? BEACH_TABLE_SEAWARD_Z_MIN_METRES
+      : BEACH_TABLE_LANDWARD_Z_MIN_METRES;
+    const zMax = seaward
+      ? BEACH_TABLE_SEAWARD_Z_MAX_METRES
+      : BEACH_TABLE_LANDWARD_Z_MAX_METRES;
+    const z = zMin + random() * (zMax - zMin);
+
+    const clothTint = 1 - random() * 0.06;
+    const flowerTint = FLOWER_TINTS[Math.floor(random() * FLOWER_TINTS.length)]
+      ?? FLOWER_TINTS[0];
 
     return {
+      // Packed as a single greyscale multiplier so the cloth's instance colour
+      // only varies its shade, never its hue — banquet linen is one bolt of
+      // cloth, and a per-table hue would read as mismatched tablecloths.
+      clothTint,
+      flowerTint,
       position: [x, beachGroundHeightAt(x, z), z] as const,
       rotationY: random() * Math.PI * 2,
-      scale: 0.62 + random() * 0.72,
-      tint,
+      scale: 0.94 + random() * 0.12,
       windPhase: random() * Math.PI * 2,
     };
   });
-}
-
-export type BeachPierLayout = {
-  readonly deckCenterZ: number;
-  readonly deckLength: number;
-  readonly deckWidth: number;
-  readonly deckY: number;
-  readonly landwardZ: number;
-  readonly plankCount: number;
-  readonly poleRowCount: number;
-  readonly poleXOffsets: readonly [number, number];
-  readonly seawardZ: number;
-  readonly x: number;
-};
-
-/**
- * The finale pier, laid out from the finale pose.
- *
- * The seaward end is measured from `shorelineOffsetAt` at the pier's own x, not
- * from a fixed z: the shoreline curves by up to 2.4m alongshore, so a fixed end
- * would leave the deck stopping short of the water at some x values and the
- * poles standing on dry sand.
- */
-export function getBeachPierLayout(
-  scene: Pick<BeachJourneyScene, "cameraPosition" | "lookTarget">,
-  plankCount: number,
-): BeachPierLayout {
-  const { position } = getBeachFrameGeometry(scene);
-  const x = position[0];
-  const landwardZ = scene.cameraPosition[2] + BEACH_PIER_LANDWARD_REACH_METRES;
-  const seawardZ = shorelineOffsetAt(x) - BEACH_PIER_SEAWARD_REACH_METRES;
-  const deckLength = landwardZ - seawardZ;
-  const poleRowCount = Math.max(
-    2,
-    Math.round(deckLength / BEACH_PIER_POLE_SPACING_METRES) + 1,
-  );
-  const poleInset = BEACH_PIER_DECK_WIDTH_METRES / 2 - BEACH_PIER_POLE_RADIUS_METRES * 2;
-
-  return {
-    deckCenterZ: (landwardZ + seawardZ) / 2,
-    deckLength,
-    deckWidth: BEACH_PIER_DECK_WIDTH_METRES,
-    deckY: BEACH_PIER_DECK_HEIGHT_METRES,
-    landwardZ,
-    plankCount: Math.max(1, plankCount),
-    poleRowCount,
-    poleXOffsets: [-poleInset, poleInset],
-    seawardZ,
-    x,
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -593,56 +596,72 @@ export function createBeachPostGeometry(): BufferGeometry {
 }
 
 /**
- * A tuft of tapered blades, pivoted at the base and one unit tall.
+ * A white-clothed round table, pivoted at the sand and one unit of scale.
  *
- * Opaque geometry rather than an alpha card: no grass atlas ships in the
- * manifest and the decoded texture budget has no room for one, so a card would
- * either be a visible rectangle or need a texture that does not exist. Blades
- * are drawn `DoubleSide` so a tuft reads from any approach angle.
+ * Built as one merged mesh: the cloth is a continuous surface over the top and
+ * down the skirt, so splitting it into separate meshes would put a shading seam
+ * exactly on the table edge where the light wraps. The skirt is a cone rather
+ * than a cylinder because linen flares at the hem, and it is `DoubleSide` so the
+ * inside of the hem is not a hole when the camera passes low and close.
+ *
+ * No maps: the linen carries no pattern to sample, and the decoded texture budget
+ * is the scene's binding constraint. Fold shading comes from the scalloped hem
+ * radius and the environment term.
  */
-export function createBeachGrassTuftGeometry(
-  bladesPerTuft = BEACH_GRASS_BLADES_PER_TUFT,
-): BufferGeometry {
-  const heights = [0, 0.42, 0.74, 1] as const;
-  const widths = [1, 0.66, 0.34, 0] as const;
-  const baseWidth = 0.035;
+export function createBeachTableGeometry(): BufferGeometry {
+  const segments = BEACH_TABLE_RADIAL_SEGMENTS;
+  const topRadius = BEACH_TABLE_RADIUS_METRES;
+  const hemRadius = topRadius + BEACH_TABLE_HEM_FLARE_METRES;
+  const height = BEACH_TABLE_HEIGHT_METRES;
 
   const positions: number[] = [];
   const normals: number[] = [];
   const uvs: number[] = [];
   const indices: number[] = [];
-  const random = createBeachScatter(0x1cebba);
 
-  for (let blade = 0; blade < bladesPerTuft; blade += 1) {
-    const yaw = (blade / bladesPerTuft) * Math.PI * 2 + random() * 0.5;
-    const lean = 0.14 + random() * 0.3;
-    const heightScale = 0.7 + random() * 0.42;
-    const cos = Math.cos(yaw);
-    const sin = Math.sin(yaw);
-    const base = positions.length / 3;
+  // Cloth top: a fan from the centre out to the table edge.
+  positions.push(0, height, 0);
+  normals.push(0, 1, 0);
+  uvs.push(0.5, 0.5);
+  for (let segment = 0; segment <= segments; segment += 1) {
+    const angle = (segment / segments) * Math.PI * 2;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    positions.push(cos * topRadius, height, sin * topRadius);
+    normals.push(0, 1, 0);
+    uvs.push(0.5 + cos * 0.5, 0.5 + sin * 0.5);
+  }
+  for (let segment = 0; segment < segments; segment += 1) {
+    indices.push(0, segment + 2, segment + 1);
+  }
 
-    for (let ring = 0; ring < heights.length; ring += 1) {
-      const height = heights[ring]! * heightScale;
-      // The blade bends away from vertical faster the higher it goes, which is
-      // what makes a straight spike read as a growing leaf.
-      const bend = lean * heights[ring]! ** 2;
-      const halfWidth = (baseWidth * widths[ring]!) / 2;
+  // Skirt: table edge down to the flared hem, with the hem radius scalloped so
+  // the drape has folds instead of reading as a smooth lampshade.
+  const skirtBase = positions.length / 3;
+  const folds = 12;
+  for (let segment = 0; segment <= segments; segment += 1) {
+    const angle = (segment / segments) * Math.PI * 2;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    // 3cm of scallop: deep enough to catch a highlight, shallow enough that the
+    // hem still reads as a circle.
+    const scallop = 0.03 * Math.sin(angle * folds);
+    const hem = hemRadius + scallop;
 
-      for (const side of [-1, 1] as const) {
-        positions.push(
-          cos * bend + -sin * halfWidth * side,
-          height,
-          sin * bend + cos * halfWidth * side,
-        );
-        normals.push(-sin, 0, cos);
-        uvs.push((side + 1) / 2, heights[ring]!);
-      }
+    positions.push(cos * topRadius, height, sin * topRadius);
+    positions.push(cos * hem, 0, sin * hem);
+    // The skirt leans out, so its normal tilts up by the flare's slope rather
+    // than pointing straight out from the axis.
+    const slope = (hem - topRadius) / height;
+    const length = Math.hypot(1, slope);
+    for (let repeat = 0; repeat < 2; repeat += 1) {
+      normals.push(cos / length, slope / length, sin / length);
     }
-
-    for (let ring = 0; ring < heights.length - 1; ring += 1) {
-      const a = base + ring * 2;
-      indices.push(a, a + 1, a + 3, a, a + 3, a + 2);
-    }
+    uvs.push(segment / segments, 1, segment / segments, 0);
+  }
+  for (let segment = 0; segment < segments; segment += 1) {
+    const a = skirtBase + segment * 2;
+    indices.push(a, a + 1, a + 3, a, a + 3, a + 2);
   }
 
   const geometry = new BufferGeometry();
@@ -656,71 +675,135 @@ export function createBeachGrassTuftGeometry(
   return geometry;
 }
 
-/** Deck planks, laid across the pier with a gap between each. */
-export function createBeachPierDeckGeometry(
-  layout: BeachPierLayout,
+/**
+ * A centrepiece: a low dome of blooms over a collar of foliage.
+ *
+ * Pivoted at the cloth, so an instance can be planted at
+ * `BEACH_TABLE_HEIGHT_METRES` and scaled with its table. Each bloom is a small
+ * fan of petals facing its own outward direction on the dome, which is what makes
+ * a cluster of triangles read as an arrangement rather than as a green ball.
+ * Blooms and foliage are separated by vertex colour rather than by material, so
+ * the whole centrepiece is one draw call per instanced mesh.
+ */
+export function createBeachFlowerGeometry(
+  bloomsPerCluster = BEACH_FLOWER_BLOOMS_PER_CLUSTER,
 ): BufferGeometry {
-  const slot = layout.deckLength / layout.plankCount;
-  const plankDepth = slot * BEACH_PIER_PLANK_FILL;
-  const parts: BufferGeometry[] = [];
+  const positions: number[] = [];
+  const normals: number[] = [];
+  const uvs: number[] = [];
+  const indices: number[] = [];
+  const bloomMask: number[] = [];
+  const random = createBeachScatter(0x30ce5a);
 
-  for (let index = 0; index < layout.plankCount; index += 1) {
-    const plank = new BoxGeometry(
-      layout.deckWidth,
-      BEACH_PIER_PLANK_THICKNESS_METRES,
-      plankDepth,
+  const radius = BEACH_FLOWER_CLUSTER_RADIUS_METRES;
+  const height = BEACH_FLOWER_HEIGHT_METRES;
+  /**
+   * Largest petal reach, and the dome apex that leaves room for it.
+   *
+   * A bloom is a fan of petals around its centre, so the arrangement's real top
+   * is the topmost bloom's centre *plus* its petal radius — placing centres up to
+   * `height` overshot the authored height by the petal reach. Deriving the apex
+   * by subtraction keeps the whole centrepiece inside `height` whatever the
+   * random petal size draws.
+   */
+  const maxPetalReach = radius * 0.46;
+  const domeApexY = height - maxPetalReach;
+  const domeBaseY = height * 0.16;
+
+  // Foliage collar: a flat ruff just above the cloth, wider than the blooms, so
+  // the arrangement has a base and does not appear to float.
+  const collarSegments = 10;
+  const collarCentre = positions.length / 3;
+  positions.push(0, domeBaseY, 0);
+  normals.push(0, 1, 0);
+  uvs.push(0.5, 0.5);
+  bloomMask.push(0);
+  for (let segment = 0; segment <= collarSegments; segment += 1) {
+    const angle = (segment / collarSegments) * Math.PI * 2;
+    const leafRadius = radius * (1.02 + random() * 0.26);
+    positions.push(
+      Math.cos(angle) * leafRadius,
+      domeBaseY * (0.45 + random() * 0.3),
+      Math.sin(angle) * leafRadius,
     );
-    plank.translate(0, 0, layout.seawardZ + slot * (index + 0.5) - layout.deckCenterZ);
-    parts.push(plank);
+    normals.push(0, 1, 0);
+    uvs.push(0.5, 0);
+    bloomMask.push(0);
+  }
+  for (let segment = 0; segment < collarSegments; segment += 1) {
+    indices.push(collarCentre, collarCentre + segment + 2, collarCentre + segment + 1);
   }
 
-  const merged = mergeGeometries(parts);
-  for (const part of parts) part.dispose();
-  if (!merged) throw new Error("Beach pier deck geometry failed to merge");
-  merged.computeBoundingSphere();
-  return merged;
-}
+  for (let bloom = 0; bloom < bloomsPerCluster; bloom += 1) {
+    // Spread the blooms over a dome: a golden-angle spiral in azimuth with the
+    // polar angle biased toward the top, so the dome is covered without the
+    // regular rings a uniform grid would produce.
+    const spiral = bloom * 2.39996;
+    const polar = Math.acos(1 - 0.82 * ((bloom + 0.5) / bloomsPerCluster));
+    const domeX = Math.sin(polar) * Math.cos(spiral) * radius;
+    const domeZ = Math.sin(polar) * Math.sin(spiral) * radius;
+    // Interpolated between the collar and the apex, so no bloom centre — and so
+    // no petal — can pass the authored height.
+    const domeY = domeBaseY + Math.cos(polar) * (domeApexY - domeBaseY);
 
-/** Pole rows under the deck, each pole reaching from the bed to the deck. */
-export function createBeachPierPoleGeometry(
-  layout: BeachPierLayout,
-): BufferGeometry {
-  const rowSpacing = layout.deckLength / Math.max(1, layout.poleRowCount - 1);
-  const parts: BufferGeometry[] = [];
+    // The bloom faces out along the dome's own normal.
+    const outward = [domeX, domeY - domeBaseY, domeZ];
+    const outwardLength = Math.hypot(...outward) || 1;
+    const facing = outward.map((value) => value / outwardLength) as [number, number, number];
+    // Any vector not parallel to the facing direction works as the first tangent.
+    const helper: [number, number, number] = Math.abs(facing[1]) > 0.9
+      ? [1, 0, 0]
+      : [0, 1, 0];
+    const tangentA = [
+      helper[1] * facing[2] - helper[2] * facing[1],
+      helper[2] * facing[0] - helper[0] * facing[2],
+      helper[0] * facing[1] - helper[1] * facing[0],
+    ];
+    const tangentALength = Math.hypot(...tangentA) || 1;
+    const uAxis = tangentA.map((value) => value / tangentALength);
+    const vAxis = [
+      facing[1] * uAxis[2]! - facing[2] * uAxis[1]!,
+      facing[2] * uAxis[0]! - facing[0] * uAxis[2]!,
+      facing[0] * uAxis[1]! - facing[1] * uAxis[0]!,
+    ];
 
-  for (let row = 0; row < layout.poleRowCount; row += 1) {
-    const z = layout.seawardZ + rowSpacing * row;
-    for (const offsetX of layout.poleXOffsets) {
-      const bedY = beachGroundHeightAt(layout.x + offsetX, z);
-      const height = layout.deckY - bedY;
-      if (height <= 0) continue;
+    const petalRadius = maxPetalReach * (0.65 + random() * 0.35);
+    const centre = positions.length / 3;
+    positions.push(domeX, domeY, domeZ);
+    normals.push(...facing);
+    uvs.push(0.5, 0.5);
+    bloomMask.push(1);
 
-      const pole = new CylinderGeometry(
-        BEACH_PIER_POLE_RADIUS_METRES,
-        BEACH_PIER_POLE_RADIUS_METRES * 1.15,
-        height,
-        6,
-        1,
-        false,
+    const twist = random() * Math.PI * 2;
+    for (let petal = 0; petal <= BEACH_FLOWER_PETALS_PER_BLOOM; petal += 1) {
+      const angle = twist + (petal / BEACH_FLOWER_PETALS_PER_BLOOM) * Math.PI * 2;
+      const cos = Math.cos(angle) * petalRadius;
+      const sin = Math.sin(angle) * petalRadius;
+      positions.push(
+        domeX + uAxis[0]! * cos + vAxis[0]! * sin,
+        domeY + uAxis[1]! * cos + vAxis[1]! * sin,
+        domeZ + uAxis[2]! * cos + vAxis[2]! * sin,
       );
-      pole.translate(
-        offsetX,
-        bedY + height / 2 - layout.deckY,
-        z - layout.deckCenterZ,
-      );
-      parts.push(pole);
+      normals.push(...facing);
+      uvs.push(0.5, 0);
+      bloomMask.push(1);
+    }
+    for (let petal = 0; petal < BEACH_FLOWER_PETALS_PER_BLOOM; petal += 1) {
+      indices.push(centre, centre + petal + 2, centre + petal + 1);
     }
   }
 
-  if (parts.length === 0) {
-    throw new Error("Beach pier has no poles above the bed");
-  }
-
-  const merged = mergeGeometries(parts);
-  for (const part of parts) part.dispose();
-  if (!merged) throw new Error("Beach pier pole geometry failed to merge");
-  merged.computeBoundingSphere();
-  return merged;
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("normal", new Float32BufferAttribute(normals, 3));
+  const uvAttribute = new Float32BufferAttribute(uvs, 2);
+  geometry.setAttribute("uv", uvAttribute);
+  geometry.setAttribute("uv1", uvAttribute);
+  // Read by the material's shader patch to pick bloom tint over foliage green.
+  geometry.setAttribute("bloomMask", new Float32BufferAttribute(bloomMask, 1));
+  geometry.setIndex(indices);
+  geometry.computeBoundingSphere();
+  return geometry;
 }
 
 // ---------------------------------------------------------------------------
@@ -747,6 +830,82 @@ function createWoodMaterial(
     roughness: 1,
     roughnessMap: mapSet.arm,
   });
+}
+
+/**
+ * Linen: an untextured white dielectric, rough enough to have no sheen.
+ *
+ * `DoubleSide` for the hem's inside face, and `flatShading` off so the scalloped
+ * skirt reads as drape rather than as facets.
+ */
+function createTableClothMaterial(): MeshStandardMaterial {
+  return new MeshStandardMaterial({
+    color: TABLE_CLOTH_COLOR,
+    metalness: 0,
+    roughness: 0.86,
+    side: DoubleSide,
+  });
+}
+
+/**
+ * Petals and foliage in one material, selected per vertex.
+ *
+ * The instance colour carries the bloom tint, and `bloomMask` chooses between it
+ * and the foliage green — so an arrangement is one draw call instead of two, and
+ * each table can have its own flower colour without its own material. Patched
+ * rather than written from scratch so the blooms still take the scene's PBR
+ * lighting and the environment term.
+ */
+function createFlowerMaterial(): {
+  readonly material: MeshStandardMaterial;
+  readonly wind: BeachWindUniforms;
+} {
+  const material = new MeshStandardMaterial({
+    metalness: 0,
+    roughness: 0.72,
+    side: DoubleSide,
+  });
+
+  const wind = attachBeachWind(material, BEACH_FLOWER_WIND_HEIGHT);
+  const foliage = new Color(FOLIAGE_TINT);
+
+  // `attachBeachWind` owns `onBeforeCompile`, so chain onto it rather than
+  // replacing it — overwriting would silently drop the sway.
+  const windPatch = material.onBeforeCompile;
+  material.onBeforeCompile = (shader, renderer) => {
+    windPatch?.(shader, renderer);
+
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+attribute float bloomMask;
+varying float vBeachBloomMask;`,
+      )
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+vBeachBloomMask = bloomMask;`,
+      );
+
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+varying float vBeachBloomMask;
+uniform vec3 uFoliageColor;`,
+      )
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+diffuseColor.rgb = mix(uFoliageColor, diffuseColor.rgb, vBeachBloomMask);`,
+      );
+
+    shader.uniforms.uFoliageColor = { value: foliage };
+  };
+
+  material.customProgramCacheKey = () => "beach-flowers";
+  return { material, wind };
 }
 
 // ---------------------------------------------------------------------------
@@ -800,106 +959,114 @@ function DriftwoodPosts({
   );
 }
 
-function DuneGrass({
+/**
+ * The reception tables and their centrepieces.
+ *
+ * Two instanced meshes over one placement list: the cloth is still and takes no
+ * wind, while the flowers sway, so they cannot share a material. Both read the
+ * same `placements`, so a table and its centrepiece can never drift apart.
+ */
+function ReceptionTables({
   cueRef,
   placements,
   reducedMotion,
 }: {
   readonly cueRef: MutableRefObject<BeachJourneyCueState>;
-  readonly placements: readonly BeachGrassPlacement[];
+  readonly placements: readonly BeachTablePlacement[];
   readonly reducedMotion: boolean;
 }) {
-  const geometry = useMemo(() => createBeachGrassTuftGeometry(), []);
-  const surface = useMemo(() => {
-    const material = new MeshStandardMaterial({
-      metalness: 0,
-      roughness: 0.78,
-      side: DoubleSide,
-    });
-    return { material, wind: attachBeachWind(material, BEACH_GRASS_WIND_HEIGHT) };
-  }, []);
+  const clothGeometry = useMemo(() => createBeachTableGeometry(), []);
+  const flowerGeometry = useMemo(() => createBeachFlowerGeometry(), []);
+  const clothMaterial = useMemo(() => createTableClothMaterial(), []);
+  const flowers = useMemo(() => createFlowerMaterial(), []);
 
-  const meshRef = useRef<InstancedMesh | null>(null);
+  const clothRef = useRef<InstancedMesh | null>(null);
+  const flowerRef = useRef<InstancedMesh | null>(null);
 
   useLayoutEffect(() => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
+    const cloth = clothRef.current;
+    const bloom = flowerRef.current;
+    if (!cloth || !bloom) return;
 
     const object = new Object3D();
     const color = new Color();
     const windValues = new Float32Array(Math.max(1, placements.length));
+
     placements.forEach((placement, index) => {
       object.position.set(...placement.position);
       object.rotation.set(0, placement.rotationY, 0);
-      object.scale.set(placement.scale, placement.scale, placement.scale);
+      object.scale.setScalar(placement.scale);
       object.updateMatrix();
-      mesh.setMatrixAt(index, object.matrix);
-      mesh.setColorAt(index, color.setHex(placement.tint));
+      cloth.setMatrixAt(index, object.matrix);
+      cloth.setColorAt(
+        index,
+        color.setScalar(placement.clothTint),
+      );
+
+      // The centrepiece rides on the cloth, so its own pivot is lifted by the
+      // table's height — scaled with the table, or a taller table would leave its
+      // flowers hovering.
+      object.position.set(
+        placement.position[0],
+        placement.position[1] + BEACH_TABLE_HEIGHT_METRES * placement.scale,
+        placement.position[2],
+      );
+      object.updateMatrix();
+      bloom.setMatrixAt(index, object.matrix);
+      bloom.setColorAt(index, color.setHex(placement.flowerTint));
       windValues[index] = placement.windPhase;
     });
 
-    geometry.setAttribute(
+    flowerGeometry.setAttribute(
       "instanceWindPhase",
       new InstancedBufferAttribute(windValues, 1),
     );
-    mesh.count = placements.length;
-    mesh.instanceMatrix.needsUpdate = true;
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-    mesh.computeBoundingSphere();
-  }, [geometry, placements]);
+
+    for (const mesh of [cloth, bloom]) {
+      mesh.count = placements.length;
+      mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+      mesh.computeBoundingSphere();
+    }
+  }, [flowerGeometry, placements]);
 
   useFrame(({ clock }) => {
     driveBeachWind(
-      surface.wind,
+      flowers.wind,
       clock.getElapsedTime(),
-      BEACH_GRASS_WIND_BASE + cueRef.current.windStrength * BEACH_GRASS_WIND_CUE_GAIN,
+      BEACH_FLOWER_WIND_BASE
+        + cueRef.current.windStrength * BEACH_FLOWER_WIND_CUE_GAIN,
       reducedMotion,
     );
   });
 
-  useEffect(() => () => geometry.dispose(), [geometry]);
-  useEffect(() => () => surface.material.dispose(), [surface]);
+  useEffect(() => () => {
+    clothGeometry.dispose();
+    flowerGeometry.dispose();
+  }, [clothGeometry, flowerGeometry]);
+  useEffect(() => () => {
+    clothMaterial.dispose();
+    flowers.material.dispose();
+  }, [clothMaterial, flowers]);
 
   if (placements.length === 0) return null;
 
   return (
-    <instancedMesh
-      args={[geometry, surface.material, placements.length]}
-      castShadow={false}
-      name="beach-dune-grass"
-      receiveShadow={false}
-      ref={meshRef}
-    />
-  );
-}
-
-function FinalePier({
-  layout,
-  mapSet,
-}: {
-  readonly layout: BeachPierLayout;
-  readonly mapSet: BeachPropMapSet | null;
-}) {
-  const deckGeometry = useMemo(() => createBeachPierDeckGeometry(layout), [layout]);
-  const poleGeometry = useMemo(() => createBeachPierPoleGeometry(layout), [layout]);
-  const material = useMemo(
-    () => createWoodMaterial(mapSet, PIER_FALLBACK_COLOR),
-    [mapSet],
-  );
-
-  useEffect(() => () => {
-    deckGeometry.dispose();
-    poleGeometry.dispose();
-  }, [deckGeometry, poleGeometry]);
-  useEffect(() => () => material.dispose(), [material]);
-
-  return (
-    <group
-      name="beach-finale-pier"
-      position={[layout.x, layout.deckY, layout.deckCenterZ]}
-    >
-      <mesh args={[deckGeometry, material]} castShadow={false} receiveShadow={false} />
-      <mesh args={[poleGeometry, material]} castShadow={false} receiveShadow={false} />
+    <group name="beach-reception-tables">
+      <instancedMesh
+        args={[clothGeometry, clothMaterial, placements.length]}
+        castShadow={false}
+        name="beach-table-cloths"
+        receiveShadow={false}
+        ref={clothRef}
+      />
+      <instancedMesh
+        args={[flowerGeometry, flowers.material, placements.length]}
+        castShadow={false}
+        name="beach-table-flowers"
+        receiveShadow={false}
+        ref={flowerRef}
+      />
     </group>
   );
 }
@@ -924,37 +1091,22 @@ export function BeachProps({
     () => resolveBeachPostPlacements(scenes, density.posts),
     [density.posts, scenes],
   );
-  const grassPlacements = useMemo(
-    () => resolveBeachDuneGrassPlacements(density.duneGrass),
-    [density.duneGrass],
-  );
-
-  const finale = useMemo(
-    () => scenes.find((scene) => scene.type === "finale") ?? null,
-    [scenes],
-  );
-  const pierLayout = useMemo(
-    () => (finale ? getBeachPierLayout(finale, density.pierPlanks) : null),
-    [density.pierPlanks, finale],
+  const tablePlacements = useMemo(
+    () => resolveBeachTablePlacements(density.tables),
+    [density.tables],
   );
 
   return (
     <group data-beach-photoreal-props>
       <DriftwoodPosts
-        mapSet={textures ? textures.pier : null}
+        mapSet={textures ? textures.driftwood : null}
         placements={postPlacements}
       />
-      <DuneGrass
+      <ReceptionTables
         cueRef={cueRef}
-        placements={grassPlacements}
+        placements={tablePlacements}
         reducedMotion={reducedMotion}
       />
-      {pierLayout ? (
-        <FinalePier
-          layout={pierLayout}
-          mapSet={textures ? textures.pier : null}
-        />
-      ) : null}
     </group>
   );
 }

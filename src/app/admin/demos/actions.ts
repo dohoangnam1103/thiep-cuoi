@@ -9,6 +9,7 @@ import { verifyAdmin } from "@/lib/admin-dal";
 import { completedTemplateSlugs, getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { templateSeoFacets } from "@/data/template-seo-facets";
 import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
 import { defaultTemplateLabel } from "@/lib/template-labels";
 import {
@@ -143,6 +144,27 @@ export async function renameTemplate(
     revalidatePath(`/${locale}/templates`);
     revalidatePath(getPathname({ href: "/", locale }));
     revalidatePath(getPathname({ href: "/templates", locale }));
+    for (const facet of templateSeoFacets) {
+      if (facet.kind === "style") {
+        revalidatePath(`/${locale}/templates/style/${facet.slug}`);
+        revalidatePath(getPathname({
+          href: {
+            pathname: "/templates/style/[slug]",
+            params: { slug: facet.slug },
+          },
+          locale,
+        }));
+      } else {
+        revalidatePath(`/${locale}/templates/color/${facet.slug}`);
+        revalidatePath(getPathname({
+          href: {
+            pathname: "/templates/color/[slug]",
+            params: { slug: facet.slug },
+          },
+          locale,
+        }));
+      }
+    }
   }
 
   return { ok: true, name: name || defaultTemplateLabel(templateId) };

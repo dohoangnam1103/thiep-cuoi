@@ -116,9 +116,12 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
         {/* Ảnh tràn viền, tỷ lệ ngang rộng như ảnh mở đầu phóng sự. */}
         {hero ? (
           <figure className="relative w-full">
-            <img src={hero} alt={t("weddingPhotoAlt", { couple: `${people[0].shortName} & ${people[1].shortName}` })} className="aspect-[4/5] w-full object-cover md:aspect-[16/10]" />
+            <img src={hero} alt={t("weddingPhotoAlt", { couple: `${people[0].shortName} ${t("and")} ${people[1].shortName}` })} className="aspect-[4/5] w-full object-cover md:aspect-[16/10]" />
             <figcaption className="px-5 pt-3 md:px-12">
-              <Kicker>{people[0].shortName} &amp; {people[1].shortName} — {venue.address.split("\n")[0]}</Kicker>
+              {/* Mỗi tên một dòng riêng: giãn chữ 0.42em nên gộp một dòng rất dễ tràn trên máy hẹp. */}
+              <Kicker>{people[0].shortName} &amp;</Kicker>
+              <Kicker>{people[1].shortName}</Kicker>
+              <Kicker>{venue.address.split("\n")[0]}</Kicker>
             </figcaption>
           </figure>
         ) : null}

@@ -3,6 +3,8 @@
 import { Color, Mesh, Program, Renderer, Triangle } from "ogl";
 import { useEffect, useRef } from "react";
 
+import { browserSupportsWebGl2 } from "@/lib/webgl-support";
+
 const VERT = `#version 300 es
 in vec2 position;
 void main() {
@@ -88,94 +90,114 @@ export default function AuroraBackground({
     const ctn = ctnRef.current;
     if (!ctn) return;
 
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: true });
-    const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 0);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.canvas.style.backgroundColor = "transparent";
+    // This layer is pure decoration at 20% opacity, so anything short of a
+    // working WebGL2 context must degrade to nothing rather than escalate.
+    // OGL's Renderer only logs when `getContext` returns null and then
+    // dereferences it anyway, which threw `Cannot set properties of null
+    // (setting 'renderer')` for a visitor on 2026-08-04 and — because this
+    // sits in the homepage tree — replaced the entire page with the error
+    // boundary about a second after it painted.
+    if (!browserSupportsWebGl2()) return;
 
-    const geometry = new Triangle(gl);
-    if (geometry.attributes.uv) {
-      delete geometry.attributes.uv;
+    // Unwound in reverse on teardown, so a throw partway through init cannot
+    // leak a canvas, a listener or an observer.
+    const disposers: Array<() => void> = [];
+    const dispose = () => {
+      while (disposers.length) disposers.pop()?.();
+    };
+
+    try {
+      const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: true });
+      const gl = renderer.gl;
+      gl.clearColor(0, 0, 0, 0);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.canvas.style.backgroundColor = "transparent";
+      disposers.push(() => gl.getExtension("WEBGL_lose_context")?.loseContext());
+
+      const geometry = new Triangle(gl);
+      if (geometry.attributes.uv) {
+        delete geometry.attributes.uv;
+      }
+
+      const toColor = (hex: string) => {
+        const c = new Color(hex);
+        return [c.r, c.g, c.b];
+      };
+
+      const program = new Program(gl, {
+        vertex: VERT,
+        fragment: FRAG,
+        uniforms: {
+          uTime: { value: 0 },
+          uAmplitude: { value: amplitude },
+          uColorStops: { value: colorStops.map(toColor) },
+          uResolution: { value: [ctn.offsetWidth, ctn.offsetHeight] },
+          uBlend: { value: blend },
+        },
+      });
+
+      const mesh = new Mesh(gl, { geometry, program });
+
+      const resize = () => {
+        renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
+        program.uniforms.uResolution.value = [ctn.offsetWidth, ctn.offsetHeight];
+      };
+      window.addEventListener("resize", resize);
+      disposers.push(() => window.removeEventListener("resize", resize));
+      resize();
+
+      ctn.appendChild(gl.canvas);
+      disposers.push(() => {
+        if (gl.canvas.parentNode === ctn) ctn.removeChild(gl.canvas);
+      });
+
+      let rafId = 0;
+      let visible = true;
+      const update = (t: number) => {
+        rafId = requestAnimationFrame(update);
+        program.uniforms.uTime.value = t * 0.001;
+        renderer.render({ scene: mesh });
+      };
+      const start = () => {
+        if (!rafId) rafId = requestAnimationFrame(update);
+      };
+      const stop = () => {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = 0;
+        }
+      };
+      disposers.push(stop);
+
+      // Dừng render khi khuất màn hình để không tốn GPU lúc scroll qua.
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          visible = entry.isIntersecting;
+          if (visible && document.visibilityState === "visible") start();
+          else stop();
+        },
+        { threshold: 0 },
+      );
+      io.observe(ctn);
+      disposers.push(() => io.disconnect());
+
+      // Dừng render khi tab ẩn.
+      const onVisibility = () => {
+        if (document.visibilityState === "visible" && visible) start();
+        else stop();
+      };
+      document.addEventListener("visibilitychange", onVisibility);
+      disposers.push(() => document.removeEventListener("visibilitychange", onVisibility));
+
+      start();
+    } catch {
+      // A driver crash, a blocklisted GPU or a shader that will not link must
+      // cost the visitor a background gradient, never the page.
+      dispose();
     }
 
-    const toColor = (hex: string) => {
-      const c = new Color(hex);
-      return [c.r, c.g, c.b];
-    };
-
-    const program = new Program(gl, {
-      vertex: VERT,
-      fragment: FRAG,
-      uniforms: {
-        uTime: { value: 0 },
-        uAmplitude: { value: amplitude },
-        uColorStops: { value: colorStops.map(toColor) },
-        uResolution: { value: [ctn.offsetWidth, ctn.offsetHeight] },
-        uBlend: { value: blend },
-      },
-    });
-
-    const mesh = new Mesh(gl, { geometry, program });
-
-    const resize = () => {
-      if (!ctn) return;
-      renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
-      program.uniforms.uResolution.value = [ctn.offsetWidth, ctn.offsetHeight];
-    };
-    window.addEventListener("resize", resize);
-    resize();
-
-    ctn.appendChild(gl.canvas);
-
-    let rafId = 0;
-    let visible = true;
-    const update = (t: number) => {
-      rafId = requestAnimationFrame(update);
-      program.uniforms.uTime.value = t * 0.001;
-      renderer.render({ scene: mesh });
-    };
-    const start = () => {
-      if (!rafId) rafId = requestAnimationFrame(update);
-    };
-    const stop = () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = 0;
-      }
-    };
-
-    // Dừng render khi khuất màn hình để không tốn GPU lúc scroll qua.
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        if (visible && document.visibilityState === "visible") start();
-        else stop();
-      },
-      { threshold: 0 },
-    );
-    io.observe(ctn);
-
-    // Dừng render khi tab ẩn.
-    const onVisibility = () => {
-      if (document.visibilityState === "visible" && visible) start();
-      else stop();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
-    start();
-
-    return () => {
-      stop();
-      io.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("resize", resize);
-      if (gl.canvas.parentNode === ctn) {
-        ctn.removeChild(gl.canvas);
-      }
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
-    };
+    return dispose;
   }, [amplitude, blend, colorStops]);
 
   return <div ref={ctnRef} className={className} aria-hidden />;

@@ -94,7 +94,11 @@ export async function saveBlogPost(
     return { error: "Bài viết không còn tồn tại." };
   }
 
-  const slug = await uniqueBlogSlug(parsed.data.title, id ?? undefined);
+  // Once published, a URL is a permalink. Drafts can still follow title edits
+  // until their first publication so they do not launch with an outdated slug.
+  const slug = current?.publishedAt
+    ? current.slug
+    : await uniqueBlogSlug(parsed.data.title, current?.id);
   const publishedAt = parsed.data.status === "published"
     ? current?.publishedAt ?? new Date()
     : current?.publishedAt ?? null;

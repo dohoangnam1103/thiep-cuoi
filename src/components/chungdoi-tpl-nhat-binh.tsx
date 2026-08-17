@@ -157,11 +157,14 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
         />
         {/* header collage */}
         <header className="relative z-10 flex w-full flex-col items-center pt-[calc(clamp(75px,calc(5vw+45px),140px)+30px)] md:pt-[calc(clamp(75px,calc(5vw+45px),140px)+50px)]" aria-label="Đầu thiệp">
+          {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
           <p
-            className="relative z-20 max-w-[95%] text-center uppercase"
+            className="relative z-20 flex max-w-[95%] flex-col items-center text-center uppercase"
             style={{ fontFamily: NB_PACIFICO, color: RED, fontSize: "clamp(20px, 5.5vw, 40px)", lineHeight: 1.2, letterSpacing: "0.03em", WebkitTextStroke: "1px #f8c88b", paintOrder: "stroke" }}
           >
-            {people[0].shortName} &amp; {people[1].shortName}
+            <span className="block">{people[0].shortName}</span>
+            <span className="block text-[0.7em] leading-none">&amp;</span>
+            <span className="block">{people[1].shortName}</span>
           </p>
           <div className="relative z-10 mt-2 h-[min(92vw,420px)] w-full max-w-[480px] md:h-[480px] md:max-w-[769px]">
             {/* 囍 double-happiness */}

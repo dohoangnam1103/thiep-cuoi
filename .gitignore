@@ -89,3 +89,6 @@ docs/research/original-dom/
 
 # Visual brainstorm companion
 .superpowers/
+
+# Worktree dùng cho deploy, không phải source
+.deploy-worktree/

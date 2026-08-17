@@ -47,40 +47,40 @@ const POLY_HAVEN_SOURCES = Object.freeze({
     md5: "bc686a415608ae66bd88f70d081fd572",
     url: "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/hanging_picture_frame_02/hanging_picture_frame_02_nor_gl_1k.jpg",
   },
-  hdri: {
-    filename: "umhlanga_sunrise_1k.hdr",
-    md5: "9fb1501bb5ec41e7909a8dc497638501",
-    url: "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/umhlanga_sunrise_1k.hdr",
-  },
-  pierPlanksArm: {
+  driftwoodArm: {
     filename: "modular_wooden_pier_planks_arm_1k.jpg",
     md5: "e6ffdf7314cc015aaa5c0899326b42a7",
     url: "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_arm_1k.jpg",
   },
-  pierPlanksColor: {
+  driftwoodColor: {
     filename: "modular_wooden_pier_planks_diff_1k.jpg",
     md5: "f3fef39b0ec16e4006678c846d3601ab",
     url: "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_diff_1k.jpg",
   },
-  pierPlanksNormal: {
+  driftwoodNormal: {
     filename: "modular_wooden_pier_planks_nor_gl_1k.jpg",
     md5: "b752108fe7504d5dd4ae0f4701b1218b",
     url: "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_nor_gl_1k.jpg",
   },
+  hdri: {
+    filename: "table_mountain_1_puresky_1k.hdr",
+    md5: "6c68d0e51d99c9a8a93438472ab8bc42",
+    url: "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/table_mountain_1_puresky_1k.hdr",
+  },
   sandArm: {
-    filename: "coast_sand_01_arm_1k.jpg",
-    md5: "f044891a328d284c9e7cd46da12fa45d",
-    url: "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coast_sand_01/coast_sand_01_arm_1k.jpg",
+    filename: "sand_03_arm_1k.jpg",
+    md5: "2d69c938c9ce5d4ba41f4789eae3a9cb",
+    url: "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_arm_1k.jpg",
   },
   sandColor: {
-    filename: "coast_sand_01_diff_1k.jpg",
-    md5: "a1e243fc8635806381505c7dc44b192a",
-    url: "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coast_sand_01/coast_sand_01_diff_1k.jpg",
+    filename: "sand_03_diff_1k.jpg",
+    md5: "84bde2b8bea6351805f67a15682b36b2",
+    url: "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg",
   },
   sandNormal: {
-    filename: "coast_sand_01_nor_gl_1k.jpg",
-    md5: "38bbe6863249a3d20d8417c9db207780",
-    url: "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/coast_sand_01/coast_sand_01_nor_gl_1k.jpg",
+    filename: "sand_03_nor_gl_1k.jpg",
+    md5: "ad8d6ce28344b1d8f241cbd7796243dc",
+    url: "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_nor_gl_1k.jpg",
   },
   wetSandArm: {
     filename: "damp_sand_arm_1k.jpg",
@@ -99,10 +99,16 @@ const SHARED_COMPRESSED_BUDGET = 12_000_000;
 const SAND_TEXTURE_SIZE = 1_024;
 const WATER_NORMAL_SIZE = 512;
 /**
- * Pier planks ship at 1k: the deck is a large tiled surface the camera walks
- * along, so halving it reads as mush underfoot.
+ * Driftwood maps ship at 512, down from the 1k the deleted pier needed.
+ *
+ * The pier was a large tiled deck the camera walked along, so halving it read as
+ * mush underfoot. With the pier gone the same `modular_wooden_pier` set dresses
+ * only the driftwood posts, which are 0.15m-wide cylinders seen from 2m and up —
+ * three tiles of grain up a post at 512 is already past what the silhouette
+ * resolves. Halving all three maps returns 12.6MB of the decoded ceiling
+ * (16.8MB at 1k to 4.2MB at 512), which is what pays for the reception tables.
  */
-const PIER_TEXTURE_SIZE = 1_024;
+const DRIFTWOOD_TEXTURE_SIZE = 512;
 /**
  * Frame maps ship at 512, forced by the 64MB decoded-texture ceiling.
  *
@@ -110,17 +116,23 @@ const PIER_TEXTURE_SIZE = 1_024;
  * the 16.8MB worst case of three live 1k gallery photos totals 88.1MB — 21.0MB
  * over. Frames are narrow mouldings around the photos, so they lose the least
  * from 512; the ceiling is a hard constraint and is never the thing that moves.
- * This leaves 4.2MB (6%) of headroom, so any later task adding a texture must
- * recompute the decoded total rather than assume room exists.
  */
 const FRAME_TEXTURE_SIZE = 512;
 /**
- * Golden-hour warm-up applied to colour/diffuse maps only.
+ * White-sand grade for `sand_03`, applied to the dry colour map only.
  *
- * Normal and ARM maps encode geometry and material data in their channels, so
- * scaling those channels corrupts the data rather than grading it.
+ * Replaces the golden-hour warm-up that shipped with `coast_sand_01`. Measured
+ * on a 512 resample: ungraded `sand_03` is L* 41.4 at 27.1% mean saturation —
+ * finer-grained than `coast_sand_01` (high-frequency grain RMS 10.33 against
+ * 30.93) but too dark and too warm to read as white. The blue channel is lifted
+ * hardest because the residual cast is yellow; scaling all three equally raises
+ * lightness without touching saturation, since saturation is a ratio.
+ *
+ * At these gains the map measures L* 58.0 at 15.5% saturation with 0.00% of
+ * pixels clipped, so the sand reads bright and near-neutral while keeping its
+ * grain. Normal and ARM maps are data and are never graded.
  */
-const GOLDEN_HOUR_TINT = Object.freeze([1.04, 1.0, 0.94]);
+const WHITE_SAND_GAIN = Object.freeze([1.38, 1.44, 1.6]);
 
 /**
  * Declared dimensions of the HDRI, which never passes through Sharp.
@@ -138,9 +150,9 @@ const OUTPUTS = Object.freeze([
   { blocking: true, filename: "sand-arm.webp", group: "entry", height: SAND_TEXTURE_SIZE, id: "sandArm", width: SAND_TEXTURE_SIZE },
   { blocking: true, filename: "water-normal.webp", group: "entry", height: WATER_NORMAL_SIZE, id: "waterNormal", width: WATER_NORMAL_SIZE },
   { blocking: true, filename: "sky.hdr", group: "entry", height: HDRI_DIMENSIONS.height, id: "sky", radiance: true, width: HDRI_DIMENSIONS.width },
-  { blocking: false, filename: "pier-planks-color.webp", group: "props", height: PIER_TEXTURE_SIZE, id: "pierPlanksColor", width: PIER_TEXTURE_SIZE },
-  { blocking: false, filename: "pier-planks-normal.webp", group: "props", height: PIER_TEXTURE_SIZE, id: "pierPlanksNormal", width: PIER_TEXTURE_SIZE },
-  { blocking: false, filename: "pier-planks-arm.webp", group: "props", height: PIER_TEXTURE_SIZE, id: "pierPlanksArm", width: PIER_TEXTURE_SIZE },
+  { blocking: false, filename: "driftwood-color.webp", group: "props", height: DRIFTWOOD_TEXTURE_SIZE, id: "driftwoodColor", width: DRIFTWOOD_TEXTURE_SIZE },
+  { blocking: false, filename: "driftwood-normal.webp", group: "props", height: DRIFTWOOD_TEXTURE_SIZE, id: "driftwoodNormal", width: DRIFTWOOD_TEXTURE_SIZE },
+  { blocking: false, filename: "driftwood-arm.webp", group: "props", height: DRIFTWOOD_TEXTURE_SIZE, id: "driftwoodArm", width: DRIFTWOOD_TEXTURE_SIZE },
   { blocking: false, filename: "frame-01-color.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame01Color", width: FRAME_TEXTURE_SIZE },
   { blocking: false, filename: "frame-01-normal.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame01Normal", width: FRAME_TEXTURE_SIZE },
   { blocking: false, filename: "frame-01-arm.webp", group: "props", height: FRAME_TEXTURE_SIZE, id: "frame01Arm", width: FRAME_TEXTURE_SIZE },
@@ -196,7 +208,32 @@ async function loadVerifiedSource(sourceDir, source) {
 }
 
 const WET_BAND_START_V = 0.62;
-const WET_BAND_FEATHER_V = 0.16;
+/**
+ * Width of the damp band's inland feather, in V.
+ *
+ * Widened from 0.16. The narrow feather put the full wet-to-dry transition
+ * inside 3.4m of ground at the shore UV mapping, which is what made the damp
+ * strip read as a pasted-on border rather than as sand drying out. At 0.30 the
+ * same transition spans roughly 6.4m and the seam has no single edge to catch
+ * the eye on.
+ */
+const WET_BAND_FEATHER_V = 0.3;
+/**
+ * How much of the damp sand's own chroma survives, and its lightness gain.
+ *
+ * This is the fix for the waterline reading as a different colour of sand.
+ * `damp_sand_diff` measures 55.6% mean saturation against the white-graded dry
+ * sand's 15.5% — an 86% relative jump in chroma, at a comparable lightness — so
+ * compositing it produced a band that was not darker sand but *oranger* sand.
+ *
+ * Keeping 35% of its chroma and lifting it 1.25x measures L* 51.4 at 22.6%
+ * saturation: still visibly damper and darker than the L* 58.0 dry sand, which
+ * is physically what wet sand does, but now inside the same colour family
+ * instead of beside it. Chroma is pulled toward the pixel's own luminance rather
+ * than toward grey, so the damp texture's contrast survives the desaturation.
+ */
+const WET_SAND_CHROMA_KEEP = 0.35;
+const WET_SAND_GAIN = 1.25;
 
 /**
  * Alpha mask for compositing damp sand over dry along the tile's V axis, so the
@@ -215,53 +252,110 @@ async function createWetBandMask(size) {
   return mask;
 }
 
+/**
+ * Pulls a pixel's chroma toward its own luminance, then applies a gain.
+ *
+ * Applied to the damp colour layer before compositing. Sharp's `linear` cannot
+ * express this: a per-channel gain rescales all three channels by a constant, so
+ * it moves lightness but leaves the max-to-min channel ratio — the saturation —
+ * exactly where it was. That is why the previous per-channel warm-up could not
+ * have closed the waterline's chroma gap however it was tuned.
+ */
+function desaturateTowardLuminance(rgb, keep, gain) {
+  const out = Buffer.alloc(rgb.length);
+  for (let index = 0; index < rgb.length; index += 3) {
+    const r = rgb[index];
+    const g = rgb[index + 1];
+    const b = rgb[index + 2];
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    for (let channel = 0; channel < 3; channel += 1) {
+      const value = rgb[index + channel];
+      const graded = (luminance + (value - luminance) * keep) * gain;
+      out[index + channel] = Math.max(0, Math.min(255, Math.round(graded)));
+    }
+  }
+  return out;
+}
+
+/**
+ * Applies a per-channel gain to raw RGB.
+ *
+ * Done on the buffer rather than through Sharp's `linear` because Sharp applies
+ * its operations in a fixed internal order, not call order: `linear` lands
+ * *after* `composite`, so grading the dry base through the pipeline graded the
+ * composited damp band along with it. That measured L* 71.7 for fully-wet sand
+ * against dry sand's 58.5 — wet sand brighter than dry, the inverse of what wet
+ * sand does — because the damp layer was scaled twice, once by its own grade and
+ * again by the dry map's. Both grades are explicit here so the order is the order
+ * they are written in.
+ */
+function applyGain(rgb, gain) {
+  const out = Buffer.alloc(rgb.length);
+  for (let index = 0; index < rgb.length; index += 3) {
+    for (let channel = 0; channel < 3; channel += 1) {
+      const scaled = rgb[index + channel] * gain[channel];
+      out[index + channel] = Math.max(0, Math.min(255, Math.round(scaled)));
+    }
+  }
+  return out;
+}
+
 async function encodeSandMap(dryPath, wetPath, destination, { dataMap }) {
   const size = SAND_TEXTURE_SIZE;
   const resize = { fit: "fill", kernel: sharp.kernel.lanczos3 };
 
-  const dry = sharp(dryPath).resize(size, size, resize).removeAlpha();
+  const dryBase = await sharp(dryPath)
+    .resize(size, size, resize)
+    .removeAlpha()
+    .raw()
+    .toBuffer();
   const wetBase = await sharp(wetPath)
     .resize(size, size, resize)
     .removeAlpha()
     .raw()
-    .toBuffer({ resolveWithObject: true });
+    .toBuffer();
+
+  // The colour map is graded; the ARM map's channels are ambient occlusion,
+  // roughness and metalness, so neither the white grade nor the chroma pull
+  // means anything there and both would corrupt the material data.
+  const dry = dataMap ? dryBase : applyGain(dryBase, WHITE_SAND_GAIN);
+  const wet = dataMap
+    ? wetBase
+    : desaturateTowardLuminance(
+      wetBase,
+      WET_SAND_CHROMA_KEEP,
+      WET_SAND_GAIN,
+    );
+
   const mask = await createWetBandMask(size);
-
-  // Interleave the mask as the wet layer's alpha so `composite` blends per pixel.
-  const wetRgba = Buffer.alloc(size * size * 4);
+  const blended = Buffer.alloc(size * size * 3);
   for (let index = 0; index < size * size; index += 1) {
-    wetRgba[index * 4] = wetBase.data[index * 3];
-    wetRgba[index * 4 + 1] = wetBase.data[index * 3 + 1];
-    wetRgba[index * 4 + 2] = wetBase.data[index * 3 + 2];
-    wetRgba[index * 4 + 3] = mask[index];
+    const alpha = mask[index] / 255;
+    for (let channel = 0; channel < 3; channel += 1) {
+      const offset = index * 3 + channel;
+      blended[offset] = Math.round(
+        dry[offset] * (1 - alpha) + wet[offset] * alpha,
+      );
+    }
   }
 
-  let image = dry.composite([
-    { input: wetRgba, raw: { channels: 4, height: size, width: size } },
-  ]);
-  if (!dataMap) {
-    // Warm the dry sand toward golden hour; data maps must not be tinted.
-    image = image.linear([...GOLDEN_HOUR_TINT], [0, 0, 0]);
-  }
-
-  await image.webp({ effort: 6, lossless: false, quality: 88 }).toFile(destination);
+  await sharp(blended, { raw: { channels: 3, height: size, width: size } })
+    .webp({ effort: 6, lossless: false, quality: 88 })
+    .toFile(destination);
 }
 
 /**
- * Plain 1k resize → WebP, used for every map with no compositing of its own.
+ * Plain resize → WebP, used for every map with no compositing of its own.
  *
  * `sand-normal.webp` runs through here rather than `encodeSandMap`: Poly Haven
  * publishes `damp_sand` as colour and ARM only, so there is no damp normal to
  * blend into the wet band, and inventing one would put fabricated slopes under
  * a measured albedo.
  */
-async function encodeTexture(sourcePath, destination, { dataMap, size }) {
-  let image = sharp(sourcePath)
+async function encodeTexture(sourcePath, destination, { size }) {
+  const image = sharp(sourcePath)
     .resize(size, size, { fit: "fill", kernel: sharp.kernel.lanczos3 })
     .removeAlpha();
-  if (!dataMap) {
-    image = image.linear([...GOLDEN_HOUR_TINT], [0, 0, 0]);
-  }
 
   await image.webp({ effort: 6, lossless: false, quality: 88 }).toFile(destination);
 }
@@ -448,6 +542,120 @@ async function copyRadianceHdri(source, destination) {
   }
 }
 
+/** CIE L* of an sRGB byte triple, used by the sand band assertions. */
+function lightness(r, g, b) {
+  const toLinear = (byte) => {
+    const s = byte / 255;
+    return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  const y = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+  return y > 0.008856 ? 116 * y ** (1 / 3) - 16 : 903.3 * y;
+}
+
+/** Mean L* and mean saturation of a band of rows, in V. */
+function bandStats(rgb, size, fromV, toV) {
+  const y0 = Math.floor(fromV * (size - 1));
+  const y1 = Math.max(y0 + 1, Math.floor(toV * (size - 1)));
+  let lightnessSum = 0;
+  let saturationSum = 0;
+  let count = 0;
+
+  for (let y = y0; y < y1; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const offset = (y * size + x) * 3;
+      const r = rgb[offset];
+      const g = rgb[offset + 1];
+      const b = rgb[offset + 2];
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      saturationSum += max === 0 ? 0 : (max - min) / max;
+      lightnessSum += lightness(r, g, b);
+      count += 1;
+    }
+  }
+
+  return { lightness: lightnessSum / count, saturation: saturationSum / count };
+}
+
+/**
+ * The largest saturation step between adjacent rows, in percentage points.
+ *
+ * A visible waterline seam is a discontinuity down V, so this measures the thing
+ * the eye actually catches rather than the endpoint values.
+ */
+function maxRowSaturationStep(rgb, size) {
+  let previous = null;
+  let worst = 0;
+  let worstV = 0;
+
+  for (let y = 0; y < size; y += 1) {
+    let saturationSum = 0;
+    for (let x = 0; x < size; x += 1) {
+      const offset = (y * size + x) * 3;
+      const max = Math.max(rgb[offset], rgb[offset + 1], rgb[offset + 2]);
+      const min = Math.min(rgb[offset], rgb[offset + 1], rgb[offset + 2]);
+      saturationSum += max === 0 ? 0 : (max - min) / max;
+    }
+    const saturation = saturationSum / size;
+    if (previous !== null && Math.abs(saturation - previous) > worst) {
+      worst = Math.abs(saturation - previous);
+      worstV = y / size;
+    }
+    previous = saturation;
+  }
+
+  return { step: worst * 100, v: worstV };
+}
+
+/** Largest tolerated saturation step between adjacent rows, in points. */
+const WET_BAND_MAX_SATURATION_STEP_POINTS = 2;
+
+/**
+ * Proves the graded sand still reads as one beach.
+ *
+ * Three properties, each of which has actually broken during this work:
+ *
+ * 1. Wet sand must be *darker* than dry. Grading the dry base through Sharp's
+ *    pipeline put the `linear` after the `composite`, so the damp band was graded
+ *    twice and measured L* 71.7 against dry sand's 58.5 — glowing wet sand.
+ * 2. The dry sand must actually be white-ish, or requirement "white, fine sand"
+ *    is unmet however fine the grain is.
+ * 3. No abrupt chroma step down V, which is what made the old waterline read as
+ *    a pasted-on strip of a different sand.
+ */
+async function validateSandBands(outputDir) {
+  const size = SAND_TEXTURE_SIZE;
+  const rgb = await sharp(path.join(outputDir, "sand-color.webp"))
+    .raw()
+    .toBuffer();
+
+  const dry = bandStats(rgb, size, 0, 0.55);
+  const wet = bandStats(rgb, size, 0.94, 1);
+  const seam = maxRowSaturationStep(rgb, size);
+
+  if (wet.lightness >= dry.lightness) {
+    throw new Error(
+      `Wet sand must be darker than dry: dry L* ${dry.lightness.toFixed(1)}, wet L* ${wet.lightness.toFixed(1)}. Check that no grade is applied after the wet band is composited.`,
+    );
+  }
+  if (dry.lightness < 55) {
+    throw new Error(
+      `Dry sand must read white: L* ${dry.lightness.toFixed(1)} is below 55. Raise WHITE_SAND_GAIN.`,
+    );
+  }
+  if (seam.step > WET_BAND_MAX_SATURATION_STEP_POINTS) {
+    throw new Error(
+      `Waterline has a visible chroma seam: ${seam.step.toFixed(2)}pp saturation step at V ${seam.v.toFixed(3)}, over the ${WET_BAND_MAX_SATURATION_STEP_POINTS}pp limit. Widen WET_BAND_FEATHER_V or lower WET_SAND_CHROMA_KEEP.`,
+    );
+  }
+
+  console.log(
+    `sand bands: dry L* ${dry.lightness.toFixed(1)} / sat ${(100 * dry.saturation).toFixed(1)}%, `
+    + `wet L* ${wet.lightness.toFixed(1)} / sat ${(100 * wet.saturation).toFixed(1)}%, `
+    + `max seam step ${seam.step.toFixed(2)}pp / ${WET_BAND_MAX_SATURATION_STEP_POINTS}pp`,
+  );
+}
+
 async function validateOutputs(outputDir) {
   const assets = [];
 
@@ -531,7 +739,7 @@ await Promise.all([
   encodeTexture(
     sourcePaths.sandNormal.path,
     path.join(outputDir, "sand-normal.webp"),
-    { dataMap: true, size: SAND_TEXTURE_SIZE },
+    { size: SAND_TEXTURE_SIZE },
   ),
   encodeSandMap(
     sourcePaths.sandArm.path,
@@ -542,24 +750,24 @@ await Promise.all([
   encodeWaterNormal(path.join(outputDir, "water-normal.webp")),
   copyRadianceHdri(sourcePaths.hdri, path.join(outputDir, "sky.hdr")),
   ...[
-    { dataMap: false, filename: "pier-planks-color.webp", size: PIER_TEXTURE_SIZE, source: "pierPlanksColor" },
-    { dataMap: true, filename: "pier-planks-normal.webp", size: PIER_TEXTURE_SIZE, source: "pierPlanksNormal" },
-    { dataMap: true, filename: "pier-planks-arm.webp", size: PIER_TEXTURE_SIZE, source: "pierPlanksArm" },
-    { dataMap: false, filename: "frame-01-color.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Color" },
-    { dataMap: true, filename: "frame-01-normal.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Normal" },
-    { dataMap: true, filename: "frame-01-arm.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Arm" },
-    { dataMap: false, filename: "frame-02-color.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Color" },
-    { dataMap: true, filename: "frame-02-normal.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Normal" },
-    { dataMap: true, filename: "frame-02-arm.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Arm" },
-  ].map(({ dataMap, filename, size, source }) =>
+    { filename: "driftwood-color.webp", size: DRIFTWOOD_TEXTURE_SIZE, source: "driftwoodColor" },
+    { filename: "driftwood-normal.webp", size: DRIFTWOOD_TEXTURE_SIZE, source: "driftwoodNormal" },
+    { filename: "driftwood-arm.webp", size: DRIFTWOOD_TEXTURE_SIZE, source: "driftwoodArm" },
+    { filename: "frame-01-color.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Color" },
+    { filename: "frame-01-normal.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Normal" },
+    { filename: "frame-01-arm.webp", size: FRAME_TEXTURE_SIZE, source: "frame01Arm" },
+    { filename: "frame-02-color.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Color" },
+    { filename: "frame-02-normal.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Normal" },
+    { filename: "frame-02-arm.webp", size: FRAME_TEXTURE_SIZE, source: "frame02Arm" },
+  ].map(({ filename, size, source }) =>
     encodeTexture(sourcePaths[source].path, path.join(outputDir, filename), {
-      dataMap,
       size,
     }),
   ),
 ]);
 
 const report = await validateOutputs(outputDir);
+await validateSandBands(outputDir);
 
 // Asset ids sit at the top level as plain numbers because the Task 4 manifest
 // test reads this file as `Record<string, number>`; provenance is nested under

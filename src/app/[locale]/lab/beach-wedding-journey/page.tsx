@@ -56,6 +56,16 @@ function resolveFixture(value: string | undefined): BeachWeddingJourneyFixture {
   return value === "long-copy" ? "long-copy" : "default";
 }
 
+/**
+ * `?backdrop=video` runs the live-action ocean prototype.
+ *
+ * A query parameter rather than an env flag so the two directions can be compared
+ * side by side in two tabs on the same build.
+ */
+function resolveVideoBackdrop(value: string | undefined): boolean {
+  return value === "video";
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -98,6 +108,7 @@ export default async function BeachWeddingJourneyLabPage({
       <BeachWeddingJourneyLab
         diagnosticsEnabled={areRuntimeDiagnosticsEnabled()}
         fixture={fixture}
+        videoBackdrop={resolveVideoBackdrop(firstSearchParam(query.backdrop))}
       />
     </NextIntlClientProvider>
   );

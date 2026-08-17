@@ -41,6 +41,7 @@ export const contentSchema = z.object({
   fontFamily: z.string().max(80).optional().default(""),
   music: z.string().max(300).optional().default(""),
   dressCodeColors: z.string().max(200).optional().default(""),
+  albumLayout: z.enum(["grid", "mosaic", "coverflow"]).optional().default("grid"),
 
   brideFullName: optionalName(120),
   groomFullName: optionalName(120),

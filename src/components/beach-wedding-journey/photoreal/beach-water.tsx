@@ -68,8 +68,15 @@ export const WATER_NORMAL_FREQUENCY = 6;
 /** Wave crawl speed. The swell is a scroll of the normal map, not geometry. */
 const WATER_TIME_SCALE = 0.35;
 
-/** Golden-hour sea: a deep teal that the warm sun reads against. */
-const WATER_COLOR = "#1d4b52";
+/**
+ * Sunrise sea: a mid teal, lifted from the golden-hour `#1d4b52`.
+ *
+ * The old value was tuned under a sun sitting 1.65deg above the horizon, where
+ * almost no light reached the water and a very dark sea was correct. Under a
+ * 12.8deg sun and the bright `puresky` environment, that same teal reads as a
+ * slick of oil against pale sand; this keeps the hue and raises the value.
+ */
+const WATER_COLOR = "#2c6b74";
 
 /**
  * Strength of the refraction offset. The class default of 20 is tuned for a

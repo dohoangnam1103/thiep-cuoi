@@ -153,11 +153,14 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
               <p className="whitespace-nowrap" style={{ marginTop: 4, marginLeft: "70%", color: "#2F6982", fontFamily: COBA_HAYDON, fontSize: "clamp(25px, 4.5vw, 40px)", lineHeight: 1 }}>Đám Cưới</p>
             </div>
           </div>
+          {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
           <p
-            className="relative z-20 mt-[50px] max-w-[95%] text-center uppercase md:mt-[100px] lg:mt-[100px]"
+            className="relative z-20 mt-[50px] flex max-w-[95%] flex-col items-center text-center uppercase md:mt-[100px] lg:mt-[100px]"
             style={{ fontFamily: COBA_MARVIN, color: RED, fontSize: "clamp(20px, 5.5vw, 40px)", lineHeight: 1.2, letterSpacing: "0.03em" }}
           >
-            {names[0]} &amp; {names[1]}
+            <span className="block">{names[0]}</span>
+            <span className="block text-[0.7em] leading-none">&amp;</span>
+            <span className="block">{names[1]}</span>
           </p>
           <div className="relative z-10 mt-2 h-[min(92vw,420px)] w-full max-w-[480px] md:h-[480px] md:max-w-[769px]">
             <div className="pointer-events-none absolute left-1/2 top-[calc(14%_-_115px)] z-[4] w-[130%] max-w-none -translate-x-1/2 md:top-[calc(14%_-_245px)] md:w-[140%] lg:top-[calc(14%_-_245px)] lg:w-[140%]">

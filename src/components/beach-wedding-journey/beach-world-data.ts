@@ -5,18 +5,24 @@ export type BeachWorldViewport = "desktop" | "mobile";
 export type BeachWorldQualityTier = BeachWorldViewport | "reduced";
 
 export type BeachWorldDensity = {
-  readonly duneGrass: number;
   readonly frames: number;
-  readonly pierPlanks: number;
   readonly posts: number;
+  readonly tables: number;
 };
 
 export type BeachWorldVector3 = readonly [number, number, number];
 
+/**
+ * Tables, not tufts: the dune grass this replaced ran to 900 instances because a
+ * grass band has to be dense to read as ground cover at all. A reception is
+ * counted furniture — 18 tables across the 128m of shore the walk covers is
+ * roughly one every 7m, which reads as a set reception without becoming a car
+ * park, and each table carries a centrepiece, so the instance cost is doubled.
+ */
 const DENSITIES = {
-  desktop: { duneGrass: 900, frames: 3, pierPlanks: 48, posts: 24 },
-  mobile: { duneGrass: 520, frames: 3, pierPlanks: 36, posts: 18 },
-  reduced: { duneGrass: 240, frames: 3, pierPlanks: 24, posts: 12 },
+  desktop: { frames: 3, posts: 24, tables: 18 },
+  mobile: { frames: 3, posts: 18, tables: 12 },
+  reduced: { frames: 3, posts: 12, tables: 8 },
 } as const satisfies Record<BeachWorldQualityTier, BeachWorldDensity>;
 
 export function estimateExactRgbaMipBytes(

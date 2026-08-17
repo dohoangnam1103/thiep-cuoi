@@ -18,12 +18,6 @@ import "../globals.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 
-const FOREST_LAB_LOCALES = ["en", "ja", "ko", "zh"] as const;
-
-function isForestLabLocale(locale: string): boolean {
-  return FOREST_LAB_LOCALES.some((candidate) => candidate === locale);
-}
-
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -106,13 +100,11 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  if (!hasLocale(routing.locales, locale) && !isForestLabLocale(locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
-  const appLocale = hasLocale(routing.locales, locale)
-    ? locale
-    : routing.defaultLocale;
+  const appLocale = locale;
   setRequestLocale(appLocale);
   const t = await getTranslations({ locale: appLocale, namespace: "metadata" });
   const jsonLd = {

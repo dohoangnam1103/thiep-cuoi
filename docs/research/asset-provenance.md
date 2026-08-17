@@ -306,7 +306,39 @@ Constraints: entirely original output; no people, animals, wedding furniture, fl
 Avoid: recognizable reference composition, empty sky, manicured hedge shapes, evenly spaced rows, fantasy effects, bloom, fisheye, painterly rendering, CGI plasticity, oversharpening.
 ```
 
-### Original generated wildlife atlas
+### Baked aerial perspective on the shipped backdrop
+
+The shipped `backdrop.webp` is not a direct encode of that master. The
+preparation script resizes it to 1024 by 512 and then blends every texel 35
+percent of the way toward the scene haze colour `#8fae7f` in linear light,
+converting to and from sRGB around the mix so the blend is physically correct
+rather than a gamma-space average.
+
+Two reasons, both verified by measurement. First, the backdrop cylinder stands
+at radius 96 while the scene fog ends at 76 and the backdrop material sets
+`fog: false`, so nothing at runtime supplies aerial perspective; the untouched
+panorama arrived at full contrast and read as a flat painted wall rather than a
+96-metre distance. Second, the material tints the map by `0x9fb894` and the
+renderer tone-maps with ACES at exposure 1.08, a chain that resolves anything
+below roughly sRGB 20 to pure black — 42.08 percent of the master's texels sat
+there and punched a black void above the treeline. The bake is the correct
+treatment for the distance and it lifts the tonal floor clear of the tone
+curve's toe at the same time.
+
+The blend factor is the smallest that clears the toe with headroom: 0.30
+already lifted every texel above the floor against this panorama, and 0.35
+keeps the margin after WebP's lossy pass. Higher values wash the treeline out.
+The encode is WebP quality 82, effort 6, `preset: "picture"`, with smart
+subsampling.
+
+`validateBackdropTonalFloor` in the preparation script rejects any output
+holding a texel below sRGB luminance 24, and
+`forest-asset-manifest.test.ts` re-checks the shipped file plus the fact that
+the baked haze colour still matches the atmosphere colour declared in
+`forest-lighting.tsx`. The check is per-texel rather than a mean because a
+black hole in one corner of the sky is exactly what a healthy average hides.
+
+
 
 The accepted 1536-by-1024 RGB chroma master was saved by the built-in tool at
 `/Users/namdo/.codex/generated_images/019fc46c-edee-7433-a3b2-f4b36fa31860/exec-4247d684-2def-4550-bd9b-6c0404324c21.png`
@@ -464,6 +496,220 @@ The seven blocking files total 805,532 compressed bytes and have a conservative
 RGBA-plus-mip decode estimate of 15,379,118 bytes. Including optional wildlife,
 the shared pack totals 868,098 compressed bytes.
 
+### Measured runtime budgets (2026-08-04)
+
+The numbers above are manifest estimates. The figures below were measured from
+the running lab through the on-demand runtime diagnostics reader, so they
+reflect what the GPU actually holds.
+
+| Measurement | Desktop 1440x900 | Mobile 390x844 |
+| --- | ---: | ---: |
+| Environment textures decoded (RGBA + mips) | 15,379,116 | 15,379,116 |
+| Three retained gallery photos decoded | 44,649,828 | 44,649,828 |
+| Peak total decoded | 60,028,944 | 60,028,944 |
+| Device pixel ratio ceiling | 1.25 | 1 |
+| Draw-call ceiling asserted | 120 | 80 |
+| Triangle ceiling asserted | 250,000 | 150,000 |
+
+Environment decode differs from the 15,379,118-byte manifest estimate by two
+bytes: the manifest rounds each mip chain with `ceil(w * h * 4 * 4 / 3)` while
+the runtime sums the exact per-level sizes. Both are recorded so a drift in
+either direction is visible.
+
+Chunk residency is what bounds alpha-foliage fill rate. At most four conifer
+chunks stay mounted — the departure and arrival chunks plus their immediate
+neighbours — and level of detail is measured from the arrival chunk, so a long
+hop demotes the departure end to impostors. The petal field is fingerprinted by
+a transform hash so a silent change to placement or aerodynamics fails a test
+rather than passing unnoticed.
+
+### Running the diagnostics and visual suites
+
+The runtime reader is published only when the server resolves
+`FOREST_RUNTIME_DIAGNOSTICS=1` per request, never by build mode, so a
+production build can opt in for tests while real visitors never receive it:
+
+```bash
+FOREST_RUNTIME_DIAGNOSTICS=1 npx playwright test tests/e2e/forest-wedding-journey-lab.spec.ts --project=chromium --workers=1
+npx playwright test tests/e2e/forest-wedding-journey-visual.spec.ts --project=chromium --workers=1
+```
+
+The Playwright web server is reused locally, so restart it (or free port 3100)
+when toggling the flag. Running the lab suite without the flag skips the budget
+tests and instead asserts the negative contract that the reader is absent.
+
+## Beach Wedding Journey photoreal pack (2026-08-04)
+
+Everything under `public/chungdoi/labs/beach-wedding-journey/photoreal/` is
+either a derivative of a CC0 Poly Haven download or generated from code in this
+repository. No pixel comes from a competitor site, and no runtime request
+leaves our origin — the pack is fully self-hosted.
+
+`scripts/prepare-beach-photoreal-assets.mjs` is the only writer of this
+directory. It downloads each source, records the byte count, upstream URL,
+Poly Haven MD5 and its own SHA-256 of the downloaded file into
+`beach-asset-bytes.json`, then encodes the production outputs.
+
+### Licensing
+
+All Poly Haven downloads are CC0 1.0 (public domain dedication) — no
+attribution required, commercial use permitted. Poly Haven does not name
+individual authors per asset in the download endpoint used here; the asset
+slug in the URL is the canonical identifier.
+
+### Downloaded sources
+
+Fifteen files were downloaded. The MD5 is Poly Haven's published checksum; the
+SHA-256 was computed locally on the downloaded bytes.
+
+| Source key | Upstream file | MD5 | SHA-256 |
+| --- | --- | --- | --- |
+| `sandColor` | `Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg` | `84bde2b8bea6351805f67a15682b36b2` | `e72144f9d7b81bdb7bbdb34222b53431738dcef79346dd89412d2abd541e4d30` |
+| `sandNormal` | `Textures/jpg/1k/sand_03/sand_03_nor_gl_1k.jpg` | `ad8d6ce28344b1d8f241cbd7796243dc` | `1bde5f49ea78f94bcad73592696bf3949711c4ac197133b710c0c8521b6e996b` |
+| `sandArm` | `Textures/jpg/1k/sand_03/sand_03_arm_1k.jpg` | `2d69c938c9ce5d4ba41f4789eae3a9cb` | `6b497a5f4aaa6b8a6ffc35eb840c2ca3050db17eec7980426c531355a84704fa` |
+| `wetSandColor` | `Textures/jpg/1k/damp_sand/damp_sand_diff_1k.jpg` | `fd55de6d79f938dbf5cc0f5e1f473c6c` | `3b26e6033205d4c774bb8c48bda8081b5a369e01ac701a0dcaa7ddc1f484f1de` |
+| `wetSandArm` | `Textures/jpg/1k/damp_sand/damp_sand_arm_1k.jpg` | `c4653c6996f55d919bf89fe3f21920de` | `a54ba44a05381a87b4506c6e75d92e096b11cb45c5d7d052957b1d36eee4aef9` |
+| `hdri` | `HDRIs/hdr/1k/table_mountain_1_puresky_1k.hdr` | `6c68d0e51d99c9a8a93438472ab8bc42` | `ced63bc210a2cae807dd6aa6dbad28dd754f6e7caf0b3082da05ba7620fe033a` |
+| `driftwoodColor` | `Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_diff_1k.jpg` | `f3fef39b0ec16e4006678c846d3601ab` | `2670a7eae2a3104e8537e61d90a8d8b169c7eb0f69b51622bec10e9472dc4573` |
+| `driftwoodNormal` | `Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_nor_gl_1k.jpg` | `b752108fe7504d5dd4ae0f4701b1218b` | `b23d7b0c23c9a41d50b7e1691e183902765aa4c21ac6ca6da678e874c4ddfb04` |
+| `driftwoodArm` | `Models/jpg/1k/modular_wooden_pier/modular_wooden_pier_planks_arm_1k.jpg` | `e6ffdf7314cc015aaa5c0899326b42a7` | `4c03bcee7d0fb9708be5e5ebc4dd5fd73789f4eb24b6391dff6167f11c3ce95d` |
+| `frame01Color` | `Models/jpg/1k/hanging_picture_frame_01/hanging_picture_frame_01_diff_1k.jpg` | `4311cd03620cafa59976f9e8b7b26f88` | `a6aa51141299ff7366b6e1ac1496dee2d8bd2d6fe775ea7d1fbbb299b2afb5e8` |
+| `frame01Normal` | `Models/jpg/1k/hanging_picture_frame_01/hanging_picture_frame_01_nor_gl_1k.jpg` | `2ff7cca9a9b2918b5476d39c13592214` | `6f16f93ee6fcffb27dbd5ebf3de8fda71c77c7e1abd61ae9261715029be4d43e` |
+| `frame01Arm` | `Models/jpg/1k/hanging_picture_frame_01/hanging_picture_frame_01_arm_1k.jpg` | `8d9dd625ec0705f3ac0a2ec2b402844e` | `aec54462e91d53610f46b2bb760cbdf453e7b87c5193efa24f995cd5bb0253bc` |
+| `frame02Color` | `Models/jpg/1k/hanging_picture_frame_02/hanging_picture_frame_02_diff_1k.jpg` | `906c164baad3f02b67244998b7558a9c` | `575f2b6481b9e02474750ded776a0b490744228cb64d9b346f28bd78b9cf5897` |
+| `frame02Normal` | `Models/jpg/1k/hanging_picture_frame_02/hanging_picture_frame_02_nor_gl_1k.jpg` | `bc686a415608ae66bd88f70d081fd572` | `79367cf9d7e4981263dd1439297585148d6c93500acaffa7afeb534351e68b86` |
+| `frame02Arm` | `Models/jpg/1k/hanging_picture_frame_02/hanging_picture_frame_02_arm_1k.jpg` | `01e09bbe488c7a2953b5a207fdf192ca` | `67378630bc6bb69799f8ee0fde4ab11ecd9e7a43ed3dfef402fdd784d8c2cea3` |
+
+Fifteen sources become fourteen shipped files: `wetSandColor` and `wetSandArm`
+are not shipped on their own. They are composited into `sand-color.webp` and
+`sand-arm.webp` as the damp band, so the count differs by design.
+
+### Encode settings
+
+Every LDR output is WebP at `effort: 6`, and every resize is Lanczos-3 with
+`fit: "fill"`. Beyond that the pipeline splits three ways.
+
+**Colour maps** other than the sand (`quality: 88`, lossy) are resized and
+encoded with no grade at all. The `GOLDEN_HOUR_TINT = [1.04, 1.0, 0.94]` warm-up
+that shipped with the previous coastal HDRI is gone: the sky is now a bright
+sunrise rather than a low golden hour, and warming every albedo toward orange
+fought the white sand it sits on.
+
+**Data maps** — every `*-normal` and `*-arm` output — take the same
+`quality: 88` encode and are never graded. Scaling a normal or an ARM channel
+would corrupt the vector or the roughness it encodes.
+
+**The two sand maps** are composites rather than plain resizes, and both grades
+below are applied on raw pixel buffers rather than through Sharp's `linear`.
+That is deliberate: Sharp applies its operations in a fixed internal order, not
+call order, so a `linear` on the dry base landed *after* the `composite` and
+graded the damp band a second time — measured L\* 71.7 for fully-wet sand
+against dry sand's 58.5, i.e. wet sand brighter than dry.
+
+`sand_03` is the dry base, chosen for grain: its high-frequency grain RMS is
+10.33 against `coast_sand_01`'s 30.93, so it reads as fine sand rather than
+gravel. Ungraded it is too dark and too warm (L\* 41.4 at 27.1% mean
+saturation), so `WHITE_SAND_GAIN = [1.38, 1.44, 1.6]` lifts it to **L\* 58.0 at
+15.5% saturation** with no clipped pixels — bright and near-neutral. The blue
+channel is lifted hardest because the residual cast is yellow; a uniform gain
+would raise lightness and leave saturation untouched, since saturation is a
+ratio.
+
+`damp_sand` is layered over it with a smoothstep alpha ramp starting at
+`WET_BAND_START_V = 0.62` and feathering over `WET_BAND_FEATHER_V = 0.30`.
+Before compositing, the damp colour is pulled toward its own luminance by
+`WET_SAND_CHROMA_KEEP = 0.35` and lifted by `WET_SAND_GAIN = 1.25`. This is the
+fix for the waterline reading as a *different colour* of sand: raw `damp_sand`
+measures 55.6% mean saturation against the graded dry sand's 15.5%, an 86%
+relative chroma jump at comparable lightness, so the band was not darker sand
+but oranger sand. Graded, it measures **L\* 51.6 at 22.9% saturation** — still
+visibly damper and darker than the dry sand, which is what wet sand does, but
+inside the same colour family. `validateSandBands` asserts all three properties
+after every run: wet darker than dry, dry above L\* 55, and no row-to-row
+saturation step above 2 points (measured: 0.41).
+
+The ARM map takes the same composite with neither grade. Its channels are
+ambient occlusion, roughness and metalness, so "saturation" there is not a
+colour and desaturating it would corrupt the material data. `sand-normal.webp`
+skips the composite path entirely: Poly Haven publishes `damp_sand` as colour
+and ARM only, and inventing a damp normal would put fabricated slopes under a
+measured albedo.
+
+`sky.hdr` is a **verbatim byte copy** of `table_mountain_1_puresky_1k.hdr` — its
+shipped SHA-256 equals the downloaded SHA-256 above. Sharp is deliberately
+absent from that path and the script asserts the copy is bit-identical,
+because the sun's above-1.0 radiance values only survive in the original float
+encoding and a future "just resize it" edit must fail the pipeline rather than
+silently ship LDR.
+
+`water-normal.webp` has **no third-party source at all**. It is generated from
+seeded tiling value noise (`WATER_NOISE_SEED = 0x5eab1234`,
+`WATER_NORMAL_STRENGTH = 10`), converted to a normal map by central
+differences on a wrapping lattice, and encoded **lossless** so the asserted
+buffer and the written file agree byte for byte. The generator refuses to
+write a tile whose opposite-edge delta exceeds `WATER_SEAM_TOLERANCE = 12`,
+naming the failing axis, so a non-wrapping tile cannot reach the output
+directory.
+
+### Shipped files
+
+Measured from disk on 2026-08-05.
+
+| File | Dimensions | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| `sand-color.webp` | 1024×1024 | 284,316 | `7d7b83dc129e3aa1a4930a40dc7e1f9f268408ed149dc9770c1f247306a8f3f8` |
+| `sand-normal.webp` | 1024×1024 | 218,418 | `3a94745b40c78a970c186c1f9e9bbca607430fa5f123a8da1e2b63c7c4149428` |
+| `sand-arm.webp` | 1024×1024 | 63,890 | `bed78ab66af912c468e3752a79c0320685d24f70303035fc8de38d0fc319ff67` |
+| `water-normal.webp` | 512×512 | 113,206 | `ed2e2cf9f5c7f4a54c5cf318b64996ee100e621a4f3f6829b9fda6ee645f9864` |
+| `sky.hdr` | 1024×512 | 1,381,374 | `ced63bc210a2cae807dd6aa6dbad28dd754f6e7caf0b3082da05ba7620fe033a` |
+| `driftwood-color.webp` | 512×512 | 64,118 | `15bb1848c280927bf3033136c5e5cce6e3ca99a76cb2bcc79120cc3539e5c5c5` |
+| `driftwood-normal.webp` | 512×512 | 85,528 | `aadf676e9d7d0f43daa58565c4d6c6a35a1911375bed7dcc35cac08ce41b082f` |
+| `driftwood-arm.webp` | 512×512 | 38,236 | `2f43c4e50609f750d641f016353df7da4c2c88b6aa316dee853bc413593fb631` |
+| `frame-01-color.webp` | 512×512 | 12,426 | `10dcc8f0b469747917fc3c61ebbfe409b2dbdd8df6655ff79a91f6af810fd876` |
+| `frame-01-normal.webp` | 512×512 | 4,630 | `0a3e01a821f8d2f581e9c33e20156b0fd2890a2f0f1f095c02dd790cc0389d1f` |
+| `frame-01-arm.webp` | 512×512 | 13,518 | `f8d6ad9a06b0d7fb1eee5811940ad5e3ca355b68e46537e55ebcd52ba7f48c8d` |
+| `frame-02-color.webp` | 512×512 | 24,326 | `ac940461b83d1c82213408b99fb48942c06bcb067e7b78658e3ca1b201c173e1` |
+| `frame-02-normal.webp` | 512×512 | 6,598 | `5bce1b61e83ebb0c59e887534174e7d717ac31052ab06f410ef4415e7796b9ef` |
+| `frame-02-arm.webp` | 512×512 | 14,638 | `12e467f4929468d35b440eb8bef43c8cbad1959b6a885a247421237c69a8bd48` |
+
+The five entry-blocking assets (the three sand maps, the water normal and the
+sky) total 2,061,204 bytes; all fourteen total 2,325,222 bytes. Both sit well
+under the delivery budgets of 4 MB entry-required and 12 MB shared.
+
+Decoded, the shared pack is 32.0 MiB, down from 44.0 MiB: removing the pier left
+the `modular_wooden_pier` maps dressing only the driftwood posts, which are
+0.15m-wide cylinders seen from 2m and up, so all three dropped from 1024² to
+512². With three live 1k gallery photos the decoded total is **48.0 MiB of the
+64 MiB ceiling**, leaving 16.0 MiB of headroom rather than the 4.2 MiB that
+forced the frame maps down to 512² in the first place.
+
+### Geometry is procedural, not downloaded
+
+No `.glb` ships with this lab. The Poly Haven pier and picture-frame downloads
+supplied **textures only** — the driftwood posts and the three hanging photo
+frames are generated geometry in `src/components/beach-wedding-journey/`, and the
+white-clothed reception tables and their flower centrepieces carry no maps at
+all: linen has no pattern to sample, and the blooms are too small on screen to
+resolve a petal texture, so both are geometry plus vertex colour. The visible sun
+and its rays are likewise a shader on one additive billboard — the HDRI's sun disk
+measures 2 pixels above 5% of peak luminance at 1k, so the environment is what
+lights the beach, not what shows a sunrise.
+
+### Running the diagnostics and visual suites
+
+The beach reader is published only when the server resolves
+`BEACH_RUNTIME_DIAGNOSTICS=1` per request, so a production build can opt in for
+tests while real visitors never receive it. The lab itself is behind
+`BEACH_WEDDING_JOURNEY_LAB_ENABLED=1`; both are set by the `beach` Playwright
+project, which pins `workers: 1` because a shared GPU breaks the frame budget.
+
+```bash
+E2E_PORT=3131 BEACH_RUNTIME_DIAGNOSTICS=1 npx playwright test --project=beach
+```
+
+The Playwright web server is reused locally, so restart it when toggling either
+flag or after changing server-side code.
+
 ## Thập Nhị Chi Đỏ zodiac artwork (2026-08-05)
 
 The twelve animal masters in
@@ -494,3 +740,34 @@ The fallback phoenix alpha comes from the existing self-hosted
 `public/chungdoi/images/themes/_decor/songphung-red/HOA.webp`; opened-invitation
 paper, flower, and happiness artwork remain the existing self-hosted Song Phụng
 assets. No runtime request leaves the application origin.
+
+## Hải Yến Thanh Thư sea photography
+
+The hero band and the four scrolling decor dividers under
+`public/chungdoi/images/themes/_decor/hai-yen-thanh-thu/photo/` are real sea
+photographs, not generated imagery. Both sources are Poly Haven tonemapped
+HDRI panoramas released CC0 1.0 (`https://polyhaven.com/license`).
+
+| Panorama | Page | Download URL | Downloaded SHA-256 |
+|---|---|---|---|
+| Umhlanga Sunrise | `https://polyhaven.com/a/umhlanga_sunrise` | `https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/umhlanga_sunrise.jpg` | `eca284ee49844eadc13c594afbd34931516116a6434181de8496b86ec79f4a1f` |
+| Blouberg Sunrise 1 | `https://polyhaven.com/a/blouberg_sunrise_1` | `https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/blouberg_sunrise_1.jpg` | `5153523ca5108c29c678e0477258c943c99c871e4e0cd9e88fec32e2da944c5f` |
+
+`scripts/prepare-hai-yen-sea-photos.mjs` reprojects each 8192x4096
+equirectangular panorama to a flat perspective crop with ffmpeg's `v360`
+filter, then grades it toward the template's cerulean palette with Sharp
+(desaturate, lift, pale-cerulean veil) so the photograph sits naturally on
+cream paper. Panoramas are cached in the gitignored `tmp/sea-src/`; only the
+graded WebP crops are committed.
+
+| Output | Source panorama | Camera (yaw / pitch / hFov / vFov) | Size |
+|---|---|---|---|
+| `sea-hero.webp` | Umhlanga Sunrise | 36 / 2 / 92 / 52 | 1024x580 |
+| `sea-band-waves.webp` | Umhlanga Sunrise | 78 / -4 / 78 / 15 | 1280x280 |
+| `sea-band-foam.webp` | Umhlanga Sunrise | 88 / -2 / 72 / 14 | 1280x280 |
+| `sea-band-horizon.webp` | Umhlanga Sunrise | 10 / 0 / 90 / 12 | 1280x220 |
+| `sea-band-shore.webp` | Blouberg Sunrise 1 | 8 / -6 / 84 / 16 | 1280x250 |
+
+CC0 requires no attribution and permits commercial use; Poly Haven does not
+name individual photographers for these panoramas. No runtime request leaves
+the application origin — every crop is self-hosted.

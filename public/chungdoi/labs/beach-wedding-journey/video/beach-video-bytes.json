@@ -1,0 +1,18 @@
+{
+  "oceanLoopDesktop": 1398149,
+  "oceanLoopMobile": 404025,
+  "oceanLoopPoster": 66160,
+  "source": {
+    "author": "Enrique Hoyos",
+    "filename": "pexels-4763824-hd_1920_1080_24fps.mp4",
+    "licence": "Pexels Licence — free for commercial use, no attribution required",
+    "licenceUrl": "https://www.pexels.com/license/",
+    "loopCrossfadeSeconds": 1,
+    "loopDurationSeconds": 7.5,
+    "loopFps": 21,
+    "loopStartSeconds": 6,
+    "pageUrl": "https://www.pexels.com/video/waves-rushing-to-the-shore-4763824/",
+    "sha256": "1509bee64c8efd367cd080610080e6fabdde5217a7cb86d109ec1d40c04ffefa",
+    "url": "https://videos.pexels.com/video-files/4763824/4763824-hd_1920_1080_24fps.mp4"
+  }
+}

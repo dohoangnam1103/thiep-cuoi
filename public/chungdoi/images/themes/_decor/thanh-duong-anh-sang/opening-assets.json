@@ -9,30 +9,30 @@
       "id": "rose-glow",
       "src": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-rose-glow.webp",
       "rect": {
-        "x": 363,
-        "y": 19,
-        "width": 298,
-        "height": 298
+        "x": 326,
+        "y": 43,
+        "width": 380,
+        "height": 328
       }
     },
     {
       "id": "dove-pair",
       "src": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-dove-pair.webp",
       "rect": {
-        "x": 297,
-        "y": 231,
-        "width": 430,
-        "height": 83
+        "x": 288,
+        "y": 275,
+        "width": 448,
+        "height": 57
       }
     },
     {
       "id": "light-shaft",
       "src": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-light-shaft.webp",
       "rect": {
-        "x": 390,
-        "y": 102,
-        "width": 276,
-        "height": 440
+        "x": 384,
+        "y": 298,
+        "width": 290,
+        "height": 270
       }
     }
   ]
