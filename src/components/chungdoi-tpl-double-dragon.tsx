@@ -15,7 +15,7 @@ import {
   GiftQrGrid,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationCouple, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationCouple, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const DD_TEX = "/images/double-dragon.webp";
 const DD_HY = "/images/chu-hy.webp";
@@ -115,11 +115,12 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
-  const bankCards = orderByBrideFirst(
-    { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const bankCards = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.side === "bride" ? "Cô Dâu" : "Chú Rể"} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const { bride, groom } = invitationCouple(content);
   const avatarCards = orderByBrideFirst(
     { src: DD_AVATARS.bride, person: bride, label: couple.brideBirthOrder || palette.brideLabel },

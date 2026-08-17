@@ -28,6 +28,7 @@ import {
 import { ArchOutline, LeafSprig } from "@/components/chungdoi-tpl-ornaments";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
   orderByBrideFirst,
@@ -68,7 +69,7 @@ function ArchHeading({ children }: { children: ReactNode }) {
 
 export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }) {
   const t = useTranslations("invitationTemplate");
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
@@ -76,21 +77,12 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const hero = invitationHeroImage(content);
 
-  const banks = orderByBrideFirst(
-    {
-      label: `${couple.brideBirthOrder || "Út Nữ"} — ${bank.brideAccountName}`,
-      bank: bank.brideBankName,
-      num: bank.brideAccountNumber,
-      name: bank.brideAccountName,
-    },
-    {
-      label: `${couple.groomBirthOrder || "Trưởng Nam"} — ${bank.groomAccountName}`,
-      bank: bank.groomBankName,
-      num: bank.groomAccountNumber,
-      name: bank.groomAccountName,
-    },
-    couple.brideFirst,
-  ).filter((entry) => entry.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} — ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   const familyPair = orderByBrideFirst(
     {

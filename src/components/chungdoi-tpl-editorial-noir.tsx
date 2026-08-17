@@ -21,6 +21,7 @@ import {
 import { HairRule, OrnamentDivider } from "@/components/chungdoi-tpl-ornaments";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
   orderByBrideFirst,
@@ -64,7 +65,7 @@ function DataRow({ label, value }: { label: string; value: ReactNode }) {
 
 export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoContent }) {
   const t = useTranslations("invitationTemplate");
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const hero = invitationHeroImage(content);
   const ceremony = formatDate(couple.ceremonyDate);
@@ -78,11 +79,12 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
     couple.brideFirst,
   );
 
-  const banks = orderByBrideFirst(
-    { label: bank.brideAccountName, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: bank.groomAccountName, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((b) => b.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div className="w-full bg-[#f4f1ea] text-[#111111]">

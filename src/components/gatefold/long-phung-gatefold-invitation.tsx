@@ -25,6 +25,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   invitationCeremonies,
+  invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
   orderedCouple,
@@ -369,15 +370,7 @@ export function LongPhungGatefoldInvitationBody({
 }: InvitationProps) {
   const locale = useLocale();
   const t = useTranslations("invitationTemplate");
-  const {
-    bank,
-    couple,
-    families,
-    gallery,
-    schedule,
-    venue,
-    wishes,
-  } = content;
+  const { couple, families, gallery, schedule, venue, wishes } = content;
   const people = orderedCouple(content);
   const portraitPrints = orderedHeroPhotos(content, {
     albumFallback: true,
@@ -417,21 +410,12 @@ export function LongPhungGatefoldInvitationBody({
     border: color.toLowerCase() === "#ead9b8" ? "#B58A3A" : undefined,
     color,
   }));
-  const banks = orderByBrideFirst(
-    {
-      bank: bank.brideBankName,
-      label: bank.brideAccountName,
-      name: bank.brideAccountName,
-      num: bank.brideAccountNumber,
-    },
-    {
-      bank: bank.groomBankName,
-      label: bank.groomAccountName,
-      name: bank.groomAccountName,
-      num: bank.groomAccountNumber,
-    },
-    couple.brideFirst,
-  ).filter((entry) => entry.bank && entry.num);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   return (
     <div
       data-gatefold-invitation-body="true"

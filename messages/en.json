@@ -1427,6 +1427,31 @@
       "error": "Could not load music library. Please try again."
     }
   },
+  "comicHero": {
+    "issueBanner": "Special issue",
+    "issueNo": "Issue 01",
+    "coverTagline": "The team-up of the century!",
+    "assemble": "Assemble!",
+    "originStory": "Origin story",
+    "secretIdentity": "Secret identity",
+    "affiliation": "Affiliation",
+    "homeBase": "Home base",
+    "teamUp": "Allied for good",
+    "missionBriefing": "Mission briefing",
+    "ceremonyPanel": "Ceremony",
+    "receptionPanel": "Reception",
+    "countdown": "Countdown to zero hour",
+    "headquarters": "Headquarters",
+    "plotCourse": "Plot a course",
+    "missionLog": "Mission log",
+    "panel": "Panel {index}",
+    "archive": "Archive",
+    "squadColors": "Squad colours",
+    "squadColorsHint": "Reception dress code",
+    "transmissions": "Transmissions",
+    "supplyDrop": "Supply drop",
+    "toBeContinued": "To be continued..."
+  },
   "invitationTemplate": {
     "invitation": "Wedding invitation",
     "weddingPass": "Wedding pass",

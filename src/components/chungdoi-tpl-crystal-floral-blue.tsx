@@ -15,7 +15,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 
 const BLUE_BASE = "/chungdoi/images/themes/_decor/crystal-floral-blue";
 const BLUE = "#2a4a7f";
@@ -34,7 +34,7 @@ function BlueHeading({ children }: { children: React.ReactNode }) {
 
 /** Faithful rebuild of the Crystal Floral Blue (hoa-thuy-tinh-lam) opened invitation. */
 export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoContent }) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
@@ -44,11 +44,12 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = orderByBrideFirst(
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName || "Ngân hàng", num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName || "Ngân hàng", num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.num || q.name);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">

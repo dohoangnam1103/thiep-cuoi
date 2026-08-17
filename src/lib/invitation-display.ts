@@ -1,4 +1,5 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { isUsableVietQrAccount } from "@/lib/vietqr";
 
 export const DEFAULT_OPENING_MESSAGE = "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI.";
 
@@ -149,4 +150,63 @@ export function invitationCouple(
 export function orderedCouple(content: ChungDoiDemoContent) {
   const { bride, groom } = invitationCouple(content);
   return orderByBrideFirst(bride, groom, content.couple.brideFirst);
+}
+
+export type InvitationGiftAccount = {
+  side: CoupleSide;
+  /** Bank name as entered, trimmed. */
+  bank: string;
+  /** Account number as entered, trimmed. */
+  num: string;
+  /** Account holder as entered, trimmed. */
+  name: string;
+  /** Birth-order caption for this side, already defaulted. */
+  birthOrder: string;
+  fullName: string;
+  shortName: string;
+};
+
+/**
+ * Transfer accounts that can actually produce a VietQR, in display order.
+ *
+ * Templates each used to build and filter this list themselves, and most only
+ * checked the bank name. A half-filled form — bank picked from the combobox,
+ * account number left blank — therefore passed the check and rendered a gift
+ * section whose QR request `/api/vietqr` rejects, which guests saw as a broken
+ * image next to empty account lines. Deciding validity here, with the same rule
+ * as the QR endpoint, keeps every template consistent and stops the next one
+ * from reintroducing the bug.
+ *
+ * Callers still own presentation: pick whatever label shape the layout needs
+ * from the returned fields.
+ */
+export function invitationGiftAccounts(
+  content: ChungDoiDemoContent,
+): InvitationGiftAccount[] {
+  const { bank, couple } = content;
+  const { bride, groom } = invitationCouple(content);
+
+  return orderByBrideFirst<InvitationGiftAccount>(
+    {
+      side: "bride",
+      bank: bank.brideBankName.trim(),
+      num: bank.brideAccountNumber.trim(),
+      name: bank.brideAccountName.trim(),
+      birthOrder: bride.birthOrder,
+      fullName: bride.fullName,
+      shortName: bride.shortName,
+    },
+    {
+      side: "groom",
+      bank: bank.groomBankName.trim(),
+      num: bank.groomAccountNumber.trim(),
+      name: bank.groomAccountName.trim(),
+      birthOrder: groom.birthOrder,
+      fullName: groom.fullName,
+      shortName: groom.shortName,
+    },
+    couple.brideFirst,
+  ).filter((account) =>
+    isUsableVietQrAccount({ bank: account.bank, accountNumber: account.num }),
+  );
 }

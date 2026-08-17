@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   buildVietQrImageUrl,
   buildVietQrPayload,
+  isUsableVietQrAccount,
   normalizeVietQrAccountNumber,
   resolveVietQrBankId,
 } from "./vietqr";
@@ -63,5 +64,33 @@ test("builds a dynamic amount payload identical to the reference VietQR", () => 
   assert.equal(
     buildVietQrPayload({ bankId: "970422", accountNumber: "0357596289", amount: 150000, addInfo: "CDABC234" }),
     "00020101021238540010A00000072701240006970422011003575962890208QRIBFTTA530370454061500005802VN62120808CDABC234630487E1",
+  );
+});
+
+test("isUsableVietQrAccount matches the rule enforced by /api/vietqr", () => {
+  assert.equal(isUsableVietQrAccount({ bank: "Vietcombank", accountNumber: "0123456789" }), true);
+  // Separators do not count towards the minimum length.
+  assert.equal(isUsableVietQrAccount({ bank: "Vietcombank", accountNumber: "0123 45" }), true);
+
+  assert.equal(isUsableVietQrAccount({ bank: "", accountNumber: "0123456789" }), false);
+  assert.equal(isUsableVietQrAccount({ bank: "   ", accountNumber: "0123456789" }), false);
+  assert.equal(isUsableVietQrAccount({ bank: "Vietcombank", accountNumber: "" }), false);
+  assert.equal(isUsableVietQrAccount({ bank: "Vietcombank", accountNumber: "12345" }), false);
+  assert.equal(isUsableVietQrAccount({ bank: "Vietcombank", accountNumber: "---" }), false);
+});
+
+test("buildVietQrImageUrl returns null rather than a URL the endpoint rejects", () => {
+  // Rendered inside an <img>, a rejected request would show as a broken image.
+  assert.equal(
+    buildVietQrImageUrl({ bank: "Vietcombank", accountNumber: "", accountName: "" }),
+    null,
+  );
+  assert.equal(
+    buildVietQrImageUrl({ bank: "", accountNumber: "0123456789", accountName: "NGUYEN VAN A" }),
+    null,
+  );
+  assert.equal(
+    buildVietQrImageUrl({ bank: "Vietcombank", accountNumber: "123", accountName: "NGUYEN VAN A" }),
+    null,
   );
 });

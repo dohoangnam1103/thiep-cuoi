@@ -8,6 +8,7 @@ import {
   invitationCeremonies,
   invitationCeremonyMessage,
   invitationCouple,
+  invitationGiftAccounts,
   invitationHeroPhotos,
   orderByBrideFirst,
   orderedCouple,
@@ -248,4 +249,117 @@ test("an explicit empty ceremony list does not restore the legacy ceremony", () 
   const content = displayContent([]);
   assert.deepEqual(invitationCeremonies(content), []);
   assert.equal(invitationCeremonyMessage(content), "");
+});
+
+function giftContent(bank: Partial<ChungDoiDemoContent["bank"]>, brideFirst = true): ChungDoiDemoContent {
+  const base = displayContent();
+  return {
+    ...base,
+    couple: {
+      ...base.couple,
+      brideFirst,
+      brideFullName: "Lê Vân Khánh",
+      brideShortName: "Vân Khánh",
+      groomFullName: "Trần Hải Đăng",
+      groomShortName: "Hải Đăng",
+    },
+    bank: { ...base.bank, ...bank },
+  };
+}
+
+test("invitationGiftAccounts keeps only accounts that can produce a QR", () => {
+  const accounts = invitationGiftAccounts(
+    giftContent({
+      brideBankName: "Vietcombank",
+      brideAccountNumber: "1026888899",
+      brideAccountName: "Le Van Khanh",
+      groomBankName: "Techcombank",
+      groomAccountNumber: "1903888899",
+      groomAccountName: "Tran Hai Dang",
+    }),
+  );
+
+  assert.deepEqual(
+    accounts.map((account) => [account.side, account.bank, account.num]),
+    [
+      ["bride", "Vietcombank", "1026888899"],
+      ["groom", "Techcombank", "1903888899"],
+    ],
+  );
+});
+
+test("invitationGiftAccounts drops a bank picked without an account number", () => {
+  // The editor's bank combobox makes this the most likely half-filled state:
+  // one click sets the bank, the account number stays empty.
+  const accounts = invitationGiftAccounts(
+    giftContent({
+      brideBankName: "Vietcombank",
+      brideAccountNumber: "",
+      brideAccountName: "",
+      groomBankName: "Techcombank",
+      groomAccountNumber: "1903888899",
+      groomAccountName: "Tran Hai Dang",
+    }),
+  );
+
+  assert.deepEqual(accounts.map((account) => account.side), ["groom"]);
+});
+
+test("invitationGiftAccounts drops an account number too short for VietQR", () => {
+  const accounts = invitationGiftAccounts(
+    giftContent({ brideBankName: "Vietcombank", brideAccountNumber: "123" }),
+  );
+
+  assert.deepEqual(accounts, []);
+});
+
+test("invitationGiftAccounts drops an account holder name with no bank or number", () => {
+  const accounts = invitationGiftAccounts(
+    giftContent({ brideAccountName: "Le Van Khanh", groomAccountName: "Tran Hai Dang" }),
+  );
+
+  assert.deepEqual(accounts, []);
+});
+
+test("invitationGiftAccounts ignores whitespace-only bank details", () => {
+  const accounts = invitationGiftAccounts(
+    giftContent({ brideBankName: "   ", brideAccountNumber: "   " }),
+  );
+
+  assert.deepEqual(accounts, []);
+});
+
+test("invitationGiftAccounts returns accounts in display order", () => {
+  const bank = {
+    brideBankName: "Vietcombank",
+    brideAccountNumber: "1026888899",
+    brideAccountName: "Le Van Khanh",
+    groomBankName: "Techcombank",
+    groomAccountNumber: "1903888899",
+    groomAccountName: "Tran Hai Dang",
+  };
+
+  assert.deepEqual(
+    invitationGiftAccounts(giftContent(bank, true)).map((account) => account.side),
+    ["bride", "groom"],
+  );
+  assert.deepEqual(
+    invitationGiftAccounts(giftContent(bank, false)).map((account) => account.side),
+    ["groom", "bride"],
+  );
+});
+
+test("invitationGiftAccounts carries the captions templates build labels from", () => {
+  const [account] = invitationGiftAccounts(
+    giftContent({
+      brideBankName: "Vietcombank",
+      brideAccountNumber: "1026888899",
+      brideAccountName: "Le Van Khanh",
+    }),
+  );
+
+  assert.equal(account.birthOrder, "Út Nữ");
+  assert.equal(account.fullName, "Lê Vân Khánh");
+  assert.equal(account.shortName, "Vân Khánh");
+  assert.equal(account.name, "Le Van Khanh");
 });

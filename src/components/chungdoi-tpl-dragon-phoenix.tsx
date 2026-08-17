@@ -18,7 +18,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const LPD_UNI = '"UNI Chu truyen thong", "Baskerville", "Times New Roman", serif';
 const LPD_BODY = 'Baskerville, "Times New Roman", serif';
@@ -173,11 +173,12 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  const bankCards = orderByBrideFirst(
-    { role: "Cô Dâu / 新娘", bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { role: "Chú Rể / 新郎", bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const bankCards = invitationGiftAccounts(content).map((account) => ({
+    role: account.side === "bride" ? "Cô Dâu / 新娘" : "Chú Rể / 新郎",
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông Bà", father: families.brideFather, mother: families.brideMother, address: families.brideAddress, translatedAddress: "台北市信義區信義路456號" },
     { title: families.groomParentTitle || "Ông Bà", father: families.groomFather, mother: families.groomMother, address: families.groomAddress, translatedAddress: "台北市大安區忠孝東路123號" },
@@ -408,6 +409,8 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                         <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4" style={{ color: GOLD }}>
                           {bankCards.map((q) => {
                             const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
+                            // An account that cannot produce a QR has nothing to show here.
+                            if (!qr) return null;
                             return (
                               <div key={q.role} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                                 <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: GOLD }}>{q.role} - {q.name}</h3>

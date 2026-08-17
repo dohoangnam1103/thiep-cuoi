@@ -1210,6 +1210,31 @@
       "error": "음악 라이브러리를 불러올 수 없습니다. 다시 시도해 주세요."
     }
   },
+  "comicHero": {
+    "issueBanner": "특별호",
+    "issueNo": "제01호",
+    "coverTagline": "세기의 팀업!",
+    "assemble": "어셈블!",
+    "originStory": "히어로의 기원",
+    "secretIdentity": "본명",
+    "affiliation": "소속",
+    "homeBase": "본거지",
+    "teamUp": "영원한 동맹",
+    "missionBriefing": "임무 브리핑",
+    "ceremonyPanel": "예식",
+    "receptionPanel": "피로연",
+    "countdown": "결전까지 카운트다운",
+    "headquarters": "본부 좌표",
+    "plotCourse": "경로 안내",
+    "missionLog": "임무 기록",
+    "panel": "컷 {index}",
+    "archive": "아카이브",
+    "squadColors": "팀 컬러",
+    "squadColorsHint": "피로연 드레스 코드",
+    "transmissions": "동료들의 메시지",
+    "supplyDrop": "보급 지원",
+    "toBeContinued": "다음 편에 계속…"
+  },
   "invitationTemplate": {
     "invitation": "청첩장",
     "weddingPass": "웨딩 패스",

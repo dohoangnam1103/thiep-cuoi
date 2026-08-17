@@ -18,7 +18,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const COBA_MARVIN = '"SVN-HC Marvin Visions", sans-serif';
 const COBA_HAYDON = '"SVN-HC Haydon Brush", cursive';
@@ -119,11 +119,12 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  const bankCards = orderByBrideFirst(
-    { role: "Cô Dâu", bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { role: "Chú Rể", bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const bankCards = invitationGiftAccounts(content).map((account) => ({
+    role: account.side === "bride" ? "Cô Dâu" : "Chú Rể",
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông Bà", father: families.brideFather, mother: families.brideMother, address: families.brideAddress },
     { title: families.groomParentTitle || "Ông Bà", father: families.groomFather, mother: families.groomMother, address: families.groomAddress },
@@ -362,6 +363,8 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                         <div className="flex flex-row flex-wrap items-start justify-center gap-3 sm:gap-4" style={{ color: BROWN }}>
                           {bankCards.map((q) => {
                             const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
+                            // An account that cannot produce a QR has nothing to show here.
+                            if (!qr) return null;
                             return (
                               <div key={q.role} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                                 <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: RED }}>{q.role} - {q.name}</h3>

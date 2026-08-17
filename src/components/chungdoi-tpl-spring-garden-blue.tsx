@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   hexToRgba,
   formatDate,
@@ -85,12 +85,13 @@ function WishesList({ wishes }: { wishes: ChungDoiDemoContent["wishes"] }) {
 }
 
 function GiftSection({ content }: { content: ChungDoiDemoContent }) {
-  const { couple, bank } = content;
-  const banks = orderByBrideFirst(
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const { couple } = content;
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   if (banks.length === 0) return null;
   return (
     <SectionCard className="text-center">

@@ -19,7 +19,7 @@ import {
   FamilyColumn,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, invitationOpeningMessage, orderedCouple } from "@/lib/invitation-display";
 
 const BAROQUE_BASE = "/chungdoi/images/themes/_decor/baroque-gold";
 const GOLD = "#b8912f";
@@ -61,7 +61,7 @@ function BaroqueCountdown({ target }: { target: string }) {
 
 /** Faithful rebuild of the Baroque Gold (hoang-gia-vang) opened invitation. */
 export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoContent }) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const [giftOpen, setGiftOpen] = useState(false);
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
@@ -74,11 +74,12 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = orderByBrideFirst(
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: CREAM }}>
@@ -282,6 +283,8 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: INK }}>
                 {banks.map((q) => {
                   const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
+                  // An account that cannot produce a QR has nothing to show here.
+                  if (!qr) return null;
                   return (
                     <div key={q.label} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                       <h3 className="mb-2 line-clamp-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: GOLD_DARK }}>{q.label}</h3>

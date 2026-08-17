@@ -186,6 +186,35 @@ export function resolveVietQrBankId(bankName: string, banks: VietQrBank[] = []):
   return matched?.bin ?? resolveUniqueTypoMatch(normalized, banks);
 }
 
+/** Shortest account number /api/vietqr will accept. */
+export const VIETQR_MIN_ACCOUNT_LENGTH = 6;
+
+/**
+ * Whether a bank/account pair can actually produce a QR.
+ *
+ * Mirrors the guard in `src/app/api/vietqr/route.ts`. Keeping the rule in one
+ * place matters because callers render the QR inside an `<img>`: a request the
+ * endpoint rejects surfaces to guests as a broken image rather than an error.
+ * Note a short account number fails too, so a truthiness check is not enough.
+ */
+export function isUsableVietQrAccount({
+  bank,
+  accountNumber,
+}: {
+  bank: string;
+  accountNumber: string;
+}): boolean {
+  return (
+    bank.trim().length > 0
+    && normalizeVietQrAccountNumber(accountNumber).length >= VIETQR_MIN_ACCOUNT_LENGTH
+  );
+}
+
+/**
+ * URL of the QR image for a transfer account, or `null` when the account cannot
+ * produce one. Callers must handle `null` by omitting the QR instead of
+ * rendering an image that is guaranteed to fail.
+ */
 export function buildVietQrImageUrl({
   bank,
   accountNumber,
@@ -198,7 +227,9 @@ export function buildVietQrImageUrl({
   accountName: string;
   amount?: number;
   addInfo?: string;
-}): string {
+}): string | null {
+  if (!isUsableVietQrAccount({ bank, accountNumber })) return null;
+
   const params = new URLSearchParams({ bank, account: accountNumber, name: accountName });
   if (amount && amount > 0) params.set("amount", String(Math.trunc(amount)));
   if (addInfo?.trim()) params.set("addInfo", addInfo.trim());

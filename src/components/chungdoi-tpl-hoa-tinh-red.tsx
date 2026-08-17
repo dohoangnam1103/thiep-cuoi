@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCouple, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCouple, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   useLightbox, Lightbox, googleCalendarUrl, InvitationMap, MapDirectionsButton,
@@ -21,7 +21,7 @@ function HoaTinhHeading({ children }: { children: React.ReactNode }) {
 }
 
 export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent }) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
@@ -36,11 +36,12 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = orderByBrideFirst(
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">

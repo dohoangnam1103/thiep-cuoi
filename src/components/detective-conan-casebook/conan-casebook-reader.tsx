@@ -33,6 +33,7 @@ import { ConanCasebookFittedName } from "@/components/detective-conan-casebook/c
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   invitationCeremonies,
+  invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
   orderedCouple,
@@ -438,21 +439,12 @@ function CasebookChapterComponent({
     },
     content.couple.brideFirst,
   );
-  const banks = orderByBrideFirst(
-    {
-      bank: content.bank.brideBankName,
-      label: content.bank.brideAccountName,
-      name: content.bank.brideAccountName,
-      num: content.bank.brideAccountNumber,
-    },
-    {
-      bank: content.bank.groomBankName,
-      label: content.bank.groomAccountName,
-      name: content.bank.groomAccountName,
-      num: content.bank.groomAccountNumber,
-    },
-    content.couple.brideFirst,
-  ).filter((bank) => bank.bank && bank.num);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   if (chapterId === "intro") {
     return (

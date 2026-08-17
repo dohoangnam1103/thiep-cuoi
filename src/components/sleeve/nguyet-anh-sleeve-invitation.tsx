@@ -26,6 +26,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { nguyetAnhSleevePilot } from "@/data/nguyet-anh-sleeve-pilot";
 import {
   invitationCeremonies,
+  invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
   orderedCouple,
@@ -288,15 +289,7 @@ export function NguyetAnhSleeveInvitationBody({
 }: InvitationProps) {
   const locale = useLocale();
   const t = useTranslations("invitationTemplate");
-  const {
-    bank,
-    couple,
-    families,
-    gallery,
-    schedule,
-    venue,
-    wishes,
-  } = content;
+  const { couple, families, gallery, schedule, venue, wishes } = content;
   const people = orderedCouple(content);
   const portraits = orderedHeroPhotos(content, { albumFallback: true })
     .map((src, index) => ({ person: people[index], src }))
@@ -335,21 +328,12 @@ export function NguyetAnhSleeveInvitationBody({
     border: color.toLowerCase() === "#d7e4ea" ? MOON_CYAN : undefined,
     color,
   }));
-  const banks = orderByBrideFirst(
-    {
-      bank: bank.brideBankName,
-      label: bank.brideAccountName,
-      name: bank.brideAccountName,
-      num: bank.brideAccountNumber,
-    },
-    {
-      bank: bank.groomBankName,
-      label: bank.groomAccountName,
-      name: bank.groomAccountName,
-      num: bank.groomAccountNumber,
-    },
-    couple.brideFirst,
-  ).filter((entry) => entry.bank && entry.num);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div

@@ -26,6 +26,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { doraemonDoorPilot } from "@/data/doraemon-door-pilot";
 import {
   invitationCeremonies,
+  invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
   orderedCouple,
@@ -317,15 +318,7 @@ export function DoraemonDoorInvitationBody({
   const locale = useLocale();
   const t = useTranslations("invitationTemplate");
   const doorT = useTranslations("doraemonDoor");
-  const {
-    bank,
-    couple,
-    families,
-    gallery,
-    schedule,
-    venue,
-    wishes,
-  } = content;
+  const { couple, families, gallery, schedule, venue, wishes } = content;
   const people = orderedCouple(content);
   const familyPanels = orderByBrideFirst<FamilyPanelData>(
     {
@@ -361,21 +354,12 @@ export function DoraemonDoorInvitationBody({
     border: color.toLowerCase() === "#fff9ee" ? INK : undefined,
     color,
   }));
-  const banks = orderByBrideFirst(
-    {
-      bank: bank.brideBankName,
-      label: bank.brideAccountName,
-      name: bank.brideAccountName,
-      num: bank.brideAccountNumber,
-    },
-    {
-      bank: bank.groomBankName,
-      label: bank.groomAccountName,
-      name: bank.groomAccountName,
-      num: bank.groomAccountNumber,
-    },
-    couple.brideFirst,
-  ).filter((entry) => entry.bank && entry.num);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div

@@ -15,7 +15,7 @@ import {
   parseISODate,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const SLX_GREEN = "#1F3A25";
 const SLX_LINEN = "#ECE8D6";
@@ -87,11 +87,12 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time || "11:00";
 
-  const bankCards = orderByBrideFirst(
-    { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const bankCards = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.side === "bride" ? "Cô Dâu" : "Chú Rể"} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const familyColumns = orderByBrideFirst(
     { a: families.brideFather, b: families.brideMother, addr: families.brideAddress, title: families.brideParentTitle || "Ông bà" },
     { a: families.groomFather, b: families.groomMother, addr: families.groomAddress, title: families.groomParentTitle || "Ông bà" },

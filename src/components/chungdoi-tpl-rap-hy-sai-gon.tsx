@@ -21,6 +21,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
   orderByBrideFirst,
@@ -56,7 +57,7 @@ function OffsetPanel({ children, cyan = false, className = "" }: { children: Rea
 
 export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoContent }) {
   const t = useTranslations("invitationTemplate");
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const heroImage = invitationHeroImage(content);
   const ceremonyDate = formatDate(couple.ceremonyDate);
@@ -69,11 +70,12 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
     { side: t("groomFamily"), title: families.groomParentTitle || t("parents"), father: families.groomFather, mother: families.groomMother, address: families.groomAddress },
     couple.brideFirst,
   );
-  const banks = orderByBrideFirst(
-    { label: bank.brideAccountName, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: bank.groomAccountName, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((entry) => entry.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const dressColors = (content.dressCodeColors ?? "")
     .split(",")
     .map((color) => color.trim())

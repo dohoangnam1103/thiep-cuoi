@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 
 import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonyMessage, invitationHeroImage, invitationOpeningMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
@@ -171,11 +171,12 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
   const albumExtra = Math.max(0, gallery.length - 4);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const banks = orderByBrideFirst(
-    { title: `${couple.brideBirthOrder || "Út Nữ"} - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { title: `${couple.groomBirthOrder || "Trưởng Nam"} - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    title: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
     { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
@@ -429,6 +430,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
               <div className="flex flex-row flex-wrap items-start justify-center gap-x-10 gap-y-6 sm:gap-x-20" style={{ color: "rgb(70, 70, 70)" }}>
                 {banks.map((q) => {
                   const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
+                  // An account that cannot produce a QR has nothing to show here.
+                  if (!qr) return null;
                   return (
                     <div key={q.title} className="flex w-[42%] max-w-[180px] flex-col items-center sm:w-auto sm:max-w-none">
                       <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg sm:h-40 sm:w-40" style={{ border: `2px solid ${hexToRgba(palette.accent, 0.125)}` }}>

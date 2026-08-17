@@ -53,9 +53,9 @@ import {
 import {
   invitationCeremonies,
   invitationCeremonyMessage,
+  invitationGiftAccounts,
   invitationOpeningMessage,
   orderedCouple,
-  orderByBrideFirst,
 } from "@/lib/invitation-display";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
@@ -1166,7 +1166,7 @@ function GenericWishForm({ tokens }: { tokens: Tokens }) {
 }
 
 function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tokens: Tokens }) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -1179,12 +1179,12 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
     <FamilyBlock title={families.groomParentTitle || "Ông Bà"} father={families.groomFather} mother={families.groomMother} address={families.groomAddress} tokens={tokens} />
   );
 
-  const hasBank = Boolean(bank.brideBankName || bank.groomBankName);
-  const orderedBanks = orderByBrideFirst(
-    { side: "Cô Dâu", name: bank.brideAccountName, bank: bank.brideBankName, number: bank.brideAccountNumber },
-    { side: "Chú Rể", name: bank.groomAccountName, bank: bank.groomBankName, number: bank.groomAccountNumber },
-    couple.brideFirst,
-  );
+  const orderedBanks = invitationGiftAccounts(content).map((account) => ({
+    side: account.side === "bride" ? "Cô Dâu" : "Chú Rể",
+    name: account.name,
+    bank: account.bank,
+    number: account.num,
+  }));
   const galleryPreview = gallery.slice(0, 4);
   const extraCount = Math.max(0, gallery.length - 4);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -1347,18 +1347,18 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
         ) : null}
       </section>
 
-      {hasBank ? (
+      {orderedBanks.length > 0 ? (
         <section className="reveal is-visible mt-16">
           <SectionHeading tokens={tokens}>Mừng Cưới</SectionHeading>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {orderedBanks.map((item) => item.bank ? (
+            {orderedBanks.map((item) => (
               <div key={item.side} className="flex flex-col items-center rounded-2xl border p-5 text-center" style={{ borderColor: tokens.guestBoxBorder, backgroundColor: tokens.guestBoxBg }}>
                 <h3 className="text-base font-semibold">{item.side} - {item.name}</h3>
                 <p className="mt-3 text-sm font-semibold">{item.bank}</p>
                 <p className="text-sm">{item.number}</p>
                 <p className="text-sm">{item.name}</p>
               </div>
-            ) : null)}
+            ))}
           </div>
         </section>
       ) : null}

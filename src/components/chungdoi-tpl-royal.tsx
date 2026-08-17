@@ -17,7 +17,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const ROYAL_GOLD = "#E1BC7C";
 const ROYAL_GOLD_MUTED = "#C39E5E";
@@ -117,11 +117,12 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const [giftOpen, setGiftOpen] = useState(false);
 
-  const banks = orderByBrideFirst(
-    { title: content.bank.brideAccountName, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { title: content.bank.groomAccountName, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    title: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const familyColumns = orderByBrideFirst(
     { title: families.brideParentTitle || "Ông Bà", a: families.brideFather, b: families.brideMother, addr: families.brideAddress },
     { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
@@ -304,6 +305,8 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
                   <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center" style={{ color: ROYAL_GOLD }}>
                     {banks.map((q) => {
                       const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
+                      // An account that cannot produce a QR has nothing to show here.
+                      if (!qr) return null;
                       return (
                         <div key={q.title} className="flex max-w-[180px] flex-1 flex-col items-center sm:max-w-none">
                           <h3 className="mb-2 flex min-h-[2rem] items-start justify-center text-center text-xs font-medium" style={{ color: ROYAL_GOLD }}>{q.name}</h3>

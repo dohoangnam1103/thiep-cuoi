@@ -1210,6 +1210,31 @@
       "error": "无法加载音乐库，请重试。"
     }
   },
+  "comicHero": {
+    "issueBanner": "特刊",
+    "issueNo": "第01期",
+    "coverTagline": "世纪携手！",
+    "assemble": "集结！",
+    "originStory": "英雄起源",
+    "secretIdentity": "真实身份",
+    "affiliation": "所属",
+    "homeBase": "基地",
+    "teamUp": "永久同盟",
+    "missionBriefing": "任务简报",
+    "ceremonyPanel": "婚礼仪式",
+    "receptionPanel": "喜宴",
+    "countdown": "决战倒计时",
+    "headquarters": "总部坐标",
+    "plotCourse": "规划路线",
+    "missionLog": "任务日志",
+    "panel": "分格 {index}",
+    "archive": "档案库",
+    "squadColors": "队伍配色",
+    "squadColorsHint": "喜宴着装",
+    "transmissions": "队友留言",
+    "supplyDrop": "后勤补给",
+    "toBeContinued": "未完待续…"
+  },
   "invitationTemplate": {
     "invitation": "婚礼请柬",
     "weddingPass": "婚礼入场券",

@@ -1971,6 +1971,31 @@
       "error": "Không thể tải thư viện nhạc. Vui lòng thử lại."
     }
   },
+  "comicHero": {
+    "issueBanner": "Số đặc biệt",
+    "issueNo": "Số 01",
+    "coverTagline": "Màn hợp tác của thế kỷ!",
+    "assemble": "Tập hợp!",
+    "originStory": "Nguồn gốc anh hùng",
+    "secretIdentity": "Danh tính thật",
+    "affiliation": "Tổ chức",
+    "homeBase": "Căn cứ",
+    "teamUp": "Liên minh vĩnh viễn",
+    "missionBriefing": "Bản giao nhiệm vụ",
+    "ceremonyPanel": "Hôn lễ",
+    "receptionPanel": "Đại tiệc",
+    "countdown": "Đếm ngược giờ G",
+    "headquarters": "Toạ độ tổng bộ",
+    "plotCourse": "Vạch đường tới",
+    "missionLog": "Trình tự nhiệm vụ",
+    "panel": "Khung {index}",
+    "archive": "Hồ sơ lưu trữ",
+    "squadColors": "Sắc phục biệt đội",
+    "squadColorsHint": "Trang phục dự tiệc",
+    "transmissions": "Lời nhắn từ đồng đội",
+    "supplyDrop": "Tiếp tế hậu phương",
+    "toBeContinued": "Còn tiếp..."
+  },
   "invitationTemplate": {
     "invitation": "Thiệp mời",
     "weddingPass": "Vé dự tiệc cưới",

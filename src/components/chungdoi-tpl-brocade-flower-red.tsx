@@ -3,7 +3,7 @@
 import type React from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   FamilyColumn,
@@ -36,7 +36,7 @@ function BrocadeHeading({ children }: { children: React.ReactNode }) {
 
 /** Faithful rebuild of the Brocade Flower Red (gấm hoa đỏ) opened invitation. */
 export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoContent }) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
@@ -48,11 +48,12 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
-  const banks = orderByBrideFirst(
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BFR_CREAM }}>

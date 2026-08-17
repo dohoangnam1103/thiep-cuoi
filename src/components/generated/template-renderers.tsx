@@ -17,38 +17,39 @@ const TemplateRenderer6 = dynamic(() => import("@/components/chungdoi-tpl-celest
 const TemplateRenderer7 = dynamic(() => import("@/components/chungdoi-tpl-chim-lac-ivory").then((module) => module.ChimLacIvoryInvitation));
 const TemplateRenderer8 = dynamic(() => import("@/components/chungdoi-tpl-cinema-credit").then((module) => module.CinemaCreditInvitation));
 const TemplateRenderer9 = dynamic(() => import("@/components/chungdoi-tpl-coastal-mediterranean").then((module) => module.CoastalMediterraneanInvitation));
-const TemplateRenderer10 = dynamic(() => import("@/components/chungdoi-tpl-detective-conan-casebook").then((module) => module.DetectiveConanCasebookInvitation));
-const TemplateRenderer11 = dynamic(() => import("@/components/chungdoi-tpl-dong-ho-folk").then((module) => module.DongHoFolkInvitation));
-const TemplateRenderer12 = dynamic(() => import("@/components/chungdoi-tpl-doraemon-door").then((module) => module.DoraemonDoorInvitation));
-const TemplateRenderer13 = dynamic(() => import("@/components/chungdoi-tpl-editorial-noir").then((module) => module.EditorialNoirInvitation));
-const TemplateRenderer14 = dynamic(() => import("@/components/chungdoi-tpl-hai-yen-thanh-thu").then((module) => module.HaiYenThanhThuInvitation));
-const TemplateRenderer15 = dynamic(() => import("@/components/chungdoi-tpl-hang-trong-folk").then((module) => module.HangTrongFolkInvitation));
-const TemplateRenderer16 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-do-ruou-vang").then((module) => module.HoaThuDoRuouVangInvitation));
-const TemplateRenderer17 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-hong").then((module) => module.HoaThuHongInvitation));
-const TemplateRenderer18 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-xanh-duong").then((module) => module.HoaThuXanhDuongInvitation));
-const TemplateRenderer19 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-xanh-la").then((module) => module.HoaThuXanhLaInvitation));
-const TemplateRenderer20 = dynamic(() => import("@/components/chungdoi-tpl-ivory-signature").then((module) => module.IvorySignatureInvitation));
-const TemplateRenderer21 = dynamic(() => import("@/components/chungdoi-tpl-long-phung-deco").then((module) => module.LongPhungDecoInvitation));
-const TemplateRenderer22 = dynamic(() => import("@/components/chungdoi-tpl-long-phung-gatefold").then((module) => module.LongPhungGatefoldInvitation));
-const TemplateRenderer23 = dynamic(() => import("@/components/chungdoi-tpl-nguyet-anh-sleeve").then((module) => module.NguyetAnhSleeveInvitation));
-const TemplateRenderer24 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-be").then((module) => module.PhongThuBeInvitation));
-const TemplateRenderer25 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-do-pastel").then((module) => module.PhongThuDoPastelInvitation));
-const TemplateRenderer26 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-hong-pastel").then((module) => module.PhongThuHongPastelInvitation));
-const TemplateRenderer27 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-lam-pastel").then((module) => module.PhongThuLamPastelInvitation));
-const TemplateRenderer28 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-luc-pastel").then((module) => module.PhongThuLucPastelInvitation));
-const TemplateRenderer29 = dynamic(() => import("@/components/chungdoi-tpl-rap-hy-sai-gon").then((module) => module.RapHySaiGonInvitation));
-const TemplateRenderer30 = dynamic(() => import("@/components/chungdoi-tpl-riso-duotone").then((module) => module.RisoDuotoneInvitation));
-const TemplateRenderer31 = dynamic(() => import("@/components/chungdoi-tpl-sen-monoline").then((module) => module.SenMonolineInvitation));
-const TemplateRenderer32 = dynamic(() => import("@/components/chungdoi-tpl-son-mai-lacquer").then((module) => module.SonMaiLacquerInvitation));
-const TemplateRenderer33 = dynamic(() => import("@/components/chungdoi-tpl-swiss-brutalist").then((module) => module.SwissBrutalistInvitation));
-const TemplateRenderer34 = dynamic(() => import("@/components/chungdoi-tpl-thanh-duong-anh-sang").then((module) => module.ThanhDuongAnhSangInvitation));
-const TemplateRenderer35 = dynamic(() => import("@/components/chungdoi-tpl-thap-nhi-chi-do").then((module) => module.ThapNhiChiInvitation));
-const TemplateRenderer36 = dynamic(() => import("@/components/chungdoi-tpl-tho-cam-highland").then((module) => module.ThoCamHighlandInvitation));
-const TemplateRenderer37 = dynamic(() => import("@/components/chungdoi-tpl-ticket-terracotta").then((module) => module.TicketTerracottaInvitation));
-const TemplateRenderer38 = dynamic(() => import("@/components/chungdoi-tpl-trong-dong-dong-son").then((module) => module.TrongDongDongSonInvitation));
-const TemplateRenderer39 = dynamic(() => import("@/components/chungdoi-tpl-truc-chi-minimal").then((module) => module.TrucChiMinimalInvitation));
-const TemplateRenderer40 = dynamic(() => import("@/components/chungdoi-tpl-y2k-chrome").then((module) => module.Y2kChromeInvitation));
-const TemplateRenderer41 = dynamic(() => import("@/components/chungdoi-tpl-zen-sand").then((module) => module.ZenSandInvitation));
+const TemplateRenderer10 = dynamic(() => import("@/components/chungdoi-tpl-comic-hero-assemble").then((module) => module.ComicHeroAssembleInvitation));
+const TemplateRenderer11 = dynamic(() => import("@/components/chungdoi-tpl-detective-conan-casebook").then((module) => module.DetectiveConanCasebookInvitation));
+const TemplateRenderer12 = dynamic(() => import("@/components/chungdoi-tpl-dong-ho-folk").then((module) => module.DongHoFolkInvitation));
+const TemplateRenderer13 = dynamic(() => import("@/components/chungdoi-tpl-doraemon-door").then((module) => module.DoraemonDoorInvitation));
+const TemplateRenderer14 = dynamic(() => import("@/components/chungdoi-tpl-editorial-noir").then((module) => module.EditorialNoirInvitation));
+const TemplateRenderer15 = dynamic(() => import("@/components/chungdoi-tpl-hai-yen-thanh-thu").then((module) => module.HaiYenThanhThuInvitation));
+const TemplateRenderer16 = dynamic(() => import("@/components/chungdoi-tpl-hang-trong-folk").then((module) => module.HangTrongFolkInvitation));
+const TemplateRenderer17 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-do-ruou-vang").then((module) => module.HoaThuDoRuouVangInvitation));
+const TemplateRenderer18 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-hong").then((module) => module.HoaThuHongInvitation));
+const TemplateRenderer19 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-xanh-duong").then((module) => module.HoaThuXanhDuongInvitation));
+const TemplateRenderer20 = dynamic(() => import("@/components/chungdoi-tpl-hoa-thu-xanh-la").then((module) => module.HoaThuXanhLaInvitation));
+const TemplateRenderer21 = dynamic(() => import("@/components/chungdoi-tpl-ivory-signature").then((module) => module.IvorySignatureInvitation));
+const TemplateRenderer22 = dynamic(() => import("@/components/chungdoi-tpl-long-phung-deco").then((module) => module.LongPhungDecoInvitation));
+const TemplateRenderer23 = dynamic(() => import("@/components/chungdoi-tpl-long-phung-gatefold").then((module) => module.LongPhungGatefoldInvitation));
+const TemplateRenderer24 = dynamic(() => import("@/components/chungdoi-tpl-nguyet-anh-sleeve").then((module) => module.NguyetAnhSleeveInvitation));
+const TemplateRenderer25 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-be").then((module) => module.PhongThuBeInvitation));
+const TemplateRenderer26 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-do-pastel").then((module) => module.PhongThuDoPastelInvitation));
+const TemplateRenderer27 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-hong-pastel").then((module) => module.PhongThuHongPastelInvitation));
+const TemplateRenderer28 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-lam-pastel").then((module) => module.PhongThuLamPastelInvitation));
+const TemplateRenderer29 = dynamic(() => import("@/components/chungdoi-tpl-phong-thu-luc-pastel").then((module) => module.PhongThuLucPastelInvitation));
+const TemplateRenderer30 = dynamic(() => import("@/components/chungdoi-tpl-rap-hy-sai-gon").then((module) => module.RapHySaiGonInvitation));
+const TemplateRenderer31 = dynamic(() => import("@/components/chungdoi-tpl-riso-duotone").then((module) => module.RisoDuotoneInvitation));
+const TemplateRenderer32 = dynamic(() => import("@/components/chungdoi-tpl-sen-monoline").then((module) => module.SenMonolineInvitation));
+const TemplateRenderer33 = dynamic(() => import("@/components/chungdoi-tpl-son-mai-lacquer").then((module) => module.SonMaiLacquerInvitation));
+const TemplateRenderer34 = dynamic(() => import("@/components/chungdoi-tpl-swiss-brutalist").then((module) => module.SwissBrutalistInvitation));
+const TemplateRenderer35 = dynamic(() => import("@/components/chungdoi-tpl-thanh-duong-anh-sang").then((module) => module.ThanhDuongAnhSangInvitation));
+const TemplateRenderer36 = dynamic(() => import("@/components/chungdoi-tpl-thap-nhi-chi-do").then((module) => module.ThapNhiChiInvitation));
+const TemplateRenderer37 = dynamic(() => import("@/components/chungdoi-tpl-tho-cam-highland").then((module) => module.ThoCamHighlandInvitation));
+const TemplateRenderer38 = dynamic(() => import("@/components/chungdoi-tpl-ticket-terracotta").then((module) => module.TicketTerracottaInvitation));
+const TemplateRenderer39 = dynamic(() => import("@/components/chungdoi-tpl-trong-dong-dong-son").then((module) => module.TrongDongDongSonInvitation));
+const TemplateRenderer40 = dynamic(() => import("@/components/chungdoi-tpl-truc-chi-minimal").then((module) => module.TrucChiMinimalInvitation));
+const TemplateRenderer41 = dynamic(() => import("@/components/chungdoi-tpl-y2k-chrome").then((module) => module.Y2kChromeInvitation));
+const TemplateRenderer42 = dynamic(() => import("@/components/chungdoi-tpl-zen-sand").then((module) => module.ZenSandInvitation));
 
 export const GENERATED_TEMPLATE_RENDERERS = {
   "ao-dai-hue": TemplateRenderer0,
@@ -61,36 +62,37 @@ export const GENERATED_TEMPLATE_RENDERERS = {
   "chim-lac-ivory": TemplateRenderer7,
   "cinema-credit": TemplateRenderer8,
   "coastal-mediterranean": TemplateRenderer9,
-  "detective-conan-casebook": TemplateRenderer10,
-  "dong-ho-folk": TemplateRenderer11,
-  "doraemon-door": TemplateRenderer12,
-  "editorial-noir": TemplateRenderer13,
-  "hai-yen-thanh-thu": TemplateRenderer14,
-  "hang-trong-folk": TemplateRenderer15,
-  "hoa-thu-do-ruou-vang": TemplateRenderer16,
-  "hoa-thu-hong": TemplateRenderer17,
-  "hoa-thu-xanh-duong": TemplateRenderer18,
-  "hoa-thu-xanh-la": TemplateRenderer19,
-  "ivory-signature": TemplateRenderer20,
-  "long-phung-deco": TemplateRenderer21,
-  "long-phung-gatefold": TemplateRenderer22,
-  "nguyet-anh-sleeve": TemplateRenderer23,
-  "phong-thu-be": TemplateRenderer24,
-  "phong-thu-do-pastel": TemplateRenderer25,
-  "phong-thu-hong-pastel": TemplateRenderer26,
-  "phong-thu-lam-pastel": TemplateRenderer27,
-  "phong-thu-luc-pastel": TemplateRenderer28,
-  "rap-hy-sai-gon": TemplateRenderer29,
-  "riso-duotone": TemplateRenderer30,
-  "sen-monoline": TemplateRenderer31,
-  "son-mai-lacquer": TemplateRenderer32,
-  "swiss-brutalist": TemplateRenderer33,
-  "thanh-duong-anh-sang": TemplateRenderer34,
-  "thap-nhi-chi-do": TemplateRenderer35,
-  "tho-cam-highland": TemplateRenderer36,
-  "ticket-terracotta": TemplateRenderer37,
-  "trong-dong-dong-son": TemplateRenderer38,
-  "truc-chi-minimal": TemplateRenderer39,
-  "y2k-chrome": TemplateRenderer40,
-  "zen-sand": TemplateRenderer41,
+  "comic-hero-assemble": TemplateRenderer10,
+  "detective-conan-casebook": TemplateRenderer11,
+  "dong-ho-folk": TemplateRenderer12,
+  "doraemon-door": TemplateRenderer13,
+  "editorial-noir": TemplateRenderer14,
+  "hai-yen-thanh-thu": TemplateRenderer15,
+  "hang-trong-folk": TemplateRenderer16,
+  "hoa-thu-do-ruou-vang": TemplateRenderer17,
+  "hoa-thu-hong": TemplateRenderer18,
+  "hoa-thu-xanh-duong": TemplateRenderer19,
+  "hoa-thu-xanh-la": TemplateRenderer20,
+  "ivory-signature": TemplateRenderer21,
+  "long-phung-deco": TemplateRenderer22,
+  "long-phung-gatefold": TemplateRenderer23,
+  "nguyet-anh-sleeve": TemplateRenderer24,
+  "phong-thu-be": TemplateRenderer25,
+  "phong-thu-do-pastel": TemplateRenderer26,
+  "phong-thu-hong-pastel": TemplateRenderer27,
+  "phong-thu-lam-pastel": TemplateRenderer28,
+  "phong-thu-luc-pastel": TemplateRenderer29,
+  "rap-hy-sai-gon": TemplateRenderer30,
+  "riso-duotone": TemplateRenderer31,
+  "sen-monoline": TemplateRenderer32,
+  "son-mai-lacquer": TemplateRenderer33,
+  "swiss-brutalist": TemplateRenderer34,
+  "thanh-duong-anh-sang": TemplateRenderer35,
+  "thap-nhi-chi-do": TemplateRenderer36,
+  "tho-cam-highland": TemplateRenderer37,
+  "ticket-terracotta": TemplateRenderer38,
+  "trong-dong-dong-son": TemplateRenderer39,
+  "truc-chi-minimal": TemplateRenderer40,
+  "y2k-chrome": TemplateRenderer41,
+  "zen-sand": TemplateRenderer42,
 } satisfies Record<GeneratedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;

@@ -11,6 +11,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
 } from "@/lib/invitation-display";
@@ -54,7 +55,7 @@ function FloralHeading({ accent, upper, children }: { accent: string; upper: boo
 }
 
 export function FloralInvitation({ content, palette, hero, albumFirst = false, backdrop = [], headerDecor = [], albumDecor = [], lowerDecor, footerDecor, dividerSrc }: Props) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const P = palette;
   const muted = hexToRgba(P.accent, 0.72);
   const ceremony = formatDate(couple.ceremonyDate);
@@ -76,11 +77,12 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
     couple.groomShortName || couple.groomFullName,
     couple.brideFirst,
   );
-  const banks = orderByBrideFirst(
-    { label: `${couple.brideBirthOrder || "Út Nữ"} - ${bank.brideAccountName}`, bank: bank.brideBankName, num: bank.brideAccountNumber, name: bank.brideAccountName },
-    { label: `${couple.groomBirthOrder || "Trưởng Nam"} - ${bank.groomAccountName}`, bank: bank.groomBankName, num: bank.groomAccountNumber, name: bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.birthOrder} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
 
   const albumSection = gallery.length > 0 ? (
     <section className="relative flex w-full flex-col items-center gap-6">

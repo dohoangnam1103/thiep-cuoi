@@ -18,7 +18,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, orderedCouple, orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 import type { ZodiacInvitationArtwork } from "@/lib/zodiac-invitation-artwork";
 import { cn } from "@/lib/utils";
 
@@ -111,11 +111,12 @@ export function PhoenixInvitation({
     { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
     couple.brideFirst,
   );
-  const bankCards = orderByBrideFirst(
-    { label: `Cô Dâu - ${content.bank.brideAccountName}`, bank: content.bank.brideBankName, num: content.bank.brideAccountNumber, name: content.bank.brideAccountName },
-    { label: `Chú Rể - ${content.bank.groomAccountName}`, bank: content.bank.groomBankName, num: content.bank.groomAccountNumber, name: content.bank.groomAccountName },
-    couple.brideFirst,
-  ).filter((q) => q.bank);
+  const bankCards = invitationGiftAccounts(content).map((account) => ({
+    label: `${account.side === "bride" ? "Cô Dâu" : "Chú Rể"} - ${account.name}`,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const rootStyle: ZodiacColorStyle = {
     backgroundColor: CREAM,
     color: M,

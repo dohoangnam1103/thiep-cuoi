@@ -1,7 +1,7 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { FormattedDate } from "@/components/chungdoi-tpl-shared";
 import { buildCalendar, formatDate, googleCalendarUrl } from "@/components/chungdoi-tpl-shared";
-import { orderByBrideFirst } from "@/lib/invitation-display";
+import { invitationGiftAccounts } from "@/lib/invitation-display";
 
 export const DALAT_INVITATION_STOP_ROLES = [
   "cover",
@@ -86,46 +86,21 @@ function accountBelongsToPerson(
 export function buildDalatInvitationContract(
   content: ChungDoiDemoContent,
 ): DalatInvitationContract {
-  const { couple, venue, bank } = content;
-  const giftBanks = orderByBrideFirst(
-    {
-      side: "bride" as const,
-      label: bank.brideAccountName,
-      bank: bank.brideBankName,
-      num: bank.brideAccountNumber,
-      name: bank.brideAccountName,
-      ownerMatches: accountBelongsToPerson(
-        bank.brideAccountName,
-        couple.brideFullName,
-        couple.brideShortName,
-      ),
-    },
-    {
-      side: "groom" as const,
-      label: bank.groomAccountName,
-      bank: bank.groomBankName,
-      num: bank.groomAccountNumber,
-      name: bank.groomAccountName,
-      ownerMatches: accountBelongsToPerson(
-        bank.groomAccountName,
-        couple.groomFullName,
-        couple.groomShortName,
-      ),
-    },
-    couple.brideFirst,
-  )
-    .filter((gift) => Boolean(
-      gift.bank
-      && gift.num
-      && gift.name
-      && gift.ownerMatches,
+  const { couple, venue } = content;
+  // invitationGiftAccounts already drops accounts that cannot produce a QR.
+  // This journey additionally requires the account holder to be recognisably
+  // one of the couple, so a stray third-party account is never shown.
+  const giftBanks = invitationGiftAccounts(content)
+    .filter((account) => Boolean(
+      account.name
+      && accountBelongsToPerson(account.name, account.fullName, account.shortName),
     ))
-    .map((gift) => ({
-      bank: gift.bank,
-      label: gift.label,
-      name: gift.name,
-      num: gift.num,
-      side: gift.side,
+    .map((account) => ({
+      bank: account.bank,
+      label: account.name,
+      name: account.name,
+      num: account.num,
+      side: account.side,
     }));
 
   return {

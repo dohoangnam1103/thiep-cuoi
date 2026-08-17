@@ -22,6 +22,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
   orderByBrideFirst,
@@ -298,7 +299,7 @@ export function ArtInvitation({
   config: ArtInvitationConfig;
   t: InvitationTranslator;
 }) {
-  const { couple, families, venue, schedule, gallery, wishes, bank } = content;
+  const { couple, families, venue, schedule, gallery, wishes } = content;
   const effectiveConfig = {
     ...config,
     displayFontClass: resolveArtDisplayFontClass(
@@ -328,21 +329,12 @@ export function ArtInvitation({
     },
     couple.brideFirst,
   );
-  const banks = orderByBrideFirst(
-    {
-      label: bank.brideAccountName,
-      bank: bank.brideBankName,
-      num: bank.brideAccountNumber,
-      name: bank.brideAccountName,
-    },
-    {
-      label: bank.groomAccountName,
-      bank: bank.groomBankName,
-      num: bank.groomAccountNumber,
-      name: bank.groomAccountName,
-    },
-    couple.brideFirst,
-  ).filter((entry) => entry.bank);
+  const banks = invitationGiftAccounts(content).map((account) => ({
+    label: account.name,
+    bank: account.bank,
+    num: account.num,
+    name: account.name,
+  }));
   const dressColors = (content.dressCodeColors ?? "")
     .split(",")
     .map((color) => color.trim())

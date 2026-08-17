@@ -32,13 +32,19 @@ export function genOrderCode(): string {
 }
 
 export function buildVietQrUrl({ amount, code }: { amount: number; code: string }): string {
-  return buildVietQrImageUrl({
+  const url = buildVietQrImageUrl({
     bank: BANK.bin,
     accountNumber: BANK.account,
     accountName: BANK.name,
     amount,
     addInfo: code,
   });
+
+  // Unreachable with the BANK constant above. Unlike guest-supplied accounts a
+  // null here means our own merchant details are misconfigured, which should
+  // surface loudly rather than render a broken payment QR.
+  if (!url) throw new Error("Cấu hình tài khoản nhận thanh toán không hợp lệ.");
+  return url;
 }
 
 export function applyVoucher(base: number, amountOff: number): number {

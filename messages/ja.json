@@ -1210,6 +1210,31 @@
       "error": "音楽ライブラリを読み込めませんでした。もう一度お試しください。"
     }
   },
+  "comicHero": {
+    "issueBanner": "特別号",
+    "issueNo": "第01号",
+    "coverTagline": "世紀のチームアップ！",
+    "assemble": "アッセンブル！",
+    "originStory": "ヒーローの原点",
+    "secretIdentity": "本当の名前",
+    "affiliation": "所属",
+    "homeBase": "拠点",
+    "teamUp": "永遠の同盟",
+    "missionBriefing": "任務説明",
+    "ceremonyPanel": "挙式",
+    "receptionPanel": "披露宴",
+    "countdown": "決戦までカウントダウン",
+    "headquarters": "本部の座標",
+    "plotCourse": "ルートを表示",
+    "missionLog": "任務記録",
+    "panel": "コマ {index}",
+    "archive": "アーカイブ",
+    "squadColors": "チームカラー",
+    "squadColorsHint": "披露宴のドレスコード",
+    "transmissions": "仲間からの通信",
+    "supplyDrop": "支援物資",
+    "toBeContinued": "つづく…"
+  },
   "invitationTemplate": {
     "invitation": "結婚式招待状",
     "weddingPass": "ウェディングパス",

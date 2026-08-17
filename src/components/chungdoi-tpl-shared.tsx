@@ -737,6 +737,24 @@ export function CopyValueButton({
   );
 }
 
+/**
+ * Pairs each account with its QR URL, dropping any that cannot produce one.
+ *
+ * Templates already filter unusable accounts via `invitationGiftAccounts`, so
+ * this is a second line of defence: it guarantees the gift UI can never render
+ * an `<img>` pointing at a request `/api/vietqr` rejects.
+ */
+function giftCardsWithQr(banks: GiftBank[]): { gift: GiftBank; qr: string }[] {
+  return banks.flatMap((gift) => {
+    const qr = buildVietQrImageUrl({
+      bank: gift.bank,
+      accountNumber: gift.num,
+      accountName: gift.name,
+    });
+    return qr ? [{ gift, qr }] : [];
+  });
+}
+
 export function GiftQrGrid({
   banks,
   heading = "Hộp Quà Mừng",
@@ -756,7 +774,8 @@ export function GiftQrGrid({
   numberCopiedLabel?: string;
   headingClassName?: string;
 }) {
-  if (banks.length === 0) return null;
+  const cards = giftCardsWithQr(banks);
+  if (cards.length === 0) return null;
 
   return (
     <div data-testid="gift-qr-grid" className="flex w-full flex-col items-center gap-6 text-center">
@@ -767,8 +786,7 @@ export function GiftQrGrid({
         {heading}
       </h2>
       <div className="flex w-full flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
-        {banks.map((gift) => {
-          const qr = buildVietQrImageUrl({ bank: gift.bank, accountNumber: gift.num, accountName: gift.name });
+        {cards.map(({ gift, qr }) => {
           return (
             <div key={gift.label} className="flex max-w-[200px] flex-1 flex-col items-center">
               <h3 className="mb-2 flex min-h-8 items-start justify-center text-xs font-semibold" style={{ color: accent }}>{gift.label}</h3>
@@ -829,6 +847,10 @@ export function GiftFlipCard({
 }) {
   const [flipped, setFlipped] = useState(false);
   const qr = buildVietQrImageUrl({ bank: bank.bank, accountNumber: bank.num, accountName: bank.name });
+
+  // The whole card exists to reveal a QR, so an account that cannot produce one
+  // has nothing to show.
+  if (!qr) return null;
 
   return (
     <div className={cn("gift-flip-scene w-full max-w-[280px]", className)}>
@@ -971,7 +993,10 @@ export function GiftEnvelope({
       document.body.style.overflow = original;
     };
   }, [open]);
-  if (banks.length === 0) return null;
+  const cards = giftCardsWithQr(banks);
+  // Without a usable account the envelope would open onto an empty modal, so it
+  // is never offered in the first place.
+  if (cards.length === 0) return null;
   const muted = labelColor ?? hexToRgba(dark, 0.72);
   const visual = resolveGiftVisual(templateSlug);
   return (
@@ -1040,8 +1065,7 @@ export function GiftEnvelope({
             </div>
             <div className="p-4 sm:p-6">
               <div data-testid="gift-bank-list" className="flex flex-row flex-wrap items-start justify-center gap-x-16 gap-y-8 sm:gap-x-24">
-                {banks.map((q) => {
-                  const qr = buildVietQrImageUrl({ bank: q.bank, accountNumber: q.num, accountName: q.name });
+                {cards.map(({ gift: q, qr }) => {
                   return (
                     <div data-testid="gift-bank-card" key={q.label} className="flex w-[42%] max-w-40 flex-col items-center">
                       <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg" style={{ border: `2px solid ${hexToRgba(accent, 0.2)}` }}>
