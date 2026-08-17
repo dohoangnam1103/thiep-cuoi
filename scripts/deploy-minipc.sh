@@ -89,6 +89,7 @@ rsync -az --delete \
   --exclude '/public/uploads/' \
   --exclude '/temp/' \
   --exclude '/tmp/' \
+  --exclude '/.claude/' \
   --exclude '.playwright-mcp' \
   --exclude '.capture' \
   --exclude '/.claude-flow' \

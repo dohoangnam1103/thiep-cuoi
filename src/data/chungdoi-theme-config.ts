@@ -1736,5 +1736,41 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       ]
     }
   },
+  // Viết tay: maroon-love không đến từ bundle chungdoi.com nên script extract
+  // không sinh ra entry, mà cũng không phải mẫu manifest nên không nằm trong
+  // generatedThemeConfigs. Thiếu entry thì resolveTokens rơi vào nhánh fallback
+  // và dựng cả bìa từ primaryColor "#E8B4B8" — hồng phấn trên thẻ trắng ngà,
+  // tương phản chỉ ~1.7:1. Màu dưới đây lấy đúng bảng màu trong
+  // chungdoi-tpl-maroon-love.tsx để bìa khớp với thân thiệp.
+  "maroon-love": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #4A080D, #5C0A11, #7A0C15)",
+      "cardBg": "#5C0A11",
+      "textPrimary": "#F5E6E0",
+      "textSecondary": "rgba(245, 230, 224, 0.85)",
+      "accent": "#E8B4B8",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(232, 180, 184, 0.5)",
+      "buttonBg": "#F5E6E0",
+      "buttonText": "#5C0A11",
+      "guestBoxBg": "rgba(0, 0, 0, 0.18)",
+      "guestBoxBorder": "rgba(232, 180, 184, 0.3)",
+      "particleColors": [
+        "#E8B4B8",
+        "#C98A90",
+        "#F5E6E0"
+      ],
+      "particleType": "happiness"
+    },
+    // couple: null để vẫn dùng font "Fz Qellia" lấy từ theme.fontFamily của demo.
+    "fonts": {
+      "couple": null,
+      "ampersand": null
+    },
+    "sealType": "happiness",
+    "decorations": {
+      "cardImages": []
+    }
+  },
   ...generatedThemeConfigs,
 };

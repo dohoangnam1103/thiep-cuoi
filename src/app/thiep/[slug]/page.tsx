@@ -11,19 +11,14 @@ import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
 import { getCurrentUserId } from "@/lib/dal";
+import { isInvitationExpired } from "@/lib/invitation-entitlement";
 import { resolveCoupleNames } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { loadPublished } from "@/lib/published-invitation";
-import { FREE_TRIAL_DAYS, trialExpiresAt } from "@/lib/trial";
+import { FREE_TRIAL_DAYS } from "@/lib/trial";
 import { SITE_URL } from "@/lib/site-url";
 import { toDemoContent } from "@/lib/to-demo-content";
 import { submitRsvp, submitWish } from "./actions";
-
-function isExpired(paid: boolean, publishedAt: Date | null): boolean {
-  if (paid) return false;
-  if (!publishedAt) return false;
-  return Date.now() >= trialExpiresAt(publishedAt).getTime();
-}
 
 function OwnerManagementLink({ label }: { label: string }) {
   return (
@@ -103,7 +98,7 @@ export default async function PublicInvitationPage({
   const ownerLabel = isOwner ? invitationTranslations("manage") : null;
   const ownerManagement = ownerLabel ? <OwnerManagementLink label={ownerLabel} /> : null;
 
-  if (isExpired(invitation.paid, invitation.publishedAt)) {
+  if (isInvitationExpired(invitation)) {
     return (
       <>
         <AnalyticsEventOnView

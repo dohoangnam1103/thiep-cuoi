@@ -168,6 +168,10 @@ function mutationChangesFormData(record: MutationRecord): boolean {
 export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
   const { formId, invitationId, enabled, onChange, onFlush } = opts;
   const latestRef = useRef<Draft | null>(null);
+  // Bản nháp tại thời điểm lưu thành công (clear): flush không ghi lại snapshot
+  // này nếu form chưa đổi thêm, kẻo nó che giá trị mới hơn trên server.
+  const savedDraftRef = useRef<Draft | null>(null);
+  const cleanRef = useRef(false);
   const onChangeRef = useRef(onChange);
   const onFlushRef = useRef(onFlush);
 
@@ -179,9 +183,12 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
   const persist = useCallback(
     (draft: Draft) => {
       latestRef.current = draft;
-      return writeDraft(invitationId, draft);
+      cleanRef.current = false;
+      // Non-owner modes (demo/support editor) serialize the form for submit
+      // but must never write the localStorage draft.
+      return enabled ? writeDraft(invitationId, draft) : false;
     },
-    [invitationId],
+    [enabled, invitationId],
   );
 
   const capture = useCallback(() => {
@@ -193,9 +200,11 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
   }, [formId, persist]);
 
   const clear = useCallback(() => {
+    savedDraftRef.current = latestRef.current;
+    cleanRef.current = true;
     latestRef.current = null;
-    clearFormDraft(invitationId);
-  }, [invitationId]);
+    if (enabled) clearFormDraft(invitationId);
+  }, [enabled, invitationId]);
 
   const getLatest = useCallback(() => latestRef.current, []);
 
@@ -229,10 +238,18 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
     };
 
     const flush = () => {
-      const latest = latestRef.current;
-      if (!latest) return;
-      persist(latest);
-      onFlushRef.current?.(latest);
+      const latest = serializeForm(form);
+      // Vừa lưu thành công và form chưa đổi thêm: không ghi lại snapshot vừa xóa,
+      // kẻo bản cũ che giá trị mới hơn trên server khi mở lại editor.
+      const unchangedSinceSave =
+        cleanRef.current &&
+        savedDraftRef.current !== null &&
+        draftsEqual(latest, savedDraftRef.current);
+      latestRef.current = latest;
+      if (!unchangedSinceSave) {
+        persist(latest);
+        onFlushRef.current?.(latest);
+      }
     };
 
     const onFieldBlur = (event: FocusEvent) => {
@@ -240,20 +257,15 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
       persistCurrentForm();
     };
     const onVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        latestRef.current = serializeForm(form);
-        flush();
-      }
+      if (document.visibilityState === "hidden") flush();
     };
-    const onPageHide = () => {
-      latestRef.current = serializeForm(form);
-      flush();
-    };
+    const onPageHide = () => flush();
     const observer = new MutationObserver((records) => {
       if (records.some(mutationChangesFormData)) persistCurrentForm();
     });
 
     form.addEventListener("input", onProgrammaticInput);
+    form.addEventListener("change", onProgrammaticInput);
     form.addEventListener("focusout", onFieldBlur);
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pagehide", onPageHide);
@@ -264,11 +276,11 @@ export function useFormDraft(opts: UseFormDraftOptions): FormDraftController {
 
     return () => {
       form.removeEventListener("input", onProgrammaticInput);
+      form.removeEventListener("change", onProgrammaticInput);
       form.removeEventListener("focusout", onFieldBlur);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", onPageHide);
       observer.disconnect();
-      latestRef.current = serializeForm(form);
       flush();
     };
   }, [enabled, formId, persist]);

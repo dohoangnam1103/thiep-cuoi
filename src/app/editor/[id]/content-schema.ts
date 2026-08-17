@@ -84,14 +84,36 @@ export const contentSchema = z.object({
   groomAccountName: optionalName(120),
 });
 
-export type EditorState = {
-  error?: string;
-  focusField?: string;
-  ok?: boolean;
-  persisted?: boolean;
-  publishedSlug?: string;
-  publishedAt?: string;
-} | undefined;
+export type EditorErrorCode =
+  | "invalidData"
+  | "invitationNotFound"
+  | "slugMissing"
+  | "slugMalformed"
+  | "slugTaken"
+  | "coupleRequired"
+  | "dateRequired"
+  | "timeRequired";
+
+export type EditorState =
+  | {
+      errorCode?: EditorErrorCode;
+      focusField?: string;
+      ok?: boolean;
+      persisted?: boolean;
+      publishedSlug?: string;
+      publishedAt?: string;
+    }
+  | undefined;
+
+export type SlugCheckResult =
+  | { available: true }
+  | {
+      available: false;
+      reasonCode: Extract<
+        EditorErrorCode,
+        "invitationNotFound" | "slugMissing" | "slugMalformed" | "slugTaken"
+      >;
+    };
 
 export function parseSchedule(formData: FormData) {
   const times = formData.getAll("scheduleTime").map(String);

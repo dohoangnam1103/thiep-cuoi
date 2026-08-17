@@ -108,7 +108,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
             <BohoHeading>Thông Tin Lễ Cưới</BohoHeading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>

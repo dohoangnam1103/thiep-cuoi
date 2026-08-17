@@ -62,6 +62,16 @@ export async function POST(req: Request) {
         reference: raw.data.reference,
       });
       if (result.slug) revalidatePath(`/thiep/${result.slug}`);
+    } else {
+      const latest = await prisma.payment.findUnique({
+        where: { id: payment.id },
+        select: { status: true },
+      });
+      console.warn("payment_settlement_not_claimed", {
+        paymentId: payment.id,
+        provider: "payos",
+        localStatus: latest?.status ?? "missing",
+      });
     }
   }
 

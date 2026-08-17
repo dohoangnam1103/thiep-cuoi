@@ -1,7 +1,14 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
-import { ORDER_CODE_REGEX, isPendingPaymentExpired, verifyCassoSignature } from "@/lib/payment";
+import { ORDER_CODE_REGEX, verifyCassoSignature } from "@/lib/payment";
+import { markPaymentPaid } from "@/lib/payment-service";
+import {
+  cassoReconciliationMetadata,
+  decideCassoSettlement,
+  type CassoCandidate,
+  type CassoDecision,
+} from "@/lib/payment-settlement";
 
 type CassoV2Data = {
   id?: number;
@@ -13,6 +20,18 @@ type CassoV2Body = {
   error?: number;
   data?: CassoV2Data;
 };
+
+function logReconciliation(input: {
+  transactionId: number | string | null;
+  payment: CassoCandidate;
+  receivedAmount: number;
+  reason: Extract<CassoDecision, { kind: "reconcile" }>["reason"];
+}): void {
+  console.warn(
+    "payment_manual_reconciliation_required",
+    cassoReconciliationMetadata(input),
+  );
+}
 
 export async function POST(req: Request) {
   const checksumKey = process.env.CASSO_WEBHOOK_TOKEN;
@@ -36,42 +55,53 @@ export async function POST(req: Request) {
   const description = tx?.description ?? "";
   const received = typeof tx?.amount === "number" ? tx.amount : 0;
 
-  if (received > 0) {
-    const match = description.toUpperCase().match(ORDER_CODE_REGEX);
-    if (match) {
-      const code = match[0];
-      const payment = await prisma.payment.findUnique({ where: { code } });
-      if (
-        payment &&
-        payment.provider === "casso" &&
-        payment.status === "pending" &&
-        !isPendingPaymentExpired(payment.createdAt) &&
-        received >= payment.amount
-      ) {
-        await prisma.$transaction(async (db) => {
-          await db.payment.update({
-            where: { id: payment.id },
-            data: { status: "paid", paidAt: new Date() },
-          });
-          await db.invitation.update({
-            where: { id: payment.invitationId },
-            data: { paid: true },
-          });
-          if (payment.voucherCode) {
-            await db.voucher.updateMany({
-              where: { code: payment.voucherCode },
-              data: { usedCount: { increment: 1 } },
-            });
-          }
-        });
+  if (received <= 0) {
+    return Response.json({ success: true });
+  }
 
-        const invitation = await prisma.invitation.findUnique({
-          where: { id: payment.invitationId },
-          select: { slug: true },
+  const match = description.toUpperCase().match(ORDER_CODE_REGEX);
+  if (!match) {
+    return Response.json({ success: true });
+  }
+
+  const payment = await prisma.payment.findUnique({
+    where: { code: match[0] },
+  });
+  const decision = decideCassoSettlement({
+    payment,
+    receivedAmount: received,
+    now: new Date(),
+  });
+
+  if (decision.kind === "reconcile" && payment) {
+    logReconciliation({
+      transactionId: tx?.id ?? null,
+      payment,
+      receivedAmount: received,
+      reason: decision.reason,
+    });
+  }
+
+  if (decision.kind === "settle" && payment) {
+    const result = await markPaymentPaid(payment.id, received);
+    if (result.updated) {
+      if (result.slug) revalidatePath(`/thiep/${result.slug}`);
+    } else {
+      const latest = await prisma.payment.findUnique({
+        where: { id: payment.id },
+      });
+      const latestDecision = decideCassoSettlement({
+        payment: latest,
+        receivedAmount: received,
+        now: new Date(),
+      });
+      if (latest && latestDecision.kind === "reconcile") {
+        logReconciliation({
+          transactionId: tx?.id ?? null,
+          payment: latest,
+          receivedAmount: received,
+          reason: latestDecision.reason,
         });
-        if (invitation?.slug) {
-          revalidatePath(`/thiep/${invitation.slug}`);
-        }
       }
     }
   }

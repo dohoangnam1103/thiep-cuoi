@@ -82,7 +82,7 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
             <QasrHeading>Thông Tin Lễ Cưới</QasrHeading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
@@ -138,7 +138,7 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: QASR_GREEN_MUTED }}>{reception.lunar}</div> : null}
+            {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: QASR_GREEN_MUTED }}>{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <QasrHeading>Cùng đếm ngược</QasrHeading>

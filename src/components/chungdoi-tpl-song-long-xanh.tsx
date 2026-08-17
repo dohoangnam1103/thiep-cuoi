@@ -134,14 +134,16 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
 
         {/* family + báo tin + ceremony */}
         <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
-          <div className="mt-6 flex w-full items-start justify-center gap-3 px-2 sm:px-4 md:gap-8" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
+          {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng thẻ,
+              không bị cắt bởi overflow-hidden của khung ngoài. */}
+          <div className="mt-6 flex w-full flex-col items-center gap-6 px-2 sm:px-4 md:flex-row md:items-start md:justify-center md:gap-8" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
             {familyColumns.map((f, i) => (
               <div key={i} className="contents">
-                {i === 1 ? <div className="h-[60px] w-px self-center" style={{ backgroundColor: SLX_GREEN }} /> : null}
+                {i === 1 ? <div className="h-px w-16 self-center md:h-[60px] md:w-px" style={{ backgroundColor: SLX_GREEN }} /> : null}
                 <div className="flex min-w-0 max-w-[160px] flex-1 flex-col items-center gap-1 text-center md:max-w-[280px]">
                   <span className="text-[14px] md:text-[15px]" style={{ color: SLX_GRAY }}>{f.title} / 부모님</span>
-                  <span className="whitespace-nowrap font-semibold" style={{ color: SLX_GREEN, fontSize: 15 }}>{f.a}</span>
-                  <span className="whitespace-nowrap font-semibold" style={{ color: SLX_GREEN, fontSize: 15 }}>{f.b}</span>
+                  <span className="font-semibold" style={{ color: SLX_GREEN, fontSize: 15 }}>{f.a}</span>
+                  <span className="font-semibold" style={{ color: SLX_GREEN, fontSize: 15 }}>{f.b}</span>
                   <div className="mt-1 flex flex-col whitespace-pre-line text-[12px] leading-tight md:text-[13px]" style={{ color: SLX_GRAY }}>{f.addr}</div>
                 </div>
               </div>

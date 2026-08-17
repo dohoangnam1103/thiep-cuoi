@@ -15,7 +15,8 @@
 - Đọc lại `AGENTS.md`, `docs/research/INSPECTION_GUIDE.md` và spec tại `docs/superpowers/specs/2026-08-13-admin-user-invitation-support-design.md` trước khi sửa code.
 - Next.js 16 dùng `params` và `searchParams` dạng Promise. Các page động trong plan phải khai báo `params: Promise<{ id: string }>` và `await params`.
 - Mỗi server action là endpoint POST có thể bị gọi trực tiếp. Mọi action phải tự gọi `verifyAdmin()` hoặc `verifySession()`, parse input và truy vấn lại ownership từ database.
-- Worktree hiện tại có thay đổi chưa commit trùng vào `messages/*.json`, `src/app/editor/[id]/EditorForm.tsx` và một số file editor. Khi bắt đầu thực thi, dùng `superpowers:using-git-worktrees` và tạo một execution worktree an toàn. Nếu cần mang các thay đổi hiện tại ở file trùng sang execution worktree, lưu chúng thành patch tiền đề riêng; không reset, stage hoặc commit thay đổi của người dùng trong worktree gốc.
+- Execution worktree đã được tách tại `/Users/namdo/.config/superpowers/worktrees/clone/admin-invitation-support`, branch `codex/admin-invitation-support`. Feature base cố định là `d46e89ac6f0d606951fcc02c220ad764e7c79dd4`; không tính lại base từ remote branch và không thao tác lên worktree gốc đang dirty.
+- Checkpoint hiện tại: Task 1 (`424a61b`), Task 6 (`8784359`) và Task 2 (`c5051ab`) đã hoàn tất tại `HEAD c5051ab`. Giữ nguyên các bước/checklist của ba task làm hồ sơ TDD và review contract; khi tiếp tục implementation, xác minh ba commit rồi bắt đầu Task 3, không viết lại lịch sử hoặc triển khai lại lát cắt đã hoàn tất.
 - `src/generated/prisma/` bị gitignore. Chạy `npm run prisma:generate` để kiểm tra/typecheck nhưng không stage generated client.
 - Chỉ deploy khi người dùng yêu cầu riêng sau khi toàn bộ gate hoàn tất.
 
@@ -28,14 +29,20 @@ Thực thi theo thứ tự `Task 1 → Task 6 → Task 2 → Task 3 → Task 4 �
 ### File mới
 
 - `prisma/migrations/20260813090000_add_admin_invitation_support/migration.sql` — migration entitlement, giá riêng và audit.
+- `src/lib/admin-support-schema.test.ts` — contract test schema/migration của Task 1.
 - `src/lib/invitation-entitlement.ts` — nguồn quyết định duy nhất cho trạng thái paid/complimentary/trial và expiry.
 - `src/lib/invitation-entitlement.test.ts` — unit test entitlement.
 - `src/lib/invitation-pricing.ts` — hàm thuần resolve giá hệ thống/override và validation giới hạn giá.
 - `src/lib/invitation-pricing.test.ts` — unit test pricing.
+- `src/lib/payment-settlement.ts` — quyết định settlement thuần, tập trạng thái settleable và metadata reconciliation an toàn.
+- `src/lib/payment-settlement.test.ts` — unit test mọi nhánh settle/ignore/reconcile.
 - `src/lib/admin-support-input.ts` — normalize search, chặn user hệ thống và allowlist template dùng chung cho page/action.
 - `src/lib/admin-support-input.test.ts` — unit test validation search/template/user đích.
+- `src/lib/admin-support-copy.test.ts` — contract test key shape cho năm catalog.
 - `src/lib/admin-audit.ts` — action constants, serialization details và hàm ghi audit trong transaction.
 - `src/lib/admin-audit.test.ts` — unit test audit detail.
+- `src/lib/invitation-editor-audit.ts` — canonicalize dữ liệu editor trước/sau và chỉ trả tên field/group đã đổi.
+- `src/lib/invitation-editor-audit.test.ts` — unit test canonicalization, legacy ceremony fallback và không rò giá trị nhạy cảm.
 - `src/lib/admin-audit-view.ts` — parser allowlist cho metadata audit hiển thị trong Admin UI.
 - `src/lib/admin-audit-view.test.ts` — unit test malformed/nhạy cảm audit details không bị render.
 - `src/lib/invitation-editor-rules.ts` — pure publication/slug rules có thể unit test.
@@ -53,20 +60,23 @@ Thực thi theo thứ tự `Task 1 → Task 6 → Task 2 → Task 3 → Task 4 �
 - `prisma/schema.prisma` — fields/relations/model audit.
 - `src/lib/admin-dal.ts` — trả cả email snapshot của Admin đã xác thực.
 - `src/lib/payment-config.ts` — resolve giá theo thiệp trong cùng transaction.
-- `src/lib/payment-service.ts` — chỉ claim payment `pending`.
+- `src/lib/payment-service.ts` — conditional claim đúng `pending` và legacy voucher `cancelled`, không claim `superseded`.
 - `src/lib/trial-reminder.ts`, `scripts/send-trial-reminders.ts`, `src/app/api/cron/trial-reminders/route.ts` — bỏ qua thiệp complimentary.
 - `src/app/api/casso/webhook/route.ts`, `src/app/api/payos/webhook/route.ts` — settlement tập trung và chặn payment superseded.
+- `src/app/api/payment/[code]/status/route.ts` — polling trả nguyên trạng thái `superseded` cho đúng chủ thiệp.
 - `src/app/dashboard/[id]/thanh-toan/actions.ts`, `page.tsx`, `PaymentPanel.tsx` — dùng override, chặn checkout activated và xử lý superseded.
 - `src/app/dashboard/page.tsx`, `DashboardInvitationCard.tsx` — hiển thị complimentary, không hiện trial/payment CTA.
 - `src/app/thiep/[slug]/page.tsx` — complimentary không hết hạn.
 - `src/app/editor/[id]/actions.ts`, `EditorForm.tsx`, `page.tsx`, `PublishSuccessDialog.tsx` — persistence dùng chung, entitlement và ba editor mode.
 - `src/app/editor/[id]/content-schema.ts` — `EditorState` dùng error code ổn định; UI dịch code qua `editor.errors`.
-- `src/app/admin/demos/[id]/page.tsx` — chuyển sang mode `demo-admin`.
+- `src/app/admin/demos/actions.ts`, `src/app/admin/demos/[id]/page.tsx` — giữ auth demo, chuyển state sang error code và mode `demo-admin`.
+- `src/hooks/use-form-draft.ts` — vô hiệu hóa mọi localStorage write/clear ngoài owner mode mà vẫn serialize form submit.
 - `src/app/admin/users/page.tsx` — tìm kiếm và liên kết hồ sơ.
 - `src/app/admin/layout.tsx` — cung cấp message `adminSupport` cho client component Admin.
 - `src/app/dashboard/layout.tsx` — cung cấp message activation/payment cho dashboard client component.
 - `messages/{vi,en,ko,ja,zh}.json` — copy mới theo namespace `adminSupport`, `dashboardActivation`, `paymentActivation`, `editor.support` và `editor.errors`.
-- `tests/e2e/helpers/fixtures.ts`, `tests/e2e/payment-webhook.spec.ts`, `tests/e2e/payos-webhook.spec.ts`, `tests/e2e/dashboard-manage.spec.ts` — fixtures và regression payment/entitlement.
+- `src/lib/trial-reminder.test.ts`, `src/lib/to-demo-content.test.ts` — regression unit/typed fixtures của entitlement.
+- `tests/e2e/helpers/fixtures.ts`, `tests/e2e/thiep.spec.ts`, `tests/e2e/dashboard.spec.ts`, `tests/e2e/dashboard-manage.spec.ts`, `tests/e2e/editor.spec.ts`, `tests/e2e/payment-webhook.spec.ts`, `tests/e2e/payos-webhook.spec.ts` — fixtures và consumer regression cho entitlement, editor, checkout và settlement.
 
 ---
 
@@ -297,6 +307,9 @@ git commit -m "feat(admin): add invitation support data model"
 - Modify: `src/app/editor/[id]/PublishSuccessDialog.tsx`
 - Modify: `src/app/admin/demos/[id]/page.tsx`
 - Modify: `src/lib/to-demo-content.test.ts`
+- Modify: `tests/e2e/helpers/fixtures.ts`
+- Modify: `tests/e2e/thiep.spec.ts`
+- Modify: `tests/e2e/dashboard.spec.ts`
 
 - [ ] **Step 1: Viết unit tests entitlement đang đỏ**
 
@@ -404,13 +417,15 @@ export type ReminderCandidate = {
 };
 
 export function shouldSendReminder(c: ReminderCandidate, now: Date): boolean {
-  if (c.paid || c.complimentary) return false;
+  if (isInvitationActivated(c)) return false;
   if (!c.publishedAt || c.reminderSentAt || !c.email) return false;
   const expiresAt = c.publishedAt.getTime() + FREE_TRIAL_MS;
   const nowMs = now.getTime();
   return expiresAt > nowMs && expiresAt <= nowMs + REMINDER_WINDOW_MS;
 }
 ```
+
+Import `isInvitationActivated` từ `@/lib/invitation-entitlement`. Đây là nguồn quyết định duy nhất; không lặp lại biểu thức `paid || complimentary` ở reminder.
 
 Trong cả script và cron route, đổi filter/candidate chính xác thành:
 
@@ -435,7 +450,69 @@ const candidate: ReminderCandidate = {
 };
 ```
 
-- [ ] **Step 5: Thay mọi expiry/payment CTA trực tiếp theo `paid` bằng activation**
+- [ ] **Step 5: Viết consumer E2E đang đỏ cho thiệp complimentary cũ**
+
+Mở rộng `createInvitation` trong `tests/e2e/helpers/fixtures.ts` để nhận `complimentary: boolean` và INSERT cột `complimentary`. Trong `tests/e2e/thiep.spec.ts`, seed thiệp đã publish lâu hơn `FREE_TRIAL_MS`, có `paid=false`, `complimentary=true`, rồi assert nội dung public vẫn hiện, màn “hết 3 ngày dùng thử” không hiện và không có CTA thanh toán:
+
+```ts
+test("an old complimentary invitation remains publicly available", async ({ page }) => {
+  const user = createUser();
+  const slug = `complimentary-${randomUUID().slice(0, 8)}`;
+  const invitation = createInvitation(user.id, {
+    status: "published",
+    slug,
+    paid: false,
+    complimentary: true,
+    publishedAt: new Date(Date.now() - FREE_TRIAL_MS - 60_000),
+  });
+  try {
+    setInvitationContent(invitation.id, {
+      brideFullName: "Nguyễn Mai",
+      groomFullName: "Trần Nam",
+    });
+    await page.goto(`/thiep/${slug}`);
+    await expect(page.getByText("Nguyễn Mai")).toBeVisible();
+    await expect(page.getByText(/đã hết 3 ngày dùng thử/i)).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /thanh toán/i })).toHaveCount(0);
+  } finally {
+    cleanupUser(user.id);
+  }
+});
+```
+
+Trong `tests/e2e/dashboard.spec.ts`, seed cùng trạng thái và assert card hiện bản dịch `dashboardActivation.complimentary`, không có trial countdown và không có CTA thanh toán:
+
+```ts
+test("complimentary invitation shows its badge without a trial countdown", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id, {
+    status: "published",
+    slug: `complimentary-${randomUUID().slice(0, 8)}`,
+    complimentary: true,
+    publishedAt: new Date(Date.now() - FREE_TRIAL_MS - 60_000),
+  });
+  try {
+    await loginAsUser(context, user.id);
+    await page.goto("/dashboard");
+    const card = page.locator(`[data-invitation-id="${invitation.id}"]`);
+    await expect(card.getByText("Được tặng miễn phí")).toBeVisible();
+    await expect(card.getByText(/còn lại|đã hết/i)).toHaveCount(0);
+    await expect(card.getByRole("link", { name: /thanh toán/i })).toHaveCount(0);
+  } finally {
+    cleanupUser(user.id);
+  }
+});
+```
+
+Chạy trước khi đổi consumer:
+
+```bash
+npx playwright test tests/e2e/thiep.spec.ts tests/e2e/dashboard.spec.ts --project=chromium --grep 'old complimentary|complimentary invitation shows'
+```
+
+Expected: FAIL vì public route coi thiệp cũ là expired và dashboard chưa render badge/ẩn countdown.
+
+- [ ] **Step 6: Thay mọi expiry/payment CTA trực tiếp theo `paid` bằng activation**
 
 Áp dụng các thay đổi sau:
 
@@ -486,7 +563,9 @@ const showTrialBanner = Boolean(published && activation === "trial" && published
 
 Badge activation phải có ba nhánh độc lập: `paid`, `complimentary`, và không có badge vĩnh viễn đối với `trial`. Copy được lấy từ `dashboardActivation` ở Task 6.
 
-- [ ] **Step 6: Chuyển editor và publish dialog sang activation**
+`DashboardInvitationCard` gọi `useTranslations("dashboardActivation")` ngay trong Task 2 và render `paid`/`complimentary` bằng key catalog, không để việc dịch badge lại Task 10. `src/app/dashboard/layout.tsx` đã expose namespace này ở Task 6.
+
+- [ ] **Step 7: Chuyển editor và publish dialog sang activation**
 
 Trong `EditorFormProps`, thay `paid` bằng:
 
@@ -510,19 +589,20 @@ complimentary: false,
 complimentaryAt: null,
 ```
 
-- [ ] **Step 7: Chạy unit regression và typecheck**
+- [ ] **Step 8: Chạy unit, consumer regression và typecheck**
 
 ```bash
 npx tsx --test src/lib/invitation-entitlement.test.ts src/lib/trial-reminder.test.ts
 npm run typecheck
+npx playwright test tests/e2e/thiep.spec.ts tests/e2e/dashboard.spec.ts --project=chromium --grep 'old complimentary|complimentary invitation shows'
 ```
 
-Expected: tests PASS; typecheck exit 0 và không còn lỗi prop `paid` tại các call site của `EditorForm`/`DashboardInvitationCard`.
+Expected: unit và hai consumer E2E PASS; typecheck exit 0 và không còn lỗi prop `paid` tại các call site của `EditorForm`/`DashboardInvitationCard`.
 
-- [ ] **Step 8: Commit entitlement slice**
+- [ ] **Step 9: Commit entitlement slice**
 
 ```bash
-git add src/lib/invitation-entitlement.ts src/lib/invitation-entitlement.test.ts src/lib/trial-reminder.ts src/lib/trial-reminder.test.ts src/lib/to-demo-content.test.ts scripts/send-trial-reminders.ts src/app/api/cron/trial-reminders/route.ts 'src/app/thiep/[slug]/page.tsx' src/app/dashboard/page.tsx src/app/dashboard/DashboardInvitationCard.tsx 'src/app/editor/[id]/page.tsx' 'src/app/editor/[id]/EditorForm.tsx' 'src/app/editor/[id]/PublishSuccessDialog.tsx' 'src/app/admin/demos/[id]/page.tsx'
+git add src/lib/invitation-entitlement.ts src/lib/invitation-entitlement.test.ts src/lib/trial-reminder.ts src/lib/trial-reminder.test.ts src/lib/to-demo-content.test.ts scripts/send-trial-reminders.ts src/app/api/cron/trial-reminders/route.ts 'src/app/thiep/[slug]/page.tsx' src/app/dashboard/page.tsx src/app/dashboard/DashboardInvitationCard.tsx 'src/app/editor/[id]/page.tsx' 'src/app/editor/[id]/EditorForm.tsx' 'src/app/editor/[id]/PublishSuccessDialog.tsx' 'src/app/admin/demos/[id]/page.tsx' tests/e2e/helpers/fixtures.ts tests/e2e/thiep.spec.ts tests/e2e/dashboard.spec.ts
 git commit -m "feat(invitation): support complimentary activation"
 ```
 
@@ -533,10 +613,13 @@ git commit -m "feat(invitation): support complimentary activation"
 **Files:**
 - Create: `src/lib/invitation-pricing.ts`
 - Create: `src/lib/invitation-pricing.test.ts`
+- Create: `src/lib/payment-service.test.ts`
 - Modify: `src/lib/payment-config.ts`
+- Modify: `src/lib/payment-service.ts`
 - Modify: `src/app/dashboard/[id]/thanh-toan/actions.ts`
 - Modify: `src/app/dashboard/[id]/thanh-toan/page.tsx`
 - Modify: `src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx`
+- Modify: `tests/e2e/helpers/fixtures.ts`
 - Modify: `tests/e2e/dashboard-manage.spec.ts`
 
 - [ ] **Step 1: Viết pricing unit tests đang đỏ**
@@ -678,159 +761,89 @@ export async function getPriceForUser(
 }
 ```
 
-- [ ] **Step 5: Làm checkout transaction-safe và không tạo payment cho thiệp activated**
+- [ ] **Step 4b: Chốt typed reason cho huỷ payOS ngay trong payment slice**
 
-Trong actions thanh toán, định nghĩa:
+Task 3 là nơi đầu tiên gọi `cancelPayosPayment(payment, reason)`, vì vậy contract
+hai tham số phải được triển khai tại đây, không trì hoãn sang Task 5. Trước khi
+sửa `src/lib/payment-service.ts`, tạo `src/lib/payment-service.test.ts`:
 
 ```ts
-export type CheckoutPreparation =
-  | { kind: "activated"; activation: "paid" | "complimentary" }
-  | { kind: "payment"; payment: PaymentInfo };
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import type { Payment } from "@/generated/prisma/client";
+import {
+  cancelPayosPayment,
+  PAYOS_CANCELLATION_REASONS,
+  type PayosCancellationReason,
+} from "./payment-service";
+
+test("payOS cancellation uses the bounded support reason contract", () => {
+  assert.deepEqual(PAYOS_CANCELLATION_REASONS, [
+    "voucher_changed",
+    "provider_create_failed",
+    "admin_price_changed",
+  ]);
+  const typedCancel: (
+    payment: Payment,
+    reason?: PayosCancellationReason,
+  ) => Promise<void> = cancelPayosPayment;
+  assert.equal(typedCancel, cancelPayosPayment);
+});
 ```
 
-`createOrGetPayment` phải dùng một interactive transaction để đọc entitlement, tái sử dụng/tạo payment và resolve giá:
+Chạy RED:
+
+```bash
+npx tsx --test src/lib/payment-service.test.ts
+npm run typecheck:tests
+```
+
+Expected: FAIL vì constants/type và optional reason chưa tồn tại. Sau đó dùng
+implementation tối thiểu chính xác trong `src/lib/payment-service.ts`:
 
 ```ts
-export async function createOrGetPayment(invitationId: string): Promise<CheckoutPreparation> {
-  const { userId } = await verifySession();
-  const provider = getPaymentProvider();
+export const PAYOS_CANCELLATION_REASONS = [
+  "voucher_changed",
+  "provider_create_failed",
+  "admin_price_changed",
+] as const;
 
-  const result = await prisma.$transaction(async (db) => {
-    const invitation = await db.invitation.findFirst({
-      where: { id: invitationId, userId },
-      select: {
-        paid: true,
-        complimentary: true,
-        adminPriceOverride: true,
-      },
+export type PayosCancellationReason =
+  (typeof PAYOS_CANCELLATION_REASONS)[number];
+
+export async function cancelPayosPayment(
+  payment: Payment,
+  reason: PayosCancellationReason = "voucher_changed",
+): Promise<void> {
+  if (payment.provider !== "payos" || !payment.providerOrderCode) return;
+  try {
+    await cancelPayosPaymentRequest(payment.providerOrderCode, reason);
+  } catch (error) {
+    console.error("Không thể hủy link payOS cũ", {
+      paymentId: payment.id,
+      error: error instanceof Error ? error.message : "unknown",
     });
-    if (!invitation) throw new Error("Không tìm thấy thiệp");
-    if (invitation.paid) return { kind: "activated" as const, activation: "paid" as const };
-    if (invitation.complimentary) {
-      return { kind: "activated" as const, activation: "complimentary" as const };
-    }
-
-    const existing = await db.payment.findFirst({
-      where: { invitationId, status: "pending", provider },
-      orderBy: { createdAt: "desc" },
-    });
-    if (existing && !isPendingPaymentExpired(existing.createdAt)) {
-      return {
-        kind: "payment" as const,
-        payment: existing,
-        voucherAllowed: invitation.adminPriceOverride === null,
-      };
-    }
-
-    const amount = await getPriceForInvitation(db, userId, invitationId);
-    if (amount <= 0) {
-      throw new Error("INVALID_COMPLIMENTARY_STATE");
-    }
-    const payment = await db.payment.create({
-      data: {
-        invitationId,
-        code: genOrderCode(),
-        amount,
-        provider,
-        providerOrderCode: provider === "payos" ? genPayosOrderCode() : null,
-      },
-    });
-    return {
-      kind: "payment" as const,
-      payment,
-      voucherAllowed: invitation.adminPriceOverride === null,
-    };
-  });
-
-  if (result.kind === "activated") return result;
-  const prepared = await preparePayment(result.payment);
-  return {
-    kind: "payment",
-    payment: paymentInfo(prepared, result.voucherAllowed),
-  };
+  }
 }
 ```
 
-Page thanh toán bỏ nhánh đọc `invitation.paid` riêng và luôn gọi đúng một lần `createOrGetPayment(id)`. Nó render activated state khi transaction trả `kind: "activated"`, kể cả activation đổi ngay trước request; không gọi `PaymentPanel` trong nhánh này. Copy lấy từ `getTranslations("paymentActivation")`.
+Chạy lại hai command trên và yêu cầu unit test cùng test typecheck PASS. Mọi call
+ở cuối Task 3 và Task 7 dùng đúng ba literal trong union này; Task 5 chỉ tái sử
+dụng contract, không được định nghĩa lại signature.
 
-- [ ] **Step 6: Chặn voucher làm giảm tiếp “giá cuối cùng” của Admin**
+- [ ] **Step 5: Viết checkout/voucher E2E đang đỏ trước implementation**
 
-Thêm `voucherAllowed: boolean` vào `PaymentInfo`. `createOrGetPayment` phải select thêm `adminPriceOverride`, return internal result `{ payment, voucherAllowed: invitation.adminPriceOverride === null }`, rồi gọi helper sau transaction:
-
-```ts
-function paymentInfo(payment: Payment, voucherAllowed: boolean): PaymentInfo {
-  return {
-    paymentId: payment.id,
-    code: payment.code,
-    amount: payment.amount,
-    voucherCode: payment.voucherCode,
-    status: payment.status,
-    expiresAt: paymentExpiresAt(payment.createdAt),
-    provider: payment.provider === "payos" ? "payos" : "casso",
-    checkoutUrl: payment.providerCheckoutUrl,
-    bankBin: payment.providerBankBin ?? BANK.bin,
-    bankAccount: payment.providerBankAccount ?? BANK.account,
-    bankAccountName: payment.providerBankAccountName ?? BANK.name,
-    voucherAllowed,
-  };
-}
-```
-
-Trong `applyVoucherToPayment`, query payment kèm:
-
-```ts
-include: {
-  invitation: {
-    select: { userId: true, adminPriceOverride: true },
-  },
-},
-```
-
-Sau authorization, từ chối:
-
-```ts
-if (payment.invitation.adminPriceOverride !== null) {
-  return { ok: false, errorCode: "customPriceVoucherBlocked" };
-}
-```
-
-`PaymentPanel` chỉ render input voucher khi `payment.voucherAllowed` và chưa có `voucherCode`.
-
-Đổi `VoucherResult` từ free-form message sang contract chính xác sau:
-
-```ts
-export type VoucherErrorCode =
-  | "voucherRequired"
-  | "paymentNotFound"
-  | "forbidden"
-  | "paymentProcessed"
-  | "voucherAlreadyApplied"
-  | "paymentExpired"
-  | "voucherInvalid"
-  | "voucherExpired"
-  | "voucherExhausted"
-  | "paymentProviderFailed"
-  | "customPriceVoucherBlocked";
-
-export type VoucherResult =
-  | { ok: true; payment: PaymentInfo }
-  | { ok: false; errorCode: VoucherErrorCode };
-```
-
-Mọi nhánh lỗi hiện tại map theo đúng thứ tự guard sang các code trên. Bổ sung toàn bộ keys vào `paymentActivation.errors` của cả năm catalog; `PaymentPanel` chỉ render `t(`errors.${result.errorCode}`)`. Không trả copy tiếng Việt trực tiếp từ action mới/refactor.
-
-Toàn bộ validate voucher và update/create replacement phải chạy trong một interactive transaction. Trong transaction, re-read payment với điều kiện `status: "pending"`, re-read `invitation.adminPriceOverride`, voucher active/expiry/uses, rồi mới update. Như vậy Admin đổi giá đồng thời không thể bị một action voucher đang bay ghi đè. Với payOS, transaction tạo replacement và đổi old payment local sang `cancelled` để giữ semantics voucher hiện tại; lời gọi `ensurePayosPaymentRequest` chạy sau commit, và nếu provider create thất bại thì mark replacement `failed` như behavior hiện tại. Admin price action ở Task 5 sẽ supersede cả `pending` và `cancelled`, nên sau khi Admin đổi giá không còn payment cũ nào settle được.
-
-- [ ] **Step 7: Viết E2E regression cho override và complimentary checkout**
-
-Trong `tests/e2e/helpers/fixtures.ts`, mở rộng overrides:
+Task 2 đã thêm `complimentary` vào fixture và câu INSERT. Task 3 **chỉ** thêm
+`adminPriceOverride` vào override type, danh sách cột SQL và bind values; không
+lặp lại hoặc ghi đè phần `complimentary` đã có:
 
 ```ts
 adminPriceOverride: number | null;
-complimentary: boolean;
 ```
 
-và thêm các cột này vào câu INSERT Invitation. Trong `tests/e2e/dashboard-manage.spec.ts`, thêm hai test:
+và thêm cột này vào câu INSERT Invitation cùng một bind value nullable. Trong
+`tests/e2e/dashboard-manage.spec.ts`, thêm hai test:
 
 ```ts
 test("admin final price is used for the next payment", async ({ page, context }) => {
@@ -864,20 +877,334 @@ test("complimentary invitation creates no payment", async ({ page, context }) =>
 });
 ```
 
+Trong cùng suite, thêm characterization cho voucher thường và regression stale UI. Thêm ba helper local typed, dùng `randomUUID()`/`prismaNow()` và SQL thật:
+
+```ts
+function createVoucher(input: { amountOff: number; active: boolean }): { id: string; code: string } {
+  const id = `v-${randomUUID()}`;
+  const code = `VC${randomUUID().slice(0, 8).toUpperCase()}`;
+  getDb().prepare(`
+    INSERT INTO Voucher (id, code, amountOff, active, usedCount, createdAt)
+    VALUES (?, ?, ?, ?, 0, ?)
+  `).run(id, code, input.amountOff, input.active ? 1 : 0, prismaNow());
+  return { id, code };
+}
+
+function cleanupVoucher(code: string): void {
+  getDb().prepare("DELETE FROM Voucher WHERE code = ?").run(code);
+}
+
+function latestPaymentOf(invitationId: string): {
+  id: string;
+  amount: number;
+  voucherCode: string | null;
+  status: string;
+} {
+  return getDb().prepare(`
+    SELECT id, amount, voucherCode, status FROM Payment
+    WHERE invitationId = ? ORDER BY createdAt DESC, id DESC LIMIT 1
+  `).get(invitationId) as {
+    id: string;
+    amount: number;
+    voucherCode: string | null;
+    status: string;
+  };
+}
+```
+
+Test thứ hai phải mở trang trước để lấy payment/voucher form, rồi mới update override trực tiếp nhằm mô phỏng Admin đổi giá trong lúc form cũ đang mở:
+
+```ts
+test("a regular voucher still applies and returns updated payment info", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id);
+  const voucher = createVoucher({ amountOff: 20_000, active: true });
+  try {
+    await loginAsUser(context, user.id);
+    await page.goto(`/dashboard/${invitation.id}/thanh-toan`);
+    await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
+    await page.getByRole("button", { name: "Áp mã" }).click();
+    await expect(page.getByText("130.000đ")).toBeVisible();
+    const latest = latestPaymentOf(invitation.id);
+    expect(latest).toMatchObject({ amount: 130_000, voucherCode: voucher.code });
+  } finally {
+    cleanupVoucher(voucher.code);
+    cleanup(user.id);
+  }
+});
+
+test("a stale voucher form rejects an admin final price without mutating payment", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id);
+  const voucher = createVoucher({ amountOff: 20_000, active: true });
+  try {
+    await loginAsUser(context, user.id);
+    await page.goto(`/dashboard/${invitation.id}/thanh-toan`);
+    const before = latestPaymentOf(invitation.id);
+    getDb().prepare(
+      "UPDATE Invitation SET adminPriceOverride = 79000, updatedAt = ? WHERE id = ?",
+    ).run(prismaNow(), invitation.id);
+
+    await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
+    await page.getByRole("button", { name: "Áp mã" }).click();
+    await expect(page.getByText("Thiệp đã có giá ưu đãi riêng.")).toBeVisible();
+    expect(latestPaymentOf(invitation.id)).toMatchObject({
+      id: before.id,
+      amount: before.amount,
+      voucherCode: null,
+      status: "pending",
+    });
+  } finally {
+    cleanupVoucher(voucher.code);
+    cleanup(user.id);
+  }
+});
+```
+
+Chạy trước khi sửa action:
+
+```bash
+npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation|regular voucher|stale voucher|non-owner cannot access payment page'
+```
+
+Expected: các case override/complimentary/stale voucher FAIL vì giá mới chưa điều
+khiển amount/visibility hoặc vẫn tạo payment; characterization voucher thường và
+`non-owner cannot access payment page (404)` tiếp tục PASS. Nếu non-owner không
+còn render 404 hoặc tạo payment, dừng và sửa ownership contract trước Step 6.
+
+- [ ] **Step 6: Làm checkout transaction-safe và định nghĩa result union đầy đủ**
+
+Trong actions thanh toán, định nghĩa internal/public result riêng:
+
+```ts
+type CheckoutTxResult =
+  | { kind: "not-found" }
+  | { kind: "activated"; activation: "paid" | "complimentary" }
+  | { kind: "payment"; payment: Payment; voucherAllowed: boolean };
+
+export type CheckoutPreparation =
+  | { kind: "not-found" }
+  | { kind: "activated"; activation: "paid" | "complimentary" }
+  | { kind: "payment"; payment: PaymentInfo };
+```
+
+Thêm `voucherAllowed: boolean` vào `PaymentInfo` và đổi helper thành chữ ký bắt buộc:
+
+```ts
+function paymentInfo(payment: Payment, voucherAllowed: boolean): PaymentInfo {
+  return {
+    paymentId: payment.id,
+    code: payment.code,
+    amount: payment.amount,
+    voucherCode: payment.voucherCode,
+    status: payment.status,
+    expiresAt: paymentExpiresAt(payment.createdAt),
+    provider: payment.provider === "payos" ? "payos" : "casso",
+    checkoutUrl: payment.providerCheckoutUrl,
+    bankBin: payment.providerBankBin ?? BANK.bin,
+    bankAccount: payment.providerBankAccount ?? BANK.account,
+    bankAccountName: payment.providerBankAccountName ?? BANK.name,
+    voucherAllowed,
+  };
+}
+```
+
+`createOrGetPayment` dùng implementation đầy đủ sau. Không lặp lại `paid || complimentary`, không dùng `getPriceForUser` trong transaction:
+
+```ts
+export async function createOrGetPayment(
+  invitationId: string,
+): Promise<CheckoutPreparation> {
+  const { userId } = await verifySession();
+  const provider = getPaymentProvider();
+  const result = await prisma.$transaction(async (db): Promise<CheckoutTxResult> => {
+    const invitation = await db.invitation.findFirst({
+      where: { id: invitationId, userId },
+      select: { paid: true, complimentary: true, adminPriceOverride: true },
+    });
+    if (!invitation) return { kind: "not-found" };
+
+    const activation = getInvitationActivation(invitation);
+    if (activation !== "trial") return { kind: "activated", activation };
+
+    const voucherAllowed = invitation.adminPriceOverride === null;
+    const existing = await db.payment.findFirst({
+      where: { invitationId, status: "pending", provider },
+      orderBy: { createdAt: "desc" },
+    });
+    if (existing && !isPendingPaymentExpired(existing.createdAt)) {
+      return { kind: "payment", payment: existing, voucherAllowed };
+    }
+
+    const amount = await getPriceForInvitation(db, userId, invitationId);
+    if (amount <= 0) throw new Error("INVALID_COMPLIMENTARY_STATE");
+    const payment = await db.payment.create({
+      data: {
+        invitationId,
+        code: genOrderCode(),
+        amount,
+        provider,
+        providerOrderCode: provider === "payos" ? genPayosOrderCode() : null,
+      },
+    });
+    return { kind: "payment", payment, voucherAllowed };
+  });
+
+  if (result.kind === "not-found" || result.kind === "activated") return result;
+  const prepared = await preparePayment(result.payment);
+  return {
+    kind: "payment",
+    payment: paymentInfo(prepared, result.voucherAllowed),
+  };
+}
+```
+
+Nếu giá resolve `<= 0` trong một trial record, throw domain error `INVALID_COMPLIMENTARY_STATE`; không tạo payment 0 thay cho Admin entitlement. Sau commit, gọi `preparePayment`, rồi `paymentInfo(prepared, result.voucherAllowed)`. Page thanh toán bỏ query/guard `invitation.paid` riêng, gọi `createOrGetPayment(id)` đúng một lần và chỉ map nhánh typed `not-found` sang `notFound()`:
+
+```ts
+const preparation = await createOrGetPayment(id);
+if (preparation.kind === "not-found") notFound();
+if (preparation.kind === "activated") {
+  const title = preparation.activation === "paid"
+    ? t("paidTitle")
+    : t("complimentaryTitle");
+  const description = preparation.activation === "paid"
+    ? t("paidDescription")
+    : t("complimentaryDescription");
+  return (
+    <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow">
+      <h1 className="font-heading text-2xl font-semibold text-foreground">{title}</h1>
+      <p className="mt-2 text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+return <PaymentPanel initial={preparation.payment} />;
+```
+
+Ở đây `t` là `await getTranslations("paymentActivation")`; các keys đã tồn tại
+từ Task 6 theo thứ tự thực thi bắt buộc. Giữ back link/page shell hiện có quanh
+ba nhánh, không tạo component giả hoặc thêm file ngoài file map.
+
+`verifySession()` và lookup ownership `{ id: invitationId, userId }` phải tiếp tục
+nằm trong action/transaction; page không được khôi phục pre-query riêng. Chỉ
+`not-found` được map thành 404, còn lỗi hạ tầng phải rethrow. Điều này bảo toàn
+test non-owner hiện có: User B thấy đúng UI 404 như ID lạ và không có payment nào
+được tạo cho thiệp của User A.
+
+- [ ] **Step 7: Viết voucher transaction tương tác, không nested transaction**
+
+Đổi result sang error code ổn định:
+
+```ts
+export type VoucherErrorCode =
+  | "voucherRequired"
+  | "paymentNotFound"
+  | "forbidden"
+  | "paymentProcessed"
+  | "voucherAlreadyApplied"
+  | "paymentExpired"
+  | "voucherInvalid"
+  | "voucherExpired"
+  | "voucherExhausted"
+  | "paymentProviderFailed"
+  | "customPriceVoucherBlocked";
+
+export type VoucherResult =
+  | { ok: true; payment: PaymentInfo }
+  | { ok: false; errorCode: VoucherErrorCode };
+
+type VoucherTxResult = {
+  payment: Payment;
+  voucherAllowed: true;
+  oldPayosToCancel: Payment | null;
+  needsPayosRequest: boolean;
+};
+```
+
+Định nghĩa error nội bộ để callback transaction có thể abort mà outer action chỉ map đúng domain lỗi:
+
+```ts
+class VoucherMutationError extends Error {
+  constructor(readonly code: Exclude<VoucherErrorCode, "voucherRequired" | "paymentProviderFailed">) {
+    super(code);
+  }
+}
+
+function voucherFailure(error: unknown): VoucherResult {
+  if (error instanceof VoucherMutationError) {
+    return { ok: false, errorCode: error.code };
+  }
+  throw error;
+}
+```
+
+`verifySession()` và guard code rỗng chạy trước transaction. Mọi guard/data mutation còn lại chạy trong **một** `prisma.$transaction(async (db) => ...)`, theo đúng thứ tự sau; mỗi nhánh lỗi throw `VoucherMutationError(code)` để rollback:
+
+1. `db.payment.findUnique({ where: { id: paymentId }, include: { invitation: { select: { userId: true, adminPriceOverride: true } } } })`; null → `paymentNotFound`.
+2. So `invitation.userId` với session user → `forbidden`; `status !== "pending"` → `paymentProcessed`; đã có `voucherCode` → `voucherAlreadyApplied`; expired → `paymentExpired`.
+3. Kiểm tra lại `invitation.adminPriceOverride`; khác `null` → `customPriceVoucherBlocked`. Đây là guard stale UI bắt buộc.
+4. `db.voucher.findUnique({ where: { code } })`; lần lượt map inactive/null → `voucherInvalid`, quá hạn → `voucherExpired`, hết lượt → `voucherExhausted`.
+5. Tính `amount = applyVoucher(payment.amount, voucher.amountOff)`.
+6. Với Casso, dùng `payment.updateMany({ where: { id: payment.id, status: "pending", voucherCode: null }, ... })`. `amount > 0` ghi `amount/voucherCode`; `amount === 0` ghi thêm `status:"paid", paidAt:now`, update `Invitation.paid=true` và increment voucher ngay trong transaction. Nếu `count !== 1`, throw typed `paymentProcessed` để rollback.
+7. Với payOS, conditional update payment cũ `pending → cancelled` trước; `count !== 1` rollback `paymentProcessed`. Tạo replacement với `voucherCode`, provider/order code mới và `status: amount === 0 ? "paid" : "pending"`. Nếu zero, update invitation paid và increment voucher trong cùng transaction; nếu dương, chưa increment voucher vì `markPaymentPaid` sẽ increment khi settlement thật.
+8. Return `VoucherTxResult`; Casso trả payment đã re-read, `oldPayosToCancel:null`, `needsPayosRequest:false`; payOS trả replacement, payment cũ trong `oldPayosToCancel`, và `needsPayosRequest = amount > 0`. Outer `try/catch` gọi `voucherFailure`; lỗi lạ rethrow và không chạy provider I/O.
+
+Tuyệt đối không gọi `markPaymentPaid` từ callback transaction vì helper đó mở transaction riêng. Zero-amount activation, `paidAt`, invitation `paid` và voucher increment phải commit/rollback cùng nhau như bước 6–7.
+
+Sau commit mới chạy provider I/O theo thứ tự:
+
+```ts
+if (result.oldPayosToCancel) {
+  await cancelPayosPayment(result.oldPayosToCancel, "voucher_changed");
+}
+let payment = result.payment;
+if (result.needsPayosRequest) {
+  try {
+    payment = await ensurePayosPaymentRequest(payment);
+  } catch (error) {
+    await prisma.payment.updateMany({
+      where: { id: payment.id, status: "pending" },
+      data: { status: "failed" },
+    });
+    await cancelPayosPayment(payment, "provider_create_failed");
+    console.error("Không thể tạo link payOS sau khi áp voucher", {
+      paymentId: payment.id,
+      error: error instanceof Error ? error.message : "unknown",
+    });
+    return { ok: false, errorCode: "paymentProviderFailed" };
+  }
+}
+return { ok: true, payment: paymentInfo(payment, true) };
+```
+
+Conditional `pending → failed` là bắt buộc để provider failure không ghi đè `superseded`. `cancelPayosPayment` và `ensurePayosPaymentRequest` không chạy trong transaction. `PaymentPanel` chỉ render voucher form khi `payment.voucherAllowed && !payment.voucherCode`, và dịch `errorCode` qua `paymentActivation.errors`.
+
+Rà toàn bộ call site hiện có trong `actions.ts`: cached/new checkout đều truyền `invitation.adminPriceOverride === null`; Casso updated/zero-paid và payOS replacement đều truyền `true` sau guard override. Chạy:
+
+```bash
+rg -n 'paymentInfo\(' 'src/app/dashboard/[id]/thanh-toan/actions.ts'
+```
+
+Expected: definition có hai parameters và mọi call có argument `voucherAllowed`; không còn `paymentInfo(payment)` một-argument.
+
 - [ ] **Step 8: Chạy unit, E2E slice và typecheck**
 
 ```bash
 npx tsx --test src/lib/invitation-pricing.test.ts
 npm run typecheck
-npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation'
+npm run typecheck:tests
+npx tsx --test src/lib/payment-service.test.ts
+npx playwright test tests/e2e/dashboard-manage.spec.ts --project=chromium --grep 'final price|complimentary invitation|regular voucher|stale voucher|non-owner cannot access payment page'
 ```
 
-Expected: unit tests PASS, typecheck exit 0, 2 E2E tests PASS.
+Expected: pricing/payment-service unit tests PASS, cả hai typecheck exit 0; override,
+complimentary, voucher thường, stale-form và non-owner 404 E2E đều PASS. Case
+non-owner vẫn không tạo payment.
 
-- [ ] **Step 9: Commit pricing slice**
+- [ ] **Step 9: Commit pricing/checkout slice**
 
 ```bash
-git add src/lib/invitation-pricing.ts src/lib/invitation-pricing.test.ts src/lib/payment-config.ts 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/helpers/fixtures.ts tests/e2e/dashboard-manage.spec.ts
+git add src/lib/invitation-pricing.ts src/lib/invitation-pricing.test.ts src/lib/payment-config.ts src/lib/payment-service.ts src/lib/payment-service.test.ts 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/helpers/fixtures.ts tests/e2e/dashboard-manage.spec.ts
 git commit -m "feat(payment): honor invitation final price overrides"
 ```
 
@@ -892,11 +1219,14 @@ git commit -m "feat(payment): honor invitation final price overrides"
 - Modify: `src/app/api/casso/webhook/route.ts`
 - Modify: `src/app/api/payos/webhook/route.ts`
 - Modify: `src/app/api/payment/[code]/status/route.ts`
+- Modify: `src/app/dashboard/[id]/thanh-toan/actions.ts`
+- Modify: `src/app/dashboard/[id]/thanh-toan/page.tsx`
 - Modify: `src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx`
+- Modify: `tests/e2e/helpers/auth.ts`
 - Modify: `tests/e2e/payment-webhook.spec.ts`
 - Modify: `tests/e2e/payos-webhook.spec.ts`
 
-- [ ] **Step 1: Viết unit test đang đỏ cho tập trạng thái settleable**
+- [ ] **Step 1: Viết unit tests đang đỏ cho quyết định settlement và log an toàn**
 
 Tạo `src/lib/payment-settlement.test.ts`:
 
@@ -904,7 +1234,11 @@ Tạo `src/lib/payment-settlement.test.ts`:
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isPaymentSettleable } from "./payment-settlement";
+import {
+  cassoReconciliationMetadata,
+  decideCassoSettlement,
+  isPaymentSettleable,
+} from "./payment-settlement";
 
 test("only pending and legacy voucher-cancelled payments may settle", () => {
   assert.equal(isPaymentSettleable("pending"), true);
@@ -912,6 +1246,66 @@ test("only pending and legacy voucher-cancelled payments may settle", () => {
   assert.equal(isPaymentSettleable("superseded"), false);
   assert.equal(isPaymentSettleable("failed"), false);
   assert.equal(isPaymentSettleable("paid"), false);
+});
+
+const candidate = {
+  id: "payment-1",
+  code: "CDABC123",
+  provider: "casso",
+  status: "pending",
+  amount: 150_000,
+  createdAt: new Date("2026-08-13T10:00:00.000Z"),
+};
+const now = new Date("2026-08-13T10:05:00.000Z");
+
+test("Casso decision distinguishes settle, ignore and manual reconciliation", () => {
+  assert.deepEqual(decideCassoSettlement({ payment: candidate, receivedAmount: 150_000, now }), {
+    kind: "settle",
+  });
+  assert.deepEqual(decideCassoSettlement({ payment: null, receivedAmount: 150_000, now }), {
+    kind: "ignore",
+    reason: "unknown-code",
+  });
+  assert.deepEqual(decideCassoSettlement({
+    payment: { ...candidate, status: "paid" }, receivedAmount: 150_000, now,
+  }), { kind: "ignore", reason: "duplicate-paid" });
+  assert.deepEqual(decideCassoSettlement({
+    payment: { ...candidate, status: "superseded" }, receivedAmount: 150_000, now,
+  }), { kind: "reconcile", reason: "superseded" });
+  assert.deepEqual(decideCassoSettlement({
+    payment: { ...candidate, status: "failed" }, receivedAmount: 150_000, now,
+  }), { kind: "reconcile", reason: "non-settleable" });
+  assert.deepEqual(decideCassoSettlement({
+    payment: { ...candidate, createdAt: new Date("2026-08-12T10:00:00.000Z") },
+    receivedAmount: 150_000,
+    now,
+  }), { kind: "reconcile", reason: "expired" });
+  assert.deepEqual(decideCassoSettlement({ payment: candidate, receivedAmount: 149_999, now }), {
+    kind: "reconcile",
+    reason: "underpaid",
+  });
+  assert.deepEqual(decideCassoSettlement({
+    payment: { ...candidate, status: "cancelled" }, receivedAmount: 150_000, now,
+  }), { kind: "settle" });
+});
+
+test("manual reconciliation metadata contains identifiers and money only", () => {
+  const metadata = cassoReconciliationMetadata({
+    transactionId: 42,
+    payment: candidate,
+    receivedAmount: 149_999,
+    reason: "underpaid",
+  });
+  assert.deepEqual(metadata, {
+    transactionId: 42,
+    paymentId: "payment-1",
+    paymentCode: "CDABC123",
+    localStatus: "pending",
+    expectedAmount: 150_000,
+    receivedAmount: 149_999,
+    reason: "underpaid",
+  });
+  assert.doesNotMatch(JSON.stringify(metadata), /description|account|bank/i);
 });
 ```
 
@@ -921,19 +1315,187 @@ test("only pending and legacy voucher-cancelled payments may settle", () => {
 npx tsx --test src/lib/payment-settlement.test.ts
 ```
 
-Expected: FAIL vì module chưa tồn tại.
+Expected: FAIL vì module/quyết định chưa tồn tại.
 
-- [ ] **Step 3: Viết helper và siết conditional claim chống race**
+- [ ] **Step 3: Viết helper thuần đầy đủ**
 
 Tạo `src/lib/payment-settlement.ts`:
 
 ```ts
+import { PAYMENT_PENDING_EXPIRES_MS } from "@/lib/payment";
+
 export const SETTLEABLE_PAYMENT_STATUSES = ["pending", "cancelled"] as const;
 
 export function isPaymentSettleable(status: string): boolean {
   return (SETTLEABLE_PAYMENT_STATUSES as readonly string[]).includes(status);
 }
+
+export type CassoCandidate = {
+  id: string;
+  code: string;
+  provider: string;
+  status: string;
+  amount: number;
+  createdAt: Date;
+};
+
+export type CassoDecision =
+  | { kind: "settle" }
+  | { kind: "ignore"; reason: "duplicate-paid" | "unknown-code" }
+  | {
+      kind: "reconcile";
+      reason: "superseded" | "expired" | "underpaid" | "non-settleable";
+    };
+
+export function decideCassoSettlement(input: {
+  payment: CassoCandidate | null;
+  receivedAmount: number;
+  now: Date;
+}): CassoDecision {
+  const payment = input.payment;
+  if (!payment || payment.provider !== "casso") {
+    return { kind: "ignore", reason: "unknown-code" };
+  }
+  if (payment.status === "paid") return { kind: "ignore", reason: "duplicate-paid" };
+  if (payment.status === "superseded") return { kind: "reconcile", reason: "superseded" };
+  if (!isPaymentSettleable(payment.status)) {
+    return { kind: "reconcile", reason: "non-settleable" };
+  }
+  if (input.now.getTime() >= payment.createdAt.getTime() + PAYMENT_PENDING_EXPIRES_MS) {
+    return { kind: "reconcile", reason: "expired" };
+  }
+  if (input.receivedAmount < payment.amount) {
+    return { kind: "reconcile", reason: "underpaid" };
+  }
+  return { kind: "settle" };
+}
+
+type ReconciliationReason = Extract<CassoDecision, { kind: "reconcile" }>["reason"];
+
+export function cassoReconciliationMetadata(input: {
+  transactionId: number | string | null;
+  payment: CassoCandidate;
+  receivedAmount: number;
+  reason: ReconciliationReason;
+}) {
+  return {
+    transactionId: input.transactionId,
+    paymentId: input.payment.id,
+    paymentCode: input.payment.code,
+    localStatus: input.payment.status,
+    expectedAmount: input.payment.amount,
+    receivedAmount: input.receivedAmount,
+    reason: input.reason,
+  };
+}
 ```
+
+Helper không nhận description/nội dung chuyển khoản, số tài khoản hoặc payload raw nên caller không thể vô tình log chúng.
+
+- [ ] **Step 4: Viết webhook E2E đang đỏ trước khi đổi route/service**
+
+Ngoài hai test `superseded ... cannot activate`, thêm test Casso và payOS cho legacy voucher `cancelled` với amount đủ; cả hai phải chuyển payment thành `paid`, invitation thành `paid=1`. Thêm assertion status route trả nguyên chuỗi `superseded`:
+
+```ts
+test("legacy voucher-cancelled Casso payment still settles", async ({ request }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id);
+  const payment = createPayment(invitation.id, {
+    code: "CDCANCEL2",
+    amount: 130_000,
+    status: "cancelled",
+    voucherCode: "LEGACY20",
+  });
+  try {
+    const body = cassoBody(`thanh toan ${payment.code}`, 130_000);
+    expect((await request.post(WEBHOOK_PATH, {
+      headers: { "x-casso-signature": signCasso(body) },
+      data: body,
+    })).status()).toBe(200);
+    expect(getPayment(payment.code)?.status).toBe("paid");
+    expect(getInvitationPaid(invitation.id)).toBe(1);
+  } finally {
+    cleanupUser(user.id);
+  }
+});
+```
+
+PayOS test dùng `provider:"payos"`, `status:"cancelled"`, signed `orderCode`/amount
+tương ứng và cùng assertions. Với superseded payment, gọi
+`GET /api/payment/${code}/status` bằng user session và assert JSON
+`status === "superseded"`.
+
+Trong chính Step 4, trước mọi thay đổi route/service, thêm ba status-route tests
+vào `tests/e2e/payment-webhook.spec.ts`. Import `loginAsUser` và dùng
+`page.request` sau khi set cookie cho các request authenticated. Nếu cần request
+unauthenticated sau một login trong cùng test, thêm/export helper typed
+`logoutUser(context)` trong `tests/e2e/helpers/auth.ts` chỉ xoá cookie `session`.
+Các test phải mang tên chính xác và nằm trong file trước lần chạy RED:
+
+```ts
+test("payment status rejects unauthenticated GET", async ({ request }) => {
+  const response = await request.get("/api/payment/CDNOPE22/status", {
+    maxRedirects: 0,
+  });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toContain("/login");
+});
+
+test("payment status hides another user's payment like an unknown code", async ({ page, context }) => {
+  const userA = createUser();
+  const userB = createUser();
+  const invitationA = createInvitation(userA.id);
+  const paymentA = createPayment(invitationA.id, {
+    code: "CDOWNER2",
+    status: "pending",
+  });
+  try {
+    await loginAsUser(context, userB.id);
+    const ownedByA = await page.request.get(`/api/payment/${paymentA.code}/status`);
+    const unknown = await page.request.get("/api/payment/CDNOPE22/status");
+    expect(ownedByA.status()).toBe(404);
+    expect(await ownedByA.json()).toEqual({ error: "not found" });
+    expect(unknown.status()).toBe(404);
+    expect(await unknown.json()).toEqual({ error: "not found" });
+  } finally {
+    cleanupUser(userA.id);
+    cleanupUser(userB.id);
+  }
+});
+
+test("payment status returns exact local superseded for its owner", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id);
+  const payment = createPayment(invitation.id, {
+    code: "CDSUPER2",
+    provider: "payos",
+    providerOrderCode: "987654321",
+    status: "superseded",
+  });
+  try {
+    await loginAsUser(context, user.id);
+    const response = await page.request.get(`/api/payment/${payment.code}/status`);
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual({ status: "superseded" });
+  } finally {
+    cleanupUser(user.id);
+  }
+});
+```
+
+Test owner-superseded phải chạy với payOS provider và không mock provider; nếu
+route gọi remote reconciliation, test phải đỏ do network/provider error hoặc
+không trả exact local status. Chạy RED bao gồm cả ba title mới:
+
+```bash
+npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium --grep 'superseded|legacy voucher-cancelled|payment status rejects unauthenticated GET|payment status hides another user|payment status returns exact local superseded'
+```
+
+Expected: ít nhất unauthenticated và non-owner tests FAIL vì route hiện chưa gọi
+`verifySession()`/chưa bind ownership; legacy Casso `cancelled` cũng FAIL vì
+webhook hiện prefilter `pending`. Không được đổi expected thành public polling.
+
+- [ ] **Step 5: Siết conditional claim chống race**
 
 Trong `src/lib/payment-service.ts`, thay guard và conditional update:
 
@@ -957,7 +1519,7 @@ const claimed = await db.payment.updateMany({
 
 Điều kiện thứ hai là bắt buộc: nếu Admin đổi `pending → superseded` sau lần read nhưng trước lần update, `updateMany` phải trả count `0`. Giữ `cancelled` trong tập để không âm thầm thay đổi semantics voucher hiện tại; trạng thái mới `superseded` tuyệt đối không nằm trong tập.
 
-- [ ] **Step 4: Viết E2E characterization cho payment `superseded`**
+**Hai superseded tests đầy đủ thuộc Step 4:**
 
 Trong Casso suite thêm:
 
@@ -1023,37 +1585,89 @@ test("superseded payOS payment cannot activate an invitation", async ({ request 
 });
 ```
 
-- [ ] **Step 5: Chạy unit và hai E2E characterization tests**
+- [ ] **Step 6: Cho Casso load theo code và xử lý đủ settle/ignore/reconcile**
 
-```bash
-npx tsx --test src/lib/payment-settlement.test.ts
-npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium --grep 'superseded'
-```
-
-Expected: unit test và cả hai E2E tests PASS. E2E là characterization của bất biến route; unit test là test đỏ/đỏ→xanh cho helper mới và conditional claim được review cùng implementation.
-
-Trong `reconcilePayosPayment`, return sớm nếu local payment không còn settleable:
+Giữ validation JSON/signature và extraction `ORDER_CODE_REGEX`, nhưng query `findUnique({ where: { code } })` **không có status prefilter**. Sau đó gọi `decideCassoSettlement`. Với `ignore`, trả `{ success:true }`. Với `reconcile`, log đúng một event có metadata allowlist rồi không claim:
 
 ```ts
-if (!isPaymentSettleable(payment.status)) {
-  return payment.status === "paid" ? "paid" : "cancelled";
+function logReconciliation(input: {
+  transactionId: number | string | null;
+  payment: CassoCandidate;
+  receivedAmount: number;
+  reason: Extract<CassoDecision, { kind: "reconcile" }>["reason"];
+}): void {
+  console.warn(
+    "payment_manual_reconciliation_required",
+    cassoReconciliationMetadata(input),
+  );
 }
 ```
 
-- [ ] **Step 6: Cho Casso dùng settlement service chung**
-
-Thay transaction thủ công trong Casso route bằng:
+Nhánh settle và race handling phải là:
 
 ```ts
-const result = await markPaymentPaid(payment.id, received);
-if (result.updated && result.slug) {
-  revalidatePath(`/thiep/${result.slug}`);
+const decision = decideCassoSettlement({ payment, receivedAmount: received, now: new Date() });
+if (decision.kind === "reconcile" && payment) {
+  logReconciliation({
+    transactionId: tx?.id ?? null,
+    payment,
+    receivedAmount: received,
+    reason: decision.reason,
+  });
 }
+if (decision.kind === "settle" && payment) {
+  const result = await markPaymentPaid(payment.id, received);
+  if (result.updated) {
+    if (result.slug) revalidatePath(`/thiep/${result.slug}`);
+  } else {
+    const latest = await prisma.payment.findUnique({ where: { id: payment.id } });
+    const latestDecision = decideCassoSettlement({
+      payment: latest,
+      receivedAmount: received,
+      now: new Date(),
+    });
+    if (latest && latestDecision.kind === "reconcile") {
+      logReconciliation({
+        transactionId: tx?.id ?? null,
+        payment: latest,
+        receivedAmount: received,
+        reason: latestDecision.reason,
+      });
+    }
+  }
+}
+return Response.json({ success: true });
 ```
 
-Giữ điều kiện signature, provider, `status === "pending"`, expiry và amount hiện có trước lời gọi. Import `markPaymentPaid` từ `@/lib/payment-service`. Cách này đảm bảo Casso và payOS dùng cùng conditional claim trong transaction.
+Do đó Casso `pending` và legacy voucher `cancelled` amount đủ đều settle; `superseded`, expired, underpaid và terminal non-settleable có tiền đều tạo structured warning nhưng tuyệt đối không claim; duplicate paid và code/provider không thuộc Casso được ignore. Không log `description`, payload raw, account number hoặc bank text.
 
 - [ ] **Step 7: Chặn tạo link payOS cho payment vừa bị supersede**
+
+Trước hết, `reconcilePayosPayment` phải giữ nguyên local terminal status và chỉ hỏi/claim provider khi local status settleable:
+
+```ts
+export async function reconcilePayosPayment(payment: Payment): Promise<string> {
+  if (payment.provider !== "payos" || !payment.providerOrderCode) {
+    return payment.status;
+  }
+  if (!isPaymentSettleable(payment.status)) return payment.status;
+
+  const remote = await getPayosPaymentRequest(payment.providerOrderCode);
+  const remoteStatus = remote.status.toUpperCase();
+  if (remoteStatus === "PAID") {
+    const result = await markPaymentPaid(
+      payment.id,
+      Math.max(remote.amountPaid ?? 0, remote.amount ?? 0),
+    );
+    if (result.updated) return "paid";
+    return (await prisma.payment.findUniqueOrThrow({ where: { id: payment.id } })).status;
+  }
+  if (remoteStatus === "CANCELLED") return "cancelled";
+  return payment.status;
+}
+```
+
+PayOS webhook vẫn query bằng `providerOrderCode` và gọi `markPaymentPaid`; không thêm `status:"pending"` prefilter. `markPaymentPaid` là nơi cho phép `pending/cancelled`. Nếu conditional claim thua race, re-read để phục vụ structured reconciliation/observability nhưng không update status; đặc biệt không map `superseded` thành `cancelled` hoặc `pending`.
 
 Trong `ensurePayosPaymentRequest`, re-read payment trước provider call:
 
@@ -1091,9 +1705,51 @@ return latest;
 
 Trong `createOrGetPayment`, sau `preparePayment`, nếu returned payment không còn `pending`, return `{ kind: "price-changed" }`. Bổ sung nhánh này vào `CheckoutPreparation` và payment page render cùng copy/nút reload với trạng thái superseded. Không trả QR/link từ payment đã mất hiệu lực.
 
+Contract public sau Task 4 là:
+
+```ts
+export type CheckoutPreparation =
+  | { kind: "not-found" }
+  | { kind: "activated"; activation: "paid" | "complimentary" }
+  | { kind: "price-changed" }
+  | { kind: "payment"; payment: PaymentInfo };
+```
+
+Sau `preparePayment`, chỉ `prepared.status === "pending"` được chuyển thành `PaymentInfo`; mọi status khác trả `price-changed`. Nhánh page dùng cùng `paymentActivation.priceChanged`, `priceChangedDescription`, `reload` và tuyệt đối không render QR/provider URL.
+
 - [ ] **Step 8: Trả trạng thái superseded cho polling và UI**
 
-Status route đã trả `payment.status` ở cuối; giữ `superseded` nguyên trạng. Trong `PaymentPanel`, thay boolean expired đơn bằng state:
+Status route không được là endpoint public. Đầu `GET`, gọi `verifySession()` rồi
+query bằng code và ownership trong một query:
+
+```ts
+const { userId } = await verifySession();
+const payment = await prisma.payment.findFirst({
+  where: {
+    code,
+    invitation: { userId },
+  },
+});
+if (!payment) {
+  return Response.json({ error: "not found" }, { status: 404 });
+}
+```
+
+Query relation `invitation.userId = session.userId` (hoặc SQL/Prisma tương đương)
+là bắt buộc; không load theo code rồi trả lỗi quyền khác. Missing code và payment
+của user khác phải trả cùng status/body 404 để không lộ tồn tại. Chỉ gọi
+`reconcilePayosPayment` khi `payment.provider === "payos"` và local status là
+`pending` hoặc legacy voucher `cancelled` theo `isPaymentSettleable`; `superseded`
+trả nguyên local string ngay, không gọi provider.
+Giữ expiration mapping cho local pending sau nhánh reconciliation.
+
+Các characterization polling cũ cho pending, paid, expired và unknown code cũng
+phải dùng session: login owner trước ba request theo payment, và login một user
+fixture trước unknown-code request. Không xoá các assertions cũ; chỉ chuyển chúng
+từ public `request` sang authenticated `page.request` để toàn suite phản ánh
+contract mới.
+
+Trong `PaymentPanel`, thay boolean expired đơn bằng state:
 
 ```ts
 type PaymentTerminalState = "active" | "paid" | "expired" | "superseded";
@@ -1105,30 +1761,35 @@ Khi poll nhận `superseded`, dừng interval và render card có copy `paymentA
 
 ```bash
 npx tsx --test src/lib/payment-settlement.test.ts
+npm run typecheck
+npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium --grep 'superseded|legacy voucher-cancelled|payment status rejects unauthenticated GET|payment status hides another user|payment status returns exact local superseded'
 npx playwright test tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts --project=chromium
 ```
 
-Expected: toàn bộ Casso/payOS tests PASS, gồm pending settlement và superseded rejection.
+Expected: unit/typecheck, focused auth/ownership/status set và toàn bộ Casso/payOS
+tests PASS, gồm unauthenticated redirect theo session semantics, identical 404 cho
+missing/non-owner, pending và legacy cancelled settlement, structured reconciliation
+decision, exact owner superseded status không remote reconcile và superseded rejection.
 
 - [ ] **Step 10: Commit settlement hardening**
 
 ```bash
-git add src/lib/payment-settlement.ts src/lib/payment-settlement.test.ts src/lib/payment-service.ts src/app/api/casso/webhook/route.ts src/app/api/payos/webhook/route.ts 'src/app/api/payment/[code]/status/route.ts' 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts
+git add src/lib/payment-settlement.ts src/lib/payment-settlement.test.ts src/lib/payment-service.ts src/app/api/casso/webhook/route.ts src/app/api/payos/webhook/route.ts 'src/app/api/payment/[code]/status/route.ts' 'src/app/dashboard/[id]/thanh-toan/actions.ts' 'src/app/dashboard/[id]/thanh-toan/page.tsx' 'src/app/dashboard/[id]/thanh-toan/PaymentPanel.tsx' tests/e2e/helpers/auth.ts tests/e2e/payment-webhook.spec.ts tests/e2e/payos-webhook.spec.ts
 git commit -m "fix(payment): reject superseded payment settlements"
 ```
 
 ---
 
-### Task 5: Tạo audit primitives và Admin price/create actions
+### Task 5: Tạo audit, input và editor-diff primitives
 
 **Files:**
 - Create: `src/lib/admin-audit.ts`
 - Create: `src/lib/admin-audit.test.ts`
+- Create: `src/lib/invitation-editor-audit.ts`
+- Create: `src/lib/invitation-editor-audit.test.ts`
 - Create: `src/lib/admin-support-input.ts`
 - Create: `src/lib/admin-support-input.test.ts`
-- Create: `src/app/admin/users/[id]/actions.ts`
 - Modify: `src/lib/admin-dal.ts`
-- Modify: `src/lib/payment-service.ts`
 
 - [ ] **Step 1: Viết audit unit tests đang đỏ**
 
@@ -1140,7 +1801,6 @@ import test from "node:test";
 
 import {
   ADMIN_AUDIT_ACTIONS,
-  changedEditorGroups,
   serializeAuditDetails,
 } from "./admin-audit";
 
@@ -1164,24 +1824,89 @@ test("audit details serialize only the supplied safe metadata", () => {
   assert.doesNotMatch(serialized, /password|session|accountNumber/i);
 });
 
-test("changed editor groups reveal categories but never field values", () => {
-  assert.deepEqual(
-    changedEditorGroups(
-      { brideFullName: "Mai", address: "Old", templateId: "song-hy-red" },
-      { brideFullName: "Lan", address: "New", templateId: "song-hy-red" },
-    ),
-    ["couple", "venue"],
+```
+
+Tạo riêng `src/lib/invitation-editor-audit.test.ts`. Test dùng một raw Prisma-shaped input có `id`/foreign key, quan hệ đảo thứ tự nhưng có `sortOrder`, `null` scalar và không có `CeremonyItem`; submitted input dùng `persistedData + ceremonies + schedule + gallery` như `PreparedInvitationDraft`:
+
+```ts
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { diffInvitationEditorAudit } from "./invitation-editor-audit";
+
+test("raw Prisma data and logically identical submitted data normalize equally", () => {
+  const diff = diffInvitationEditorAudit(
+    prismaSnapshot({
+      content: { brideFullName: null, ceremonyType: "thanh-hon", ceremonyHeader: null },
+      ceremonies: [],
+      schedule: [
+        { id: "s2", invitationId: "i1", time: "18:00", label: "Đón khách", sortOrder: 1 },
+        { id: "s1", invitationId: "i1", time: "17:00", label: "Khai tiệc", sortOrder: 0 },
+      ],
+    }),
+    submittedSnapshot({
+      persistedData: {
+        brideFullName: "",
+        ceremonyType: "thanh-hon",
+        ceremonyHeader: "LỄ THÀNH HÔN SẼ ĐƯỢC CỬ HÀNH TẠI TƯ GIA",
+        ceremonyDate: "",
+        ceremonyTime: "",
+      },
+      ceremonies: [{
+        title: "LỄ THÀNH HÔN SẼ ĐƯỢC CỬ HÀNH TẠI TƯ GIA",
+        date: "",
+        time: "",
+      }],
+      schedule: [
+        { time: "17:00", label: "Khai tiệc" },
+        { time: "18:00", label: "Đón khách" },
+      ],
+      gallery: [],
+    }),
   );
+  assert.deepEqual(diff, { changedGroups: [], changedFields: [] });
+});
+
+test("real scalar and ordered relation changes return deterministic names", () => {
+  const diff = diffInvitationEditorAudit(
+    prismaSnapshot({
+      content: { brideFullName: "Mai", address: "Địa chỉ cũ" },
+      ceremonies: [{ title: "Lễ cũ", date: "2026-12-20", time: "09:00", sortOrder: 0 }],
+    }),
+    submittedSnapshot({
+      persistedData: { brideFullName: "Lan", address: "Địa chỉ mới" },
+      ceremonies: [{ title: "Lễ mới", date: "2026-12-20", time: "09:00" }],
+    }),
+  );
+  assert.deepEqual(diff, {
+    changedGroups: ["couple", "event", "venue"],
+    changedFields: ["brideFullName", "ceremonies", "address"],
+  });
+});
+
+test("bank changes expose the field name but never the account value", () => {
+  const secret = "012345678901";
+  const diff = diffInvitationEditorAudit(
+    prismaSnapshot({ content: { brideAccountNumber: "old" } }),
+    submittedSnapshot({ persistedData: { brideAccountNumber: secret } }),
+  );
+  assert.deepEqual(diff, {
+    changedGroups: ["gift"],
+    changedFields: ["brideAccountNumber"],
+  });
+  assert.doesNotMatch(JSON.stringify(diff), new RegExp(secret));
 });
 ```
+
+Trong file test, `prismaSnapshot` và `submittedSnapshot` là fixture builders typed, có default đầy đủ cho `templateId`, `content`, `ceremonies`, `schedule`, `gallery`; không dùng `as any`.
 
 - [ ] **Step 2: Chạy unit test để xác nhận đỏ**
 
 ```bash
-npx tsx --test src/lib/admin-audit.test.ts
+npx tsx --test src/lib/admin-audit.test.ts src/lib/invitation-editor-audit.test.ts
 ```
 
-Expected: FAIL vì module chưa tồn tại.
+Expected: FAIL vì hai module chưa tồn tại.
 
 - [ ] **Step 3: Viết audit primitives**
 
@@ -1215,41 +1940,6 @@ export function serializeAuditDetails(details: Record<string, AuditJson>): strin
   return JSON.stringify(details);
 }
 
-const EDITOR_AUDIT_GROUPS = {
-  appearance: ["templateId", "primaryColor", "fontFamily", "music", "albumLayout"],
-  couple: [
-    "brideFullName", "groomFullName", "brideShortName", "groomShortName",
-    "brideBirthOrder", "groomBirthOrder", "brideZodiac", "groomZodiac", "brideFirst",
-  ],
-  event: [
-    "date", "time", "ceremonyDate", "ceremonyTime", "ceremonyHeader",
-    "ceremonyType", "openingMessage", "banquetTime", "ceremonies", "schedule",
-  ],
-  family: [
-    "brideFather", "brideMother", "brideAddress", "groomFather", "groomMother",
-    "groomAddress", "brideParentTitle", "groomParentTitle",
-  ],
-  venue: ["address", "mapAddress"],
-  gift: [
-    "brideBankName", "brideAccountNumber", "brideAccountName",
-    "groomBankName", "groomAccountNumber", "groomAccountName",
-  ],
-  media: ["heroImage", "heroImage2", "showHeroImage", "dressCodeColors", "gallery"],
-} as const;
-
-export type EditorAuditGroup = keyof typeof EDITOR_AUDIT_GROUPS;
-
-export function changedEditorGroups(
-  before: Record<string, unknown>,
-  after: Record<string, unknown>,
-): EditorAuditGroup[] {
-  return (Object.keys(EDITOR_AUDIT_GROUPS) as EditorAuditGroup[]).filter((group) =>
-    EDITOR_AUDIT_GROUPS[group].some(
-      (field) => JSON.stringify(before[field]) !== JSON.stringify(after[field]),
-    ),
-  );
-}
-
 export async function writeAdminAudit(
   db: Prisma.TransactionClient,
   input: {
@@ -1275,6 +1965,69 @@ export async function writeAdminAudit(
   });
 }
 ```
+
+Không đặt logic editor diff trong `admin-audit.ts`. Tạo `src/lib/invitation-editor-audit.ts` là module thuần, export contract:
+
+```ts
+export type EditorAuditGroup =
+  | "appearance"
+  | "couple"
+  | "event"
+  | "family"
+  | "venue"
+  | "gift"
+  | "media";
+
+export type EditorAuditField =
+  | keyof z.infer<typeof contentSchema>
+  | "ceremonies"
+  | "schedule"
+  | "gallery";
+
+export type InvitationEditorAuditDiff = {
+  changedGroups: EditorAuditGroup[];
+  changedFields: EditorAuditField[];
+};
+
+export function diffInvitationEditorAudit(
+  before: InvitationEditorAuditInput,
+  after: InvitationEditorAuditInput,
+): InvitationEditorAuditDiff;
+```
+
+`InvitationEditorAuditInput` là discriminated union để caller không ghép shape mơ hồ:
+
+```ts
+type StoredRelation<T> = T & { id?: string; invitationId?: string; sortOrder: number };
+
+export type InvitationEditorAuditInput =
+  | {
+      source: "prisma";
+      templateId: string;
+      content: Partial<Record<keyof z.infer<typeof contentSchema>, unknown>> | null;
+      ceremonies: StoredRelation<{ title: string; date: string; time: string }>[];
+      schedule: StoredRelation<{ time: string; label: string }>[];
+      gallery: StoredRelation<{ url: string }>[];
+    }
+  | {
+      source: "submitted";
+      persistedData: z.infer<typeof contentSchema>;
+      ceremonies: { title: string; date: string; time: string }[];
+      schedule: { time: string; label: string }[];
+      gallery: string[];
+    };
+```
+
+Implementation phải canonicalize theo thuật toán cụ thể:
+
+1. Với `source:"prisma"`, tạo object `{ templateId, ...content }`; đổi mọi scalar `null` thành `undefined`, rồi parse qua `contentSchema` để áp đúng editor defaults/transform. Với `source:"submitted"`, parse lại `persistedData` qua cùng schema.
+2. Stored `ceremonies`, `schedule`, `gallery` được stable-sort theo `(sortOrder, originalIndex)` rồi map chỉ các field business; bỏ `id`, `invitationId`, timestamps và foreign keys. Submitted arrays giữ nguyên thứ tự. Gallery canonical luôn là `string[]` URL.
+3. Nếu canonical ceremonies rỗng, hydrate đúng row EditorForm hiện hành: `{ title: parsed.ceremonyHeader || defaultCeremonyMessage(parsed.ceremonyType), date: parsed.ceremonyDate, time: parsed.ceremonyTime }`. Cả raw legacy record và submitted row vì vậy so sánh cùng semantics.
+4. Không sort arrays theo nội dung: đổi thứ tự ceremony/schedule/gallery là thay đổi có nghĩa.
+5. So sánh `EDITOR_AUDIT_FIELDS` theo thứ tự tuple cố định: các scalar theo thứ tự `contentSchema`, chèn `ceremonies` ngay sau các ceremony scalar, `schedule` sau event fields, `gallery` cuối media. `changedFields` giữ thứ tự này.
+6. Map field sang `EDITOR_AUDIT_GROUPS`, rồi trả `changedGroups` theo thứ tự cố định `appearance, couple, event, family, venue, gift, media`; không return bất kỳ before/after value nào.
+
+Để expected ở test trên chính xác, tuple phải đặt `brideFullName` trước `ceremonies`, và `ceremonies` trước `address`. Support audit chỉ serialize `changedFields`/`changedGroups` cùng allowlist `templateId`, `status`, `slug`; không serialize canonical snapshots.
 
 - [ ] **Step 4: Viết validation helper dùng chung cho action và page**
 
@@ -1363,211 +2116,35 @@ export async function verifyAdmin(): Promise<{
 
 Đây là thay đổi additive; các caller hiện chỉ destructure `adminId` hoặc bỏ qua return nên không cần nới quyền.
 
-- [ ] **Step 6: Cho `cancelPayosPayment` nhận lý do cụ thể**
+- [ ] **Step 6: Tái sử dụng typed cancellation contract từ Task 3**
 
-Đổi signature:
-
-```ts
-export async function cancelPayosPayment(
-  payment: Payment,
-  reason = "voucher_changed",
-): Promise<void> {
-  if (payment.provider !== "payos" || !payment.providerOrderCode) return;
-  try {
-    await cancelPayosPaymentRequest(payment.providerOrderCode, reason);
-  } catch (error) {
-    console.error("Không thể hủy link payOS cũ", {
-      paymentId: payment.id,
-      error: error instanceof Error ? error.message : "unknown",
-    });
-  }
-}
-```
-
-- [ ] **Step 7: Viết create invitation action**
-
-Trong `src/app/admin/users/[id]/actions.ts`, import `parseAdminTemplateId`/`SYSTEM_EMAIL` từ `@/lib/admin-support-input`, và viết action:
-
-```ts
-export async function createInvitationForUser(
-  userId: string,
-  _previous: CreateInvitationState,
-  formData: FormData,
-): Promise<CreateInvitationState> {
-  const { adminId, adminEmail } = await verifyAdmin();
-  const templateId = parseAdminTemplateId(formData.get("templateId"));
-  if (!templateId) {
-    return { ok: false, errorCode: "invalidTemplate" };
-  }
-
-  const invitation = await prisma.$transaction(async (db) => {
-    const user = await db.user.findFirst({
-      where: { id: userId, NOT: { email: SYSTEM_EMAIL } },
-      select: { id: true, email: true },
-    });
-    if (!user) throw new AdminSupportMutationError("userNotFound");
-
-    const created = await db.invitation.create({
-      data: {
-        userId: user.id,
-        templateId,
-        status: "draft",
-        content: { create: {} },
-      },
-    });
-    await writeAdminAudit(db, {
-      adminId,
-      adminEmail,
-      targetUserId: user.id,
-      targetUserEmail: user.email,
-      invitationId: created.id,
-      action: ADMIN_AUDIT_ACTIONS.invitationCreated,
-      details: { templateId: created.templateId },
-    });
-    return created;
-  });
-
-  revalidatePath(`/admin/users/${userId}`);
-  revalidatePath("/dashboard");
-  redirect(`/admin/invitations/${invitation.id}/edit`);
-}
-```
-
-Với:
-
-```ts
-type CreateInvitationErrorCode = "invalidTemplate" | "userNotFound";
-
-export type CreateInvitationState =
-  | { ok: false; errorCode: CreateInvitationErrorCode }
-  | undefined;
-
-class AdminSupportMutationError extends Error {
-  constructor(readonly code: Extract<CreateInvitationErrorCode, "userNotFound">) {
-    super(code);
-    this.name = "AdminSupportMutationError";
-  }
-}
-```
-
-Bao transaction bằng `try/catch`, nhưng để `redirect` ở ngoài `try` theo Next.js 16. Catch riêng `AdminSupportMutationError` và trả `{ ok: false, errorCode: error.code }`; rethrow lỗi không xác định. Client template picker dùng `useActionState` và dịch `adminSupport.errors.*`. Thành công redirect nên không cần return state. Không trả/throw copy tiếng Việt từ action.
-
-Đặt `revalidatePath` trước `redirect` vì `redirect` ném control-flow exception trong Next.js 16.
-
-- [ ] **Step 8: Viết price mutation transaction-safe**
-
-Trong cùng file, import `adminFinalPriceSchema` từ `@/lib/invitation-pricing` và dùng schema:
-
-```ts
-const priceMutationSchema = z.discriminatedUnion("mode", [
-  z.object({
-    mode: z.literal("set"),
-    invitationId: z.string().min(1),
-    finalPrice: adminFinalPriceSchema,
-  }),
-  z.object({
-    mode: z.literal("reset"),
-    invitationId: z.string().min(1),
-  }),
-]);
-
-export type PriceMutationErrorCode =
-  | "invalidPrice"
-  | "userNotFound"
-  | "invitationNotFound"
-  | "paidPriceLocked"
-  | "concurrentChange";
-
-export type PriceMutationState =
-  | { ok: true; activation: "trial" | "complimentary"; finalPrice: number | null }
-  | { ok: false; errorCode: PriceMutationErrorCode }
-  | undefined;
-
-class AdminPriceMutationError extends Error {
-  constructor(readonly code: Exclude<PriceMutationErrorCode, "invalidPrice">) {
-    super(code);
-    this.name = "AdminPriceMutationError";
-  }
-}
-```
-
-Signature action phải bind user đích ở server component, không đọc user đích từ form:
-
-```ts
-export async function updateInvitationPrice(
-  targetUserId: string,
-  _previous: PriceMutationState,
-  formData: FormData,
-): Promise<PriceMutationState>;
-```
-
-`updateInvitationPrice` phải thực hiện theo thứ tự trong một transaction:
-
-1. Xác thực Admin.
-2. Parse `mode`, `invitationId`, `finalPrice`.
-3. Query thiệp thật bằng cả `id = invitationId`, `userId` route-bound và `isDemo = false`, kèm user snapshot + mọi payment pending. `updateInvitationPrice` nhận `userId` bằng bind từ profile page; không tin `userId` từ hidden input.
-4. Từ chối nếu `paid = true`.
-5. Tính after state: reset → `null/false/null`; set 0 → `0/true/now`; set dương → `price/false/null`.
-6. Query ban đầu phải select `updatedAt`. Gọi `updateMany({ where: { id, userId: targetUserId, isDemo: false, paid: false, updatedAt: invitation.updatedAt }, data: nextState })`; count phải bằng 1. Nếu webhook đặt `paid=true` hoặc bất kỳ mutation nào đổi thiệp giữa read/write, `updatedAt` thay đổi và transaction trả `{ ok: false, errorCode: "concurrentChange" }` mà không supersede payment hay ghi audit.
-7. Đã query `pendingPayments` bằng `status: { in: ["pending", "cancelled"] }`; gọi `payment.updateMany({ where: { invitationId, status: { in: ["pending", "cancelled"] } }, data: { status: "superseded" } })` để vô hiệu cả QR gốc lẫn payment voucher cũ.
-8. Ghi `PRICE_OVERRIDE_SET` hoặc `PRICE_OVERRIDE_CLEARED`; ghi thêm `COMPLIMENTARY_GRANTED`/`COMPLIMENTARY_REVOKED` khi boolean đổi.
-9. Return danh sách pending payment đã đọc để huỷ payOS sau commit.
-
-Phần after state phải dùng object chính xác:
-
-```ts
-const reset = parsed.data.mode === "reset";
-const finalPrice = reset ? null : parsed.data.finalPrice;
-const nextComplimentary = finalPrice === 0;
-const nextState = {
-  adminPriceOverride: finalPrice,
-  complimentary: nextComplimentary,
-  complimentaryAt: nextComplimentary ? new Date() : null,
-};
-```
-
-Ngay sau `updateMany`, kiểm tra:
-
-```ts
-if (updated.count !== 1) {
-  throw new AdminPriceMutationError("concurrentChange");
-}
-```
-
-Parse lỗi trả `invalidPrice`; user/thiệp/paid/concurrent trả code tương ứng qua `AdminPriceMutationError`. Catch ngoài transaction chỉ chuyển class này thành `{ ok: false, errorCode: error.code }`; rethrow lỗi không xác định. Action price không redirect. `InvitationPriceDialog` dịch bằng `t(`errors.${state.errorCode}`)`.
-
-Sau transaction:
-
-```ts
-await Promise.all(
-  result.pendingPayments
-    .filter((payment) => payment.provider === "payos")
-    .map((payment) => cancelPayosPayment(payment, "admin_price_changed")),
-);
-revalidatePath(`/admin/users/${result.userId}`);
-revalidatePath("/dashboard");
-if (result.slug) revalidatePath(`/thiep/${result.slug}`);
-return {
-  ok: true,
-  activation: result.complimentary ? "complimentary" : "trial",
-  finalPrice: result.adminPriceOverride,
-};
-```
-
-- [ ] **Step 9: Chạy unit và typecheck**
+Không sửa hoặc định nghĩa lại `cancelPayosPayment` trong Task 5. Signature
+`(payment, reason?: PayosCancellationReason)` cùng ba reason literal đã được test
+và triển khai ở Task 3. Chỉ xác nhận primitives mới không tạo thêm wrapper hoặc
+signature cạnh tranh:
 
 ```bash
-npx tsx --test src/lib/admin-audit.test.ts src/lib/admin-support-input.test.ts
+rg -n 'export async function cancelPayosPayment' src/lib
+```
+
+Expected: đúng một definition tại `src/lib/payment-service.ts`; các call site dùng
+`voucher_changed`, `provider_create_failed` hoặc `admin_price_changed` theo typed
+union của Task 3.
+
+- [ ] **Step 7: Chạy unit và typecheck**
+
+```bash
+npx tsx --test src/lib/admin-audit.test.ts src/lib/invitation-editor-audit.test.ts src/lib/admin-support-input.test.ts
 npm run typecheck
 ```
 
 Expected: audit tests PASS; typecheck exit 0.
 
-- [ ] **Step 10: Commit action/domain slice**
+- [ ] **Step 8: Commit primitive slice**
 
 ```bash
-git add src/lib/admin-audit.ts src/lib/admin-audit.test.ts src/lib/admin-support-input.ts src/lib/admin-support-input.test.ts src/lib/admin-dal.ts src/lib/payment-service.ts 'src/app/admin/users/[id]/actions.ts'
-git commit -m "feat(admin): add audited invitation price controls"
+git add src/lib/admin-audit.ts src/lib/admin-audit.test.ts src/lib/invitation-editor-audit.ts src/lib/invitation-editor-audit.test.ts src/lib/admin-support-input.ts src/lib/admin-support-input.test.ts src/lib/admin-dal.ts
+git commit -m "feat(admin): add support audit primitives"
 ```
 
 ---
@@ -1821,6 +2398,7 @@ git commit -m "feat(i18n): add admin invitation support copy"
 ### Task 7: Xây trang hồ sơ người dùng, tạo thiệp và đặt giá
 
 **Files:**
+- Create: `src/app/admin/users/[id]/actions.ts`
 - Create: `src/app/admin/users/[id]/page.tsx`
 - Create: `src/app/admin/users/[id]/AdminCreateInvitationButton.tsx`
 - Create: `src/app/admin/users/[id]/InvitationPriceDialog.tsx`
@@ -1870,13 +2448,220 @@ test("system user is not exposed by the admin customer list", async ({ page, con
 });
 ```
 
+Trước khi có page/action implementation, thêm toàn bộ mutation/security cases sau vào cùng file. Bốn test golden create/final-price/free/invalid-price có test bodies đầy đủ trong khối “Test bodies bổ sung của Step 1” bên dưới; chúng cũng phải được ghi vào file trước lần chạy Step 2, không trì hoãn tới sau UI:
+
+```ts
+test("unauthenticated direct create submission changes nothing", async ({ page, context }) => {
+  const user = createUser();
+  const admin = seedAdmin(false);
+  const before = invitationCountFor(user.id);
+  try {
+    await loginAsAdmin(context, admin.id);
+    await page.goto(`/admin/users/${user.id}`);
+    await page.getByRole("button", { name: "Tạo thiệp mới" }).click();
+    await context.clearCookies();
+    await page.locator('button[data-template-id="song-hy-red"]').click();
+    await page.waitForURL("**/admin/login");
+    expect(invitationCountFor(user.id)).toBe(before);
+    expect(auditCountForUser(user.id)).toBe(0);
+  } finally {
+    deleteAdmin(admin.id);
+    cleanupUser(user.id);
+  }
+});
+
+test("unauthenticated direct price submission changes nothing", async ({ page, context }) => {
+  const user = createUser();
+  const admin = seedAdmin(false);
+  const invitation = createInvitation(user.id);
+  const payment = createPayment(invitation.id, { status: "pending" });
+  try {
+    await loginAsAdmin(context, admin.id);
+    await page.goto(`/admin/users/${user.id}`);
+    await page.getByRole("button", { name: "Đặt giá" }).click();
+    await page.getByLabel("Giá cuối cùng (VND)").fill("79000");
+    await context.clearCookies();
+    await page.getByRole("button", { name: "Lưu giá" }).click();
+    await page.waitForURL("**/admin/login");
+    expect(invitationPriceState(invitation.id)).toEqual({
+      adminPriceOverride: null,
+      complimentary: 0,
+    });
+    expect(paymentStatusById(payment.id)).toBe("pending");
+    expect(auditCountForInvitation(invitation.id)).toBe(0);
+  } finally {
+    deleteAdmin(admin.id);
+    cleanupUser(user.id);
+  }
+});
+
+test("route-bound user prevents cross-profile invitation price mutation", async ({ page, context }) => {
+  const userA = createUser();
+  const userB = createUser();
+  const invitationA = createInvitation(userA.id);
+  const invitationB = createInvitation(userB.id);
+  const admin = seedAdmin(false);
+  try {
+    await loginAsAdmin(context, admin.id);
+    await page.goto(`/admin/users/${userA.id}`);
+    await page.getByRole("button", { name: "Đặt giá" }).click();
+    await page.locator('input[name="invitationId"]').evaluate((input, id) => {
+      (input as HTMLInputElement).value = id;
+    }, invitationB.id);
+    await page.getByLabel("Giá cuối cùng (VND)").fill("79000");
+    await page.getByRole("button", { name: "Lưu giá" }).click();
+    await expect(page.getByText("Không tìm thấy thiệp.")).toBeVisible();
+    expect(invitationPriceState(invitationA.id).adminPriceOverride).toBeNull();
+    expect(invitationPriceState(invitationB.id).adminPriceOverride).toBeNull();
+    expect(auditCountForInvitation(invitationA.id)).toBe(0);
+    expect(auditCountForInvitation(invitationB.id)).toBe(0);
+  } finally {
+    deleteAdmin(admin.id);
+    cleanupUser(userA.id);
+    cleanupUser(userB.id);
+  }
+});
+
+test("a payment race locks direct price mutation", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id);
+  const payment = createPayment(invitation.id, { status: "pending" });
+  const admin = seedAdmin(false);
+  try {
+    await loginAsAdmin(context, admin.id);
+    await page.goto(`/admin/users/${user.id}`);
+    await page.getByRole("button", { name: "Đặt giá" }).click();
+    await page.getByLabel("Giá cuối cùng (VND)").fill("79000");
+    getDb().prepare("UPDATE Invitation SET paid = 1, updatedAt = ? WHERE id = ?")
+      .run(prismaNow(), invitation.id);
+    await page.getByRole("button", { name: "Lưu giá" }).click();
+    await expect(page.getByText("Thiệp đã thanh toán nên không thể đổi giá.")).toBeVisible();
+    expect(invitationPriceState(invitation.id).adminPriceOverride).toBeNull();
+    expect(paymentStatusById(payment.id)).toBe("pending");
+    expect(auditCountForInvitation(invitation.id)).toBe(0);
+  } finally {
+    deleteAdmin(admin.id);
+    cleanupUser(user.id);
+  }
+});
+
+test("direct price action rejects an already-paid invitation without side effects", async ({ page, context }) => {
+  const user = createUser();
+  const invitation = createInvitation(user.id, { paid: true });
+  const paid = createPayment(invitation.id, { status: "paid", amount: 150_000 });
+  const admin = seedAdmin(false);
+  try {
+    await loginAsAdmin(context, admin.id);
+    await page.goto(`/admin/users/${user.id}`);
+    const form = page.locator(`form[data-price-invitation-id="${invitation.id}"]`);
+    await form.locator('input[name="finalPrice"]').evaluate((input) => {
+      const element = input as HTMLInputElement;
+      element.disabled = false;
+      element.value = "79000";
+    });
+    await form.locator('button[type="submit"]').evaluate((button) => {
+      (button as HTMLButtonElement).disabled = false;
+    });
+    await form.locator('button[type="submit"]').click();
+    await expect(page.getByText("Thiệp đã thanh toán nên không thể đổi giá.")).toBeVisible();
+    expect(invitationPriceState(invitation.id)).toEqual({
+      adminPriceOverride: null,
+      complimentary: 0,
+    });
+    expect(paymentStatusById(paid.id)).toBe("paid");
+    expect(auditCountForInvitation(invitation.id)).toBe(0);
+  } finally {
+    deleteAdmin(admin.id);
+    cleanupUser(user.id);
+  }
+});
+```
+
+Thêm và export các SQL helpers typed được gọi ở trên trong `tests/e2e/helpers/fixtures.ts`; mỗi helper chỉ SELECT/COUNT, không tự mutation ngoài fixture seed. Cũng thêm từ đầu các test mang tên chính xác: `non-super admin creates an invitation for the selected user with an audit log`, `admin final price supersedes pending payment and records the actor`, `admin grants complimentary access without creating revenue`, và hai cases `invalid admin price ... changes nothing`. Các test này assert DB, payment và audit đúng như test bodies bên dưới; tất cả đều tồn tại trước lần chạy đỏ ở Step 2.
+
+Trước implementation, thêm luôn test parameterized mang title chứa chính xác
+`admin role parity`. Nó phải chạy cùng chuỗi mutation với cả Admin thường và
+SuperAdmin, không chỉ kiểm tra quyền đọc:
+
+```ts
+for (const isSuperAdmin of [false, true] as const) {
+  test(`admin role parity (${isSuperAdmin ? "super" : "regular"}) creates and prices invitations identically`, async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const admin = seedAdmin(isSuperAdmin);
+    const db = getDb();
+    try {
+      await loginAsAdmin(context, admin.id);
+      await page.goto(`/admin/users/${user.id}`);
+      await page.getByRole("button", { name: "Tạo thiệp mới" }).click();
+      await page.locator('button[data-template-id="song-hy-red"]').click();
+      await expect(page).toHaveURL(/\/admin\/invitations\/[^/]+\/edit$/);
+
+      const invitation = db.prepare(`
+        SELECT id FROM Invitation
+        WHERE userId = ? ORDER BY createdAt DESC, id DESC LIMIT 1
+      `).get(user.id) as { id: string };
+
+      await page.goto(`/admin/users/${user.id}`);
+      await page.getByRole("button", { name: "Đặt giá" }).click();
+      await page.getByLabel("Giá cuối cùng (VND)").fill("79000");
+      await page.getByRole("button", { name: "Lưu giá" }).click();
+      await expect.poll(() => invitationPriceState(invitation.id)).toEqual({
+        adminPriceOverride: 79_000,
+        complimentary: 0,
+      });
+
+      await page.getByRole("button", { name: "Đặt giá" }).click();
+      await page.getByLabel("Giá cuối cùng (VND)").fill("0");
+      page.once("dialog", (dialog) => dialog.accept());
+      await page.getByRole("button", { name: "Lưu giá" }).click();
+      await expect.poll(() => invitationPriceState(invitation.id)).toEqual({
+        adminPriceOverride: 0,
+        complimentary: 1,
+      });
+
+      const audits = db.prepare(`
+        SELECT action, adminId, adminEmail
+        FROM AdminAuditLog WHERE invitationId = ?
+        ORDER BY createdAt, id
+      `).all(invitation.id) as {
+        action: string;
+        adminId: string | null;
+        adminEmail: string;
+      }[];
+      expect(audits.map((row) => row.action)).toEqual([
+        "INVITATION_CREATED_FOR_USER",
+        "PRICE_OVERRIDE_SET",
+        "PRICE_OVERRIDE_SET",
+        "COMPLIMENTARY_GRANTED",
+      ]);
+      expect(audits.every((row) => (
+        row.adminId === admin.id && row.adminEmail === admin.email
+      ))).toBe(true);
+    } finally {
+      db.prepare("DELETE FROM AdminAuditLog WHERE targetUserId = ? OR targetUserEmail = ?")
+        .run(user.id, user.email);
+      deleteAdmin(admin.id);
+      cleanupUser(user.id);
+    }
+  });
+}
+```
+
+Hai iterations phải có cùng final DB state và cùng action list; khác biệt duy nhất
+được phép là snapshot `adminId/adminEmail`, và mỗi row phải khớp actor đã login của
+iteration đó.
+
 - [ ] **Step 2: Chạy tests để xác nhận đỏ**
 
 ```bash
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|cannot open|system user'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|cannot open|system user|creates an invitation|final price|complimentary|invalid admin price|unauthenticated direct|cross-profile|payment race|already-paid|admin role parity'
 ```
 
-Expected: detail route 404 hoặc link/profile assertions FAIL.
+Expected: list/detail, mọi create/price mutation và cả hai `admin role parity`
+iterations FAIL vì route/action/UI chưa tồn tại. Ghi lại output đỏ trước Step 3.
 
 - [ ] **Step 3: Nâng `/admin/users` với search params Promise**
 
@@ -1973,7 +2758,8 @@ const [state, formAction, pending] = useActionState(
 <form action={formAction}>
   <input type="hidden" name="templateId" value={template.slug} />
   <button type="submit" data-template-id={template.slug} disabled={pending}>
-    {/* Next Image preview và label */}
+    <Image src={templatePreviewUrl(template.slug)} alt="" width={240} height={320} />
+    <span>{templateLabel(template.slug, templateLabels)}</span>
   </button>
 </form>
 ```
@@ -1997,7 +2783,7 @@ type Props = {
 
 Dùng `useActionState(updateInvitationPrice.bind(null, userId), undefined)` và thêm `userId` vào `Props`. Form set gửi `mode=set`, `invitationId`, `finalPrice`; form reset gửi `mode=reset`, `invitationId`. `onSubmit` phải gọi `window.confirm(t("confirmFree"))` khi chuỗi input đã trim bằng `"0"`; reset complimentary gọi `window.confirm(t("confirmResetFree"))`. Khi state `ok`, hiển thị `priceSaved` và `router.refresh()`. Với `paid`, không render input/action, chỉ render `paidPriceLocked`.
 
-- [ ] **Step 7: Viết E2E create/price/audit tests**
+**Test bodies bổ sung của Step 1 (phải được thêm trước lần chạy đỏ ở Step 2):**
 
 Thêm tests:
 
@@ -2145,19 +2931,93 @@ for (const invalidPrice of ["", "1.5"] as const) {
 
 Mọi test khác trong suite tạo audit thành công cũng phải xóa audit theo `targetUserId` **hoặc snapshot `targetUserEmail`** trước `cleanupUser`; điều này cover cả row đã bị `SetNull` sau khi xóa user/thiệp.
 
+- [ ] **Step 7: Implement create/price actions sau khi toàn bộ mutation tests đã đỏ**
+
+Trong `src/app/admin/users/[id]/actions.ts`, mọi export gọi `verifyAdmin()` ở dòng logic đầu tiên. `createInvitationForUser(targetUserId, prev, formData)` chỉ parse `templateId` sau auth; trong transaction load target bằng `{ id:targetUserId, NOT:{email:SYSTEM_EMAIL} }`, tạo draft/content, ghi `INVITATION_CREATED_FOR_USER` với actor/target snapshots và `{templateId}`. Catch duy nhất typed `AdminSupportMutationError("userNotFound")`; rethrow lỗi lạ. Sau commit gọi `revalidatePath('/admin/users/'+targetUserId)`, `revalidatePath('/dashboard')`, rồi `redirect('/admin/invitations/'+created.id+'/edit')` ngoài `try/catch`.
+
+Giữ contracts exact:
+
+```ts
+export type CreateInvitationState =
+  | { ok: false; errorCode: "invalidTemplate" | "userNotFound" }
+  | undefined;
+
+export type PriceMutationErrorCode =
+  | "invalidPrice"
+  | "userNotFound"
+  | "invitationNotFound"
+  | "paidPriceLocked"
+  | "concurrentChange";
+
+export type PriceMutationState =
+  | { ok: true; activation: "trial" | "complimentary"; finalPrice: number | null }
+  | { ok: false; errorCode: PriceMutationErrorCode }
+  | undefined;
+
+export async function updateInvitationPrice(
+  targetUserId: string,
+  _previous: PriceMutationState,
+  formData: FormData,
+): Promise<PriceMutationState>;
+```
+
+`updateInvitationPrice` thực hiện đúng thuật toán sau:
+
+Định nghĩa domain error trước action và chỉ catch class này; validation trả trực tiếp `invalidPrice`, còn lỗi Prisma/provider/programming không bị đổi thành thông báo thành công giả:
+
+```ts
+class AdminSupportMutationError extends Error {
+  constructor(readonly code: Exclude<PriceMutationErrorCode, "invalidPrice">) {
+    super(code);
+  }
+}
+
+function priceFailure(error: unknown): PriceMutationState {
+  if (error instanceof AdminSupportMutationError) {
+    return { ok: false, errorCode: error.code };
+  }
+  throw error;
+}
+```
+
+1. `verifyAdmin()` trước parse. Parse discriminated union `mode=set|reset`, bound `invitationId`, và `adminFinalPriceSchema`; parse fail → `invalidPrice`.
+2. Trong một interactive transaction, load target user không phải system; null → `userNotFound`. Load thiệp bằng **cả** `{id:invitationId,userId:targetUserId,isDemo:false}` với `paid`, `updatedAt`, `adminPriceOverride`, `complimentary`, `complimentaryAt`, `slug`, user email snapshot và payments `where:{status:{in:["pending","cancelled"]}}`. null → `invitationNotFound`; `paid` → `paidPriceLocked`.
+3. Tính state chính xác:
+
+```ts
+const reset = parsed.data.mode === "reset";
+const finalPrice = reset ? null : parsed.data.finalPrice;
+const complimentary = finalPrice === 0;
+const nextState = {
+  adminPriceOverride: finalPrice,
+  complimentary,
+  complimentaryAt: complimentary ? new Date() : null,
+};
+```
+
+4. Optimistic write bằng `invitation.updateMany({where:{id,userId:targetUserId,isDemo:false,paid:false,updatedAt:invitation.updatedAt},data:nextState})`; count 0 → typed `concurrentChange`, transaction rollback nên chưa payment/audit nào đổi.
+5. `payment.updateMany({where:{invitationId:id,status:{in:["pending","cancelled"]}},data:{status:"superseded"}})`. Không dùng `pending`-only; cả QR gốc và legacy voucher-cancelled đều mất hiệu lực.
+6. Trong cùng transaction ghi `PRICE_OVERRIDE_SET` hoặc `PRICE_OVERRIDE_CLEARED`, details chỉ gồm before/after price+complimentary và `supersededPaymentCount`. Nếu complimentary boolean đổi, ghi thêm `COMPLIMENTARY_GRANTED` hoặc `COMPLIMENTARY_REVOKED`. Mọi row dùng cùng actor/target snapshots.
+7. Return payment rows đã load, slug và next state. Sau commit mới `Promise.all` payOS rows qua `cancelPayosPayment(payment,"admin_price_changed")`; Casso không có provider call.
+8. Bao transaction trong `try/catch`; `priceFailure(error)` chỉ map `AdminSupportMutationError`, rethrow lỗi lạ. Chỉ sau transaction commit mới cancel provider, revalidate profile target, `/dashboard`, `/editor/${id}` và public slug nếu có, rồi return success state.
+
+Không tin `userId`/paid/price từ hidden input. Direct action tests ở Step 1 phải chứng minh auth-first, cross-binding, paid lock, zero audit trên mọi failure và Admin thường có cùng quyền mutation như SuperAdmin.
+
 - [ ] **Step 8: Chạy admin support UI slice**
 
 ```bash
 npm run typecheck
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|creates an invitation|final price|complimentary'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'search users|creates an invitation|final price|complimentary|invalid admin price|unauthenticated direct|cross-profile|payment race|already-paid|admin role parity'
 ```
 
-Expected: typecheck exit 0; selected tests PASS.
+Expected: typecheck exit 0; selected tests PASS, gồm cả Admin thường và SuperAdmin
+trong hai `admin role parity` iterations với cùng outcome/action list và đúng actor
+snapshot riêng.
 
 - [ ] **Step 9: Commit profile/UI slice**
 
 ```bash
-git add src/app/admin/users/page.tsx 'src/app/admin/users/[id]/page.tsx' 'src/app/admin/users/[id]/AdminCreateInvitationButton.tsx' 'src/app/admin/users/[id]/InvitationPriceDialog.tsx' tests/e2e/admin-invitation-support.spec.ts tests/e2e/helpers/fixtures.ts
+git add src/app/admin/users/page.tsx 'src/app/admin/users/[id]/actions.ts' 'src/app/admin/users/[id]/page.tsx' 'src/app/admin/users/[id]/AdminCreateInvitationButton.tsx' 'src/app/admin/users/[id]/InvitationPriceDialog.tsx' tests/e2e/admin-invitation-support.spec.ts tests/e2e/helpers/fixtures.ts
 git commit -m "feat(admin): add user invitation support workspace"
 ```
 
@@ -2171,8 +3031,50 @@ git commit -m "feat(admin): add user invitation support workspace"
 - Create: `src/lib/invitation-editor-rules.test.ts`
 - Modify: `src/app/editor/[id]/actions.ts`
 - Modify: `src/app/editor/[id]/content-schema.ts`
+- Modify: `tests/e2e/editor.spec.ts`
 
-- [ ] **Step 1: Viết tests cho validation publication/slug đang đỏ**
+- [ ] **Step 1: Khóa successful owner publish behavior trước refactor**
+
+Thêm test tên chính xác `owner successfully publishes with persisted content and no admin audit` vào `tests/e2e/editor.spec.ts` trước khi sửa action:
+
+```ts
+test("owner successfully publishes with persisted content and no admin audit", async ({ page, context }) => {
+  const user = newUser();
+  const invitation = createInvitation(user.id);
+  const slug = `owner-publish-${randomUUID().slice(0, 8)}`;
+  await loginAsUser(context, user.id);
+  await page.goto(`/editor/${invitation.id}`);
+  await page.locator("#brideFullName").fill("Nguyễn Mai");
+  await page.locator("#groomFullName").fill("Trần Nam");
+  await page.locator("#date").fill("2026-12-20");
+  await page.locator("#time").fill("18:00");
+  await page.locator("#slug").fill(slug);
+  await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByRole("dialog").locator(`a[href="/thiep/${slug}"]`)).toBeVisible();
+  await expect.poll(() => getDb().prepare(`
+    SELECT status, slug, publishedAt FROM Invitation WHERE id = ?
+  `).get(invitation.id)).toMatchObject({ status: "published", slug });
+  expect(readContent(invitation.id, "brideFullName")).toBe("Nguyễn Mai");
+  expect(readContent(invitation.id, "groomFullName")).toBe("Trần Nam");
+  expect((getDb().prepare(
+    "SELECT COUNT(*) AS count FROM AdminAuditLog WHERE invitationId = ?",
+  ).get(invitation.id) as { count: number }).count).toBe(0);
+  await page.goto(`/thiep/${slug}`);
+  await expect(page.getByText("Nguyễn Mai")).toBeVisible();
+});
+```
+
+Chạy characterization trước refactor:
+
+```bash
+npx playwright test tests/e2e/editor.spec.ts --project=chromium --grep 'owner successfully publishes'
+```
+
+Expected: PASS trên baseline. Test này khóa persistence, public link/dialog và bất biến không có `AdminAuditLog` cho owner.
+
+- [ ] **Step 2: Viết tests cho validation publication/slug đang đỏ**
 
 Tạo `src/lib/invitation-editor-rules.test.ts`:
 
@@ -2210,7 +3112,7 @@ test("slug validation accepts lowercase path and rejects malformed values", () =
 });
 ```
 
-- [ ] **Step 2: Chạy unit test để xác nhận đỏ**
+- [ ] **Step 3: Chạy unit test để xác nhận đỏ**
 
 ```bash
 npx tsx --test src/lib/invitation-editor-rules.test.ts
@@ -2218,7 +3120,7 @@ npx tsx --test src/lib/invitation-editor-rules.test.ts
 
 Expected: FAIL vì rules module chưa tồn tại.
 
-- [ ] **Step 3: Tạo pure editor rules**
+- [ ] **Step 4: Tạo pure editor rules**
 
 Tạo `src/lib/invitation-editor-rules.ts` với đúng hai helper từ test:
 
@@ -2259,7 +3161,7 @@ export function publicationIssue(data: {
 }
 ```
 
-- [ ] **Step 4: Tạo prepare/write service không chứa auth**
+- [ ] **Step 5: Tạo prepare/write service không chứa auth**
 
 `src/lib/invitation-editor-store.ts` phải export:
 
@@ -2369,7 +3271,7 @@ export async function writeInvitationDraft(
 
 Hàm không tự mở transaction và không gọi auth. Không import file này trong Node unit tests vì `google-maps-server.ts` là server-only; persistence được cover bởi owner/support Playwright tests ở Step 6 và Task 9.
 
-- [ ] **Step 5: Refactor owner actions qua store nhưng giữ cổng quyền**
+- [ ] **Step 6: Refactor owner actions qua store nhưng giữ cổng quyền**
 
 Trong `src/app/editor/[id]/actions.ts`, giữ auth owner tường minh bằng helper:
 
@@ -2427,20 +3329,20 @@ rg -n 'getAdminSession|verifyAdmin' 'src/app/editor/[id]/actions.ts'
 
 Expected: không có match.
 
-- [ ] **Step 6: Chạy unit, owner editor E2E và typecheck**
+- [ ] **Step 7: Chạy unit, owner editor E2E và typecheck**
 
 ```bash
 npx tsx --test src/lib/invitation-editor-rules.test.ts 'src/app/editor/[id]/content-schema.test.ts' 'src/app/editor/[id]/slug.test.ts'
 npm run typecheck
-npx playwright test tests/e2e/editor.spec.ts --project=chromium --grep 'owner opens editor|hydrates existing content|publish validation|publishes'
+npx playwright test tests/e2e/editor.spec.ts --project=chromium --grep 'owner opens editor|hydrates existing content|publish validation|owner successfully publishes'
 ```
 
 Expected: unit tests PASS; typecheck exit 0; owner editor regression PASS.
 
-- [ ] **Step 7: Commit editor service refactor**
+- [ ] **Step 8: Commit editor service refactor**
 
 ```bash
-git add src/lib/invitation-editor-rules.ts src/lib/invitation-editor-rules.test.ts src/lib/invitation-editor-store.ts 'src/app/editor/[id]/actions.ts' 'src/app/editor/[id]/content-schema.ts'
+git add src/lib/invitation-editor-rules.ts src/lib/invitation-editor-rules.test.ts src/lib/invitation-editor-store.ts 'src/app/editor/[id]/actions.ts' 'src/app/editor/[id]/content-schema.ts' tests/e2e/editor.spec.ts
 git commit -m "refactor(editor): share invitation persistence service"
 ```
 
@@ -2494,21 +3396,63 @@ test("support editor rejects demo and unknown invitation ids", async ({ page, co
   const demo = createInvitation(user.id, { isDemo: true });
   try {
     await loginAsAdmin(context, seededAdminId());
-    await page.goto(`/admin/invitations/${demo.id}/edit`);
-    await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+    for (const id of [demo.id, `missing-${randomUUID()}`]) {
+      const response = await page.goto(`/admin/invitations/${id}/edit`);
+      expect(response?.status()).toBe(404);
+      await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+    }
   } finally {
     cleanupUser(user.id);
   }
 });
 ```
 
+Parameterize happy path bằng `for (const isSuperAdmin of [false, true] as const)`; mỗi case seed admin tương ứng, chạy cùng edit/publish flow và assert audit actor/action như nhau. Thêm bốn direct-action regressions trước Step 2:
+
+- Mở support editor khi authenticated, sửa field, `context.clearCookies()`, submit save; phải navigate login, content/status/audit không đổi.
+- Lặp lại với publish; slug/status/content/audit không đổi.
+- Khi còn authenticated, tamper hidden `templateId` thành slug không allowlist rồi save; action trả `invalidData`, toàn bộ DB và audit không đổi.
+- Mở page authenticated rồi clear cookies trước khi blur/check slug và trước khi nhập Google Maps short URL để trigger resolver; cả `checkSupportedInvitationSlug` và `resolveSupportedGoogleMapsLink` phải chạy auth mới tại invocation, navigate login và không query/mutate thiệp đích.
+
+Mỗi test snapshot `Invitation`, `InvitationContent` và `COUNT(AdminAuditLog)` trước submit, rồi deep-compare sau failure. Không chỉ assert UI error.
+
+Thêm test mang title chính xác
+`support editor cross-binding re-derives user from invitation`: tạo User A/B và
+hai thiệp thật A/B; mở support editor A, rồi tamper bound invocation của
+`saveSupportedInvitation` và `publishSupportedInvitation` lần lượt sang ID thiệp
+B trong khi giữ submitted form/state từ A. Vì B là thiệp thật, cả action phải
+re-query B và derive `targetUserId/targetUserEmail` từ `invitationB.user`, không
+dùng profile/context A và không nhận hidden `userId`.
+
+Test snapshot cả A/B trước invocation. Sau save, A phải giữ nguyên toàn bộ
+content/status; B nhận đúng submitted content và audit save chỉ có cặp
+`targetUserId=userB.id, invitationId=invitationB.id`. Sau publish, A vẫn giữ
+nguyên; B có status/slug/content published đúng và audit publish cũng chỉ có cặp
+B/B. Cuối test query trực tiếp invariant âm:
+
+```ts
+const mismatchedAuditCount = (getDb().prepare(`
+  SELECT COUNT(*) AS count FROM AdminAuditLog
+  WHERE (targetUserId = ? AND invitationId = ?)
+     OR (targetUserId = ? AND invitationId = ?)
+`).get(userA.id, invitationB.id, userB.id, invitationA.id) as { count: number }).count;
+expect(mismatchedAuditCount).toBe(0);
+```
+
+Nếu variant riêng dùng B demo/missing, action phải trả `invitationNotFound`, cả
+A/B và audit giữ nguyên; không thay thế golden real-B cross-binding case ở trên.
+
 - [ ] **Step 2: Chạy tests để xác nhận đỏ**
 
 ```bash
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo|unauthenticated support|invalid template|slug wrapper|map wrapper|cross-binding'
 ```
 
-Expected: route 404 và happy-path FAIL.
+Expected: route 404 và mọi happy/security path FAIL trước support route/actions.
+Case `cross-binding` phải đỏ và phơi bày việc bảo vệ A/B chưa tồn tại: một
+implementation không re-query invitation B có thể ghi content vào sai thiệp hoặc
+tạo audit ghép `targetUserId=A` với `invitationId=B`; không được chấp nhận test
+xanh nếu chỉ kiểm UI mà bỏ qua hai DB snapshot và mismatch count.
 
 - [ ] **Step 3: Viết support actions với auth riêng**
 
@@ -2539,14 +3483,49 @@ export async function resolveSupportedGoogleMapsLink(value: string): Promise<{
 }>;
 ```
 
-Mỗi export bắt đầu bằng `verifyAdmin()`. Save flow:
-
-1. `prepareInvitationDraft(formData)` ngoài transaction.
-2. Trong transaction query `Invitation` với `{ id, isDemo: false }` và user snapshot.
-3. `writeInvitationDraft`.
-4. Gọi audit cùng transaction bằng object đầy đủ:
+Mỗi export bắt đầu bằng `verifyAdmin()`. Định nghĩa domain error dùng chung trong file action; chỉ error này được catch và map về `EditorState`, lỗi hạ tầng/lỗi code phải rethrow:
 
 ```ts
+class SupportEditorMutationError extends Error {
+  constructor(readonly code: EditorErrorCode) {
+    super(code);
+  }
+}
+
+function editorFailure(error: unknown): EditorState {
+  if (error instanceof SupportEditorMutationError) {
+    return { errorCode: error.code };
+  }
+  throw error;
+}
+```
+
+Save flow:
+
+1. `prepareInvitationDraft(formData)` ngoài transaction.
+2. Trong transaction query `Invitation` với `{ id, isDemo: false }`, user snapshot, content và ba relation có `sortOrder`; không thấy thì throw `SupportEditorMutationError("invitationNotFound")`.
+3. `writeInvitationDraft`.
+4. Trước khi write, canonicalize/diff persisted row và submitted draft bằng đúng helper Task 5. Sau write, gọi audit cùng transaction bằng object đầy đủ:
+
+```ts
+const editorDiff = diffInvitationEditorAudit(
+  {
+    source: "prisma",
+    templateId: invitation.templateId,
+    content: invitation.content,
+    ceremonies: invitation.ceremonies,
+    schedule: invitation.schedule,
+    gallery: invitation.gallery,
+  },
+  {
+    source: "submitted",
+    persistedData: prepared.data.persistedData,
+    ceremonies: prepared.data.ceremonies,
+    schedule: prepared.data.schedule,
+    gallery: prepared.data.gallery,
+  },
+);
+
 await writeAdminAudit(db, {
   adminId,
   adminEmail,
@@ -2555,23 +3534,22 @@ await writeAdminAudit(db, {
   invitationId: invitation.id,
   action: ADMIN_AUDIT_ACTIONS.invitationUpdated,
   details: {
-    changedGroups: changedEditorGroups(contentSnapshot, {
-      ...prepared.data.persistedData,
-      ceremonies: prepared.data.ceremonies,
-      schedule: prepared.data.schedule,
-      gallery: prepared.data.gallery,
-    }),
-    before: { templateId: invitation.templateId },
-    after: { templateId: prepared.data.templateId },
+    changedGroups: editorDiff.changedGroups,
+    changedFields: editorDiff.changedFields,
+    ...(invitation.templateId === prepared.data.templateId
+      ? {}
+      : { templateId: prepared.data.templateId }),
   },
 });
 ```
 
-Ngay sau query, tạo `contentSnapshot` chính xác bằng `{ templateId: invitation.templateId, ...invitation.content, ceremonies: invitation.ceremonies, schedule: invitation.schedule, gallery: invitation.gallery.map((item) => item.url) }`. Object này chỉ dùng làm input cho `changedEditorGroups`; tuyệt đối không ghi snapshot hoặc giá trị field vào audit. Import `changedEditorGroups` từ `@/lib/admin-audit`.
+Import `diffInvitationEditorAudit` từ `@/lib/invitation-editor-audit`; `admin-audit` chỉ cung cấp action constants/serialization/write. Không tạo `contentSnapshot`, không gọi `changedEditorGroups`, không ghi raw Prisma row/canonical snapshot hoặc before/after nội dung vào audit. `changedGroups` và `changedFields` là exact result của canonical diff; `templateId` chỉ được thêm khi đổi và là slug allowlist an toàn.
 
 5. Revalidate profile, admin editor, owner editor và dashboard.
 
-Publish flow validate required fields và slug trước write. Trong transaction, check collision bằng slug unique query, tạo cùng `contentSnapshot`, write content, update status/slug/publishedAt, rồi audit action `INVITATION_PUBLISHED_BY_ADMIN` nếu status cũ chưa published; nếu đã published dùng `INVITATION_UPDATED_BY_ADMIN`. Audit details dùng cùng `changedGroups` an toàn như save và thêm `before.status`/`after.status`, `before.slug`/`after.slug`; không ghi tên, địa chỉ, bank hoặc nội dung đầy đủ. Return `publishedSlug` và `publishedAt` như owner action.
+Save action phải `try` quanh transaction, catch bằng `editorFailure`, chỉ revalidate/return `{ok:true,persisted:true}` sau commit. Submit invalid hoặc transaction fail không có content write và không có audit.
+
+Publish flow chuẩn bị draft, validate required fields và slug syntax trước transaction nhưng chưa ghi gì. Trong **một** transaction: query `{id,isDemo:false}` cùng user/content/relations; check collision; tính `editorDiff` bằng hai discriminant như save; `writeInvitationDraft`; update status/slug/publishedAt; ghi audit action `INVITATION_PUBLISHED_BY_ADMIN` nếu status cũ chưa published, nếu đã published dùng `INVITATION_UPDATED_BY_ADMIN`. Audit details chỉ gồm `changedGroups`, `changedFields`, `templateId` khi đổi, `before:{status,slug}` và `after:{status,slug}`; status/slug là metadata định danh allowlist, không ghi tên, địa chỉ, bank hoặc nội dung đầy đủ. Transaction lỗi rollback cả draft, publication và audit. Catch chỉ `SupportEditorMutationError`; rethrow lỗi lạ. Revalidate/return `publishedSlug` và `publishedAt` như owner action chỉ sau commit.
 
 Slug check phải query thiệp đích `{ id: invitationId, isDemo: false }` sau `verifyAdmin`; resolver map chỉ chạy sau `verifyAdmin`, dùng cùng URL/length policy của owner action.
 
@@ -2647,27 +3625,48 @@ type ResolveMapAction = (value: string) => Promise<{
 }>;
 ```
 
-Narrow union trước khi chọn action; default chỉ tồn tại ở owner branch:
+Không destructure các action khỏi `props` trước khi narrow. Tách ba branch component tường minh để TypeScript giữ đúng discriminant và hook order ổn định; default owner action chỉ xuất hiện trong owner branch:
 
-```ts
-const editorMode = mode ?? "owner";
-const ownerMode = editorMode === "owner";
-const demoMode = editorMode === "demo-admin";
-const supportMode = editorMode === "support-admin";
+```tsx
+export function EditorForm(props: EditorFormProps) {
+  if (props.mode === "support-admin") {
+    return <SupportAdminEditorForm {...props} />;
+  }
+  if (props.mode === "demo-admin") {
+    return <DemoAdminEditorForm {...props} />;
+  }
+  return <OwnerEditorForm {...props} mode="owner" />;
+}
 
-const effectiveSaveAction = (
-  ownerMode ? saveDraft : props.saveAction
-).bind(null, invitationId);
-const effectivePublishAction = (
-  supportMode ? props.publishAction : publish
-).bind(null, invitationId);
-const effectiveCheckSlug = supportMode ? props.checkSlugAction : checkSlug;
-const effectiveResolveMap = supportMode
-  ? props.resolveMapAction
-  : resolveGoogleMapsLink;
+function OwnerEditorForm(
+  props: CommonEditorFormProps & { mode: "owner" },
+) {
+  return (
+    <EditorFormBody
+      {...props}
+      ownerMode
+      saveAction={saveDraft}
+      publishAction={publish}
+      checkSlugAction={checkSlug}
+      resolveMapAction={resolveGoogleMapsLink}
+    />
+  );
+}
+
+function SupportAdminEditorForm(
+  props: Extract<EditorFormProps, { mode: "support-admin" }>,
+) {
+  return <EditorFormBody {...props} ownerMode={false} />;
+}
+
+function DemoAdminEditorForm(
+  props: Extract<EditorFormProps, { mode: "demo-admin" }>,
+) {
+  return <DemoEditorFormBody {...props} ownerMode={false} />;
+}
 ```
 
-Không dựng `useActionState` cho publish trong `demoMode`; tách một child component cho publish section hoặc dùng action no-op nội bộ không export/không gắn vào form. Mục tiêu là `saveDemo` không bao giờ vô tình nhận submit xuất bản.
+`EditorFormBody` nhận đủ bốn action bắt buộc và có save/publish/slug/map hooks. `DemoEditorFormBody` chỉ nhận `saveAction`, không có prop publish/slug/map và không dựng các hook/section đó. Không dùng no-op action. Như vậy `saveDemo` không thể nhận submit xuất bản hoặc fallback sang action owner ở cả runtime lẫn type-level.
 
 Behavior matrix bắt buộc:
 
@@ -2721,10 +3720,9 @@ export type SlugCheckResult =
 
 Import `EditorErrorCode`, `EditorState` và `SlugCheckResult` ở các action/UI thay vì định nghĩa union lệch nhau. `EditorForm` dùng `const errorT = useTranslations("editor.errors")` và map `saveState.errorCode`, `publishState.errorCode`, `slugStatus.reasonCode` qua `errorT(code)` trước toast/render. Không đưa message đã dịch từ client vào analytics; analytics chỉ nhận error code.
 
-Đổi outer `EditorForm` restore logic thành:
+Đổi draft restore logic trong `EditorFormBody` thành:
 
 ```ts
-const ownerMode = (props.mode ?? "owner") === "owner";
 const restoredDraft = useMemo(
   () => (hydrated && ownerMode ? readDraft(props.invitationId) : null),
   [hydrated, ownerMode, props.invitationId],
@@ -2799,15 +3797,21 @@ Page phải `await verifyAdmin()`, `await params`, query thiệp `{ id, isDemo: 
 
 Trang demo đổi `adminMode` thành `mode="demo-admin"`; quyền demo và behavior save giữ nguyên. Vì `EditorState.error` đã bị thay bằng `errorCode`, refactor `src/app/admin/demos/actions.ts` trong Task 9 để `saveDemo` trả `invitationNotFound`/`invalidData` thay cho copy tự do; không thay đổi `RenameTemplateState` hoặc các action quản lý template khác.
 
+Support page link/back context chỉ lấy `invitation.user.id/email` từ query server. Không nhận `userId` qua search param/form. Direct support action cũng chỉ nhận `invitationId`, rồi tự derive target user từ row đã re-query; đây là bất biến ngăn audit cross-binding User A/thiệp B.
+
 - [ ] **Step 6: Chạy support/owner/demo editor regressions**
 
 ```bash
 npm run typecheck
-npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo'
+npx playwright test tests/e2e/admin-invitation-support.spec.ts --project=chromium --grep 'edits and publishes|rejects demo|unauthenticated support|invalid template|slug wrapper|map wrapper|cross-binding'
 npx playwright test tests/e2e/editor.spec.ts tests/e2e/admin.spec.ts --project=chromium --grep 'owner opens editor|demo edit page loads'
 ```
 
-Expected: typecheck exit 0; support, owner và demo tests PASS.
+Expected: typecheck exit 0; support happy path cho Admin/SuperAdmin, demo/unknown
+rejection, mọi direct-action auth/invalid-data zero-write/zero-audit regression,
+owner và demo tests đều PASS. `cross-binding` xác nhận A không đổi, B nhận đúng
+save/publish state sau khi action re-derive owner từ B, audit chỉ có cặp B/B và
+`mismatchedAuditCount === 0`.
 
 - [ ] **Step 7: Commit support editor slice**
 
@@ -3286,13 +4290,15 @@ git commit -m "test(admin): cover invitation support invariants"
 - [ ] **Step 1: Kiểm tra diff scope và whitespace**
 
 ```bash
-feature_base=$(git merge-base HEAD origin/master)
-git status --short
-git diff --check
+feature_base=d46e89ac6f0d606951fcc02c220ad764e7c79dd4
+git merge-base --is-ancestor "$feature_base" HEAD
+test -z "$(git status --porcelain)"
+git diff --check "$feature_base"..HEAD
 git diff --stat "$feature_base"..HEAD
+git log --oneline "$feature_base"..HEAD
 ```
 
-Expected: không có whitespace error; diff chỉ gồm các file được liệt kê trong plan và thay đổi tiền đề đã được nhận diện rõ. Không giả định số commit cố định vì plan có 11 task/commit và execution worktree có thể chứa commit tiền đề được bảo toàn.
+Expected: feature base chính xác là ancestor, worktree sạch, không có whitespace error; diff chỉ gồm các file được liệt kê trong plan và thay đổi tiền đề đã được nhận diện rõ. Không giả định số commit cố định vì plan có 11 task/commit và execution worktree có thể chứa commit tiền đề được bảo toàn.
 
 - [ ] **Step 2: Rehearse migration trên snapshot tạm**
 
@@ -3392,15 +4398,27 @@ Nếu mục nào FAIL, ghi route, viewport, bước tái hiện và sửa trong 
 
 - [ ] **Step 7: Ghi kết quả và bàn giao, không tự deploy**
 
-Tạo handoff trong final response theo mẫu thực tế (không tạo file mới):
+Tạo handoff trong final response bằng dữ liệu thật của lần chạy này, không tạo
+file mới và không để template token. Handoff bắt buộc chứa:
 
-```text
-Migration rehearsal: <command> — PASS/FAIL
-Quality gates: <command + số pass thực tế cho từng suite>
-Feature commits: <git log --oneline "$feature_base"..HEAD>
-Preserved overlaps: <danh sách file + commit/patch tiền đề>
-Manual QA: <6 dòng PASS/FAIL từ Step 6>
-Deployment: NOT RUN — chờ yêu cầu riêng
-```
+1. `Migration rehearsal`: paste nguyên các command deploy/SQLite verification đã
+   chạy ở Step 2, exit status và output xác nhận `quick_check=ok`, số foreign-key
+   rows và legacy defaults; kết luận rõ `PASS` hoặc `FAIL`.
+2. `Quality gates`: liệt kê từng command thực tế ở Steps 3–5 cùng exit status.
+   Với `npm run test:unit` và từng Playwright invocation, paste summary có số test
+   pass/fail/skipped thực tế; không viết chung chung “tests pass”. Với build,
+   typecheck, typecheck tests, lint, Prisma validate/generate, ghi output kết luận
+   thực tế tương ứng.
+3. `Feature commits`: paste nguyên output thực tế của
+   `git log --oneline "$feature_base"..HEAD`; không tóm tắt hoặc thay bằng tên
+   command.
+4. `Preserved overlaps`: liệt kê từng file overlap tiền đề thực tế cùng commit SHA
+   hoặc patch nguồn đã được giữ lại. Nếu scan xác minh không có overlap, ghi rõ
+   `None` và command đã dùng để xác minh; không để mục trống.
+5. `Manual QA`: paste đúng sáu entry của Step 6, mỗi entry có literal `PASS` hoặc
+   `FAIL` và quan sát thực tế. Sáu entry phải lần lượt cover desktop search,
+   mobile overflow, keyboard/focus, support banner/back link, full golden path và
+   dashboard paid-versus-complimentary; không gộp hoặc bỏ entry nào.
+6. `Deployment`: ghi nguyên `NOT RUN — chờ yêu cầu riêng`.
 
 Nếu người dùng yêu cầu deploy sau đó, dùng đúng runbook Mini PC, backup SQLite trước migration và deploy từ một source tree chỉ chứa feature đã duyệt.

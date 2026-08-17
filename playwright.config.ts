@@ -9,10 +9,15 @@ const TEST_DB_URL = "file:./tests/e2e/.data/test.db";
 export default defineConfig({
   testDir: "./tests/e2e",
   outputDir: "./tests/e2e/.artifacts",
-  fullyParallel: true,
+  // Chromium E2E specs share one SQLite database and several deliberately
+  // exercise direct database mutations alongside browser requests. WAL avoids
+  // lock timeouts, but cannot provide test-level isolation between workers.
+  // Keep this integration suite deterministic instead of allowing one test's
+  // cleanup or price mutation to race another test's assertion.
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: 1,
   reporter: [["list"], ["html", { outputFolder: "tests/e2e/.report", open: "never" }]],
   timeout: 60_000,
   expect: { timeout: 10_000 },

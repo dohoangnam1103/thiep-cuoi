@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import viMessages from "../../../../../messages/vi.json";
 import { verifyAdmin } from "@/lib/admin-dal";
+import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels } from "@/lib/template-labels";
@@ -42,11 +43,11 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
       </Link>
       <NextIntlClientProvider locale="vi" messages={{ editor: viMessages.editor }}>
         <EditorForm
-          adminMode
+          mode="demo-admin"
           saveAction={saveDemo}
           invitationId={invitation.id}
           status={invitation.status}
-          paid={invitation.paid}
+          activation={getInvitationActivation(invitation)}
           currentSlug={invitation.slug}
           templateId={invitation.templateId}
           content={invitation.content}

@@ -108,7 +108,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             <div className="rounded-[14px] border-2 border-[#ffbe89] px-5 py-2 md:px-7 md:py-3">
               <RedHeading>Thông Tin Lễ Cưới</RedHeading>
             </div>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
@@ -160,7 +160,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
+            {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">
               <RedHeading>Cùng đếm ngược</RedHeading>

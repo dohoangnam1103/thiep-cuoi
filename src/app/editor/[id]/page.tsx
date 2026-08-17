@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { routing } from "@/i18n/routing";
 import { verifySession, ownInvitation } from "@/lib/dal";
+import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels } from "@/lib/template-labels";
@@ -38,7 +39,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
     <EditorForm
       invitationId={id}
       status={invitation.status}
-      paid={invitation.paid}
+      activation={getInvitationActivation(invitation)}
       publishedAt={invitation.publishedAt?.toISOString() ?? null}
       currentSlug={invitation.slug}
       templateId={invitation.templateId}

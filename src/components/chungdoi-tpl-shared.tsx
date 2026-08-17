@@ -1,6 +1,6 @@
 "use client";
 
-import { type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type ReactNode, type SetStateAction, useCallback, useEffect, useId, useRef, useState } from "react";
+import { startTransition, type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 
@@ -30,6 +30,7 @@ import {
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { cn } from "@/lib/utils";
+import viMessages from "../../messages/vi.json";
 
 export { buildVietQrImageUrl } from "@/lib/vietqr";
 export { googleCalendarUrl } from "@/lib/google-calendar-url";
@@ -280,8 +281,10 @@ export function FamilyColumn({ title, a, b, addr }: { title: string; a: string; 
   return (
     <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
       <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{title}</span>
-      <span className="whitespace-nowrap text-[20px] font-bold">{a}</span>
-      <span className="whitespace-nowrap text-[20px] font-bold">{b}</span>
+      {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài sẽ bị
+          cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên. */}
+      <span className="text-[20px] font-bold">{a}</span>
+      <span className="text-[20px] font-bold">{b}</span>
       {addr ? <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{addr}</div> : null}
     </div>
   );
@@ -337,8 +340,10 @@ export function FitText({
 type SharedWishFormLabels = {
   nameLabel?: string;
   namePlaceholder?: string;
+  nameRequired?: string;
   textLabel?: string;
   textPlaceholder?: string;
+  textRequired?: string;
   success?: string;
   submit?: string;
   pending?: string;
@@ -357,23 +362,49 @@ export function SharedWishForm({
   const { formProps, pending, state } = useWishFormBinding();
   const nameId = useId();
   const textId = useId();
+  const [validationError, setValidationError] = useState<string>();
   const copy = {
-    namePlaceholder: "Tên của bạn",
-    textPlaceholder: "Lời chúc của bạn",
-    success: "Cảm ơn lời chúc của bạn!",
-    submit: "Gửi lời chúc",
-    pending: "Đang gửi...",
+    namePlaceholder: viMessages.invitationTemplate.wishName,
+    nameRequired: viMessages.invitationTemplate.wishNameRequired,
+    textPlaceholder: viMessages.invitationTemplate.wishText,
+    textRequired: viMessages.invitationTemplate.wishTextRequired,
+    success: viMessages.invitationTemplate.wishSuccess,
+    submit: viMessages.invitationTemplate.wishSubmit,
+    pending: viMessages.invitationTemplate.wishPending,
     ...labels,
   };
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const name = formData.get("name");
+    const text = formData.get("text");
+
+    if (typeof name !== "string" || !name.trim()) {
+      setValidationError(copy.nameRequired);
+      return;
+    }
+    if (typeof text !== "string" || !text.trim()) {
+      setValidationError(copy.textRequired);
+      return;
+    }
+
+    setValidationError(undefined);
+    if ("action" in formProps) {
+      startTransition(() => formProps.action(formData));
+      return;
+    }
+    formProps.onSubmit(event);
+  }
+
   return (
-    <form {...formProps} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+    <form noValidate onSubmit={handleSubmit} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
         <label className="sr-only" htmlFor={nameId}>{labels?.nameLabel ?? copy.namePlaceholder}</label>
-        <input id={nameId} name="name" required maxLength={120} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
+        <input id={nameId} name="name" required maxLength={120} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
         <label className="sr-only" htmlFor={textId}>{labels?.textLabel ?? copy.textPlaceholder}</label>
-        <textarea id={textId} name="text" rows={3} required maxLength={1000} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
-        {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
+        <textarea id={textId} name="text" rows={3} required maxLength={1000} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
+        {validationError || state?.error ? <p role="alert" className="text-[12px]" style={{ color: "#c0392b" }}>{validationError ?? state?.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{copy.success}</p> : null}
         <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
           <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: "#fff" }}>{pending ? copy.pending : copy.submit}</button>

@@ -4,85 +4,18 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 import { verifySession, ownInvitation } from "@/lib/dal";
-import { isGoogleMapsShortUrl, isGoogleMapsUrl } from "@/lib/google-maps";
+import { isGoogleMapsUrl } from "@/lib/google-maps";
 import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
-import {
-  contentSchema,
-  parseCeremonies,
-  parseSchedule,
-  parseGallery,
-  type EditorState,
-} from "./content-schema";
+import { publicationIssue, validateInvitationSlug } from "@/lib/invitation-editor-rules";
+import { prepareInvitationDraft, writeInvitationDraft } from "@/lib/invitation-editor-store";
+import { type EditorState, type SlugCheckResult } from "./content-schema";
 import { slugFromFormFields } from "./slug";
 
-const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-
-async function persistDraft(id: string, formData: FormData) {
-  const parsed = contentSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" } as const;
-  }
-
-  const data = parsed.data;
-  const ceremonies = parseCeremonies(formData);
-  const schedule = parseSchedule(formData);
-  const gallery = parseGallery(formData);
-  const mapAddress = isGoogleMapsShortUrl(data.mapAddress)
-    ? await expandGoogleMapsShortUrl(data.mapAddress)
-    : data.mapAddress;
-  const firstCeremony = ceremonies[0];
-  const persistedData = {
-    ...data,
-    ceremonyHeader: firstCeremony?.title ?? "",
-    ceremonyDate: firstCeremony?.date ?? "",
-    ceremonyTime: firstCeremony?.time ?? "",
-    mapAddress,
-  };
-  const { templateId, ...contentData } = persistedData;
-
-  await prisma.$transaction([
-    prisma.invitation.update({
-      where: { id },
-      data: { templateId },
-    }),
-    prisma.invitationContent.upsert({
-      where: { invitationId: id },
-      create: { invitationId: id, ...contentData },
-      update: contentData,
-    }),
-    prisma.ceremonyItem.deleteMany({ where: { invitationId: id } }),
-    prisma.scheduleItem.deleteMany({ where: { invitationId: id } }),
-    prisma.galleryPhoto.deleteMany({ where: { invitationId: id } }),
-    ...(ceremonies.length
-      ? [
-          prisma.ceremonyItem.createMany({
-            data: ceremonies.map((ceremony, i) => ({
-              invitationId: id,
-              title: ceremony.title,
-              date: ceremony.date,
-              time: ceremony.time,
-              sortOrder: i,
-            })),
-          }),
-        ]
-      : []),
-    ...(schedule.length
-      ? [
-          prisma.scheduleItem.createMany({
-            data: schedule.map((s, i) => ({ invitationId: id, time: s.time, label: s.label, sortOrder: i })),
-          }),
-        ]
-      : []),
-    ...(gallery.length
-      ? [
-          prisma.galleryPhoto.createMany({
-            data: gallery.map((url, i) => ({ invitationId: id, url, sortOrder: i })),
-          }),
-        ]
-      : []),
-  ]);
-
-  return { data: persistedData } as const;
+async function requireOwnedInvitation(id: string) {
+  const { userId } = await verifySession();
+  const invitation = await ownInvitation(id, userId);
+  if (!invitation) return null;
+  return { invitation, userId };
 }
 
 export async function resolveGoogleMapsLink(value: string): Promise<{
@@ -104,13 +37,15 @@ export async function resolveGoogleMapsLink(value: string): Promise<{
 }
 
 export async function saveDraft(id: string, _prev: EditorState, formData: FormData): Promise<EditorState> {
-  const { userId } = await verifySession();
-  const invitation = await ownInvitation(id, userId);
-  if (!invitation) return { error: "Không tìm thấy thiệp" };
+  const access = await requireOwnedInvitation(id);
+  if (!access) return { errorCode: "invitationNotFound" };
 
-  const result = await persistDraft(id, formData);
-  if ("error" in result) return { error: result.error };
+  const prepared = await prepareInvitationDraft(formData);
+  if ("errorCode" in prepared) {
+    return { errorCode: prepared.errorCode };
+  }
 
+  await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
   revalidatePath(`/editor/${id}`);
   return { ok: true, persisted: true };
 }
@@ -121,77 +56,100 @@ export async function saveDraft(id: string, _prev: EditorState, formData: FormDa
  * có nên dời baseline hay giữ lại để thử lại.
  */
 export async function autosaveDraft(id: string, formData: FormData): Promise<boolean> {
-  const { userId } = await verifySession();
-  const invitation = await ownInvitation(id, userId);
-  if (!invitation) return false;
+  const access = await requireOwnedInvitation(id);
+  if (!access) return false;
 
-  const result = await persistDraft(id, formData);
-  return !("error" in result);
+  const prepared = await prepareInvitationDraft(formData);
+  if ("errorCode" in prepared) return false;
+
+  await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
+  return true;
 }
 
-export async function checkSlug(slug: string, invitationId: string): Promise<{ available: boolean; reason?: string }> {
-  const { userId } = await verifySession();
+export async function checkSlug(
+  slug: string,
+  invitationId: string,
+): Promise<SlugCheckResult> {
+  const access = await requireOwnedInvitation(invitationId);
+  if (!access) {
+    return { available: false, reasonCode: "invitationNotFound" };
+  }
   const normalized = slug.trim().toLowerCase();
-  if (!normalized) return { available: false, reason: "Chưa nhập đường dẫn" };
-  if (!SLUG_RE.test(normalized)) {
-    return { available: false, reason: "Chỉ dùng chữ thường, số và dấu gạch ngang" };
+  const syntax = validateInvitationSlug(normalized);
+  if (!syntax.available) {
+    return syntax;
   }
   const existing = await prisma.invitation.findUnique({ where: { slug: normalized } });
   if (existing && existing.id !== invitationId) {
-    return { available: false, reason: "Đường dẫn đã được dùng" };
-  }
-  if (existing && existing.userId !== userId) {
-    return { available: false, reason: "Đường dẫn đã được dùng" };
+    return { available: false, reasonCode: "slugTaken" };
   }
   return { available: true };
 }
 
 export async function publish(id: string, _prev: EditorState, formData: FormData): Promise<EditorState> {
-  const { userId } = await verifySession();
-  const invitation = await ownInvitation(id, userId);
-  if (!invitation) return { error: "Không tìm thấy thiệp" };
+  const access = await requireOwnedInvitation(id);
+  if (!access) return { errorCode: "invitationNotFound" };
 
-  const draft = await persistDraft(id, formData);
-  if ("error" in draft) return { error: draft.error };
+  const prepared = await prepareInvitationDraft(formData);
+  if ("errorCode" in prepared) {
+    return { errorCode: prepared.errorCode };
+  }
 
-  // persistDraft đã ghi nội dung mới nhất; giữ Server Component đồng bộ kể cả khi
+  await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
+  // Draft đã ghi nội dung mới nhất; giữ Server Component đồng bộ kể cả khi
   // các điều kiện xuất bản bên dưới chưa đạt.
   revalidatePath(`/editor/${id}`);
 
-  if (!draft.data.brideFullName.trim() || !draft.data.groomFullName.trim()) {
+  const issue = publicationIssue(prepared.data.persistedData);
+  if (issue) {
     return {
-      error: "Cần tên cô dâu và chú rể trước khi xuất bản",
-      focusField: !draft.data.brideFullName.trim() ? "brideFullName" : "groomFullName",
+      errorCode: issue.errorCode,
+      focusField: issue.focusField,
       persisted: true,
     };
   }
-  if (!draft.data.date.trim()) {
-    return { error: "Cần ngày cưới trước khi xuất bản", focusField: "date", persisted: true };
-  }
-  if (!draft.data.time.trim()) {
-    return { error: "Cần giờ tiệc cưới trước khi xuất bản", focusField: "time", persisted: true };
-  }
 
   const formSlug = String(formData.get("slug") ?? "").trim().toLowerCase();
-  const baseSlug = formSlug || slugFromFormFields(draft.data);
+  const baseSlug = formSlug || slugFromFormFields(prepared.data.persistedData);
   if (!baseSlug) {
-    return { error: "Chưa có tên cô dâu/chú rể để tạo đường dẫn", persisted: true };
+    return { errorCode: "slugMissing", persisted: true };
   }
 
-  const slugCheck = await checkSlug(baseSlug, id);
-  if (!slugCheck.available) {
-    return { error: slugCheck.reason ?? "Đường dẫn không hợp lệ", focusField: "slug", persisted: true };
+  const syntax = validateInvitationSlug(baseSlug);
+  if (!syntax.available) {
+    return {
+      errorCode: syntax.reasonCode,
+      focusField: "slug",
+      persisted: true,
+    };
   }
 
-  const publishedAt = invitation.publishedAt ?? new Date();
-  await prisma.invitation.update({
-    where: { id },
-    data: {
-      slug: baseSlug,
-      status: "published",
-      ...(invitation.publishedAt ? {} : { publishedAt }),
-    },
+  const published = await prisma.$transaction(async (db) => {
+    const current = await db.invitation.findFirst({
+      where: { id, userId: access.userId },
+    });
+    if (!current) return { errorCode: "invitationNotFound" } as const;
+    const existing = await db.invitation.findUnique({ where: { slug: baseSlug } });
+    if (existing && existing.id !== id) return { errorCode: "slugTaken" } as const;
+    const publishedAt = current.publishedAt ?? new Date();
+    await db.invitation.update({
+      where: { id },
+      data: {
+        slug: baseSlug,
+        status: "published",
+        ...(current.publishedAt ? {} : { publishedAt }),
+      },
+    });
+    return { publishedAt };
   });
+
+  if ("errorCode" in published) {
+    return {
+      errorCode: published.errorCode,
+      focusField: published.errorCode === "slugTaken" ? "slug" : undefined,
+      persisted: true,
+    };
+  }
 
   revalidatePath(`/editor/${id}`);
   revalidatePath(`/thiep/${baseSlug}`);
@@ -199,6 +157,6 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
     ok: true,
     persisted: true,
     publishedSlug: baseSlug,
-    publishedAt: publishedAt.toISOString(),
+    publishedAt: published.publishedAt.toISOString(),
   };
 }

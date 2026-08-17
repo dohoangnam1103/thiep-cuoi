@@ -216,10 +216,11 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
         <section className="relative z-[2] px-6 py-10 md:px-10 md:py-14">
           <NhatBinhSectionCorners nb={NB} />
           <NhatBinhHeading red={RED}>Thông Tin Lễ Cưới</NhatBinhHeading>
-          <div className="relative mx-auto mt-8 grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] items-start gap-3 text-center md:max-w-[520px] md:gap-6 lg:max-w-[600px]">
+          {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng, không bị cắt. */}
+          <div className="relative mx-auto mt-8 grid w-full max-w-[366px] grid-cols-1 items-start gap-6 text-center md:max-w-[520px] md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:max-w-[600px]">
             <FamilyColumn {...familyColumns[0]} />
-            <div className="flex h-[50px] w-0 shrink-0 items-center justify-center self-stretch px-0 md:h-[64px]">
-              <div className="h-full w-px" style={{ backgroundColor: BROWN }} />
+            <div className="flex w-full items-center justify-center self-stretch md:h-[64px] md:w-0 md:shrink-0 md:px-0">
+              <div className="h-px w-16 md:h-full md:w-px" style={{ backgroundColor: BROWN }} />
             </div>
             <FamilyColumn {...familyColumns[1]} />
           </div>

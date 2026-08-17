@@ -15,7 +15,12 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   const now = new Date();
   const invitations = await prisma.invitation.findMany({
-    where: { paid: false, publishedAt: { not: null }, reminderSentAt: null },
+    where: {
+      paid: false,
+      complimentary: false,
+      publishedAt: { not: null },
+      reminderSentAt: null,
+    },
     include: {
       user: { select: { email: true } },
       content: { select: { brideShortName: true, groomShortName: true } },
@@ -30,6 +35,7 @@ async function main() {
     const email = inv.user.email;
     const candidate: ReminderCandidate = {
       paid: inv.paid,
+      complimentary: inv.complimentary,
       publishedAt: inv.publishedAt,
       reminderSentAt: inv.reminderSentAt,
       email,

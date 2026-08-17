@@ -2,10 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { trackEvent } from "@/lib/analytics";
 import { BANK, buildVietQrUrl } from "@/lib/payment";
-import { applyVoucherToPayment, type PaymentInfo } from "./actions";
+import {
+  applyVoucherToPayment,
+  type PaymentInfo,
+  type VoucherErrorCode,
+} from "./actions";
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + "đ";
@@ -15,14 +20,44 @@ function formatDateTime(date: Date): string {
   return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
+type PaymentTerminalState = "active" | "paid" | "expired" | "superseded";
+
+export function PaymentPriceChangedCard() {
+  const router = useRouter();
+  const t = useTranslations("paymentActivation");
+
+  return (
+    <div className="mt-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center shadow">
+      <h2 className="font-heading text-2xl font-semibold text-foreground">
+        {t("priceChanged")}
+      </h2>
+      <p className="mt-2 text-muted-foreground">
+        {t("priceChangedDescription")}
+      </p>
+      <button
+        type="button"
+        onClick={() => router.refresh()}
+        className="mt-5 rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground transition hover:bg-primary/90"
+      >
+        {t("reload")}
+      </button>
+    </div>
+  );
+}
+
 export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
   const router = useRouter();
+  const t = useTranslations("paymentActivation");
   const [payment, setPayment] = useState(initial);
   const [voucherInput, setVoucherInput] = useState("");
-  const [voucherError, setVoucherError] = useState<string | null>(null);
+  const [voucherError, setVoucherError] = useState<VoucherErrorCode | null>(null);
   const [applying, setApplying] = useState(false);
-  const [paid, setPaid] = useState(initial.status === "paid");
-  const [expired, setExpired] = useState(() => Date.now() >= new Date(initial.expiresAt).getTime());
+  const [terminalState, setTerminalState] = useState<PaymentTerminalState>(() => {
+    if (initial.status === "paid") return "paid";
+    if (initial.status === "superseded") return "superseded";
+    if (Date.now() >= new Date(initial.expiresAt).getTime()) return "expired";
+    return "active";
+  });
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const qrUrl = payment.provider === "payos"
@@ -37,13 +72,16 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
   }, [initial.amount, initial.status]);
 
   useEffect(() => {
-    if (paid || expired) return;
-    const timeout = setTimeout(() => setExpired(true), Math.max(0, expiresAtMs - Date.now()));
+    if (terminalState !== "active") return;
+    const timeout = setTimeout(
+      () => setTerminalState("expired"),
+      Math.max(0, expiresAtMs - Date.now()),
+    );
     return () => clearTimeout(timeout);
-  }, [expired, expiresAtMs, paid]);
+  }, [expiresAtMs, terminalState]);
 
   useEffect(() => {
-    if (paid || expired) return;
+    if (terminalState !== "active") return;
     pollRef.current = setInterval(async () => {
       try {
         const res = await fetch(`/api/payment/${payment.code}/status`);
@@ -56,13 +94,15 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
             value: payment.amount,
             coupon: payment.voucherCode || undefined,
           });
-          setPaid(true);
+          setTerminalState("paid");
           if (pollRef.current) clearInterval(pollRef.current);
           router.push("/dashboard");
           router.refresh();
-        }
-        if (data.status === "expired") {
-          setExpired(true);
+        } else if (data.status === "expired") {
+          setTerminalState("expired");
+          if (pollRef.current) clearInterval(pollRef.current);
+        } else if (data.status === "superseded") {
+          setTerminalState("superseded");
           if (pollRef.current) clearInterval(pollRef.current);
         }
       } catch {
@@ -72,7 +112,7 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [expired, paid, payment.amount, payment.code, payment.voucherCode, router]);
+  }, [payment.amount, payment.code, payment.voucherCode, router, terminalState]);
 
   async function onApplyVoucher() {
     setApplying(true);
@@ -86,19 +126,24 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
         discount: Math.max(0, previousAmount - result.payment.amount),
       });
       setPayment(result.payment);
-      setExpired(false);
       setVoucherInput("");
       if (result.payment.status === "paid") {
-        setPaid(true);
+        setTerminalState("paid");
         router.push("/dashboard");
         router.refresh();
+      } else if (result.payment.status === "superseded") {
+        setTerminalState("superseded");
+      } else if (Date.now() >= new Date(result.payment.expiresAt).getTime()) {
+        setTerminalState("expired");
+      } else {
+        setTerminalState("active");
       }
     } else {
-      setVoucherError(result.error);
+      setVoucherError(result.errorCode);
     }
   }
 
-  if (paid) {
+  if (terminalState === "paid") {
     return (
       <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow">
         <h2 className="font-heading text-2xl font-semibold text-foreground">Thanh toán thành công</h2>
@@ -107,12 +152,16 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
     );
   }
 
-  if (expired) {
+  if (terminalState === "superseded") {
+    return <PaymentPriceChangedCard />;
+  }
+
+  if (terminalState === "expired") {
     return (
       <div className="mt-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center shadow">
         <h2 className="font-heading text-2xl font-semibold text-foreground">Mã thanh toán đã hết hạn</h2>
         <p className="mt-2 text-muted-foreground">
-          Mỗi mã thanh toán chỉ có hiệu lực đến {formatDateTime(new Date(initial.expiresAt))}.
+          Mỗi mã thanh toán chỉ có hiệu lực đến {formatDateTime(new Date(payment.expiresAt))}.
           Tải lại trang để lấy mã chuyển khoản mới.
         </p>
         <button
@@ -167,7 +216,7 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
         <div className="mt-5">
           {payment.voucherCode ? (
             <p className="text-sm text-green-700">Đã áp mã <span className="font-semibold">{payment.voucherCode}</span></p>
-          ) : (
+          ) : payment.voucherAllowed ? (
             <div className="flex gap-2">
               <input
                 value={voucherInput}
@@ -184,8 +233,12 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
                 {applying ? "Đang áp…" : "Áp mã"}
               </button>
             </div>
-          )}
-          {voucherError ? <p className="mt-2 text-sm text-red-600">{voucherError}</p> : null}
+          ) : null}
+          {voucherError ? (
+            <p className="mt-2 text-sm text-red-600">
+              {t(`errors.${voucherError}`)}
+            </p>
+          ) : null}
         </div>
 
         <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">

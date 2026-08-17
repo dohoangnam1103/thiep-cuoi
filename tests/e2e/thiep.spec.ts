@@ -91,6 +91,28 @@ test.describe("published invitation /thiep/[slug]", () => {
     }
   });
 
+  test("an old complimentary invitation remains publicly available", async ({ page }) => {
+    const user = createUser();
+    try {
+      const slug = `complimentary-${user.id}`;
+      createInvitation(user.id, {
+        slug,
+        status: "published",
+        paid: false,
+        complimentary: true,
+        publishedAt: new Date("2020-01-01T00:00:00.000Z"),
+      });
+
+      const response = await page.goto(`/thiep/${slug}`);
+      expect(response?.status()).toBe(200);
+      await expect(page.locator("[data-open-invitation-control]")).toBeVisible();
+      await expect(page.getByText("Thiệp đã hết hạn dùng thử")).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "Gia hạn / Thanh toán" })).toHaveCount(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
   test("unknown slug returns 404", async ({ page }) => {
     const res = await page.goto("/thiep/khong-ton-tai-slug-abc123");
     expect(res?.status()).toBe(404);

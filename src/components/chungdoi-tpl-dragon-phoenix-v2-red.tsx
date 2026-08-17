@@ -89,7 +89,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
           <section className="relative flex w-full flex-col items-center gap-8">
             <img src={`${DPV2_BASE}/cloud.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-16 right-0 -z-10 h-auto w-[80%] max-w-none object-contain opacity-[0.1]" />
             <Dpv2Heading>Thông Tin Lễ Cưới</Dpv2Heading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
@@ -135,7 +135,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
               </div>
             ) : null}
             {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
-            {reception ? <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
+            {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar — bordered box (no frame image in this set) */}
             {calendar ? (

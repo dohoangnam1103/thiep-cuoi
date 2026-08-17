@@ -10,12 +10,15 @@ export const getCurrentAdmin = cache(async () => {
   return prisma.admin.findUnique({ where: { id: session.adminId } });
 });
 
-export async function verifyAdmin(): Promise<{ adminId: string }> {
+export async function verifyAdmin(): Promise<{
+  adminId: string;
+  adminEmail: string;
+}> {
   const admin = await getCurrentAdmin();
   if (!admin) {
     redirect("/admin/login");
   }
-  return { adminId: admin.id };
+  return { adminId: admin.id, adminEmail: admin.email };
 }
 
 export async function verifySuperAdmin(): Promise<{ adminId: string }> {

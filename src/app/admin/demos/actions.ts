@@ -13,10 +13,10 @@ import { templateSeoFacets } from "@/data/template-seo-facets";
 import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
 import { defaultTemplateLabel } from "@/lib/template-labels";
 import {
-  contentSchema,
   parseCeremonies,
   parseSchedule,
   parseGallery,
+  contentSchema,
   type EditorState,
 } from "@/app/editor/[id]/content-schema";
 
@@ -24,11 +24,11 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
   await verifyAdmin();
 
   const invitation = await prisma.invitation.findFirst({ where: { id, isDemo: true } });
-  if (!invitation) return { error: "Không tìm thấy thiệp demo" };
+  if (!invitation) return { errorCode: "invitationNotFound" };
 
   const parsed = contentSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { errorCode: "invalidData" };
   }
   const ceremonies = parseCeremonies(formData);
   const firstCeremony = ceremonies[0];

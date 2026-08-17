@@ -18,7 +18,6 @@ import { useTranslations } from "next-intl";
 import {
   useActionState,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
@@ -60,6 +59,7 @@ import {
 } from "@/data/editor-template-capabilities";
 import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, type SelectOption } from "@/data/editor-options";
 import type { InvitationContent } from "@/generated/prisma/client";
+import type { InvitationActivation } from "@/lib/invitation-entitlement";
 import type { MusicPickerMessages } from "@/lib/music-picker";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
@@ -86,7 +86,10 @@ import {
   autosaveDraft,
   resolveGoogleMapsLink,
 } from "./actions";
-import { type EditorState } from "./content-schema";
+import {
+  type EditorState,
+  type SlugCheckResult,
+} from "./content-schema";
 import {
   draftsEqual,
   draftToFormData,
@@ -107,10 +110,27 @@ const MusicPicker = dynamic(() =>
   import("@/components/music-picker").then((module) => module.MusicPicker),
 );
 
-type EditorFormProps = {
+export type EditorMode = "owner" | "demo-admin" | "support-admin";
+
+type EditorMutationAction = (
+  id: string,
+  prev: EditorState,
+  formData: FormData,
+) => Promise<EditorState>;
+type SlugCheckAction = (
+  slug: string,
+  invitationId: string,
+) => Promise<SlugCheckResult>;
+type ResolveMapAction = (value: string) => Promise<{
+  url: string;
+  resolved: boolean;
+  valid: boolean;
+}>;
+
+type CommonEditorFormProps = {
   invitationId: string;
   status: string;
-  paid: boolean;
+  activation: InvitationActivation;
   publishedAt?: string | null;
   currentSlug: string | null;
   templateId: string;
@@ -121,10 +141,58 @@ type EditorFormProps = {
   locale: string;
   musicMessages: MusicPickerMessages;
   initialTrack: { url: string; title: string; artist: string } | null;
-  saveAction?: (id: string, prev: EditorState, formData: FormData) => Promise<EditorState>;
-  adminMode?: boolean;
   /** Admin-renamed template names, keyed by slug. Falls back to built-in names. */
   templateLabels?: Record<string, string>;
+};
+
+export type EditorFormProps = CommonEditorFormProps & (
+  | {
+      mode?: "owner";
+      saveAction?: never;
+      publishAction?: never;
+      checkSlugAction?: never;
+      resolveMapAction?: never;
+      supportContext?: never;
+    }
+  | {
+      mode: "demo-admin";
+      saveAction: EditorMutationAction;
+      publishAction?: never;
+      checkSlugAction?: never;
+      resolveMapAction?: never;
+      supportContext?: never;
+    }
+  | {
+      mode: "support-admin";
+      saveAction: EditorMutationAction;
+      publishAction: EditorMutationAction;
+      checkSlugAction: SlugCheckAction;
+      resolveMapAction: ResolveMapAction;
+      supportContext: { userId: string; email: string };
+    }
+);
+
+/** Everything the shared body needs, resolved by the mode branch above it. */
+type EditorFormBodyConfig = CommonEditorFormProps & {
+  ownerMode: boolean;
+  supportMode: boolean;
+  showSlugSection: boolean;
+  supportContext: { userId: string; email: string } | null;
+  saveAction: EditorMutationAction;
+  publishAction: EditorMutationAction;
+  checkSlugAction: SlugCheckAction;
+  resolveMapAction: ResolveMapAction;
+  restoredDraft: Draft | null;
+};
+
+/**
+ * Demo body wires only the save action: it deliberately never declares
+ * publish/slug/map action props, so `saveDemo` cannot receive a publish
+ * submission or fall back to owner actions at runtime or type level.
+ */
+type DemoEditorFormBodyConfig = CommonEditorFormProps & {
+  saveAction: EditorMutationAction;
+  restoredDraft: Draft | null;
 };
 
 type CeremonyRow = {
@@ -377,9 +445,11 @@ function Text({
 function VenueLocationFields({
   initialAddress,
   initialMapAddress,
+  resolveMapAction,
 }: {
   initialAddress: string;
   initialMapAddress: string;
+  resolveMapAction: ResolveMapAction;
 }) {
   const t = useTranslations("editor.venue");
   const [address, setAddress] = useState(initialAddress);
@@ -426,7 +496,7 @@ function VenueLocationFields({
     setResolving(true);
     setLinkError(false);
     try {
-      const result = await resolveGoogleMapsLink(source);
+      const result = await resolveMapAction(source);
       if (!mapInputRef.current || mapInputRef.current.value.trim() !== source) return;
       if (!result.valid || !result.resolved) {
         setLinkError(true);
@@ -1543,10 +1613,84 @@ function TabBar({
   );
 }
 
-function EditorFormContent({
+function CeremonyDeleteDialog({
+  rows,
+  deleteId,
+  onCancel,
+  onConfirm,
+}: {
+  rows: CeremonyRow[];
+  deleteId: string | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const ceremonyT = useTranslations("editor.ceremonies");
+  return (
+    <Dialog.Root
+      open={deleteId !== null}
+      onOpenChange={(open) => {
+        if (!open) onCancel();
+      }}
+    >
+      <Dialog.Portal>
+        <Dialog.Backdrop className="fixed inset-0 z-[140] bg-black/55 backdrop-blur-[2px] transition-opacity data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+        <Dialog.Viewport className="fixed inset-0 z-[140] flex items-end justify-center p-0 sm:items-center sm:p-4">
+          <Dialog.Popup className="w-full max-w-md rounded-t-3xl bg-card p-5 text-card-foreground shadow-2xl outline-none transition data-[ending-style]:translate-y-4 data-[ending-style]:opacity-0 data-[starting-style]:translate-y-4 data-[starting-style]:opacity-0 sm:rounded-3xl sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <Dialog.Title className="text-xl font-semibold">
+                  {ceremonyT("deleteTitle")}
+                </Dialog.Title>
+                <Dialog.Description className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {ceremonyT("deleteDescription", {
+                    number: Math.max(1, rows.findIndex((row) => row.id === deleteId) + 1),
+                  })}
+                </Dialog.Description>
+              </div>
+              <Dialog.Close
+                aria-label={ceremonyT("cancel")}
+                className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <X className="size-5" aria-hidden />
+              </Dialog.Close>
+            </div>
+            {deleteId ? (
+              <p className="mt-4 line-clamp-2 rounded-xl bg-muted px-3 py-2 text-sm font-medium">
+                {rows.find((row) => row.id === deleteId)?.title
+                  || ceremonyT("itemLabel", {
+                    number: Math.max(1, rows.findIndex((row) => row.id === deleteId) + 1),
+                  })}
+              </p>
+            ) : null}
+            <div className="mt-6 flex justify-end gap-3">
+              <Dialog.Close className="min-h-11 rounded-full border border-border px-5 text-sm font-semibold transition hover:bg-muted">
+                {ceremonyT("cancel")}
+              </Dialog.Close>
+              <button
+                type="button"
+                onClick={onConfirm}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-red-600 px-5 text-sm font-semibold text-white transition hover:bg-red-700"
+              >
+                <Trash2 className="size-4" aria-hidden />
+                {ceremonyT("confirmDelete")}
+              </button>
+            </div>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+/**
+ * The full editor for owner and support-admin modes. Every action arrives as a
+ * prop already selected by the mode branch, so this component never falls back
+ * to an owner action for a non-owner mode.
+ */
+function EditorFormBody({
   invitationId,
   status,
-  paid,
+  activation,
   publishedAt = null,
   currentSlug,
   templateId,
@@ -1557,16 +1701,25 @@ function EditorFormContent({
   locale,
   musicMessages,
   initialTrack,
-  saveAction: saveActionProp,
-  adminMode = false,
   templateLabels,
+  ownerMode,
+  supportMode,
+  showSlugSection,
+  supportContext,
+  saveAction: saveActionProp,
+  publishAction: publishActionProp,
+  checkSlugAction: checkSlugActionProp,
+  resolveMapAction: resolveMapActionProp,
   restoredDraft,
-}: EditorFormProps & { restoredDraft: Draft | null }) {
+}: EditorFormBodyConfig) {
   const venueT = useTranslations("editor.venue");
   const ceremonyT = useTranslations("editor.ceremonies");
   const zodiacT = useTranslations("editor.zodiac");
-  const saveAction = (saveActionProp ?? saveDraft).bind(null, invitationId);
-  const publishAction = publish.bind(null, invitationId);
+  const supportT = useTranslations("editor.support");
+  const errorT = useTranslations("editor.errors");
+  const activated = activation !== "trial";
+  const saveAction = saveActionProp.bind(null, invitationId);
+  const publishAction = publishActionProp.bind(null, invitationId);
   const [saveState, saveFormAction, saving] = useActionState<EditorState, FormData>(saveAction, undefined);
   const [publishState, publishFormAction, publishing] = useActionState<EditorState, FormData>(
     publishAction,
@@ -1686,7 +1839,7 @@ function EditorFormContent({
   });
   const [slug, setSlug] = useState(initialSlug);
   const [slugEdited, setSlugEdited] = useState(Boolean(currentSlug));
-  const [slugStatus, setSlugStatus] = useState<{ available: boolean; reason?: string } | null>(null);
+  const [slugStatus, setSlugStatus] = useState<SlugCheckResult | null>(null);
   const [checking, startCheck] = useTransition();
 
   const [tab, setTab] = useState<"edit" | "preview">("edit");
@@ -1694,8 +1847,9 @@ function EditorFormContent({
 
   // Autosave ngầm lên DB: debounce mỗi thay đổi, bỏ qua nếu trùng bản đã lưu,
   // và không bao giờ chạy hai request cùng lúc (xem autosave-controller).
+  // Owner-only: support/demo mutations go through explicit save/publish only.
   const autosaveRef = useRef<ReturnType<typeof createAutosaveController<Draft>> | null>(null);
-  if (autosaveRef.current === null && !adminMode) {
+  if (autosaveRef.current === null && ownerMode) {
     autosaveRef.current = createAutosaveController<Draft>({
       initial: activeDraft ?? {},
       equals: draftsEqual,
@@ -1713,7 +1867,7 @@ function EditorFormContent({
   } = useFormDraft({
     formId: "editor-form",
     invitationId,
-    enabled: true,
+    enabled: ownerMode,
     onChange: (draft) => autosaveRef.current?.schedule(draft),
     onFlush: (draft) => {
       autosaveRef.current?.schedule(draft);
@@ -1724,6 +1878,7 @@ function EditorFormContent({
   useEffect(() => () => autosaveRef.current?.dispose(), []);
 
   function reconcilePersistedDraft() {
+    if (!ownerMode) return;
     const submitted = submittedDraftRef.current;
     if (!submitted) return;
 
@@ -1744,18 +1899,19 @@ function EditorFormContent({
       toast.success("Đã lưu bản nháp");
       trackEvent("save_draft", { template_id: selectedTemplateId });
     }
-    else if (saveState?.error) toast.error(saveState.error);
+    else if (saveState?.errorCode) toast.error(errorT(saveState.errorCode));
     if (saveState?.persisted) reconcilePersistedDraft();
     // Mỗi object saveState tương ứng với đúng một lần Server Action hoàn tất.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveState]);
 
   useEffect(() => {
-    if (publishState?.error) {
-      toast.error(publishState.error);
+    if (publishState?.errorCode) {
+      toast.error(errorT(publishState.errorCode));
+      // Analytics chỉ nhận error code, không nhận message đã dịch.
       trackEvent("publish_invitation_error", {
         template_id: selectedTemplateId,
-        validation_message: publishState.error,
+        error_code: publishState.errorCode,
       });
     }
     if (publishState?.focusField) {
@@ -1774,7 +1930,8 @@ function EditorFormContent({
     }
     if (publishState?.publishedSlug) {
       setPublishedSlug(publishState.publishedSlug);
-      setPublishDialogSlug(publishState.publishedSlug);
+      if (ownerMode) setPublishDialogSlug(publishState.publishedSlug);
+      else if (supportMode) toast.success(supportT("publishToast"));
       trackEvent("publish_invitation", { template_id: selectedTemplateId });
     }
     if (publishState?.publishedAt) {
@@ -1841,16 +1998,27 @@ function EditorFormContent({
 
   function onCheckSlug() {
     if (!slug.trim()) {
-      setSlugStatus({ available: false, reason: "Chưa nhập đường dẫn" });
+      setSlugStatus({ available: false, reasonCode: "slugMissing" });
       return;
     }
     startCheck(async () => {
-      const result = await checkSlug(slug, invitationId);
+      const result = await checkSlugActionProp(slug, invitationId);
       setSlugStatus(result);
     });
   }
 
   const isPublished = status === "published" || Boolean(publishedSlug);
+
+  const backHref = supportMode
+    ? `/admin/users/${supportContext?.userId ?? ""}`
+    : ownerMode
+      ? "/dashboard"
+      : "/admin/demos";
+  const backLabel = supportMode
+    ? supportT("back")
+    : ownerMode
+      ? "← Bảng điều khiển"
+      : "← Danh sách thiệp demo";
 
   return (
     <>
@@ -1861,7 +2029,7 @@ function EditorFormContent({
           onEdit={() => setTab("edit")}
           onPreview={onShowPreview}
           shareSlug={
-            !adminMode
+            ownerMode
               ? publishedSlug ?? (status === "published" ? currentSlug ?? undefined : undefined)
               : undefined
           }
@@ -1883,17 +2051,30 @@ function EditorFormContent({
       <div className={`mx-auto max-w-4xl px-4 pb-8 pt-24 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
         <div className="mb-6">
           <Link
-            href={adminMode ? "/admin/demos" : "/dashboard"}
+            href={backHref}
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            {adminMode ? "← Danh sách thiệp demo" : "← Bảng điều khiển"}
+            {backLabel.startsWith("←") ? backLabel : `← ${backLabel}`}
           </Link>
           <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Chỉnh sửa thiệp</h1>
           <p className="text-sm text-muted-foreground">
             Trạng thái: {isPublished ? "Đã xuất bản" : "Bản nháp"}
           </p>
         </div>
-        {!adminMode && isPublished && !paid && activePublishedAt ? (
+        {supportMode && supportContext ? (
+          <div
+            role="status"
+            className="mb-6 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3"
+          >
+            <p className="text-sm font-semibold text-primary">
+              {supportT("banner", { email: supportContext.email })}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {supportT("bannerDescription")}
+            </p>
+          </div>
+        ) : null}
+        {ownerMode && isPublished && activation === "trial" && activePublishedAt ? (
           <TrialCountdownBanner
             invitationId={invitationId}
             expiresAt={trialExpiresAt(new Date(activePublishedAt)).getTime()}
@@ -2134,6 +2315,7 @@ function EditorFormContent({
             <VenueLocationFields
               initialAddress={seed("address", field(content, "address"))}
               initialMapAddress={seed("mapAddress", field(content, "mapAddress"))}
+              resolveMapAction={resolveMapActionProp}
             />
           </Grid>
         </Accordion>
@@ -2397,7 +2579,7 @@ function EditorFormContent({
           />
         </Accordion>
 
-        {adminMode && (
+        {!ownerMode && (
           <div className="sticky bottom-0 -mx-4 mt-2 flex items-center gap-3 border-t border-border bg-background/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
             <button
               type="submit"
@@ -2407,10 +2589,26 @@ function EditorFormContent({
             >
               {saving ? "Đang lưu..." : "Lưu bản nháp"}
             </button>
+            {supportMode ? (
+              <button
+                type="submit"
+                formAction={publishFormAction}
+                disabled={saving || publishing}
+                className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+              >
+                {publishing
+                  ? isPublished
+                    ? "Đang lưu..."
+                    : "Đang lưu và xuất bản..."
+                  : isPublished
+                    ? "Lưu"
+                    : "Xuất bản thiệp"}
+              </button>
+            ) : null}
           </div>
         )}
 
-      {!adminMode && (
+      {showSlugSection && (
       <section className="mt-8 rounded-2xl border border-primary/30 bg-primary/5 p-5">
         <h2 className="mb-4 text-xl font-bold text-primary">Xuất bản</h2>
         <div className="space-y-3">
@@ -2443,20 +2641,30 @@ function EditorFormContent({
           <p className="text-xs text-muted-foreground">Tự tạo từ tên cô dâu/chú rể, bạn có thể sửa lại tuỳ ý.</p>
           {slugStatus ? (
             <p className={`text-sm ${slugStatus.available ? "text-emerald-700" : "text-red-700"}`}>
-              {slugStatus.available ? "Đường dẫn khả dụng" : slugStatus.reason}
+              {slugStatus.available
+                ? "Đường dẫn khả dụng"
+                : errorT(slugStatus.reasonCode)}
             </p>
           ) : null}
-          {publishState?.error ? (
-            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-700">{publishState.error}</p>
+          {publishState?.errorCode ? (
+            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-700">
+              {errorT(publishState.errorCode)}
+            </p>
           ) : null}
         </div>
 
-        {paid ? (
+        {activation === "paid" ? (
           <p className="mt-4 text-sm font-semibold text-emerald-700">
             Thiệp đã được kích hoạt vĩnh viễn.
           </p>
         ) : null}
+        {activation === "complimentary" ? (
+          <p className="mt-4 text-sm font-semibold text-emerald-700">
+            {supportT("complimentary")}
+          </p>
+        ) : null}
 
+        {ownerMode && (
         <div className="mt-6 flex flex-col items-center gap-2">
           <button
             type="submit"
@@ -2475,80 +2683,682 @@ function EditorFormContent({
                 : "Xuất bản thiệp"}
           </button>
         </div>
+        )}
       </section>
       )}
       </form>
       </div>
-      {publishDialogSlug ? (
+      {ownerMode && publishDialogSlug ? (
         <PublishSuccessDialog
           invitationId={invitationId}
-          paid={paid}
+          activated={activated}
           slug={publishDialogSlug}
           onClose={() => setPublishDialogSlug(null)}
         />
       ) : null}
-      <Dialog.Root
-        open={ceremonyDeleteId !== null}
-        onOpenChange={(open) => {
-          if (!open) setCeremonyDeleteId(null);
+      <CeremonyDeleteDialog
+        rows={ceremonyRows}
+        deleteId={ceremonyDeleteId}
+        onCancel={() => setCeremonyDeleteId(null)}
+        onConfirm={() => {
+          setCeremonyRows((rows) => rows.filter((row) => row.id !== ceremonyDeleteId));
+          setCeremonyDeleteId(null);
         }}
-      >
-        <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-[140] bg-black/55 backdrop-blur-[2px] transition-opacity data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
-          <Dialog.Viewport className="fixed inset-0 z-[140] flex items-end justify-center p-0 sm:items-center sm:p-4">
-            <Dialog.Popup className="w-full max-w-md rounded-t-3xl bg-card p-5 text-card-foreground shadow-2xl outline-none transition data-[ending-style]:translate-y-4 data-[ending-style]:opacity-0 data-[starting-style]:translate-y-4 data-[starting-style]:opacity-0 sm:rounded-3xl sm:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <Dialog.Title className="text-xl font-semibold">
-                    {ceremonyT("deleteTitle")}
-                  </Dialog.Title>
-                  <Dialog.Description className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {ceremonyT("deleteDescription", {
-                      number: Math.max(
-                        1,
-                        ceremonyRows.findIndex((row) => row.id === ceremonyDeleteId) + 1,
-                      ),
-                    })}
-                  </Dialog.Description>
-                </div>
-                <Dialog.Close
-                  aria-label={ceremonyT("cancel")}
-                  className="grid size-10 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                >
-                  <X className="size-5" aria-hidden />
-                </Dialog.Close>
-              </div>
-              {ceremonyDeleteId ? (
-                <p className="mt-4 line-clamp-2 rounded-xl bg-muted px-3 py-2 text-sm font-medium">
-                  {ceremonyRows.find((row) => row.id === ceremonyDeleteId)?.title
-                    || ceremonyT("itemLabel", {
-                      number: Math.max(
-                        1,
-                        ceremonyRows.findIndex((row) => row.id === ceremonyDeleteId) + 1,
-                      ),
-                    })}
-                </p>
-              ) : null}
-              <div className="mt-6 flex justify-end gap-3">
-                <Dialog.Close className="min-h-11 rounded-full border border-border px-5 text-sm font-semibold transition hover:bg-muted">
-                  {ceremonyT("cancel")}
-                </Dialog.Close>
+      />
+    </>
+  );
+}
+
+/**
+ * Demo editor body: save-only. It never declares publish/slug/map actions, so
+ * a demo invitation cannot be published from this form or fall back to owner
+ * actions — not at runtime, not at the type level.
+ */
+function DemoEditorFormBody({
+  invitationId,
+  status,
+  templateId,
+  content,
+  ceremonies,
+  schedule,
+  gallery,
+  locale,
+  musicMessages,
+  initialTrack,
+  templateLabels,
+  saveAction: saveActionProp,
+  restoredDraft,
+}: DemoEditorFormBodyConfig) {
+  const venueT = useTranslations("editor.venue");
+  const ceremonyT = useTranslations("editor.ceremonies");
+  const zodiacT = useTranslations("editor.zodiac");
+  const errorT = useTranslations("editor.errors");
+  const saveAction = saveActionProp.bind(null, invitationId);
+  const [saveState, saveFormAction, saving] = useActionState<EditorState, FormData>(saveAction, undefined);
+
+  const draft = restoredDraft;
+  const [submittedDraft, setSubmittedDraft] = useState<Draft | null>(null);
+  const activeDraft = submittedDraft ?? draft;
+  const seed = (key: string, fallback: string) =>
+    typeof activeDraft?.[key] === "string" ? (activeDraft[key] as string) : fallback;
+  const seedBool = (key: string, fallback: boolean) =>
+    typeof activeDraft?.[key] === "boolean" ? (activeDraft[key] as boolean) : fallback;
+
+  const initialBrideFullName = seed("brideFullName", field(content, "brideFullName"));
+  const initialGroomFullName = seed("groomFullName", field(content, "groomFullName"));
+
+  const [selectedTemplateId, setSelectedTemplateId] = useState(seed("templateId", templateId));
+  const [primaryColor, setPrimaryColor] = useState(
+    seed("primaryColor", field(content, "primaryColor")) || "#c8102e",
+  );
+  const [brideFullName, setBrideFullName] = useState(initialBrideFullName);
+  const [groomFullName, setGroomFullName] = useState(initialGroomFullName);
+  const [weddingDate, setWeddingDate] = useState(seed("date", field(content, "date")));
+  const [brideShortName, setBrideShortName] = useState(
+    seed("brideShortName", field(content, "brideShortName")) || shortNameFromFullName(initialBrideFullName),
+  );
+  const [groomShortName, setGroomShortName] = useState(
+    seed("groomShortName", field(content, "groomShortName")) || shortNameFromFullName(initialGroomFullName),
+  );
+  const [brideFirst, setBrideFirst] = useState(seedBool("brideFirst", content?.brideFirst ?? true));
+  const zodiacOptions = ZODIAC.map((item) => ({
+    value: item.id,
+    label: zodiacT(`options.${item.id}`),
+  }));
+  const [ceremonyRows, setCeremonyRows] = useState<CeremonyRow[]>(() => {
+    if (ceremonies.length) {
+      return ceremonies.map((ceremony, index) => ({
+        id: `ceremony-saved-${index}`,
+        ...ceremony,
+      }));
+    }
+    const legacyTitle = field(content, "ceremonyHeader");
+    const legacyDate = field(content, "ceremonyDate");
+    const legacyTime = field(content, "ceremonyTime");
+    return [{
+      id: "ceremony-initial",
+      title: legacyTitle || defaultCeremonyMessage(field(content, "ceremonyType")),
+      date: legacyDate,
+      time: legacyTime,
+    }];
+  });
+  const [ceremonyDeleteId, setCeremonyDeleteId] = useState<string | null>(null);
+
+  function onTemplateChange(nextTemplateId: string) {
+    if (
+      nextTemplateId === ZODIAC_TEMPLATE_SLUG &&
+      selectedTemplateId !== ZODIAC_TEMPLATE_SLUG &&
+      primaryColor.toLowerCase() === "#c8102e"
+    ) {
+      setPrimaryColor(DEFAULT_ZODIAC_ART_COLOR);
+    }
+    setSelectedTemplateId(nextTemplateId);
+  }
+
+  const [scheduleRows, setScheduleRows] = useState(() => {
+    return schedule.length ? schedule : [{ time: "", label: "" }];
+  });
+
+  const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [previewContent, setPreviewContent] = useState<ChungDoiDemoContent | null>(null);
+
+  const { capture: captureDraft } = useFormDraft({
+    formId: "editor-form",
+    invitationId,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (saveState?.ok) toast.success("Đã lưu bản nháp");
+    else if (saveState?.errorCode) toast.error(errorT(saveState.errorCode));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveState]);
+
+  function handleTextCaseBlur(event: ReactFocusEvent<HTMLFormElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLTextAreaElement)) return;
+
+    const formatter = NAME_CASE_FIELDS.has(target.name)
+      ? titleCaseVietnameseName
+      : SENTENCE_CASE_FIELDS.has(target.name)
+        ? capitalizeVietnameseSentences
+        : null;
+    if (!formatter) return;
+
+    const normalized = formatter(target.value);
+    if (normalized === target.value) return;
+    target.value = normalized;
+
+    if (target.name === "brideFullName") {
+      setBrideFullName(normalized);
+      setBrideShortName(shortNameFromFullName(normalized));
+    } else if (target.name === "groomFullName") {
+      setGroomFullName(normalized);
+      setGroomShortName(shortNameFromFullName(normalized));
+    } else if (target.name === "ceremonyItemTitle") {
+      const rowId = target.id.replace(/^ceremony-title-/, "");
+      setCeremonyRows((rows) => rows.map((row) => (
+        row.id === rowId ? { ...row, title: normalized } : row
+      )));
+    }
+  }
+
+  function onShowPreview() {
+    const form = document.getElementById("editor-form") as HTMLFormElement | null;
+    if (!form) return;
+    setPreviewContent(buildPreviewContent(form, invitationId));
+    setTab("preview");
+  }
+
+  const isPublished = status === "published";
+
+  return (
+    <>
+      <AdaptiveToaster />
+      <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
+        <TabBar
+          tab={tab}
+          onEdit={() => setTab("edit")}
+          onPreview={onShowPreview}
+          templateId={selectedTemplateId}
+        />
+      </div>
+      {tab === "preview" && previewContent ? (
+        <ChungDoiDemo
+          key={JSON.stringify(previewContent)}
+          template={
+            completedTemplates.find((template) => template.slug === previewContent.slug) ??
+            completedTemplates[0]
+          }
+          content={previewContent}
+          previewMode
+        />
+      ) : null}
+
+      <div className={`mx-auto max-w-4xl px-4 pb-8 pt-24 sm:px-6 ${tab === "preview" ? "hidden" : ""}`}>
+        <div className="mb-6">
+          <Link
+            href="/admin/demos"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            ← Danh sách thiệp demo
+          </Link>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Chỉnh sửa thiệp</h1>
+          <p className="text-sm text-muted-foreground">
+            Trạng thái: {isPublished ? "Đã xuất bản" : "Bản nháp"}
+          </p>
+        </div>
+
+        <form
+          action={saveFormAction}
+          onBlurCapture={handleTextCaseBlur}
+          onReset={(event) => event.preventDefault()}
+          onSubmitCapture={() => {
+            const snapshot = captureDraft();
+            if (!snapshot) return;
+            setSubmittedDraft(snapshot);
+          }}
+          className="space-y-4"
+          id="editor-form"
+        >
+        <Accordion title="Thông tin chính" icon="♡">
+          <Grid>
+            <div>
+              <label htmlFor="brideFullName" className={labelClass}>Họ tên cô dâu<span className="ml-0.5 text-destructive" aria-hidden> *</span></label>
+              <input
+                id="brideFullName"
+                name="brideFullName"
+                value={brideFullName}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setBrideFullName(next);
+                  setBrideShortName(shortNameFromFullName(next));
+                }}
+                placeholder="VD: Nguyễn Quỳnh Anh"
+                aria-required="true"
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Họ tên đầy đủ, hiển thị ở phần giới thiệu.</p>
+            </div>
+            <div>
+              <label htmlFor="groomFullName" className={labelClass}>Họ tên chú rể<span className="ml-0.5 text-destructive" aria-hidden> *</span></label>
+              <input
+                id="groomFullName"
+                name="groomFullName"
+                value={groomFullName}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setGroomFullName(next);
+                  setGroomShortName(shortNameFromFullName(next));
+                }}
+                placeholder="VD: Trần Gia Khánh"
+                aria-required="true"
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Họ tên đầy đủ, hiển thị ở phần giới thiệu.</p>
+            </div>
+            <div>
+              <label htmlFor="brideShortName" className={labelClass}>Tên ngắn cô dâu</label>
+              <input
+                id="brideShortName"
+                name="brideShortName"
+                value={brideShortName}
+                onChange={(event) => setBrideShortName(event.target.value)}
+                placeholder="VD: Quỳnh Anh"
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Tự lấy 2 từ cuối của họ tên; chỉ sửa khi cần.</p>
+            </div>
+            <div>
+              <label htmlFor="groomShortName" className={labelClass}>Tên ngắn chú rể</label>
+              <input
+                id="groomShortName"
+                name="groomShortName"
+                value={groomShortName}
+                onChange={(event) => setGroomShortName(event.target.value)}
+                placeholder="VD: Gia Khánh"
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">Tự lấy 2 từ cuối của họ tên; chỉ sửa khi cần.</p>
+            </div>
+            <BirthOrderField
+              name="brideBirthOrder"
+              label="Thứ bậc cô dâu"
+              defaultValue={seed("brideBirthOrder", field(content, "brideBirthOrder"))}
+              hint="Hiển thị dưới ảnh cô dâu."
+              birthOrderOptions={BRIDE_BIRTH_ORDER_OPTIONS}
+              customPlaceholder="VD: Con gái thứ tư"
+            />
+            <BirthOrderField
+              name="groomBirthOrder"
+              label="Thứ bậc chú rể"
+              defaultValue={seed("groomBirthOrder", field(content, "groomBirthOrder"))}
+              hint="Hiển thị dưới ảnh chú rể."
+              birthOrderOptions={GROOM_BIRTH_ORDER_OPTIONS}
+              customPlaceholder="VD: Con trai thứ tư"
+            />
+            {templateSupportsZodiac(selectedTemplateId) ? (
+              <>
+                <ZodiacField
+                  name="brideZodiac"
+                  label={zodiacT("brideLabel")}
+                  defaultValue={seed("brideZodiac", field(content, "brideZodiac"))}
+                  placeholder={zodiacT("placeholder")}
+                  hint={zodiacT("hint")}
+                  options={zodiacOptions}
+                />
+                <ZodiacField
+                  name="groomZodiac"
+                  label={zodiacT("groomLabel")}
+                  defaultValue={seed("groomZodiac", field(content, "groomZodiac"))}
+                  placeholder={zodiacT("placeholder")}
+                  hint={zodiacT("hint")}
+                  options={zodiacOptions}
+                />
+              </>
+            ) : null}
+            <div className="sm:col-span-2">
+              <span className={labelClass}>Thứ tự hiển thị toàn thiệp</span>
+              <input type="hidden" name="brideFirst" value={brideFirst ? "true" : "false"} />
+              <div className="grid grid-cols-2 gap-2 rounded-xl bg-muted p-1" role="group" aria-label="Thứ tự hiển thị toàn thiệp">
                 <button
                   type="button"
-                  onClick={() => {
-                    setCeremonyRows((rows) => rows.filter((row) => row.id !== ceremonyDeleteId));
-                    setCeremonyDeleteId(null);
-                  }}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-red-600 px-5 text-sm font-semibold text-white transition hover:bg-red-700"
+                  onClick={() => setBrideFirst(false)}
+                  className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${!brideFirst ? "bg-background text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                  aria-pressed={!brideFirst}
                 >
-                  <Trash2 className="size-4" aria-hidden />
-                  {ceremonyT("confirmDelete")}
+                  Nhà trai trước
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBrideFirst(true)}
+                  className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${brideFirst ? "bg-background text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                  aria-pressed={brideFirst}
+                >
+                  Nhà gái trước
                 </button>
               </div>
-            </Dialog.Popup>
-          </Dialog.Viewport>
-        </Dialog.Portal>
-      </Dialog.Root>
+              <p className="mt-1 text-xs text-muted-foreground">Áp dụng cho tên, gia đình và thông tin chuyển khoản.</p>
+            </div>
+          </Grid>
+        </Accordion>
+
+        <Accordion title="Thông tin gia đình" icon="⌂">
+          <Grid>
+            <SubHeader>Nhà trai</SubHeader>
+            <Text name="groomFather" label="Cha chú rể" defaultValue={seed("groomFather", field(content, "groomFather"))} placeholder="VD: Ông Trần Văn Minh" />
+            <Text name="groomMother" label="Mẹ chú rể" defaultValue={seed("groomMother", field(content, "groomMother"))} placeholder="VD: Bà Phạm Thị Hoa" />
+            <Text
+              name="groomParentTitle"
+              label="Danh xưng nhà trai"
+              defaultValue={seed("groomParentTitle", field(content, "groomParentTitle")) || "Ông bà"}
+              placeholder="VD: Ông Bà"
+              hint="Cách gọi cha mẹ trên thiệp (VD: Ông Bà, Gia đình)."
+            />
+            <Text name="groomAddress" label="Địa chỉ nhà trai" defaultValue={seed("groomAddress", field(content, "groomAddress"))} placeholder="Số nhà, đường, phường/xã, tỉnh/thành" full />
+
+            <SubHeader>Nhà gái</SubHeader>
+            <Text name="brideFather" label="Cha cô dâu" defaultValue={seed("brideFather", field(content, "brideFather"))} placeholder="VD: Ông Nguyễn Văn Hưng" />
+            <Text name="brideMother" label="Mẹ cô dâu" defaultValue={seed("brideMother", field(content, "brideMother"))} placeholder="VD: Bà Trần Thị Lan" />
+            <Text
+              name="brideParentTitle"
+              label="Danh xưng nhà gái"
+              defaultValue={seed("brideParentTitle", field(content, "brideParentTitle")) || "Ông bà"}
+              placeholder="VD: Ông Bà"
+              hint="Cách gọi cha mẹ trên thiệp (VD: Ông Bà, Gia đình)."
+            />
+            <Text name="brideAddress" label="Địa chỉ nhà gái" defaultValue={seed("brideAddress", field(content, "brideAddress"))} placeholder="Số nhà, đường, phường/xã, tỉnh/thành" full />
+          </Grid>
+        </Accordion>
+
+        <Accordion title="Mở đầu thiệp" icon="◱">
+          <Grid>
+            <HeroImageUploader
+              initialUrl={seed("heroImage", field(content, "heroImage"))}
+              initialUrl2={seed("heroImage2", field(content, "heroImage2"))}
+              initialEnabled={seedBool("showHeroImage", content?.showHeroImage ?? true)}
+              count={heroImageCount(selectedTemplateId)}
+            />
+            <Textarea
+              name="openingMessage"
+              label="Lời mở đầu thiệp"
+              defaultValue={seed("openingMessage", field(content, "openingMessage")) || DEFAULT_OPENING_MESSAGE}
+              hint="Nội dung mặc định đã được điền sẵn; chỉ sửa khi gia đình muốn dùng câu khác."
+              rows={3}
+            />
+          </Grid>
+        </Accordion>
+
+        <Accordion title={venueT("title")} icon="✦">
+          <Grid>
+            <VenueLocationFields
+              initialAddress={seed("address", field(content, "address"))}
+              initialMapAddress={seed("mapAddress", field(content, "mapAddress"))}
+              resolveMapAction={resolveGoogleMapsLink}
+            />
+          </Grid>
+        </Accordion>
+
+        <Accordion title={ceremonyT("sectionTitle")} icon="🕊">
+          <input type="hidden" name="ceremonyType" value="thanh-hon" />
+          <input type="hidden" name="ceremonyHeader" value={ceremonyRows[0]?.title ?? ""} />
+          <input type="hidden" name="ceremonyDate" value={ceremonyRows[0]?.date ?? ""} />
+          <input type="hidden" name="ceremonyTime" value={ceremonyRows[0]?.time ?? ""} />
+
+          <div className="space-y-4">
+            {ceremonyRows.length ? ceremonyRows.map((row, index) => {
+              const parsedDate = row.date ? new Date(`${row.date}T00:00:00`) : null;
+              const weekday = parsedDate && !Number.isNaN(parsedDate.getTime())
+                ? parsedDate.toLocaleDateString(locale, { weekday: "long" })
+                : "";
+              const lunarDate = formatVietnameseLunarDate(row.date);
+              return (
+                <section
+                  key={row.id}
+                  className="relative rounded-2xl border border-border bg-background/55 p-4 sm:p-5"
+                >
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <h3 className="font-semibold text-foreground">
+                      {ceremonyT("itemLabel", { number: index + 1 })}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setCeremonyDeleteId(row.id)}
+                      aria-label={ceremonyT("deleteLabel", { number: index + 1 })}
+                      className="grid size-10 shrink-0 place-items-center rounded-full text-destructive transition hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Trash2 className="size-4.5" aria-hidden />
+                    </button>
+                  </div>
+
+                  <label htmlFor={`ceremony-title-${row.id}`} className={labelClass}>
+                    {ceremonyT("titleLabel")}
+                  </label>
+                  <textarea
+                    id={`ceremony-title-${row.id}`}
+                    name="ceremonyItemTitle"
+                    value={row.title}
+                    onChange={(event) => {
+                      const title = event.target.value;
+                      setCeremonyRows((rows) => rows.map((item) => (
+                        item.id === row.id ? { ...item, title } : item
+                      )));
+                    }}
+                    placeholder={ceremonyT("titlePlaceholder")}
+                    rows={3}
+                    className={`${inputClass} resize-y leading-6`}
+                  />
+
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <label className="block">
+                      <span className={labelClass}>{ceremonyT("dateLabel")}</span>
+                      <input
+                        name="ceremonyItemDate"
+                        type="date"
+                        value={row.date}
+                        onChange={(event) => {
+                          const date = event.target.value;
+                          setCeremonyRows((rows) => rows.map((item) => (
+                            item.id === row.id
+                              ? { ...item, date }
+                              : item.date ? item : { ...item, date }
+                          )));
+                          if (date) setWeddingDate((prev) => prev || date);
+                        }}
+                        className={inputClass}
+                      />
+                    </label>
+                    <label className="block">
+                      <span className={labelClass}>{ceremonyT("timeLabel")}</span>
+                      <input
+                        name="ceremonyItemTime"
+                        type="time"
+                        value={row.time}
+                        onChange={(event) => {
+                          const time = event.target.value;
+                          setCeremonyRows((rows) => rows.map((item) => (
+                            item.id === row.id ? { ...item, time } : item
+                          )));
+                        }}
+                        className={inputClass}
+                      />
+                    </label>
+                  </div>
+
+                  {weekday || lunarDate ? (
+                    <div className="mt-3 rounded-lg bg-muted/60 px-3 py-2 text-xs leading-5 text-muted-foreground" aria-live="polite">
+                      {weekday ? <span className="font-semibold capitalize text-foreground">{weekday}</span> : null}
+                      {weekday && lunarDate ? <span> · </span> : null}
+                      {lunarDate}
+                    </div>
+                  ) : null}
+                  <p className="mt-2 text-xs text-muted-foreground">{ceremonyT("dateHint")}</p>
+                </section>
+              );
+            }) : (
+              <div className="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+                {ceremonyT("empty")}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setCeremonyRows((rows) => (
+                rows.length >= 20 ? rows : [...rows, newCeremonyRow()]
+              ))}
+              disabled={ceremonyRows.length >= 20}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary px-4 text-sm font-semibold text-secondary-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Plus className="size-4.5" aria-hidden />
+              {ceremonyT("add")}
+              <span className="text-xs font-normal italic text-muted-foreground">{ceremonyT("optional")}</span>
+            </button>
+          </div>
+        </Accordion>
+
+        <Accordion title="Phần Tiệc" icon="✿">
+          <Grid>
+            <EventDateTimeField
+              dateName="date"
+              timeName="time"
+              label="Ngày cưới (tiệc cưới diễn ra vào lúc)"
+              dateDefault={seed("date", field(content, "date"))}
+              timeDefault={seed("time", field(content, "time")) || seed("banquetTime", field(content, "banquetTime"))}
+              hint="Thứ và ngày âm lịch được hệ thống tự tính từ ngày dương lịch."
+              requiredMark
+              value={weddingDate}
+              onDateChange={setWeddingDate}
+            />
+          </Grid>
+          <div className="mt-6 border-t border-border pt-5">
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Chương trình <span className="text-xs font-normal italic text-muted-foreground">(không bắt buộc)</span>
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Các mốc như đón khách, khai tiệc, cắt bánh hoặc kết thúc.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setScheduleRows((rows) => [...rows, { time: "", label: "" }])}
+                className="shrink-0 rounded-lg border border-border bg-secondary px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-muted"
+              >
+                + Thêm mốc
+              </button>
+            </div>
+            <div className="space-y-3">
+              {scheduleRows.map((row, index) => (
+                <div
+                  key={index}
+                  className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-3 sm:grid-cols-[8rem_minmax(0,1fr)_auto]"
+                >
+                  <input
+                    name="scheduleTime"
+                    type="time"
+                    defaultValue={row.time}
+                    className={`${inputClass} col-start-1 row-start-1 sm:w-32`}
+                  />
+                  <input
+                    name="scheduleLabel"
+                    defaultValue={row.label}
+                    placeholder="VD: Đón khách"
+                    className={`${inputClass} col-span-2 row-start-2 sm:col-span-1 sm:col-start-2 sm:row-start-1`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setScheduleRows((rows) => rows.filter((_, rowIndex) => rowIndex !== index))}
+                    className="col-start-2 row-start-1 min-h-11 rounded-lg border border-border px-3 text-sm text-muted-foreground transition hover:border-destructive/40 hover:text-destructive sm:col-start-3"
+                    aria-label={`Xoá mốc ${index + 1}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Accordion>
+
+        <Accordion title="Album ảnh" icon="▧">
+          <AlbumLayoutField defaultValue={seed("albumLayout", field(content, "albumLayout") ?? "grid")} />
+          <div className="mt-4">
+            <GalleryUploader initial={gallery} />
+          </div>
+        </Accordion>
+
+        <TierDivider />
+
+        <Accordion title="Font & Nhạc" icon="♪" defaultOpen={false}>
+          <Grid>
+            <Select
+              name="fontFamily"
+              label="Font chữ"
+              defaultValue={seed("fontFamily", field(content, "fontFamily"))}
+              options={FONT_OPTIONS}
+              hint="Font hiển thị tên cô dâu chú rể trên thiệp."
+              formatOptionLabel={(option) => (
+                <span
+                  style={option.value ? { fontFamily: `"${option.value}"` } : undefined}
+                  className="text-base"
+                >
+                  {option.label}
+                </span>
+              )}
+            />
+            <MusicPicker
+              defaultValue={seed("music", field(content, "music"))}
+              initialTrack={initialTrack}
+              locale={locale}
+              messages={musicMessages}
+            />
+          </Grid>
+        </Accordion>
+
+        <Accordion title="Màu chủ đạo" icon="🎨" defaultOpen={false}>
+          <Grid>
+            <ColorField
+              name="primaryColor"
+              label="Màu chủ đạo"
+              value={primaryColor}
+              onChange={setPrimaryColor}
+            />
+          </Grid>
+        </Accordion>
+
+        <Accordion title="Dress Code" icon="👗" defaultOpen={false}>
+          <DressCodeField defaultValue={seed("dressCodeColors", field(content, "dressCodeColors"))} />
+        </Accordion>
+
+        <Accordion title="Thông tin chuyển khoản" icon="✉" defaultOpen={false}>
+          <Grid>
+            <SubHeader>Nhà trai</SubHeader>
+            <BankCombobox
+              name="groomBankName"
+              label="Ngân hàng chú rể"
+              defaultValue={seed("groomBankName", field(content, "groomBankName"))}
+            />
+            <Text name="groomAccountNumber" label="Số tài khoản chú rể" defaultValue={seed("groomAccountNumber", field(content, "groomAccountNumber"))} />
+            <Text name="groomAccountName" label="Chủ tài khoản chú rể" defaultValue={seed("groomAccountName", field(content, "groomAccountName"))} full />
+
+            <SubHeader>Nhà gái</SubHeader>
+            <BankCombobox
+              name="brideBankName"
+              label="Ngân hàng cô dâu"
+              defaultValue={seed("brideBankName", field(content, "brideBankName"))}
+            />
+            <Text name="brideAccountNumber" label="Số tài khoản cô dâu" defaultValue={seed("brideAccountNumber", field(content, "brideAccountNumber"))} />
+            <Text name="brideAccountName" label="Chủ tài khoản cô dâu" defaultValue={seed("brideAccountName", field(content, "brideAccountName"))} full />
+          </Grid>
+        </Accordion>
+
+        <Accordion title="Mẫu thiệp" icon="✧" defaultOpen={false}>
+          <TemplatePicker
+            value={selectedTemplateId}
+            onChange={onTemplateChange}
+            labels={templateLabels}
+          />
+        </Accordion>
+
+        <div className="sticky bottom-0 -mx-4 mt-2 flex items-center gap-3 border-t border-border bg-background/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+          <button
+            type="submit"
+            formNoValidate
+            disabled={saving}
+            className="rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+          >
+            {saving ? "Đang lưu..." : "Lưu bản nháp"}
+          </button>
+        </div>
+        </form>
+      </div>
+      <CeremonyDeleteDialog
+        rows={ceremonyRows}
+        deleteId={ceremonyDeleteId}
+        onCancel={() => setCeremonyDeleteId(null)}
+        onConfirm={() => {
+          setCeremonyRows((rows) => rows.filter((row) => row.id !== ceremonyDeleteId));
+          setCeremonyDeleteId(null);
+        }}
+      />
     </>
   );
 }
@@ -2563,10 +3373,6 @@ export function EditorForm(props: EditorFormProps) {
     getClientHydrationSnapshot,
     getServerHydrationSnapshot,
   );
-  const restoredDraft = useMemo(
-    () => (hydrated ? readDraft(props.invitationId) : null),
-    [hydrated, props.invitationId],
-  );
 
   if (!hydrated) {
     return (
@@ -2580,5 +3386,52 @@ export function EditorForm(props: EditorFormProps) {
     );
   }
 
-  return <EditorFormContent {...props} restoredDraft={restoredDraft} />;
+  const ownerMode = (props.mode ?? "owner") === "owner";
+  // The localStorage draft is owner-only: demo/support modes seed straight from
+  // the database and must never read or write it.
+  const restoredDraft = ownerMode
+    ? readDraft(props.invitationId)
+    : null;
+
+  if (props.mode === "support-admin") {
+    return (
+      <EditorFormBody
+        {...props}
+        ownerMode={false}
+        supportMode
+        showSlugSection
+        supportContext={props.supportContext}
+        saveAction={props.saveAction}
+        publishAction={props.publishAction}
+        checkSlugAction={props.checkSlugAction}
+        resolveMapAction={props.resolveMapAction}
+        restoredDraft={restoredDraft}
+      />
+    );
+  }
+
+  if (props.mode === "demo-admin") {
+    return (
+      <DemoEditorFormBody
+        {...props}
+        saveAction={props.saveAction}
+        restoredDraft={restoredDraft}
+      />
+    );
+  }
+
+  return (
+    <EditorFormBody
+      {...props}
+      ownerMode
+      supportMode={false}
+      showSlugSection
+      supportContext={null}
+      saveAction={saveDraft}
+      publishAction={publish}
+      checkSlugAction={checkSlug}
+      resolveMapAction={resolveGoogleMapsLink}
+      restoredDraft={restoredDraft}
+    />
+  );
 }

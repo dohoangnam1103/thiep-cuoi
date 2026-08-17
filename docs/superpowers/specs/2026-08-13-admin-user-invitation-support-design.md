@@ -1,7 +1,7 @@
 # Thiết kế luồng Admin hỗ trợ thiệp của người dùng
 
-**Ngày:** 2026-08-13  
-**Trạng thái:** Đã được người dùng duyệt  
+**Ngày:** 2026-08-13
+**Trạng thái:** Đã được người dùng duyệt
 **Phạm vi:** Cho mọi Admin xem thiệp của từng người dùng, tạo và chỉnh sửa thiệp thay người dùng, xuất bản thiệp, đặt giá cuối cùng hoặc tặng miễn phí, đồng thời lưu audit log tự động.
 
 ## 1. Mục tiêu

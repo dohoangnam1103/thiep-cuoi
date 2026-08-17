@@ -14,7 +14,13 @@ import {
 } from "./helpers/fixtures";
 
 type GuestRow = { id: string; token: string; name: string };
-type PaymentRow = { id: string; code: string; amount: number; status: string };
+type PaymentRow = {
+  id: string;
+  code: string;
+  amount: number;
+  status: string;
+  voucherCode: string | null;
+};
 
 function seedRsvp(
   invitationId: string,
@@ -53,8 +59,46 @@ function guestsOf(invitationId: string): GuestRow[] {
 
 function paymentsOf(invitationId: string): PaymentRow[] {
   return getDb()
-    .prepare(`SELECT id, code, amount, status FROM Payment WHERE invitationId = ?`)
+    .prepare(`SELECT id, code, amount, status, voucherCode FROM Payment WHERE invitationId = ?`)
     .all(invitationId) as PaymentRow[];
+}
+
+function createVoucher(input: {
+  amountOff: number;
+  active: boolean;
+}): { id: string; code: string } {
+  const id = `v-${randomUUID()}`;
+  const code = `E2E${randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()}`;
+  getDb()
+    .prepare(
+      `INSERT INTO Voucher (id, code, amountOff, active, usedCount, createdAt)
+       VALUES (?, ?, ?, ?, 0, ?)`,
+    )
+    .run(id, code, input.amountOff, input.active ? 1 : 0, prismaNow());
+  return { id, code };
+}
+
+function cleanupVoucher(code: string): void {
+  getDb().prepare(`DELETE FROM Voucher WHERE code = ?`).run(code);
+}
+
+function latestPaymentOf(invitationId: string): {
+  id: string;
+  amount: number;
+  voucherCode: string | null;
+  status: string;
+} {
+  return getDb()
+    .prepare(
+      `SELECT id, amount, voucherCode, status FROM Payment
+       WHERE invitationId = ? ORDER BY createdAt DESC, id DESC LIMIT 1`,
+    )
+    .get(invitationId) as {
+    id: string;
+    amount: number;
+    voucherCode: string | null;
+    status: string;
+  };
 }
 
 test.describe("dashboard guests", () => {
@@ -66,8 +110,10 @@ test.describe("dashboard guests", () => {
       await loginAsUser(context, user.id);
       const res = await page.goto(`/dashboard/${inv.id}/guests`);
       expect(res?.ok()).toBeTruthy();
-      await expect(page.getByRole("heading", { name: "Khách mời" })).toBeVisible();
-      await expect(page.getByText("Tổng khách mời")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "Quản lý khách mời", exact: true }),
+      ).toBeVisible();
+      await expect(page.getByText("Tổng số thiệp đã mời", { exact: true })).toBeVisible();
     } finally {
       cleanup(user.id);
     }
@@ -82,8 +128,9 @@ test.describe("dashboard guests", () => {
     try {
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/guests`);
-      await expect(page.getByText("Trần Thị Seed")).toBeVisible();
-      await expect(page.getByText("Lê Văn Seed")).toBeVisible();
+      const guestTable = page.getByRole("table");
+      await expect(guestTable.getByText("Trần Thị Seed", { exact: true })).toBeVisible();
+      await expect(guestTable.getByText("Lê Văn Seed", { exact: true })).toBeVisible();
     } finally {
       cleanup(user.id);
     }
@@ -112,19 +159,20 @@ test.describe("dashboard guests", () => {
     const user = createUser();
     const inv = createInvitation(user.id);
     publishInvitation(inv.id);
-    const name = `UI Khách ${randomUUID().slice(0, 6)}`;
+    const name = "Khách Tạo Mới";
     try {
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/guests`);
-      await page.getByPlaceholder("Tên khách*").fill(name);
-      await page.getByPlaceholder("Vai (anh, chị, bạn...)").fill("bạn");
-      await page.getByRole("button", { name: /Thêm khách/ }).click();
-
-      await expect(page.getByText(name)).toBeVisible();
+      await page.getByRole("button", { name: "Thêm khách", exact: true }).first().click();
+      const addDialog = page.getByRole("dialog");
+      await addDialog.getByLabel("Tên khách *", { exact: true }).fill(name);
+      await addDialog.getByRole("button", { name: "Thêm khách", exact: true }).click();
 
       await expect
         .poll(() => guestsOf(inv.id).some((g) => g.name === name))
         .toBeTruthy();
+      await page.reload();
+      await expect(page.getByRole("table").getByText(name, { exact: true })).toBeVisible();
       const row = guestsOf(inv.id).find((g) => g.name === name);
       expect(row?.token).toBeTruthy();
     } finally {
@@ -132,16 +180,20 @@ test.describe("dashboard guests", () => {
     }
   });
 
-  test("each guest has a unique share token surfaced as a link", async ({ page, context }) => {
+  test("each guest has a unique share token surfaced in its share dialog", async ({ page, context }) => {
     const user = createUser();
     const inv = createInvitation(user.id);
     publishInvitation(inv.id);
-    const g = createGuest(inv.id, "Token Khách");
+    const guestName = "Token Khách";
+    const g = createGuest(inv.id, guestName);
     try {
       await loginAsUser(context, user.id);
       await page.goto(`/dashboard/${inv.id}/guests`);
-      // Zalo/Messenger anchors embed the per-guest link (…?g=<token>).
-      await expect(page.locator(`a[href*="${g.token}"]`).first()).toBeVisible();
+      await page
+        .getByRole("button", { name: `Chia sẻ thiệp cho ${guestName}`, exact: true })
+        .click();
+      // Zalo/Messenger anchors in the share dialog embed the per-guest link (…?g=<token>).
+      await expect(page.getByRole("dialog").locator(`a[href*="${g.token}"]`).first()).toBeVisible();
 
       const tokens = guestsOf(inv.id).map((r) => r.token);
       expect(new Set(tokens).size).toBe(tokens.length);
@@ -280,6 +332,102 @@ test.describe("dashboard thanh-toan (payment)", () => {
       expect(paymentsOf(inv.id).length).toBe(1);
     } finally {
       cleanup(user.id);
+    }
+  });
+
+  test("admin final price is used for the next payment", async ({ page, context }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id, { adminPriceOverride: 79_000 });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+
+      await expect(page.getByText("79.000đ", { exact: true })).toBeVisible();
+      await expect(page.getByPlaceholder("Mã giảm giá")).toHaveCount(0);
+      await expect.poll(() => paymentsOf(inv.id).length).toBe(1);
+      expect(paymentsOf(inv.id).at(-1)?.amount).toBe(79_000);
+    } finally {
+      cleanup(user.id);
+    }
+  });
+
+  test("complimentary invitation creates no payment", async ({ page, context }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id, {
+      paid: false,
+      adminPriceOverride: 0,
+      complimentary: true,
+    });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+
+      await expect(
+        page.getByRole("heading", { name: "Được tặng miễn phí", exact: true }),
+      ).toBeVisible();
+      expect(paymentsOf(inv.id).length).toBe(0);
+    } finally {
+      cleanup(user.id);
+    }
+  });
+
+  test("a regular voucher still applies and returns updated payment info", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id);
+    const voucher = createVoucher({ amountOff: 20_000, active: true });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+      await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
+      await page.getByRole("button", { name: "Áp mã", exact: true }).click();
+
+      await expect(page.getByText("130.000đ", { exact: true })).toBeVisible();
+      expect(latestPaymentOf(inv.id)).toMatchObject({
+        amount: 130_000,
+        voucherCode: voucher.code,
+      });
+    } finally {
+      cleanup(user.id);
+      cleanupVoucher(voucher.code);
+    }
+  });
+
+  test("a stale voucher form rejects an admin final price without mutating payment", async ({
+    page,
+    context,
+  }) => {
+    const user = createUser();
+    const inv = createInvitation(user.id);
+    const voucher = createVoucher({ amountOff: 20_000, active: true });
+    try {
+      await loginAsUser(context, user.id);
+      await page.goto(`/dashboard/${inv.id}/thanh-toan`);
+      await expect(page.getByPlaceholder("Mã giảm giá")).toBeVisible();
+      const before = latestPaymentOf(inv.id);
+
+      getDb()
+        .prepare(
+          `UPDATE Invitation SET adminPriceOverride = ?, updatedAt = ? WHERE id = ?`,
+        )
+        .run(79_000, prismaNow(), inv.id);
+      await page.getByPlaceholder("Mã giảm giá").fill(voucher.code);
+      await page.getByRole("button", { name: "Áp mã", exact: true }).click();
+
+      await expect(
+        page.getByText("Thiệp đã có giá ưu đãi riêng.", { exact: true }),
+      ).toBeVisible();
+      expect(latestPaymentOf(inv.id)).toMatchObject({
+        id: before.id,
+        amount: before.amount,
+        status: "pending",
+        voucherCode: null,
+      });
+    } finally {
+      cleanup(user.id);
+      cleanupVoucher(voucher.code);
     }
   });
 

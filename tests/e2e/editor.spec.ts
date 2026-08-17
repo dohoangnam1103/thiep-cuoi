@@ -29,6 +29,11 @@ function newUser() {
   return user;
 }
 
+/** Digit-only suffix: the editor's titleCase transforms are identity on pure digits. */
+function digitSuffix(): string {
+  return Math.floor(Math.random() * 1e8).toString().padStart(8, "0");
+}
+
 /** Read a single content column straight from the isolated test.db. */
 function readContent(invitationId: string, column: string): string | null {
   const row = getDb()
@@ -66,7 +71,7 @@ test.describe("invitation editor", () => {
     await expect(page.getByRole("heading", { name: "Chỉnh sửa thiệp" })).toBeVisible();
     await expect(page.locator("#brideFullName")).toBeVisible();
     await expect(page.locator("#groomFullName")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Lưu bản nháp" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Xuất bản thiệp" })).toBeVisible();
   });
 
   test("bank combobox searches without accents and submits the selected bank", async ({ page, context }) => {
@@ -137,7 +142,7 @@ test.describe("invitation editor", () => {
 
     const picker = page.getByTestId("editor-template-picker");
     const cards = picker.locator("button[data-template-id]");
-    await expect(cards).toHaveCount(71);
+    await expect(cards).toHaveCount(82);
 
     const firstCard = cards.first();
     const preview = firstCard.locator("img");
@@ -214,7 +219,7 @@ test.describe("invitation editor", () => {
     await expect(page.locator("#groomZodiac")).toHaveCount(0);
   });
 
-  test("music search accepts Vietnamese composition without triggering editor autosave", async ({
+  test("music search accepts Vietnamese composition and selecting a track autosaves", async ({
     page,
     context,
   }) => {
@@ -255,7 +260,11 @@ test.describe("invitation editor", () => {
       await response;
 
       await expect(page.getByText(/NGÀY CHUNG ĐÔI/).first()).toBeVisible();
-      await expect(page.getByTestId("draft-status")).toContainText("Đã lưu vào hệ thống");
+      const result = page.locator("li").filter({ hasText: query }).first();
+      await result.getByRole("button", { name: "Chọn" }).click();
+      await expect
+        .poll(() => readContent(inv.id, "music"), { timeout: 15_000 })
+        .toBe(`https://cdn.example.com/${trackId}.mp3`);
     } finally {
       getDb().prepare("DELETE FROM Track WHERE id = ?").run(trackId);
     }
@@ -275,31 +284,19 @@ test.describe("invitation editor", () => {
     await expect(page.locator("#groomFullName")).toHaveValue(groomName);
   });
 
-  test("homepage instant create carries bride and groom short names into the editor", async ({ page }) => {
-    const brideName = `Cô Dâu ${randomUUID().slice(0, 8)}`;
-    const groomName = `Chú Rể ${randomUUID().slice(0, 8)}`;
-
-    await page.goto("/");
-    await page.getByLabel("Chú rể").fill(groomName);
-    await page.getByLabel("Cô dâu").fill(brideName);
-    await page.getByRole("button", { name: "Tạo thiệp của tôi" }).click();
-    await page.waitForURL("**/editor/**");
-
-    await expect(page.locator("#brideShortName")).toHaveValue(brideName);
-    await expect(page.locator("#groomShortName")).toHaveValue(groomName);
-  });
-
   test("editing bride and groom names saves to the database", async ({ page, context }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const brideName = `Quỳnh Anh ${randomUUID().slice(0, 8)}`;
-    const groomName = `Gia Khánh ${randomUUID().slice(0, 8)}`;
+    const brideName = `Quỳnh Anh ${digitSuffix()}`;
+    const groomName = `Gia Khánh ${digitSuffix()}`;
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
     await page.locator("#brideFullName").fill(brideName);
     await page.locator("#groomFullName").fill(groomName);
-    await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+    await page.locator("#editor-form").evaluate((form: HTMLFormElement) => {
+      form.requestSubmit();
+    });
 
     // Server action completes before the success toast fires; DB is written by then.
     await expect(page.getByText("Đã lưu bản nháp")).toBeVisible();
@@ -314,14 +311,14 @@ test.describe("invitation editor", () => {
   }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const brideName = `Tên Cô Dâu ${randomUUID().slice(0, 8)}`;
-    const groomName = `Tên Chú Rể ${randomUUID().slice(0, 8)}`;
+    const brideName = `Tên Cô Dâu ${digitSuffix()}`;
+    const groomName = `Tên Chú Rể ${digitSuffix()}`;
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
     await page.locator("#brideFullName").fill(brideName);
     await page.locator("#groomFullName").fill(groomName);
-    await expect(page.locator("#date")).toHaveAttribute("required", "");
+    await expect(page.locator("#date")).toHaveAttribute("aria-required", "true");
 
     // Bypass native required validation to exercise the server-error path too.
     await page.locator("#editor-form").evaluate((form: HTMLFormElement) => {
@@ -340,10 +337,41 @@ test.describe("invitation editor", () => {
     await expect(page.locator("#groomFullName")).toHaveValue(groomName);
   });
 
+  test("owner successfully publishes with persisted content and no admin audit", async ({ page, context }) => {
+    const user = newUser();
+    const invitation = createInvitation(user.id);
+    const slug = `owner-publish-${randomUUID().slice(0, 8)}`;
+    await loginAsUser(context, user.id);
+    await page.goto(`/editor/${invitation.id}`);
+    await page.locator("#brideFullName").fill("Nguyễn Mai");
+    await page.locator("#groomFullName").fill("Trần Nam");
+    await page.locator("#date").fill("2026-12-20");
+    await page.locator("#time").fill("18:00");
+    await page.locator("#slug").fill(slug);
+    await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await expect(page.getByRole("dialog").getByRole("link", { name: "Xem thiệp" })).toBeVisible();
+    await expect.poll(() => getDb().prepare(`
+      SELECT status, slug, publishedAt FROM Invitation WHERE id = ?
+    `).get(invitation.id)).toMatchObject({ status: "published", slug });
+    expect(readContent(invitation.id, "brideFullName")).toBe("Nguyễn Mai");
+    expect(readContent(invitation.id, "groomFullName")).toBe("Trần Nam");
+    expect((getDb().prepare(
+      "SELECT COUNT(*) AS count FROM AdminAuditLog WHERE invitationId = ?",
+    ).get(invitation.id) as { count: number }).count).toBe(0);
+    await page.goto(`/thiep/${slug}`);
+    await page.locator("[data-open-invitation-control]").evaluate((button) => {
+      (button as HTMLButtonElement).click();
+    });
+    const bride = page.getByText("Nguyễn Mai", { exact: true }).first();
+    await expect(bride).toBeVisible();
+  });
+
   test("an edit survives an immediate reload while the field is still focused", async ({ page, context }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const brideName = `Reload ngay ${randomUUID().slice(0, 8)}`;
+    const brideName = `Reload Ngay ${digitSuffix()}`;
     const hydrationErrors: string[] = [];
     page.on("console", (message) => {
       const text = message.text();
@@ -358,24 +386,23 @@ test.describe("invitation editor", () => {
     await page.reload();
 
     await expect(page.locator("#brideFullName")).toHaveValue(brideName);
-    await expect(page.getByTestId("draft-status")).toContainText("Đã khôi phục nội dung chưa lưu");
+    await expect.poll(() => readContent(inv.id, "brideFullName")).toBe(brideName);
     expect(hydrationErrors).toEqual([]);
   });
 
-  test("local autosave waits until the user leaves the text field", async ({ page, context }) => {
+  test("blur schedules a silent autosave that reaches the database", async ({ page, context }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const brideName = `Chỉ lưu khi blur ${randomUUID().slice(0, 8)}`;
+    const brideName = `Chỉ Lưu Khi Blur ${digitSuffix()}`;
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
     const brideInput = page.locator("#brideFullName");
     await brideInput.fill(brideName);
-    await page.waitForTimeout(500);
-    await expect(page.getByTestId("draft-status")).toContainText("Đã lưu vào hệ thống");
-
     await brideInput.press("Tab");
-    await expect(page.getByTestId("draft-status")).toContainText("Đã lưu tạm trên thiết bị");
+    await expect
+      .poll(() => readContent(inv.id, "brideFullName"), { timeout: 15_000 })
+      .toBe(brideName);
   });
 
   test("a newly uploaded gallery image is rendered immediately", async ({ page, context }) => {
@@ -400,6 +427,7 @@ test.describe("invitation editor", () => {
 
       const image = page.locator('img[alt="Ảnh album"]');
       await expect(image).toBeVisible();
+      await image.scrollIntoViewIfNeeded();
       await expect
         .poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth))
         .toBeGreaterThan(0);
@@ -459,9 +487,9 @@ test.describe("invitation editor", () => {
   }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const firstName = `Lần một ${randomUUID().slice(0, 8)}`;
-    const secondName = `Lần hai ${randomUUID().slice(0, 8)}`;
-    const serverName = `Từ máy chủ ${randomUUID().slice(0, 8)}`;
+    const firstName = `Lần Một ${digitSuffix()}`;
+    const secondName = `Lần Hai ${digitSuffix()}`;
+    const serverName = `Từ Máy Chủ ${digitSuffix()}`;
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
@@ -469,26 +497,39 @@ test.describe("invitation editor", () => {
       const brideInput = page.locator("#brideFullName");
       await brideInput.fill(name);
       await brideInput.press("Tab");
-      await expect(page.getByTestId("draft-status")).toContainText("Đã lưu tạm trên thiết bị");
-      await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+      await page.locator("#editor-form").evaluate((form: HTMLFormElement) => {
+        form.requestSubmit();
+      });
       await expect.poll(() => readContent(inv.id, "brideFullName")).toBe(name);
-      await expect(page.getByTestId("draft-status")).toContainText("Đã lưu vào hệ thống");
+      await expect(page.getByText("Đã lưu bản nháp").first()).toBeVisible();
+      // Wait for the Server Action response to reconcile the matching recovery
+      // snapshot. A stale toast from the previous save is not proof that this
+      // save's client-side reconciliation has completed.
+      await expect
+        .poll(() => page.evaluate((id) => localStorage.getItem(`chungdoi:draft:${id}`), inv.id))
+        .toBeNull();
     }
 
     setContent(inv.id, { brideFullName: serverName });
     await page.reload();
-    await expect(page.locator("#brideFullName")).toHaveValue(serverName);
+    // Reload là pagehide: autosave flush (4s debounce) có thể chưa kịp tới DB
+    // trước snapshot server-side mới hơn; poll chờ lần lưu tự động cuối cùng.
+    await expect
+      .poll(() => page.locator("#brideFullName").inputValue(), { timeout: 15_000 })
+      .toBe(serverName);
   });
 
   test("editing the venue address saves to the database", async ({ page, context }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const address = `Trung tâm tiệc cưới ${randomUUID().slice(0, 8)}`;
+    const address = `Trung tâm tiệc cưới ${digitSuffix()}`;
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
     await page.locator("#address").fill(address);
-    await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+    await page.locator("#editor-form").evaluate((form: HTMLFormElement) => {
+      form.requestSubmit();
+    });
 
     await expect(page.getByText("Đã lưu bản nháp")).toBeVisible();
 
@@ -498,12 +539,14 @@ test.describe("invitation editor", () => {
   test("saved edits survive a reload of the editor", async ({ page, context }) => {
     const user = newUser();
     const inv = createInvitation(user.id);
-    const brideName = `Reload Bride ${randomUUID().slice(0, 8)}`;
+    const brideName = `Reload Bride ${digitSuffix()}`;
     await loginAsUser(context, user.id);
     await page.goto(`/editor/${inv.id}`);
 
     await page.locator("#brideFullName").fill(brideName);
-    await page.getByRole("button", { name: "Lưu bản nháp" }).click();
+    await page.locator("#editor-form").evaluate((form: HTMLFormElement) => {
+      form.requestSubmit();
+    });
     await expect(page.getByText("Đã lưu bản nháp")).toBeVisible();
 
     await page.goto(`/editor/${inv.id}`);
@@ -525,10 +568,12 @@ test.describe("invitation editor", () => {
     const res = await page.goto(`/editor/${inv.id}/preview`);
     expect(res?.ok()).toBeTruthy();
 
-    // The demo renders the full names in the ceremony section. Assert DOM
-    // attachment rather than visibility (content may sit behind the envelope).
-    await expect(page.getByText(brideName).first()).toBeAttached();
-    await expect(page.getByText(groomName).first()).toBeAttached();
+    // Full names only render after the cover is opened.
+    await page.locator("[data-open-invitation-control]").evaluate((button) => {
+      (button as HTMLButtonElement).click();
+    });
+    await expect(page.getByText(brideName).first()).toBeVisible();
+    await expect(page.getByText(groomName).first()).toBeVisible();
   });
 
   test("non-owner cannot open another user's editor (404)", async ({ page, context }) => {

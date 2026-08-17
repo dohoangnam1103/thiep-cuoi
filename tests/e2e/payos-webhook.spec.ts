@@ -127,4 +127,75 @@ test.describe("payOS webhook", () => {
     expect(response.status()).toBe(200);
     expect(await response.json()).toEqual({ success: true });
   });
+
+  test("superseded payOS payment cannot activate an invitation", async ({ request }) => {
+    const user = createUser();
+    try {
+      const invitation = createInvitation(user.id);
+      const orderCode = 987_654_399;
+      const { code } = createPayment(invitation.id, {
+        code: "CDSUPR99",
+        amount: 150_000,
+        provider: "payos",
+        providerOrderCode: String(orderCode),
+        status: "superseded",
+      });
+      const data = webhookData(orderCode, 150_000);
+
+      const response = await request.post(WEBHOOK_PATH, {
+        data: {
+          code: "00",
+          desc: "success",
+          success: true,
+          data,
+          signature: sign(data),
+        },
+      });
+
+      expect(response.status()).toBe(200);
+      expect(paymentStatus(code)).toBe("superseded");
+      const row = getDb()
+        .prepare("SELECT paid FROM Invitation WHERE id = ?")
+        .get(invitation.id) as { paid: number };
+      expect(row.paid).toBe(0);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
+
+  test("legacy voucher-cancelled payOS payment still settles", async ({ request }) => {
+    const user = createUser();
+    try {
+      const invitation = createInvitation(user.id);
+      const orderCode = 987_654_397;
+      const { code } = createPayment(invitation.id, {
+        code: "CDLGCY97",
+        amount: 130_000,
+        provider: "payos",
+        providerOrderCode: String(orderCode),
+        status: "cancelled",
+        voucherCode: "LEGACY20",
+      });
+      const data = webhookData(orderCode, 130_000);
+
+      const response = await request.post(WEBHOOK_PATH, {
+        data: {
+          code: "00",
+          desc: "success",
+          success: true,
+          data,
+          signature: sign(data),
+        },
+      });
+
+      expect(response.status()).toBe(200);
+      expect(paymentStatus(code)).toBe("paid");
+      const row = getDb()
+        .prepare("SELECT paid FROM Invitation WHERE id = ?")
+        .get(invitation.id) as { paid: number };
+      expect(row.paid).toBe(1);
+    } finally {
+      cleanupUser(user.id);
+    }
+  });
 });

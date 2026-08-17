@@ -122,7 +122,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
           {albumFirst ? albumSection : null}
           <section className="flex w-full flex-col items-center gap-8">
             <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Thông Tin Lễ Cưới</FloralHeading>
-            <div className="flex w-full items-start justify-center gap-3 md:gap-10">
+            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="max-w-xl whitespace-pre-line text-center text-[14px] font-semibold uppercase leading-relaxed tracking-wide md:text-[17px]">

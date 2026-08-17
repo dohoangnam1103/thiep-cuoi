@@ -24,6 +24,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           messages={{
             chrome: viMessages.chrome,
             trialCountdown: viMessages.trialCountdown,
+            dashboardActivation: viMessages.dashboardActivation,
+            paymentActivation: viMessages.paymentActivation,
           }}
         >
           <SiteHeader initialLoggedIn hideCreateButton />

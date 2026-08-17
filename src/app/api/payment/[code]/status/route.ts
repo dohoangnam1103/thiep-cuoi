@@ -1,24 +1,29 @@
+import { verifySession } from "@/lib/dal";
 import { isPendingPaymentExpired } from "@/lib/payment";
 import { reconcilePayosPayment } from "@/lib/payment-service";
+import { isPaymentSettleable } from "@/lib/payment-settlement";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ code: string }> },
 ) {
+  const { userId } = await verifySession();
   const { code } = await params;
-  const payment = await prisma.payment.findUnique({
-    where: { code },
+  const payment = await prisma.payment.findFirst({
+    where: {
+      code,
+      invitation: { userId },
+    },
   });
   if (!payment) {
     return Response.json({ error: "not found" }, { status: 404 });
   }
-  if (payment.status === "pending" && payment.provider === "payos") {
+
+  let status = payment.status;
+  if (payment.provider === "payos" && isPaymentSettleable(payment.status)) {
     try {
-      const remoteStatus = await reconcilePayosPayment(payment);
-      if (remoteStatus === "paid") {
-        return Response.json({ status: "paid" });
-      }
+      status = await reconcilePayosPayment(payment);
     } catch (error) {
       console.error("Không thể đối soát trạng thái payOS", {
         paymentId: payment.id,
@@ -26,8 +31,10 @@ export async function GET(
       });
     }
   }
-  const status = payment.status === "pending" && isPendingPaymentExpired(payment.createdAt)
-    ? "expired"
-    : payment.status;
-  return Response.json({ status });
+
+  const visibleStatus =
+    status === "pending" && isPendingPaymentExpired(payment.createdAt)
+      ? "expired"
+      : status;
+  return Response.json({ status: visibleStatus });
 }

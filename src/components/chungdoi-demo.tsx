@@ -4,7 +4,7 @@ import Lenis from "lenis";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
+import { NextIntlClientProvider, useTranslations } from "next-intl";
 import { type ComponentType, type CSSProperties, type Dispatch, type MouseEvent, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
@@ -57,6 +57,7 @@ import {
   invitationOpeningMessage,
   orderedCouple,
 } from "@/lib/invitation-display";
+import viMessages from "../../messages/vi.json";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
@@ -1827,9 +1828,11 @@ export function ChungDoiDemo({
           <DoraemonDoorInvitation content={content} />
         </div>
       ) : AuditedTemplateRenderer ? (
-        <div className="contents" data-template-renderer={content.slug}>
-          <AuditedTemplateRenderer content={content} />
-        </div>
+        <NextIntlClientProvider locale="vi" messages={{ invitationTemplate: viMessages.invitationTemplate }}>
+          <div className="contents" data-template-renderer={content.slug}>
+            <AuditedTemplateRenderer content={content} />
+          </div>
+        </NextIntlClientProvider>
       ) : content.slug === "double-phoenix-red" || content.slug === "double-phoenix-green" ? (
         <PhoenixInvitation content={content} />
       ) : content.slug === "song-hy-green" ? (
