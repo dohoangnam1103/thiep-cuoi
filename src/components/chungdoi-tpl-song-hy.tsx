@@ -195,14 +195,14 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <div className="relative z-10 mx-auto mt-3 flex w-full max-w-[872px] items-center justify-center gap-4 px-4 md:mt-4 md:gap-5 md:px-10">
           <div className="min-w-0 flex-1 text-center">
             <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{people[0].birthOrder}</p>
-            <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[0].fullName)}</p>
+            <p className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[0].fullName)}</p>
           </div>
           <div className="flex w-[64px] shrink-0 items-center justify-center md:w-[83px]">
             <img alt="" className="h-[64px] w-[64px] object-contain md:h-[83px] md:w-[83px]" src={`${SHR}/chu-hy.webp`} style={{ filter: palette.chuHyFilter }} />
           </div>
           <div className="min-w-0 flex-1 text-center">
             <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{people[1].birthOrder}</p>
-            <p className="whitespace-nowrap uppercase" style={{ fontSize: 23, color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[1].fullName)}</p>
+            <p className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[1].fullName)}</p>
           </div>
         </div>
         <div className="relative z-10 mt-2 flex justify-center px-6 md:mt-3">

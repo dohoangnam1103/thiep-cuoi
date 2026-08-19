@@ -136,7 +136,7 @@ function HeroCard({
           className="comic-halftone pointer-events-none absolute inset-0 text-[#12141f] opacity-[0.12]"
           aria-hidden
         />
-        <p className="relative text-[26px] font-bold uppercase leading-[1.05] tracking-[0.02em] text-[#12141f] md:text-[32px]">
+        <p className="relative min-w-0 text-balance break-words text-[clamp(1.15rem,5.5vw,1.625rem)] font-bold uppercase leading-[1.05] tracking-[0.02em] text-[#12141f] md:text-[clamp(1.5rem,3vw,2rem)]">
           {person.shortName}
         </p>
       </div>
@@ -299,14 +299,20 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
               ) : null}
 
               {/* Codename lockup */}
-              <div className="relative flex flex-col items-center">
-                <span className="text-[42px] font-bold uppercase leading-[0.95] tracking-[0.01em] text-[#fffaf0] comic-ink-stroke-lg [text-shadow:5px_5px_0_#d7263d] md:text-[64px]">
+              <div className="relative flex w-full min-w-0 flex-col items-center px-1">
+                <span
+                  data-comic-cover-name
+                  className="block w-full px-1 text-balance break-words text-center text-[clamp(1.65rem,8.5vw,2.625rem)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-[#fffaf0] comic-ink-stroke-lg [text-shadow:5px_5px_0_#d7263d] md:text-[clamp(2.5rem,6vw,4rem)]"
+                >
                   {firstHero.shortName}
                 </span>
                 <span className="my-1 text-[20px] font-bold uppercase text-[#1b4dc1] md:text-[26px]">
                   {t("and")}
                 </span>
-                <span className="text-[42px] font-bold uppercase leading-[0.95] tracking-[0.01em] text-[#fffaf0] comic-ink-stroke-lg [text-shadow:5px_5px_0_#1b4dc1] md:text-[64px]">
+                <span
+                  data-comic-cover-name
+                  className="block w-full px-1 text-balance break-words text-center text-[clamp(1.65rem,8.5vw,2.625rem)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-[#fffaf0] comic-ink-stroke-lg [text-shadow:5px_5px_0_#1b4dc1] md:text-[clamp(2.5rem,6vw,4rem)]"
+                >
                   {secondHero.shortName}
                 </span>
               </div>
@@ -326,7 +332,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
           {/* ── ORIGIN STORY ────────────────────────────────────────── */}
           <section className="flex flex-col items-center gap-6">
             <SectionMarker>{c("originStory")}</SectionMarker>
-            <div className="flex w-full items-stretch gap-3 md:gap-6">
+            <div className="flex w-full flex-col items-stretch gap-3 md:flex-row md:gap-6">
               {couple.brideFirst ? (
                 <>
                   {brideCard}
@@ -357,13 +363,13 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
                   {couple.openingMessage}
                 </p>
                 <div className="relative mt-7 flex flex-col items-center gap-1">
-                  <p className="text-[24px] font-bold uppercase leading-tight text-[#12141f] md:text-[32px]">
+                  <p className="w-full text-balance break-words text-[clamp(1.25rem,5.5vw,1.5rem)] font-bold uppercase leading-tight text-[#12141f] md:text-[clamp(1.5rem,3vw,2rem)]">
                     {firstHero.fullName}
                   </p>
                   <span className="text-[13px] font-bold uppercase tracking-[0.2em] text-[#d7263d] md:text-[15px]">
                     {t("and")}
                   </span>
-                  <p className="text-[24px] font-bold uppercase leading-tight text-[#12141f] md:text-[32px]">
+                  <p className="w-full text-balance break-words text-[clamp(1.25rem,5.5vw,1.5rem)] font-bold uppercase leading-tight text-[#12141f] md:text-[clamp(1.5rem,3vw,2rem)]">
                     {secondHero.fullName}
                   </p>
                 </div>
