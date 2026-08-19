@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import viMessages from "../../../messages/vi.json";
 import "../globals.css";
 import "./editor-mobile.css";
+import { ContactFab } from "@/components/chungdoi-chrome";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
 import { appFontVariables } from "@/lib/fonts";
@@ -24,9 +25,11 @@ export default function EditorLayout({ children }: { children: React.ReactNode }
           messages={{
             editor: viMessages.editor,
             trialCountdown: viMessages.trialCountdown,
+            chrome: { footer: viMessages.chrome.footer },
           }}
         >
           {children}
+          <ContactFab />
         </NextIntlClientProvider>
         <GoogleAnalytics />
       </body>
