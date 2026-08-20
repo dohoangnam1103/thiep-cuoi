@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+import { retiredTemplateSlugPattern } from "./src/data/retired-template-slugs";
 import { canonicalHostRedirects } from "./src/lib/seo-redirects";
 
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -71,7 +72,21 @@ const nextConfig: NextConfig = {
         // trang danh sách thay vì để 404.
         source: "/mau-thiep/phong-cach/di-san-viet",
         destination: "/mau-thiep",
-        permanent: true,
+        statusCode: 301,
+      },
+      // Mẫu đã rút khỏi catalog: 301 cả trang giới thiệu và trang demo về
+      // danh sách, thay vì để 404 những URL từng nằm trong sitemap.
+      // Dùng statusCode: 301 chứ không phải permanent: true, vì permanent phát
+      // ra 308 — Google coi hai mã như nhau nhưng 301 mới là mã được yêu cầu.
+      {
+        source: `/mau-thiep/:slug(${retiredTemplateSlugPattern})`,
+        destination: "/mau-thiep",
+        statusCode: 301,
+      },
+      {
+        source: `/mau-thiep/:slug(${retiredTemplateSlugPattern})/demo`,
+        destination: "/mau-thiep",
+        statusCode: 301,
       },
     ];
   },
