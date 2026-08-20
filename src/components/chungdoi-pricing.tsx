@@ -6,7 +6,12 @@ import { useTranslations } from "next-intl";
 import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { Link } from "@/i18n/navigation";
 
-export function ChungDoiPricing() {
+interface PricingData {
+  productPrice: number;
+  repeatCustomerPrice: number;
+}
+
+export function ChungDoiPricing({ prices }: { prices: PricingData }) {
   const t = useTranslations("pricing");
 
   const highlights = [t("highlight1"), t("highlight2"), t("highlight3")];
@@ -34,6 +39,10 @@ export function ChungDoiPricing() {
     [t("faq5Q"), t("faq5A")],
   ];
 
+  const formatVnd = (value: number) => `${new Intl.NumberFormat("vi-VN").format(value)}đ`;
+
+  const { productPrice, repeatCustomerPrice } = prices;
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <SiteHeader />
@@ -60,7 +69,7 @@ export function ChungDoiPricing() {
               <p className="text-sm font-black uppercase tracking-[0.18em] text-primary">{t("planType")}</p>
               <span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">-50%</span>
             </div>
-            <p className="mt-4 font-heading text-5xl font-black text-foreground">199.000đ</p>
+            <p className="mt-4 font-heading text-5xl font-black text-foreground">{formatVnd(productPrice)}</p>
             <p className="mt-2 text-muted-foreground">{t("planPay")}</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {planNotes.map((note) => (
@@ -91,7 +100,7 @@ export function ChungDoiPricing() {
                 <p className="text-sm font-black uppercase tracking-[0.18em] text-muted-foreground">{t("secondTitle")}</p>
                 <span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">-50%</span>
               </div>
-              <p className="mt-4 font-heading text-4xl font-black text-foreground">99.000đ</p>
+              <p className="mt-4 font-heading text-4xl font-black text-foreground">{formatVnd(repeatCustomerPrice)}</p>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("secondNote")}</p>
             </div>
             <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
