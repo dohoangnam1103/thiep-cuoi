@@ -138,7 +138,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative flex w-full max-w-[480px] flex-col overflow-hidden md:mx-auto md:max-w-[900px] md:border md:border-[#88292522]" style={{ backgroundColor: DD_LINEN }}>
+      <div className="relative flex w-full max-w-[480px] flex-col overflow-hidden mx-auto md:max-w-[900px] md:border md:border-[#88292522]" style={{ backgroundColor: DD_LINEN }}>
         {/* top red band */}
         <div className="relative h-12 w-full sm:h-16 md:h-[128px]" style={{ backgroundColor: DD_RED }}>
           <div className="absolute inset-0 opacity-40" style={{ backgroundImage: `url("${DD_TEX}")`, backgroundSize: "clamp(300px, 50vw, 500px)" }} />

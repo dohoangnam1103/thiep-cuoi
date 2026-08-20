@@ -53,7 +53,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
-        className="relative isolate w-full max-w-[480px] overflow-visible bg-[url('/chungdoi/images/themes/glass-garden-green/floral-background.webp')] bg-[length:180%] bg-left-top md:mx-auto md:max-w-[900px] md:overflow-hidden md:border"
+        className="relative isolate w-full max-w-[480px] overflow-visible bg-[url('/chungdoi/images/themes/glass-garden-green/floral-background.webp')] bg-[length:180%] bg-left-top mx-auto md:max-w-[900px] md:overflow-hidden md:border"
         style={{ color: GREEN, borderColor: hexToRgba(GREEN, 0.2) }}
       >
         {/* HEADER — source-specific translucent garden capsule */}

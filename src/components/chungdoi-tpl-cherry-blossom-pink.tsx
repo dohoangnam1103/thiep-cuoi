@@ -66,7 +66,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BLUSH }}>
-      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden rounded md:mx-auto md:max-w-[900px] md:border" style={{ color: PINK, borderColor: hexToRgba(PINK, 0.2) }}>
+      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden rounded mx-auto md:max-w-[900px] md:border" style={{ color: PINK, borderColor: hexToRgba(PINK, 0.2) }}>
         {/* BACKGROUND — dải watermark cành đào (900×6000) phủ full chiều rộng, lặp dọc suốt trang */}
         <div
           className="pointer-events-none absolute inset-0 z-0 bg-[url('/chungdoi/images/themes/_decor/anhdao-pink/bg-full.jpg')] bg-[length:100%_auto] bg-top bg-repeat-y"

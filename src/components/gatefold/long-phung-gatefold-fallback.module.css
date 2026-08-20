@@ -36,12 +36,12 @@
 .backFaceOverlay::before,
 .backFaceOverlay::after {
   position: absolute;
-  border: 1px solid rgb(181 138 58 / 75%);
   content: "";
 }
 
 .backFaceOverlay::before {
   inset: 1rem;
+  border: 1px solid rgb(181 138 58 / 75%);
 }
 
 .backFaceOverlay::after {

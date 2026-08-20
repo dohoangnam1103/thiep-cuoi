@@ -189,7 +189,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
         ref={parallaxRef}
-        className="relative isolate w-full max-w-[480px] overflow-hidden rounded md:mx-auto md:max-w-[900px] md:border md:border-[#e9ce9e22]"
+        className="relative isolate w-full max-w-[480px] overflow-hidden rounded mx-auto md:max-w-[900px] md:border md:border-[#e9ce9e22]"
         style={{ backgroundColor: CARD_BG, color: GOLD, fontFamily: LPD_BODY }}
       >
         {/* header */}

@@ -106,7 +106,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative flex w-full max-w-[480px] flex-col overflow-hidden md:mx-auto md:max-w-[900px] md:border md:border-[#1F3A2522]" style={{ backgroundColor: SLX_LINEN }}>
+      <div className="relative flex w-full max-w-[480px] flex-col overflow-hidden mx-auto md:max-w-[900px] md:border md:border-[#1F3A2522]" style={{ backgroundColor: SLX_LINEN }}>
         {/* top green band */}
         <div className="relative h-12 w-full sm:h-16 md:h-[128px]" style={{ backgroundColor: SLX_GREEN }} />
 

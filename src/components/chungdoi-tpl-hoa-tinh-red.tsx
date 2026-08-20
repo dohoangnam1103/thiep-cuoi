@@ -45,7 +45,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: PURPLE, borderColor: hexToRgba(PURPLE, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ color: PURPLE, borderColor: hexToRgba(PURPLE, 0.2) }}>
         {/* HEADER */}
         <header className="relative z-20 w-full overflow-hidden" aria-label="Đầu thiệp">
           <div className="absolute left-1/2 top-[44px] z-[5] w-[82%] max-w-[340px] -translate-x-1/2 md:top-[50px] md:w-[90%] md:max-w-[510px]">

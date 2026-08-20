@@ -148,7 +148,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white" style={{ color: BROWN }}>
-      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden pb-8 md:mx-auto md:max-w-[900px] md:border" style={{ backgroundColor: CREAM, borderColor: hexToRgba(RED, 0.18), fontFamily: '"HelveticaNeue", sans-serif' }}>
+      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden pb-8 mx-auto md:max-w-[900px] md:border" style={{ backgroundColor: CREAM, borderColor: hexToRgba(RED, 0.18), fontFamily: '"HelveticaNeue", sans-serif' }}>
         {/* paper texture overlay */}
         <div
           className="pointer-events-none absolute inset-0 z-0"

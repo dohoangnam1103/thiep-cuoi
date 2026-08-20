@@ -112,7 +112,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden bg-white md:mx-auto md:max-w-[900px] md:border" style={{ color: TEXT, borderColor: hexToRgba(ACCENT, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden bg-white mx-auto md:max-w-[900px] md:border" style={{ color: TEXT, borderColor: hexToRgba(ACCENT, 0.2) }}>
         <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 z-[1] h-[1550px] w-[1680px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/vuon-xuan-blue/top.webp')] bg-contain bg-top bg-no-repeat md:h-[2800px] md:w-[3000px]" />
         <div aria-hidden className="pointer-events-none absolute left-1/2 top-[1850px] z-[1] h-[1500px] w-[1650px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/vuon-xuan-blue/mid.webp')] bg-contain bg-center bg-no-repeat opacity-80 md:h-[2700px] md:w-[2950px]" />
 

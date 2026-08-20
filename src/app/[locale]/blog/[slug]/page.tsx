@@ -73,10 +73,10 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
             </time>
           ) : null}
         </div>
-        <h1 className="mt-6 font-heading text-3xl font-black leading-tight tracking-tight text-foreground sm:text-5xl">
+        <h1 className="mt-6 font-heading text-2xl font-black leading-tight tracking-tight text-foreground sm:text-4xl">
           {post.title}
         </h1>
-        <p className="mt-6 text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
+        <p className="mt-6 text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{post.excerpt}</p>
         {post.thumbnailUrl ? (
           <div className="relative mt-8 aspect-video overflow-hidden rounded-2xl bg-muted">
             <Image
@@ -97,7 +97,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
 
       <section className="border-t border-border bg-secondary py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-black text-foreground sm:text-3xl">{t("related")}</h2>
+          <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl">{t("related")}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
             {related.map((item) => (
               <Link
@@ -117,7 +117,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
                   </div>
                 ) : null}
                 <div className="p-5">
-                  <h3 className="font-heading text-lg font-black leading-snug text-foreground group-hover:text-primary">
+                  <h3 className="font-heading text-base font-black leading-snug text-foreground sm:text-lg group-hover:text-primary">
                     {item.title}
                   </h3>
                   <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted-foreground">{item.excerpt}</p>

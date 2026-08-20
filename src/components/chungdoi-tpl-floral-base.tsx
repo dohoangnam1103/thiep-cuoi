@@ -96,7 +96,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ background: P.outerBg }}>
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: P.text, borderColor: hexToRgba(P.accent, 0.2), backgroundColor: P.surfaceBg }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ color: P.text, borderColor: hexToRgba(P.accent, 0.2), backgroundColor: P.surfaceBg }}>
         {backdrop.map((d, i) => (
           <img key={`bd-${i}`} src={d.src} alt="" aria-hidden className={`pointer-events-none absolute -z-10 h-auto w-auto max-w-none object-contain ${d.flip ? "-scale-x-100" : ""} ${d.className}`} />
         ))}

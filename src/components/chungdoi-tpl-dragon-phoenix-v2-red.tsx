@@ -58,7 +58,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
         data-template-visual="dragon-phoenix-v2-red"
-        className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fbf3e6] text-[#8c1c1c] md:mx-auto md:max-w-[900px] md:border md:border-[#8c1c1c]/20"
+        className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fbf3e6] text-[#8c1c1c] mx-auto md:max-w-[900px] md:border md:border-[#8c1c1c]/20"
         style={{ backgroundImage: "url('/chungdoi/images/themes/dragon-phoenix-v2-red/bg-frame.jpg')", backgroundSize: "100% auto" }}
       >
         {/* Original V2 cover: deep-red field, cream happiness band and balanced gold long/phung. */}

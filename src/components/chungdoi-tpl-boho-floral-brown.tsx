@@ -68,7 +68,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fffaf7] md:mx-auto md:max-w-[900px] md:border" style={{ color: BROWN, borderColor: hexToRgba(BROWN, 0.2) }}>
+      <div className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fffaf7] mx-auto md:max-w-[900px] md:border" style={{ color: BROWN, borderColor: hexToRgba(BROWN, 0.2) }}>
         {/* fixed corner florals */}
         <img src={`${BASE}/fixed_flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[6%] top-[30%] -z-10 h-[220px] w-auto max-w-none object-contain opacity-[0.16] md:h-[340px]" />
         <img src={`${BASE}/fixed_flower_2.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[6%] top-[62%] -z-10 h-[220px] w-auto max-w-none object-contain opacity-[0.16] md:h-[340px]" />

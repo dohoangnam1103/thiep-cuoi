@@ -132,7 +132,7 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
-        className="relative isolate w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
+        className="relative isolate w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border"
         style={{ background: BASE_GRADIENT, color: ROYAL_GOLD, fontFamily: ROYAL_SERIF, borderColor: hexToRgba(ROYAL_GOLD, 0.2) }}
       >
         {/* faint background texture */}

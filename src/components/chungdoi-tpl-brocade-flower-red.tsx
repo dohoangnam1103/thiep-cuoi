@@ -58,7 +58,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: BFR_CREAM }}>
       <div
-        className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
+        className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border"
         style={{ color: BFR_DARK, borderColor: hexToRgba(BFR_DARK, 0.4), backgroundColor: BFR_CREAM }}
       >
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 bg-[url('/chungdoi/images/themes/brocade-flower-red/tile-background.webp')] bg-[length:140%] bg-top opacity-[0.12]" />

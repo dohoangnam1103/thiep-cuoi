@@ -56,7 +56,7 @@ export function SpringGardenRedInvitation({ content }: { content: ChungDoiDemoCo
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ background: SGR_BG }}>
       <div
-        className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
+        className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border"
         style={{ color: SGR_ACCENT, borderColor: hexToRgba(SGR_TEXT, 0.25) }}
       >
         <img

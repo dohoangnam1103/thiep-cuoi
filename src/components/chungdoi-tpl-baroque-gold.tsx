@@ -83,7 +83,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
 
   return (
     <div className="flex w-full justify-center overflow-x-clip" style={{ backgroundColor: CREAM }}>
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: INK, backgroundColor: CREAM, borderColor: hexToRgba(GOLD, 0.35) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ color: INK, backgroundColor: CREAM, borderColor: hexToRgba(GOLD, 0.35) }}>
         {/* faint side flower */}
         <img src={`${BAROQUE_BASE}/hoa.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
 
@@ -165,7 +165,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
 
             {/* calendar framed by khung-lich */}
             {calendar ? (
-              <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[340px] md:mt-10 md:max-w-[420px]">
+              <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[408px] md:mt-10 md:max-w-[504px]">
                 <img src={`${BAROQUE_BASE}/khung-lich.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-fill" />
                 <div className="relative flex h-full w-full flex-col items-center justify-center px-8 py-6">
                   <p className="text-[12px] font-semibold uppercase tracking-wide md:text-[13px]" style={{ color: GOLD_DARK }}>Tháng {calendar.month} / {calendar.year}</p>

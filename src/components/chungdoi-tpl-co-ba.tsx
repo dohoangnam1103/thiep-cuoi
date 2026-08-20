@@ -135,7 +135,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
     <div className="flex w-full justify-center overflow-x-clip bg-white" style={{ color: BROWN }}>
       <div
         ref={parallaxRef}
-        className="relative isolate w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border md:border-[#542e0822]"
+        className="relative isolate w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border md:border-[#542e0822]"
         style={{ backgroundColor: CREAM, color: BROWN, fontFamily: COBA_HELV }}
       >
         {/* paper texture overlay */}

@@ -102,7 +102,7 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
-        className="relative isolate w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border"
+        className="relative isolate w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border"
         style={{ background: BASE_GRADIENT, color: CREAM, fontFamily: SERIF, borderColor: hexToRgba(PINK, 0.2) }}
       >
         {/* header — couple names */}

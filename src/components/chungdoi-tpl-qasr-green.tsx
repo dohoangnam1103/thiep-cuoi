@@ -60,7 +60,7 @@ export function QasrGreenInvitation({ content }: { content: ChungDoiDemoContent 
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: QASR_GREEN, borderColor: hexToRgba(QASR_GREEN, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ color: QASR_GREEN, borderColor: hexToRgba(QASR_GREEN, 0.2) }}>
         {/* page corner flowers */}
         <img src={`${QASR_BASE}/flower-top.webp`} alt="" aria-hidden className="pointer-events-none absolute top-0 right-0 z-20 h-auto w-[180px] max-w-none object-contain md:w-[300px]" />
         <img src={`${QASR_BASE}/flower-bottom.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-20 h-auto w-[180px] max-w-none object-contain md:w-[300px]" />

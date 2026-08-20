@@ -53,7 +53,7 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: BLUE, borderColor: hexToRgba(BLUE, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ color: BLUE, borderColor: hexToRgba(BLUE, 0.2) }}>
         {/* faint side flower */}
         <img src={`${BLUE_BASE}/flower1.webp`} alt="" aria-hidden className="pointer-events-none absolute top-[640px] -left-[25%] -z-10 h-[900px] w-auto max-w-none object-contain opacity-[0.15] md:top-[760px] md:-left-[15%] md:h-[1400px] lg:h-[1200px]" />
 

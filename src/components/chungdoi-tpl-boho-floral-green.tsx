@@ -64,7 +64,7 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fffaf7] font-[Baskerville,'Times_New_Roman',serif] font-light text-[#30530f] md:mx-auto md:max-w-[900px] md:border md:border-[#30530f22]">
+      <div className="relative isolate w-full max-w-[480px] overflow-hidden bg-[#fffaf7] font-[Baskerville,'Times_New_Roman',serif] font-light text-[#30530f] mx-auto md:max-w-[900px] md:border md:border-[#30530f22]">
         <img src={`${THEME_BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[42%] top-[500px] -z-10 w-[100%] max-w-none rotate-[-61deg] md:-left-[23%] md:w-[70%]" />
         <img src={`${THEME_BASE}/flower.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[65%] top-[300px] -z-10 w-[135%] max-w-none rotate-[152deg] opacity-[0.15] md:-right-[40%] md:w-[108%]" />
 

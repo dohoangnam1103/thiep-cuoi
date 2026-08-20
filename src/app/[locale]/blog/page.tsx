@@ -49,7 +49,7 @@ export default async function BlogPage({
       <section className="border-b border-border bg-secondary py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("eyebrow")}</p>
-          <h1 className="mt-4 font-heading text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">
+          <h1 className="mt-4 font-heading text-3xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
             {t("title")}
           </h1>
         </div>
@@ -85,7 +85,7 @@ export default async function BlogPage({
                       </time>
                     ) : null}
                   </div>
-                  <h2 className="mt-3 font-heading text-lg font-black leading-snug text-foreground transition group-hover:text-primary">
+                  <h2 className="mt-3 font-heading text-base font-black leading-snug text-foreground sm:text-lg transition group-hover:text-primary">
                     {post.title}
                   </h2>
                   <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
@@ -99,7 +99,7 @@ export default async function BlogPage({
               {t("empty")}
             </div>
           )}
-          <p className="mt-10 text-center text-sm text-muted-foreground">
+          <p className="mt-8 text-center text-xs text-muted-foreground sm:text-sm">
             {t("postCount", { count: posts.length })}
           </p>
         </div>

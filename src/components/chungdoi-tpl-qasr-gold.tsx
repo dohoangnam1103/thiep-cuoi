@@ -60,7 +60,7 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ color: QASR_GOLD_DARK, borderColor: hexToRgba(QASR_GOLD, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ color: QASR_GOLD_DARK, borderColor: hexToRgba(QASR_GOLD, 0.2) }}>
         {/* foreground greenery */}
         <img src={`${QASR_BASE}/bush5.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-20 h-auto w-[150px] max-w-none object-contain md:w-[240px]" />
         <img src={`${QASR_BASE}/bush5.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 right-0 z-20 h-auto w-[150px] max-w-none -scale-x-100 object-contain md:w-[240px]" />
@@ -146,9 +146,9 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
 
             {/* calendar framed by frame-lich */}
             {calendar ? (
-              <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[340px] md:mt-10 md:max-w-[420px]">
+              <div className="relative mx-auto mt-8 aspect-[388/332] w-full max-w-[408px] md:mt-10 md:max-w-[504px]">
                 <img src={`${QASR_BASE}/frame-lich.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full object-fill" />
-                <div className="relative flex h-full w-full flex-col items-center justify-center px-8 py-6">
+                <div className="relative flex h-full w-full flex-col items-center justify-center px-20 py-18">
                   <p className="text-[12px] font-semibold uppercase tracking-wide md:text-[13px]">Tháng {calendar.month} / {calendar.year}</p>
                   <div className="mt-2 grid w-full grid-cols-7 text-[10px] font-medium opacity-70 md:text-[11px]">
                     {WEEKDAY_LABELS.map((d) => (<span key={d} className="py-0.5 text-center">{d}</span>))}

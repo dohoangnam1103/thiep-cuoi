@@ -49,7 +49,7 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
-      <div className="relative w-full max-w-[480px] overflow-hidden bg-white md:mx-auto md:max-w-[900px] md:border" style={{ color: GREEN, borderColor: hexToRgba(GREEN, 0.2) }}>
+      <div className="relative w-full max-w-[480px] overflow-hidden bg-white mx-auto md:max-w-[900px] md:border" style={{ color: GREEN, borderColor: hexToRgba(GREEN, 0.2) }}>
         {/* HEADER */}
         <header className="relative z-20 flex min-h-[600px] w-full flex-col items-center justify-center overflow-visible bg-white px-6 pb-[148px] pt-12 text-center md:min-h-[780px] md:px-[31px] md:pb-[192px] md:pt-[62px] lg:min-h-[900px] lg:px-[36px] lg:pb-[222px] lg:pt-[72px]">
           <div className="pointer-events-none absolute left-[-80px] top-0 z-0 w-[390px] -rotate-[30deg] md:w-[507px] lg:w-[585px]">

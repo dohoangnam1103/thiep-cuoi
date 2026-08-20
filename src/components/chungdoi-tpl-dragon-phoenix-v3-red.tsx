@@ -63,7 +63,7 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
     <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
         data-template-visual="dragon-phoenix-v3-red"
-        className="relative w-full max-w-[480px] overflow-hidden bg-[radial-gradient(circle_at_50%_10%,#a60022_0%,#8f0018_38%,#710013_100%)] text-[#ffbe89] md:mx-auto md:max-w-[900px] md:border md:border-[#ffbe89]/25"
+        className="relative w-full max-w-[480px] overflow-hidden bg-[radial-gradient(circle_at_50%_10%,#a60022_0%,#8f0018_38%,#710013_100%)] text-[#ffbe89] mx-auto md:max-w-[900px] md:border md:border-[#ffbe89]/25"
       >
         <img src={`${RED_BASE}/phung.webp`} alt="" aria-hidden className="pointer-events-none absolute -left-[32%] top-0 h-auto w-[90%] max-w-none opacity-[0.08] md:-left-[18%] md:w-[65%]" />
         <img src={`${RED_BASE}/rong.webp`} alt="" aria-hidden className="pointer-events-none absolute -right-[30%] top-[620px] h-auto w-[90%] max-w-none opacity-[0.08] md:-right-[15%] md:top-[760px] md:w-[65%]" />

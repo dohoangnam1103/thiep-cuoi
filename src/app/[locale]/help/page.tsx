@@ -42,7 +42,7 @@ export default async function HelpPage({
 
       <section className="border-b border-border bg-[radial-gradient(circle_at_15%_-10%,rgba(122,143,106,0.16),transparent_40%)] py-14 text-center sm:py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h1 className="font-heading text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">
+          <h1 className="font-heading text-3xl font-black leading-[1.05] tracking-tight text-foreground sm:text-5xl">
             {t("title")}
           </h1>
           <p className="mt-5 text-lg leading-8 text-muted-foreground">{t("subtitle")}</p>
@@ -70,7 +70,7 @@ export default async function HelpPage({
                   <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
                     <Icon className="size-5" />
                   </div>
-                  <h2 className="mt-6 font-heading text-xl font-black text-foreground">{category.name}</h2>
+                  <h2 className="mt-6 font-heading text-lg font-black text-foreground sm:text-xl">{category.name}</h2>
                   <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{category.description}</p>
                 </article>
               );
@@ -81,7 +81,7 @@ export default async function HelpPage({
 
       <section className="border-t border-border bg-secondary py-14 sm:py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h2 className="font-heading text-2xl font-black text-foreground sm:text-3xl">{t("popularTitle")}</h2>
+          <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl">{t("popularTitle")}</h2>
           <div className="mt-8 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
             {helpPopularArticles.map((article) => (
               <Link

@@ -255,7 +255,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-[#e6dcc4]">
-      <div className="relative w-full max-w-[480px] overflow-hidden bg-[#f6efdd] text-[#12141f] md:mx-auto md:max-w-[900px] md:border-[3px] md:border-[#12141f]">
+      <div className="relative w-full max-w-[480px] overflow-hidden bg-[#f6efdd] text-[#12141f] mx-auto md:max-w-[900px] md:border-[3px] md:border-[#12141f]">
         {/* Newsprint tint over the whole issue. */}
         <span
           className="comic-newsprint pointer-events-none absolute inset-0 z-0 text-[#12141f] opacity-[0.07]"
@@ -286,7 +286,6 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
               {heroImage ? (
                 <div className="comic-panel-pop -rotate-2 border-[4px] border-[#12141f] bg-[#fffaf0] p-2 shadow-[8px_8px_0_#12141f]">
                   <div className="h-[58vw] w-[72vw] overflow-hidden border-[2px] border-[#12141f] md:h-[300px] md:w-[380px]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={heroImage}
                       alt={t("weddingPhotoAlt", {

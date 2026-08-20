@@ -141,8 +141,8 @@ export function TemplateSuggestionCta() {
         <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Lightbulb className="size-7" />
         </span>
-        <h2 className="mt-4 font-heading text-2xl font-black text-foreground sm:text-3xl">{t("title")}</h2>
-        <p className="mx-auto mt-3 max-w-2xl leading-7 text-muted-foreground">{t("description")}</p>
+        <h2 className="mt-4 font-heading text-xl font-black text-foreground sm:text-3xl md:text-4xl lg:text-5xl">{t("title")}</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-xs leading-5 text-muted-foreground">{t("description")}</p>
         <button
           type="button"
           onClick={() => {
@@ -174,10 +174,10 @@ export function TemplateSuggestionCta() {
                 <Lightbulb className="size-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 id="template-suggestion-title" className="font-heading text-2xl font-black text-foreground">
+                <h2 id="template-suggestion-title" className="font-heading text-2xl font-black text-foreground sm:text-3xl md:text-4xl lg:text-5xl">
                   {t("modalTitle")}
                 </h2>
-                <p className="mt-0.5 text-sm leading-5 text-muted-foreground sm:text-base sm:leading-6">
+                <p className="mt-0.5 text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
                   {t("modalDescription")}
                 </p>
               </div>

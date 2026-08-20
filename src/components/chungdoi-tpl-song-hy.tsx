@@ -186,7 +186,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
   );
 
   return (
-    <div className="relative isolate flex w-full max-w-[480px] flex-col overflow-hidden overflow-x-clip md:mx-auto md:max-w-[900px] md:border" style={{ backgroundColor: palette.cardBg, borderColor: hexToRgba(palette.accent, 0.13) }}>
+    <div className="relative isolate mx-auto flex w-full max-w-[480px] flex-col overflow-hidden overflow-x-clip md:max-w-[900px] md:border" style={{ backgroundColor: palette.cardBg, borderColor: hexToRgba(palette.accent, 0.13) }}>
       <header className="relative w-full overflow-hidden pb-[100px] md:pb-[130px]" style={{ backgroundColor: palette.cardBg }}>
         <div className="pointer-events-none absolute left-1/2 top-0 aspect-square w-[min(671px,130vw)] -translate-x-1/2 -translate-y-1/2 md:w-[min(872px,100%)]" aria-hidden="true">
           <img alt="" className="h-full w-full" src={`${SHR}/sunburst.svg`} style={{ filter: palette.sunburstFilter }} />
@@ -413,15 +413,17 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         </section>
       </div>
 
-      <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
-        <div className="relative z-10 flex flex-col items-center justify-center py-8">
-          <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
-          <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
-            <TemplateGiftArtwork templateSlug={content.slug} />
-            <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: "rgb(70, 70, 70)" }}>Nhấn để mở</p>
-          </button>
+      {banks.length > 0 ? (
+        <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
+          <div className="relative z-10 flex flex-col items-center justify-center py-8">
+            <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
+            <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
+              <TemplateGiftArtwork templateSlug={content.slug} />
+              <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: "rgb(70, 70, 70)" }}>Nhấn để mở</p>
+            </button>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {giftOpen ? createPortal((
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setGiftOpen(false)}>

@@ -152,7 +152,7 @@ export function PhoenixInvitation({
       data-zodiac-invitation={artwork ? "true" : undefined}
       style={rootStyle}
     >
-      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden md:mx-auto md:max-w-[900px] md:border" style={{ borderColor: "#71000122" }}>
+      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden mx-auto md:max-w-[900px] md:border" style={{ borderColor: "#71000122" }}>
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{ backgroundImage: `url("${SONGPHUNG}/NENGIAY.jpg")`, backgroundSize: "100%", backgroundRepeat: "repeat-y", backgroundPosition: "center top", opacity: 0.3 }}
