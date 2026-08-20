@@ -4,6 +4,8 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+> Scope for the rule above: `node_modules/next/dist/docs/` is 423 files / 3.6MB. Read only the one guide covering the API you are about to touch, and only when this repo has no existing example of it. Following an existing pattern in `src/app/` is cheaper and usually sufficient. Skip it entirely for edits that do not touch Next APIs (styling, copy, component internals, data files).
+
 # Chungdoi — Wedding Invitation App
 
 ## What This Is
@@ -22,9 +24,12 @@ A web app for creating and sharing digital wedding invitations (thiệp cưới)
 ## Commands
 - `npm run dev` — Start dev server
 - `npm run build` — Production build
-- `npm run lint` — ESLint check
-- `npm run typecheck` — TypeScript check
-- `npm run check` — Run lint + typecheck + build
+- `npm run lint` — ESLint check (fastest gate, run this first)
+- `npm run typecheck` — TypeScript check for `src/`
+- `npm run typecheck:tests` — TypeScript check for `tests/`
+- `npm run test:unit` — Unit tests (`src/**/*.test.ts` via tsx)
+- `npm run check` — lint + typecheck + typecheck:tests + test:unit + build. Slow with a long log; use only as the final gate.
+- `npm run test:e2e` — Playwright E2E. Target one spec (`npx playwright test tests/e2e/<file>`) instead of the whole suite.
 - `npm run prisma:migrate` — Run Prisma migrations (dev)
 - `npm run prisma:generate` — Regenerate Prisma client
 - `npm run test:lightbox` — Playwright check for the demo lightbox
@@ -64,7 +69,35 @@ docs/               # deploy guides + research notes
 
 ## Notes
 - `dev.db` and `prisma/*.db` are gitignored — the SQLite database is local only.
-- Files in `src/data/` marked `// Auto-generated` were seeded from research crawls; edit them directly, there is no regeneration script anymore.
+- Files in `src/data/` marked `// Auto-generated` were seeded from research crawls; edit them directly. The crawl scripts they name (e.g. `scripts/crawl-chungdoi-demo-content.mjs`) no longer exist — do not go looking for them.
 - Some Prisma writes are wrapped in a data-access layer (`src/lib/dal.ts`) — prefer it over calling the client directly from components.
 
-@docs/research/INSPECTION_GUIDE.md
+## Reference Docs — Read On Demand Only
+Do NOT read these unless the current task actually needs them. They are large and cost a lot of context.
+- `docs/research/INSPECTION_GUIDE.md` (36KB) — checklist for reverse-engineering a target website. Only for crawl/clone-a-template tasks.
+- `docs/research/DISTINCTIVE_TEMPLATE_ROADMAP.md` (50KB) — template roadmap.
+- `docs/research/asset-provenance.md` (57KB) — where each public asset came from.
+- `docs/deploy-minipc.md` — deployment. Read before touching deploy scripts.
+- `docs/superpowers/plans/*.md` — historical plan docs, some 80-175KB. Skim by heading, never read whole.
+
+## Context Efficiency Rules
+These matter: the repo has several files big enough to blow a context window in one read.
+
+**Never read whole; jump to the section you need:**
+
+| File | Size | How to navigate |
+|---|---|---|
+| `src/app/editor/[id]/EditorForm.tsx` | 3488 lines | Field components ~370-1740, `EditorFormBody` 1737-2765, `DemoEditorFormBody` 2766-3420, `EditorForm` export 3421+. Grep the field label first. |
+| `src/data/chungdoi-demo-content.ts` | 4422 lines | Type `ChungDoiDemoContent` at top (~lines 1-300); rest is data. Read the type only. |
+| `messages/vi.json` (+ en/ko/ja/zh) | 131KB | Grep the message key, then read that namespace's line range. Top keys: `home`, `weddingGuide`, `templateSeoFacets`, `listing`, `guestManager`, `templateStudio`, `editor`. |
+| `src/components/chungdoi-demo.tsx` | 1986 lines | Grep the section name. |
+| `src/data/chungdoi-theme-config.ts` | 1776 lines | Keyed by template id — grep the id. |
+| `tests/e2e/forest-wedding-journey-lab.spec.ts` | 3288 lines | Grep the test name. |
+
+**Never read or search these (generated, duplicated, or disposable):**
+- `src/generated/prisma/**` — generated client, some files 100-176KB. Import types from it, never open it.
+- `.deploy-worktree/` — full duplicate of the source tree. Any hit here is a false positive.
+- `.next/`, `tmp/`, `temp/`, `.playwright-mcp/`, `.capture/`, `tests/e2e/.report/`, `.claude-flow/logs/`
+- `docs/research/original-dom/`, `docs/research/templates/` — raw crawl dumps.
+
+**Verification order — cheapest first.** Run `npm run lint` and `npm run typecheck` before reaching for `npm run check`; a full build of 48 pages × 5 locales produces a long log. When a command output is long, pipe it (`2>&1 | tail -40`).
