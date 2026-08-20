@@ -122,6 +122,14 @@ model TemplateLabel {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+/// An optional, admin-provided thumbnail that is shown only on small screens.
+/// An absent row deliberately keeps the built-in long listing image everywhere.
+model TemplateMobileThumbnail {
+  slug      String   @id
+  imageUrl  String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
 model AppConfig {
   id                  String   @id @default("default")
   productPrice        Int      @default(150000)
