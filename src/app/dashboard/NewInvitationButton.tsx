@@ -10,8 +10,10 @@ import { createInvitation } from "./actions";
 
 export function NewInvitationButton({
   templateLabels,
+  mobileThumbnailOverrides,
 }: {
   templateLabels?: Record<string, string>;
+  mobileThumbnailOverrides?: Record<string, string>;
 }) {
   const [open, setOpen] = useState(false);
   const label = (slug: string) => templateLabels?.[slug] ?? templateLabel(slug);
@@ -50,6 +52,7 @@ export function NewInvitationButton({
 
             <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
               {completedTemplates.map((template) => {
+                const mobileThumbnailUrl = mobileThumbnailOverrides?.[template.slug];
                 return (
                   <form
                     key={template.slug}
@@ -65,13 +68,32 @@ export function NewInvitationButton({
                       data-template-id={template.slug}
                     >
                       <span className="relative block aspect-[3/4] overflow-hidden bg-muted">
-                        <Image
-                          src={templatePreviewUrl(template.listing)}
-                          alt={label(template.slug)}
-                          fill
-                          sizes="(min-width: 640px) 200px, 50vw"
-                          className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
-                        />
+                        {mobileThumbnailUrl ? (
+                          <>
+                            <Image
+                              src={mobileThumbnailUrl}
+                              alt={label(template.slug)}
+                              fill
+                              sizes="(max-width: 639px) 50vw, 1px"
+                              className="object-cover object-center sm:hidden"
+                            />
+                            <Image
+                              src={templatePreviewUrl(template.listing)}
+                              alt={label(template.slug)}
+                              fill
+                              sizes="(min-width: 640px) 200px, 1px"
+                              className="hidden object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none sm:block"
+                            />
+                          </>
+                        ) : (
+                          <Image
+                            src={templatePreviewUrl(template.listing)}
+                            alt={label(template.slug)}
+                            fill
+                            sizes="(min-width: 640px) 200px, 50vw"
+                            className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
+                          />
+                        )}
                       </span>
                       <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
                         {label(template.slug)}

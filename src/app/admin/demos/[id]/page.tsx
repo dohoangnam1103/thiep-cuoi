@@ -8,6 +8,7 @@ import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels } from "@/lib/template-labels";
+import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 import { EditorForm } from "@/app/editor/[id]/EditorForm";
 import { saveDemo } from "../actions";
 
@@ -15,9 +16,10 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
   await verifyAdmin();
   const { id } = await params;
 
-  const [musicMessages, templateLabels] = await Promise.all([
+  const [musicMessages, templateLabels, mobileThumbnailOverrides] = await Promise.all([
     getMusicPickerMessages("vi"),
     getTemplateLabels(),
+    getTemplateMobileThumbnailOverrides(),
   ]);
   const invitation = await prisma.invitation.findFirst({
     where: { id, isDemo: true },
@@ -62,6 +64,7 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
           musicMessages={musicMessages}
           initialTrack={initialTrack}
           templateLabels={templateLabels}
+          mobileThumbnailOverrides={mobileThumbnailOverrides}
         />
       </NextIntlClientProvider>
     </div>

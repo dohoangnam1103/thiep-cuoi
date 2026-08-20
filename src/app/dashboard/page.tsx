@@ -2,6 +2,7 @@ import { verifySession } from "@/lib/dal";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels, labelFromMap } from "@/lib/template-labels";
+import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 import { logout } from "../(auth)/actions";
 import { NewInvitationButton } from "./NewInvitationButton";
 import { DashboardInvitationCard } from "./DashboardInvitationCard";
@@ -9,7 +10,7 @@ import { DashboardInvitationCard } from "./DashboardInvitationCard";
 export default async function DashboardPage() {
   const { userId } = await verifySession();
 
-  const [invitations, templateLabels] = await Promise.all([
+  const [invitations, templateLabels, mobileThumbnailOverrides] = await Promise.all([
     prisma.invitation.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -19,13 +20,17 @@ export default async function DashboardPage() {
       },
     }),
     getTemplateLabels(),
+    getTemplateMobileThumbnailOverrides(),
   ]);
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
         <div className="flex flex-wrap items-center gap-2">
-          <NewInvitationButton templateLabels={templateLabels} />
+          <NewInvitationButton
+            templateLabels={templateLabels}
+            mobileThumbnailOverrides={mobileThumbnailOverrides}
+          />
           <form action={logout}>
             <button
               type="submit"

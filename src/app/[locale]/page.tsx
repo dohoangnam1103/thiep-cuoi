@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiClone } from "@/components/chungdoi-clone";
+import { TemplateMobileThumbnailOverridesProvider } from "@/components/template-mobile-thumbnail-overrides";
 import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
 import type { Locale } from "@/i18n/routing";
 import { pageSeo, staticAlternates } from "@/lib/seo";
 import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
+import { getPublicTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 
 export async function generateMetadata({
   params,
@@ -38,11 +40,16 @@ export const dynamic = "force-dynamic";
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const templateNameOverrides = await getPublicTemplateNameOverrides();
+  const [templateNameOverrides, mobileThumbnailOverrides] = await Promise.all([
+    getPublicTemplateNameOverrides(),
+    getPublicTemplateMobileThumbnailOverrides(),
+  ]);
 
   return (
-    <TemplateNameOverridesProvider value={templateNameOverrides}>
-      <ChungDoiClone />
-    </TemplateNameOverridesProvider>
+    <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
+      <TemplateNameOverridesProvider value={templateNameOverrides}>
+        <ChungDoiClone />
+      </TemplateNameOverridesProvider>
+    </TemplateMobileThumbnailOverridesProvider>
   );
 }

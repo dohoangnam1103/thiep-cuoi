@@ -11,6 +11,7 @@ import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { templateSeoFacets } from "@/data/template-seo-facets";
 import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
+import { isEditorUploadPublicUrl } from "@/lib/editor-uploads";
 import { defaultTemplateLabel } from "@/lib/template-labels";
 import {
   parseCeremonies,
@@ -97,6 +98,52 @@ const renameSchema = z.object({
     .max(TEMPLATE_LABEL_MAX_LENGTH, `Tên tối đa ${TEMPLATE_LABEL_MAX_LENGTH} ký tự`),
 });
 
+const mobileThumbnailSchema = z.object({
+  templateId: z.string().trim().min(1),
+  imageUrl: z.string().trim().refine(isEditorUploadPublicUrl),
+});
+
+const mobileThumbnailClearSchema = z.object({
+  templateId: z.string().trim().min(1),
+});
+
+export type TemplateMobileThumbnailState =
+  | { ok: true; imageUrl?: string }
+  | { ok: false; errorCode: "invalidData" | "templateNotFound" | "saveFailed" };
+
+function revalidatePublicTemplatePresentation() {
+  // Invalidate both the internal App Router paths and the externally visible
+  // localized paths. With next-intl rewrites, invalidating only
+  // `/{locale}/templates` does not evict the `/mau-thiep` route cache.
+  for (const locale of routing.locales) {
+    revalidatePath(`/${locale}`);
+    revalidatePath(`/${locale}/templates`);
+    revalidatePath(getPathname({ href: "/", locale }));
+    revalidatePath(getPathname({ href: "/templates", locale }));
+    for (const facet of templateSeoFacets) {
+      if (facet.kind === "style") {
+        revalidatePath(`/${locale}/templates/style/${facet.slug}`);
+        revalidatePath(getPathname({
+          href: {
+            pathname: "/templates/style/[slug]",
+            params: { slug: facet.slug },
+          },
+          locale,
+        }));
+      } else {
+        revalidatePath(`/${locale}/templates/color/${facet.slug}`);
+        revalidatePath(getPathname({
+          href: {
+            pathname: "/templates/color/[slug]",
+            params: { slug: facet.slug },
+          },
+          locale,
+        }));
+      }
+    }
+  }
+}
+
 export type RenameTemplateState = { error?: string; ok?: boolean; name?: string } | undefined;
 
 /**
@@ -135,37 +182,67 @@ export async function renameTemplate(
   revalidatePath("/admin/demos");
   revalidatePath("/dashboard");
   revalidatePath("/editor", "layout");
-
-  // Invalidate both the internal App Router paths and the externally visible
-  // localized paths. With next-intl rewrites, invalidating only
-  // `/{locale}/templates` does not evict the `/mau-thiep` route cache.
-  for (const locale of routing.locales) {
-    revalidatePath(`/${locale}`);
-    revalidatePath(`/${locale}/templates`);
-    revalidatePath(getPathname({ href: "/", locale }));
-    revalidatePath(getPathname({ href: "/templates", locale }));
-    for (const facet of templateSeoFacets) {
-      if (facet.kind === "style") {
-        revalidatePath(`/${locale}/templates/style/${facet.slug}`);
-        revalidatePath(getPathname({
-          href: {
-            pathname: "/templates/style/[slug]",
-            params: { slug: facet.slug },
-          },
-          locale,
-        }));
-      } else {
-        revalidatePath(`/${locale}/templates/color/${facet.slug}`);
-        revalidatePath(getPathname({
-          href: {
-            pathname: "/templates/color/[slug]",
-            params: { slug: facet.slug },
-          },
-          locale,
-        }));
-      }
-    }
-  }
+  revalidatePublicTemplatePresentation();
 
   return { ok: true, name: name || defaultTemplateLabel(templateId) };
+}
+
+/** Saves an uploaded WebP as the template's mobile-only card thumbnail. */
+export async function saveTemplateMobileThumbnail(
+  input: unknown,
+): Promise<TemplateMobileThumbnailState> {
+  await verifyAdmin();
+
+  const parsed = mobileThumbnailSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, errorCode: "invalidData" };
+
+  const { templateId, imageUrl } = parsed.data;
+  if (!completedTemplateSlugs.has(templateId)) {
+    return { ok: false, errorCode: "templateNotFound" };
+  }
+
+  try {
+    await prisma.templateMobileThumbnail.upsert({
+      where: { slug: templateId },
+      create: { slug: templateId, imageUrl },
+      update: { imageUrl },
+    });
+  } catch {
+    return { ok: false, errorCode: "saveFailed" };
+  }
+
+  revalidatePath("/admin/demos");
+  revalidatePath("/dashboard");
+  revalidatePath("/editor", "layout");
+  revalidatePublicTemplatePresentation();
+
+  return { ok: true, imageUrl };
+}
+
+/** Removes the override so all small-screen cards fall back to their old image. */
+export async function clearTemplateMobileThumbnail(
+  input: unknown,
+): Promise<TemplateMobileThumbnailState> {
+  await verifyAdmin();
+
+  const parsed = mobileThumbnailClearSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, errorCode: "invalidData" };
+
+  const { templateId } = parsed.data;
+  if (!completedTemplateSlugs.has(templateId)) {
+    return { ok: false, errorCode: "templateNotFound" };
+  }
+
+  try {
+    await prisma.templateMobileThumbnail.deleteMany({ where: { slug: templateId } });
+  } catch {
+    return { ok: false, errorCode: "saveFailed" };
+  }
+
+  revalidatePath("/admin/demos");
+  revalidatePath("/dashboard");
+  revalidatePath("/editor", "layout");
+  revalidatePublicTemplatePresentation();
+
+  return { ok: true };
 }

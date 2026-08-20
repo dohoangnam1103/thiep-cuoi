@@ -144,6 +144,8 @@ type CommonEditorFormProps = {
   initialTrack: { url: string; title: string; artist: string } | null;
   /** Admin-renamed template names, keyed by slug. Falls back to built-in names. */
   templateLabels?: Record<string, string>;
+  /** Optional admin-selected thumbnail used in template pickers on mobile. */
+  mobileThumbnailOverrides?: Record<string, string>;
 };
 
 export type EditorFormProps = CommonEditorFormProps & (
@@ -930,10 +932,12 @@ function TemplatePicker({
   value,
   onChange,
   labels,
+  mobileThumbnailOverrides,
 }: {
   value: string;
   onChange: (value: string) => void;
   labels?: Record<string, string>;
+  mobileThumbnailOverrides?: Record<string, string>;
 }) {
   const label = (slug: string) => labels?.[slug] ?? templateLabel(slug);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -954,6 +958,7 @@ function TemplatePicker({
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3" data-testid="editor-template-picker">
         {completedTemplates.map((template) => {
           const active = value === template.slug;
+          const mobileThumbnailUrl = mobileThumbnailOverrides?.[template.slug];
           return (
             <button
               key={template.slug}
@@ -968,13 +973,32 @@ function TemplatePicker({
               data-template-id={template.slug}
             >
               <span className="relative block aspect-[3/4] overflow-hidden bg-muted">
-                <Image
-                  src={templatePreviewUrl(template.listing)}
-                  alt={label(template.slug)}
-                  fill
-                  sizes="(min-width: 640px) 200px, 50vw"
-                  className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
-                />
+                {mobileThumbnailUrl ? (
+                  <>
+                    <Image
+                      src={mobileThumbnailUrl}
+                      alt={label(template.slug)}
+                      fill
+                      sizes="(max-width: 639px) 50vw, 1px"
+                      className="object-cover object-center sm:hidden"
+                    />
+                    <Image
+                      src={templatePreviewUrl(template.listing)}
+                      alt={label(template.slug)}
+                      fill
+                      sizes="(min-width: 640px) 200px, 1px"
+                      className="hidden object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none sm:block"
+                    />
+                  </>
+                ) : (
+                  <Image
+                    src={templatePreviewUrl(template.listing)}
+                    alt={label(template.slug)}
+                    fill
+                    sizes="(min-width: 640px) 200px, 50vw"
+                    className="object-cover object-top transition-[object-position,transform] duration-[9000ms] ease-in-out group-hover:object-bottom group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
+                  />
+                )}
               </span>
               <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
                 {label(template.slug)}
@@ -1725,6 +1749,7 @@ function EditorFormBody({
   musicMessages,
   initialTrack,
   templateLabels,
+  mobileThumbnailOverrides,
   ownerMode,
   supportMode,
   showSlugSection,
@@ -2159,7 +2184,7 @@ function EditorFormBody({
         >
         <Accordion title="Thông tin chính" icon="♡">
           <Grid>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="brideFullName" className={labelClass}>Họ tên cô dâu<span className="ml-0.5 text-destructive" aria-hidden> *</span></label>
               <input
                 id="brideFullName"
@@ -2176,7 +2201,7 @@ function EditorFormBody({
               />
               <p className="mt-1 text-xs text-muted-foreground">Họ tên đầy đủ, hiển thị ở phần giới thiệu.</p>
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="groomFullName" className={labelClass}>Họ tên chú rể<span className="ml-0.5 text-destructive" aria-hidden> *</span></label>
               <input
                 id="groomFullName"
@@ -2193,7 +2218,7 @@ function EditorFormBody({
               />
               <p className="mt-1 text-xs text-muted-foreground">Họ tên đầy đủ, hiển thị ở phần giới thiệu.</p>
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="brideShortName" className={labelClass}>Tên ngắn cô dâu</label>
               <input
                 id="brideShortName"
@@ -2209,7 +2234,7 @@ function EditorFormBody({
               />
               <p className="mt-1 text-xs text-muted-foreground">Tự lấy 2 từ cuối của họ tên; chỉ sửa khi cần.</p>
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="groomShortName" className={labelClass}>Tên ngắn chú rể</label>
               <input
                 id="groomShortName"
@@ -2599,6 +2624,7 @@ function EditorFormBody({
             value={selectedTemplateId}
             onChange={onTemplateChange}
             labels={templateLabels}
+            mobileThumbnailOverrides={mobileThumbnailOverrides}
           />
         </Accordion>
 
@@ -2749,6 +2775,7 @@ function DemoEditorFormBody({
   musicMessages,
   initialTrack,
   templateLabels,
+  mobileThumbnailOverrides,
   saveAction: saveActionProp,
   restoredDraft,
 }: DemoEditorFormBodyConfig) {
@@ -3358,6 +3385,7 @@ function DemoEditorFormBody({
             value={selectedTemplateId}
             onChange={onTemplateChange}
             labels={templateLabels}
+            mobileThumbnailOverrides={mobileThumbnailOverrides}
           />
         </Accordion>
 

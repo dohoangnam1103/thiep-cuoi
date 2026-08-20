@@ -246,36 +246,36 @@
     "fallbackNotice": "Thiết bị đang dùng phiên bản khu rừng nhẹ hơn.",
     "reducedMotion": "Giảm chuyển động",
     "gestureHint": "Vuốt dọc để di chuyển · kéo ngang để nhìn quanh",
-  "sceneStatus": "{current} trên {total}: {name}",
-  "demoContent": {
-    "ceremonyHeader": "Lễ thành hôn được cử hành trong niềm vui của hai gia đình.",
-    "openingMessage": "Cùng gia đình hai bên, chúng tôi trân trọng mời bạn đến chung vui trong ngày cưới.",
-    "families": {
-      "brideParentTitle": "Ông bà",
-      "groomParentTitle": "Ông bà"
+    "sceneStatus": "{current} trên {total}: {name}",
+    "demoContent": {
+      "ceremonyHeader": "Lễ thành hôn được cử hành trong niềm vui của hai gia đình.",
+      "openingMessage": "Cùng gia đình hai bên, chúng tôi trân trọng mời bạn đến chung vui trong ngày cưới.",
+      "families": {
+        "brideParentTitle": "Ông bà",
+        "groomParentTitle": "Ông bà"
+      },
+      "schedule": {
+        "guestWelcome": "Đón khách",
+        "banquetOpening": "Khai tiệc",
+        "toastAndCake": "Rót rượu và cắt bánh",
+        "mainCourse": "Phục vụ món chính",
+        "farewell": "Kết thúc tiệc"
+      },
+      "wishes": {
+        "first": "Chúc hai bạn trăm năm hạnh phúc và cùng nhau đi qua một hành trình thật đẹp!",
+        "second": "Mong hai bạn luôn yêu thương, thấu hiểu và gìn giữ niềm vui trong mái ấm của mình."
+      }
     },
-    "schedule": {
-      "guestWelcome": "Đón khách",
-      "banquetOpening": "Khai tiệc",
-      "toastAndCake": "Rót rượu và cắt bánh",
-      "mainCourse": "Phục vụ món chính",
-      "farewell": "Kết thúc tiệc"
+    "longCopy": {
+      "familyParentTitle": "ChuỗiTênĐạiDiệnGiaĐìnhRấtDài cùng toàn thể những người thân yêu chung niềm vui trong ngày trọng đại",
+      "venueAddress": "KhuVựcĐónKháchNgoàiTrờiCóTênRấtDài, sảnh tiệc bên rừng với lối vào qua khu vườn mùa hạ, số 25 đường Phan Chu Trinh, thành phố Đà Lạt, tỉnh Lâm Đồng",
+      "labels": {
+        "rsvpAttendance": "Xin vui lòng cho chúng tôi biết bạn và nhiều người đồng hành thân yêu có thể tham dự buổi tiệc hay không?",
+        "rsvpNotes": "Lời nhắn dành cho cô dâu chú rể, bao gồm mọi lưu ý cần thiết cho ngày tổ chức tiệc",
+        "wishText": "Hãy viết một lời chúc thật dài và đầy đủ ý nghĩa dành cho hành trình mới của cô dâu chú rể"
+      }
     },
-    "wishes": {
-      "first": "Chúc hai bạn trăm năm hạnh phúc và cùng nhau đi qua một hành trình thật đẹp!",
-      "second": "Mong hai bạn luôn yêu thương, thấu hiểu và gìn giữ niềm vui trong mái ấm của mình."
-    }
-  },
-  "longCopy": {
-    "familyParentTitle": "ChuỗiTênĐạiDiệnGiaĐìnhRấtDài cùng toàn thể những người thân yêu chung niềm vui trong ngày trọng đại",
-    "venueAddress": "KhuVựcĐónKháchNgoàiTrờiCóTênRấtDài, sảnh tiệc bên rừng với lối vào qua khu vườn mùa hạ, số 25 đường Phan Chu Trinh, thành phố Đà Lạt, tỉnh Lâm Đồng",
-    "labels": {
-      "rsvpAttendance": "Xin vui lòng cho chúng tôi biết bạn và nhiều người đồng hành thân yêu có thể tham dự buổi tiệc hay không?",
-      "rsvpNotes": "Lời nhắn dành cho cô dâu chú rể, bao gồm mọi lưu ý cần thiết cho ngày tổ chức tiệc",
-      "wishText": "Hãy viết một lời chúc thật dài và đầy đủ ý nghĩa dành cho hành trình mới của cô dâu chú rể"
-    }
-  },
-  "sceneNames": {
+    "sceneNames": {
       "coverGate": "Cổng hoa",
       "families": "Hai bên gia đình",
       "openingMessage": "Lời ngỏ",
@@ -846,25 +846,25 @@
     "faq": {
       "heading": "Giải đáp nhanh về thiệp cưới online",
       "q1Q": "Thiệp cưới online là gì?",
-      "q1A": "Thiệp cưới online là một trang thiệp kỹ thuật số dành riêng cho ngày cưới của hai bạn. Thay vì chỉ truyền tải lời mời, thiệp còn giúp khách mời xem đầy đủ thời gian, địa điểm, bản đồ, album ảnh, câu chuyện tình yêu và xác nhận tham dự. Với thiepmungonline.com, bạn có thể gửi lời mời nhanh chóng, cá nhân hóa nội dung cho từng khách và lưu giữ những kỷ niệm đẹp trong một không gian riêng.",
+      "q1A": "Thiệp cưới online là một trang thiệp kỹ thuật số dành riêng cho ngày cưới của hai bạn. Thay vì chỉ truyền tải lời mời, thiệp còn giúp khách mời xem đầy đủ thời gian, địa điểm, bản đồ, album ảnh, câu chuyện tình yêu và xác nhận tham dự.\n\nVới thiepmungonline.com, bạn có thể gửi lời mời nhanh chóng, cá nhân hóa nội dung cho từng khách và lưu giữ những kỷ niệm đẹp trong một không gian riêng.",
       "q2Q": "Tạo thiệp cưới online có mất nhiều thời gian không?",
-      "q2A": "Không. Bạn chỉ cần thực hiện ba bước đơn giản: chọn mẫu thiệp yêu thích; điền thông tin, thêm hình ảnh, âm nhạc và các nội dung mong muốn; xuất bản và gửi đường link đến khách mời. Một tấm thiệp hoàn chỉnh có thể được tạo chỉ trong vài phút nếu bạn đã chuẩn bị sẵn nội dung.",
+      "q2A": "Không. Bạn chỉ cần thực hiện ba bước đơn giản:\n\nChọn mẫu thiệp yêu thích.\nĐiền thông tin, thêm hình ảnh, âm nhạc và các nội dung mong muốn.\nXuất bản và gửi đường link đến khách mời.\n\nMột tấm thiệp hoàn chỉnh có thể được tạo chỉ trong vài phút nếu bạn đã chuẩn bị sẵn nội dung.",
       "q3Q": "Tôi có cần biết thiết kế hoặc lập trình không?",
-      "q3A": "Hoàn toàn không. thiepmungonline.com được thiết kế để bất kỳ ai cũng có thể sử dụng. Bạn chỉ cần chọn mẫu, điền thông tin và tải hình ảnh lên. Mọi bố cục và hiệu ứng đã được chuẩn bị sẵn, giúp bạn tạo thiệp đẹp mà không cần biết lập trình hay sử dụng phần mềm thiết kế.",
+      "q3A": "Hoàn toàn không. thiepmungonline.com được thiết kế để bất kỳ ai cũng có thể sử dụng.\n\nBạn chỉ cần chọn mẫu, điền thông tin và tải hình ảnh lên. Mọi bố cục và hiệu ứng đã được chuẩn bị sẵn, giúp bạn tạo thiệp đẹp mà không cần biết lập trình hay sử dụng phần mềm thiết kế.",
       "q4Q": "Tôi cần chuẩn bị những thông tin gì trước khi tạo thiệp?",
-      "q4A": "Để tạo thiệp nhanh hơn, bạn nên chuẩn bị: tên cô dâu, chú rể và thông tin gia đình hai bên; ngày giờ, địa điểm tổ chức lễ cưới và tiệc cưới; ảnh cưới, video hoặc câu chuyện tình yêu; lời mời và lời nhắn dành cho khách; thông tin RSVP, bản đồ và phương tiện đưa đón nếu có; mã QR hoặc thông tin nhận quà mừng nếu muốn sử dụng. Bạn vẫn có thể bổ sung hoặc chỉnh sửa các nội dung này sau.",
+      "q4A": "Để tạo thiệp nhanh hơn, bạn nên chuẩn bị:\n\nTên cô dâu, chú rể và thông tin gia đình hai bên.\nNgày giờ, địa điểm tổ chức lễ cưới và tiệc cưới.\nẢnh cưới, video hoặc câu chuyện tình yêu.\nLời mời và lời nhắn dành cho khách.\nThông tin RSVP, bản đồ và phương tiện đưa đón nếu có.\nMã QR hoặc thông tin nhận quà mừng nếu muốn sử dụng.\n\nBạn vẫn có thể bổ sung hoặc chỉnh sửa các nội dung này sau.",
       "q5Q": "Thiệp có thể thêm ảnh, nhạc, bản đồ và RSVP không?",
-      "q5A": "Có. Bạn có thể làm cho tấm thiệp trở nên sinh động và đầy đủ hơn bằng cách thêm album ảnh và video kỷ niệm, bản nhạc yêu thích của hai bạn, bản đồ chỉ đường đến địa điểm tổ chức, biểu mẫu xác nhận tham dự RSVP, số người đi cùng, yêu cầu món ăn, ghi chú riêng và mã QR nhận quà mừng. Các nội dung được sắp xếp trực quan để khách mời dễ dàng theo dõi.",
+      "q5A": "Có. Bạn có thể làm cho tấm thiệp trở nên sinh động và đầy đủ hơn bằng cách thêm:\n\nAlbum ảnh và video kỷ niệm.\nBản nhạc yêu thích của hai bạn.\nBản đồ chỉ đường đến địa điểm tổ chức.\nBiểu mẫu xác nhận tham dự RSVP.\nSố người đi cùng, yêu cầu món ăn, ghi chú riêng.\nMã QR nhận quà mừng.\n\nCác nội dung được sắp xếp trực quan để khách mời dễ dàng theo dõi.",
       "q6Q": "Sau khi xuất bản, tôi có thể chỉnh sửa nội dung không?",
-      "q6A": "Có. Bạn có thể cập nhật nội dung thiệp ngay cả khi đã xuất bản và gửi cho khách mời. Những thay đổi như thời gian, địa điểm, hình ảnh hoặc lời mời sẽ được cập nhật trên chính đường link cũ. Bạn không cần gửi lại một liên kết mới.",
+      "q6A": "Có. Bạn có thể cập nhật nội dung thiệp ngay cả khi đã xuất bản và gửi cho khách mời.\n\nNhững thay đổi như thời gian, địa điểm, hình ảnh hoặc lời mời sẽ được cập nhật trên chính đường link cũ. Bạn không cần gửi lại một liên kết mới.",
       "q7Q": "Tôi có thể gửi thiệp cho bao nhiêu khách mời?",
-      "q7A": "Bạn có thể chia sẻ đường link thiệp đến tất cả người thân và bạn bè qua Zalo, Messenger, email hoặc các nền tảng mạng xã hội. Ngoài đường link chung, bạn cũng có thể tạo link riêng cho từng khách để cá nhân hóa tên, cách xưng hô và theo dõi phản hồi RSVP thuận tiện hơn.",
+      "q7A": "Bạn có thể chia sẻ đường link thiệp đến tất cả người thân và bạn bè qua Zalo, Messenger, email hoặc các nền tảng mạng xã hội.\n\nNgoài đường link chung, bạn cũng có thể tạo link riêng cho từng khách để cá nhân hóa tên, cách xưng hô và theo dõi phản hồi RSVP thuận tiện hơn.",
       "q8Q": "Khách mời sẽ nhận và xem thiệp như thế nào?",
-      "q8A": "Bạn chỉ cần gửi đường link thiệp trực tiếp cho khách qua tin nhắn, mạng xã hội hoặc email. Khách mời nhấn vào liên kết để xem thiệp ngay trên trình duyệt mà không cần tải ứng dụng hay đăng nhập. Bạn cũng có thể tạo mã QR để in trên thiệp giấy, bảng đón khách hoặc quà tặng.",
+      "q8A": "Bạn chỉ cần gửi đường link thiệp trực tiếp cho khách qua tin nhắn, mạng xã hội hoặc email.\n\nKhách mời nhấn vào liên kết để xem thiệp ngay trên trình duyệt mà không cần tải ứng dụng hay đăng nhập. Bạn cũng có thể tạo mã QR để in trên thiệp giấy, bảng đón khách hoặc quà tặng.",
       "q9Q": "Thiệp có hiển thị tốt trên điện thoại và máy tính không?",
-      "q9A": "Có. Thiệp được tối ưu để hiển thị đẹp trên điện thoại, máy tính bảng và máy tính. Nội dung, hình ảnh, bản đồ và các nút tương tác sẽ tự động điều chỉnh theo kích thước màn hình, giúp khách mời xem thiệp thuận tiện trên mọi thiết bị.",
+      "q9A": "Có. Thiệp được tối ưu để hiển thị đẹp trên điện thoại, máy tính bảng và máy tính.\n\nNội dung, hình ảnh, bản đồ và các nút tương tác sẽ tự động điều chỉnh theo kích thước màn hình, giúp khách mời xem thiệp thuận tiện trên mọi thiết bị.",
       "q10Q": "Chi phí tạo thiệp cưới online là bao nhiêu?",
-      "q10A": "Bạn có thể bắt đầu tạo và chỉnh sửa thiệp trước khi quyết định sử dụng gói phù hợp. Mọi mức giá và quyền lợi sẽ được hiển thị rõ ràng trước khi thanh toán, giúp bạn dễ dàng lựa chọn theo nhu cầu mà không phát sinh chi phí ngoài dự kiến."
+      "q10A": "Bạn có thể bắt đầu tạo và chỉnh sửa thiệp trước khi quyết định sử dụng gói phù hợp.\n\nMọi mức giá và quyền lợi sẽ được hiển thị rõ ràng trước khi thanh toán, giúp bạn dễ dàng lựa chọn theo nhu cầu mà không phát sinh chi phí ngoài dự kiến."
     },
     "instant": {
       "eyebrow": "Thử ngay lập tức",
@@ -2066,6 +2066,42 @@
       "paidPriceLocked": "Thiệp đã thanh toán nên không thể đổi giá.",
       "concurrentChange": "Thiệp vừa thay đổi, vui lòng tải lại.",
       "customPriceVoucherBlocked": "Thiệp đã có giá ưu đãi riêng."
+    }
+  },
+  "adminDemos": {
+    "title": "Thiệp demo ({count})",
+    "tabNavLabel": "Quản lý thiệp demo",
+    "tabs": {
+      "demos": "Thiệp demo",
+      "mobileThumbnails": "Thumbnail mobile"
+    },
+    "demosDescription": "Tên mẫu thiệp áp dụng cho trang quản lý, danh sách thiệp của khách, bộ chọn mẫu trong trình chỉnh sửa và cả trang giới thiệu công khai (mọi ngôn ngữ). Để trống để dùng lại tên mặc định theo bản dịch.",
+    "templateColumn": "Mẫu thiệp",
+    "coupleColumn": "Cặp đôi",
+    "actionsColumn": "Thao tác",
+    "noDemos": "Chưa có thiệp demo nào.",
+    "edit": "Sửa",
+    "mobileTitle": "Thumbnail riêng cho mobile",
+    "mobileDescription": "Ảnh này chỉ hiển thị trên màn hình nhỏ. Trên desktop, ảnh PNG dài và hiệu ứng cuộn khi hover vẫn giữ nguyên.",
+    "mobileHelp": "Nên dùng ảnh dọc đã căn theo khung thumbnail; ảnh sẽ được cắt vừa khung. Hỗ trợ JPG, PNG, WebP, GIF, HEIC, HEIF; tối đa 50MB.",
+    "custom": "Đang dùng ảnh riêng cho mobile",
+    "fallback": "Đang dùng thumbnail mặc định",
+    "upload": "Tải ảnh lên",
+    "replace": "Thay ảnh",
+    "remove": "Bỏ ảnh riêng",
+    "uploading": "Đang tải ảnh...",
+    "saving": "Đang lưu...",
+    "saved": "Đã cập nhật thumbnail mobile.",
+    "removed": "Đã chuyển về thumbnail mặc định.",
+    "customPreviewAlt": "Thumbnail mobile của {name}",
+    "fallbackPreviewAlt": "Thumbnail mặc định của {name}",
+    "errors": {
+      "invalidData": "Dữ liệu thumbnail không hợp lệ.",
+      "templateNotFound": "Mẫu thiệp không tồn tại hoặc chưa hoàn thiện.",
+      "saveFailed": "Không thể lưu thumbnail. Vui lòng thử lại.",
+      "upload": "Không thể tải ảnh lên. Vui lòng thử lại.",
+      "sourceTooLarge": "Ảnh nguồn quá lớn. Vui lòng chọn ảnh dưới 50MB.",
+      "outputTooLarge": "Không thể nén ảnh xuống dung lượng cho phép. Vui lòng chọn ảnh khác."
     }
   },
   "dashboardActivation": {

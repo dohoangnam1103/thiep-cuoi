@@ -20,3 +20,14 @@ export function legacyEditorUploadPath(filename: string): string | null {
 export function editorUploadPublicUrl(filename: string): string {
   return `/uploads/${filename}`;
 }
+
+/**
+ * Checks an editor-upload URL before it is persisted in another record. This
+ * keeps those records limited to files served by our upload route instead of
+ * accepting arbitrary or traversal-shaped paths.
+ */
+export function isEditorUploadPublicUrl(value: string): boolean {
+  const prefix = "/uploads/";
+  if (!value.startsWith(prefix)) return false;
+  return EDITOR_UPLOAD_FILENAME.test(value.slice(prefix.length));
+}

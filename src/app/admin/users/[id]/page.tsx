@@ -7,6 +7,7 @@ import { verifyAdmin } from "@/lib/admin-dal";
 import { parseAuditDetailsForDisplay } from "@/lib/admin-audit-view";
 import { SYSTEM_EMAIL } from "@/lib/admin-support-input";
 import { getTemplateLabels } from "@/lib/template-labels";
+import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 import { templateLabel } from "@/app/editor/[id]/templates";
 import {
   resolveEffectiveInvitationPrice,
@@ -57,12 +58,13 @@ export default async function AdminUserProfilePage({
   if (!user) notFound();
 
   const t = await getTranslations("adminSupport");
-  const [prices, paidPaymentCount, templateLabels] = await Promise.all([
+  const [prices, paidPaymentCount, templateLabels, mobileThumbnailOverrides] = await Promise.all([
     getPaymentPrices(),
     prisma.payment.count({
       where: { status: "paid", invitation: { userId: id } },
     }),
     getTemplateLabels(),
+    getTemplateMobileThumbnailOverrides(),
   ]);
   const systemPrice = resolveSystemInvitationPrice(
     prices.productPrice,
@@ -83,7 +85,11 @@ export default async function AdminUserProfilePage({
 
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="font-heading text-2xl font-semibold text-foreground">{email}</h1>
-        <AdminCreateInvitationButton userId={user.id} templateLabels={templateLabels} />
+        <AdminCreateInvitationButton
+          userId={user.id}
+          templateLabels={templateLabels}
+          mobileThumbnailOverrides={mobileThumbnailOverrides}
+        />
       </div>
 
       <section className="space-y-3">

@@ -338,15 +338,73 @@ test.describe("templates — gallery listing", () => {
     await expect(page.getByRole("heading", { name: "Double Happiness Red" })).toHaveCount(0);
   });
 
-  test("gallery shows the count summary and demo links", async ({ page }) => {
+  test("gallery omits the count summary and exposes demo links", async ({ page }) => {
     await page.goto("/vi/templates");
 
-    // Count pill: "{n} / {total} mẫu thiệp".
-    await expect(page.getByText(/\d+\s*\/\s*\d+\s*mẫu thiệp/)).toBeVisible();
+    await expect(page.getByText(/\d+\s*\/\s*\d+\s*mẫu thiệp/)).toHaveCount(0);
 
-    // Each card exposes a "Xem demo" link to the demo route.
-    const demoLinks = page.getByRole("link", { name: /Xem demo/ });
+    // Each card exposes a demo link to the demo route.
+    const demoLinks = page.locator('[data-ga-event="open_template_demo"]');
     expect(await demoLinks.count()).toBeGreaterThan(1);
+  });
+
+  test("facet links become horizontal scrollers only on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 844 });
+    await page.goto("/vi/templates");
+
+    const heading = page.locator("#template-collections-title");
+    const description = page.locator("#template-collections-title + p");
+    await expect(description).toBeHidden();
+
+    const mobileHeading = await heading.evaluate((element) => {
+      const styles = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return {
+        position: styles.position,
+        width: rect.width,
+        height: rect.height,
+      };
+    });
+    expect(mobileHeading).toEqual({ position: "absolute", width: 1, height: 1 });
+
+    const facetRows = [
+      page.getByTestId("template-facet-style-links"),
+      page.getByTestId("template-facet-color-links"),
+    ];
+    for (const row of facetRows) {
+      await expect(row).toBeVisible();
+      await expect(row).toHaveCSS("scrollbar-width", "none");
+      const content = row.locator('[data-slot="horizontal-pill-scroller-content"]');
+      const mobileRow = await row.evaluate((element) => {
+        const container = element as HTMLElement;
+        const styles = getComputedStyle(container);
+        const initialScrollLeft = container.scrollLeft;
+        container.scrollLeft = container.scrollWidth;
+        return {
+          overflowX: styles.overflowX,
+          scrollable: container.scrollWidth > container.clientWidth,
+          canScroll: container.scrollLeft > initialScrollLeft,
+        };
+      });
+      expect(mobileRow).toEqual({
+        overflowX: "auto",
+        scrollable: true,
+        canScroll: true,
+      });
+      await expect(content).toHaveCSS("flex-wrap", "nowrap");
+    }
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth))
+      .toBe(true);
+
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await expect(heading).toBeVisible();
+    await expect(description).toBeVisible();
+    for (const row of facetRows) {
+      const content = row.locator('[data-slot="horizontal-pill-scroller-content"]');
+      await expect(row).toHaveCSS("overflow-x", "visible");
+      await expect(content).toHaveCSS("flex-wrap", "wrap");
+    }
   });
 
   test("clicking a card preview opens the template modal", async ({ page }) => {
@@ -369,6 +427,44 @@ test.describe("templates — gallery listing", () => {
     // The modal exposes both the demo CTA and the "use this template" form.
     await expect(dialog.getByRole("link", { name: /Xem demo thiệp/ })).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Dùng mẫu này" })).toBeVisible();
+  });
+
+  test("a mobile thumbnail override does not change the desktop hover image", async ({ page }) => {
+    const templateId = "song-hy-red";
+    const imageUrl = "/uploads/00000000-0000-4000-8000-000000000001.webp";
+    const db = getDb();
+
+    db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
+    db.prepare(
+      `INSERT INTO TemplateMobileThumbnail (slug, imageUrl, updatedAt)
+       VALUES (?, ?, ?)
+       ON CONFLICT(slug) DO UPDATE SET imageUrl = excluded.imageUrl, updatedAt = excluded.updatedAt`,
+    ).run(templateId, imageUrl, new Date().toISOString().replace("Z", "+00:00"));
+
+    try {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("/vi/templates");
+
+      const mobileImage = page.getByTestId(`template-mobile-thumbnail-${templateId}`);
+      const desktopImage = page.getByTestId(`template-listing-thumbnail-${templateId}`);
+      await expect(mobileImage).toBeVisible();
+      await expect(desktopImage).toBeHidden();
+      await expect(mobileImage).toHaveAttribute("src", /00000000-0000-4000-8000-000000000001\.webp/);
+
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await expect(mobileImage).toBeHidden();
+      await expect(desktopImage).toBeVisible();
+      await expect(desktopImage).toHaveAttribute("src", /listing/);
+      await expect(desktopImage).toHaveClass(/group-hover:translate-y/);
+
+      db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.reload();
+      await expect(page.getByTestId(`template-mobile-thumbnail-${templateId}`)).toHaveCount(0);
+      await expect(page.getByTestId(`template-listing-thumbnail-${templateId}`)).toBeVisible();
+    } finally {
+      db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
+    }
   });
 });
 

@@ -30,6 +30,7 @@ import {
 
 import { SiteHeader, SiteFooter } from "@/components/chungdoi-chrome";
 import { WeddingFaqSection } from "@/components/chungdoi-faq";
+import { useTemplateMobileThumbnailOverrides } from "@/components/template-mobile-thumbnail-overrides";
 import { WeddingGuideVideo } from "@/components/wedding-guide-video";
 import { useTemplateName } from "@/components/template-name-overrides";
 import { TemplatePreviewModal } from "@/components/template-preview-modal";
@@ -276,12 +277,12 @@ function HeroSection({ createHref }: { createHref: string }) {
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="flex flex-col justify-center">
-          <h1 className="hero-enter font-heading max-w-3xl text-4xl font-black leading-[1.15] tracking-tight text-foreground sm:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
+          <h1 className="hero-enter font-heading max-w-3xl text-xl font-black leading-[1.05] tracking-tight text-foreground sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
             <span className="shiny-text">{t("hero.title")}</span>
           </h1>
-          <p className="hero-enter mt-6 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
-          <p className="hero-enter mt-2 max-w-2xl text-lg leading-8 text-muted-foreground" style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
-          <p className="hero-enter mt-5 max-w-2xl text-sm leading-6 text-muted-foreground" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
+          <p className="hero-enter mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
+          <p className="hero-enter mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7" style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
+          <p className="hero-enter mt-3 max-w-2xl text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
           <div className="hero-enter mt-8 flex flex-col items-center gap-4 sm:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href={createHref}
@@ -303,10 +304,10 @@ function HeroSection({ createHref }: { createHref: string }) {
         </div>
       </div>
       <div className="relative mx-auto max-w-7xl px-4 pb-16 text-center sm:px-6 lg:px-8">
-        <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">
+        <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
           {t("hero.showcaseTitle")} <span className="font-pattaya font-normal italic text-primary">{t("hero.showcaseAccent")}</span>
         </h2>
-        <p className="mt-4 text-muted-foreground">{t("hero.showcaseSubtitle")}</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("hero.showcaseSubtitle")}</p>
       </div>
     </section>
   );
@@ -320,6 +321,7 @@ function TemplateCarousel() {
   const listingT = useTranslations("listing");
   const locale = useLocale();
   const templateName = useTemplateName();
+  const mobileThumbnailOverrides = useTemplateMobileThumbnailOverrides();
   const autoplay = useRef(
     Autoplay({ delay: 4200, stopOnInteraction: false, stopOnMouseEnter: true }),
   );
@@ -368,7 +370,7 @@ function TemplateCarousel() {
       const node = api.slideNodes()[snapIndex];
       const inner = node?.firstElementChild as HTMLElement | null;
       if (!node || !inner) return;
-      const image = inner.querySelector("img");
+      const image = inner.querySelector<HTMLImageElement>("[data-carousel-preview]");
 
       inner.style.transform = `translate3d(0, ${lift.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
       inner.style.boxShadow = `0 ${shadowY.toFixed(0)}px ${shadowBlur.toFixed(0)}px rgb(95 49 47 / ${shadowOpacity.toFixed(3)}), 0 5px 18px rgb(95 49 47 / ${(shadowOpacity * 0.45).toFixed(3)})`;
@@ -404,8 +406,8 @@ function TemplateCarousel() {
     <section className="overflow-hidden bg-background py-16">
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <div className="reveal">
-          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("carousel.title")}</h2>
-          <p className="mt-4 text-muted-foreground">{t("carousel.subtitle")}</p>
+          <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("carousel.title")}</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("carousel.subtitle")}</p>
         </div>
       </div>
 
@@ -418,13 +420,14 @@ function TemplateCarousel() {
           <div className="relative flex touch-pan-y">
             {featuredTemplates.map((template, index) => {
               const isActive = index === selectedIndex;
+              const mobileThumbnailUrl = mobileThumbnailOverrides[template.slug];
 
               return (
                 <div
                   key={template.slug}
                   className="min-w-0 shrink-0 grow-0 basis-[286px] px-2.5 [will-change:opacity]"
                   onMouseEnter={(event) => {
-                    const image = event.currentTarget.querySelector("img");
+                    const image = event.currentTarget.querySelector<HTMLImageElement>("[data-carousel-preview]");
                     event.currentTarget.style.opacity = "1";
                     if (image) image.style.filter = "saturate(1.1) brightness(1) contrast(1.06)";
                   }}
@@ -441,18 +444,45 @@ function TemplateCarousel() {
                       isActive ? "border-primary/85" : "border-border/40"
                     }`}
                   >
-                    <Image
-                      src={templatePreviewUrl(template.listing)}
-                      alt={templateName(template.slug, template.name)}
-                      width={768}
-                      height={featuredListingImageHeight(template.listing)}
-                      sizes="192px"
-                      draggable={false}
-                      loading="lazy"
-                      decoding="async"
-                      data-carousel-preview
-                      className="pointer-events-none block h-auto w-full max-w-none [transition-duration:240ms,1200ms] [transition-property:filter,translate] [transition-timing-function:ease,ease-out] group-hover:translate-y-[calc(520px_-_100%)] group-hover:[transition-duration:240ms,40000ms] group-hover:[transition-timing-function:ease,linear] motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none"
-                    />
+                    {mobileThumbnailUrl ? (
+                      <>
+                        <Image
+                          src={mobileThumbnailUrl}
+                          alt={templateName(template.slug, template.name)}
+                          fill
+                          sizes="(max-width: 639px) 286px, 1px"
+                          draggable={false}
+                          loading="lazy"
+                          decoding="async"
+                          className="pointer-events-none object-cover object-center sm:hidden"
+                        />
+                        <Image
+                          src={templatePreviewUrl(template.listing)}
+                          alt={templateName(template.slug, template.name)}
+                          width={768}
+                          height={featuredListingImageHeight(template.listing)}
+                          sizes="(max-width: 639px) 1px, 192px"
+                          draggable={false}
+                          loading="lazy"
+                          decoding="async"
+                          data-carousel-preview
+                          className="pointer-events-none hidden h-auto w-full max-w-none [transition-duration:240ms,1200ms] [transition-property:filter,translate] [transition-timing-function:ease,ease-out] group-hover:translate-y-[calc(520px_-_100%)] group-hover:[transition-duration:240ms,40000ms] group-hover:[transition-timing-function:ease,linear] motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none sm:block"
+                        />
+                      </>
+                    ) : (
+                      <Image
+                        src={templatePreviewUrl(template.listing)}
+                        alt={templateName(template.slug, template.name)}
+                        width={768}
+                        height={featuredListingImageHeight(template.listing)}
+                        sizes="192px"
+                        draggable={false}
+                        loading="lazy"
+                        decoding="async"
+                        data-carousel-preview
+                        className="pointer-events-none block h-auto w-full max-w-none [transition-duration:240ms,1200ms] [transition-property:filter,translate] [transition-timing-function:ease,ease-out] group-hover:translate-y-[calc(520px_-_100%)] group-hover:[transition-duration:240ms,40000ms] group-hover:[transition-timing-function:ease,linear] motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none"
+                      />
+                    )}
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
                       {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
                       <h3 className="mt-2 font-heading text-lg font-black text-background">
@@ -539,8 +569,8 @@ function HowItWorks() {
     <section id="how-it-works" className="bg-background py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
-          <h2 className="font-heading text-3xl font-black text-foreground sm:text-5xl">{t("howItWorks.title")}</h2>
-          <p className="mt-4 text-muted-foreground">{t("howItWorks.subtitle")}</p>
+          <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("howItWorks.title")}</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("howItWorks.subtitle")}</p>
         </div>
         <div className="mx-auto mt-12 grid max-w-5xl items-center gap-12 lg:grid-cols-2">
           <ol className="reveal relative flex w-full max-w-md flex-col lg:justify-self-end">
@@ -553,9 +583,9 @@ function HowItWorks() {
                   <Icon className="size-5" />
                 </div>
                 <div className="pt-1">
-                  <p className="text-sm font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
-                  <h3 className="mt-2 font-heading text-2xl font-black text-foreground">{title}</h3>
-                  <p className="mt-2 text-muted-foreground">{copy}</p>
+                  <p className="text-xs font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
+                  <h3 className="mt-1 font-heading text-lg font-black text-foreground sm:text-xl">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p>
                 </div>
               </li>
             ))}
@@ -593,10 +623,10 @@ function SupportSection() {
   return (
     <section className="bg-secondary py-16 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-        <h2 className="reveal font-heading text-3xl font-black text-foreground sm:text-5xl">
+        <h2 className="reveal font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
           {t("support.title")} <span className="font-pattaya font-normal italic text-primary">{t("support.titleAccent")}</span>
         </h2>
-        <p className="reveal mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+        <p className="reveal mx-auto mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
           {t.rich("support.subtitle", {
             hl: (chunks) => <span className="font-semibold text-primary">{chunks}</span>,
           })}
@@ -611,8 +641,8 @@ function SupportSection() {
                 <Icon className="size-6" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{label}</p>
-                <p className="mt-1 text-xl font-black text-foreground">{value}</p>
+                <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
+                <p className="mt-1 text-base font-semibold text-foreground sm:text-lg">{value}</p>
               </div>
             </div>
           ))}
@@ -630,9 +660,9 @@ function GuestsSection() {
       <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(214,64,69,0.14),transparent_55%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
         <div className="reveal">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("guests.eyebrow")}</p>
-          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("guests.title")}</h2>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">{t("guests.subtitle")}</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-accent">{t("guests.eyebrow")}</p>
+          <h2 className="mt-3 font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("guests.title")}</h2>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("guests.subtitle")}</p>
           <ul className="mt-8 space-y-4 text-foreground">
             {[
               t("guests.point1"),
@@ -674,9 +704,9 @@ function TestimonialsSection() {
     <section className="bg-background py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
-          <p className="text-sm font-black uppercase tracking-[0.22em] text-accent">{t("testimonials.eyebrow")}</p>
-          <h2 className="mt-4 font-heading text-3xl font-black text-foreground sm:text-5xl">{t("testimonials.title")}</h2>
-          <p className="mt-4 text-muted-foreground">{t("testimonials.subtitle")}</p>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-accent">{t("testimonials.eyebrow")}</p>
+          <h2 className="mt-3 font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("testimonials.title")}</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("testimonials.subtitle")}</p>
         </div>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {testimonialKeys.map((key) => (

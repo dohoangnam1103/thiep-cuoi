@@ -20,6 +20,7 @@ const NAV = [
   { href: "/admin", label: "Tổng quan" },
   { href: "/admin/users", label: "Người dùng" },
   { href: "/admin/demos", label: "Thiệp demo" },
+  { href: "/admin/demos?tab=mobile-thumbnail", label: "Thumbnail mobile" },
   { href: "/admin/blogs", label: "Bài viết" },
   { href: "/admin/template-suggestions", label: "Gợi ý mẫu thiệp" },
   { href: "/admin/payments", label: "Giao dịch" },
@@ -42,6 +43,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           locale="vi"
           messages={{
             adminSupport: viMessages.adminSupport,
+            adminDemos: viMessages.adminDemos,
             editor: { support: viMessages.editor.support },
           }}
         >

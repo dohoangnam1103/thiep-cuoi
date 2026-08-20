@@ -8,6 +8,7 @@ import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels } from "@/lib/template-labels";
+import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 import { EditorForm } from "./EditorForm";
 
 export default async function EditorPage({ params }: { params: Promise<{ id: string }> }) {
@@ -20,13 +21,14 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
   const locale = hasLocale(routing.locales, requestedLocale)
     ? requestedLocale
     : routing.defaultLocale;
-  const [content, ceremonies, schedule, gallery, musicMessages, templateLabels] = await Promise.all([
+  const [content, ceremonies, schedule, gallery, musicMessages, templateLabels, mobileThumbnailOverrides] = await Promise.all([
     prisma.invitationContent.findUnique({ where: { invitationId: id } }),
     prisma.ceremonyItem.findMany({ where: { invitationId: id }, orderBy: { sortOrder: "asc" } }),
     prisma.scheduleItem.findMany({ where: { invitationId: id }, orderBy: { sortOrder: "asc" } }),
     prisma.galleryPhoto.findMany({ where: { invitationId: id }, orderBy: { sortOrder: "asc" } }),
     getMusicPickerMessages(locale),
     getTemplateLabels(),
+    getTemplateMobileThumbnailOverrides(),
   ]);
   const initialTrack = content?.music
     ? await prisma.track.findFirst({
@@ -55,6 +57,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
       musicMessages={musicMessages}
       initialTrack={initialTrack}
       templateLabels={templateLabels}
+      mobileThumbnailOverrides={mobileThumbnailOverrides}
     />
   );
 }

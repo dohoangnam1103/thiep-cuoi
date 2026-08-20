@@ -6,6 +6,7 @@ import {
   ChungDoiListing,
   type TemplateSeoFacetContent,
 } from "@/components/chungdoi-listing";
+import { TemplateMobileThumbnailOverridesProvider } from "@/components/template-mobile-thumbnail-overrides";
 import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
 import {
   findTemplateSeoFacet,
@@ -19,6 +20,7 @@ import type { Locale } from "@/i18n/routing";
 import { pageSeo, templateFacetAlternates } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site-url";
 import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
+import { getPublicTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 const TEMPLATE_PREVIEW_WIDTH = 2400;
@@ -100,10 +102,11 @@ export async function TemplateSeoFacetPage({
   if (templates.length === 0) notFound();
 
   setRequestLocale(locale);
-  const [t, listingT, templateNameOverrides] = await Promise.all([
+  const [t, listingT, templateNameOverrides, mobileThumbnailOverrides] = await Promise.all([
     getTranslations({ locale, namespace: "templateSeoFacets" }),
     getTranslations({ locale, namespace: "listing" }),
     getPublicTemplateNameOverrides(),
+    getPublicTemplateMobileThumbnailOverrides(),
   ]);
 
   const title = t(`items.${facet.id}.title`);
@@ -205,14 +208,16 @@ export async function TemplateSeoFacetPage({
   };
 
   return (
-    <TemplateNameOverridesProvider value={templateNameOverrides}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-        }}
-      />
-      <ChungDoiListing initialTemplates={templates} facetContent={content} />
-    </TemplateNameOverridesProvider>
+    <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
+      <TemplateNameOverridesProvider value={templateNameOverrides}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <ChungDoiListing initialTemplates={templates} facetContent={content} />
+      </TemplateNameOverridesProvider>
+    </TemplateMobileThumbnailOverridesProvider>
   );
 }

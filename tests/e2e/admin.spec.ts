@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { unlink } from "node:fs/promises";
+import path from "node:path";
 
 import { test, expect } from "@playwright/test";
 
@@ -120,6 +122,67 @@ test.describe("admin: auth gating", () => {
       await expect(page).toHaveURL(/\/admin$/);
     } finally {
       deleteAdminByEmail(admin.email);
+    }
+  });
+});
+
+test.describe("admin: mobile template thumbnails", () => {
+  test("the admin navigation links directly to mobile thumbnails", async ({ context, page }) => {
+    await loginAsAdmin(context, seededAdminId());
+    await page.goto("/admin/demos");
+
+    const mobileThumbnailLink = page.locator("header").getByRole("link", {
+      name: "Thumbnail mobile",
+      exact: true,
+    });
+    await expect(mobileThumbnailLink).toBeVisible();
+    await mobileThumbnailLink.click();
+
+    await expect(page).toHaveURL(/\/admin\/demos\?tab=mobile-thumbnail$/);
+    await expect(page.locator("h1")).toHaveText("Thumbnail riêng cho mobile");
+  });
+
+  test("an admin can upload, persist, and clear a mobile-only thumbnail", async ({ context, page }) => {
+    const templateId = "song-hy-red";
+    const db = getDb();
+    let imageUrl: string | undefined;
+
+    db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
+
+    try {
+      await loginAsAdmin(context, seededAdminId());
+      await page.goto("/admin/demos?tab=mobile-thumbnail");
+
+      const card = page.locator(`[data-template-mobile-thumbnail="${templateId}"]`);
+      await expect(card).toBeVisible();
+      await expect(card.getByText("Đang dùng thumbnail mặc định")).toBeVisible();
+
+      await card.getByTestId(`mobile-thumbnail-upload-${templateId}`).setInputFiles(
+        "public/chungdoi/icon.png",
+      );
+      await expect(card.getByText("Đã cập nhật thumbnail mobile.")).toBeVisible();
+
+      const row = db
+        .prepare("SELECT imageUrl FROM TemplateMobileThumbnail WHERE slug = ?")
+        .get(templateId) as { imageUrl: string } | undefined;
+      expect(row?.imageUrl).toMatch(/^\/uploads\/[0-9a-f-]{36}\.webp$/);
+      imageUrl = row?.imageUrl;
+
+      await page.reload();
+      await expect(card.getByText("Đang dùng ảnh riêng cho mobile")).toBeVisible();
+
+      await card.getByRole("button", { name: "Bỏ ảnh riêng" }).click();
+      await expect(card.getByText("Đã chuyển về thumbnail mặc định.")).toBeVisible();
+      expect(
+        db.prepare("SELECT imageUrl FROM TemplateMobileThumbnail WHERE slug = ?").get(templateId),
+      ).toBeUndefined();
+    } finally {
+      db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
+      if (imageUrl) {
+        await unlink(path.join(process.cwd(), "tests/e2e/.data/editor-uploads", path.basename(imageUrl))).catch(
+          () => undefined,
+        );
+      }
     }
   });
 });
