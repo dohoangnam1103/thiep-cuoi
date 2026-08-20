@@ -753,10 +753,22 @@ export const templates = [
 
 // Templates hidden from production listing (incomplete, pilot, or under revision)
 export const hiddenTemplateSlugs = new Set<string>([
+  "ao-dai-hue",
+  "bat-trang-blue",
+  "botanical-lavender",
+  "comic-hero-assemble",
   "doraemon-door",
   "dong-ho-folk",
+  "hang-trong-folk",
+  "long-phung-gatefold",
+  "nguyet-anh-sleeve",
   "rap-hy-sai-gon",
+  "riso-duotone",
+  "sen-monoline",
+  "son-mai-lacquer",
   "swiss-brutalist",
+  "tho-cam-highland",
+  "ticket-terracotta",
   "y2k-chrome",
   "zen-sand",
   "arch-sage",

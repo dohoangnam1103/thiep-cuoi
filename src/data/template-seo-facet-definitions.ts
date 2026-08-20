@@ -32,13 +32,10 @@ export const templateSeoFacets = [
     filterKey: "category",
     filterValue: "Modern",
   },
-  {
-    id: "style-vietnamese-heritage",
-    kind: "style",
-    slug: "di-san-viet",
-    filterKey: "category",
-    filterValue: "Vietnamese Heritage",
-  },
+  // style-vietnamese-heritage (di-san-viet) đã rút khỏi taxonomy: toàn bộ 11
+  // mẫu "Vietnamese Heritage" đang bị ẩn nên facet này rỗng, để index tiếp là
+  // tạo ra một trang thin collection. URL cũ được 301 về /mau-thiep trong
+  // next.config.ts.
   {
     id: "style-royal",
     kind: "style",

@@ -65,6 +65,14 @@ const nextConfig: NextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        // Facet "di sản Việt" đã rút khỏi taxonomy SEO vì toàn bộ mẫu thuộc
+        // nhóm này đang bị ẩn. URL này từng nằm trong sitemap nên trả 301 về
+        // trang danh sách thay vì để 404.
+        source: "/mau-thiep/phong-cach/di-san-viet",
+        destination: "/mau-thiep",
+        permanent: true,
+      },
     ];
   },
   async headers() {

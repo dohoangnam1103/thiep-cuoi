@@ -14,8 +14,8 @@ test("curates a unique, intentionally small set of indexable template facets", (
   const ids = templateSeoFacets.map((facet) => facet.id);
   const paths = templateSeoFacets.map((facet) => `${facet.kind}/${facet.slug}`);
 
-  assert.equal(templateSeoFacets.length, 8);
-  assert.equal(styleTemplateSeoFacets.length, 5);
+  assert.equal(templateSeoFacets.length, 7);
+  assert.equal(styleTemplateSeoFacets.length, 4);
   assert.equal(colorTemplateSeoFacets.length, 3);
   assert.equal(new Set(ids).size, ids.length);
   assert.equal(new Set(paths).size, paths.length);
