@@ -71,9 +71,9 @@ ENV DATABASE_URL="file:./dev.db"
 ENV SESSION_SECRET="build-time-placeholder"
 ENV NEXT_DEPLOYMENT_ID=${NEXT_DEPLOYMENT_ID}
 ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
-# QEMU (amd64 emulation on arm64 hosts) lacks io_uring support that Node 24's
-# libuv enables by default, aborting the build at finalize. Disable it.
-ENV UV_USE_IO_URING=0
+# Cross-platform Node builds under QEMU are best-effort on Apple Silicon. The
+# deployment script's BUILD_ON=local mode compiles Next natively on the Mac;
+# BUILD_ON=remote compiles natively on the Mini PC.
 
 RUN npm run prisma:generate
 

@@ -1,0 +1,94 @@
+# Build a Linux/amd64 runner from a Next.js artifact compiled natively on a Mac.
+#
+# `prebuilt` is a named BuildKit context with only these files:
+#   - server.js copied from .next/standalone/server.js
+#   - .next copied from .next/standalone/.next
+#   - static copied from .next/static
+# Keeping the Next compilation outside QEMU avoids Node 24's amd64 emulation
+# crash on Apple Silicon. Linux dependencies are still installed in this image.
+
+ARG NODE_VERSION=24.18.0-slim
+
+FROM node:${NODE_VERSION} AS dependencies
+
+WORKDIR /app
+
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+
+RUN --mount=type=cache,target=/root/.npm \
+  --mount=type=cache,target=/usr/local/share/.cache/yarn \
+  --mount=type=cache,target=/root/.local/share/pnpm/store \
+  if [ -f package-lock.json ]; then \
+  npm ci --ignore-scripts --no-audit --no-fund; \
+  elif [ -f yarn.lock ]; then \
+  corepack enable yarn && yarn install --frozen-lockfile --production=false --ignore-scripts; \
+  elif [ -f pnpm-lock.yaml ]; then \
+  corepack enable pnpm && pnpm install --frozen-lockfile --ignore-scripts; \
+  else \
+  echo "No lockfile found." && exit 1; \
+  fi
+
+# `npm ci --ignore-scripts` intentionally skips this native binary. Rebuild it
+# for the Linux target that will run on the Mini PC.
+RUN npm rebuild better-sqlite3
+
+FROM dependencies AS runtime-dependencies
+
+# Keep only packages declared for runtime. This stage remains Linux/amd64, so
+# every native module used by the runner is installed for the target platform.
+RUN npm prune --omit=dev --ignore-scripts
+
+FROM node:${NODE_VERSION} AS migrate
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=dependencies /app/node_modules ./node_modules
+# A migration only needs Prisma's config, schema and migration history. Do not
+# add the Next app or public asset tree to this short-lived image.
+COPY package.json ./package.json
+COPY prisma.config.ts ./prisma.config.ts
+COPY prisma ./prisma
+
+ENV NODE_ENV=production
+ENV DATABASE_URL="file:./dev.db"
+ENV SESSION_SECRET="build-time-placeholder"
+
+RUN npm run prisma:generate
+
+FROM node:${NODE_VERSION} AS public-assets
+
+WORKDIR /app
+
+# Preserve every public URL while storing byte-identical theme assets only once
+# in the final image layer. This stays inside Docker, so the worktree is never
+# modified during a deploy.
+COPY public ./public
+COPY scripts/dedupe-public-assets.mjs ./scripts/dedupe-public-assets.mjs
+RUN node scripts/dedupe-public-assets.mjs --apply
+
+FROM node:${NODE_VERSION} AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Do not use .next/standalone/node_modules here: it was produced on macOS and
+# can contain Mach-O native addons. Reinstalling runtime dependencies for Linux
+# makes the image portable to the Mini PC while omitting dev-only packages.
+COPY --from=runtime-dependencies --chown=node:node /app/node_modules ./node_modules
+COPY --from=prebuilt --chown=node:node /server.js ./server.js
+COPY --from=prebuilt --chown=node:node /.next ./.next
+COPY --from=prebuilt --chown=node:node /static ./.next/static
+COPY --from=public-assets --chown=node:node /app/public ./public
+
+USER node
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

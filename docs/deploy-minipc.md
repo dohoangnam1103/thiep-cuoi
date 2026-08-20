@@ -6,28 +6,42 @@ Quy trình deploy web app lên Mini PC (chạy sau Cloudflare Tunnel). Xem thêm
 ## TL;DR
 
 ```bash
+# Mặc định: build native trên Mini PC.
 ./scripts/deploy-minipc.sh
+
+# Build image linux/amd64 trên MacBook rồi stream image qua SSH sang Mini PC.
+BUILD_ON=local ./scripts/deploy-minipc.sh
 ```
 
 Script tự làm: xác minh đúng Mini PC → rsync source → backup DB/uploads → build
-image native trên Mini PC → chạy các Prisma migration còn thiếu → gắn
+image (native trên Mini PC hoặc cross-build trên MacBook) → chạy các Prisma migration còn thiếu → gắn
 version/rollback tag → restart riêng web → kiểm tra LAN, canonical, database và
 URL public.
 
-## Vì sao build native trên Mini PC?
+## Chọn nơi build
 
-- Mini PC là **x86_64**, nên build native tránh QEMU và lỗi native module khác
-  kiến trúc từ Mac Apple Silicon.
-- BuildKit và Turbopack cache được giữ trên Mini PC, nên các lần deploy sau chỉ
-  biên dịch phần thay đổi.
+- Mặc định `BUILD_ON=remote`: Mini PC là **x86_64**, nên build native tránh QEMU
+  và tái dùng BuildKit/Turbopack cache trên VPS.
+- Với `BUILD_ON=local`, Next.js được build native trên MacBook trước. Docker
+  Desktop chỉ đóng gói artifact với runtime dependencies `linux/amd64`, nhờ đó
+  tránh chạy Next/Node 24 dưới QEMU. Image được kiểm tra kiến trúc rồi stream
+  qua SSH bằng `docker save | ssh minipc docker load`. Không tạo file tar trên
+  VPS.
+- Khi có Prisma migration pending, local mode build và chuyển thêm builder image
+  tạm thời để migration vẫn chạy trực tiếp cạnh database production trước khi
+  web được restart.
 - Mỗi image có tag theo `DEPLOYMENT_ID`; image đang chạy được giữ thêm một tag
   rollback trước khi promote bản mới.
+- Nếu bước đóng gói `linux/amd64` cục bộ gặp lỗi QEMU, chạy lại không có
+  `BUILD_ON=local` để build native hoàn toàn trên Mini PC; vẫn giữ nguyên backup,
+  migration preflight và rollback của script.
 
 ## Yêu cầu
 
 - SSH tới Mini PC qua alias `minipc` (đã cấu hình trong `~/.ssh/config` →
   `ssh.hoangnam.cloud`).
-- Docker Buildx trên Mini PC.
+- Docker Buildx trên Mini PC khi dùng `BUILD_ON=remote`; Docker Desktop/Buildx
+  có builder `desktop-linux` trên MacBook khi dùng `BUILD_ON=local`.
 - Python 3 trên Mini PC để tạo SQLite online backup và chạy `quick_check`.
 
 ## Các bước script thực hiện
@@ -38,8 +52,11 @@ URL public.
 2. **Backup** SQLite bằng online-backup API, chuyển ảnh editor legacy khỏi writable
    layer vào `data/editor-uploads`, rồi archive ảnh editor và thư viện ảnh/video
    do khách đóng góp trước deploy.
-3. **Build native** image versioned trên Mini PC với `NEXT_DEPLOYMENT_ID` và
-   `NEXT_PUBLIC_SITE_URL` được đóng vào build.
+3. **Build image versioned** trên Mini PC (mặc định) hoặc build Next native trên
+   MacBook, sau đó đóng gói dependencies `linux/amd64` và stream qua SSH, với
+   `NEXT_DEPLOYMENT_ID` và `NEXT_PUBLIC_SITE_URL` được đóng vào build.
+   Local mode chạy thêm smoke test `better-sqlite3` và `sharp` ngay trên Mini PC
+   trước khi image có thể được promote.
 4. **Migrate database** bằng chính builder image của revision vừa build. Migration
    chạy sau backup và trước khi thay container; lỗi migration sẽ dừng deploy.
 5. **Seed danh sách nhạc** từ `prisma/tracks.json` nếu bảng `Track` đang trống.
@@ -57,6 +74,8 @@ URL public.
 | `REMOTE_APP_DIR` | `/home/namdo/apps/thiepmungonline` | Thư mục app trên Mini PC |
 | `WEB_IMAGE` | `thiepmungonline-web:latest` | Tên image |
 | `WEB_PLATFORM` | `linux/amd64` | Kiến trúc build |
+| `BUILD_ON` | `remote` | `remote` để build tại VPS, `local` để build tại MacBook |
+| `LOCAL_BUILDER` | `desktop-linux` | Tên Docker Buildx builder khi `BUILD_ON=local` |
 | `PUBLIC_URL` | `https://thiepmungonline.com` | URL healthcheck cuối |
 | `WEB_PORT` | `3211` | Cổng LAN app trên Mini PC |
 | `DEPLOYMENT_ID` | UTC timestamp | Tag image và cache-bust Next.js |
@@ -65,6 +84,13 @@ Ví dụ deploy sang host khác:
 
 ```bash
 REMOTE_HOST=192.168.0.77 PUBLIC_URL=https://staging.example.com ./scripts/deploy-minipc.sh
+```
+
+Nếu cần build local cho staging:
+
+```bash
+BUILD_ON=local REMOTE_HOST=192.168.0.77 PUBLIC_URL=https://staging.example.com \
+  ./scripts/deploy-minipc.sh
 ```
 
 ## Secrets runtime trên Mini PC

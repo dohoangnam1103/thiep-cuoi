@@ -5,7 +5,7 @@
 # Chiến lược:
 #   1. Rsync source (không đụng .env, database, uploads).
 #   2. Backup SQLite bằng online-backup API và archive uploads.
-#   3. Build native amd64 ngay trên production, tái dùng BuildKit/Turbopack cache.
+#   3. Build amd64 trên Mini PC hoặc cross-build trên Mac, rồi chuyển image qua SSH.
 #   4. Migrate rồi seed danh sách nhạc nếu bảng Track đang trống.
 #   5. Gắn version tag + rollback tag, recreate riêng web, chờ healthy.
 #   6. Xác minh deployment ID, public URL và database integrity.
@@ -16,6 +16,8 @@
 #   REMOTE_APP_DIR    Thư mục app                        (/home/namdo/apps/thiepmungonline)
 #   WEB_IMAGE         Image compose sử dụng              (thiepmungonline-web:latest)
 #   WEB_PLATFORM      Kiến trúc                           (linux/amd64)
+#   BUILD_ON          Nơi build image                     (remote|local, remote)
+#   LOCAL_BUILDER     Docker Buildx builder trên Mac      (desktop-linux)
 #   PUBLIC_URL        URL public                          (https://thiepmungonline.com)
 #   WEB_PORT          Cổng LAN                            (3211)
 #   DEPLOYMENT_ID     Mã version/cache-bust Next.js      (UTC timestamp)
@@ -27,6 +29,8 @@ EXPECTED_REMOTE_IP="${EXPECTED_REMOTE_IP:-192.168.0.57}"
 REMOTE_APP_DIR="${REMOTE_APP_DIR:-/home/namdo/apps/thiepmungonline}"
 WEB_IMAGE="${WEB_IMAGE:-thiepmungonline-web:latest}"
 WEB_PLATFORM="${WEB_PLATFORM:-linux/amd64}"
+BUILD_ON="${BUILD_ON:-remote}"
+LOCAL_BUILDER="${LOCAL_BUILDER:-desktop-linux}"
 PUBLIC_URL="${PUBLIC_URL:-https://thiepmungonline.com}"
 WEB_PORT="${WEB_PORT:-3211}"
 DEPLOYMENT_ID="${DEPLOYMENT_ID:-$(date -u +%Y%m%d%H%M%S)}"
@@ -34,6 +38,14 @@ IMAGE_REPOSITORY="${WEB_IMAGE%:*}"
 VERSION_IMAGE="${IMAGE_REPOSITORY}:${DEPLOYMENT_ID}"
 MIGRATE_IMAGE="${IMAGE_REPOSITORY}:migrate-${DEPLOYMENT_ID}"
 ROLLBACK_IMAGE="${IMAGE_REPOSITORY}:rollback-${DEPLOYMENT_ID}"
+
+case "${BUILD_ON}" in
+  remote|local) ;;
+  *)
+    echo "❌ BUILD_ON phải là 'remote' hoặc 'local' (nhận được: ${BUILD_ON})."
+    exit 1
+    ;;
+esac
 
 cd "$(dirname "$0")/.."
 
@@ -46,7 +58,12 @@ log_step() {
   LAST_STEP_TS=$now
 }
 
-echo "🚀 Deploy thiepmungonline → ${REMOTE_HOST}:${REMOTE_APP_DIR} (dpl=${DEPLOYMENT_ID})"
+echo "🚀 Deploy thiepmungonline → ${REMOTE_HOST}:${REMOTE_APP_DIR} (dpl=${DEPLOYMENT_ID}, build=${BUILD_ON})"
+
+if [[ "${BUILD_ON}" == "local" ]] && ! docker buildx inspect "${LOCAL_BUILDER}" >/dev/null; then
+  echo "❌ Không tìm thấy Docker Buildx builder local '${LOCAL_BUILDER}'."
+  exit 1
+fi
 
 # Docker context tên "minipc" trên máy phát triển có thể trỏ sang máy khác.
 # Luôn đi qua đúng SSH alias production và chặn deploy nếu IP không khớp.
@@ -90,6 +107,7 @@ rsync -az --delete \
   --exclude '/temp/' \
   --exclude '/tmp/' \
   --exclude '/.claude/' \
+  --exclude '/.deploy-worktree/' \
   --exclude '.playwright-mcp' \
   --exclude '.capture' \
   --exclude '/.claude-flow' \
@@ -176,8 +194,90 @@ else
 fi
 log_step "migration preflight"
 
-echo "🏗️  Build native ${VERSION_IMAGE} trên production"
-ssh "${REMOTE_HOST}" bash -s -- \
+transfer_local_image() {
+  local image="$1"
+  local local_platform
+  local remote_platform
+
+  local_platform=$(docker image inspect "$image" --format '{{.Os}}/{{.Architecture}}')
+  if [[ "$local_platform" != "$WEB_PLATFORM" ]]; then
+    echo "❌ Image local $image có kiến trúc $local_platform, cần $WEB_PLATFORM."
+    exit 1
+  fi
+
+  echo "📦 Stream image $image → $REMOTE_HOST (không tạo tar trên VPS)"
+  docker save "$image" | ssh "$REMOTE_HOST" docker load
+  remote_platform=$(ssh "$REMOTE_HOST" docker image inspect "$image" --format '{{.Os}}/{{.Architecture}}')
+  if [[ "$remote_platform" != "$WEB_PLATFORM" ]]; then
+    echo "❌ Image trên VPS $image có kiến trúc $remote_platform, cần $WEB_PLATFORM."
+    exit 1
+  fi
+}
+
+smoke_local_runner_image() {
+  local image="$1"
+
+  # This runs on the Mini PC before the image can be promoted. It catches an
+  # accidentally transferred macOS/native addon without touching the live DB
+  # or binding an HTTP port.
+  echo "🩺 Smoke native modules on ${REMOTE_HOST}: $image"
+  ssh "${REMOTE_HOST}" bash -s -- "$image" <<'REMOTE_SMOKE'
+set -euo pipefail
+image="$1"
+
+docker run --rm --entrypoint node "$image" -e \
+  'require("better-sqlite3"); require("sharp"); console.log("native_modules_ok")'
+REMOTE_SMOKE
+}
+
+build_local_prebuilt_runner() {
+  local prebuilt_context
+  local build_status
+
+  echo "🏗️  Build Next.js native trên Mac"
+  npm run prisma:generate
+  NEXT_DEPLOYMENT_ID="$DEPLOYMENT_ID" NEXT_PUBLIC_SITE_URL="$PUBLIC_URL" npm run build
+
+  prebuilt_context=$(mktemp -d "${TMPDIR:-/tmp}/thiepmungonline-prebuilt.XXXXXX")
+  mkdir -p "$prebuilt_context/.next" "$prebuilt_context/static"
+  cp .next/standalone/server.js "$prebuilt_context/server.js"
+  rsync -a --delete .next/standalone/.next/ "$prebuilt_context/.next/"
+  rsync -a --delete .next/static/ "$prebuilt_context/static/"
+
+  echo "🏗️  Pack ${VERSION_IMAGE} cho ${WEB_PLATFORM} (builder=${LOCAL_BUILDER})"
+  if docker buildx build \
+    --builder "$LOCAL_BUILDER" \
+    --platform "$WEB_PLATFORM" \
+    --provenance=false \
+    --build-context "prebuilt=$prebuilt_context" \
+    --load \
+    -t "$VERSION_IMAGE" \
+    -f Dockerfile.local-build \
+    .; then
+    rm -rf -- "$prebuilt_context"
+  else
+    build_status=$?
+    rm -rf -- "$prebuilt_context"
+    return "$build_status"
+  fi
+}
+
+build_local_migration_image() {
+  echo "🏗️  Pack migration image ${MIGRATE_IMAGE} cho ${WEB_PLATFORM}"
+  docker buildx build \
+    --builder "$LOCAL_BUILDER" \
+    --platform "$WEB_PLATFORM" \
+    --provenance=false \
+    --target migrate \
+    --load \
+    -t "$MIGRATE_IMAGE" \
+    -f Dockerfile.local-build \
+    .
+}
+
+if [[ "$BUILD_ON" == "remote" ]]; then
+  echo "🏗️  Build native ${VERSION_IMAGE} trên production"
+  ssh "${REMOTE_HOST}" bash -s -- \
   "${REMOTE_APP_DIR}" "${VERSION_IMAGE}" "${MIGRATE_IMAGE}" "${WEB_PLATFORM}" "${DEPLOYMENT_ID}" "${PUBLIC_URL}" "${NEEDS_MIGRATION}" <<'REMOTE_BUILD'
 set -euo pipefail
 app_dir="$1"
@@ -230,6 +330,34 @@ else
   echo "migration_skipped=1"
 fi
 REMOTE_BUILD
+else
+  build_local_prebuilt_runner
+  transfer_local_image "$VERSION_IMAGE"
+  smoke_local_runner_image "$VERSION_IMAGE"
+
+  if [[ "$NEEDS_MIGRATION" = 1 ]]; then
+    build_local_migration_image
+    transfer_local_image "$MIGRATE_IMAGE"
+
+    ssh "${REMOTE_HOST}" bash -s -- "${REMOTE_APP_DIR}" "${MIGRATE_IMAGE}" <<'REMOTE_MIGRATE'
+set -euo pipefail
+app_dir="$1"
+migrate_image="$2"
+cd "$app_dir"
+
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$app_dir/data:/app/data" \
+  -e DATABASE_URL=file:/app/data/prod.db \
+  "$migrate_image" \
+  npx prisma migrate deploy
+
+docker image rm "$migrate_image" >/dev/null 2>&1 || true
+REMOTE_MIGRATE
+  else
+    echo "migration_skipped=1"
+  fi
+fi
 log_step "build + migrate database"
 
 echo "🎵 Seed danh sách nhạc nếu Track đang trống"
