@@ -8,6 +8,7 @@ import sharp from "sharp";
 
 import {
   completedTemplateSlugs,
+  hiddenTemplateSlugs,
   templateCategories,
   templateColors,
   templates,
@@ -267,7 +268,11 @@ test("generated template manifests are wired through every public data registry"
 
   for (const manifest of generatedTemplateManifests) {
     assert.equal(catalogSlugs.has(manifest.slug), true, `${manifest.slug}: catalog`);
-    assert.equal(completedTemplateSlugs.has(manifest.slug), true, `${manifest.slug}: completed`);
+    assert.equal(
+      completedTemplateSlugs.has(manifest.slug),
+      !hiddenTemplateSlugs.has(manifest.slug),
+      `${manifest.slug}: completed unless hidden`,
+    );
     assert.equal(routeSlugs.has(manifest.slug), true, `${manifest.slug}: route`);
     assert.equal(auditedSlugs.has(manifest.slug), true, `${manifest.slug}: renderer`);
     assert.equal(chungdoiDemoContent[manifest.slug]?.slug, manifest.slug, `${manifest.slug}: demo`);

@@ -751,6 +751,16 @@ export const templates = [
   ...generatedTemplates,
 ] satisfies ChungDoiTemplate[];
 
+// Templates hidden from production listing (incomplete, pilot, or under revision)
+export const hiddenTemplateSlugs = new Set<string>([
+  "doraemon-door",
+  "dong-ho-folk",
+  "rap-hy-sai-gon",
+  "swiss-brutalist",
+  "y2k-chrome",
+  "zen-sand",
+]);
+
 // Templates with complete dedicated renderers. This registry drives the public listing,
 // canonical demo sitemap entries, and editor choices; incomplete templates stay excluded.
 export const completedTemplateSlugs = new Set<string>([
@@ -794,7 +804,7 @@ export const completedTemplateSlugs = new Set<string>([
   "chibi-red",
   "minimalism-red",
   "cherry-blossom-pink",
-  ...generatedTemplateSlugs,
+  ...generatedTemplateSlugs.filter((slug) => !hiddenTemplateSlugs.has(slug)),
 ]);
 
 export const completedTemplates = templates.filter((template) => completedTemplateSlugs.has(template.slug));
