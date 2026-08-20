@@ -40,13 +40,6 @@ export const templateSeoFacets = [
     filterValue: "Vietnamese Heritage",
   },
   {
-    id: "style-minimal",
-    kind: "style",
-    slug: "toi-gian",
-    filterKey: "category",
-    filterValue: "Minimal",
-  },
-  {
     id: "style-royal",
     kind: "style",
     slug: "hoang-gia",
