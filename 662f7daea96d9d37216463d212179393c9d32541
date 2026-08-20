@@ -1,0 +1,17 @@
+ĐÍNH CHÍNH: câu cuối trong message của commit này sai.
+
+Message viết: "Hai thay đổi này do daemon claude-flow sinh ra, không phải do
+người viết." Đó là suy đoán từ trùng khớp thời gian, không có kiểm chứng.
+
+Kiểm tra sau đó cho thấy daemon claude-flow không sửa file source. Các worker
+audit/optimize/testgaps của nó gửi prompt chỉ để phân tích ("Analyze this
+codebase... Provide a JSON report") và ghi kết quả vào .claude-flow/logs/,
+còn map/consolidate/backup ghi vào .codegraph/ và .claude/memory/ — đều nằm
+ngoài source và đã được gitignore.
+
+Thứ sửa AGENTS.md và src/data/chungdoi-demo-content.ts là một session agent
+khác chạy trên cùng workspace với --permission-mode bypassPermissions.
+
+Nội dung thay đổi trong commit vẫn đúng và vẫn nên giữ: header cũ ghi file
+được sinh bởi scripts/crawl-chungdoi-demo-content.mjs và không được sửa tay,
+nhưng script đó không còn tồn tại. Chỉ phần quy kết nguồn gốc là sai.
