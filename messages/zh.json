@@ -862,7 +862,7 @@
       "referenceImage": "参考图片",
       "uploadTitle": "上传图片",
       "uploadHint": "拖放或点击选择图片",
-      "uploadHelp": "JPG、PNG、WebP、HEIC 或 HEIF · 最大5MB",
+      "uploadHelp": "JPG、PNG、WebP、HEIC 或 HEIF · 原始图片最大50MB，超过20MB会自动压缩",
       "changeImage": "更换图片",
       "removeImage": "删除图片",
       "ideaLabel": "描述您理想中的请柬",
@@ -876,7 +876,7 @@
       "success": "模板建议已发送。",
       "invalidDescription": "请至少输入10个字符。",
       "invalidImage": "仅支持 JPG、PNG、WebP、HEIC 或 HEIF 图片。",
-      "imageTooLarge": "参考图片不能超过5MB。",
+      "imageTooLarge": "参考图片过大，无法处理。请选择小于50MB的图片。",
       "submitError": "暂时无法发送建议，请重试。"
     }
   },
@@ -1205,6 +1205,11 @@
       "coupleRequired": "发布前请填写新娘和新郎的姓名。",
       "dateRequired": "发布前请填写婚礼日期。",
       "timeRequired": "发布前请填写婚宴时间。"
+    },
+    "upload": {
+      "galleryHelp": "原始图片最大50MB；超过20MB的照片会在保存前自动压缩至20MB以下，最多可添加30张。",
+      "sourceTooLarge": "原始图片过大，无法处理。请选择小于50MB的图片。",
+      "outputTooLarge": "无法将该图片压缩至20MB以下。请选择其他图片。"
     },
     "zodiac": {
       "brideLabel": "新娘生肖",

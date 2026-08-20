@@ -6,6 +6,8 @@ import {
 } from "@/lib/upload-image-formats";
 
 const MAX_UPLOAD_IMAGE_PIXELS = 60_000_000;
+const MIN_WEBP_QUALITY = 50;
+const OUTPUT_SCALE_FACTORS = [1, 0.75, 0.5, 0.25] as const;
 
 type HeifFrame = {
   width: number;
@@ -27,7 +29,15 @@ type ProcessUploadedImageOptions = {
   maxWidth: number;
   maxHeight: number;
   quality: number;
+  maxOutputBytes?: number;
 };
+
+export class ImageOutputTooLargeError extends Error {
+  constructor() {
+    super("Image could not be compressed to the required output size");
+    this.name = "ImageOutputTooLargeError";
+  }
+}
 
 function assertSafeDimensions(width: number | undefined, height: number | undefined): asserts width is number {
   if (
@@ -67,12 +77,63 @@ async function heifProcessor(bytes: Buffer): Promise<Sharp> {
   }
 }
 
+function compressionQualities(quality: number): number[] {
+  const minimumQuality = Math.min(quality, MIN_WEBP_QUALITY);
+  const reducedQuality = Math.max(minimumQuality, quality - 20);
+  return [...new Set([quality, reducedQuality, minimumQuality])];
+}
+
+function assertOutputLimit(maxOutputBytes: number | undefined): void {
+  if (
+    maxOutputBytes !== undefined
+    && (!Number.isSafeInteger(maxOutputBytes) || maxOutputBytes <= 0)
+  ) {
+    throw new Error("Image output size limit must be a positive integer");
+  }
+}
+
+async function encodeWebp(
+  processor: Sharp,
+  {
+    maxWidth,
+    maxHeight,
+    quality,
+    maxOutputBytes,
+  }: Pick<ProcessUploadedImageOptions, "maxWidth" | "maxHeight" | "quality" | "maxOutputBytes">,
+): Promise<Buffer> {
+  assertOutputLimit(maxOutputBytes);
+
+  const qualities = maxOutputBytes === undefined ? [quality] : compressionQualities(quality);
+  const scales = maxOutputBytes === undefined ? [1] : OUTPUT_SCALE_FACTORS;
+
+  for (const scale of scales) {
+    for (const candidateQuality of qualities) {
+      const image = scale === 1
+        ? processor.clone()
+        : processor.clone().resize({
+          width: Math.max(1, Math.floor(maxWidth * scale)),
+          height: Math.max(1, Math.floor(maxHeight * scale)),
+          fit: "inside",
+          withoutEnlargement: true,
+        });
+      const output = await image.webp({ quality: candidateQuality }).toBuffer();
+
+      if (maxOutputBytes === undefined || output.byteLength <= maxOutputBytes) {
+        return output;
+      }
+    }
+  }
+
+  throw new ImageOutputTooLargeError();
+}
+
 export async function processUploadedImageToWebp({
   bytes,
   allowedFormats,
   maxWidth,
   maxHeight,
   quality,
+  maxOutputBytes,
 }: ProcessUploadedImageOptions): Promise<Buffer> {
   const isHeif = hasHeifSignature(bytes);
   const processor = isHeif
@@ -87,14 +148,19 @@ export async function processUploadedImageToWebp({
     assertSafeDimensions(metadata.width, metadata.height);
   }
 
-  return processor
+  const normalized = processor
     .rotate()
     .resize({
       width: maxWidth,
       height: maxHeight,
       fit: "inside",
       withoutEnlargement: true,
-    })
-    .webp({ quality })
-    .toBuffer();
+    });
+
+  return encodeWebp(normalized, {
+    maxWidth,
+    maxHeight,
+    quality,
+    maxOutputBytes,
+  });
 }

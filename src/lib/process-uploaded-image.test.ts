@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomBytes } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
@@ -53,4 +54,27 @@ test("a file renamed to HEIC is still rejected when its bytes are not an image",
       quality: 82,
     }),
   );
+});
+
+test("an output byte limit adaptively compresses a valid image", async () => {
+  const width = 1024;
+  const height = 1024;
+  const maxOutputBytes = 512 * 1024;
+  const input = await sharp(randomBytes(width * height * 3), {
+    raw: { width, height, channels: 3 },
+  }).png({ compressionLevel: 0 }).toBuffer();
+
+  assert.ok(input.byteLength > maxOutputBytes);
+
+  const output = await processUploadedImageToWebp({
+    bytes: input,
+    allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS,
+    maxWidth: 1600,
+    maxHeight: 1600,
+    quality: 82,
+    maxOutputBytes,
+  });
+
+  assert.ok(output.byteLength <= maxOutputBytes);
+  assert.equal((await sharp(output).metadata()).format, "webp");
 });

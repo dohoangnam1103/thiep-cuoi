@@ -862,7 +862,7 @@
       "referenceImage": "参考画像",
       "uploadTitle": "画像をアップロード",
       "uploadHint": "ドラッグ＆ドロップまたはクリックして選択",
-      "uploadHelp": "JPG、PNG、WebP、HEIC、HEIF · 最大5MB",
+      "uploadHelp": "JPG、PNG、WebP、HEIC、HEIF · 元画像は最大50MB、20MBを超える写真は自動圧縮されます",
       "changeImage": "画像を変更",
       "removeImage": "画像を削除",
       "ideaLabel": "理想の招待状を説明してください",
@@ -876,7 +876,7 @@
       "success": "テンプレートの提案を送信しました。",
       "invalidDescription": "10文字以上入力してください。",
       "invalidImage": "JPG、PNG、WebP、HEIC、HEIF画像のみ対応しています。",
-      "imageTooLarge": "参考画像は5MB以下にしてください。",
+      "imageTooLarge": "参考画像が大きすぎて処理できません。50MB未満の画像を選択してください。",
       "submitError": "提案を送信できませんでした。もう一度お試しください。"
     }
   },
@@ -1205,6 +1205,11 @@
       "coupleRequired": "公開前に新婦と新郎の名前を入力してください。",
       "dateRequired": "公開前に結婚式の日付を入力してください。",
       "timeRequired": "公開前に披露宴の時間を入力してください。"
+    },
+    "upload": {
+      "galleryHelp": "元画像は最大50MBです。20MBを超える写真は、保存前に20MB未満へ自動圧縮されます。最大30枚まで追加できます。",
+      "sourceTooLarge": "元画像が大きすぎて処理できません。50MB未満の画像を選択してください。",
+      "outputTooLarge": "この画像を20MB未満に圧縮できません。別の画像を選択してください。"
     },
     "zodiac": {
       "brideLabel": "花嫁の十二支",

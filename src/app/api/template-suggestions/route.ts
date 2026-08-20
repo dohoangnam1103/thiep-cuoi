@@ -5,13 +5,25 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 import {
+  parseBoundedFormData,
+  RequestBodyTooLargeError,
+} from "@/lib/bounded-form-data";
+import {
   editorUploadPath,
   editorUploadPublicUrl,
   editorUploadRoot,
 } from "@/lib/editor-uploads";
 import { prisma } from "@/lib/prisma";
-import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
+import {
+  ImageOutputTooLargeError,
+  processUploadedImageToWebp,
+} from "@/lib/process-uploaded-image";
 import { getSession } from "@/lib/session";
+import {
+  MAX_IMAGE_UPLOAD_OUTPUT_BYTES,
+  MAX_IMAGE_UPLOAD_REQUEST_BYTES,
+  MAX_IMAGE_UPLOAD_SOURCE_BYTES,
+} from "@/lib/upload-image-limits";
 import {
   isAcceptedImageUpload,
   TEMPLATE_SUGGESTION_IMAGE_FORMATS,
@@ -19,20 +31,12 @@ import {
 
 export const runtime = "nodejs";
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const MAX_REQUEST_BYTES = 6 * 1024 * 1024;
-
 const suggestionSchema = z.object({
   description: z.string().trim().min(1).max(800),
   notifyWhenAvailable: z.boolean(),
 });
 
 export async function POST(request: NextRequest) {
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BYTES) {
-    return Response.json({ error: "requestTooLarge" }, { status: 413 });
-  }
-
   const session = await getSession();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
 
@@ -44,8 +48,11 @@ export async function POST(request: NextRequest) {
 
   let formData: FormData;
   try {
-    formData = await request.formData();
-  } catch {
+    formData = await parseBoundedFormData(request, MAX_IMAGE_UPLOAD_REQUEST_BYTES);
+  } catch (error) {
+    if (error instanceof RequestBodyTooLargeError) {
+      return Response.json({ error: "requestTooLarge" }, { status: 413 });
+    }
     return Response.json({ error: "invalidRequest" }, { status: 400 });
   }
 
@@ -62,7 +69,7 @@ export async function POST(request: NextRequest) {
   if (image && !isAcceptedImageUpload(image, TEMPLATE_SUGGESTION_IMAGE_FORMATS)) {
     return Response.json({ error: "unsupportedImage" }, { status: 415 });
   }
-  if (image && image.size > MAX_IMAGE_BYTES) {
+  if (image && image.size > MAX_IMAGE_UPLOAD_SOURCE_BYTES) {
     return Response.json({ error: "imageTooLarge" }, { status: 413 });
   }
 
@@ -80,8 +87,12 @@ export async function POST(request: NextRequest) {
           maxWidth: 1800,
           maxHeight: 1800,
           quality: 84,
+          maxOutputBytes: MAX_IMAGE_UPLOAD_OUTPUT_BYTES,
         });
-      } catch {
+      } catch (error) {
+        if (error instanceof ImageOutputTooLargeError) {
+          return Response.json({ error: "imageTooLarge" }, { status: 422 });
+        }
         return Response.json({ error: "unsupportedImage" }, { status: 415 });
       }
 

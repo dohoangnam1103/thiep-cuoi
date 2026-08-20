@@ -12,8 +12,7 @@ import {
   TEMPLATE_SUGGESTION_IMAGE_ACCEPT,
   TEMPLATE_SUGGESTION_IMAGE_FORMATS,
 } from "@/lib/upload-image-formats";
-
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+import { MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "@/lib/upload-image-limits";
 
 type SessionResponse = {
   loggedIn: boolean;
@@ -85,7 +84,7 @@ export function TemplateSuggestionCta() {
       setError(t("invalidImage"));
       return;
     }
-    if (nextFile.size > MAX_IMAGE_BYTES) {
+    if (nextFile.size > MAX_IMAGE_UPLOAD_SOURCE_BYTES) {
       setError(t("imageTooLarge"));
       return;
     }

@@ -1079,7 +1079,7 @@
       "referenceImage": "Reference image",
       "uploadTitle": "Upload an image",
       "uploadHint": "Drag and drop or click to choose",
-      "uploadHelp": "JPG, PNG, WebP, HEIC or HEIF · up to 5MB",
+      "uploadHelp": "JPG, PNG, WebP, HEIC or HEIF · source images up to 50MB; photos over 20MB are compressed automatically",
       "changeImage": "Change image",
       "removeImage": "Remove image",
       "ideaLabel": "Describe your dream invitation",
@@ -1093,7 +1093,7 @@
       "success": "Your template suggestion was sent.",
       "invalidDescription": "Please enter at least 10 characters.",
       "invalidImage": "Only JPG, PNG, WebP, HEIC or HEIF images are supported.",
-      "imageTooLarge": "The reference image cannot exceed 5MB.",
+      "imageTooLarge": "The reference image is too large to process. Please choose one under 50MB.",
       "submitError": "We could not send your suggestion. Please try again."
     }
   },
@@ -1422,6 +1422,11 @@
       "coupleRequired": "Enter both the bride's and groom's names before publishing.",
       "dateRequired": "Enter the wedding date before publishing.",
       "timeRequired": "Enter the reception time before publishing."
+    },
+    "upload": {
+      "galleryHelp": "Source photos up to 50MB; photos over 20MB are automatically compressed below 20MB before saving. Up to 30 photos.",
+      "sourceTooLarge": "The source image is too large to process. Please choose one under 50MB.",
+      "outputTooLarge": "We could not compress this image below 20MB. Please choose a different image."
     },
     "zodiac": {
       "brideLabel": "Bride's zodiac animal",

@@ -2,6 +2,7 @@ import { readFile, unlink } from "node:fs/promises";
 import path from "node:path";
 
 import { test, expect } from "@playwright/test";
+import sharp from "sharp";
 
 import { loginAsAdmin, loginAsUser, SEEDED_ADMIN } from "./helpers/auth";
 import { getDb } from "./helpers/db";
@@ -10,6 +11,19 @@ import { createUser, cleanupUser } from "./helpers/fixtures";
 const UPLOAD_DIR = path.join(process.cwd(), "tests", "e2e", ".data", "editor-uploads");
 const VALID_PNG_PATH = path.join(process.cwd(), "public", "chungdoi", "icon.png");
 const VALID_HEIC_PATH = path.join(process.cwd(), "tests", "fixtures", "sample.heic");
+const MAX_STORED_IMAGE_BYTES = 20 * 1024 * 1024;
+const OVERSIZED_IMAGE_WIDTH = 2700;
+const OVERSIZED_IMAGE_HEIGHT = 2700;
+
+let oversizedPngPromise: Promise<Buffer> | undefined;
+
+function oversizedPng(): Promise<Buffer> {
+  oversizedPngPromise ??= sharp(
+    Buffer.alloc(OVERSIZED_IMAGE_WIDTH * OVERSIZED_IMAGE_HEIGHT * 3),
+    { raw: { width: OVERSIZED_IMAGE_WIDTH, height: OVERSIZED_IMAGE_HEIGHT, channels: 3 } },
+  ).png({ compressionLevel: 0 }).toBuffer();
+  return oversizedPngPromise;
+}
 
 // 1x1 transparent PNG.
 const PNG_BYTES = Buffer.from(
@@ -137,20 +151,28 @@ test.describe("POST /api/upload", () => {
     }
   });
 
-  test("authed oversize file → 413", async ({ context, page }) => {
+  test("authed image source over 20MB is compressed and stored", async ({ context, page }) => {
     const user = createUser();
     await loginAsUser(context, user.id);
+    let savedName: string | undefined;
     try {
-      // 6MB of zeroed bytes with an allowed mime type → passes type gate, fails size gate.
-      const big = Buffer.alloc(6 * 1024 * 1024, 0);
+      const source = await oversizedPng();
+      expect(source.byteLength).toBeGreaterThan(MAX_STORED_IMAGE_BYTES);
       const res = await page.request.post("/api/upload", {
         multipart: {
-          file: { name: "big.png", mimeType: "image/png", buffer: big },
+          file: { name: "large-source.png", mimeType: "image/png", buffer: source },
         },
       });
-      expect(res.status()).toBe(413);
-      expect((await res.json()).error).toBeTruthy();
+      expect(res.status()).toBe(200);
+      const body = (await res.json()) as { url: string };
+      savedName = body.url.replace("/uploads/", "");
+
+      const uploaded = await page.request.get(body.url);
+      expect(uploaded.status()).toBe(200);
+      expect(uploaded.headers()["content-type"]).toBe("image/webp");
+      expect(Number(uploaded.headers()["content-length"])).toBeLessThan(MAX_STORED_IMAGE_BYTES);
     } finally {
+      if (savedName) await unlink(path.join(UPLOAD_DIR, savedName)).catch(() => {});
       cleanupUser(user.id);
     }
   });
@@ -184,6 +206,42 @@ test.describe("POST /api/template-suggestions", () => {
       const uploaded = await page.request.get(row.referenceImageUrl);
       expect(uploaded.status()).toBe(200);
       expect(uploaded.headers()["content-type"]).toBe("image/webp");
+    } finally {
+      if (savedPath) await unlink(savedPath).catch(() => {});
+      cleanupUser(user.id);
+    }
+  });
+
+  test("compresses a reference image source over 20MB before storing it", async ({ context, page }) => {
+    const user = createUser();
+    await loginAsUser(context, user.id);
+    let savedPath: string | undefined;
+    try {
+      const source = await oversizedPng();
+      expect(source.byteLength).toBeGreaterThan(MAX_STORED_IMAGE_BYTES);
+      const res = await page.request.post("/api/template-suggestions", {
+        multipart: {
+          description: "Mẫu thiệp dùng ảnh tham khảo kích thước lớn",
+          notifyWhenAvailable: "false",
+          referenceImage: {
+            name: "large-reference.png",
+            mimeType: "image/png",
+            buffer: source,
+          },
+        },
+      });
+      expect(res.status()).toBe(201);
+      const body = (await res.json()) as { suggestion: { id: string } };
+      const row = getDb()
+        .prepare("SELECT referenceImageUrl FROM TemplateSuggestion WHERE id = ?")
+        .get(body.suggestion.id) as { referenceImageUrl: string };
+      expect(row.referenceImageUrl).toMatch(/^\/uploads\/[\w-]+\.webp$/);
+      savedPath = path.join(UPLOAD_DIR, row.referenceImageUrl.replace("/uploads/", ""));
+
+      const uploaded = await page.request.get(row.referenceImageUrl);
+      expect(uploaded.status()).toBe(200);
+      expect(uploaded.headers()["content-type"]).toBe("image/webp");
+      expect(Number(uploaded.headers()["content-length"])).toBeLessThan(MAX_STORED_IMAGE_BYTES);
     } finally {
       if (savedPath) await unlink(savedPath).catch(() => {});
       cleanupUser(user.id);

@@ -862,7 +862,7 @@
       "referenceImage": "참고 이미지",
       "uploadTitle": "이미지 업로드",
       "uploadHint": "드래그하거나 클릭하여 선택",
-      "uploadHelp": "JPG, PNG, WebP, HEIC 또는 HEIF · 최대 5MB",
+      "uploadHelp": "JPG, PNG, WebP, HEIC 또는 HEIF · 원본 이미지는 최대 50MB, 20MB 초과 사진은 자동 압축됩니다",
       "changeImage": "이미지 변경",
       "removeImage": "이미지 삭제",
       "ideaLabel": "꿈꾸는 청첩장을 설명해 주세요",
@@ -876,7 +876,7 @@
       "success": "템플릿 제안을 보냈습니다.",
       "invalidDescription": "10자 이상 입력해 주세요.",
       "invalidImage": "JPG, PNG, WebP, HEIC 또는 HEIF 이미지만 지원합니다.",
-      "imageTooLarge": "참고 이미지는 5MB를 초과할 수 없습니다.",
+      "imageTooLarge": "참고 이미지가 너무 커서 처리할 수 없습니다. 50MB 미만의 이미지를 선택해 주세요.",
       "submitError": "제안을 보낼 수 없습니다. 다시 시도해 주세요."
     }
   },
@@ -1205,6 +1205,11 @@
       "coupleRequired": "게시하기 전에 신부와 신랑의 이름을 입력해 주세요.",
       "dateRequired": "게시하기 전에 결혼식 날짜를 입력해 주세요.",
       "timeRequired": "게시하기 전에 피로연 시간을 입력해 주세요."
+    },
+    "upload": {
+      "galleryHelp": "원본 이미지는 최대 50MB입니다. 20MB를 초과하는 사진은 저장 전에 20MB 미만으로 자동 압축됩니다. 최대 30장까지 추가할 수 있습니다.",
+      "sourceTooLarge": "원본 이미지가 너무 커서 처리할 수 없습니다. 50MB 미만의 이미지를 선택해 주세요.",
+      "outputTooLarge": "이 이미지를 20MB 미만으로 압축할 수 없습니다. 다른 이미지를 선택해 주세요."
     },
     "zodiac": {
       "brideLabel": "신부의 띠 동물",

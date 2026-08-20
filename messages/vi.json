@@ -1211,7 +1211,7 @@
       "referenceImage": "Ảnh tham khảo",
       "uploadTitle": "Tải ảnh lên",
       "uploadHint": "Kéo thả hoặc bấm để chọn ảnh",
-      "uploadHelp": "JPG, PNG, WebP, HEIC hoặc HEIF · tối đa 5MB",
+      "uploadHelp": "JPG, PNG, WebP, HEIC hoặc HEIF · ảnh nguồn tối đa 50MB, tự động nén nếu trên 20MB",
       "changeImage": "Đổi ảnh",
       "removeImage": "Xóa ảnh",
       "ideaLabel": "Mô tả mẫu thiệp trong mơ của bạn",
@@ -1225,7 +1225,7 @@
       "success": "Đã gửi gợi ý mẫu thiệp.",
       "invalidDescription": "Vui lòng mô tả ít nhất 10 ký tự.",
       "invalidImage": "Chỉ hỗ trợ ảnh JPG, PNG, WebP, HEIC hoặc HEIF.",
-      "imageTooLarge": "Ảnh tham khảo không được vượt quá 5MB.",
+      "imageTooLarge": "Ảnh tham khảo quá lớn để xử lý. Vui lòng chọn ảnh dưới 50MB.",
       "submitError": "Chưa thể gửi gợi ý. Vui lòng thử lại."
     },
     "categories": {
@@ -2111,6 +2111,11 @@
       "coupleRequired": "Cần tên cô dâu và chú rể trước khi xuất bản.",
       "dateRequired": "Cần ngày cưới trước khi xuất bản.",
       "timeRequired": "Cần giờ tiệc cưới trước khi xuất bản."
+    },
+    "upload": {
+      "galleryHelp": "Ảnh nguồn tối đa 50MB; ảnh trên 20MB sẽ được tự động nén xuống dưới 20MB trước khi lưu. Tối đa 30 ảnh.",
+      "sourceTooLarge": "Ảnh nguồn quá lớn để xử lý. Vui lòng chọn ảnh dưới 50MB.",
+      "outputTooLarge": "Không thể nén ảnh xuống dưới 20MB. Vui lòng chọn ảnh khác."
     },
     "zodiac": {
       "brideLabel": "Con giáp cô dâu",

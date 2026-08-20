@@ -445,12 +445,12 @@ test.describe("invitation editor", () => {
     await page.goto(`/editor/${inv.id}`);
 
     await page.locator('#editor-form input[type="file"][multiple]').setInputFiles({
-      name: "too-large.jpg",
-      mimeType: "image/jpeg",
-      buffer: Buffer.alloc(5 * 1024 * 1024 + 1),
+      name: "not-an-image.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("not an image"),
     });
 
-    const toast = page.locator("[data-sonner-toast]").filter({ hasText: "Ảnh vượt quá 5MB" });
+    const toast = page.locator("[data-sonner-toast]").filter({ hasText: "Định dạng ảnh không hỗ trợ" });
     await expect(toast).toBeVisible();
 
     const bounds = await toast.boundingBox();

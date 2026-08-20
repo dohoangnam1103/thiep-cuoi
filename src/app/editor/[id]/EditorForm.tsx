@@ -73,6 +73,7 @@ import {
 import { normalizeAlbumLayout, type AlbumLayout } from "@/lib/album-layout";
 import { trialExpiresAt } from "@/lib/trial";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
+import { MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "@/lib/upload-image-limits";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import {
   DEFAULT_ZODIAC_ART_COLOR,
@@ -1029,6 +1030,7 @@ function SortablePhoto({ url, onRemove }: { url: string; onRemove: () => void })
 
 /** Upload + sắp xếp ảnh album. Mỗi ảnh render hidden input galleryUrl để action đọc như cũ. */
 function GalleryUploader({ initial }: { initial: string[] }) {
+  const uploadT = useTranslations("editor.upload");
   const [urls, setUrls] = useState<string[]>(initial);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -1046,13 +1048,23 @@ function GalleryUploader({ initial }: { initial: string[] }) {
     setUploading(true);
     let added = 0;
     for (const file of list.slice(0, remaining)) {
+      if (file.size > MAX_IMAGE_UPLOAD_SOURCE_BYTES) {
+        toast.error(uploadT("sourceTooLarge"));
+        continue;
+      }
       const body = new FormData();
       body.append("file", file);
       try {
         const res = await fetch("/api/upload", { method: "POST", body });
         const data = (await res.json()) as { url?: string; error?: string };
         if (!res.ok || !data.url) {
-          toast.error(data.error ?? "Tải ảnh thất bại");
+          toast.error(
+            data.error === "sourceTooLarge"
+              ? uploadT("sourceTooLarge")
+              : data.error === "outputTooLarge"
+                ? uploadT("outputTooLarge")
+                : data.error ?? "Tải ảnh thất bại",
+          );
           continue;
         }
         setUrls((prev) => [...prev, data.url!]);
@@ -1085,7 +1097,7 @@ function GalleryUploader({ initial }: { initial: string[] }) {
   return (
     <div>
       <p className="mb-3 text-xs text-muted-foreground">
-        Tải ảnh lên để hiển thị trong album thiệp. Kéo để sắp xếp thứ tự, tối đa 30 ảnh (≤5MB mỗi ảnh).
+        {uploadT("galleryHelp")}
       </p>
       <div
         onDragOver={(e) => {
@@ -1149,6 +1161,7 @@ function HeroImageSlot({
   dimmed: boolean;
   onUploaded: () => void;
 }) {
+  const uploadT = useTranslations("editor.upload");
   const [url, setUrl] = useState(initialUrl);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -1164,6 +1177,10 @@ function HeroImageSlot({
   }, [url]);
 
   async function uploadFile(file: File) {
+    if (file.size > MAX_IMAGE_UPLOAD_SOURCE_BYTES) {
+      toast.error(uploadT("sourceTooLarge"));
+      return;
+    }
     const body = new FormData();
     body.append("file", file);
     setUploading(true);
@@ -1171,7 +1188,13 @@ function HeroImageSlot({
       const response = await fetch("/api/upload", { method: "POST", body });
       const data = (await response.json()) as { url?: string; error?: string };
       if (!response.ok || !data.url) {
-        toast.error(data.error ?? "Tải ảnh thất bại");
+        toast.error(
+          data.error === "sourceTooLarge"
+            ? uploadT("sourceTooLarge")
+            : data.error === "outputTooLarge"
+              ? uploadT("outputTooLarge")
+              : data.error ?? "Tải ảnh thất bại",
+        );
         return;
       }
       setUrl(data.url);
