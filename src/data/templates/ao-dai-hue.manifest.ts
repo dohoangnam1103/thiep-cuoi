@@ -18,9 +18,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "The Nautigal", particleType: "flowers", gallerySlug: "ticket-terracotta", music: "/chungdoi/music/ticket-terracotta.mp3",
   i18n: {
     vi: { name: "Áo Dài Huế Tím", description: "Thiệp cưới lụa tím Huế với đường tà áo, gấm cung đình và chỉ kim tuyến tiết chế." },
-    en: { name: "Hue Silk", description: "Flowing silk panels and court-weaving details shape a Hue-inspired invitation." },
-    ja: { name: "フエの絹", description: "アオザイの流線と宮廷織りを紫の絹で表現した招待状です。" },
-    ko: { name: "후에 실크", description: "아오자이의 곡선과 궁정 직조를 보랏빛 비단에 담은 청첩장입니다." },
-    zh: { name: "顺化紫绸", description: "以奥黛曲线、宫廷织锦和紫色丝绸呈现的婚礼请柬。" },
   },
 });

@@ -4,6 +4,7 @@ import { ArrowRight, Check, QrCode, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import QRCode from "qrcode";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { createInvitation } from "@/app/dashboard/actions";
 import { useTemplateName } from "@/components/template-name-overrides";
@@ -33,16 +34,20 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
     ? `/mau-thiep/${localizedSlug}/demo`
     : `/${locale}/templates/${localizedSlug}/demo`;
 
+  // Thứ tự được xếp theo độ dài nhãn, không theo mức độ quan trọng: grid 2 cột lấy
+  // chiều cao hàng bằng item cao nhất, nên nhãn 1 dòng phải đi cặp với nhãn 1 dòng
+  // và nhãn 2 dòng đi cặp với nhãn 2 dòng, nếu không cột ngắn hơn sẽ hở một khoảng
+  // trắng lệch hẳn so với cột kia trên mobile.
   const features = [
     modalT("editSimple"),
-    modalT("unlimitedUpload"),
-    modalT("googleMapsLink"),
     modalT("multiLanguage"),
+    modalT("googleMapsLink"),
     modalT("guestName"),
-    modalT("shareLink"),
     modalT("attendanceConfirmed"),
-    modalT("receiveWishes"),
     modalT("qrCodeDemo"),
+    modalT("unlimitedUpload"),
+    modalT("shareLink"),
+    modalT("receiveWishes"),
     modalT("photoUploadAfterWedding"),
   ];
 
@@ -59,7 +64,14 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
     };
   }, [onClose]);
 
-  return (
+  // Modal phải nằm trực tiếp trên body. Ở hero, StackFan bị bọc trong `.hero-enter`
+  // (`transform: translateY(...)` + `animation ... forwards`, computed style giữ lại
+  // `matrix(1,0,0,1,0,0)` chứ không phải `none`). Một transform khác `none` tạo
+  // containing block cho `position: fixed`, nên `inset-0` co lại theo cột hero
+  // ~380px thay vì viewport, làm modal nhỏ hơn hẳn các chỗ khác.
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/60 p-2 sm:p-4"
       role="dialog"
@@ -126,13 +138,16 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
                   <h3 className="text-xs font-black uppercase tracking-[0.08em] text-foreground">
                     {modalT("featuresTitle")}
                   </h3>
-                  <ul className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-2">
+                  <ul className="mt-2.5 grid grid-cols-2 gap-x-2.5 gap-y-2 sm:gap-x-4">
                     {features.map((item) => (
-                      <li key={item} className="flex gap-2 text-xs leading-4 text-muted-foreground">
+                      <li
+                        key={item}
+                        className="flex gap-1.5 text-[11px] leading-4 text-muted-foreground sm:gap-2 sm:text-xs"
+                      >
                         <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                           <Check className="size-3" strokeWidth={3} />
                         </span>
-                        <span>{item}</span>
+                        <span className="text-pretty">{item}</span>
                       </li>
                     ))}
                   </ul>
@@ -177,7 +192,7 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
                 <input type="hidden" name="templateId" value={template.slug} />
                 <button
                   type="submit"
-                  className="inline-flex h-full min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-center text-xs font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 sm:text-sm"
+                  className="demo-shine relative inline-flex h-full min-h-11 w-full min-w-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-3 py-2.5 text-center text-xs font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 sm:text-sm"
                 >
                   {t("useStyle")}
                 </button>
@@ -190,7 +205,8 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
           </aside>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

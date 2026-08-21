@@ -18,9 +18,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Fz Qellia", particleType: "petals", gallerySlug: "zen-sand", music: "/chungdoi/music/zen-sand.mp3",
   i18n: {
     vi: { name: "Gốm Bát Tràng Lam", description: "Thiệp cưới lam trắng với nét cọ men cobalt, cánh én và sen trên nền sứ rạn." },
-    en: { name: "Bat Trang Blue", description: "Cobalt brushwork and a softly crazed porcelain ground shape this invitation." },
-    ja: { name: "バッチャン青花", description: "コバルトの筆致と貫入釉を生かした青花磁器風の招待状です。" },
-    ko: { name: "밧짱 청화", description: "코발트 붓결과 빙렬 유약을 살린 청화 도자기풍 청첩장입니다." },
-    zh: { name: "钵场青花", description: "以钴蓝笔触和开片釉面呈现的青花陶瓷婚礼请柬。" },
   },
 });

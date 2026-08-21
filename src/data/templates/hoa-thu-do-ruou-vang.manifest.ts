@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Fz Qellia", particleType: "petals", gallerySlug: "arch-sage", music: "/chungdoi/music/arch-sage.mp3",
   i18n: {
     vi: { name: "Hoa Thư Đỏ Rượu Vang", description: "Thiệp cưới cổ điển với vòm hoa đỏ rượu vang ôm lấy ảnh cô dâu chú rể." },
-    en: { name: "Hoa Thư Đỏ Rượu Vang", description: "A classic floral arch of wine-red blooms framing the couple portrait." },
-    ja: { name: "花書・ワインレッド", description: "ワインレッドの花のアーチが新郎新婦の写真を囲む、古典的な招待状です。" },
-    ko: { name: "화서 와인 레드", description: "와인 레드 꽃 아치가 신랑신부 사진을 감싸는 클래식 청첩장입니다." },
-    zh: { name: "花书酒红", description: "酒红花拱门环绕新人照片的古典婚礼请柬。" },
   },
 });

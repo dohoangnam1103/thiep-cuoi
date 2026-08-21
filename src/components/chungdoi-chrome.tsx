@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import NextLink from "next/link";
 
-// import { LanguageSwitcher } from "@/components/language-switcher"; // tạm ẩn: web chỉ dùng tiếng Việt
 import { LogoMark } from "@/components/logo-mark";
 import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -82,8 +81,9 @@ export function SiteHeader({
   const pricingActive = isActivePath(pathname, "/pricing");
   const toolsActive = isActivePath(pathname, "/tools");
   const blogActive = isActivePath(pathname, "/blog");
-  const helpActive = isActivePath(pathname, "/help");
 
+  // menuItems chỉ dùng cho drawer mobile. Trợ giúp được bỏ khỏi đây theo yêu cầu;
+  // trang /help vẫn còn và vẫn được link từ footer (mục Tài nguyên).
   const menuItems: Array<{ label: string; href: string; active: boolean }> = [
     { label: t("nav.templates"), href: "/templates", active: templatesActive },
     ...(loggedIn
@@ -95,7 +95,6 @@ export function SiteHeader({
     { label: t("nav.pricing"), href: "/pricing", active: pricingActive },
     { label: t("nav.tools"), href: "/tools", active: toolsActive },
     { label: t("nav.blog"), href: "/blog", active: blogActive },
-    { label: t("nav.help"), href: "/help", active: helpActive },
   ];
 
   return (
@@ -145,8 +144,6 @@ export function SiteHeader({
           </Link>
         </nav>
         <div className="flex items-center gap-2">
-          {/* Tạm ẩn: web hiện chỉ dùng tiếng Việt */}
-          {/* <LanguageSwitcher /> */}
           {/* Nút "Tạo ngay": khi hideCreateButton (vd trang Mẫu thiệp) vẫn render
               nhưng GIỮ CHỖ vô hình (invisible + non-interactive) → header đồng vị
               trí mọi trang, nav không bị dồn lệch sang phải. */}

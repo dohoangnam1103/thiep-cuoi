@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Alex Brush", particleType: "sparkles", gallerySlug: "editorial-noir", music: "/chungdoi/music/editorial-noir.mp3",
   i18n: {
     vi: { name: "Bản Đồ Tinh Túc", description: "Thiệp cưới thiên văn với hai đường chòm sao gặp nhau dưới nhịp pha trăng." },
-    en: { name: "Celestial Map", description: "Two constellation paths meet beneath a restrained sequence of lunar phases." },
-    ja: { name: "星の地図", description: "二つの星座の軌跡と静かな月相を描いた天文招待状です。" },
-    ko: { name: "별자리 지도", description: "두 별자리의 궤적과 절제된 달의 위상을 담은 천문 청첩장입니다." },
-    zh: { name: "星宿地图", description: "两条星座轨迹在克制的月相序列下相遇的婚礼请柬。" },
   },
 });

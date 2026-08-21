@@ -6,6 +6,98 @@ Quy trình deploy web app lên Mini PC (chạy sau Cloudflare Tunnel). Xem thêm
 ## TL;DR
 
 ```bash
+# Lần đầu (idempotent): thêm bind-mount public/ vào compose trên Mini PC.
+npm run deploy:setup
+
+# Deploy nhanh (khuyến nghị): build trên Mac, lắp image trên Mini PC. ~60-90s.
+npm run deploy
+
+# Thử pipeline mà không đụng production: dựng image mới rồi chạy container tạm
+# ở cổng 3299, verify xong tự xoá.
+npm run deploy:smoke
+
+# Đường cũ, giữ làm fallback.
+npm run deploy:legacy
+```
+
+## Deploy nhanh (`scripts/deploy-fast.sh`)
+
+Đây là đường mặc định nên dùng. Số đo trên chính setup này:
+
+| Bước | Thời gian |
+|------|-----------|
+| Xác minh host | 1s |
+| Build Next (Mac) ‖ rsync source ‖ backup (song song) | ~29s |
+| Rsync artifact (105MB, delta) | ~9s |
+| Migration preflight | <1s |
+| Lắp image trên Mini PC (cache ấm) | ~16s |
+| Promote + healthcheck + verify | ~20-30s |
+| **Tổng (cache ấm)** | **~60-90s** |
+
+Lần deploy đầu tiên mất thêm ~5 phút vì `npm ci` + `npm prune` chạy lần đầu
+trên Mini PC. Sau đó hai stage này nằm trong layer cache và chỉ chạy lại khi
+`package-lock.json` đổi.
+
+### Bốn thay đổi tạo ra khác biệt
+
+1. **Đi thẳng LAN, không qua Cloudflare tunnel.** Alias `minipc` trong
+   `~/.ssh/config` dùng `cloudflared access ssh`, nên mọi byte rsync/docker phải
+   ra Internet rồi quay lại LAN. Đo được **<0.33 MB/s qua tunnel so với ~21 MB/s
+   khi nối thẳng `192.168.0.57`** — chênh khoảng 65 lần. Script tự dò LAN trước,
+   không thấy thì rơi về tunnel để vẫn deploy được khi ở ngoài mạng.
+2. **Compile trên Mac, không compile trên Mini PC.** Mini PC là i5-9500T, RAM
+   7GB nhưng chỉ còn ~2.6GB trống và đã swap 3GB vì đang chạy 19 container.
+   Build Next ở đó phải thrash swap. Trên M1 Max với Turbopack cache ấm: 35s.
+3. **Chỉ chuyển 105MB artifact, không chuyển image.** `BUILD_ON=local` cũ dùng
+   `docker save | ssh docker load`, tức 1.84GB mỗi lần deploy dù thực tế chỉ
+   ~83MB đổi. Đường mới rsync `.next` + `static` + `server.js` sang
+   `releases/current/.next-prebuilt/` rồi để Mini PC chạy COPY. `node_modules`
+   amd64 nằm sẵn trong layer cache của Mini PC nên không bao giờ đi qua mạng.
+4. **`public/` (539MB) ra khỏi image.** Nó được bind-mount read-only từ
+   `releases/current/public`, thư mục mà rsync đã cập nhật sẵn. Image giảm từ
+   ~2.5GB xuống ~2.0GB, và thêm asset mới chỉ tốn một delta rsync. Đổi lại phải
+   chạy `npm run deploy:setup` một lần để thêm mount vào compose; deploy sẽ
+   dừng ngay nếu thiếu mount.
+
+### Rào an toàn
+
+Giữ nguyên toàn bộ của script cũ: xác minh đúng IP production, backup DB +
+uploads trước khi đổi gì, migration preflight fail-closed, rollback tag và tự
+rollback khi lỗi, healthcheck, kiểm tra container chạy đúng image, kiểm tra
+deployment ID + canonical, SQLite `quick_check`, verify URL public.
+
+Thêm mới:
+
+- **Kiểm tra asset public.** Vì `public/` giờ là bind-mount, script fetch thật
+  một asset (`/chungdoi/icon-v2.png`) và rollback nếu không trả 200. Đây là lưới
+  an toàn cho trường hợp mount thiếu hoặc sai đường dẫn.
+- **`--provenance=false` khi build.** Mặc định BuildKit bọc image trong một
+  manifest list kèm attestation; khi đó `docker image inspect --format '{{.Id}}'`
+  trả digest của manifest list và không bao giờ khớp `{{.Image}}` của container,
+  làm bước "chạy đúng image" fail và rollback oan.
+- **Backup uploads bằng hardlink snapshot** (`cp -al`) thay cho `tar -czf` 78MB
+  mỗi deploy. Ảnh editor đặt tên theo uuid và không bị ghi đè nên hardlink an
+  toàn, chỉ tốn chỗ cho file mới. Kèm retention 10 bản
+  (`data/backups` từng phình lên 3.6GB trên đĩa đã dùng 93%).
+
+### Biến môi trường
+
+| Biến | Mặc định | Ý nghĩa |
+|------|----------|---------|
+| `REMOTE_LAN_IP` | `192.168.0.57` | IP LAN Mini PC, thử trước |
+| `REMOTE_LAN_USER` | `namdo` | User SSH trên LAN |
+| `REMOTE_TUNNEL_ALIAS` | `minipc` | Alias fallback khi không cùng mạng |
+| `SMOKE_ONLY` | `0` | `1` để test image mà không promote |
+| `SMOKE_PORT` | `3299` | Cổng container smoke test |
+| `SKIP_BUILD` | `0` | `1` để dùng lại `.next` có sẵn |
+| `BACKUP_RETENTION` | `10` | Số bản backup giữ lại |
+| `VERIFY_ASSET` | `/chungdoi/icon-v2.png` | Asset dùng để kiểm tra mount public |
+
+## Đường cũ (`scripts/deploy-minipc.sh`)
+
+Vẫn dùng được, giữ làm fallback khi Mini PC không nhận artifact prebuilt.
+
+```bash
 # Mặc định: build native trên Mini PC.
 ./scripts/deploy-minipc.sh
 

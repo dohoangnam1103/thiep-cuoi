@@ -128,7 +128,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
             <p className="max-w-xl whitespace-pre-line text-center text-[14px] font-semibold uppercase leading-relaxed tracking-wide md:text-[17px]">
               {invitationOpeningMessage(content)}
             </p>
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex w-full flex-col items-center gap-2 text-center">
               <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[40px] leading-[1.1] md:text-[54px]" style={P.nameFont}>{orderedPeople[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{orderedPeople[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={amp}>&amp;</div>

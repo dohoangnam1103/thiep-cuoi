@@ -327,6 +327,11 @@ const MOMENTS_STYLES: Record<string, MomentsStyle> = {
     sectionClassName: "w-full bg-[#eef7f0] px-4 py-10 text-[#47613e] md:px-10 md:py-14",
     cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#47613e]/30",
   },
+  "glass-garden-pink": {
+    ...PORTRAIT_PINK,
+    sectionClassName: "w-full bg-[#fdf6f8] px-4 py-10 text-[#933845] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#CB5D6C]/30",
+  },
   "royal-red": ROYAL_RED,
   "nhat-binh-red": {
     sectionClassName: "w-full bg-[#F8F3E0] px-6 py-10 text-[#542E08] md:px-10 md:py-14",
@@ -387,6 +392,11 @@ const MOMENTS_STYLES: Record<string, MomentsStyle> = {
     ...PORTRAIT_RED,
     sectionClassName: "w-full bg-[#fffaf7] px-4 py-10 text-[#7c151a] md:px-10 md:py-14",
     cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#7c151a]/30",
+  },
+  "minimalism-dark-red": {
+    ...PORTRAIT_RED,
+    sectionClassName: "w-full bg-[#fff7eb] px-4 py-10 text-[#511419] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#511419]/30",
   },
   "cherry-blossom-pink": {
     sectionClassName: "w-full bg-[#fdf3f6] px-6 py-10 text-[#ae4c51] md:px-10 md:py-14",

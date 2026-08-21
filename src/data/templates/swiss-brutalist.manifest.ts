@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "HelveticaNeue", particleType: "confetti", gallerySlug: "editorial-noir", music: "/chungdoi/music/editorial-noir.mp3",
   i18n: {
     vi: { name: "Thụy Sĩ Tô Bạo", description: "Thiệp cưới lưới Thụy Sĩ với hình đen cắt mạnh và một trục đỏ duy nhất." },
-    en: { name: "Swiss Brutalist", description: "A strict modular grid, oversized black geometry and one signal-red axis." },
-    ja: { name: "スイス・ブルータル", description: "厳格なグリッド、黒い大形状、一本の赤い軸で構成した招待状です。" },
-    ko: { name: "스위스 브루탈", description: "엄격한 그리드와 거대한 검정 형태, 하나의 붉은 축으로 만든 청첩장입니다." },
-    zh: { name: "瑞士粗野", description: "以严格网格、巨型黑色形体和单一红轴构成的婚礼请柬。" },
   },
 });

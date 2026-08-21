@@ -56,22 +56,6 @@ export const manifest = defineTemplateManifest({
       name: "Hắc Bản Tin",
       description: "Thiệp cưới phong cách tạp chí với bố cục bất đối xứng, nền ngà và điểm nhấn đỏ trầm.",
     },
-    en: {
-      name: "Editorial Noir",
-      description: "A collectible magazine-style invitation in black, ivory and deep red.",
-    },
-    ja: {
-      name: "エディトリアル・ノワール",
-      description: "黒、アイボリー、深い赤で構成した雑誌風のウェディング招待状です。",
-    },
-    ko: {
-      name: "에디토리얼 누아르",
-      description: "블랙, 아이보리, 딥 레드로 완성한 매거진 스타일 청첩장입니다.",
-    },
-    zh: {
-      name: "黑色编辑志",
-      description: "以黑色、象牙白和深红打造的杂志式婚礼请柬。",
-    },
   },
   assets: [
     ...Array.from({ length: 8 }, (_, index) => `/chungdoi/images/gallery/${slug}/photo-${index + 1}.webp`),

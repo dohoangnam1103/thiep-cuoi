@@ -54,26 +54,6 @@ export const manifest = defineTemplateManifest({
       description:
         "Cánh cửa thần kỳ Three.js mở ra đám cưới của Nobita và Shizuka cùng nhóm bạn thân.",
     },
-    en: {
-      name: "Doraemon Door",
-      description:
-        "A Three.js Anywhere Door opens onto Nobita and Shizuka's wedding with their closest friends.",
-    },
-    ja: {
-      name: "ドラえもん・ドア",
-      description:
-        "どこでもドアが開き、のび太としずかの結婚式と仲間たちが現れるThree.js招待状です。",
-    },
-    ko: {
-      name: "도라에몽 도어",
-      description:
-        "어디로든 문이 열리며 노비타와 시즈카의 결혼식과 친구들이 등장하는 Three.js 청첩장입니다.",
-    },
-    zh: {
-      name: "哆啦A梦任意门",
-      description:
-        "任意门开启后，大雄、静香与好友们共同呈现一场 Three.js 婚礼请柬。",
-    },
   },
   assets: [
     `${characterRoot}/nobita-groom.webp`,

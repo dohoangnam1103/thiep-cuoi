@@ -18,9 +18,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Lora", particleType: "leaves", gallerySlug: "zen-sand", music: "/chungdoi/music/zen-sand.mp3",
   i18n: {
     vi: { name: "Trúc Chỉ Tỏa Sáng", description: "Thiệp cưới giấy trúc chỉ xuyên sáng với xơ sợi, phù điêu tre và khoảng thở lớn." },
-    en: { name: "Truc Chi Light", description: "Backlit bamboo-fiber paper and blind botanical relief create a luminous invitation." },
-    ja: { name: "竹紙の光", description: "竹繊維の透ける紙と浮き彫りで仕立てた光の招待状です。" },
-    ko: { name: "죽지의 빛", description: "대나무 섬유 종이와 은은한 부조가 빛나는 청첩장입니다." },
-    zh: { name: "竹纸之光", description: "以透光竹纤维纸和浅浮雕植物纹样构成的婚礼请柬。" },
   },
 });

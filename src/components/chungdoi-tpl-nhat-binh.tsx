@@ -412,7 +412,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
                         </div>
                         <div className="mt-2 space-y-0.5 text-center">
                           <p className="text-[10px]" style={{ color: BROWN }}>{q.bank}</p>
-                          <p className="font-mono text-[10px]" style={{ color: BROWN }}>{q.num}</p>
+                          <p className="tabular-nums text-[10px]" style={{ color: BROWN }}>{q.num}</p>
                           <p className="text-[10px] font-semibold" style={{ color: BROWN }}>{q.name}</p>
                         </div>
                         <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: RED, backgroundColor: hexToRgba(RED, 0.082) }}>Lưu QR</a>

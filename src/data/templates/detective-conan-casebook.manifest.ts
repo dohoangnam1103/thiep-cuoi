@@ -63,26 +63,6 @@ export const manifest = defineTemplateManifest({
       description:
         "Mở hồ sơ Three.js của Shinichi và Ran, rồi lật từng trang điều tra đám cưới cùng toàn bộ nhóm bạn.",
     },
-    en: {
-      name: "Wedding Case File 4869",
-      description:
-        "Open Shinichi and Ran's Three.js casebook, then turn through a no-scroll wedding story with their detective friends.",
-    },
-    ja: {
-      name: "ウェディング事件簿4869",
-      description:
-        "新一と蘭のThree.js事件簿を開き、仲間たちとページをめくって結婚式をたどる招待状です。",
-    },
-    ko: {
-      name: "웨딩 사건 파일 4869",
-      description:
-        "신이치와 란의 Three.js 사건 수첩을 열고 탐정 친구들과 페이지를 넘기는 스크롤 없는 청첩장입니다.",
-    },
-    zh: {
-      name: "婚礼档案4869",
-      description:
-        "打开新一与小兰的 Three.js 案件簿，与侦探伙伴逐页阅读无需纵向滚动的婚礼请柬。",
-    },
   },
   assets: [
     ...characterGroups.map((group) => `${characterRoot}/source/${group}.png`),

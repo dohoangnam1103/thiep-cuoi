@@ -30,6 +30,7 @@ import {
   orderedHeroPhotos,
 } from "@/lib/invitation-display";
 import { resolveArtDisplayFontClass } from "@/lib/art-invitation-typography";
+import { invitationBodyFontClass } from "@/lib/invitation-fonts";
 import { cn } from "@/lib/utils";
 
 export type ArtInvitationLayout =
@@ -300,13 +301,15 @@ export function ArtInvitation({
   t: InvitationTranslator;
 }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
-  const effectiveConfig = {
-    ...config,
-    displayFontClass: resolveArtDisplayFontClass(
-      content.theme.fontFamily,
-      config.displayFontClass,
-    ),
-  };
+  const displayFontClass = resolveArtDisplayFontClass(
+    content.theme.fontFamily,
+    config.displayFontClass,
+  );
+  // Body font suy ra từ display để cặp font luôn hợp tông, kể cả khi người dùng
+  // đổi font trong editor. Áp ở <main> rồi để mọi text con thừa hưởng — nhờ vậy
+  // thiệp chỉ có đúng 2 family: display + body.
+  const bodyFontClass = invitationBodyFontClass(displayFontClass);
+  const effectiveConfig = { ...config, displayFontClass };
   const people = orderedCouple(content);
   const ceremonyDate = formatDate(couple.ceremonyDate);
   const receptionDate = formatDate(couple.date);
@@ -342,7 +345,7 @@ export function ArtInvitation({
     .map((color) => ({ color }));
 
   return (
-    <main className={cn("relative z-40 min-h-[100dvh] w-full overflow-hidden", config.pageClass)}>
+    <main className={cn("relative z-40 min-h-[100dvh] w-full overflow-hidden", bodyFontClass, config.pageClass)}>
       <div
         data-invitation-column="true"
         className="relative mx-auto w-full max-w-[900px] [container-type:inline-size]"

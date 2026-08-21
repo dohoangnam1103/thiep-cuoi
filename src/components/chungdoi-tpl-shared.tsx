@@ -279,7 +279,7 @@ export function MapDirectionsButton({ query, label = "Chỉ đường", classNam
 
 export function FamilyColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
   return (
-    <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
+    <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5 text-center">
       <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{title}</span>
       {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài sẽ bị
           cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên. */}
@@ -825,7 +825,7 @@ export function GiftQrGrid({
                 <img src={qr} alt={`QR - ${gift.label}`} className="h-full w-full object-contain" />
               </div>
               <p className="mt-2 text-[13px] font-semibold" style={{ color: accent }}>{gift.bank}</p>
-              <p className="font-mono text-[13px]" style={{ color: accent }}>{gift.num}</p>
+              <p className="tabular-nums text-[13px]" style={{ color: accent }}>{gift.num}</p>
               <p className="text-[13px]" style={{ color: accent }}>{gift.name}</p>
               <CopyValueButton
                 testId="gift-copy-account"
@@ -917,7 +917,7 @@ export function GiftFlipCard({
             <img src={qr} alt={`QR - ${bank.label}`} className="h-full w-full object-contain" />
           </div>
           <p className="text-[12px] font-semibold" style={{ color: dark }}>{bank.bank}</p>
-          <p className="font-mono text-[12px]" style={{ color: dark }}>{bank.num}</p>
+          <p className="tabular-nums text-[12px]" style={{ color: dark }}>{bank.num}</p>
           <p className="text-[11px]" style={{ color: hexToRgba(dark, 0.7) }}>{bank.name}</p>
           <div className="mt-1 flex flex-wrap items-center justify-center gap-2" onClick={(event) => event.stopPropagation()}>
             <CopyValueButton value={bank.num} accent={accent} label={copyNumberLabel} copiedLabel={numberCopiedLabel} />
@@ -1104,7 +1104,7 @@ export function GiftEnvelope({
                       </div>
                       <div className="mt-2 space-y-0.5 text-center" style={{ color: muted }}>
                         <p className="text-[10px]">{q.bank}</p>
-                        <p className="font-mono text-[10px]">{q.num}</p>
+                        <p className="tabular-nums text-[10px]">{q.num}</p>
                         <p className="text-[10px] font-semibold">{q.name}</p>
                       </div>
                       <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: dark, backgroundColor: hexToRgba(accent, 0.1) }}>Lưu QR</a>

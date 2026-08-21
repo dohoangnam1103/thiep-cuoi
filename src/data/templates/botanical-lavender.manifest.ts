@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "1FTV VIP Signora", particleType: "leaves", gallerySlug: "arch-sage", music: "/chungdoi/music/arch-sage.mp3",
   i18n: {
     vi: { name: "Thảo Mộc Oải Hương", description: "Thiệp cưới lavender lạnh với cành nét đơn, quả mù tạt và khoảng trắng biên tập." },
-    en: { name: "Botanical Lavender", description: "Monoline lavender stems and mustard seed pods frame a cool editorial invitation." },
-    ja: { name: "ラベンダー植物誌", description: "ラベンダーの線画とマスタード色の実が囲む涼やかな招待状です。" },
-    ko: { name: "보태니컬 라벤더", description: "라벤더 선화와 머스터드 씨앗 꼬투리가 감싸는 청첩장입니다." },
-    zh: { name: "薰衣草植物志", description: "以薰衣草线描和芥末黄色种荚环绕的清冷婚礼请柬。" },
   },
 });

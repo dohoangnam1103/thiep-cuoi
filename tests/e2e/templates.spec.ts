@@ -148,9 +148,13 @@ const ENVELOPE_GROUP_E_SLUGS = [
 ] as const;
 
 // Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
+// Desktop/tablet were widened on purpose (600 → 732, 520 → 640) because cover
+// height saturates around 518px from the 520px mark up, so width is the only
+// lever left on the cover's proportions there. The two sub-768px cases keep
+// their original numbers so the cover stays portrait on mobile.
 const ENVELOPE_SIZING_CASES = [
-  { viewport: { width: 1440, height: 900 }, expectedWidth: 600 },
-  { viewport: { width: 800, height: 900 }, expectedWidth: 520 },
+  { viewport: { width: 1440, height: 900 }, expectedWidth: 732 },
+  { viewport: { width: 800, height: 900 }, expectedWidth: 640 },
   { viewport: { width: 700, height: 900 }, expectedWidth: 340 },
   { viewport: { width: 390, height: 844 }, expectedWidth: 310 },
 ] as const;
@@ -1131,7 +1135,7 @@ test.describe("templates — demo pages", () => {
     await expect.poll(() => cherryCapture.evaluate((node) => ({
       width: Math.round(node.getBoundingClientRect().width),
       height: Math.round(node.getBoundingClientRect().height),
-    }))).toMatchObject({ width: 600 });
+    }))).toMatchObject({ width: 732 });
 
     const desktopSize = await cherryCapture.evaluate((node) => ({
       width: Math.round(node.getBoundingClientRect().width),
@@ -1140,7 +1144,7 @@ test.describe("templates — demo pages", () => {
     expect(desktopSize.height).toBeGreaterThanOrEqual(480);
     expect(desktopSize.height).toBeLessThanOrEqual(560);
     expect(desktopSize.height).not.toBe(900);
-    // The legacy fixed path would force 600 × 900 at a 3 / 4.5 ratio.
+    // The legacy fixed path would force 732 × 1098 at a 3 / 4.5 ratio.
     expect(desktopSize.height).not.toBe(Math.round((desktopSize.width / 3) * 4.5));
   });
 

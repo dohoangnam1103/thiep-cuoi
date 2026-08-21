@@ -60,6 +60,7 @@ const groupCAndD = [
   "brocade-flower-red",
   "crystal-floral-blue",
   "glass-garden-green",
+  "glass-garden-pink",
   "spring-garden-green",
   "spring-garden-red",
   "spring-garden-blue",
@@ -79,6 +80,7 @@ test("groups C and D use responsive natural sizing", () => {
 const groupE = [
   "chibi-red",
   "minimalism-red",
+  "minimalism-dark-red",
   "maroon-love",
 ] as const;
 

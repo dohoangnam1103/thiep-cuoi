@@ -960,7 +960,10 @@
   },
   "invitationControls": {
     "playMusic": "Phát nhạc",
-    "pauseMusic": "Tạm dừng nhạc"
+    "pauseMusic": "Tạm dừng nhạc",
+    "startAutoScroll": "Tự động cuộn thiệp",
+    "stopAutoScroll": "Dừng tự động cuộn",
+    "replayAutoScroll": "Xem lại từ đầu"
   },
   "templateDemoSeo": {
     "metaTitle": "Mẫu thiệp cưới {name} | Thiệp Mừng Online",
@@ -1345,6 +1348,10 @@
         "name": "Vườn Kính Xanh",
         "description": "Thiệp cưới Vườn Kính Xanh đặt tên đôi uyên ương trong khung kính bầu dục giữa nền hoa mềm mại. Miễn phí tạo thiệp."
       },
+      "glass-garden-pink": {
+        "name": "Vườn Kính Hồng",
+        "description": "Thiệp cưới Vườn Kính Hồng với nền watercolor hồng phấn, lá hồng trong suốt viền vàng và tấm kính lớn ôm trọn nội dung. Miễn phí tạo thiệp."
+      },
       "royal-red": {
         "name": "Hoàng Kim Đỏ",
         "description": "Thiệp cưới Hoàng Kim Đỏ kết hợp nền đỏ trầm với điểm nhấn vàng sang trọng. Miễn phí tạo thiệp."
@@ -1400,6 +1407,10 @@
       "minimalism-red": {
         "name": "Tối Giản Đỏ",
         "description": "Thiệp cưới Tối Giản Đỏ có nền trắng sạch, điểm nhấn đỏ thanh lịch và bố cục hiện đại. Miễn phí tạo thiệp."
+      },
+      "minimalism-dark-red": {
+        "name": "Minimalism Đỏ Đô",
+        "description": "Thiệp cưới Minimalism Đỏ Đô với nền kem, sắc đỏ đô sang trọng, hoa mẫu đơn và phong bì lồng ảnh cưới. Miễn phí tạo thiệp."
       },
       "cherry-blossom-pink": {
         "name": "Anh Đào Hồng",
@@ -2131,6 +2142,15 @@
     }
   },
   "editor": {
+    "album": {
+      "label": "Kiểu hiển thị album",
+      "gridName": "Lưới",
+      "gridHint": "4 ảnh, các ô bằng nhau",
+      "mosaicName": "Ghép ảnh",
+      "mosaicHint": "1 ảnh lớn ghép cùng 5 ảnh nhỏ",
+      "coverflowName": "3D",
+      "coverflowHint": "Trượt ngang, ảnh giữa nổi lên"
+    },
     "support": {
       "banner": "Đang hỗ trợ tài khoản {email}",
       "bannerDescription": "Mọi thay đổi đã lưu sẽ tác động trực tiếp tới thiệp của khách.",

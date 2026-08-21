@@ -113,7 +113,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
               {invitationOpeningMessage(content)}
             </div>
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex w-full flex-col items-center gap-2 text-center">
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: GOLD_DARK }}>{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: INK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={ampFont}>&amp;</div>
@@ -293,7 +293,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
                       </div>
                       <div className="mt-2 space-y-0.5 text-center">
                         <p className="text-[10px]">{q.bank}</p>
-                        <p className="font-mono text-[10px]">{q.num}</p>
+                        <p className="tabular-nums text-[10px]">{q.num}</p>
                         <p className="text-[10px] font-semibold">{q.name}</p>
                       </div>
                       <a href={`${qr}&download=1`} download className="mt-1.5 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium" style={{ color: GOLD_DARK, backgroundColor: hexToRgba(GOLD, 0.1) }}>Lưu QR</a>

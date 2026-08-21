@@ -56,7 +56,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       "particleType": "happiness"
     },
     "fonts": {
-      "couple": "\"Fz Aghita\", \"Baskerville\", \"Times New Roman\", serif",
+      "couple": "\"Fz Qellia\", \"Times New Roman\", serif",
       "ampersand": null
     },
     "sealType": "happiness",
@@ -368,6 +368,88 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
           "className": "w-[96%] max-w-[440px] md:max-w-[500px] bottom-0 left-1/2 -translate-x-1/2 translate-y-[45%] opacity-90",
           "flyOnOpen": true,
           "src": "/chungdoi/images/themes/_decor/glass-garden-green/flower5-bottom.webp"
+        }
+      ]
+    }
+  },
+  "glass-garden-pink": {
+    "theme": {
+      "background": "#ffffff url(/chungdoi/images/themes/glass-garden-pink/floral-background.webp) center / 180% auto repeat",
+      "cardBg": "rgba(255, 255, 255, 0.3)",
+      "textPrimary": "#CB5D6C",
+      "textSecondary": "rgba(147, 56, 69, 0.8)",
+      "accent": "#CB5D6C",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(203, 93, 108, 0.35)",
+      "buttonBg": "#CB5D6C",
+      "buttonText": "#ffffff",
+      "guestBoxBg": "rgba(203, 93, 108, 0.08)",
+      "guestBoxBorder": "rgba(203, 93, 108, 0.15)",
+      "particleColors": [
+        "#ffffff",
+        "#f7e3e8",
+        "#eab8c2",
+        "#f5d6dc"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Viaoda Libre\", \"EB Garamond\", cursive",
+      "ampersand": "\"Alex Brush\", \"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[45%] max-w-[200px] md:max-w-[230px] top-[2%] left-[-14px] md:left-[-26px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-90",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/glass-garden-pink/flower4-decoration.webp"
+        },
+        {
+          "className": "w-[45%] max-w-[200px] md:max-w-[230px] bottom-[-10%] right-[-14px] md:right-[-26px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-90",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/glass-garden-pink/flower4-decoration.webp"
+        }
+      ]
+    }
+  },
+  "minimalism-dark-red": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #6e1a20, #511419, #380a0e)",
+      "cardBg": "rgba(255, 250, 243, 0.96)",
+      "textPrimary": "#511419",
+      "textSecondary": "rgba(81, 20, 25, 0.8)",
+      "accent": "#b58b2f",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(81, 20, 25, 0.35)",
+      "buttonBg": "#511419",
+      "buttonText": "#ece4d8",
+      "guestBoxBg": "rgba(81, 20, 25, 0.08)",
+      "guestBoxBorder": "rgba(81, 20, 25, 0.15)",
+      "particleColors": [
+        "#a8323b",
+        "#ece4d8",
+        "#c9a24a",
+        "#7a1f26"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Viaoda Libre\", \"EB Garamond\", serif",
+      "ampersand": "\"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-dark-red/flower2-decoration.webp"
+        },
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-dark-red/flower2-decoration.webp"
         }
       ]
     }
@@ -1421,7 +1503,7 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       "particleType": "happiness"
     },
     "fonts": {
-      "couple": "\"Fz Aghita\", \"Baskerville\", \"Times New Roman\", serif",
+      "couple": "\"Fz Qellia\", \"Times New Roman\", serif",
       "ampersand": null
     },
     "sealType": "happiness",

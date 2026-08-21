@@ -113,26 +113,6 @@ export const manifest = defineTemplateManifest({
       description:
         "Thiệp cưới sơn son với cặp linh vật con giáp Việt của cô dâu và chú rể, chạm vàng và đổi màu linh hoạt.",
     },
-    en: {
-      name: "Vietnamese Zodiac Red",
-      description:
-        "A lacquer-red invitation featuring the couple's Vietnamese zodiac animals in recolorable gold cut-paper ornament.",
-    },
-    ja: {
-      name: "十二支・漆紅",
-      description:
-        "新郎新婦のベトナム十二支を、色替えできる金の切り絵装飾で描く漆赤の招待状です。",
-    },
-    ko: {
-      name: "십이지 래커 레드",
-      description:
-        "신랑 신부의 베트남 십이지 동물을 색상 변경이 가능한 금빛 페이퍼컷 장식으로 담은 붉은 옻칠 청첩장입니다.",
-    },
-    zh: {
-      name: "十二生肖漆红",
-      description:
-        "漆红请柬以可换色的金色剪纸纹样呈现新郎新娘的越南十二生肖。",
-    },
   },
   assets: [
     ...zodiacArtworkAssets,

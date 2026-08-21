@@ -8,16 +8,6 @@ import {
   dalatJourneyDefinition,
 } from "./dalat-journey";
 
-function leafKeys(value: unknown, prefix = ""): string[] {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return [prefix];
-  }
-
-  return Object.entries(value).flatMap(([key, child]) =>
-    leafKeys(child, prefix ? `${prefix}.${key}` : key),
-  );
-}
-
 test("Dalat journey registers the approved five checkpoints", () => {
   assert.deepEqual(DALAT_JOURNEY_CHECKPOINT_IDS, [
     "mistGate",
@@ -66,20 +56,10 @@ test("Dalat journey authors one typed rail midpoint for every adjacent leg", () 
   assert.deepEqual(actualMidpoints, expectedMidpoints);
 });
 
-test("Dalat journey catalogs expose identical localized key paths", () => {
-  const locales = ["vi", "en", "ja", "ko", "zh"] as const;
-  const entries = locales.map((locale) => {
-    const catalog = JSON.parse(
-      readFileSync(
-        path.join(process.cwd(), "messages", `${locale}.json`),
-        "utf8",
-      ),
-    ) as { dalatJourneyLab?: unknown };
-    assert.ok(catalog.dalatJourneyLab, `${locale} is missing dalatJourneyLab`);
-    return [locale, leafKeys(catalog.dalatJourneyLab).sort()] as const;
-  });
+test("the Vietnamese catalog carries the Dalat journey lab copy", () => {
+  const catalog = JSON.parse(
+    readFileSync(path.join(process.cwd(), "messages", "vi.json"), "utf8"),
+  ) as { dalatJourneyLab?: unknown };
 
-  for (const [locale, keys] of entries) {
-    assert.deepEqual(keys, entries[0][1], `${locale} key paths differ`);
-  }
+  assert.ok(catalog.dalatJourneyLab, "vi is missing dalatJourneyLab");
 });

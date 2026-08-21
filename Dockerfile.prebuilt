@@ -1,0 +1,107 @@
+# Runner được lắp trên Mini PC từ artifact Next.js đã build sẵn native trên Mac.
+#
+# Vì sao tách riêng khỏi Dockerfile / Dockerfile.local-build:
+#   * Dockerfile          → compile Next ngay trên Mini PC (i5-9500T, RAM còn
+#                           ~2.6GB và đã swap 3GB) nên rất chậm.
+#   * Dockerfile.local-build → compile trên Mac rồi `docker save | ssh docker
+#                           load` cả image 1.84GB, dù mỗi deploy chỉ đổi ~83MB.
+#   * File này           → Mac chỉ rsync 105MB artifact sang
+#                           releases/current/.next-prebuilt/, Mini PC chỉ chạy
+#                           COPY. node_modules amd64 nằm trong layer cache của
+#                           Mini PC nên không bao giờ phải truyền qua mạng.
+#
+# Không có bước biên dịch nào trong file này, và cũng không cần QEMU: build
+# chạy native amd64 ngay trên máy đích.
+
+ARG NODE_VERSION=24.18.0-slim
+
+# ============================================
+# Stage 1: dependencies (native amd64, cache lại giữa các deploy)
+# ============================================
+FROM node:${NODE_VERSION} AS dependencies
+
+WORKDIR /app
+
+# package.deps.json là bản package.json đã lược bỏ mọi field không liên quan
+# tới dependency (scripts, keywords, description...), do deploy-fast.sh sinh ra
+# trên Mac. Nếu COPY package.json thật vào đây thì chỉ sửa một dòng `scripts`
+# cũng làm layer này vô hiệu, kéo theo npm ci + npm prune chạy lại ~200s trên
+# Mini PC dù dependency không đổi gì. Đo được đúng trường hợp đó ở deploy
+# 20260820185043: 219s thay vì 16s.
+COPY package-lock.json .npmrc* ./
+COPY .next-prebuilt/package.deps.json ./package.json
+
+RUN --mount=type=cache,id=thiepmungonline-npm,target=/root/.npm \
+  npm ci --ignore-scripts --no-audit --no-fund
+
+# --ignore-scripts bỏ qua prebuild-install của better-sqlite3 nên binding .node
+# chưa được tải. Rebuild riêng package đó cho Node ABI + platform hiện tại.
+RUN npm rebuild better-sqlite3
+
+# ============================================
+# Stage 2: runtime dependencies
+# ============================================
+FROM dependencies AS runtime-dependencies
+
+RUN npm prune --omit=dev --ignore-scripts
+
+# ============================================
+# Stage 3: migrate (chạy prisma migrate deploy cạnh database production)
+# ============================================
+FROM node:${NODE_VERSION} AS migrate
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=dependencies /app/node_modules ./node_modules
+# Migration chỉ cần config, schema và history. Không đưa app hay public vào
+# image ngắn hạn này.
+# Ở đây phải là package.json thật, không phải bản lược: `npm run prisma:generate`
+# cần field `scripts`.
+COPY package.json ./package.json
+COPY prisma.config.ts ./prisma.config.ts
+COPY prisma ./prisma
+
+ENV NODE_ENV=production
+ENV DATABASE_URL="file:./dev.db"
+ENV SESSION_SECRET="build-time-placeholder"
+
+RUN npm run prisma:generate
+
+# ============================================
+# Stage 4: runner
+# ============================================
+FROM node:${NODE_VERSION} AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# node_modules amd64 dựng native ở stage trên. Không dùng
+# .next-prebuilt/node_modules: nó được Next trace trên macOS nên có thể chứa
+# native addon Mach-O.
+COPY --from=runtime-dependencies --chown=node:node /app/node_modules ./node_modules
+
+# Ba layer cuối là thứ duy nhất đổi mỗi deploy. Đặt sau node_modules để
+# layer cache phía trên luôn hit.
+COPY --chown=node:node .next-prebuilt/.next ./.next
+COPY --chown=node:node .next-prebuilt/static ./.next/static
+COPY --chown=node:node .next-prebuilt/server.js ./server.js
+
+# public/ (539MB) KHÔNG nằm trong image. Nó được bind-mount read-only từ
+# releases/current/public trên host, thư mục mà rsync đã cập nhật sẵn. Nhờ vậy
+# mỗi image version tiết kiệm 432MB đĩa (đĩa Mini PC đang dùng 93%) và thêm
+# asset mới chỉ tốn một delta rsync. Tạo sẵn mountpoint để container vẫn chạy
+# được nếu volume chưa gắn.
+RUN mkdir -p ./public && chown node:node ./public
+
+USER node
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

@@ -51,6 +51,7 @@ const ENVELOPE_TEMPLATE_SLUGS = [
   "dragon-phoenix-green",
   "spring-garden-blue",
   "minimalism-red",
+  "minimalism-dark-red",
   "cherry-blossom-pink",
   "double-phoenix-green",
   "double-dragon-blue",
@@ -62,6 +63,7 @@ export const SOURCE_GIFT_VISUAL_SLUGS = [
   ...ENVELOPE_TEMPLATE_SLUGS,
   "chateau-green",
   "glass-garden-green",
+  "glass-garden-pink",
 ] as const;
 
 const envelopeVisuals = Object.fromEntries(
@@ -100,6 +102,19 @@ const sourceGiftVisuals: Record<string, GiftVisual> = {
       "/chungdoi/images/giftbox/mini/boho_floral_pink.webp",
       "/chungdoi/images/giftbox/mini/brocade_flower_red.webp",
       "/chungdoi/images/giftbox/mini/chateau_green.webp",
+    ],
+  },
+  "glass-garden-pink": {
+    kind: "giftbox",
+    boxImage: "/chungdoi/images/giftbox/glass-garden-pink/box.webp",
+    decorImages: [
+      "/chungdoi/images/giftbox/mini/crystal_floral_green.webp",
+      "/chungdoi/images/giftbox/mini/spring_garden_green.webp",
+      "/chungdoi/images/giftbox/mini/spring_garden_red.webp",
+      "/chungdoi/images/giftbox/mini/spring_garden_blue.webp",
+      "/chungdoi/images/giftbox/mini/royal.webp",
+      "/chungdoi/images/giftbox/mini/royal_red.webp",
+      "/chungdoi/images/giftbox/mini/double_dragon_red.webp",
     ],
   },
 };

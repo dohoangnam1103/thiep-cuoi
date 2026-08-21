@@ -1,0 +1,51 @@
+# Build context riêng cho Dockerfile.prebuilt (BuildKit tự đọc file
+# <dockerfile>.dockerignore). Stage runner chỉ cần manifest, prisma và
+# .next-prebuilt, nên loại hẳn những thứ nặng khỏi context.
+#
+# Quan trọng nhất: public/ nặng 539MB và được bind-mount lúc runtime, không
+# COPY vào image. Nếu để trong context, Mini PC phải hash toàn bộ 539MB mỗi
+# lần build dù không dùng tới.
+public
+node_modules
+.next
+.git
+docs
+tests
+messages
+src
+scripts
+prisma/*.db
+prisma/*.db-journal
+prisma/*.db-shm
+prisma/*.db-wal
+prisma/*.sqlite*
+data
+temp
+tmp
+.env
+.env.local
+.env.*.local
+.claude
+.claude-flow
+.codegraph
+.deploy-worktree
+.playwright-mcp
+.capture
+.DS_Store
+*.tsbuildinfo
+*.png
+*.jpg
+*.jpeg
+Dockerfile
+Dockerfile.dev
+Dockerfile.local-build
+docker-compose.yml
+README.md
+CHANGELOG.md
+LICENSE
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+
+# .next-prebuilt là artifact Mac rsync sang, phải giữ lại.
+!.next-prebuilt

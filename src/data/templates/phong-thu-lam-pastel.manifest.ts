@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Alex Brush", particleType: "sparkles", gallerySlug: "arch-sage", music: "/chungdoi/music/arch-sage.mp3",
   i18n: {
     vi: { name: "Phong Thư Lam Pastel", description: "Thiệp cưới nhẹ nhàng hiện đại với phong bì giấy xanh dương pastel và dấu sáp niêm lam." },
-    en: { name: "Phong Thư Lam Pastel", description: "A powder blue paper envelope closed with a slate wax seal." },
-    ja: { name: "封書・ペールブルー", description: "淡いブルーの紙封筒とスレート色の封蝋を組み合わせた、柔らかく現代的な招待状です。" },
-    ko: { name: "봉서 파스텔 블루", description: "파우더 블루 종이 봉투와 슬레이트 봉랍으로 마무리한 부드러운 현대풍 청첩장입니다." },
-    zh: { name: "封书淡蓝", description: "粉蓝色纸质信封搭配石青火漆印的柔和现代婚礼请柬。" },
   },
 });

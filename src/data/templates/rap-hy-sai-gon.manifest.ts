@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "SVN-HC Marvin Visions", particleType: "hearts", gallerySlug: "ticket-terracotta", music: "/chungdoi/music/song-hy-red.mp3",
   i18n: {
     vi: { name: "Rạp Hỷ Sài Gòn", description: "Sân khấu tân hôn Việt được remix táo bạo với rèm nhung, đèn marquee, trái tim chrome và sắc màu pop." },
-    en: { name: "Saigon Wedding Stage", description: "A fearless Vietnamese wedding stage remixed with velvet curtains, marquee lights, chrome hearts, and pop color." },
-    ja: { name: "サイゴン祝宴ステージ", description: "ベルベットの幕、電飾、クロームのハート、鮮烈な色で再構成したベトナムの婚礼舞台です。" },
-    ko: { name: "사이공 웨딩 스테이지", description: "벨벳 커튼과 마키 조명, 크롬 하트, 강렬한 팝 컬러로 재해석한 베트남 혼례 무대입니다." },
-    zh: { name: "西贡喜宴舞台", description: "以天鹅绒帷幕、跑马灯、镀铬爱心与大胆流行色重塑越南婚礼舞台。" },
   },
 });

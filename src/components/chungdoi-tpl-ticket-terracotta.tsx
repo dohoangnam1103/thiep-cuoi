@@ -107,7 +107,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#a4462d]/75">
               {t("invitation")} · {t("weddingPass")}
             </span>
-            <span className="font-mono text-[10px] text-[#a4462d]/75">
+            <span className="tabular-nums text-[10px] text-[#a4462d]/75">
               NO. {couple.date.replace(/-/g, "")}
             </span>
           </div>
@@ -137,7 +137,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
 
           <div className="mt-8 flex items-end justify-between gap-4">
             <Barcode color="rgba(59, 35, 24, 0.8)" className="h-8 w-[140px] md:w-[180px]" />
-            <span className="font-mono text-[10px] text-[#a4462d]/70">
+            <span className="text-[10px] text-[#a4462d]/70">
               {t("admitTwo")}
             </span>
           </div>
@@ -301,7 +301,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
                     key={`${item.time}-${i}`}
                     className="flex items-baseline gap-5 border-b border-[#a4462d]/15 py-3 last:border-b-0"
                   >
-                    <span className="w-[58px] shrink-0 font-mono text-[13px] tabular-nums text-[#a4462d]">
+                    <span className="w-[58px] shrink-0 text-[13px] tabular-nums text-[#a4462d]">
                       {item.time}
                     </span>
                     <span className="text-[14px] font-medium">{item.label}</span>
@@ -328,7 +328,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
                       <span className="font-bold uppercase tracking-wide text-[#a4462d]">
                         {wish.name}
                       </span>
-                      <span className="shrink-0 font-mono text-[10px] opacity-60">{formatWishTime(wish.time)}</span>
+                      <span className="tabular-nums shrink-0 text-[10px] opacity-60">{formatWishTime(wish.time)}</span>
                     </div>
                     <p className="mt-2 leading-relaxed">{wish.text}</p>
                   </div>

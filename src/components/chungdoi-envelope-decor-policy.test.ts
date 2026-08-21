@@ -4,14 +4,15 @@ import test from "node:test";
 import { vietnameseTemplateSlugs } from "@/data/template-route-slugs";
 import {
   envelopeDecorOverflowForTemplate,
+  glassGardenTemplateSlugs,
   overflowingEnvelopeDecorTemplateSlugs,
 } from "./chungdoi-envelope-decor-policy";
 
-test("only the glass garden envelope keeps decorations outside the card", () => {
+test("only the glass garden envelopes keep decorations outside the card", () => {
   for (const [sourceSlug] of vietnameseTemplateSlugs) {
     assert.equal(
       envelopeDecorOverflowForTemplate(sourceSlug),
-      sourceSlug === "glass-garden-green" ? "visible" : "clip",
+      glassGardenTemplateSlugs.has(sourceSlug) ? "visible" : "clip",
       sourceSlug,
     );
   }

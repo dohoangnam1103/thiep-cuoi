@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Lora", particleType: "sparkles", gallerySlug: "editorial-noir", music: "/chungdoi/music/editorial-noir.mp3",
   i18n: {
     vi: { name: "Tựa Phim Tình Yêu", description: "Thiệp cưới điện ảnh với lối rạp hội tụ, đèn tungsten và nhịp chữ credit." },
-    en: { name: "Cinema Credit", description: "A central theater aisle, tungsten light and credit-block rhythm shape this invitation." },
-    ja: { name: "恋のクレジット", description: "劇場の中央通路、タングステン光、映画クレジットのリズムで構成した招待状です。" },
-    ko: { name: "러브 크레딧", description: "극장 중앙 통로와 텅스텐 조명, 영화 크레딧 리듬을 담은 청첩장입니다." },
-    zh: { name: "爱情片尾", description: "以影院中央通道、钨丝灯光和电影字幕节奏构成的婚礼请柬。" },
   },
 });

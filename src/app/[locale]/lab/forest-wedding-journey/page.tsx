@@ -7,11 +7,7 @@ import {
   ForestWeddingJourneyLab,
   type ForestWeddingJourneyFixture,
 } from "@/components/forest-wedding-journey/forest-wedding-journey-lab";
-import enMessages from "../../../../../messages/en.json";
-import jaMessages from "../../../../../messages/ja.json";
-import koMessages from "../../../../../messages/ko.json";
 import viMessages from "../../../../../messages/vi.json";
-import zhMessages from "../../../../../messages/zh.json";
 
 export const dynamic = "force-dynamic";
 
@@ -30,11 +26,7 @@ function areRuntimeDiagnosticsEnabled(): boolean {
 }
 
 const forestLabMessages = {
-  en: enMessages.forestWeddingJourneyLab,
-  ja: jaMessages.forestWeddingJourneyLab,
-  ko: koMessages.forestWeddingJourneyLab,
   vi: viMessages.forestWeddingJourneyLab,
-  zh: zhMessages.forestWeddingJourneyLab,
 } as const;
 
 type ForestLabLocale = keyof typeof forestLabMessages;

@@ -3,85 +3,26 @@ import { test, expect } from "@playwright/test";
 /**
  * i18n coverage for next-intl.
  *
- * Routing (src/i18n/routing.ts): locales vi/en/ko/ja/zh, defaultLocale "vi",
- * localePrefix "as-needed" — the default locale (vi) is served WITHOUT a prefix
- * at "/", while other locales use a "/{locale}" prefix. next-intl middleware
- * redirects an explicit "/vi" back to "/".
+ * The app is Vietnamese-only (src/i18n/routing.ts: locales ["vi"],
+ * defaultLocale "vi", localePrefix "as-needed"). vi is served WITHOUT a prefix
+ * at "/", next-intl redirects an explicit "/vi" back to "/", and every other
+ * locale prefix must 404 — the en/ko/ja/zh catalogs were removed.
  */
 
-type Locale = "vi" | "en" | "ko" | "ja" | "zh";
-
-const LOCALES: Locale[] = ["vi", "en", "ko", "ja", "zh"];
-
-// Path where each locale's home page is served. vi (default) has no prefix.
-const HOME_PATH: Record<Locale, string> = {
-  vi: "/",
-  en: "/en",
-  ko: "/ko",
-  ja: "/ja",
-  zh: "/zh",
-};
-
-// Stable, locale-distinct strings pulled from messages/*.json ("home" namespace).
-const HERO_TITLE: Record<Locale, string> = {
-  vi: "Tạo thiệp cưới online, miễn phí trong 10 phút",
-  en: "Create wedding invitations online, free in 10 minutes",
-  ko: "온라인 청첩장, 10분 만에 무료로 만들기",
-  ja: "オンライン結婚式招待状を10分で無料作成",
-  zh: "在线婚礼请柬，10分钟免费创建",
-};
-
-const CREATE_NOW: Record<Locale, string> = {
-  vi: "Tạo ngay",
-  en: "Create Now",
-  ko: "지금 만들기",
-  ja: "今すぐ作成",
-  zh: "立即创建",
-};
-
-// Language switcher option labels (src/components/language-switcher.tsx).
-const LOCALE_LABELS: Record<Locale, string> = {
-  vi: "Tiếng Việt",
-  en: "English",
-  ko: "한국어",
-  ja: "日本語",
-  zh: "中文",
-};
-
-test.describe("i18n locale routes", () => {
-  for (const locale of LOCALES) {
-    test(`${locale}: renders localized home copy at ${HOME_PATH[locale]}`, async ({ page }) => {
-      await page.goto(HOME_PATH[locale]);
-
-      // Localized hero title (rendered inside the single <h1>).
-      await expect(page.locator("h1", { hasText: HERO_TITLE[locale] })).toBeVisible();
-
-      // A second independent key to guard against a partial/stale catalog.
-      await expect(page.getByText(CREATE_NOW[locale], { exact: true }).first()).toBeVisible();
-
-      // <html lang> reflects the active locale.
-      await expect(page.locator("html")).toHaveAttribute("lang", locale);
-    });
-
-    test(`${locale}: URL prefix matches locale-prefix policy`, async ({ page }) => {
-      await page.goto(HOME_PATH[locale]);
-      const pathname = new URL(page.url()).pathname;
-
-      if (locale === "vi") {
-        // Default locale served without a prefix.
-        expect(pathname).toBe("/");
-      } else {
-        expect(pathname).toBe(`/${locale}`);
-      }
-    });
-  }
-});
+// Stable strings pulled from messages/vi.json ("home" namespace).
+const HERO_TITLE = "Tạo thiệp cưới online đơn giản, miễn phí chỉ trong 15 phút";
+const CREATE_NOW = "TẠO THIỆP NGAY";
 
 test.describe("i18n default locale", () => {
-  test('"/" serves the default locale (vi)', async ({ page }) => {
+  test('"/" serves Vietnamese without a prefix', async ({ page }) => {
     const res = await page.goto("/");
     expect(res?.ok()).toBeTruthy();
-    await expect(page.locator("h1", { hasText: HERO_TITLE.vi })).toBeVisible();
+
+    await expect(page.locator("h1", { hasText: HERO_TITLE })).toBeVisible();
+
+    // A second independent key guards against a partial/stale catalog.
+    await expect(page.getByText(CREATE_NOW, { exact: true }).first()).toBeVisible();
+
     await expect(page.locator("html")).toHaveAttribute("lang", "vi");
     expect(new URL(page.url()).pathname).toBe("/");
   });
@@ -90,26 +31,20 @@ test.describe("i18n default locale", () => {
     await page.goto("/vi");
     // next-intl strips the redundant default-locale prefix.
     expect(new URL(page.url()).pathname).toBe("/");
-    await expect(page.locator("h1", { hasText: HERO_TITLE.vi })).toBeVisible();
+    await expect(page.locator("h1", { hasText: HERO_TITLE })).toBeVisible();
   });
 });
 
-test.describe("i18n language switcher", () => {
-  for (const target of ["en", "zh"] as const) {
-    test(`switches vi -> ${target}, updating URL prefix and copy`, async ({ page }) => {
-      await page.goto("/");
-      await expect(page.locator("h1", { hasText: HERO_TITLE.vi })).toBeVisible();
+test.describe("i18n retired locales", () => {
+  // en/ko/ja/zh were indexed before the app went Vietnamese-only, so
+  // next.config.ts keeps a permanent redirect to "/" instead of letting them
+  // 404. Requested without following redirects so the status is observable.
+  for (const locale of ["en", "ko", "ja", "zh"] as const) {
+    test(`"/${locale}" permanently redirects to "/"`, async ({ request }) => {
+      const res = await request.get(`/${locale}`, { maxRedirects: 0 });
 
-      // Open the switcher dropdown (trigger label may be hidden on small viewports).
-      await page.locator('button[aria-haspopup="listbox"]').click();
-
-      // Pick the target locale option by its accessible name.
-      await page.getByRole("option", { name: LOCALE_LABELS[target] }).click();
-
-      await page.waitForURL(`**/${target}`);
-      expect(new URL(page.url()).pathname).toBe(`/${target}`);
-      await expect(page.locator("h1", { hasText: HERO_TITLE[target] })).toBeVisible();
-      await expect(page.locator("html")).toHaveAttribute("lang", target);
+      expect(res.status()).toBe(308);
+      expect(res.headers()["location"]).toBe("/");
     });
   }
 });

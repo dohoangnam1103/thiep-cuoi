@@ -1,11 +1,11 @@
 "use client";
 
 import Lenis from "lenis";
-import { Pause, Play, RotateCcw } from "lucide-react";
+import { AudioLines, ChevronsDown, Pause, RotateCcw, VolumeX } from "lucide-react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { NextIntlClientProvider, useTranslations } from "next-intl";
-import { type ComponentType, type CSSProperties, type Dispatch, type MouseEvent, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentType, type CSSProperties, type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -13,6 +13,7 @@ import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import type { ArtOpeningEffect } from "@/data/templates/opening-effect";
 import {
   envelopeDecorOverflowForTemplate,
+  glassGardenTemplateSlugs,
   type EnvelopeDecorOverflow,
 } from "@/components/chungdoi-envelope-decor-policy";
 import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
@@ -71,6 +72,8 @@ const DragonPhoenixV2Invitation = dynamic(() => import("@/components/chungdoi-tp
 const DragonPhoenixV3Invitation = dynamic(() => import("@/components/chungdoi-tpl-dragon-phoenix-v3-red").then((m) => m.DragonPhoenixV3Invitation));
 const ElegantLeafInvitation = dynamic(() => import("@/components/chungdoi-tpl-elegant-leaf-green").then((m) => m.ElegantLeafInvitation));
 const GlassGardenInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-green").then((m) => m.GlassGardenInvitation));
+const GlassGardenPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-pink").then((m) => m.GlassGardenPinkInvitation));
+const MinimalismDarkRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismDarkRedInvitation));
 const HoaTinhInvitation = dynamic(() => import("@/components/chungdoi-tpl-hoa-tinh-red").then((m) => m.HoaTinhInvitation));
 const JasmineWhiteInvitation = dynamic(() => import("@/components/chungdoi-tpl-jasmine-white").then((m) => m.JasmineWhiteInvitation));
 const MinimalismRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-red").then((m) => m.MinimalismRedInvitation));
@@ -111,10 +114,12 @@ const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "silk-flora-brown": SilkFloraBrownInvitation,
   "hoa-tinh-red": HoaTinhInvitation,
   "minimalism-red": MinimalismRedInvitation,
+  "minimalism-dark-red": MinimalismDarkRedInvitation,
   "brocade-flower-red": BrocadeFlowerRedInvitation,
   "crystal-floral-blue": CrystalFloralInvitation,
   "baroque-gold": BaroqueGoldInvitation,
   "glass-garden-green": GlassGardenInvitation,
+  "glass-garden-pink": GlassGardenPinkInvitation,
   "chibi-red": ChibiRedInvitation,
   "cherry-blossom-pink": CherryBlossomInvitation,
 } satisfies Record<BaseAuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
@@ -759,11 +764,11 @@ function CoverCard({
         </div>
       ) : null}
 
-      {/* frosted glass panel: CHỈ cho glass-garden-green — card nền trong suốt nằm
-          thẳng trên nền floral rối nên cần tấm kính phủ trắng + blur để chữ đọc
-          được. Các theme khác card có nền riêng (đặc hoặc rgba ~0.95) đọc tốt sẵn;
-          tấm trắng chỉ làm bệt màu nên KHÔNG áp. */}
-      {content.slug === "glass-garden-green" && !contentOnly ? (
+      {/* frosted glass panel: CHỈ cho họ Vườn Kính (xanh/hồng) — card nền trong
+          suốt nằm thẳng trên nền floral rối nên cần tấm kính phủ trắng + blur để
+          chữ đọc được. Các theme khác card có nền riêng (đặc hoặc rgba ~0.95) đọc
+          tốt sẵn; tấm trắng chỉ làm bệt màu nên KHÔNG áp. */}
+      {glassGardenTemplateSlugs.has(content.slug) && !contentOnly ? (
         <div
           className="pointer-events-none absolute inset-0 z-[5] rounded-lg"
           style={{
@@ -846,8 +851,13 @@ function CoverCard({
           type="button"
           data-open-btn
           onClick={onOpen}
-          className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold shadow-lg transition hover:-translate-y-0.5"
-          style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
+          className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold transition-all duration-300 hover:-translate-y-1 active:translate-y-0 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.25)_inset] active:shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.15)_inset]"
+          style={{
+            backgroundColor: tokens.buttonBg,
+            color: tokens.buttonText,
+            boxShadow: "0 12px 40px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.2) inset, 0 4px 16px -4px rgba(0,0,0,0.4)",
+            border: "1px solid rgba(255,255,255,0.15)",
+          }}
         >
           Mở thiệp
         </button>
@@ -962,6 +972,7 @@ function EnvelopeCover({
       : openingEffect.durationMs
     : 800;
   const [projectedSize, setProjectedSize] = useState<{ width: number; height: number } | null>(null);
+  const [envelopeReady, setEnvelopeReady] = useState(false);
   const handleProjectedSizeChange = useCallback((nextSize: { width: number; height: number }) => {
     setProjectedSize((currentSize) => {
       if (
@@ -973,6 +984,9 @@ function EnvelopeCover({
       }
       return nextSize;
     });
+  }, []);
+  const handleEnvelopeReadyChange = useCallback((ready: boolean) => {
+    setEnvelopeReady(ready);
   }, []);
   const coverStyle: CSSProperties & { "--zodiac-art-color"?: string } = {
     background: tokens.background,
@@ -993,12 +1007,12 @@ function EnvelopeCover({
         type="button"
         data-open-invitation-control
         onClick={onOpen}
-        disabled={opening}
+        disabled={opening || !envelopeReady}
         className="sr-only focus:fixed focus:bottom-6 focus:left-1/2 focus:z-[100] focus:block focus:h-auto focus:w-auto focus:-translate-x-1/2 focus:overflow-visible focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-neutral-900 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2"
       >
         Mở thiệp
       </button>
-      {content.slug === "glass-garden-green" ? (
+      {glassGardenTemplateSlugs.has(content.slug) ? (
         <div
           data-envelope-background-glass
           className="pointer-events-none absolute inset-0 z-0"
@@ -1029,6 +1043,7 @@ function EnvelopeCover({
       <div
         className={`relative z-10 h-full w-full ${opening ? "pointer-events-none" : ""}`}
         data-envelope-renderer="3d"
+        data-envelope-ready={envelopeReady ? "true" : "false"}
         data-envelope-projected-size={projectedSize
           ? `${Math.round(projectedSize.width)}x${Math.round(projectedSize.height)}`
           : undefined}
@@ -1042,8 +1057,10 @@ function EnvelopeCover({
           <Envelope3D
             sizing={sizing}
             decorVisible={openingEffect ? !opening : true}
+            buttonShineEnabled={!reducedMotion}
             onOpen={onOpen}
             onProjectedSizeChange={handleProjectedSizeChange}
+            onReadyChange={handleEnvelopeReadyChange}
             paperColor={coverPaperColor(tokens)}
             accentColor={toSolidColor(tokens.accent, "#8C1C13")}
             renderCard={(handleOpen) => (
@@ -1105,10 +1122,10 @@ function EnvelopeCover({
           />
         </div>
 
-        {!opening ? (
+        {!opening && envelopeReady ? (
           <p
             className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
-            style={{ color: tokens.accent }}
+            style={{ color: tokens.accent, opacity: 0.1 }}
           >
             Kéo để xoay · Chụm 2 ngón để zoom
           </p>
@@ -1262,7 +1279,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
           <p className="mt-2 text-xs leading-5 opacity-75">{reception.lunar}</p>
 
           {calendar ? (
-            <div className="mx-auto mt-8 max-w-[320px] rounded-2xl border p-4" style={{ borderColor: tokens.guestBoxBorder }}>
+            <div className="mx-auto mt-8 max-w-[384px] rounded-2xl border p-5" style={{ borderColor: tokens.guestBoxBorder }}>
               <p className="text-sm font-semibold uppercase tracking-wide">Tháng {calendar.month} / {calendar.year}</p>
               <div className="mt-3 grid grid-cols-7 gap-1 text-xs font-semibold">
                 {WEEKDAY_LABELS.map((day) => (<span key={day} className="py-1">{day}</span>))}
@@ -1413,10 +1430,11 @@ export function ChungDoiDemo({
   const openingRef = useRef(false);
   const openTimerRef = useRef<number | null>(null);
   const autoScrollTimerRef = useRef<number | null>(null);
-  const autoScrollFinishedRef = useRef(false);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
   const [autoScrolling, setAutoScrolling] = useState(false);
+  const [atInvitationEnd, setAtInvitationEnd] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const autoScrollingRef = useRef(false);
   const [physicalReplayVersion, setPhysicalReplayVersion] = useState(0);
@@ -1424,6 +1442,20 @@ export function ChungDoiDemo({
   useEffect(() => {
     autoScrollingRef.current = autoScrolling;
   }, [autoScrolling]);
+
+  // Đã cuộn tới cuối thiệp hay chưa — quyết định nút hiện "tự động cuộn" hay "xem lại
+  // từ đầu". Chỉ set state ở thời điểm đổi trạng thái nên không gây re-render mỗi frame.
+  useEffect(() => {
+    if (!opened || captureMode || isPaginatedExperience) return;
+
+    const update = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      setAtInvitationEnd(maxScroll - window.scrollY <= 2);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, [captureMode, isPaginatedExperience, opened]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -1520,7 +1552,6 @@ export function ChungDoiDemo({
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const remaining = maxScroll - lenis.scroll;
     if (remaining <= 1) {
-      autoScrollFinishedRef.current = true;
       setAutoScrolling(false);
       return;
     }
@@ -1530,15 +1561,17 @@ export function ChungDoiDemo({
     lenis.scrollTo(maxScroll, {
       duration,
       easing: (t) => t,
-      onComplete: () => {
-        autoScrollFinishedRef.current = true;
-        setAutoScrolling(false);
-      },
+      onComplete: () => setAutoScrolling(false),
     });
 
     return () => {
-      // Dừng animation scrollTo bằng cách neo về vị trí hiện tại.
-      lenis.scrollTo(lenis.scroll, { immediate: true });
+      // Huỷ animation scrollTo. Không dùng `scrollTo(lenis.scroll, { immediate: true })`:
+      // trong lúc animate programmatic, Lenis liên tục đồng bộ `targetScroll = animatedScroll`,
+      // nên `target === this.targetScroll` và scrollTo return sớm — animation vẫn chạy tiếp.
+      // `stop()`/`start()` đều gọi `reset()`, vốn gọi `animate.stop()`, nên cắt hẳn animation
+      // rồi trả lại quyền cuộn cho user.
+      lenis.stop();
+      lenis.start();
     };
   }, [
     autoScrolling,
@@ -1666,6 +1699,11 @@ export function ChungDoiDemo({
   const AuditedTemplateRenderer = isAuditedTemplateSlug(content.slug)
     ? AUDITED_TEMPLATE_RENDERERS[content.slug]
     : null;
+  const autoScrollLabel = autoScrolling
+    ? invitationControlsT("stopAutoScroll")
+    : atInvitationEnd
+      ? invitationControlsT("replayAutoScroll")
+      : invitationControlsT("startAutoScroll");
 
   function getInteractiveAudio() {
     const audio = audioRef.current;
@@ -1686,7 +1724,6 @@ export function ChungDoiDemo({
     window.scrollTo(0, 0);
     root.style.scrollBehavior = originalScrollBehavior;
 
-    autoScrollFinishedRef.current = false;
     setOpening(true);
     const openingEffect = tokens?.openingEffect;
     const revealDelay = openingEffect
@@ -1731,7 +1768,6 @@ export function ChungDoiDemo({
       window.clearTimeout(autoScrollTimerRef.current);
       autoScrollTimerRef.current = null;
     }
-    autoScrollFinishedRef.current = false;
     openingRef.current = false;
     setAutoScrolling(false);
     setOpening(false);
@@ -1742,11 +1778,19 @@ export function ChungDoiDemo({
     window.scrollTo({ behavior: "auto", top: 0 });
   }
 
-  function toggleAutoScroll(event: MouseEvent<HTMLElement>) {
-    if (previewMode || !opened || autoScrollFinishedRef.current) return;
-    const target = event.target as HTMLElement;
-    if (target.closest("button,a,input,textarea,select,label,[role='button'],[contenteditable='true']")) return;
-    setAutoScrolling((value) => !value);
+  function toggleAutoScroll() {
+    if (previewMode || !opened) return;
+    if (autoScrollingRef.current) {
+      setAutoScrolling(false);
+      return;
+    }
+    // Đã cuộn hết thiệp thì bấm nút nghĩa là muốn xem lại từ đầu.
+    const lenis = lenisRef.current;
+    if (lenis) {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll - lenis.scroll <= 1) lenis.scrollTo(0, { immediate: true });
+    }
+    setAutoScrolling(true);
   }
 
   return (
@@ -1759,7 +1803,6 @@ export function ChungDoiDemo({
           ? "relative h-[100dvh] overflow-hidden bg-[#111820]"
           : "relative min-h-screen bg-white"
       }
-      onClick={isPaginatedExperience ? undefined : toggleAutoScroll}
     >
       <h1 className="sr-only">{semanticHeading}</h1>
       {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
@@ -1951,6 +1994,26 @@ export function ChungDoiDemo({
                 <RotateCcw aria-hidden className="size-5" strokeWidth={1.5} />
               </button>
             ) : null}
+            {!isPaginatedExperience && !previewMode ? (
+              <button
+                type="button"
+                data-testid="invitation-auto-scroll-toggle"
+                onClick={toggleAutoScroll}
+                aria-label={autoScrollLabel}
+                title={autoScrollLabel}
+                aria-pressed={autoScrolling}
+                className="flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
+              >
+                {autoScrolling ? (
+                  <Pause aria-hidden className="size-5" />
+                ) : atInvitationEnd ? (
+                  <RotateCcw aria-hidden className="size-5" />
+                ) : (
+                  <ChevronsDown aria-hidden className="size-5" />
+                )}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={toggleMusic}
@@ -1959,11 +2022,20 @@ export function ChungDoiDemo({
                   ? invitationControlsT("pauseMusic")
                   : invitationControlsT("playMusic")
               }
+              title={
+                playing
+                  ? invitationControlsT("pauseMusic")
+                  : invitationControlsT("playMusic")
+              }
               aria-pressed={playing}
               className="flex size-12 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-1 sm:right-6"
               style={{ backgroundColor: tokens.buttonBg, color: tokens.buttonText }}
             >
-              {playing ? <Pause className="size-5" /> : <Play className="size-5" />}
+              {playing ? (
+                <AudioLines aria-hidden className="size-5" />
+              ) : (
+                <VolumeX aria-hidden className="size-5" />
+              )}
             </button>
           </div>
         </>

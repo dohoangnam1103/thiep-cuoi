@@ -47,6 +47,12 @@ export type ChungDoiDemoContent = {
     address: string;
     mapAddress: string;
     banquetTime: string;
+    /**
+     * Giờ đón khách, khi mẫu hiển thị cặp "Đón khách / Khai tiệc". Tách riêng vì
+     * có mẫu (minimalism-dark-red) dùng giờ đón khách khác cả `banquetTime` lẫn
+     * `couple.ceremonyTime` nên không suy ra được. Chỉ dùng cho demo content.
+     */
+    welcomeTime?: string;
   };
   ceremonies?: { title: string; date: string; time: string }[];
   schedule: { time: string; label: string }[];
@@ -2380,6 +2386,281 @@ const templateDemoContent: Record<string, ChungDoiDemoContent> = {
       "groomAccountName": " Nguyễn Gia Huy"
     },
     "music": "/chungdoi/music/glass-garden-green.mp3"
+  },
+  "glass-garden-pink": {
+    "slug": "glass-garden-pink",
+    "invitationId": "ducanh-ngochan-glass-pink",
+    "theme": {
+      "primaryColor": "#CB5D6C",
+      "fontFamily": "Viaoda Libre",
+      "assetFolder": "glass-garden-pink",
+      "assets": [
+        "/chungdoi/images/themes/glass-garden-pink/floral-background.webp",
+        "/chungdoi/images/themes/_decor/glass-garden-pink/leaf1-bloom.webp",
+        "/chungdoi/images/themes/_decor/glass-garden-pink/flower1-decoration.webp",
+        "/chungdoi/images/themes/_decor/glass-garden-pink/flower2-decoration.webp",
+        "/chungdoi/images/themes/_decor/glass-garden-pink/flower4-decoration.webp",
+        "/chungdoi/images/themes/_decor/glass-garden-pink/flower5-bottom.webp"
+      ]
+    },
+    "couple": {
+      "brideFullName": "Vũ Ngọc Hân",
+      "groomFullName": "Lê Đức Anh",
+      "brideShortName": "Ngọc Hân",
+      "groomShortName": "Đức Anh",
+      "brideBirthOrder": "Con gái út",
+      "groomBirthOrder": "Trưởng nam",
+      "brideFirst": true,
+      "date": "2026-11-08",
+      "time": "18:00",
+      "ceremonyDate": "2026-11-08",
+      "ceremonyTime": "18:00",
+      "ceremonyHeader": "LỄ THÀNH HÔN TẠI",
+      "openingMessage": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"
+    },
+    "families": {
+      "brideFather": "Vũ Đình Khoa",
+      "brideMother": "Nguyễn Thị Hạnh",
+      "brideAddress": "TP. Biên Hòa, Đồng Nai",
+      "groomFather": "Lê Hoàng Nam",
+      "groomMother": "Trần Thị Thu",
+      "groomAddress": "Quận 4, TP. Hồ Chí Minh",
+      "brideParentTitle": "Ông Bà",
+      "groomParentTitle": "Ông Bà"
+    },
+    "venue": {
+      "address": "Trung tâm Hội nghị Tiệc cưới Riverside Palace, 360D Bến Vân Đồn, P. 1, Quận 4, TP. Hồ Chí Minh",
+      "mapAddress": "",
+      "banquetTime": "18:00"
+    },
+    "schedule": [
+      {
+        "time": "17:30",
+        "label": "Đón khách"
+      },
+      {
+        "time": "18:30",
+        "label": "Khai tiệc"
+      },
+      {
+        "time": "18:45",
+        "label": "Rót rượu, cắt bánh"
+      },
+      {
+        "time": "19:00",
+        "label": "Phục vụ món chính"
+      },
+      {
+        "time": "21:00",
+        "label": "Kết thúc tiệc"
+      }
+    ],
+    "dressCodeColors": "#933845,#CB5D6C,#FFFFFF",
+    "albumLayout": "coverflow",
+    "gallery": [
+      "/chungdoi/images/gallery/glass-garden-pink/photo-1.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-2.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-3.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-4.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-5.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-6.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-7.webp",
+      "/chungdoi/images/gallery/glass-garden-pink/photo-8.webp"
+    ],
+    "wishes": [
+      {
+        "name": "Kim Ngân",
+        "time": "2026-07-18T01:00:00",
+        "text": "Chúc hai bạn một hành trình mới đầy ắp tiếng cười và yêu thương!"
+      },
+      {
+        "name": "Trọng Nghĩa",
+        "time": "2026-07-16T22:00:00",
+        "text": "Chúc mừng ngày vui của hai bạn. Mong tình yêu luôn ngọt ngào như ngày đầu."
+      },
+      {
+        "name": "Mai Anh",
+        "time": "2026-07-15T19:00:00",
+        "text": "Đức Anh và Ngọc Hân thật xứng đôi vừa lứa. Chúc hai bạn hạnh phúc mãi nhé!"
+      },
+      {
+        "name": "Hoàng Nam",
+        "time": "2026-07-14T16:00:00",
+        "text": "Mừng đám cưới của hai bạn! Chúc trăm năm tình viên mãn, bạc đầu nghĩa phu thê."
+      },
+      {
+        "name": "Lan Phương",
+        "time": "2026-07-14T01:00:00",
+        "text": "Chúc mừng hạnh phúc! Chúc hai bạn xây dựng tổ ấm thật đẹp và bền lâu."
+      },
+      {
+        "name": "Quốc Bảo",
+        "time": "2026-07-12T22:00:00",
+        "text": "Chúc cặp đôi sớm sinh quý tử, gia đình luôn ấm êm, hạnh phúc viên mãn."
+      },
+      {
+        "name": "Thu Hà",
+        "time": "2026-07-11T19:00:00",
+        "text": "Ngọc Hân ơi, chúc mừng ngày trọng đại! Mong hai bạn mãi yêu thương và thấu hiểu nhau."
+      },
+      {
+        "name": "Minh Tuấn",
+        "time": "2026-07-10T16:00:00",
+        "text": "Chúc mừng Đức Anh và Ngọc Hân! Chúc hai bạn trăm năm hạnh phúc, bên nhau trọn đời."
+      }
+    ],
+    "bank": {
+      "brideBankName": "Techcombank",
+      "brideAccountNumber": "19099887766554",
+      "brideAccountName": "VU NGOC HAN",
+      "groomBankName": "Vietcombank",
+      "groomAccountNumber": "0071000445566",
+      "groomAccountName": "LE DUC ANH"
+    },
+    "music": "/chungdoi/music/glass-garden-pink.mp3"
+  },
+  "minimalism-dark-red": {
+    "slug": "minimalism-dark-red",
+    "invitationId": "hoanglong-baongoc-minimalism-do-do",
+    "theme": {
+      "primaryColor": "#511419",
+      "fontFamily": "Viaoda Libre",
+      "assetFolder": "minimalism-dark-red",
+      "assets": [
+        "/chungdoi/images/themes/minimalism-dark-red/castle-background.webp",
+        "/chungdoi/images/themes/minimalism-dark-red/paper.webp",
+        "/chungdoi/images/themes/minimalism-dark-red/papernote-background.webp",
+        "/chungdoi/images/themes/_decor/minimalism-dark-red/envelope-background.webp",
+        "/chungdoi/images/themes/_decor/minimalism-dark-red/envelope-cover.webp",
+        "/chungdoi/images/themes/_decor/minimalism-dark-red/flower2-decoration.webp"
+      ]
+    },
+    "couple": {
+      "brideFullName": "Vũ Bảo Ngọc",
+      "groomFullName": "Đặng Hoàng Long",
+      "brideShortName": "Bảo Ngọc",
+      "groomShortName": "Hoàng Long",
+      "brideBirthOrder": "Út Nữ",
+      "groomBirthOrder": "Trưởng Nam",
+      "brideFirst": false,
+      "date": "2026-01-03",
+      "time": "18:00",
+      "ceremonyDate": "2026-01-03",
+      "ceremonyTime": "09:00",
+      "ceremonyHeader": "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      "openingMessage": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"
+    },
+    "families": {
+      "brideFather": "Vũ Đức Trung",
+      "brideMother": "Ngô Thị Hạnh",
+      "brideAddress": "Quận 3, TP. Hồ Chí Minh",
+      "groomFather": "Đặng Văn Thắng",
+      "groomMother": "Bùi Thị Mai",
+      "groomAddress": "Quận 1, TP. Hồ Chí Minh",
+      "brideParentTitle": "Ông Bà",
+      "groomParentTitle": "Ông Bà"
+    },
+    "venue": {
+      "address": "Trung Tâm Hội Nghị White Palace, 194 Hoàng Văn Thụ, Phường 9, Quận Phú Nhuận, TP. Hồ Chí Minh",
+      "mapAddress": "",
+      "banquetTime": "18:00",
+      "welcomeTime": "17:30"
+    },
+    "schedule": [
+      {
+        "time": "17:00",
+        "label": "Đón khách"
+      },
+      {
+        "time": "18:00",
+        "label": "Khai tiệc"
+      },
+      {
+        "time": "18:30",
+        "label": "Nghi thức cưới"
+      },
+      {
+        "time": "19:00",
+        "label": "Cắt bánh & nâng ly"
+      },
+      {
+        "time": "20:30",
+        "label": "Kết thúc tiệc"
+      }
+    ],
+    "dressCodeColors": "#511419,#8C3A3F,#C9A24A,#ECE4D8",
+    "albumLayout": "coverflow",
+    "heroImage": "/chungdoi/images/gallery/minimalism-dark-red/hero.webp",
+    "gallery": [
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-1.webp",
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-2.webp",
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-3.webp",
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-4.webp",
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-5.webp",
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-6.webp",
+      "/chungdoi/images/gallery/minimalism-dark-red/photo-7.webp"
+    ],
+    "wishes": [
+      {
+        "name": "Duy Khang",
+        "time": "2026-07-26T12:30:49",
+        "text": "Chúc mừng ngày vui của hai bạn, trăm năm hạnh phúc bền lâu!"
+      },
+      {
+        "name": "Lan Chi",
+        "time": "2026-07-26T12:30:49",
+        "text": "Đẹp đôi quá! Chúc hai bạn sống bên nhau đầu bạc răng long."
+      },
+      {
+        "name": "Tuấn Anh",
+        "time": "2026-07-26T12:30:49",
+        "text": "Mừng hạnh phúc hai bạn! Chúc gia đình nhỏ luôn đầy ắp tiếng cười."
+      },
+      {
+        "name": "Khánh Vy",
+        "time": "2026-07-26T12:30:49",
+        "text": "Chúc cô dâu chú rể luôn giữ được nụ cười này mãi mãi nhé!"
+      },
+      {
+        "name": "Gia Bảo",
+        "time": "2026-07-26T12:30:49",
+        "text": "Nhìn thiệp là thấy tình yêu rồi. Chúc hai bạn trăm năm viên mãn!"
+      },
+      {
+        "name": "Phương Anh",
+        "time": "2026-07-26T12:30:49",
+        "text": "Chúc đám cưới thật trọn vẹn và ấm áp. Hạnh phúc nhé hai bạn!"
+      },
+      {
+        "name": "Minh Đức",
+        "time": "2026-07-26T12:30:49",
+        "text": "Cuối cùng cũng tới ngày trọng đại, chúc mừng cặp đôi xứng lứa vừa đôi!"
+      },
+      {
+        "name": "Thu Hà",
+        "time": "2026-07-26T12:30:49",
+        "text": "Chúc hai bạn mãi mãi yêu thương và bên nhau trọn đời!"
+      },
+      {
+        "name": "Hoàng Long",
+        "time": "2026-07-26T12:30:49",
+        "text": "Mẫu thiệp đẹp quá, tông đỏ đô sang trọng ghê. Chúc mừng hai bạn!"
+      },
+      {
+        "name": "Ngọc Trâm",
+        "time": "2026-07-26T12:30:49",
+        "text": "Chúc Tuấn Kiệt và Minh Anh trăm năm hạnh phúc, sớm sinh quý tử nhé!"
+      }
+    ],
+    "bank": {
+      "brideBankName": "Techcombank",
+      "brideAccountNumber": "9988776655",
+      "brideAccountName": "LE MINH ANH",
+      "groomBankName": "Vietcombank",
+      "groomAccountNumber": "1023456789",
+      "groomAccountName": "TRAN TUAN KIET"
+    },
+    "music": "/chungdoi/music/minimalism-dark-red.mp3"
   },
   "royal-red": {
     "slug": "royal-red",

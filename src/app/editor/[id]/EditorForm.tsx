@@ -48,6 +48,7 @@ import {
   InvitationMap,
 } from "@/components/chungdoi-tpl-shared";
 import { AdaptiveToaster } from "@/components/adaptive-toaster";
+import { AlbumLayoutPreview } from "@/components/album-layout-preview";
 import { TrialCountdownBanner } from "@/components/trial-countdown-banner";
 import { BankCombobox } from "@/components/ui/bank-combobox";
 import { Combobox } from "@/components/ui/combobox";
@@ -1400,14 +1401,15 @@ const DRESS_CODE_PRESETS: { hex: string; label: string }[] = [
   { hex: "#A9B8CC", label: "Xanh xám" },
 ];
 
-const ALBUM_LAYOUT_OPTIONS: { value: AlbumLayout; label: string }[] = [
-  { value: "grid", label: "Lưới" },
-  { value: "mosaic", label: "Ghép ảnh" },
-  { value: "coverflow", label: "3D" },
+const ALBUM_LAYOUT_OPTIONS: { value: AlbumLayout; nameKey: string; hintKey: string }[] = [
+  { value: "grid", nameKey: "gridName", hintKey: "gridHint" },
+  { value: "mosaic", nameKey: "mosaicName", hintKey: "mosaicHint" },
+  { value: "coverflow", nameKey: "coverflowName", hintKey: "coverflowHint" },
 ];
 
 /** Chọn kiểu hiển thị album; ghi giá trị vào hidden input albumLayout cho action + live preview. */
 function AlbumLayoutField({ defaultValue }: { defaultValue: string }) {
+  const albumT = useTranslations("editor.album");
   const [layout, setLayout] = useState<AlbumLayout>(() => normalizeAlbumLayout(defaultValue));
   const hiddenRef = useRef<HTMLInputElement | null>(null);
   const mountedRef = useRef(false);
@@ -1423,21 +1425,26 @@ function AlbumLayoutField({ defaultValue }: { defaultValue: string }) {
   return (
     <div className="sm:col-span-2">
       <input ref={hiddenRef} type="hidden" name="albumLayout" value={layout} />
-      <span className={labelClass}>Kiểu hiển thị album</span>
+      <span className={labelClass}>{albumT("label")}</span>
       <div className="mt-2 grid grid-cols-3 gap-2">
         {ALBUM_LAYOUT_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             type="button"
             onClick={() => setLayout(opt.value)}
+            aria-pressed={layout === opt.value}
             className={cn(
-              "rounded-lg border px-3 py-2 text-sm transition",
+              "flex flex-col items-center gap-1.5 rounded-lg border px-2 py-2.5 text-center transition",
               layout === opt.value
                 ? "border-primary bg-primary/10 text-foreground"
                 : "border-border text-muted-foreground hover:border-primary/40",
             )}
           >
-            {opt.label}
+            <AlbumLayoutPreview layout={opt.value} />
+            <span className="text-sm font-semibold leading-tight">{albumT(opt.nameKey)}</span>
+            <span className="text-[11px] leading-tight text-muted-foreground">
+              {albumT(opt.hintKey)}
+            </span>
           </button>
         ))}
       </div>

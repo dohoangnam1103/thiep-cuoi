@@ -421,7 +421,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                                 </div>
                                 <div className="mt-2 space-y-0.5 text-center">
                                   <p className="text-[10px]">{q.bank}</p>
-                                  <p className="font-mono text-[10px]">{q.num}</p>
+                                  <p className="tabular-nums text-[10px]">{q.num}</p>
                                   <p className="text-[10px] font-semibold">{q.name}</p>
                                 </div>
                               </div>

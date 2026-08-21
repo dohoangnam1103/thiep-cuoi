@@ -41,36 +41,6 @@ const FOREST_SCENE_IDS = [
   "gift",
   "finale",
 ] as const;
-const FOREST_LOCALE_COPY = [
-  {
-    locale: "en",
-    opening: "Together with their families, the couple joyfully invites you to celebrate their wedding.",
-    parentTitle: "Parents",
-    schedule: "Guest welcome",
-    wish: "Wishing you a lifetime of happiness and a beautiful journey together!",
-  },
-  {
-    locale: "ja",
-    opening: "両家とともに、ふたりの結婚式へ心よりご招待いたします。",
-    parentTitle: "ご両親",
-    schedule: "ゲストのお迎え",
-    wish: "末永く幸せに、笑顔あふれる人生を歩まれますように。",
-  },
-  {
-    locale: "ko",
-    opening: "양가 가족과 함께 두 사람의 결혼을 기쁜 마음으로 초대합니다.",
-    parentTitle: "부모님",
-    schedule: "하객 맞이",
-    wish: "두 분이 오래도록 행복하고 아름다운 여정을 함께하시길 바랍니다.",
-  },
-  {
-    locale: "zh",
-    opening: "谨与双方家人诚挚邀请您共同见证我们的婚礼。",
-    parentTitle: "父母",
-    schedule: "迎接宾客",
-    wish: "愿你们百年好合，携手走过幸福美满的人生。",
-  },
-] as const;
 
 type ForestCameraSample = {
   progress: number;
@@ -3093,45 +3063,6 @@ test("renderer parity preserves every scene heading, action label, boundary, and
   await expect(page.getByTestId("forest-journey-previous")).toBeDisabled();
   await expect(page.getByTestId("forest-journey-next")).toBeEnabled();
 });
-
-for (const localeCopy of FOREST_LOCALE_COPY) {
-  test(`locale ${localeCopy.locale} projects every demo prose surface without Vietnamese fallback`, async ({
-    page,
-  }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await forceWebglFallback(page);
-    await page.goto(`/${localeCopy.locale}${LAB_PATH}`);
-    await expect(page.locator("html")).toHaveAttribute("lang", localeCopy.locale);
-
-    const stage = page.getByTestId("forest-journey-stage");
-    await page.getByTestId("forest-journey-enter").click();
-    await expect(stage).toHaveAttribute("data-current-scene-id", "families");
-    const families = page.locator(
-      '[data-forest-scene-id="families"][data-forest-interactive="true"]',
-    );
-    await expect(families.locator("article").first()).toContainText(
-      localeCopy.parentTitle,
-    );
-
-    await navigateToForestScene(page, "opening-message");
-    await expect(page.locator(
-      '[data-forest-scene-id="opening-message"][data-forest-interactive="true"]',
-    )).toContainText(localeCopy.opening);
-
-    await navigateToForestScene(page, "schedule");
-    await expect(page.locator(
-      '[data-forest-scene-id="schedule"][data-forest-interactive="true"]',
-    )).toContainText(localeCopy.schedule);
-
-    await navigateToForestScene(page, "wishes");
-    await expect(page.getByTestId("forest-wish-note").first()).toContainText(
-      localeCopy.wish,
-    );
-    await expect(page.locator("body")).not.toContainText(
-      /Ông Bà|Đón khách|Khai tiệc|Chúc hai bạn|LỄ THÀNH HÔN/,
-    );
-  });
-}
 
 test("long-copy fixture keeps mobile papers and native controls inside the viewport", async ({
   page,

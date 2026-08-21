@@ -2,9 +2,12 @@
 export const ENVELOPE_TARGET_PX = 340;
 export const ENVELOPE_VERTICAL_RESERVE_PX = 96;
 
+// Chiều cao bìa do nội dung quyết định và bão hoà quanh 518px từ mốc 520px trở lên,
+// nên width là thứ duy nhất điều khiển tỉ lệ ở tablet/desktop. Dưới 768px giữ nguyên
+// số cũ để bìa trên mobile vẫn dọc như thiết kế gốc.
 export function responsiveEnvelopeWidth(viewportWidth: number): number {
-  if (viewportWidth >= 1024) return 600;
-  if (viewportWidth >= 768) return 520;
+  if (viewportWidth >= 1024) return 732;
+  if (viewportWidth >= 768) return 640;
   if (viewportWidth >= 640) return 340;
   return 310;
 }

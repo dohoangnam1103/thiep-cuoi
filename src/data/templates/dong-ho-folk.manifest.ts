@@ -18,9 +18,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "UNI Chu truyen thong", particleType: "petals", gallerySlug: "arch-sage", music: "/chungdoi/music/arch-sage.mp3",
   i18n: {
     vi: { name: "Đông Hồ Se Duyên", description: "Thiệp cưới dân gian trên nền giấy dó, màu điệp và nét khắc mộc đầy sức sống." },
-    en: { name: "Dong Ho Folk", description: "A vivid Vietnamese folk-print invitation on textured do paper." },
-    ja: { name: "ドンホーの縁", description: "ドー紙の質感と天然顔料を生かしたベトナム民画風の招待状です。" },
-    ko: { name: "동호 인연", description: "도 종이 질감과 자연 안료를 살린 베트남 민화풍 청첩장입니다." },
-    zh: { name: "东湖良缘", description: "以竹纸肌理和天然色彩呈现的越南民间版画婚礼请柬。" },
   },
 });

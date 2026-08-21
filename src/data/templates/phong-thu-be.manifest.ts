@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "The Nautigal", particleType: "petals", gallerySlug: "zen-sand", music: "/chungdoi/music/zen-sand.mp3",
   i18n: {
     vi: { name: "Phong Thư Be", description: "Thiệp cưới nhẹ nhàng hiện đại với phong bì giấy màu be và dấu sáp niêm đồng." },
-    en: { name: "Phong Thư Be", description: "A sand-beige paper envelope closed with a bronze wax seal." },
-    ja: { name: "封書・ベージュ", description: "ベージュの紙封筒とブロンズの封蝋を組み合わせた、柔らかく現代的な招待状です。" },
-    ko: { name: "봉서 베이지", description: "베이지 종이 봉투와 브론즈 봉랍으로 마무리한 부드러운 현대풍 청첩장입니다." },
-    zh: { name: "封书米色", description: "米色纸质信封搭配青铜火漆印的柔和现代婚礼请柬。" },
   },
 });

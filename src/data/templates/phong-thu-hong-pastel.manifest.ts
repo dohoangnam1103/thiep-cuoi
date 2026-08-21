@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Fz Aghita", particleType: "petals", gallerySlug: "zen-sand", music: "/chungdoi/music/zen-sand.mp3",
   i18n: {
     vi: { name: "Phong Thư Hồng Pastel", description: "Thiệp cưới nhẹ nhàng hiện đại với phong bì giấy hồng pastel và dấu sáp niêm hồng trầm." },
-    en: { name: "Phong Thư Hồng Pastel", description: "A blush paper envelope closed with a rosewood wax seal." },
-    ja: { name: "封書・ペールピンク", description: "淡いピンクの紙封筒とローズウッドの封蝋を組み合わせた、柔らかく現代的な招待状です。" },
-    ko: { name: "봉서 파스텔 핑크", description: "블러시 종이 봉투와 로즈우드 봉랍으로 마무리한 부드러운 현대풍 청첩장입니다." },
-    zh: { name: "封书淡粉", description: "腮粉色纸质信封搭配玫紫火漆印的柔和现代婚礼请柬。" },
   },
 });

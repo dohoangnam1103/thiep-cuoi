@@ -275,7 +275,7 @@ function HeroSection({ createHref }: { createHref: string }) {
       ) : null}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(214,69,80,0.05),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(224,168,112,0.05),transparent_30%)]" />
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-8 pt-6 sm:px-6 sm:pb-20 sm:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div className="flex flex-col justify-center">
           <h1 className="hero-enter font-heading max-w-3xl text-xl font-black leading-[1.05] tracking-tight text-foreground sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
             <span className="shiny-text">{t("hero.title")}</span>
@@ -303,7 +303,7 @@ function HeroSection({ createHref }: { createHref: string }) {
           <StackFan />
         </div>
       </div>
-      <div className="relative mx-auto max-w-7xl px-4 pb-16 text-center sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 pb-6 text-center sm:px-6 sm:pb-16 lg:px-8">
         <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
           {t("hero.showcaseTitle")} <span className="font-pattaya font-normal italic text-primary">{t("hero.showcaseAccent")}</span>
         </h2>
@@ -403,7 +403,7 @@ function TemplateCarousel() {
 
   return (
     <>
-    <section className="overflow-hidden bg-background py-16">
+    <section className="overflow-hidden bg-background py-8 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <div className="reveal">
           <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("carousel.title")}</h2>
@@ -411,7 +411,7 @@ function TemplateCarousel() {
         </div>
       </div>
 
-      <div className="reveal relative mt-12 w-full">
+      <div className="reveal relative mt-8 w-full sm:mt-12">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-10 left-1/2 w-[min(42rem,80vw)] -translate-x-1/2 rounded-full bg-primary/[0.11] blur-3xl"
@@ -566,13 +566,13 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="bg-background py-16 sm:py-24">
+    <section id="how-it-works" className="bg-background py-8 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
           <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("howItWorks.title")}</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("howItWorks.subtitle")}</p>
         </div>
-        <div className="mx-auto mt-12 grid max-w-5xl items-center gap-12 lg:grid-cols-2">
+        <div className="mx-auto mt-8 grid max-w-5xl items-center gap-8 sm:mt-12 sm:gap-12 lg:grid-cols-2">
           <ol className="reveal relative flex w-full max-w-md flex-col lg:justify-self-end">
             {steps.map(([title, copy, Icon], index) => (
               <li key={title as string} className="group relative flex gap-5 pb-10 last:pb-0">
@@ -594,7 +594,7 @@ function HowItWorks() {
             <WeddingGuideVideo title={t("howItWorks.ctaHint")} />
           </div>
         </div>
-        <div className="reveal mt-14 flex flex-col items-center gap-3">
+        <div className="reveal mt-8 flex flex-col items-center gap-3 sm:mt-14">
           <a
             href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
             className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
@@ -621,7 +621,7 @@ function SupportSection() {
   ];
 
   return (
-    <section className="bg-secondary py-16 sm:py-20">
+    <section className="bg-secondary py-8 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
         <h2 className="reveal font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
           {t("support.title")} <span className="font-pattaya font-normal italic text-primary">{t("support.titleAccent")}</span>
@@ -631,7 +631,7 @@ function SupportSection() {
             hl: (chunks) => <span className="font-semibold text-primary">{chunks}</span>,
           })}
         </p>
-        <div className="reveal mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+        <div className="reveal mx-auto mt-8 grid max-w-3xl gap-4 sm:mt-10 sm:grid-cols-2">
           {cards.map(([Icon, label, value]) => (
             <div
               key={label}
@@ -656,39 +656,45 @@ function GuestsSection() {
   const t = useTranslations("home");
 
   return (
-    <section id="guests" className="relative overflow-hidden bg-background py-20">
+    <section id="guests" className="relative overflow-hidden bg-background py-8 sm:py-20">
       <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(214,64,69,0.14),transparent_55%)]" />
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-        <div className="reveal">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Eyebrow và tiêu đề nằm ngoài grid để chiếm hết bề ngang khối, thay vì
+            bị bó trong cột trái. */}
+        <div className="reveal text-center">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-accent">{t("guests.eyebrow")}</p>
           <h2 className="mt-3 font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("guests.title")}</h2>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("guests.subtitle")}</p>
-          <ul className="mt-8 space-y-4 text-foreground">
-            {[
-              t("guests.point1"),
-              t("guests.point2"),
-              t("guests.point3"),
-              t("guests.point4"),
-              t("guests.point5"),
-            ].map((item) => (
-              <li key={item} className="flex gap-3">
-                <Check className="mt-1 size-5 shrink-0 text-primary" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
         </div>
-        <div className="reveal">
-          <Image
-            src="/chungdoi/images/rsvp-showcase.png"
-            alt={t("guests.title")}
-            width={1122}
-            height={1402}
-            sizes="(max-width: 1023px) 100vw, 704px"
-            loading="lazy"
-            decoding="async"
-            className="h-auto w-full"
-          />
+        <div className="mt-8 grid gap-8 sm:mt-12 sm:gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="reveal">
+            <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("guests.subtitle")}</p>
+            <ul className="mt-8 space-y-4 text-foreground">
+              {[
+                t("guests.point1"),
+                t("guests.point2"),
+                t("guests.point3"),
+                t("guests.point4"),
+                t("guests.point5"),
+              ].map((item) => (
+                <li key={item} className="flex gap-3">
+                  <Check className="mt-1 size-5 shrink-0 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="reveal">
+            <Image
+              src="/chungdoi/images/rsvp-showcase.png"
+              alt={t("guests.title")}
+              width={1122}
+              height={1402}
+              sizes="(max-width: 1023px) 100vw, 704px"
+              loading="lazy"
+              decoding="async"
+              className="h-auto w-full"
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -701,14 +707,14 @@ function TestimonialsSection() {
   const t = useTranslations("home");
 
   return (
-    <section className="bg-background py-20">
+    <section className="bg-background py-8 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-accent">{t("testimonials.eyebrow")}</p>
           <h2 className="mt-3 font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("testimonials.title")}</h2>
           <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("testimonials.subtitle")}</p>
         </div>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3">
           {testimonialKeys.map((key) => (
             <figure
               key={key}

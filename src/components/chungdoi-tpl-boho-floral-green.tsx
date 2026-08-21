@@ -118,7 +118,7 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
             <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex w-full flex-col items-center gap-2 text-center">
               <p className="mb-3 whitespace-pre-line text-center text-[13px] uppercase leading-relaxed md:text-[16px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
               <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[64px]" style={bodyNameFont}>{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[0].birthOrder}</div>

@@ -54,6 +54,32 @@ html.lenis body {
 }
 
 @font-face {
+  font-family: "Viaoda Libre";
+  src: url("/chungdoi/fonts/ViaodaLibre-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/chungdoi/fonts/EBGaramond-Variable.ttf") format("truetype-variations");
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/chungdoi/fonts/CormorantGaramond-Variable.ttf") format("truetype-variations");
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Uchen";
+  src: url("/chungdoi/fonts/Uchen-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
   font-family: "HelveticaNeue";
   src: url("/chungdoi/fonts/HelveticaNeueRoman.otf") format("opentype");
   font-display: swap;
@@ -135,13 +161,23 @@ html.lenis body {
   font-display: swap;
 }
 
+/* ── Hệ 2 font cho thiệp ─────────────────────────────────────────────────────
+ * Mỗi thiệp chỉ được dùng đúng 2 family: 1 display (.font-art-*) cho tên cô
+ * dâu chú rể + heading, và 1 body (.font-body-*) cho toàn bộ text còn lại.
+ * Body chỉ có 2 lựa chọn để chắc chắn phủ dấu tiếng Việt và luôn hợp tông với
+ * display: serif (Lora) đi với display thư pháp/serif, sans (Be Vietnam Pro)
+ * đi với display brush/grotesque. Xem src/lib/invitation-fonts.ts.
+ * ────────────────────────────────────────────────────────────────────────── */
+.font-body-serif { font-family: var(--font-lora), "Lora", Georgia, "Times New Roman", serif; }
+.font-body-sans { font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; }
+
 .font-art-uni { font-family: "UNI Chu truyen thong", "Fz Qellia", serif; }
 .font-art-haydon { font-family: "SVN-HC Haydon Brush", "Pattaya", cursive; }
 .font-art-new-eddy { font-family: "DFVN New Eddy", "Fz Qellia", serif; }
 .font-art-qellia { font-family: "Fz Qellia", "Times New Roman", serif; }
 .font-art-pattaya { font-family: "Pattaya", cursive; }
 .font-art-signora { font-family: "1FTV VIP Signora", "Fz Aghita", cursive; }
-.font-art-lora { font-family: "Lora", Georgia, serif; }
+.font-art-lora { font-family: var(--font-lora), "Lora", Georgia, serif; }
 .font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
 .font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
 .font-art-built { font-family: "SVN-HC Built Titling", HelveticaNeue, sans-serif; }
@@ -727,6 +763,16 @@ html.lenis body {
   background: linear-gradient(90deg, transparent, rgb(255 255 255 / 45%), transparent);
   animation: demo-shine 3s ease-in-out infinite;
   pointer-events: none;
+}
+
+/* Tia sáng lặp vô hạn, nên bỏ hẳn khi người dùng yêu cầu giảm chuyển động.
+   Dùng display: none chứ không phải content: none — giá trị mặc định của
+   content trên ::after cũng tính ra none, nên minifier coi là dư và xoá rule,
+   khiến override mất tác dụng. */
+@media (prefers-reduced-motion: reduce) {
+  .demo-shine::after {
+    display: none;
+  }
 }
 
 @keyframes demo-seal-pulse {

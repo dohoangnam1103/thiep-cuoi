@@ -12,10 +12,23 @@ test("responsive envelope width follows the Chung Đôi breakpoints", () => {
   assert.equal(responsiveEnvelopeWidth(639), 310);
   assert.equal(responsiveEnvelopeWidth(640), 340);
   assert.equal(responsiveEnvelopeWidth(767), 340);
-  assert.equal(responsiveEnvelopeWidth(768), 520);
-  assert.equal(responsiveEnvelopeWidth(1023), 520);
-  assert.equal(responsiveEnvelopeWidth(1024), 600);
-  assert.equal(responsiveEnvelopeWidth(1440), 600);
+  assert.equal(responsiveEnvelopeWidth(768), 640);
+  assert.equal(responsiveEnvelopeWidth(1023), 640);
+  assert.equal(responsiveEnvelopeWidth(1024), 732);
+  assert.equal(responsiveEnvelopeWidth(1440), 732);
+});
+
+test("mobile keeps the portrait cover while desktop reads as a landscape envelope", () => {
+  // Chiều cao bìa do nội dung quyết định: 563px ở mốc mobile, 518px từ 520px trở lên.
+  const mobileRatio = 563 / responsiveEnvelopeWidth(390);
+  const desktopRatio = 518 / responsiveEnvelopeWidth(1440);
+
+  assert.ok(mobileRatio > 1.5, `bìa mobile phải còn dọc, đang ${mobileRatio}`);
+  // √2 là tỉ lệ phong bì A-series/DL — đích của bìa desktop.
+  assert.ok(
+    Math.abs(1 / desktopRatio - Math.SQRT2) < 0.02,
+    `bìa desktop phải xấp xỉ √2 ngang, đang ${1 / desktopRatio}`,
+  );
 });
 
 test("short viewports reduce width uniformly without stretching the ratio", () => {

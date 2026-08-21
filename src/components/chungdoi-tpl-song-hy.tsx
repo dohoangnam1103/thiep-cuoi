@@ -76,7 +76,7 @@ function givenName(full: string) {
 function SongHyBand({ palette, children }: { palette: SongHyPalette; children: React.ReactNode }) {
   return (
     <div className="w-full py-3 md:py-4" style={{ backgroundColor: palette.accent }}>
-      <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.bandText, fontFamily: '"Times New Roman", serif' }}>
+      <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.bandText }}>
         {children}
       </h2>
     </div>
@@ -119,11 +119,11 @@ function SongHyFamilyColumn({ palette, title, a, b, addr }: { palette: SongHyPal
 function SongHyDateRow({ palette, weekday, day, month }: { palette: SongHyPalette; weekday: string; day: string; month: string }) {
   return (
     <div className="mt-5 flex items-center justify-center">
-      <span className="w-[70px] whitespace-nowrap text-right text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{weekday}</span>
+      <span className="w-[70px] whitespace-nowrap text-right text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: palette.gray }}>{weekday}</span>
       <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: palette.gray }} />
-      <span className="text-[32px] md:text-[38px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{day}</span>
+      <span className="text-[32px] md:text-[38px]" style={{ color: palette.accent }}>{day}</span>
       <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: palette.gray }} />
-      <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Tháng {month}</span>
+      <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: palette.gray }}>Tháng {month}</span>
     </div>
   );
 }
@@ -146,7 +146,7 @@ function SongHyCountdown({ palette, target }: { palette: SongHyPalette; target: 
   const mins = Math.floor((diff % 3600000) / 60000);
   const secs = Math.floor((diff % 60000) / 1000);
   return (
-    <div className="mt-2 text-center text-[20px] font-semibold" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
+    <div className="mt-2 text-center text-[20px] font-semibold" style={{ color: palette.gray }}>
       <p>{days} ngày {hours} giờ {mins} phút {secs} giây</p>
     </div>
   );
@@ -186,23 +186,23 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
   );
 
   return (
-    <div className="relative isolate mx-auto flex w-full max-w-[480px] flex-col overflow-hidden overflow-x-clip md:max-w-[900px] md:border" style={{ backgroundColor: palette.cardBg, borderColor: hexToRgba(palette.accent, 0.13) }}>
+    <div className="font-body-serif relative isolate mx-auto flex w-full max-w-[480px] flex-col overflow-hidden overflow-x-clip md:max-w-[900px] md:border" style={{ backgroundColor: palette.cardBg, borderColor: hexToRgba(palette.accent, 0.13) }}>
       <header className="relative w-full overflow-hidden pb-[100px] md:pb-[130px]" style={{ backgroundColor: palette.cardBg }}>
         <div className="pointer-events-none absolute left-1/2 top-0 aspect-square w-[min(671px,130vw)] -translate-x-1/2 -translate-y-1/2 md:w-[min(872px,100%)]" aria-hidden="true">
           <img alt="" className="h-full w-full" src={`${SHR}/sunburst.svg`} style={{ filter: palette.sunburstFilter }} />
         </div>
-        <p className="relative z-10 px-4 pt-10 text-center text-[11px] uppercase tracking-[0.35em] md:pt-[52px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Cormorant Garamond", "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>WELCOME TO OUR WEDDING</p>
+        <p className="relative z-10 px-4 pt-10 text-center text-[11px] uppercase tracking-[0.35em] md:pt-[52px] md:text-[14px]" style={{ color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>WELCOME TO OUR WEDDING</p>
         <div className="relative z-10 mx-auto mt-3 flex w-full max-w-[872px] items-center justify-center gap-4 px-4 md:mt-4 md:gap-5 md:px-10">
           <div className="min-w-0 flex-1 text-center">
-            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{people[0].birthOrder}</p>
-            <p className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[0].fullName)}</p>
+            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{people[0].birthOrder}</p>
+            <p className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[0].fullName)}</p>
           </div>
           <div className="flex w-[64px] shrink-0 items-center justify-center md:w-[83px]">
             <img alt="" className="h-[64px] w-[64px] object-contain md:h-[83px] md:w-[83px]" src={`${SHR}/chu-hy.webp`} style={{ filter: palette.chuHyFilter }} />
           </div>
           <div className="min-w-0 flex-1 text-center">
-            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, fontFamily: '"Avenir Next", sans-serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{people[1].birthOrder}</p>
-            <p className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, fontFamily: '"Big Caslon", Baskerville, "Times New Roman", serif', textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[1].fullName)}</p>
+            <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{people[1].birthOrder}</p>
+            <p className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[1].fullName)}</p>
           </div>
         </div>
         <div className="relative z-10 mt-2 flex justify-center px-6 md:mt-3">
@@ -218,7 +218,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                       <defs>
                         <path id="lnf-arc" d="M -6.84 143 A 149.84 149.84 0 0 1 292.84 143" fill="none" />
                       </defs>
-                      <text fill={palette.arcFill} fontSize="18" fontFamily='"Cormorant Garamond", "Times New Roman", serif' letterSpacing="0.22em" dominantBaseline="central">
+                      <text fill={palette.arcFill} fontSize="18" className="font-body-serif" letterSpacing="0.22em" dominantBaseline="central">
                         <textPath href="#lnf-arc" startOffset="50%" textAnchor="middle" method="align" spacing="auto">LOVE NEVER FAILS</textPath>
                       </text>
                       {palette.starSrc ? (
@@ -246,17 +246,17 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <div className="h-px w-16 self-center md:h-[60px] md:w-px" style={{ backgroundColor: palette.accent }} />
             <SongHyFamilyColumn palette={palette} {...familyColumns[1]} />
           </div>
-          <div className="mt-8 flex flex-col gap-2 px-4 text-center text-[16px] uppercase tracking-wider md:text-[20px]" style={{ whiteSpace: "pre-line", color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
+          <div className="mt-8 flex flex-col gap-2 px-4 text-center text-[16px] uppercase tracking-wider md:text-[20px]" style={{ whiteSpace: "pre-line", color: palette.accent }}>
             {invitationOpeningMessage(content)}
           </div>
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{people[0].birthOrder}</div>
-            <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
-            <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
-            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{people[1].birthOrder}</div>
+            <h3 className="font-art-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[0].birthOrder}</div>
+            <div className="font-art-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
+            <h3 className="font-art-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+            <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[1].birthOrder}</div>
           </div>
-          <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>
+          <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray }}>
             <div style={{ color: palette.accent }}>
               <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
             </div>
@@ -303,20 +303,20 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       <SongHyBand palette={palette}>THÔNG TIN TIỆC CƯỚI</SongHyBand>
       <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
         <div className="relative z-10 -mt-[1px] flex w-full flex-col items-center justify-center px-2 pb-8 pt-6 sm:px-4">
-          <h3 className="flex flex-col items-center text-center text-[16px] uppercase md:text-[20px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Tiệc cưới sẽ diễn ra vào lúc:</h3>
-          <div className="mt-2 text-center text-[20px] font-semibold md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</div>
+          <h3 className="flex flex-col items-center text-center text-[16px] uppercase md:text-[20px]" style={{ color: palette.accent }}>Tiệc cưới sẽ diễn ra vào lúc:</h3>
+          <div className="mt-2 text-center text-[20px] font-semibold md:text-[24px]" style={{ color: palette.accent }}>{venue.banquetTime || couple.time}</div>
           {wedding ? <SongHyDateRow palette={palette} weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
-          {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.yearNumber}</div> : null}
-          <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding?.lunar}</div>
+          {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{wedding.yearNumber}</div> : null}
+          <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: palette.gray }}>{wedding?.lunar}</div>
           <div className="mt-4 flex items-center justify-center gap-8">
             <div className="flex flex-col items-center">
-              <span className="text-[11px] uppercase" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Khai tiệc</span>
-              <span className="mt-1 text-[20px] font-semibold" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</span>
+              <span className="text-[11px] uppercase" style={{ color: palette.gray }}>Khai tiệc</span>
+              <span className="mt-1 text-[20px] font-semibold" style={{ color: palette.accent }}>{venue.banquetTime || couple.time}</span>
             </div>
           </div>
           {palette.showCountdown ? (
             <div className="mt-4 flex flex-col items-center justify-center">
-              <h2 className="flex flex-col items-center text-center text-[20px] uppercase" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Cùng đếm ngược</h2>
+              <h2 className="flex flex-col items-center text-center text-[20px] uppercase" style={{ color: palette.gray }}>Cùng đếm ngược</h2>
               <SongHyCountdown palette={palette} target={`${couple.date}T${couple.time || "18:00"}`} />
             </div>
           ) : null}
@@ -347,7 +347,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           <a href={googleCalendarUrl(content)} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center justify-center text-sm tracking-wider underline decoration-1 underline-offset-4 transition-opacity hover:opacity-70" style={{ color: palette.accent }}>Thêm vào lịch</a>
         </div>
         <div className="relative z-10 flex w-full flex-col items-center justify-center pb-8 pt-2 md:pb-10 md:pt-2">
-          <button type="button" className="inline-flex items-center justify-center rounded-[10px] px-4 py-2 text-sm font-semibold tracking-wider transition-transform hover:scale-[1.03] md:text-base" style={{ backgroundColor: palette.accent, color: palette.bandText, fontFamily: 'Baskerville, "Times New Roman", serif' }}>XÁC NHẬN</button>
+          <button type="button" className="inline-flex items-center justify-center rounded-[10px] px-4 py-2 text-sm font-semibold tracking-wider transition-transform hover:scale-[1.03] md:text-base" style={{ backgroundColor: palette.accent, color: palette.bandText }}>XÁC NHẬN</button>
         </div>
       </div>
 
@@ -355,10 +355,10 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
           <section className="relative z-10 flex w-full flex-col items-center pb-8">
             <SongHyBand palette={palette}>Tiệc cưới sẽ tổ chức tại</SongHyBand>
-            <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ backgroundColor: palette.cardBg, color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.address}</div>
+            <div className="mt-6 flex w-[92%] max-w-3xl flex-col items-center whitespace-pre-line break-words rounded-lg p-4 text-center text-sm font-medium md:text-base" style={{ backgroundColor: palette.cardBg, color: palette.gray }}>{venue.address}</div>
             <div className="relative flex w-full flex-col items-center gap-4 md:gap-5">
               <InvitationMap query={mapQuery} className="mt-4 h-[350px] w-[92%] max-w-3xl rounded-xl md:h-[450px]" title={mapQuery} loading="lazy" allowFullScreen referrerPolicy="no-referrer-when-downgrade" />
-              <MapDirectionsButton query={mapQuery} style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }} />
+              <MapDirectionsButton query={mapQuery} style={{ color: palette.accent }} />
             </div>
           </section>
         </div>
@@ -366,8 +366,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
 
       {schedule.length > 0 ? (
         <div className="relative z-10 mb-10 mt-10 flex flex-col gap-6 px-4 md:mb-12 md:mt-12 md:gap-8">
-          <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: '"Times New Roman", serif' }}>LỊCH TRÌNH NGÀY CƯỚI</h2>
-          <ol className="relative mx-auto grid w-full max-w-[460px] grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-x-6 gap-y-8 md:gap-x-8 md:gap-y-10" style={{ fontFamily: 'Baskerville, "Times New Roman", serif' }}>
+          <h2 className="flex flex-col items-center text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent }}>LỊCH TRÌNH NGÀY CƯỚI</h2>
+          <ol className="relative mx-auto grid w-full max-w-[460px] grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-x-6 gap-y-8 md:gap-x-8 md:gap-y-10" >
             {schedule.map((s, i) => {
               const isFirst = i === 0;
               const isLast = i === schedule.length - 1;
@@ -378,12 +378,12 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                   : "absolute left-1/2 w-px -translate-x-1/2 -top-8 md:-top-10 -bottom-8 md:-bottom-10";
               return (
                 <li key={`${s.time}-${i}`} className="contents">
-                  <span className="pt-0.5 text-right text-[16px] leading-snug tabular-nums tracking-wide md:text-[17px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{s.time}</span>
+                  <span className="pt-0.5 text-right text-[16px] leading-snug tabular-nums tracking-wide md:text-[17px]" style={{ color: palette.accent }}>{s.time}</span>
                   <span aria-hidden="true" className="relative flex items-center justify-center self-stretch">
                     <span className={lineClass} style={{ backgroundColor: hexToRgba(palette.accent, 0.4) }} />
                     <span className="relative block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: palette.accent, boxShadow: `${hexToRgba(palette.accent, 0.13)} 0px 0px 0px 2px` }} />
                   </span>
-                  <span className="pt-0.5 text-left text-[17px] font-medium leading-snug md:text-[19px]" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{s.label}</span>
+                  <span className="pt-0.5 text-left text-[17px] font-medium leading-snug md:text-[19px]" style={{ color: palette.gray }}>{s.label}</span>
                 </li>
               );
             })}
@@ -416,7 +416,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       {banks.length > 0 ? (
         <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
           <div className="relative z-10 flex flex-col items-center justify-center py-8">
-            <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
+            <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent }}>Phong Bao Mừng Cưới</h2>
             <button data-testid="gift-envelope" type="button" aria-label="Mở hộp mừng cưới" onClick={() => setGiftOpen(true)} className="group relative cursor-pointer border-none bg-transparent outline-none" style={{ width: 200, height: 256 }}>
               <TemplateGiftArtwork templateSlug={content.slug} />
               <p className="nhat-binh-hint-text absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ color: "rgb(70, 70, 70)" }}>Nhấn để mở</p>
@@ -430,7 +430,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto sm:max-w-xl" style={{ backgroundColor: palette.modalBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: palette.accent }}>
               <button type="button" onClick={() => setGiftOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
-              <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px", fontFamily: 'Baskerville, "Times New Roman", serif' }}>Phong Bao Mừng Cưới</h2>
+              <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]" style={{ textShadow: "rgba(0, 0, 0, 0.2) 1px 1px 2px" }}>Phong Bao Mừng Cưới</h2>
             </div>
             <div className="p-4 sm:p-6">
               <div className="flex flex-row flex-wrap items-start justify-center gap-x-10 gap-y-6 sm:gap-x-20" style={{ color: "rgb(70, 70, 70)" }}>
@@ -445,7 +445,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                       </div>
                       <div className="mt-2 space-y-0.5 text-center">
                         <p className="text-[10px]" style={{ color: "rgb(70, 70, 70)" }}>{q.bank}</p>
-                        <p className="font-mono text-[10px]" style={{ color: "rgb(70, 70, 70)" }}>{q.num}</p>
+                        <p className="tabular-nums text-[10px]" style={{ color: "rgb(70, 70, 70)" }}>{q.num}</p>
                         <p className="text-[10px] font-semibold" style={{ color: "rgb(70, 70, 70)" }}>{q.name}</p>
                       </div>
                       <a href={`${qr}&download=1`} download className="mt-2.5 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold text-white shadow-md transition hover:opacity-90" style={{ backgroundColor: palette.accent }}>
@@ -462,7 +462,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
       ), document.body) : null}
 
       <div data-template-footer className="relative z-10 mx-auto max-w-4xl px-2 py-8 text-center sm:px-4">
-        <span className="flex flex-col items-center gap-1 whitespace-pre-line text-xl" style={{ color: palette.gray, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+        <span className="flex flex-col items-center gap-1 whitespace-pre-line text-xl" style={{ color: palette.gray }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
       </div>
       <footer className="flex w-full items-center justify-center py-1.5" style={{ backgroundColor: palette.cardBg }}>
         <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: palette.gray }}>♡ thiepmungonline.com</a>

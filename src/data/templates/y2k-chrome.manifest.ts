@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "SVN-HC Marvin Visions", particleType: "confetti", gallerySlug: "ticket-terracotta", music: "/chungdoi/music/ticket-terracotta.mp3",
   i18n: {
     vi: { name: "Chrome Thiên Niên Kỷ", description: "Thiệp cưới Y2K với dải chrome lỏng, phản xạ cyan-coral và chữ tương lai khổ lớn." },
-    en: { name: "Y2K Chrome", description: "Liquid chrome ribbons and spectral cyan-coral reflections form a future-facing invitation." },
-    ja: { name: "Y2Kクローム", description: "液体クロームとシアン、コーラルの反射で仕立てた未来的な招待状です。" },
-    ko: { name: "Y2K 크롬", description: "리퀴드 크롬과 시안, 코랄 반사로 완성한 미래적인 청첩장입니다." },
-    zh: { name: "千禧铬彩", description: "以液态铬带和青蓝、珊瑚色反射构成的未来感婚礼请柬。" },
   },
 });

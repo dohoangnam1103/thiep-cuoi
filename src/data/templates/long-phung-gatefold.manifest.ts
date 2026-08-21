@@ -52,26 +52,6 @@ export const manifest = defineTemplateManifest({
       description:
         "Thiệp gatefold sơn mài đỏ đương đại, mở quanh bản lề để lộ lời mời ở trung tâm.",
     },
-    en: {
-      name: "Long Phung Gatefold",
-      description:
-        "A contemporary Vietnamese lacquer gatefold that unfolds around a ceremonial center sheet.",
-    },
-    ja: {
-      name: "ロン・フン・ゲートフォールド",
-      description:
-        "現代ベトナム漆器の三つ折りゲートフォールド招待状。中央のセレモニーシートを開きます。",
-    },
-    ko: {
-      name: "롱 풍 게이트폴드",
-      description:
-        "현대 베트남 옻칠 감성의 삼단 게이트폴드 청첩장으로 중앙 초대장을 펼칩니다.",
-    },
-    zh: {
-      name: "龙凤折页",
-      description:
-        "以当代越南漆艺呈现的三折婚礼请柬，展开后露出中央仪式纸页。",
-    },
   },
   assets: [
     "/chungdoi/templates/long-phung-gatefold/source/dragon-left-master-v2.png",

@@ -18,9 +18,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "SVN-HC Haydon Brush", particleType: "confetti", gallerySlug: "ticket-terracotta", music: "/chungdoi/music/ticket-terracotta.mp3",
   i18n: {
     vi: { name: "Thổ Cẩm Vùng Cao", description: "Thiệp cưới dệt indigo với nhịp hình học bất đối xứng và sắc chỉ vùng cao." },
-    en: { name: "Highland Brocade", description: "An indigo wedding invitation built from original highland textile geometry." },
-    ja: { name: "高地の織り", description: "藍色の織物と独自の幾何学模様で仕立てた招待状です。" },
-    ko: { name: "고원 직조", description: "인디고 직물과 독창적인 기하 패턴으로 완성한 청첩장입니다." },
-    zh: { name: "高地织锦", description: "以靛蓝织物和原创几何纹样构成的婚礼请柬。" },
   },
 });

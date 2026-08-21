@@ -56,22 +56,6 @@ export const manifest = defineTemplateManifest({
       name: "Vé Hẹn Đất Nung",
       description: "Thiệp cưới lấy cảm hứng từ vé hành trình, cuống xé và sắc đất nung ấm áp.",
     },
-    en: {
-      name: "Ticket Terracotta",
-      description: "A warm terracotta invitation inspired by travel tickets and perforated stubs.",
-    },
-    ja: {
-      name: "テラコッタ・チケット",
-      description: "旅のチケットと切り取り線から着想した温かなテラコッタ色の招待状です。",
-    },
-    ko: {
-      name: "티켓 테라코타",
-      description: "여행 티켓과 절취선을 모티프로 한 따뜻한 테라코타 청첩장입니다.",
-    },
-    zh: {
-      name: "陶土旅票",
-      description: "从旅行票券和撕线汲取灵感的温暖陶土色婚礼请柬。",
-    },
   },
   assets: [
     ...Array.from({ length: 8 }, (_, index) => `/chungdoi/images/gallery/${slug}/photo-${index + 1}.webp`),

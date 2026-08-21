@@ -56,22 +56,6 @@ export const manifest = defineTemplateManifest({
       name: "Tĩnh Sa",
       description: "Thiệp cưới tối giản với nền cát, khoảng thở rộng và dấu mực ensō tĩnh tại.",
     },
-    en: {
-      name: "Zen Sand",
-      description: "A quiet sand-toned invitation with spacious rhythm and an enso ink mark.",
-    },
-    ja: {
-      name: "禅の砂",
-      description: "砂色の余白と円相の墨跡で静けさを表現した招待状です。",
-    },
-    ko: {
-      name: "젠 샌드",
-      description: "모래빛 여백과 엔소 먹선으로 고요함을 담은 청첩장입니다.",
-    },
-    zh: {
-      name: "静砂",
-      description: "以沙色留白和圆相墨迹表达宁静的婚礼请柬。",
-    },
   },
   assets: [
     ...Array.from({ length: 8 }, (_, index) => `/chungdoi/images/gallery/${slug}/photo-${index + 1}.webp`),

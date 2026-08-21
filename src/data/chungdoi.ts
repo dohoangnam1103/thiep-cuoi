@@ -409,6 +409,42 @@ export const templates = [
     "sourceUrl": "https://chungdoi.com/en/templates/glass-garden-green"
   },
   {
+    "slug": "glass-garden-pink",
+    "name": "Vườn Kính Hồng",
+    "title": "Glass Garden Pink Template - Soft Blush Garden Wedding Invitation | Thiệp Mừng Online",
+    "description": "Glass Garden Pink wedding e-card: a soft blush-pink watercolor background fills the card with gold-veined translucent leaves, the names sit in a clear oval glass frame, and a large glass panel wraps the content. Free to create on Thiệp Mừng Online.",
+    "category": "Floral",
+    "color": "Pink",
+    "isNew": true,
+    "highlights": [
+      "Soft blush-pink watercolor background filling the whole card",
+      "The couple's names inside a clear oval glass frame A large glass panel wrapping the content, florals showing through",
+      "Gold-veined translucent pink leaves, tender and elegant Rounded-frame mini calendar with the wedding day marked by a heart Wedding-day timeline with welcome, cake and dish medallions"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/glass_garden_pink.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/glass_garden_pink.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/glass_garden_pink.webp",
+    "sourceUrl": "https://chungdoi.com/en/templates/glass-garden-pink"
+  },
+  {
+    "slug": "minimalism-dark-red",
+    "name": "Minimalism Đỏ Đô",
+    "title": "Minimalism Dark Red Template - Minimalist Burgundy Wedding Invitation | Thiệp Mừng Online",
+    "description": "Minimalism Dark Red wedding e-card: a warm cream page with a faint manor silhouette, a burgundy envelope holding the couple photo, deep peony sprigs, and burgundy panels carrying cream serif type. Free to create on Thiệp Mừng Online.",
+    "category": "Modern",
+    "color": "Red",
+    "isNew": true,
+    "highlights": [
+      "Minimalist styling in a rich burgundy palette",
+      "Burgundy envelope cradling the couple photo, sealed with a gold heart wax stamp Warm cream page behind a faint manor silhouette",
+      "Deep peony sprigs with soft foliage Burgundy panels carrying formal cream lettering"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_darkred.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_darkred.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_darkred.webp",
+    "sourceUrl": "https://chungdoi.com/en/templates/minimalism-dark-red"
+  },
+  {
     "slug": "royal-red",
     "name": "Hoàng Kim Đỏ",
     "title": "Royal Red Template - Luxurious Royal Wedding Invitation | Thiệp Mừng Online",
@@ -834,9 +870,11 @@ export const completedTemplateSlugs = new Set<string>([
   "crystal-floral-blue",
   "baroque-gold",
   "glass-garden-green",
+  "glass-garden-pink",
   "hoa-tinh-red",
   "chibi-red",
   "minimalism-red",
+  "minimalism-dark-red",
   "cherry-blossom-pink",
   ...generatedTemplateSlugs.filter((slug) => !hiddenTemplateSlugs.has(slug)),
 ]);

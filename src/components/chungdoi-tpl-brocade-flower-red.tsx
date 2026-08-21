@@ -95,7 +95,7 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]">
               {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex w-full flex-col items-center gap-2 text-center">
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: BFR_GOLD }}>&amp;</div>

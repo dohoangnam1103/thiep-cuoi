@@ -18,21 +18,23 @@ A web app for creating and sharing digital wedding invitations (thiệp cưới)
 - **Icons:** Lucide React
 - **Database:** Prisma 7 + SQLite (better-sqlite3 adapter)
 - **Auth:** session-based (`jose` JWT, `bcryptjs` password hashing)
-- **i18n:** next-intl — vi (default), en, ko, ja, zh
+- **i18n:** next-intl — Vietnamese only (`messages/vi.json`). en/ko/ja/zh were removed; `src/i18n/routing.ts` serves `vi` with no URL prefix and every other prefix 404s. Copy still goes through the catalog, so do not hardcode strings.
 - **Deployment:** minipc / Docker (see `docs/deploy-minipc.md`)
 
 ## Commands
 - `npm run dev` — Start dev server
-- `npm run build` — Production build
+- `npm run build` — Production build. **Fails locally on purpose**: `next build` forces `NODE_ENV=production` and `src/lib/site-url.ts` rejects the `http://localhost` value in `.env.local`. CI and Docker pass a real HTTPS `NEXT_PUBLIC_SITE_URL`, so this script stays untouched.
+- `npm run build:local` — Same build with `ALLOW_INSECURE_SITE_URL=1`. Use this one locally; the failure above is not a bug to fix.
 - `npm run lint` — ESLint check (fastest gate, run this first)
 - `npm run typecheck` — TypeScript check for `src/`
 - `npm run typecheck:tests` — TypeScript check for `tests/`
 - `npm run test:unit` — Unit tests (`src/**/*.test.ts` via tsx)
-- `npm run check` — lint + typecheck + typecheck:tests + test:unit + build. Slow with a long log; use only as the final gate.
+- `npm run check` — lint + typecheck + typecheck:tests + test:unit + build:local. Slow; use only as the final gate.
 - `npm run test:e2e` — Playwright E2E. Target one spec (`npx playwright test tests/e2e/<file>`) instead of the whole suite.
 - `npm run prisma:migrate` — Run Prisma migrations (dev)
 - `npm run prisma:generate` — Regenerate Prisma client
 - `npm run test:lightbox` — Playwright check for the demo lightbox
+- `npm run deploy` — Deploy to minipc (`scripts/deploy-fast.sh`, helpers in `scripts/lib/`). `deploy:smoke` runs smoke checks only, `deploy:setup` provisions the host once, `deploy:legacy` is the old `deploy-minipc.sh` path. Details in `docs/deploy-minipc.md`.
 
 ## Code Style
 - TypeScript strict mode, no `any`
@@ -71,6 +73,7 @@ docs/               # deploy guides + research notes
 - `dev.db` and `prisma/*.db` are gitignored — the SQLite database is local only.
 - Files in `src/data/` marked `// Auto-generated` were seeded from research crawls; edit them directly. The crawl scripts they name (e.g. `scripts/crawl-chungdoi-demo-content.mjs`) no longer exist — do not go looking for them.
 - Some Prisma writes are wrapped in a data-access layer (`src/lib/dal.ts`) — prefer it over calling the client directly from components.
+- `public/chungdoi/images/template-previews/en/` is **not** a locale folder. It is a legacy directory name inherited from the cloned source and is the only preview directory; leave the path alone.
 
 ## Reference Docs — Read On Demand Only
 Do NOT read these unless the current task actually needs them. They are large and cost a lot of context.
@@ -89,7 +92,7 @@ These matter: the repo has several files big enough to blow a context window in 
 |---|---|---|
 | `src/app/editor/[id]/EditorForm.tsx` | 3488 lines | Field components ~370-1740, `EditorFormBody` 1737-2765, `DemoEditorFormBody` 2766-3420, `EditorForm` export 3421+. Grep the field label first. |
 | `src/data/chungdoi-demo-content.ts` | 4422 lines | Type `ChungDoiDemoContent` at top (~lines 1-300); rest is data. Read the type only. |
-| `messages/vi.json` (+ en/ko/ja/zh) | 131KB | Grep the message key, then read that namespace's line range. Top keys: `home`, `weddingGuide`, `templateSeoFacets`, `listing`, `guestManager`, `templateStudio`, `editor`. |
+| `messages/vi.json` | 131KB | Grep the message key, then read that namespace's line range. Top keys: `home`, `weddingGuide`, `templateSeoFacets`, `listing`, `guestManager`, `templateStudio`, `editor`. |
 | `src/components/chungdoi-demo.tsx` | 1986 lines | Grep the section name. |
 | `src/data/chungdoi-theme-config.ts` | 1776 lines | Keyed by template id — grep the id. |
 | `tests/e2e/forest-wedding-journey-lab.spec.ts` | 3288 lines | Grep the test name. |

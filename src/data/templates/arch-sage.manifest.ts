@@ -56,22 +56,6 @@ export const manifest = defineTemplateManifest({
       name: "Vòm Xanh Thảo Mộc",
       description: "Thiệp cưới xanh thảo mộc với hệ vòm xếp lớp, ảnh chân dung bo vòm và chiều sâu nhẹ.",
     },
-    en: {
-      name: "Arch Sage",
-      description: "A botanical sage invitation with layered arches and softly framed portraits.",
-    },
-    ja: {
-      name: "セージ・アーチ",
-      description: "重なるアーチと柔らかな額装写真で仕立てたセージ色の招待状です。",
-    },
-    ko: {
-      name: "아치 세이지",
-      description: "겹겹의 아치와 부드러운 인물 프레임을 담은 세이지 컬러 청첩장입니다.",
-    },
-    zh: {
-      name: "鼠尾草拱门",
-      description: "以层叠拱门和柔和人像框构成的鼠尾草绿色婚礼请柬。",
-    },
   },
   assets: [
     ...Array.from({ length: 8 }, (_, index) => `/chungdoi/images/gallery/${slug}/photo-${index + 1}.webp`),

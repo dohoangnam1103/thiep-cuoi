@@ -31,7 +31,7 @@ export function WeddingFaqSection({ animated = false, id }: { animated?: boolean
   const t = useTranslations("home");
 
   return (
-    <section id={id} className="bg-secondary py-20">
+    <section id={id} className="bg-secondary py-8 sm:py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <h2
           className={`${animated ? "reveal " : ""}text-center font-heading text-3xl font-black text-foreground sm:text-5xl`}

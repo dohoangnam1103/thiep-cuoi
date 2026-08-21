@@ -88,10 +88,10 @@ test("resolveOgDate trả chuỗi rỗng khi trống", () => {
   assert.equal(resolveOgDate("   "), "");
 });
 
-test("resolveOgFont map template có font riêng (song-hy-green → Fz Aghita)", () => {
+test("resolveOgFont map template có font riêng (song-hy-green → Fz Qellia)", () => {
   const f = resolveOgFont("song-hy-green");
-  assert.equal(f.family, "Fz Aghita");
-  assert.equal(f.file, "FzAghita.ttf");
+  assert.equal(f.family, "Fz Qellia");
+  assert.equal(f.file, "Fz_Qellia_Fix.ttf");
 });
 
 test("resolveOgFont fallback Lora khi template không tồn tại", () => {

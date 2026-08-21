@@ -110,7 +110,7 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="whitespace-pre-line text-center text-[15px] uppercase tracking-wide md:text-[18px]" style={{ color: PINK_MUTED }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
-            <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex w-full flex-col items-center gap-2 text-center">
               <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>

@@ -37,7 +37,7 @@ const typography = {
 function PopHeading({ number, children, invert = false }: { number: string; children: ReactNode; invert?: boolean }) {
   return (
     <div className={invert ? "text-[#fff1cf]" : "text-[#17110d]"}>
-      <span className="inline-flex -rotate-3 bg-[#12b9c7] px-3 py-1 font-mono text-xs font-black tracking-[0.2em] text-[#17110d] shadow-[4px_4px_0_#17110d]">
+      <span className="tabular-nums inline-flex -rotate-3 bg-[#12b9c7] px-3 py-1 text-xs font-black tracking-[0.2em] text-[#17110d] shadow-[4px_4px_0_#17110d]">
         {number}
       </span>
       <h2 className={`${typography.displayFontClass} mt-5 text-balance text-[clamp(2.7rem,11vw,5.6rem)] font-normal uppercase leading-[0.82] tracking-[-0.035em]`}>
@@ -136,7 +136,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
             <div className="mt-10 grid gap-7 sm:grid-cols-2">
               {familiesInOrder.map((family, index) => (
                 <OffsetPanel key={family.side} cyan={index === 1} className={index === 1 ? "p-7 sm:translate-y-7" : "p-7"}>
-                  <p className="font-mono text-xs font-black uppercase tracking-[0.18em]">{family.side}</p>
+                  <p className="text-xs font-black uppercase tracking-[0.18em]">{family.side}</p>
                   <p className="mt-6 text-lg font-black">{family.title} {family.father}</p>
                   <p className="text-lg font-black">{family.title} {family.mother}</p>
                   <p className="mt-4 whitespace-pre-line text-sm font-medium leading-6 opacity-75">{family.address}</p>
@@ -155,14 +155,14 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
                 <h3 className="font-art-marvin relative text-4xl uppercase text-[#f5d83d]">{t("ceremony")}</h3>
                 <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{invitationCeremonyMessage(content)}</p>
                 {ceremonyDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{ceremonyDate.day}.{ceremonyDate.month}</p> : null}
-                <p className="relative mt-2 font-mono text-sm font-bold">{couple.ceremonyTime}</p>
+                <p className="tabular-nums relative mt-2 text-sm font-bold">{couple.ceremonyTime}</p>
               </article>
               <article className="relative overflow-hidden border-[3px] border-[#17110d] bg-[#f5d83d] p-7 text-[#17110d] shadow-[9px_9px_0_#d7192d] sm:translate-y-10">
                 <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#12b9c7]/35">02</span>
                 <h3 className="font-art-marvin relative text-4xl uppercase text-[#d7192d]">{t("reception")}</h3>
                 <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{venue.address}</p>
                 {receptionDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{receptionDate.day}.{receptionDate.month}</p> : null}
-                <p className="relative mt-2 font-mono text-sm font-bold">{venue.banquetTime || couple.time}</p>
+                <p className="tabular-nums relative mt-2 text-sm font-bold">{venue.banquetTime || couple.time}</p>
               </article>
             </div>
           </div>
@@ -179,7 +179,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
               <div className="mt-14 border-[3px] border-[#17110d] bg-[#fff1cf] p-6 shadow-[10px_10px_0_#f5d83d] sm:p-8">
                 <h3 className="font-art-marvin text-4xl uppercase text-[#d7192d]">{t("calendar", { month: calendar.month })}</h3>
                 <div className="mt-6 grid grid-cols-7 gap-1 text-center">
-                  {WEEKDAY_LABELS.map((label) => <span key={label} className="py-2 font-mono text-[10px] font-black">{label}</span>)}
+                  {WEEKDAY_LABELS.map((label) => <span key={label} className="py-2 text-[10px] font-black">{label}</span>)}
                   {calendar.cells.map((day, index) => (
                     <span key={`${day ?? "empty"}-${index}`} className={day === calendar.highlight ? "grid aspect-square place-items-center rotate-6 rounded-full bg-[#d7192d] text-xs font-black text-[#fff1cf]" : "grid aspect-square place-items-center text-xs font-bold"}>{day}</span>
                   ))}
@@ -241,7 +241,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
               {wishes.slice(0, 4).map((wish, index) => (
                 <blockquote key={`${wish.name}-${wish.time}`} className={index % 2 ? "border-[3px] border-[#17110d] bg-[#12b9c7] p-6 shadow-[7px_7px_0_#d7192d]" : "border-[3px] border-[#17110d] bg-[#f5d83d] p-6 shadow-[7px_7px_0_#12b9c7]"}>
                   <p className="font-semibold leading-7">{wish.text}</p>
-                  <footer className="mt-5 font-mono text-[10px] font-black uppercase">{wish.name} / {formatWishTime(wish.time)}</footer>
+                  <footer className="mt-5 text-[10px] font-black uppercase">{wish.name} / {formatWishTime(wish.time)}</footer>
                 </blockquote>
               ))}
             </div>

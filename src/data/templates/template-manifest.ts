@@ -2,7 +2,9 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 
-export const TEMPLATE_MANIFEST_LOCALES = ["vi", "en", "ja", "ko", "zh"] as const;
+// Vietnamese only. The en/ja/ko/zh catalogs and manifest translations were
+// removed once routing narrowed to a single locale — see src/i18n/routing.ts.
+export const TEMPLATE_MANIFEST_LOCALES = ["vi"] as const;
 
 export type TemplateManifestLocale = (typeof TEMPLATE_MANIFEST_LOCALES)[number];
 

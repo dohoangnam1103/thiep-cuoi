@@ -10,11 +10,7 @@ import {
   BeachWeddingJourneyLab,
   type BeachWeddingJourneyFixture,
 } from "@/components/beach-wedding-journey/beach-wedding-journey-lab";
-import enMessages from "../../../../../messages/en.json";
-import jaMessages from "../../../../../messages/ja.json";
-import koMessages from "../../../../../messages/ko.json";
 import viMessages from "../../../../../messages/vi.json";
-import zhMessages from "../../../../../messages/zh.json";
 
 export const dynamic = "force-dynamic";
 
@@ -33,11 +29,7 @@ function areRuntimeDiagnosticsEnabled(): boolean {
 }
 
 const beachLabMessages = {
-  en: enMessages.beachWeddingJourneyLab,
-  ja: jaMessages.beachWeddingJourneyLab,
-  ko: koMessages.beachWeddingJourneyLab,
   vi: viMessages.beachWeddingJourneyLab,
-  zh: zhMessages.beachWeddingJourneyLab,
 } as const;
 
 type BeachLabLocale = keyof typeof beachLabMessages;

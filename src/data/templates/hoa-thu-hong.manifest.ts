@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "Fz Qellia", particleType: "petals", gallerySlug: "arch-sage", music: "/chungdoi/music/arch-sage.mp3",
   i18n: {
     vi: { name: "Hoa Thư Hồng", description: "Thiệp cưới cổ điển với vòm hoa hồng ôm lấy ảnh cô dâu chú rể." },
-    en: { name: "Hoa Thư Hồng", description: "A classic floral arch of rose blooms framing the couple portrait." },
-    ja: { name: "花書・ローズ", description: "ローズの花のアーチが新郎新婦の写真を囲む、古典的な招待状です。" },
-    ko: { name: "화서 로즈", description: "로즈 꽃 아치가 신랑신부 사진을 감싸는 클래식 청첩장입니다." },
-    zh: { name: "花书玫粉", description: "玫粉花拱门环绕新人照片的古典婚礼请柬。" },
   },
 });

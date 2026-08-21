@@ -13,9 +13,5 @@ export const manifest = createArtTemplateManifest({
   fontFamily: "SVN-HC Marvin Visions", particleType: "confetti", gallerySlug: "ticket-terracotta", music: "/chungdoi/music/ticket-terracotta.mp3",
   i18n: {
     vi: { name: "Riso Hai Màu", description: "Thiệp cưới in riso san hô và teal với hạt tram, lem mực và lệch bản có chủ ý." },
-    en: { name: "Riso Duotone", description: "Coral and teal inks overlap with authentic halftone grain and slight misregistration." },
-    ja: { name: "二色リソ", description: "コーラルとティールの重なり、網点、版ずれを生かした招待状です。" },
-    ko: { name: "투컬러 리소", description: "코랄과 틸 잉크의 겹침, 망점, 의도적 어긋남을 살린 청첩장입니다." },
-    zh: { name: "双色孔版", description: "以珊瑚红和青绿色叠印、网点颗粒及轻微套印偏差构成的请柬。" },
   },
 });

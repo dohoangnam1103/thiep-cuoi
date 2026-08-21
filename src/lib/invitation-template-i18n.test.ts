@@ -3,11 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
-import en from "../../messages/en.json";
-import ja from "../../messages/ja.json";
-import ko from "../../messages/ko.json";
 import vi from "../../messages/vi.json";
-import zh from "../../messages/zh.json";
 
 const root = process.cwd();
 const demoSource = readFileSync(join(root, "src/components/chungdoi-demo.tsx"), "utf8");
@@ -25,9 +21,7 @@ test("wish form uses catalog-backed Vietnamese validation messages", () => {
   assert.match(wishFormSource, /role="alert"/);
 });
 
-test("all invitation catalogs include required wish validation copy", () => {
-  for (const messages of [vi, en, ko, ja, zh]) {
-    assert.equal(typeof messages.invitationTemplate.wishNameRequired, "string");
-    assert.equal(typeof messages.invitationTemplate.wishTextRequired, "string");
-  }
+test("the invitation catalog includes required wish validation copy", () => {
+  assert.equal(typeof vi.invitationTemplate.wishNameRequired, "string");
+  assert.equal(typeof vi.invitationTemplate.wishTextRequired, "string");
 });

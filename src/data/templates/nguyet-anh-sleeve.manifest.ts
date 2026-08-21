@@ -52,26 +52,6 @@ export const manifest = defineTemplateManifest({
       description:
         "Thiệp film sleeve kính khói với photogram sen ánh bạc và khoảnh khắc rút card liên tục.",
     },
-    en: {
-      name: "Moonlight Film Sleeve",
-      description:
-        "A smoked-glass film sleeve with a silver lotus photogram and a continuous pull-out opening.",
-    },
-    ja: {
-      name: "月影フィルムスリーブ",
-      description:
-        "銀色の蓮フォトグラムを収めたスモークガラスのフィルムスリーブ招待状です。",
-    },
-    ko: {
-      name: "월영 필름 슬리브",
-      description:
-        "은빛 연꽃 포토그램과 부드러운 필름 카드 인출 동작을 담은 스모크 글라스 청첩장입니다.",
-    },
-    zh: {
-      name: "月影胶片套",
-      description:
-        "烟熏玻璃胶片套搭配银色莲花摄影图，以连续抽卡动效展开请柬。",
-    },
   },
   assets: [
     "/chungdoi/templates/nguyet-anh-sleeve/source/lotus-photogram-master-v1.png",
