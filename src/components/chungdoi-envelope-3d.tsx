@@ -204,66 +204,64 @@ function backTexture(paper: string, accent: string, ratio: number) {
 // Bóng đổ của bìa. Không dùng box-shadow CSS được: card DOM bị html-to-image
 // chụp thành texture và mọi shadow đã bị tắt trong capture root (Safari render
 // lệch thành vệt ghost). Nên bóng phải là hình học WebGL riêng.
-const SHADOW_PAD = 0.42; // world units mỗi phía, quyết định độ loang của bóng
-const SHADOW_DROP = 0.14; // bóng lệch xuống dưới → cảm giác thiệp nổi lên
+const SHADOW_PAD = 0.44; // world units mỗi phía = tầm loang tối đa của bóng
+// Lệch xuống khá nhiều để bóng CÓ HƯỚNG. Vầng tối đều 4 phía đọc ra thành viền
+// outline chứ không phải bóng; ở đây mép trên chỉ còn PAD-DROP còn mép dưới là
+// PAD+DROP, nên mắt hiểu là thiệp đang nổi lên chứ không phải bị kẻ viền.
+const SHADOW_DROP = 0.2;
 const SHADOW_GAP = 0.05; // khoảng hở sau bìa, đủ để bóng không z-fight với mặt sau
-const SHADOW_OPACITY = 0.8;
-// Falloff dựng bằng nhiều rounded-rect lồng nhau thay vì ctx.filter = blur():
-// Canvas2D filter chưa có trên iOS Safari < 17, ở đó blur bị bỏ qua và bóng thành
-// một khối chữ nhật đen cứng quanh bìa. Alpha cộng dồn cho gradient mọi nơi.
-const SHADOW_LAYERS = 44;
-const SHADOW_LAYER_ALPHA = 0.032;
+const SHADOW_EDGE_ALPHA = 0.3; // độ tối ngay sát mép bìa
+const SHADOW_FALLOFF = 2.2; // số mũ tắt dần; càng cao càng tan nhanh ra biên
 
-function canvasRoundedRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number,
+// Khoảng cách có dấu tới hình chữ nhật bo góc. Cho phép tính alpha TỪNG PIXEL
+// nên gradient hoàn toàn trơn, thay vì xếp nhiều rounded-rect rồi để alpha cộng
+// dồn — cách đó dồn hết độ tối vào sát mép và thành viền đen. Cũng không dùng
+// ctx.filter = blur() vì iOS Safari < 17 chưa có, ở đó blur bị bỏ qua lặng lẽ.
+function roundedRectDistance(
+  px: number,
+  py: number,
+  halfW: number,
+  halfH: number,
+  radius: number,
 ) {
-  const rad = Math.min(r, w / 2, h / 2);
-  ctx.beginPath();
-  ctx.moveTo(x + rad, y);
-  ctx.lineTo(x + w - rad, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + rad);
-  ctx.lineTo(x + w, y + h - rad);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - rad, y + h);
-  ctx.lineTo(x + rad, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - rad);
-  ctx.lineTo(x, y + rad);
-  ctx.quadraticCurveTo(x, y, x + rad, y);
-  ctx.closePath();
+  const qx = Math.abs(px) - halfW + radius;
+  const qy = Math.abs(py) - halfH + radius;
+  const outside = Math.hypot(Math.max(qx, 0), Math.max(qy, 0));
+  return outside + Math.min(Math.max(qx, qy), 0) - radius;
 }
 
 function shadowTexture(ratio: number) {
   if (typeof document === "undefined") return null;
-  const cardPx = 320;
+  const cardPx = 256;
   const padPx = Math.round((cardPx * SHADOW_PAD) / CARD_W);
   const cardHPx = Math.round(cardPx * ratio);
+  const width = cardPx + padPx * 2;
+  const height = cardHPx + padPx * 2;
   const canvas = document.createElement("canvas");
-  canvas.width = cardPx + padPx * 2;
-  canvas.height = cardHPx + padPx * 2;
+  canvas.width = width;
+  canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
 
-  // Texture đối xứng quanh bìa; độ lệch xuống dưới do vị trí mesh lo, như vậy
-  // đổi SHADOW_DROP không phải sinh lại texture.
-  ctx.fillStyle = `rgba(0,0,0,${SHADOW_LAYER_ALPHA})`;
-  // Ngoài → trong: lớp ngoài cùng trùm cả vùng pad, lớp trong cùng bó sát mép
-  // bìa. Mỗi lớp đè thêm alpha nên vùng gần bìa tối nhất, tan dần ra biên.
-  for (let i = SHADOW_LAYERS; i >= 1; i--) {
-    const inset = (padPx * i) / SHADOW_LAYERS;
-    canvasRoundedRect(
-      ctx,
-      inset,
-      inset,
-      canvas.width - inset * 2,
-      canvas.height - inset * 2,
-      CORNER * (cardPx / CARD_W) + inset * 0.6,
-    );
-    ctx.fill();
+  // Texture đối xứng quanh bìa; hướng của bóng do vị trí mesh (SHADOW_DROP) lo,
+  // nên đổi độ lệch không phải sinh lại texture.
+  const image = ctx.createImageData(width, height);
+  const data = image.data;
+  const halfW = cardPx / 2;
+  const halfH = cardHPx / 2;
+  const radius = (CORNER * cardPx) / CARD_W;
+
+  for (let y = 0; y < height; y++) {
+    const py = y + 0.5 - height / 2;
+    for (let x = 0; x < width; x++) {
+      const px = x + 0.5 - width / 2;
+      const d = roundedRectDistance(px, py, halfW, halfH, radius);
+      const t = Math.min(Math.max(d, 0) / padPx, 1);
+      const alpha = SHADOW_EDGE_ALPHA * Math.pow(1 - t, SHADOW_FALLOFF);
+      data[(y * width + x) * 4 + 3] = Math.round(alpha * 255);
+    }
   }
+  ctx.putImageData(image, 0, 0);
 
   const tex = new CanvasTexture(canvas);
   tex.anisotropy = 4;
@@ -300,11 +298,12 @@ function EnvelopeCardShadow({ cardH, ratio }: { cardH: number; ratio: number }) 
       renderOrder={-1}
     >
       <planeGeometry args={[CARD_W + SHADOW_PAD * 2, cardH + SHADOW_PAD * 2]} />
+      {/* Alpha đã nằm sẵn trong texture nên material giữ opacity 1 — chỉ một chỗ
+          điều khiển độ tối, khỏi phải nhân hai hệ số rồi đoán kết quả. */}
       <meshBasicMaterial
         map={tex}
         color="#000000"
         transparent
-        opacity={SHADOW_OPACITY}
         depthWrite={false}
         toneMapped={false}
       />

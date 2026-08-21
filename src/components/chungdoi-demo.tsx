@@ -847,20 +847,36 @@ function CoverCard({
           </p>
         </div>
 
-        <button
-          type="button"
-          data-open-btn
-          onClick={onOpen}
-          className="demo-shine relative mx-auto inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-2.5 text-lg font-semibold transition-all duration-300 hover:-translate-y-1 active:translate-y-0 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.25)_inset] active:shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.15)_inset]"
-          style={{
-            backgroundColor: tokens.buttonBg,
-            color: tokens.buttonText,
-            boxShadow: "0 12px 40px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.2) inset, 0 4px 16px -4px rgba(0,0,0,0.4)",
-            border: "1px solid rgba(255,255,255,0.15)",
-          }}
-        >
-          Mở thiệp
-        </button>
+        {/* Bóng nút là một lớp radial-gradient riêng, KHÔNG phải box-shadow: card
+            này bị html-to-image chụp thành texture và Safari rasterize box-shadow
+            lệch thành vệt ghost bên phải nút. Gradient là background thuần nên ra
+            đúng ở mọi engine. Lớp phải nằm NGOÀI button vì button có
+            overflow-hidden (để cắt tia sáng) sẽ cắt mất glow. */}
+        <span className="relative mx-auto inline-flex justify-center">
+          <span
+            aria-hidden
+            data-open-btn-glow
+            className="pointer-events-none absolute left-1/2 top-[62%] h-[180%] w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-[50%]"
+            style={{
+              background:
+                "radial-gradient(closest-side, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.22) 52%, rgba(0,0,0,0) 100%)",
+            }}
+          />
+          <button
+            type="button"
+            data-open-btn
+            onClick={onOpen}
+            className="demo-shine relative inline-flex items-center justify-center overflow-hidden whitespace-nowrap rounded-full px-8 py-2.5 text-lg font-semibold transition-all duration-300 hover:-translate-y-1 active:translate-y-0 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.25)_inset] active:shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.15)_inset]"
+            style={{
+              backgroundColor: tokens.buttonBg,
+              color: tokens.buttonText,
+              boxShadow: "0 12px 40px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.2) inset, 0 4px 16px -4px rgba(0,0,0,0.4)",
+              border: "1px solid rgba(255,255,255,0.15)",
+            }}
+          >
+            Mở thiệp
+          </button>
+        </span>
       </div>
     </div>
   );
