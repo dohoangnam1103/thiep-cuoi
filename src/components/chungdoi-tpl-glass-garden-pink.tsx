@@ -165,7 +165,10 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
           >
             {/* CEREMONY INFO */}
             <section className="relative isolate w-full px-[16px] md:px-[32px]">
-              <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute bottom-[-52px] right-[-40px] z-20 h-auto w-[96px] max-w-none rotate-[-36deg] object-contain md:bottom-[27px] md:right-[-35px] md:w-[300px]" />
+              {/* z-0, KHÔNG z-20: hoa là lớp nền nên phải nằm dưới nội dung z-10.
+                  Ở z-20 nó phủ lên dòng ceremonyHeader ("LỄ THÀNH HÔN...") vì hoa
+                  bản md rộng 300px, tràn từ mép phải vào giữa cột chữ. */}
+              <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute bottom-[-52px] right-[-40px] z-0 h-auto w-[96px] max-w-none rotate-[-36deg] object-contain md:bottom-[27px] md:right-[-35px] md:w-[300px]" />
               <div className="relative z-10 flex flex-col items-center gap-5 md:gap-7">
                 <PinkHeading>Thông Tin Lễ Cưới</PinkHeading>
 
@@ -207,7 +210,9 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                         <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremony.month}</span>
                       </div>
                       <div className="text-[18px] md:text-[24px]" style={{ color: ROSE }}>{ceremony.yearNumber}</div>
-                      <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: WINE }}>({ceremony.lunar})</div>
+                      {/* Không bọc thêm ngoặc: formatVietnameseLunarDate() đã trả về
+                          chuỗi có sẵn "(Tức ngày ... âm lịch)" nên bọc nữa ra ((...)) */}
+                      <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-sm md:tracking-[0.25em]" style={{ color: WINE }}>{ceremony.lunar}</div>
                     </div>
                   </div>
                 ) : null}
@@ -234,7 +239,8 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
 
             {/* RECEPTION INFO + countdown + calendar */}
             <section className="relative isolate w-full px-[16px] md:px-[32px]">
-              <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute left-[-30px] top-[206px] z-20 h-auto w-[110px] max-w-none -scale-x-100 rotate-[64deg] object-contain md:left-[-50px] md:top-[170px] md:w-[300px]" />
+              {/* cùng lý do như hoa ở khối Thông Tin Lễ Cưới: nền thì phải ở z-0 */}
+              <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute left-[-30px] top-[206px] z-0 h-auto w-[110px] max-w-none -scale-x-100 rotate-[64deg] object-contain md:left-[-50px] md:top-[170px] md:w-[300px]" />
               <div className="relative z-10 flex w-full flex-col items-center">
                 <PinkHeading>Thông Tin Tiệc Cưới</PinkHeading>
 
@@ -254,7 +260,7 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                         <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {reception.month}</span>
                       </div>
                       <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div>
-                      <div className="text-xs uppercase tracking-[0.25em] md:text-base">({reception.lunar})</div>
+                      <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-base md:tracking-[0.25em]">{reception.lunar}</div>
                     </>
                   ) : null}
 
@@ -353,7 +359,7 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
             {/* DRESS CODE */}
             {dressColors.length > 0 ? (
               <div className="relative isolate w-full">
-                <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute left-[-45px] top-[-52px] z-20 h-auto w-[110px] max-w-none -scale-x-100 rotate-[64deg] object-contain md:left-[-80px] md:top-[-127px] md:w-[300px]" />
+                <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute left-[-45px] top-[-52px] z-0 h-auto w-[110px] max-w-none -scale-x-100 rotate-[64deg] object-contain md:left-[-80px] md:top-[-127px] md:w-[300px]" />
                 <div className="relative z-10 flex flex-col items-center gap-5 px-6 py-10 md:px-10 md:py-12">
                   <PinkHeading>Dress Code</PinkHeading>
                   <div className="flex flex-wrap justify-center gap-4 md:gap-6">
@@ -441,7 +447,7 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
             {/* ANIMATED GIFT BOX */}
             {banks.length > 0 ? (
               <div className="relative isolate w-full">
-                <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute right-[-40px] top-[-153px] z-20 h-auto w-[96px] max-w-none rotate-[-36deg] object-contain md:right-[-35px] md:top-[-200px] md:w-[300px]" />
+                <img src={`${PINK_BASE}/flower2-decoration.webp`} alt="" aria-hidden loading="lazy" className="pointer-events-none absolute right-[-40px] top-[-153px] z-0 h-auto w-[96px] max-w-none rotate-[-36deg] object-contain md:right-[-35px] md:top-[-200px] md:w-[300px]" />
                 <section className="relative z-10 w-full px-6 pb-2 pt-2 text-center md:px-10">
                   <GiftEnvelope
                     templateSlug={content.slug}

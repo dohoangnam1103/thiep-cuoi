@@ -842,7 +842,14 @@ function CoverCard({
               {guestName}
             </span>
           </div>
-          <p className="mx-auto max-w-xs text-[15px] font-light" style={{ color: tokens.textSecondary }}>
+          {/* Bìa mobile chỉ rộng 310px (340px từ sm) nên chỉ còn 262/292px cho chữ,
+              trong khi câu mặc định cần 293px ở 15px — rớt dòng. Ba mốc dưới đây
+              khớp đúng ba bậc của responsiveEnvelopeWidth (310 / 340 / 640+), nên
+              desktop giữ nguyên 15px. */}
+          <p
+            className="mx-auto max-w-xs text-[13px] font-light sm:text-[14px] md:text-[15px]"
+            style={{ color: tokens.textSecondary }}
+          >
             {guestMessage}
           </p>
         </div>

@@ -1160,7 +1160,10 @@ export function AlbumGallery({
         : "col-span-2 row-span-2";
     };
     return (
-      <div className="w-full max-w-[400px] md:max-w-[560px]">
+      // mx-auto: max-w hẹp hơn container thì block sẽ dạt trái. Mẫu nào bọc album
+      // trong khung rộng hơn 560px (Vườn Kính dùng 800px) sẽ thấy lưới lệch khỏi
+      // tiêu đề đã canh giữa sẵn.
+      <div className="mx-auto w-full max-w-[400px] md:max-w-[560px]">
         <div className="grid grid-cols-2 gap-3 [grid-auto-rows:1fr] md:grid-cols-3 md:gap-4">
           {shown.map((src, i) => (
             <button
@@ -1191,7 +1194,7 @@ export function AlbumGallery({
   const shown = photos.slice(0, 4);
   const extra = Math.max(0, photos.length - 4);
   return (
-    <div className="grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
+    <div className="mx-auto grid w-full max-w-[400px] grid-cols-2 gap-3 md:max-w-[560px] md:gap-4">
       {shown.map((src, i) => (
         <button
           key={src}
