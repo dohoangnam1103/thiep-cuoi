@@ -204,13 +204,14 @@ function backTexture(paper: string, accent: string, ratio: number) {
 // Bóng đổ của bìa. Không dùng box-shadow CSS được: card DOM bị html-to-image
 // chụp thành texture và mọi shadow đã bị tắt trong capture root (Safari render
 // lệch thành vệt ghost). Nên bóng phải là hình học WebGL riêng.
-const SHADOW_PAD = 0.44; // world units mỗi phía = tầm loang tối đa của bóng
-// Lệch xuống khá nhiều để bóng CÓ HƯỚNG. Vầng tối đều 4 phía đọc ra thành viền
-// outline chứ không phải bóng; ở đây mép trên chỉ còn PAD-DROP còn mép dưới là
-// PAD+DROP, nên mắt hiểu là thiệp đang nổi lên chứ không phải bị kẻ viền.
-const SHADOW_DROP = 0.2;
+const SHADOW_PAD = 0.24; // world units mỗi phía = tầm loang tối đa của bóng
+// Lệch xuống để bóng CÓ HƯỚNG. Vầng tối đều 4 phía đọc ra thành viền outline chứ
+// không phải bóng; ở đây mép trên chỉ còn PAD-DROP còn mép dưới là PAD+DROP, nên
+// mắt hiểu là thiệp đang nổi lên. Giữ tỉ lệ DROP/PAD khi đổi tầm loang, không thì
+// bóng co lại thành đường viền quanh bìa.
+const SHADOW_DROP = 0.11;
 const SHADOW_GAP = 0.05; // khoảng hở sau bìa, đủ để bóng không z-fight với mặt sau
-const SHADOW_EDGE_ALPHA = 0.3; // độ tối ngay sát mép bìa
+const SHADOW_EDGE_ALPHA = 0.26; // độ tối ngay sát mép bìa
 const SHADOW_FALLOFF = 2.2; // số mũ tắt dần; càng cao càng tan nhanh ra biên
 
 // Khoảng cách có dấu tới hình chữ nhật bo góc. Cho phép tính alpha TỪNG PIXEL

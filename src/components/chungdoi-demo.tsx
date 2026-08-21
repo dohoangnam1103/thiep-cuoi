@@ -856,10 +856,10 @@ function CoverCard({
           <span
             aria-hidden
             data-open-btn-glow
-            className="pointer-events-none absolute left-1/2 top-[62%] h-[180%] w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-[50%]"
+            className="pointer-events-none absolute left-1/2 top-[58%] h-[148%] w-[114%] -translate-x-1/2 -translate-y-1/2 rounded-[50%]"
             style={{
               background:
-                "radial-gradient(closest-side, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.22) 52%, rgba(0,0,0,0) 100%)",
+                "radial-gradient(closest-side, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.14) 52%, rgba(0,0,0,0) 100%)",
             }}
           />
           <button

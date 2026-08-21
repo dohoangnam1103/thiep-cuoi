@@ -62,6 +62,7 @@
     "prisma:migrate": "prisma migrate dev",
     "seed:tracks": "tsx prisma/seed-tracks.ts",
     "seed:demos": "tsx scripts/seed-demos.ts",
+    "seed:demos:missing": "tsx scripts/seed-demos.ts --missing",
     "reminders:trial": "tsx scripts/send-trial-reminders.ts",
     "postinstall": "prisma generate"
   },
