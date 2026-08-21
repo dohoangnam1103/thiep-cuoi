@@ -55,10 +55,25 @@ function stepFor(rawDistance: number) {
 
 const AUTOPLAY_MS = 4000;
 
+/**
+ * Ngưỡng vuốt. Mũi tên prev/next là `hidden md:flex` nên trên mobile không có
+ * cách nào chuyển ảnh ngoài chạm thẻ bên cạnh hoặc bấm dot — vuốt là thao tác
+ * người dùng mong đợi ở một album 3D.
+ *
+ * Sân khấu đã có `touch-pan-y`: trình duyệt vẫn tự lo cuộn dọc, còn cử chỉ ngang
+ * không bị nó chiếm nên pointermove/up đến được tay chúng ta. Vì vậy chỉ nhận
+ * cử chỉ nào ngang trội hơn dọc, tránh giật ảnh khi người dùng đang cuộn trang.
+ */
+const SWIPE_MIN_PX = 40;
+
 export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
   const count = photos.length;
   const [active, setActive] = useState(0);
   const timer = useRef<number | null>(null);
+  const gesture = useRef<{ id: number; x: number; y: number } | null>(null);
+  // Nhả tay sau khi vuốt vẫn sinh ra một click trên thẻ nằm dưới ngón. Cờ này để
+  // chặn nó, nếu không mỗi lần vuốt sẽ mở luôn lightbox.
+  const swiped = useRef(false);
 
   const schedule = useCallback(function next() {
     if (timer.current !== null) window.clearTimeout(timer.current);
@@ -95,9 +110,49 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
     return d;
   };
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Dọn cờ ngay từ đầu mỗi cử chỉ: nếu lần vuốt trước nhả tay ra ngoài thẻ thì
+    // không có click nào tới để tiêu thụ cờ, để sót lại sẽ ăn mất cú chạm sau.
+    swiped.current = false;
+    // Bỏ qua ngón thứ hai: pinch-zoom không phải lệnh chuyển ảnh.
+    if (count <= 1 || !e.isPrimary) {
+      gesture.current = null;
+      return;
+    }
+    gesture.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    const start = gesture.current;
+    gesture.current = null;
+    if (!start || start.id !== e.pointerId) return;
+
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dx) <= Math.abs(dy)) return;
+
+    swiped.current = true;
+    step(dx < 0 ? 1 : -1);
+  };
+
   return (
     <div className="w-full">
-      <div className="relative h-[340px] touch-pan-y md:h-[520px]">
+      <div
+        className="relative h-[340px] touch-pan-y md:h-[520px]"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => {
+          gesture.current = null;
+        }}
+        // Bắt ở pha capture để chặn click TRƯỚC khi nó tới thẻ, khỏi phải nhớ
+        // kiểm tra cờ trong từng handler của thẻ và dot.
+        onClickCapture={(e) => {
+          if (!swiped.current) return;
+          swiped.current = false;
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
         {count > 1 ? (
           <>
             <button
@@ -148,8 +203,10 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
                   zIndex: s.zIndex,
                 }}
               >
+                {/* draggable=false: ảnh kéo được theo mặc định, trên desktop cú
+                    kéo native sẽ cắt ngang chuỗi pointer và vuốt bằng chuột hỏng */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt={`Ảnh cưới ${index + 1}`} className="h-full w-full object-cover" />
+                <img src={src} alt={`Ảnh cưới ${index + 1}`} draggable={false} className="h-full w-full object-cover" />
               </button>
             );
           })}
