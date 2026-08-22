@@ -226,10 +226,14 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
           </div>
           <div className="mt-10 flex w-full flex-col items-center gap-1 text-center md:gap-2">
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[17px]" style={{ color: BROWN }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
-            <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{people[0].fullName}</FitText>
+            {/* Dùng NB_HELV thay NB_PACIFICO cho khớp tên ba mẹ: thẻ gốc đặt
+                HelveticaNeue nên FamilyColumn đang render tên ba mẹ bằng font này.
+                maxFontSize hạ xuống vì sans rộng hơn brush, để FitText khỏi phải
+                co quá mạnh và giữ được nét viền. */}
+            <FitText maxFontSize={48} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_HELV, color: RED, letterSpacing: "0.025em" }}>{people[0].fullName}</FitText>
             <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>{people[0].birthOrder}</div>
             <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: NB_CAROSELLO, color: RED }}>&amp;</div>
-            <FitText maxFontSize={82} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, letterSpacing: "0.025em" }}>{people[1].fullName}</FitText>
+            <FitText maxFontSize={48} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_HELV, color: RED, letterSpacing: "0.025em" }}>{people[1].fullName}</FitText>
             <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{people[1].birthOrder}</div>
           </div>
           {ceremony ? (

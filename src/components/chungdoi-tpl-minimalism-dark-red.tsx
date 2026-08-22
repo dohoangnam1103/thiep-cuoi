@@ -32,7 +32,6 @@ const BODY = { fontFamily: '"Baskerville", "Times New Roman", serif' };
 const CORMORANT = { fontFamily: '"Cormorant Garamond", "Times New Roman", serif' };
 const SCRIPT = { fontFamily: '"Viaoda Libre", "The Nautigal", cursive' };
 const NAUTIGAL = { fontFamily: '"The Nautigal", cursive' };
-const GARAMOND = { fontFamily: '"EB Garamond", serif' };
 const UCHEN = { fontFamily: '"Uchen", "Baskerville", serif' };
 const AMP = { fontFamily: '"UNI Chu truyen thong", "Times New Roman", serif' };
 
@@ -234,10 +233,14 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
               </div>
 
               <div className="relative flex w-full min-w-0 flex-col items-center gap-3 text-center md:gap-4">
-                <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[36px] leading-[52px] md:leading-[60px]" style={{ ...GARAMOND, color: CREAM }}>{people[0].fullName}</h3>
+                {/* Dùng BODY thay GARAMOND cho khớp tên ba mẹ. Mẫu này tự khai BODY
+                    cho khối hai họ nên xoá trắng sẽ rơi về font mặc định của app và
+                    vẫn lệch. Bỏ whitespace-nowrap và hạ cỡ vì Baskerville rộng hơn
+                    Garamond, tên 4 từ sẽ tràn ngang. */}
+                <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY, color: CREAM }}>{people[0].fullName}</h3>
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[0].birthOrder}</div>
                 <div className="text-[35px]" style={{ ...AMP, color: CREAM }}>&amp;</div>
-                <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[36px] leading-[52px] md:leading-[60px]" style={{ ...GARAMOND, color: CREAM }}>{people[1].fullName}</h3>
+                <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY, color: CREAM }}>{people[1].fullName}</h3>
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[1].birthOrder}</div>
               </div>
 

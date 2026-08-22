@@ -209,10 +209,13 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             </div>
 
             <div className="relative flex flex-col items-center gap-1 py-[10px] text-center md:gap-2 md:py-[15px] lg:py-[20px]">
-              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[0].fullName}</h3>
+              {/* Dùng COBA_HELV thay COBA_HAYDON cho khớp tên ba mẹ. Mẫu này tự
+                  khai COBA_HELV cho khối hai họ nên xoá trắng sẽ rơi về font mặc
+                  định của app và vẫn lệch. Cỡ chữ hạ theo vì sans rộng hơn brush. */}
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: COBA_HELV, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[0].fullName}</h3>
               <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{people[0].birthOrder}</div>
               <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: COBA_HAYDON, color: RED }}>&amp;</div>
-              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(36px, 9.5vw, 70px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[1].fullName}</h3>
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: COBA_HELV, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[1].fullName}</h3>
               <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{people[1].birthOrder}</div>
             </div>
 

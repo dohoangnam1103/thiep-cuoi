@@ -12,14 +12,6 @@ const BASE = "/chungdoi/images/themes/_decor/boho-floral-brown";
 const BROWN = "#6b4a2e";
 const BROWN_MUTED = "rgba(107,74,46,0.72)";
 const heroNameFont = { fontFamily: '"Fz Aghita", Baskerville, "Times New Roman", serif' };
-const bodyNameFont = { fontFamily: '"Fz Qellia", Baskerville, "Times New Roman", serif' };
-
-function desktopNameSizeClass(name: string) {
-  const length = [...name.trim()].length;
-  if (length <= 14) return "md:text-[58px]";
-  if (length <= 20) return "md:text-[52px]";
-  return "md:text-[46px]";
-}
 
 function BohoHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -120,18 +112,15 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2 text-center">
-              <h3
-                className={`flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:w-full md:whitespace-nowrap ${desktopNameSizeClass(people[0].fullName)}`}
-                style={bodyNameFont}
-              >
+              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
+                  tên ba mẹ đang dùng. Cỡ chữ hạ hẳn và bỏ whitespace-nowrap vì
+                  font body rộng hơn script nên tên 4 từ sẽ tràn ngang. */}
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
                 {people[0].fullName}
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={heroNameFont}>&amp;</div>
-              <h3
-                className={`flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:w-full md:whitespace-nowrap ${desktopNameSizeClass(people[1].fullName)}`}
-                style={bodyNameFont}
-              >
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
                 {people[1].fullName}
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{people[1].birthOrder}</div>

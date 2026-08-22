@@ -11,7 +11,7 @@ function SpringGardenGreenHero({ content }: { content: ChungDoiDemoContent }) {
   const nameFont = { fontFamily: '"UNI Chu truyen thong", "Baskerville", serif' };
 
   return (
-    <header data-template-hero="spring-garden-green" className="relative z-20 flex h-[472px] flex-col items-center justify-center text-center text-[#5d6a57] md:h-[650px]">
+    <header data-template-hero="spring-garden-green" className="relative z-0 flex h-[472px] flex-col items-center justify-center text-center text-[#5d6a57] md:h-[650px]">
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[-49px] z-0 h-[1560px] w-[1680px] -translate-x-1/2 bg-[url('/chungdoi/images/themes/_decor/nature/flower_top.webp')] bg-contain bg-top bg-no-repeat opacity-70 md:h-[2800px] md:w-[3000px]"

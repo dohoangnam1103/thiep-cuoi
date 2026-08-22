@@ -111,10 +111,13 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
             </div>
             <p className="whitespace-pre-line text-center text-[15px] uppercase tracking-wide md:text-[18px]" style={{ color: PINK_MUTED }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[0].fullName}</h3>
+              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
+                  tên ba mẹ đang dùng. Giữ giống nhau bằng cơ chế thừa hưởng thay
+                  vì trùng khớp bằng tay ở hai chỗ. */}
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[58px]" style={nameFont}>{people[1].fullName}</h3>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: PINK_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (

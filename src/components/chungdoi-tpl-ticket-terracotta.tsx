@@ -167,7 +167,9 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
             <div className="mt-6 flex flex-col gap-4">
               {people.map((person) => (
                 <div key={person.side} className="flex items-baseline justify-between gap-4 border-b border-[#a4462d]/20 pb-2">
-                  <span className="font-serif text-[19px] md:text-[23px]">
+                  {/* Không khai font ở tên: tên ba mẹ ngay phía trên không khai font
+                      nên phải để tên thừa hưởng cùng font, đừng để lẻ ra một serif. */}
+                  <span className="text-[19px] md:text-[23px]">
                     {person.fullName}
                   </span>
                   <span className="shrink-0 text-[10px] uppercase tracking-[0.16em] text-[#a4462d]/80">

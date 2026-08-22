@@ -42,7 +42,6 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const nameFont = { fontFamily: '"DFVN New Eddy", "Fz Qellia", cursive' };
   const ampFont = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
 
   const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
@@ -96,10 +95,13 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
               {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex w-full flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{people[0].fullName}</h3>
+              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
+                  tên ba mẹ đang dùng. Cỡ chữ hạ theo vì font body rộng hơn script
+                  nên giữ cỡ cũ là tràn khung. */}
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ color: BFR_RED }}>{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...ampFont, color: BFR_GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={{ ...nameFont, color: BFR_RED }}>{people[1].fullName}</h3>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ color: BFR_RED }}>{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BFR_DARK_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (

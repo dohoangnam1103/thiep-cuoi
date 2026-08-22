@@ -12,13 +12,6 @@ const BASE = "/chungdoi/images/themes/_decor/thanhdiep-green";
 const GREEN = "#2f4a34";
 const GREEN_MUTED = "rgba(47,74,52,0.72)";
 
-function desktopNameSizeClass(name: string) {
-  const length = [...name.trim()].length;
-  if (length <= 14) return "md:text-[58px]";
-  if (length <= 20) return "md:text-[52px]";
-  return "md:text-[46px]";
-}
-
 function LeafHeading({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="text-center text-[22px] font-bold uppercase tracking-wide md:text-[28px]" style={{ color: GREEN }}>
@@ -96,18 +89,15 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2 text-center">
-              <h3
-                className={`flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:w-full md:whitespace-nowrap ${desktopNameSizeClass(people[0].fullName)}`}
-                style={nameFont}
-              >
+              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
+                  tên ba mẹ đang dùng. Cỡ chữ hạ hẳn và bỏ whitespace-nowrap vì
+                  font body rộng hơn script nên tên 4 từ sẽ tràn ngang. */}
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
                 {people[0].fullName}
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>
-              <h3
-                className={`flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:w-full md:whitespace-nowrap ${desktopNameSizeClass(people[1].fullName)}`}
-                style={nameFont}
-              >
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
                 {people[1].fullName}
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[1].birthOrder}</div>

@@ -8,18 +8,24 @@ const source = readFileSync(
   "utf8",
 );
 
-test("Boho Floral Brown sizes desktop names by trimmed length", () => {
-  assert.match(source, /function desktopNameSizeClass\(name: string\)/);
-  assert.match(source, /if \(length <= 14\) return "md:text-\[58px\]";/);
-  assert.match(source, /if \(length <= 20\) return "md:text-\[52px\]";/);
-  assert.match(source, /return "md:text-\[46px\]";/);
+const fullNameTags = source.match(/<h3[^>]*>\s*\{people\[[01]\]\.fullName\}/g) ?? [];
+
+test("Boho Floral Brown lets the full names inherit the body font", () => {
+  // Tên đầy đủ phải cùng font với tên ba mẹ do FamilyColumn render, mà
+  // FamilyColumn không khai font -> thẻ tên cũng không được khai font.
+  assert.equal(fullNameTags.length, 2);
+  for (const tag of fullNameTags) {
+    assert.doesNotMatch(tag, /style=/);
+    assert.doesNotMatch(tag, /font-(art-|qellia|serif|sans)/);
+  }
 });
 
-test("Boho Floral Brown keeps name wrapping mobile-only", () => {
-  assert.match(
-    source,
-    /w-\[80%\][^"`]*text-\[42px\][^"`]*md:w-full[^"`]*md:whitespace-nowrap/,
-  );
-  assert.match(source, /desktopNameSizeClass\(people\[0\]\.fullName\)/);
-  assert.match(source, /desktopNameSizeClass\(people\[1\]\.fullName\)/);
+test("Boho Floral Brown keeps the full names inside the frame", () => {
+  // Không nowrap và cỡ chữ hạ: font body rộng hơn script nên tên 4 từ
+  // ở khổ 360px sẽ tràn nếu giữ cỡ cũ.
+  for (const tag of fullNameTags) {
+    assert.doesNotMatch(tag, /whitespace-nowrap/);
+    assert.match(tag, /text-\[30px\][^"`]*md:text-\[40px\]/);
+  }
+  assert.doesNotMatch(source, /desktopNameSizeClass/);
 });

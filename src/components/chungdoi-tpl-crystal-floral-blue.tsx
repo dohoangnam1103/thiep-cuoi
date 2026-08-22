@@ -82,10 +82,13 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
               {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex w-full flex-col items-center gap-2 text-center">
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[0].fullName}</h3>
+              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
+                  tên ba mẹ đang dùng. Cỡ chữ hạ theo vì font body rộng hơn script
+                  nên giữ cỡ cũ là tràn khung. */}
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BLUE_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={ampFont}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[44px] leading-[1.1] md:text-[60px]" style={nameFont}>{people[1].fullName}</h3>
+              <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BLUE_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (

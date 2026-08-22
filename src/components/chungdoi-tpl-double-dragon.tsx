@@ -193,10 +193,14 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
             </div>
 
             <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-              <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: DD_RED, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+              {/* Bỏ font-qellia, dùng DD_SERIF cho khớp tên ba mẹ. Mẫu này KHÔNG
+                  thừa hưởng được: nó tự khai DD_SERIF cho khối hai họ, nên xoá
+                  trắng sẽ rơi về font mặc định của app và vẫn lệch.
+                  Cỡ chữ hạ theo vì serif rộng hơn script khá nhiều. */}
+              <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: DD_RED, fontFamily: DD_SERIF, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{people[0].birthOrder}</div>
               <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: DD_GRAY }}>&amp;</div>
-              <h3 className="font-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: DD_RED, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+              <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: DD_RED, fontFamily: DD_SERIF, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{people[1].birthOrder}</div>
             </div>
 

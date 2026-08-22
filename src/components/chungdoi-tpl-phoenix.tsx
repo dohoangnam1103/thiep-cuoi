@@ -222,10 +222,13 @@ export function PhoenixInvitation({
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[16px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2">
-              <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{people[0].fullName}</h3>
+              {/* Bỏ font-qellia: để tên thừa hưởng font body của thẻ, đúng cái
+                  FamilyColumn đang dùng cho tên ba mẹ. Bỏ whitespace-nowrap và hạ
+                  cỡ vì font body rộng hơn script nên tên 4 từ sẽ tràn ngang. */}
+              <h3 className="flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[0].birthOrder}</div>
               <div className="text-[35px] md:text-[48px]">&amp;</div>
-              <h3 className="font-qellia flex w-full items-center justify-center whitespace-nowrap text-[40px] leading-[52px] md:text-[64px] md:leading-[100px]">{people[1].fullName}</h3>
+              <h3 className="flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[1].birthOrder}</div>
             </div>
             <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{invitationCeremonyMessage(content)}</p>

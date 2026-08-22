@@ -15,7 +15,6 @@ const ACCENT = "#6B8040";
 const GREEN_MUTED = "rgba(48,83,15,0.72)";
 const CARD = "rgba(255, 250, 247, 0.95)";
 const heroNameFont = { fontFamily: '"Fz Aghita", Baskerville, "Times New Roman", serif' };
-const bodyNameFont = { fontFamily: '"Fz Qellia", Baskerville, "Times New Roman", serif' };
 
 function BohoHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -120,10 +119,13 @@ export function BohoFloralGreenInvitation({ content }: { content: ChungDoiDemoCo
             </div>
             <div className="flex w-full flex-col items-center gap-2 text-center">
               <p className="mb-3 whitespace-pre-line text-center text-[13px] uppercase leading-relaxed md:text-[16px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[64px]" style={bodyNameFont}>{people[0].fullName}</h3>
+              {/* Không khai font ở tên: thẻ gốc đã đặt Baskerville nên tên thừa hưởng
+                  đúng font mà tên ba mẹ đang dùng. Cỡ chữ hạ theo vì Baskerville rộng
+                  hơn Fz Qellia nên giữ cỡ cũ là tràn khung. */}
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={{ ...heroNameFont, color: ACCENT }}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[42px] leading-[1.1] md:text-[64px]" style={bodyNameFont}>{people[1].fullName}</h3>
+              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (

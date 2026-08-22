@@ -130,9 +130,13 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
               {couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}
             </div>
             <div className="flex flex-col items-center gap-2 text-center">
-              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: CREAM }}>{people[0].fullName}</h3>
+              {/* Bỏ font-qellia để tên thừa hưởng SERIF của thẻ, đúng font
+                  MaroonFamilyColumn đang dùng cho tên ba mẹ. Cỡ 60px cố định đổi
+                  sang cỡ responsive nhỏ hơn vì serif rộng hơn script, tên 4 từ
+                  ở khổ 360px sẽ tràn. */}
+              <h3 className="text-[30px] leading-[1.15] md:text-[40px]" style={{ color: CREAM }}>{people[0].fullName}</h3>
               <div className="font-qellia text-[32px] md:text-[40px]" style={{ color: PINK }}>&amp;</div>
-              <h3 className="font-qellia leading-[1.1]" style={{ fontSize: 60, color: CREAM }}>{people[1].fullName}</h3>
+              <h3 className="text-[30px] leading-[1.15] md:text-[40px]" style={{ color: CREAM }}>{people[1].fullName}</h3>
             </div>
             {/* ceremony date */}
             <div className="flex flex-col items-center gap-2 text-center" style={{ color: CREAM }}>

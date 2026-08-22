@@ -26,7 +26,6 @@ const WINE = "#933845";
 
 const NAME_FONT = { fontFamily: '"Viaoda Libre", "EB Garamond", cursive' };
 const HERO_AMP_FONT = { fontFamily: '"Alex Brush", "The Nautigal", cursive' };
-const FULLNAME_FONT = { fontFamily: '"EB Garamond", serif' };
 const AMP_FONT = { fontFamily: '"UNI Chu truyen thong", "Times New Roman", serif' };
 const BODY_FONT = { fontFamily: '"Baskerville", "Libre Baskerville", "Times New Roman", serif' };
 const HEADING_FONT = { fontFamily: '"Times New Roman", Times, serif' };
@@ -183,10 +182,14 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                 </div>
 
                 <div className="relative flex w-full min-w-0 flex-col items-center gap-3 text-center md:gap-4">
-                  <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[43px] leading-[48px] md:leading-[70px]" style={{ ...FULLNAME_FONT, color: ROSE }}>{people[0].fullName}</h3>
+                  {/* Dùng BODY_FONT thay FULLNAME_FONT cho khớp tên ba mẹ. Mẫu này tự
+                      khai BODY_FONT cho khối hai họ nên xoá trắng sẽ rơi về font mặc
+                      định của app và vẫn lệch. Bỏ whitespace-nowrap và hạ cỡ vì
+                      Baskerville rộng hơn Garamond, tên 4 từ sẽ tràn ngang. */}
+                  <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY_FONT, color: ROSE }}>{people[0].fullName}</h3>
                   <div className="text-[10px] uppercase tracking-[0.1em]" style={{ ...ORDER_FONT, color: WINE }}>{people[0].birthOrder}</div>
                   <div className="text-[30px] leading-none md:text-[40px]" style={{ ...AMP_FONT, color: ROSE }}>&amp;</div>
-                  <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[43px] leading-[48px] md:leading-[70px]" style={{ ...FULLNAME_FONT, color: ROSE }}>{people[1].fullName}</h3>
+                  <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY_FONT, color: ROSE }}>{people[1].fullName}</h3>
                   <div className="text-[10px] uppercase tracking-[0.1em]" style={{ ...ORDER_FONT, color: WINE }}>{people[1].birthOrder}</div>
                 </div>
 

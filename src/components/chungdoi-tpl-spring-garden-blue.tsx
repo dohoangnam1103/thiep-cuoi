@@ -141,10 +141,13 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
             </div>
             <p className="whitespace-pre-line text-[15px] uppercase leading-relaxed tracking-[0.12em] md:text-[19px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex flex-col items-center gap-2">
-              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[44px] leading-[1.1] md:text-[64px]" style={nameFont}>{people[0].fullName}</h3>
+              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
+                  tên ba mẹ đang dùng. Cỡ chữ hạ theo vì font body rộng hơn script
+                  nên giữ cỡ cũ là tràn khung. */}
+              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[26px] md:text-[36px]" style={scriptFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[44px] leading-[1.1] md:text-[64px]" style={nameFont}>{people[1].fullName}</h3>
+              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (

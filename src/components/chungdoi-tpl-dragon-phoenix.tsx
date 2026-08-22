@@ -257,10 +257,13 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
 
             {/* couple full names */}
             <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+              {/* Dùng LPD_BODY thay LPD_UNI cho khớp tên ba mẹ. Mẫu này tự khai
+                  LPD_BODY cho khối hai họ nên xoá trắng sẽ rơi về font mặc định
+                  của app và vẫn lệch. Cỡ chữ hạ theo vì serif rộng hơn. */}
+              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: LPD_BODY, color: GOLD, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
               <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>{people[0].birthOrder}</div>
               <div className="text-[35px] md:text-[48px]" style={{ fontFamily: LPD_UNI, color: GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", fontFamily: LPD_UNI, color: GOLD, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: LPD_BODY, color: GOLD, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
               <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>{people[1].birthOrder}</div>
             </div>
 

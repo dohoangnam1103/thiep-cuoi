@@ -250,10 +250,13 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             {invitationOpeningMessage(content)}
           </div>
           <div className="relative mb-6 mt-4 flex flex-col items-center gap-3 text-center md:gap-4">
-            <h3 className="font-art-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+            {/* Bỏ font-art-qellia: thẻ gốc đã đặt font-body-serif nên tên thừa
+                hưởng đúng font mà FamilyColumn đang dùng cho tên ba mẹ. Cỡ chữ hạ
+                theo vì Lora rộng hơn Fz Qellia nên giữ cỡ cũ là tràn khung. */}
+            <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[0].birthOrder}</div>
             <div className="font-art-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
-            <h3 className="font-art-qellia flex w-full items-center justify-center leading-[1.15] md:leading-[100px]" style={{ fontSize: "clamp(34px, 9vw, 64px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+            <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[1].birthOrder}</div>
           </div>
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray }}>
