@@ -4,9 +4,6 @@ export const routing = defineRouting({
   locales: ["vi"],
   defaultLocale: "vi",
   localePrefix: "as-needed",
-  // Tạm thời chỉ phục vụ tiếng Việt, không tự nhận ngôn ngữ từ cookie hoặc
-  // Accept-Language của trình duyệt.
-  localeDetection: false,
   alternateLinks: false,
   pathnames: {
     "/": "/",
