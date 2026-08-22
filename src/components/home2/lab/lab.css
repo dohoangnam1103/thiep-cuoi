@@ -1,0 +1,16 @@
+/* Chỉnh riêng cho các trang wireframe.
+   Không sửa `globals.css` vì trang chủ hiện tại phải giữ nguyên và đang có task
+   khác chạy trên file dùng chung. */
+
+/* `PetalField` render ở `[locale]/layout.tsx` nên có trên mọi trang. Mưa cánh
+   hoa hồng bay ngang wireframe xám làm loãng thứ cần đánh giá (chuyển động), nên
+   tắt từ phía trang bằng `:has()`. */
+body:has(.wire-lab) .petal-field {
+  display: none;
+}
+
+/* Wireframe không dùng bảng màu của app; ghim nền để dải màu hồng của
+   `--background` không lọt ra ở mép trên/dưới trang. */
+body:has(.wire-lab) {
+  background: #f4f2ee;
+}

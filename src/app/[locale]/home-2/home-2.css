@@ -1,0 +1,476 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Trang chủ v2 — art direction "Ấn phẩm" (wedding editorial letterpress)
+
+   File này CHỈ được import bởi route `/home-2`. Không sửa `globals.css` vì:
+   (a) trang chủ hiện tại phải giữ nguyên từng pixel, (b) có task khác đang
+   refactor typography dùng chung, đụng vào là đè mất code của nhau.
+
+   Mọi thứ nằm dưới `.home-editorial`. Không có selector nào chạm phần tử ngoài
+   scope đó, trừ một ngoại lệ được ghi rõ ở cuối (tắt mưa hoa toàn cục).
+
+   Nguyên tắc màu: các class tông (.hp-paper / .hp-wine / ...) chỉ set 4 biến
+   semantic là --hp-bg / --hp-fg / --hp-fg-soft / --hp-rule. Mọi class chữ và
+   đường kẻ đọc từ 4 biến đó, nên cùng một component dùng được trên nền sáng
+   hoặc nền tối mà không cần biến thể riêng.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.home-editorial {
+  /* ── Bảng màu gốc ─────────────────────────────────────────────────────── */
+  --hp-paper: oklch(0.966 0.015 78);
+  --hp-paper-2: oklch(0.938 0.023 76);
+  --hp-ink: oklch(0.243 0.027 46);
+  --hp-ink-soft: oklch(0.452 0.03 46);
+  --hp-wine: oklch(0.257 0.077 21);
+  --hp-wine-deep: oklch(0.183 0.058 21);
+  --hp-cream: oklch(0.947 0.023 80);
+  --hp-cream-soft: oklch(0.808 0.028 78);
+  --hp-gold: oklch(0.802 0.098 82);
+  --hp-seal: oklch(0.522 0.192 27);
+
+  /* ── Biến semantic (mặc định = nền giấy) ──────────────────────────────── */
+  --hp-bg: var(--hp-paper);
+  --hp-fg: var(--hp-ink);
+  --hp-fg-soft: var(--hp-ink-soft);
+  --hp-rule: color-mix(in oklab, var(--hp-ink) 17%, transparent);
+  --hp-accent: var(--hp-seal);
+
+  /* ── Nhịp dọc ──────────────────────────────────────────────────────────
+     Một thang duy nhất cho khoảng thở giữa các chương, để nhịp trang do thang
+     này quyết định chứ không do từng section tự bịa số. */
+  --hp-chapter-y: clamp(4.5rem, 9vw, 9rem);
+
+  background-color: var(--hp-bg);
+  color: var(--hp-fg);
+  font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Tông nền ─────────────────────────────────────────────────────────────
+   Đặt trên chính thẻ <section>. Chuyển tông là công cụ chính để chia trang
+   thành các chương — trang chủ cũ thiếu đúng thứ này (6 section gần như cùng
+   một độ sáng). */
+
+.home-editorial .hp-paper {
+  --hp-bg: var(--hp-paper);
+  --hp-fg: var(--hp-ink);
+  --hp-fg-soft: var(--hp-ink-soft);
+  --hp-rule: color-mix(in oklab, var(--hp-ink) 17%, transparent);
+  --hp-accent: var(--hp-seal);
+  background-color: var(--hp-bg);
+  color: var(--hp-fg);
+}
+
+.home-editorial .hp-paper-2 {
+  --hp-bg: var(--hp-paper-2);
+  --hp-fg: var(--hp-ink);
+  --hp-fg-soft: var(--hp-ink-soft);
+  --hp-rule: color-mix(in oklab, var(--hp-ink) 20%, transparent);
+  --hp-accent: var(--hp-seal);
+  background-color: var(--hp-bg);
+  color: var(--hp-fg);
+}
+
+.home-editorial .hp-wine {
+  --hp-bg: var(--hp-wine);
+  --hp-fg: var(--hp-cream);
+  --hp-fg-soft: var(--hp-cream-soft);
+  --hp-rule: color-mix(in oklab, var(--hp-cream) 22%, transparent);
+  --hp-accent: var(--hp-gold);
+  background-color: var(--hp-bg);
+  color: var(--hp-fg);
+}
+
+.home-editorial .hp-wine-deep {
+  --hp-bg: var(--hp-wine-deep);
+  --hp-fg: var(--hp-cream);
+  --hp-fg-soft: var(--hp-cream-soft);
+  --hp-rule: color-mix(in oklab, var(--hp-cream) 20%, transparent);
+  --hp-accent: var(--hp-gold);
+  background-color: var(--hp-bg);
+  color: var(--hp-fg);
+}
+
+/* ─── Hạt giấy ─────────────────────────────────────────────────────────────
+   Nhiễu fractal sinh trong SVG data-URI, không tốn request nào. Đây là chi
+   tiết rẻ nhất để một mặt phẳng màu trông như giấy in thay vì như div. Để ở
+   ::after của section, pointer-events none, không ảnh hưởng layout. */
+
+.home-editorial .hp-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.home-editorial .hp-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.09'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+.home-editorial .hp-wine.hp-grain::after,
+.home-editorial .hp-wine-deep.hp-grain::after {
+  /* Trên nền tối, multiply không thấy gì — đảo sang screen và giảm liều. */
+  mix-blend-mode: screen;
+  opacity: 0.22;
+}
+
+/* ─── Chữ ──────────────────────────────────────────────────────────────────
+   Display = Fraunces, weight 300–400. Trang chủ cũ dùng font-black cho MỌI
+   heading; đó là lý do lớn nhất khiến nó đọc ra như landing page SaaS. Serif
+   nét thanh, cỡ lớn, tracking âm mới là thứ trông "có người thiết kế". */
+
+.home-editorial .hp-display {
+  font-family: var(--hp-font-display), "Fraunces", "Iowan Old Style", Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 24, "WONK" 1;
+  font-weight: 300;
+  letter-spacing: -0.022em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.home-editorial .hp-display-italic {
+  font-style: italic;
+  font-variation-settings: "SOFT" 40, "WONK" 1;
+}
+
+/* H1 hero. Một trang một cái. */
+.home-editorial .hp-h1 {
+  font-size: clamp(2.75rem, 7.6vw, 6.25rem);
+  line-height: 0.93;
+  letter-spacing: -0.032em;
+}
+
+/* Tiêu đề chương. */
+.home-editorial .hp-h2 {
+  font-size: clamp(1.95rem, 4.2vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.026em;
+}
+
+/* Tiêu đề khối con trong chương. */
+.home-editorial .hp-h3 {
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+/* Nhãn nhỏ chữ hoa — dùng font body vì Fraunces ở cỡ 11px + tracking rộng sẽ
+   nhoè chân chữ. */
+.home-editorial .hp-label {
+  font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--hp-fg-soft);
+}
+
+.home-editorial .hp-body {
+  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  line-height: 1.78;
+  color: var(--hp-fg-soft);
+  text-wrap: pretty;
+}
+
+.home-editorial .hp-body-sm {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--hp-fg-soft);
+}
+
+.home-editorial .hp-num {
+  font-family: var(--hp-font-display), "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 10, "WONK" 0;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.03em;
+}
+
+/* Chữ ký thư pháp. Dùng ĐÚNG hai chỗ trên cả trang (tên cặp đôi ở hero và ở
+   khối thử tên), nên nó còn là chữ ký chứ không thành font body thứ ba.
+   "Fz Aghita" là font Việt self-host sẵn trong globals.css, đã phủ đủ dấu vì
+   các renderer thiệp vẫn dùng nó cho tên cô dâu chú rể. */
+.home-editorial .hp-script {
+  font-family: "Fz Aghita", "Pattaya", cursive;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+/* ─── Đường kẻ ─────────────────────────────────────────────────────────────
+   Hairline thay cho border card. Cách chia thông tin của ấn phẩm in là kẻ chỉ,
+   không phải bo góc + đổ bóng. */
+
+.home-editorial .hp-rule {
+  border: 0;
+  border-top: 1px solid var(--hp-rule);
+}
+
+.home-editorial .hp-rule-y > * + * {
+  border-top: 1px solid var(--hp-rule);
+}
+
+/* Kẻ chỉ có một đoạn đậm ở đầu — dấu hiệu mở chương. */
+.home-editorial .hp-rule-lead {
+  position: relative;
+  border: 0;
+  border-top: 1px solid var(--hp-rule);
+}
+
+.home-editorial .hp-rule-lead::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 3.5rem;
+  border-top: 1px solid var(--hp-accent);
+}
+
+/* ─── Nút ──────────────────────────────────────────────────────────────────
+   Không bo tròn hoàn toàn, không đổ bóng màu. Nút hình chữ nhật bo nhẹ + viền
+   mảnh đọc ra "ấn phẩm"; pill + shadow màu đỏ là ngôn ngữ của landing SaaS. */
+
+.home-editorial .hp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 1rem 1.75rem;
+  border-radius: 2px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+
+.home-editorial .hp-btn-solid {
+  background-color: var(--hp-accent);
+  color: var(--hp-paper);
+  border: 1px solid var(--hp-accent);
+}
+
+.home-editorial .hp-btn-solid:hover {
+  background-color: color-mix(in oklab, var(--hp-accent) 82%, black);
+  border-color: color-mix(in oklab, var(--hp-accent) 82%, black);
+}
+
+.home-editorial .hp-wine .hp-btn-solid,
+.home-editorial .hp-wine-deep .hp-btn-solid {
+  color: var(--hp-wine-deep);
+}
+
+.home-editorial .hp-btn-ghost {
+  background-color: transparent;
+  color: var(--hp-fg);
+  border: 1px solid var(--hp-rule);
+}
+
+.home-editorial .hp-btn-ghost:hover {
+  border-color: var(--hp-fg);
+}
+
+/* Link chữ có gạch chân mảnh chạy ra — thay cho nút thứ cấp. */
+.home-editorial .hp-link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--hp-fg);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  transition: background-size 280ms ease;
+}
+
+.home-editorial .hp-link:hover {
+  background-size: 0% 1px;
+}
+
+/* ─── Khung ảnh thiệp ──────────────────────────────────────────────────────
+   Viền mảnh + đổ bóng trung tính rất nhẹ. Thiệp tự đã nhiều màu, khung phải
+   im lặng. */
+
+.home-editorial .hp-frame {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in oklab, var(--hp-ink) 6%, var(--hp-paper));
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--hp-ink) 12%, transparent),
+    0 22px 50px -28px color-mix(in oklab, var(--hp-ink) 46%, transparent);
+}
+
+/* Ảnh preview là screenshot full-page cao 7.000–12.000px. Neo lên đỉnh, rồi
+   cho trôi để người xem thấy được cả thiệp mà không phải mở modal.
+
+   `--hp-shot-h` là chiều cao thật của khung, do React truyền xuống. Nhờ vậy
+   đích trôi tính được chính xác bằng calc() và không cần đo DOM bằng JS. */
+.home-editorial .hp-scrollshot {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  translate: 0 0;
+}
+
+/* Trôi theo hover — dùng cho lưới mẫu thiệp. */
+.home-editorial .hp-scrollshot-host .hp-scrollshot {
+  transition: translate 900ms ease-out;
+}
+
+.home-editorial .hp-scrollshot-host:hover .hp-scrollshot,
+.home-editorial .hp-scrollshot-host:focus-visible .hp-scrollshot {
+  translate: 0 calc(var(--hp-shot-h, 30rem) - 100%);
+  transition: translate 30s linear;
+}
+
+/* Trôi tự động — chỉ dùng cho một thiệp duy nhất ở hero. Đây là "sản phẩm tự
+   diễn": khách thấy ngay một tấm thiệp thật đang chạy, thay vì đọc ba đoạn văn
+   mô tả rằng nó đẹp. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hp-shot-drift {
+    0% {
+      translate: 0 0;
+    }
+    100% {
+      translate: 0 calc(var(--hp-shot-h, 30rem) - 100%);
+    }
+  }
+
+  .home-editorial .hp-shot-drift {
+    animation: hp-shot-drift var(--hp-drift-duration, 52s) linear infinite alternate;
+  }
+
+  .home-editorial .hp-shot-stage:hover .hp-shot-drift {
+    animation-play-state: paused;
+  }
+}
+
+/* ─── Chuyển động vào khung nhìn ───────────────────────────────────────────
+   Dùng scroll-driven animation của CSS thay vì IntersectionObserver: không JS,
+   không cần class .is-visible, và khi trình duyệt không hỗ trợ thì nội dung
+   hiện sẵn (không bao giờ trắng trang). Repo đã dùng đúng cách này cho template
+   comic nên không phải kỹ thuật mới với codebase.
+
+   Ba biến thể có biên độ khác nhau — trang chủ cũ cho gần như mọi khối cùng
+   một hiệu ứng .reveal, và sự đều đặn đó cũng là một dấu hiệu "làm bằng máy". */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes hp-rise {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 26px, 0);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes hp-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes hp-draw {
+      from {
+        clip-path: inset(0 100% 0 0);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    .home-editorial .hp-rise,
+    .home-editorial .hp-fade,
+    .home-editorial .hp-draw {
+      animation-timeline: view(block);
+      animation-fill-mode: both;
+      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .home-editorial .hp-rise {
+      animation-name: hp-rise;
+      animation-range: entry 4% cover 26%;
+    }
+
+    .home-editorial .hp-fade {
+      animation-name: hp-fade;
+      animation-range: entry 2% cover 20%;
+    }
+
+    .home-editorial .hp-draw {
+      animation-name: hp-draw;
+      animation-range: entry 10% cover 34%;
+      animation-timing-function: ease-out;
+    }
+  }
+}
+
+/* Hero không chờ scroll — nó đã ở trong khung nhìn ngay khi tải. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hp-enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .home-editorial .hp-enter {
+    opacity: 0;
+    animation: hp-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--hp-enter-delay, 0ms);
+  }
+}
+
+/* ─── Hỏi đáp ──────────────────────────────────────────────────────────────
+   <details> thuần, chỉ có kẻ chỉ. Không card, không viền bo. */
+
+.home-editorial .hp-qa summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.home-editorial .hp-qa summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-editorial .hp-qa summary::marker {
+  content: "";
+}
+
+.home-editorial .hp-qa .hp-qa-sign {
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-editorial .hp-qa[open] .hp-qa-sign {
+  transform: rotate(45deg);
+}
+
+/* ─── Ngoại lệ duy nhất ra ngoài scope ─────────────────────────────────────
+   `PetalField` được render ở `[locale]/layout.tsx` nên có mặt trên MỌI trang.
+   Mưa cánh hoa hồng bay ngang màn hình là đúng cái ngôn ngữ trang trí mà bản
+   thiết kế này muốn bỏ. Tắt bằng `:has()` từ phía trang thay vì sửa component
+   dùng chung — trang chủ hiện tại vẫn giữ mưa hoa nguyên vẹn. */
+body:has(.home-editorial) .petal-field {
+  display: none;
+}
