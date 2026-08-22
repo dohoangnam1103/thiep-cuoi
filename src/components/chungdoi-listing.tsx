@@ -24,6 +24,19 @@ import {
   styleTemplateSeoFacets,
 } from "@/data/template-seo-facets";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
+import {
+  blockTitleClass,
+  bodyClass,
+  bodySmallClass,
+  cardTitleClass,
+  eyebrowClass,
+  labelClass,
+  noteClass,
+  pageTitleClass,
+  pillClass,
+  sectionDescClass,
+  sectionTitleClass,
+} from "@/lib/typography";
 
 const listingImageHeights = {
   baroque_gold: 7666,
@@ -125,7 +138,7 @@ export function ChungDoiListing({
         <section className="bg-background pt-6 pb-3 sm:pt-8 sm:pb-4">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {facetContent ? (
-              <nav aria-label={facetContent.breadcrumbAriaLabel} className="mb-5 text-sm text-muted-foreground">
+              <nav aria-label={facetContent.breadcrumbAriaLabel} className={`mb-5 ${bodyClass} text-muted-foreground`}>
                 <ol className="flex flex-wrap items-center gap-2">
                   <li><Link href="/" className="transition hover:text-primary">{facetContent.homeLabel}</Link></li>
                   <li aria-hidden>/</li>
@@ -135,16 +148,16 @@ export function ChungDoiListing({
                 </ol>
               </nav>
             ) : null}
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-primary">
+            <p className={`${eyebrowClass} text-primary`}>
               {facetContent?.eyebrow ?? t("eyebrow")}
             </p>
-            <h1 className="mt-4 max-w-3xl font-heading text-2xl font-black leading-[1.05] tracking-tight text-foreground sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+            <h1 className={`mt-4 max-w-3xl ${pageTitleClass} text-foreground`}>
               {facetContent?.title ?? t("title")}
             </h1>
-            <p className="mt-3 max-w-3xl text-sm font-normal leading-6 text-muted-foreground sm:text-base sm:leading-7">
+            <p className={`mt-3 max-w-3xl ${sectionDescClass} text-muted-foreground`}>
               {facetContent?.subtitle ?? t("subtitle")}
             </p>
-            <p className="mt-0.5 max-w-3xl text-xs leading-5 font-semibold text-muted-foreground sm:text-sm sm:leading-6">
+            <p className={`mt-1 max-w-3xl ${noteClass} text-muted-foreground`}>
               {facetContent?.intro ?? t("editingHint")}
             </p>
           </div>
@@ -198,13 +211,13 @@ function TemplateSeoFacetLinks({ currentFacetId }: { currentFacetId?: string }) 
 
   return (
     <section className="mt-3 rounded-[2rem] border border-border bg-card p-5 sm:mt-4 sm:p-7" aria-labelledby="template-collections-title">
-      <h2 id="template-collections-title" className="sr-only font-heading text-lg font-black text-foreground sm:not-sr-only sm:text-2xl md:text-3xl lg:text-4xl">
+      <h2 id="template-collections-title" className={`sr-only ${sectionTitleClass} text-foreground sm:not-sr-only`}>
         {t("navigation.title")}
       </h2>
-      <p className="mt-2 hidden max-w-3xl text-xs leading-5 text-muted-foreground sm:block sm:text-base sm:leading-7">{t("navigation.description")}</p>
+      <p className={`mt-2 hidden max-w-3xl ${sectionDescClass} text-muted-foreground sm:block`}>{t("navigation.description")}</p>
       <div className="mt-0 grid gap-5 sm:mt-5 lg:grid-cols-2">
         <div className="min-w-0">
-          <h3 className="text-[11px] font-black uppercase leading-4 tracking-[0.18em] text-muted-foreground">
+          <h3 className={`${labelClass} text-muted-foreground`}>
             {t("navigation.styleTitle")}
           </h3>
           <HorizontalPillScroller
@@ -216,7 +229,7 @@ function TemplateSeoFacetLinks({ currentFacetId }: { currentFacetId?: string }) 
                 key={facet.id}
                 href={{ pathname: "/templates/style/[slug]", params: { slug: facet.slug } }}
                 aria-current={currentFacetId === facet.id ? "page" : undefined}
-                className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-4 py-2 text-xs font-bold transition sm:shrink sm:whitespace-normal ${
+                className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-4 py-2 ${pillClass} transition sm:shrink sm:whitespace-normal ${
                   currentFacetId === facet.id
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-secondary text-foreground hover:border-primary/50 hover:text-primary"
@@ -228,7 +241,7 @@ function TemplateSeoFacetLinks({ currentFacetId }: { currentFacetId?: string }) 
           </HorizontalPillScroller>
         </div>
         <div className="min-w-0">
-          <h3 className="text-[11px] font-black uppercase leading-4 tracking-[0.18em] text-muted-foreground">
+          <h3 className={`${labelClass} text-muted-foreground`}>
             {t("navigation.colorTitle")}
           </h3>
           <HorizontalPillScroller
@@ -240,7 +253,7 @@ function TemplateSeoFacetLinks({ currentFacetId }: { currentFacetId?: string }) 
                 key={facet.id}
                 href={{ pathname: "/templates/color/[slug]", params: { slug: facet.slug } }}
                 aria-current={currentFacetId === facet.id ? "page" : undefined}
-                className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-4 py-2 text-xs font-bold transition sm:shrink sm:whitespace-normal ${
+                className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-4 py-2 ${pillClass} transition sm:shrink sm:whitespace-normal ${
                   currentFacetId === facet.id
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-secondary text-foreground hover:border-primary/50 hover:text-primary"
@@ -260,18 +273,18 @@ function TemplateFacetEditorial({ content }: { content: TemplateSeoFacetContent 
   return (
     <section className="mt-12 grid gap-8 rounded-[2rem] border border-border bg-secondary p-6 sm:p-9 lg:grid-cols-[0.9fr_1.1fr]">
       <div>
-        <h2 className="font-heading text-2xl font-black text-foreground sm:text-3xl md:text-4xl lg:text-5xl">{content.guideTitle}</h2>
-        <p className="mt-3 text-xs leading-5 text-muted-foreground">{content.guide}</p>
+        <h2 className={`${sectionTitleClass} text-foreground`}>{content.guideTitle}</h2>
+        <p className={`mt-3 ${sectionDescClass} text-muted-foreground`}>{content.guide}</p>
       </div>
       <div>
-        <h2 className="font-heading text-2xl font-black text-foreground sm:text-3xl md:text-4xl lg:text-5xl">{content.faqTitle}</h2>
+        <h2 className={`${sectionTitleClass} text-foreground`}>{content.faqTitle}</h2>
         <div className="mt-4 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
           {content.faqs.map((item) => (
             <details key={item.question} className="group p-5">
-              <summary className="cursor-pointer list-none font-black text-xs leading-5 text-foreground">
+              <summary className={`cursor-pointer list-none ${blockTitleClass} text-foreground`}>
                 {item.question}
               </summary>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.answer}</p>
+              <p className={`mt-2 ${bodyClass} text-muted-foreground`}>{item.answer}</p>
             </details>
           ))}
         </div>
@@ -295,12 +308,12 @@ function FilterPills({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs font-black uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+      <span className={`mr-1 ${labelClass} text-muted-foreground`}>{label}</span>
       {options.map((option) => (
         <button
           key={option}
           onClick={() => onChange(option)}
-          className={`rounded-full border border-border px-4 py-1.5 text-xs font-bold transition ${
+          className={`rounded-full border border-border px-4 py-1.5 ${pillClass} transition ${
             value === option
               ? "bg-primary text-primary-foreground"
               : "bg-card text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -380,20 +393,20 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
         </div>
       </button>
       <div className="p-5">
-        <h3 className="font-heading text-xl font-black text-foreground">
+        <h3 className={`${cardTitleClass} text-foreground`}>
           <Link href={demoHref} className="transition hover:text-primary">
             {name}
           </Link>
         </h3>
-        <p className="mt-2 text-xs leading-5 text-muted-foreground">{category}</p>
-        <p className="mt-3 line-clamp-2 text-xs leading-5 text-muted-foreground">{description}</p>
+        <p className={`mt-2 ${bodySmallClass} text-muted-foreground`}>{category}</p>
+        <p className={`mt-3 line-clamp-2 ${bodySmallClass} text-muted-foreground`}>{description}</p>
         <div className="mt-5 grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-2">
           <button
             onClick={onSelect}
             data-ga-event="preview_template"
             data-ga-param-template-id={template.slug}
             data-ga-param-source="listing_card_button"
-            className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-border bg-secondary px-2 py-2.5 text-xs font-bold text-foreground transition hover:bg-muted"
+            className={`inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-border bg-secondary px-2 py-2.5 ${pillClass} text-foreground transition hover:bg-muted`}
           >
             {t("preview")}
           </button>
@@ -402,7 +415,7 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
             data-ga-event="open_template_demo"
             data-ga-param-template-id={template.slug}
             data-ga-param-source="listing_card"
-            className="inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full bg-primary px-2 py-2.5 text-xs font-bold text-primary-foreground transition hover:bg-primary/90"
+            className={`inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full bg-primary px-2 py-2.5 ${pillClass} text-primary-foreground transition hover:bg-primary/90`}
           >
             {t("demo")} <ArrowRight className="size-3.5 shrink-0" />
           </Link>

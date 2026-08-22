@@ -13,6 +13,12 @@ import {
   TEMPLATE_SUGGESTION_IMAGE_FORMATS,
 } from "@/lib/upload-image-formats";
 import { MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "@/lib/upload-image-limits";
+import {
+  blockTitleClass,
+  ctaPrimaryClass,
+  sectionDescClass,
+  sectionTitleClass,
+} from "@/lib/typography";
 
 type SessionResponse = {
   loggedIn: boolean;
@@ -141,15 +147,15 @@ export function TemplateSuggestionCta() {
         <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Lightbulb className="size-7" />
         </span>
-        <h2 className="mt-4 font-heading text-xl font-black text-foreground sm:text-3xl md:text-4xl lg:text-5xl">{t("title")}</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-xs leading-5 text-muted-foreground">{t("description")}</p>
+        <h2 className={`mt-4 ${sectionTitleClass} text-foreground`}>{t("title")}</h2>
+        <p className={`mx-auto mt-3 max-w-2xl ${sectionDescClass} text-muted-foreground`}>{t("description")}</p>
         <button
           type="button"
           onClick={() => {
             setError(null);
             setOpen(true);
           }}
-          className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+          className={`mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90`}
         >
           <Send className="size-5" />
           {t("button")}
@@ -174,10 +180,10 @@ export function TemplateSuggestionCta() {
                 <Lightbulb className="size-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 id="template-suggestion-title" className="font-heading text-2xl font-black text-foreground sm:text-3xl md:text-4xl lg:text-5xl">
+                <h2 id="template-suggestion-title" className={`${blockTitleClass} text-foreground`}>
                   {t("modalTitle")}
                 </h2>
-                <p className="mt-0.5 text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
+                <p className={`mt-1 ${sectionDescClass} text-muted-foreground`}>
                   {t("modalDescription")}
                 </p>
               </div>

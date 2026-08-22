@@ -3,6 +3,7 @@ import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels, labelFromMap } from "@/lib/template-labels";
 import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
+import { bodyClass, ctaSecondaryClass, dashboardTitleClass } from "@/lib/typography";
 import { logout } from "../(auth)/actions";
 import { NewInvitationButton } from "./NewInvitationButton";
 import { DashboardInvitationCard } from "./DashboardInvitationCard";
@@ -25,7 +26,7 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-pattaya text-3xl text-foreground">Thiệp của tôi</h1>
+        <h1 className={`${dashboardTitleClass} text-foreground`}>Thiệp của tôi</h1>
         <div className="flex flex-wrap items-center gap-2">
           <NewInvitationButton
             templateLabels={templateLabels}
@@ -34,7 +35,7 @@ export default async function DashboardPage() {
           <form action={logout}>
             <button
               type="submit"
-              className="rounded-full border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-secondary"
+              className={`rounded-full border border-border px-4 py-2.5 ${ctaSecondaryClass} font-medium text-muted-foreground transition hover:bg-secondary`}
             >
               Đăng xuất
             </button>
@@ -43,7 +44,7 @@ export default async function DashboardPage() {
       </div>
 
       {invitations.length === 0 ? (
-        <p className="mt-12 text-center text-muted-foreground">
+        <p className={`mt-12 text-center ${bodyClass} text-muted-foreground`}>
           Bạn chưa có thiệp nào. Nhấn &quot;Tạo thiệp mới&quot; để bắt đầu.
         </p>
       ) : (

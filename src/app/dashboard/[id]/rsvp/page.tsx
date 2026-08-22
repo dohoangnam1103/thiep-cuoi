@@ -5,6 +5,14 @@ import { verifySession, ownInvitation } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import viMessages from "../../../../../messages/vi.json";
 import { guestMediaPublicUrl } from "@/lib/guest-media";
+import {
+  bodyClass,
+  bodySmallClass,
+  ctaSecondaryClass,
+  dashboardTitleClass,
+  panelSubTitleClass,
+  statValueClass,
+} from "@/lib/typography";
 import { ModerationPanel } from "./ModerationPanel";
 
 export default async function RsvpListPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,14 +51,14 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <Link href="/dashboard" className="text-sm text-muted-foreground transition hover:text-foreground">
+      <Link href="/dashboard" className={`${bodyClass} text-muted-foreground transition hover:text-foreground`}>
         &larr; Về danh sách thiệp
       </Link>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <h1 className="font-pattaya text-3xl text-foreground">Xác nhận tham dự</h1>
+        <h1 className={`${dashboardTitleClass} text-foreground`}>Xác nhận tham dự</h1>
         <Link
           href={`/dashboard/${id}/guests`}
-          className="rounded-full bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition hover:bg-muted"
+          className={`rounded-full bg-secondary px-4 py-2 ${ctaSecondaryClass} font-medium text-secondary-foreground transition hover:bg-muted`}
         >
           Khách mời
         </Link>
@@ -58,37 +66,37 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-green-700">{attending.length}</p>
-          <p className="text-sm text-muted-foreground">Sẽ tham dự</p>
+          <p className={`${statValueClass} text-green-700`}>{attending.length}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>Sẽ tham dự</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-red-600">{declined.length}</p>
-          <p className="text-sm text-muted-foreground">Không tham dự</p>
+          <p className={`${statValueClass} text-red-600`}>{declined.length}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>Không tham dự</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{totalGuests}</p>
-          <p className="text-sm text-muted-foreground">Tổng khách</p>
+          <p className={`${statValueClass} text-foreground`}>{totalGuests}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>Tổng khách</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{groomGuests}</p>
-          <p className="text-sm text-muted-foreground">Khách nhà trai</p>
+          <p className={`${statValueClass} text-foreground`}>{groomGuests}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>Khách nhà trai</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{brideGuests}</p>
-          <p className="text-sm text-muted-foreground">Khách nhà gái</p>
+          <p className={`${statValueClass} text-foreground`}>{brideGuests}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>Khách nhà gái</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{wishes.length}</p>
-          <p className="text-sm text-muted-foreground">Lời chúc</p>
+          <p className={`${statValueClass} text-foreground`}>{wishes.length}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>Lời chúc</p>
         </div>
       </div>
 
-      <h2 className="mt-10 font-heading text-lg font-semibold text-foreground">Danh sách phản hồi</h2>
+      <h2 className={`mt-10 ${panelSubTitleClass} text-foreground`}>Danh sách phản hồi</h2>
       {rsvps.length === 0 ? (
-        <p className="mt-4 text-muted-foreground">Chưa có phản hồi nào.</p>
+        <p className={`mt-4 ${bodyClass} text-muted-foreground`}>Chưa có phản hồi nào.</p>
       ) : (
         <div className="mt-4 overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-left text-sm">
+          <table className={`w-full text-left ${bodyClass}`}>
             <thead className="bg-secondary text-secondary-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Tên</th>
@@ -125,7 +133,7 @@ export default async function RsvpListPage({ params }: { params: Promise<{ id: s
                     {r.answers.length > 0 ? (
                       <ul className="min-w-48 space-y-1.5">
                         {r.answers.map((answer) => (
-                          <li key={answer.id} className="text-xs">
+                          <li key={answer.id} className={bodySmallClass}>
                             <span className="font-medium text-foreground">{answer.question.label}:</span>{" "}
                             <span className="text-muted-foreground">
                               {answer.question.type === "boolean"

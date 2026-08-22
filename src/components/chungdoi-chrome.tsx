@@ -10,6 +10,12 @@ import { LogoMark } from "@/components/logo-mark";
 import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { Link, usePathname } from "@/i18n/navigation";
 import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
+import {
+  bodyClass,
+  ctaSecondaryClass,
+  labelClass,
+  pillClass,
+} from "@/lib/typography";
 
 type SessionState = { loggedIn: boolean; firstInvitationId: string | null; invitationCount?: number; email?: string | null };
 
@@ -114,7 +120,7 @@ export function SiteHeader({
         <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:left-auto lg:translate-x-0">
           <Logo responsive />
         </div>
-        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground lg:flex">
+        <nav className={`hidden items-center gap-7 ${bodyClass} font-medium text-muted-foreground lg:flex`}>
           <Link href="/templates" className={desktopNavClassName(templatesActive)} aria-current={templatesActive ? "page" : undefined}>
             {t("nav.templates")}
           </Link>
@@ -153,7 +159,7 @@ export function SiteHeader({
               aria-label={t("createNow")}
               aria-hidden={hideCreateButton || undefined}
               tabIndex={hideCreateButton ? -1 : undefined}
-              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
+              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary ${ctaSecondaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
                 hideCreateButton ? "pointer-events-none invisible" : ""
               }`}
             >
@@ -166,7 +172,7 @@ export function SiteHeader({
               aria-label={t("createNow")}
               aria-hidden={hideCreateButton || undefined}
               tabIndex={hideCreateButton ? -1 : undefined}
-              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
+              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary ${ctaSecondaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
                 hideCreateButton ? "pointer-events-none invisible" : ""
               }`}
             >
@@ -214,7 +220,7 @@ export function SiteHeader({
                   <NextLink
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className={`flex items-center rounded-xl px-4 py-3 text-base font-semibold transition ${
+                    className={`flex items-center rounded-xl px-4 py-3 ${bodyClass} font-semibold transition ${
                       item.active ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
                     }`}
                     aria-current={item.active ? "page" : undefined}
@@ -334,12 +340,12 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:px-8">
         <div>
           <Logo />
-          <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
+          <p className={`mt-4 max-w-sm ${bodyClass} text-muted-foreground`}>{t("tagline")}</p>
         </div>
         {columns.map(([heading, items]) => (
           <div key={heading}>
-            <h3 className="font-heading text-sm font-black uppercase tracking-[0.18em] text-muted-foreground">{heading}</h3>
-            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+            <h3 className={`font-heading ${labelClass} text-muted-foreground`}>{heading}</h3>
+            <ul className={`mt-4 space-y-3 ${bodyClass} text-muted-foreground`}>
               {items.map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} className="transition hover:text-foreground">
@@ -351,11 +357,11 @@ export function SiteFooter() {
           </div>
         ))}
       </div>
-      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 px-4 text-sm text-muted-foreground sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      <div className={`mx-auto mt-10 flex max-w-7xl flex-col gap-3 px-4 ${bodyClass} text-muted-foreground sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8`}>
         <p>{t("copyright")}</p>
       </div>
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur-lg lg:hidden">
-        <div className="mx-auto grid h-16 max-w-md grid-cols-3 text-xs font-bold text-muted-foreground">
+        <div className={`mx-auto grid h-16 max-w-md grid-cols-3 ${pillClass} text-muted-foreground`}>
           <Link
             href="/templates"
             className={`flex flex-col items-center justify-center gap-1 transition ${templatesActive ? "bg-primary/10 text-primary" : "hover:text-foreground"}`}

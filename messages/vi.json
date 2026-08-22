@@ -728,9 +728,6 @@
       "subtitle": "Một tấm thiệp nhỏ, thay bạn gửi lời mời chân thành",
       "subtitle2": "Dễ dàng thiết kế, chia sẻ, nhận RSVP và lưu giữ những khoảnh khắc đẹp.",
       "trialNote": "Tạo miễn phí - Dùng thử 3 ngày - Chỉ trả khi bạn hài lòng",
-      "showcaseTitle": "Mẫu thiệp cưới online",
-      "showcaseAccent": "đẹp nhất",
-      "showcaseSubtitle": "Khám phá những mẫu thiệp cưới được thiết kế tinh tế và hiện đại",
       "watchGuide": "Xem hướng dẫn",
       "coupleName": "Alex & Jordan",
       "rsvpOpen": "Đang nhận RSVP",
@@ -739,7 +736,8 @@
       "statAttending": "sẽ tham dự"
     },
     "carousel": {
-      "title": "Mẫu thiệp cưới đẹp nhất",
+      "title": "Mẫu thiệp cưới",
+      "titleAccent": "đẹp nhất",
       "subtitle": "Khám phá những thiết kế hiện đại dành riêng cho ngày trọng đại.",
       "viewAll": "Xem tất cả mẫu thiệp",
       "viewAllHint": "Những mẫu thiệp độc đáo đang chờ bạn",
@@ -969,6 +967,11 @@
     "metaTitle": "Mẫu thiệp cưới {name} | Thiệp Mừng Online",
     "heading": "Mẫu thiệp cưới {name}",
     "imageAlt": "Ảnh xem trước mẫu thiệp cưới {name}"
+  },
+  "templateVuonKinhLam": {
+    "metaTitle": "Mẫu thiệp Vườn Kinh Lâm | Thiệp Mừng Online",
+    "heading": "Mẫu thiệp Vườn Kinh Lâm",
+    "imageAlt": "Ảnh xem trước mẫu thiệp Vườn Kinh Lâm"
   },
   "weddingGuide": {
     "metadata": {

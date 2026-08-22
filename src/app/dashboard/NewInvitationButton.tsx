@@ -6,6 +6,7 @@ import { useState } from "react";
 import { completedTemplates } from "@/data/chungdoi";
 import { templateLabel } from "@/app/editor/[id]/templates";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
+import { bodyClass, ctaSecondaryClass, panelTitleClass, pillClass } from "@/lib/typography";
 import { createInvitation } from "./actions";
 
 export function NewInvitationButton({
@@ -25,7 +26,7 @@ export function NewInvitationButton({
         onClick={() => setOpen(true)}
         data-ga-event="open_template_picker"
         data-ga-param-source="dashboard"
-        className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90"
+        className={`rounded-full bg-primary px-5 py-2.5 ${ctaSecondaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90`}
       >
         + Tạo thiệp mới
       </button>
@@ -40,11 +41,11 @@ export function NewInvitationButton({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
-              <h2 className="font-heading text-xl font-semibold text-foreground">Chọn mẫu thiệp</h2>
+              <h2 className={`${panelTitleClass} text-foreground`}>Chọn mẫu thiệp</h2>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-full border border-border px-3 py-1 text-sm text-muted-foreground transition hover:bg-secondary"
+                className={`rounded-full border border-border px-3 py-1 ${bodyClass} text-muted-foreground transition hover:bg-secondary`}
               >
                 Đóng
               </button>
@@ -95,7 +96,7 @@ export function NewInvitationButton({
                           />
                         )}
                       </span>
-                      <span className="block px-2 py-1.5 text-xs font-semibold text-foreground">
+                      <span className={`block px-2 py-1.5 ${pillClass} text-foreground`}>
                         {label(template.slug)}
                       </span>
                     </button>

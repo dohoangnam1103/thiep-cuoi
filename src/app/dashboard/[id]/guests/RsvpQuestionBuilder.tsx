@@ -9,6 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import type { RsvpQuestionRow } from "@/lib/guest-manager";
 import {
+  bodyClass,
+  bodySmallClass,
+  panelSubTitleClass,
+  pillClass,
+} from "@/lib/typography";
+import {
   deleteRsvpQuestion,
   saveRsvpQuestion,
   type QuestionActionResult,
@@ -17,7 +23,7 @@ import {
 type QuestionType = RsvpQuestionRow["type"];
 
 const FIELD_CLASS =
-  "min-h-11 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15";
+  `min-h-11 w-full rounded-xl border border-border bg-background px-3.5 py-2.5 ${bodyClass} text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15`;
 
 export function RsvpQuestionBuilder({
   invitationId,
@@ -99,10 +105,10 @@ export function RsvpQuestionBuilder({
           <CircleHelp className="size-5" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-heading text-lg font-semibold text-foreground">{t("title")}</span>
-          <span className="mt-0.5 block text-sm text-muted-foreground">{t("description")}</span>
+          <span className={`block ${panelSubTitleClass} text-foreground`}>{t("title")}</span>
+          <span className={`mt-0.5 block ${bodyClass} text-muted-foreground`}>{t("description")}</span>
         </span>
-        <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground">
+        <span className={`rounded-full bg-secondary px-2.5 py-1 ${pillClass} text-secondary-foreground`}>
           {t("count", { count: questions.length })}
         </span>
         <ChevronDown className={`size-5 text-muted-foreground transition ${expanded ? "rotate-180" : ""}`} aria-hidden />
@@ -114,16 +120,16 @@ export function RsvpQuestionBuilder({
             <div className="space-y-2">
               {questions.map((question) => (
                 <div key={question.id} className="flex items-start gap-3 rounded-xl bg-muted/60 p-3.5">
-                  <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg bg-background text-xs font-bold text-primary">
+                  <span className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg bg-background ${pillClass} text-primary`}>
                     {question.sortOrder + 1}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-foreground">{question.label}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className={`${bodyClass} font-medium text-foreground`}>{question.label}</p>
+                    <p className={`mt-1 ${bodySmallClass} text-muted-foreground`}>
                       {t(`types.${question.type}`)}{question.required ? ` - ${t("required")}` : ""}
                     </p>
                     {question.options.length > 0 ? (
-                      <p className="mt-1 truncate text-xs text-muted-foreground">{question.options.join(", ")}</p>
+                      <p className={`mt-1 truncate ${bodySmallClass} text-muted-foreground`}>{question.options.join(", ")}</p>
                     ) : null}
                   </div>
                   <Button type="button" variant="ghost" size="icon" aria-label={t("edit")} onClick={() => editQuestion(question)}>
@@ -136,22 +142,22 @@ export function RsvpQuestionBuilder({
               ))}
             </div>
           ) : (
-            <p className="rounded-xl bg-muted/60 px-4 py-5 text-center text-sm text-muted-foreground">{t("empty")}</p>
+            <p className={`rounded-xl bg-muted/60 px-4 py-5 text-center ${bodyClass} text-muted-foreground`}>{t("empty")}</p>
           )}
 
           <div className="mt-5 rounded-2xl border border-border p-4">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="font-semibold text-foreground">{editing ? t("editTitle") : t("addTitle")}</h3>
+              <h3 className={`${bodyClass} font-semibold text-foreground`}>{editing ? t("editTitle") : t("addTitle")}</h3>
               {editing ? (
                 <Button type="button" variant="ghost" onClick={resetForm}><X aria-hidden />{t("cancelEdit")}</Button>
               ) : null}
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-medium text-foreground sm:col-span-2">
+              <label className={`grid gap-2 ${bodyClass} font-medium text-foreground sm:col-span-2`}>
                 {t("label")}
                 <input value={label} onChange={(event) => setLabel(event.target.value)} maxLength={180} className={FIELD_CLASS} />
               </label>
-              <label className="grid gap-2 text-sm font-medium text-foreground">
+              <label className={`grid gap-2 ${bodyClass} font-medium text-foreground`}>
                 {t("type")}
                 <Combobox
                   aria-label={t("type")}
@@ -164,20 +170,20 @@ export function RsvpQuestionBuilder({
                   ]}
                 />
               </label>
-              <label className="flex min-h-11 items-center gap-3 self-end rounded-xl border border-border bg-background px-3.5 text-sm font-medium text-foreground">
+              <label className={`flex min-h-11 items-center gap-3 self-end rounded-xl border border-border bg-background px-3.5 ${bodyClass} font-medium text-foreground`}>
                 <input type="checkbox" checked={required} onChange={(event) => setRequired(event.target.checked)} className="size-4 accent-primary" />
                 {t("required")}
               </label>
               {type === "select" ? (
-                <label className="grid gap-2 text-sm font-medium text-foreground sm:col-span-2">
+                <label className={`grid gap-2 ${bodyClass} font-medium text-foreground sm:col-span-2`}>
                   {t("options")}
                   <textarea value={options} onChange={(event) => setOptions(event.target.value)} rows={4} className={FIELD_CLASS} />
-                  <span className="text-xs font-normal text-muted-foreground">{t("optionsHint")}</span>
+                  <span className={`${bodySmallClass} font-normal text-muted-foreground`}>{t("optionsHint")}</span>
                 </label>
               ) : null}
             </div>
             {result?.error ? (
-              <p role="alert" className="mt-3 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{t(`errors.${result.error}`)}</p>
+              <p role="alert" className={`mt-3 rounded-xl bg-destructive/10 px-3 py-2 ${bodyClass} text-destructive`}>{t(`errors.${result.error}`)}</p>
             ) : null}
             <div className="mt-4 flex justify-end">
               <Button type="button" size="lg" disabled={pending || !label.trim()} onClick={save}>

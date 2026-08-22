@@ -3,6 +3,9 @@
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { sectionPaddingClass } from "@/lib/section-spacing";
+import { blockTitleClass, bodyClass, sectionTitleClass } from "@/lib/typography";
+
 const faqKeys = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10"] as const;
 
 type AnswerBlock =
@@ -31,10 +34,10 @@ export function WeddingFaqSection({ animated = false, id }: { animated?: boolean
   const t = useTranslations("home");
 
   return (
-    <section id={id} className="bg-secondary py-8 sm:py-20">
+    <section id={id} className={`bg-secondary ${sectionPaddingClass}`}>
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <h2
-          className={`${animated ? "reveal " : ""}text-center font-heading text-3xl font-black text-foreground sm:text-5xl`}
+          className={`${animated ? "reveal " : ""}text-center ${sectionTitleClass} text-foreground`}
         >
           {t("faq.heading")}
         </h2>
@@ -43,11 +46,11 @@ export function WeddingFaqSection({ animated = false, id }: { animated?: boolean
         >
           {faqKeys.map((key) => (
             <details key={key} className="group p-6">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-lg font-black text-foreground">
+              <summary className={`flex cursor-pointer list-none items-center justify-between gap-5 ${blockTitleClass} text-foreground`}>
                 {t(`faq.${key}Q`)}
                 <ChevronDown className="size-5 shrink-0 text-primary transition group-open:rotate-180" />
               </summary>
-              <div className="mt-4 space-y-4 leading-7 text-muted-foreground">
+              <div className={`mt-4 space-y-4 ${bodyClass} text-muted-foreground`}>
                 {parseAnswer(t(`faq.${key}A`)).map((block, index) =>
                   block.type === "list" ? (
                     <ul key={index} className="list-disc space-y-1 pl-5">

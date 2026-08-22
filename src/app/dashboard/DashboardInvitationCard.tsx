@@ -5,6 +5,7 @@ import { TrialCountdownBanner } from "@/components/trial-countdown-banner";
 import { resolveDashboardCardTheme } from "@/lib/dashboard-card-theme";
 import type { InvitationActivation } from "@/lib/invitation-entitlement";
 import { trialExpiresAt } from "@/lib/trial";
+import { bodyClass, panelSubTitleClass, pillClass } from "@/lib/typography";
 
 export type DashboardInvitationCardProps = {
   id: string;
@@ -74,11 +75,11 @@ export function DashboardInvitationCard({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className={`min-w-0 ${textChipClass}`}>
             <div className="flex flex-wrap items-center gap-3">
-              <h2 className="font-heading text-lg font-semibold text-foreground">
+              <h2 className={`${panelSubTitleClass} text-foreground`}>
                 {title}
               </h2>
               <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                className={`shrink-0 rounded-full px-2.5 py-1 ${pillClass} ${
                   published
                     ? "bg-green-500/15 text-green-700"
                     : "bg-amber-500/15 text-amber-700"
@@ -88,17 +89,17 @@ export function DashboardInvitationCard({
               </span>
             </div>
             {hasNames ? (
-              <p className="mt-0.5 text-sm text-muted-foreground">
+              <p className={`mt-0.5 ${bodyClass} text-muted-foreground`}>
                 {templateName}
               </p>
             ) : null}
-            <div className="mt-2 flex gap-4 text-sm text-muted-foreground">
+            <div className={`mt-2 flex gap-4 ${bodyClass} text-muted-foreground`}>
               <span>{rsvpCount} xác nhận</span>
               <span>{wishCount} lời chúc</span>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 text-sm sm:justify-end">
+          <div className={`flex flex-wrap gap-2 ${bodyClass} sm:justify-end`}>
             <Link
               href={`/editor/${id}`}
               className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"

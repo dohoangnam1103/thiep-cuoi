@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
+import { bodyClass, panelSubTitleClass } from "@/lib/typography";
 import { revokeCohostLink, rotateCohostLink, type CohostActionResult } from "./cohost-actions";
 
 export function CohostAccess({
@@ -58,18 +59,18 @@ export function CohostAccess({
           <ShieldCheck className="size-5" aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
-          <h2 className="font-heading text-lg font-semibold text-foreground">{t("title")}</h2>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("description")}</p>
+          <h2 className={`${panelSubTitleClass} text-foreground`}>{t("title")}</h2>
+          <p className={`mt-1 ${bodyClass} text-muted-foreground`}>{t("description")}</p>
         </div>
       </div>
 
       {!published ? (
-        <p className="mt-4 rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-700">{t("unpublished")}</p>
+        <p className={`mt-4 rounded-xl bg-amber-500/10 px-4 py-3 ${bodyClass} text-amber-700`}>{t("unpublished")}</p>
       ) : token ? (
         <div className="mt-5 space-y-3">
           <div className="flex items-center gap-2 rounded-xl border border-border bg-background p-2">
             <Link2 className="ml-2 size-4 shrink-0 text-muted-foreground" aria-hidden />
-            <p className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{path}</p>
+            <p className={`min-w-0 flex-1 truncate ${bodyClass} text-muted-foreground`}>{path}</p>
             <Button type="button" variant="secondary" onClick={copy}>
               <Clipboard aria-hidden />{copied ? t("copied") : t("copy")}
             </Button>
@@ -92,7 +93,7 @@ export function CohostAccess({
       )}
 
       {result?.error ? (
-        <p role="alert" className="mt-3 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{t(`errors.${result.error}`)}</p>
+        <p role="alert" className={`mt-3 rounded-xl bg-destructive/10 px-3 py-2 ${bodyClass} text-destructive`}>{t(`errors.${result.error}`)}</p>
       ) : null}
     </section>
   );

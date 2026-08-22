@@ -4,6 +4,12 @@ import { NextIntlClientProvider } from "next-intl";
 
 import { verifySession, ownInvitation } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
+import {
+  bodyClass,
+  dashboardTitleClass,
+  sectionDescClass,
+  statValueClass,
+} from "@/lib/typography";
 import { GuestManager, type GuestRow } from "./GuestManager";
 import { RsvpQuestionBuilder } from "./RsvpQuestionBuilder";
 import { CohostAccess } from "./CohostAccess";
@@ -88,33 +94,33 @@ export default async function GuestsPage({ params }: { params: Promise<{ id: str
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <Link
         href={`/dashboard/${id}/rsvp`}
-        className="text-sm text-muted-foreground transition hover:text-foreground"
+        className={`${bodyClass} text-muted-foreground transition hover:text-foreground`}
       >
         &larr; {labels.back}
       </Link>
-      <h1 className="mt-3 font-pattaya text-3xl text-foreground">{labels.title}</h1>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{labels.subtitle}</p>
+      <h1 className={`mt-3 ${dashboardTitleClass} text-foreground`}>{labels.title}</h1>
+      <p className={`mt-2 max-w-2xl ${sectionDescClass} text-muted-foreground`}>{labels.subtitle}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{rows.length}</p>
-          <p className="text-sm text-muted-foreground">{labels.stats.total}</p>
+          <p className={`${statValueClass} text-foreground`}>{rows.length}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>{labels.stats.total}</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{responded}</p>
-          <p className="text-sm text-muted-foreground">{labels.stats.responded}</p>
+          <p className={`${statValueClass} text-foreground`}>{responded}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>{labels.stats.responded}</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-emerald-700">{attending}</p>
-          <p className="text-sm text-muted-foreground">{labels.stats.attending}</p>
+          <p className={`${statValueClass} text-emerald-700`}>{attending}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>{labels.stats.attending}</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-destructive">{declined}</p>
-          <p className="text-sm text-muted-foreground">{labels.stats.declined}</p>
+          <p className={`${statValueClass} text-destructive`}>{declined}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>{labels.stats.declined}</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4 text-center">
-          <p className="text-2xl font-bold text-foreground">{expectedGuests}</p>
-          <p className="text-sm text-muted-foreground">{labels.stats.expected}</p>
+          <p className={`${statValueClass} text-foreground`}>{expectedGuests}</p>
+          <p className={`${bodyClass} text-muted-foreground`}>{labels.stats.expected}</p>
         </div>
       </div>
 

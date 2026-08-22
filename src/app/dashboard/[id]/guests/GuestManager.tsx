@@ -54,6 +54,7 @@ import {
   type GuestActionError,
   type GuestState,
 } from "./actions";
+import { panelSubTitleClass, panelTitleClass } from "@/lib/typography";
 
 export type { GuestRow } from "@/lib/guest-manager";
 
@@ -134,7 +135,7 @@ function ModalFrame({
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <Dialog.Title className="font-heading text-xl font-semibold">{title}</Dialog.Title>
+                <Dialog.Title className={panelTitleClass}>{title}</Dialog.Title>
                 {description ? (
                   <Dialog.Description className="mt-1.5 text-sm leading-6 text-muted-foreground">
                     {description}
@@ -818,7 +819,7 @@ export function GuestManager({ invitationId, slug, guests: serverGuests, accessT
     <div className="mt-7 space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-heading text-lg font-semibold text-foreground">{t("listTitle")}</h2>
+          <h2 className={`${panelSubTitleClass} text-foreground`}>{t("listTitle")}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {t("count", { shown: filtered.length, total: guests.length })}
           </p>
@@ -898,7 +899,7 @@ export function GuestManager({ invitationId, slug, guests: serverGuests, accessT
       {guests.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-card px-6 py-14 text-center">
           <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary"><Users className="size-7" aria-hidden /></span>
-          <h3 className="mt-4 font-heading text-lg font-semibold text-foreground">{t("empty.title")}</h3>
+          <h3 className={`mt-4 ${panelSubTitleClass} text-foreground`}>{t("empty.title")}</h3>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">{t("empty.description")}</p>
           <Button type="button" size="lg" className="mt-5" onClick={() => setAddOpen(true)}><Plus aria-hidden />{t("actions.add")}</Button>
         </div>

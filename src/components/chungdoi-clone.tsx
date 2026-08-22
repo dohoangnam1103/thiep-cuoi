@@ -37,7 +37,23 @@ import { TemplatePreviewModal } from "@/components/template-preview-modal";
 import { templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
 import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
+import { sectionPaddingClass } from "@/lib/section-spacing";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
+import {
+  blockTitleClass,
+  bodyClass,
+  bodySmallClass,
+  cardTitleClass,
+  thumbTitleClass,
+  ctaPrimaryClass,
+  ctaSecondaryClass,
+  eyebrowClass,
+  noteClass,
+  pageTitleClass,
+  pillClass,
+  sectionDescClass,
+  sectionTitleClass,
+} from "@/lib/typography";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
@@ -202,10 +218,12 @@ function StackFan() {
           const angle = isCenter ? 0 : fan * 9;
           const tx = isCenter ? 0 : fan * 30;
           const ty = isCenter ? -14 : Math.abs(fan) * 10;
+          // Không làm mờ thẻ hai bên: trước đây `opacity: 0.72` khiến các thiệp
+          // phụ trông bạc màu trên nền hồng nhạt. Chiều sâu đã có sẵn nhờ
+          // scale(0.9) + góc nghiêng + z-index, không cần giảm opacity.
           const style: CSSProperties = {
             transform: `translateX(${tx}px) translateY(${ty}px) rotate(${angle}deg) scale(${isCenter ? 1 : 0.9})`,
             zIndex: isCenter ? count + 1 : count - slot,
-            opacity: isCenter ? 1 : 0.72,
           };
           return (
             <button
@@ -234,10 +252,10 @@ function StackFan() {
                 className="h-full w-full rounded-2xl object-cover object-top shadow-[0_18px_44px_rgb(0_0_0/0.22)]"
               />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent p-4 opacity-0 transition-opacity group-hover:opacity-100">
-                <p className="font-heading text-sm font-black text-background">
+                <p className={`${thumbTitleClass} text-background`}>
                   {templateName(template.slug, template.name)}
                 </p>
-                <p className="text-[10px] text-background/80">{template.category} · {template.color}</p>
+                <p className={`${bodySmallClass} text-background/80`}>{template.category} · {template.color}</p>
               </div>
             </button>
           );
@@ -275,24 +293,27 @@ function HeroSection({ createHref }: { createHref: string }) {
       ) : null}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(214,69,80,0.05),transparent_34%),radial-gradient(circle_at_88%_0%,rgba(224,168,112,0.05),transparent_30%)]" />
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-muted/40 to-transparent" />
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-8 pt-6 sm:px-6 sm:pb-20 sm:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-24 lg:pt-16">
+      {/* Hero đặt padding ở div này chứ không phải trên <section>, nên nó không
+          đi qua sectionPaddingClass. Giữ pt (đầu trang cần thoáng dưới header)
+          nhưng hạ pb cho khớp nhịp 48px của các khối còn lại. */}
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-8 pt-6 sm:px-6 sm:pb-12 sm:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-14 lg:pt-16">
         <div className="flex flex-col justify-center">
-          <h1 className="hero-enter font-heading max-w-3xl text-xl font-black leading-[1.05] tracking-tight text-foreground sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl" style={{ "--hero-delay": "160ms" } as CSSProperties}>
+          <h1 className={`hero-enter ${pageTitleClass} max-w-3xl text-foreground`} style={{ "--hero-delay": "160ms" } as CSSProperties}>
             <span className="shiny-text">{t("hero.title")}</span>
           </h1>
-          <p className="hero-enter mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7" style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
-          <p className="hero-enter mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7" style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
-          <p className="hero-enter mt-3 max-w-2xl text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6" style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
+          <p className={`hero-enter mt-4 max-w-2xl ${sectionDescClass} text-muted-foreground`} style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
+          <p className={`hero-enter mt-2 max-w-2xl ${sectionDescClass} text-muted-foreground`} style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
+          <p className={`hero-enter mt-3 max-w-2xl ${noteClass} text-muted-foreground`} style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
           <div className="hero-enter mt-8 flex flex-col items-center gap-4 sm:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href={createHref}
-              className="group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)] sm:px-8 sm:py-4 sm:text-lg"
+              className={`group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)] sm:px-8 sm:py-4`}
             >
               {t("createNow")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#how-it-works"
-              className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-bold text-foreground transition hover:-translate-y-1 hover:bg-muted"
+              className={`inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 ${ctaSecondaryClass} text-foreground transition hover:-translate-y-1 hover:bg-muted`}
             >
               {t("hero.watchGuide")} <Play className="size-4" />
             </a>
@@ -302,12 +323,6 @@ function HeroSection({ createHref }: { createHref: string }) {
         <div className="hero-enter flex items-center justify-center" style={{ "--hero-delay": "300ms" } as CSSProperties}>
           <StackFan />
         </div>
-      </div>
-      <div className="relative mx-auto max-w-7xl px-4 pb-6 text-center sm:px-6 sm:pb-16 lg:px-8">
-        <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
-          {t("hero.showcaseTitle")} <span className="font-pattaya font-normal italic text-primary">{t("hero.showcaseAccent")}</span>
-        </h2>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("hero.showcaseSubtitle")}</p>
       </div>
     </section>
   );
@@ -403,11 +418,13 @@ function TemplateCarousel() {
 
   return (
     <>
-    <section className="overflow-hidden bg-background py-8 sm:py-16">
+    <section className={`overflow-hidden bg-background ${sectionPaddingClass}`}>
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <div className="reveal">
-          <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("carousel.title")}</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("carousel.subtitle")}</p>
+          <h2 className={`${sectionTitleClass} text-foreground`}>
+            {t("carousel.title")} <span className="font-pattaya font-normal italic text-primary">{t("carousel.titleAccent")}</span>
+          </h2>
+          <p className={`mt-3 ${sectionDescClass} text-muted-foreground`}>{t("carousel.subtitle")}</p>
         </div>
       </div>
 
@@ -484,11 +501,11 @@ function TemplateCarousel() {
                       />
                     )}
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
-                      {template.isNew ? <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">{t("carousel.new")}</span> : null}
-                      <h3 className="mt-2 font-heading text-lg font-black text-background">
+                      {template.isNew ? <span className={`rounded-full bg-primary px-2.5 py-1 ${pillClass} text-primary-foreground`}>{t("carousel.new")}</span> : null}
+                      <h3 className={`mt-2 ${cardTitleClass} text-background`}>
                         {templateName(template.slug, template.name)}
                       </h3>
-                      <p className="text-sm text-background/80">
+                      <p className={`${bodySmallClass} text-background/80`}>
                         {listingT(`categories.${template.category}`)} - {listingT(`colors.${template.color}`)}
                       </p>
                     </div>
@@ -541,14 +558,14 @@ function TemplateCarousel() {
         ))}
       </div>
 
-      <div className="reveal mt-12 flex flex-col items-center gap-3 px-4">
+      <div className="reveal mt-8 flex flex-col items-center gap-3 px-4">
         <a
           href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
-          className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+          className={`group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]`}
         >
           {t("carousel.viewAll")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
         </a>
-        <p className="text-sm text-muted-foreground">{t("carousel.viewAllHint")}</p>
+        <p className={`${noteClass} text-muted-foreground`}>{t("carousel.viewAllHint")}</p>
       </div>
     </section>
     {selected ? <TemplatePreviewModal template={selected} onClose={() => setSelected(null)} /> : null}
@@ -566,11 +583,11 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="bg-background py-8 sm:py-24">
+    <section id="how-it-works" className={`bg-background ${sectionPaddingClass}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
-          <h2 className="font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("howItWorks.title")}</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("howItWorks.subtitle")}</p>
+          <h2 className={`${sectionTitleClass} text-foreground`}>{t("howItWorks.title")}</h2>
+          <p className={`mt-3 ${sectionDescClass} text-muted-foreground`}>{t("howItWorks.subtitle")}</p>
         </div>
         <div className="mx-auto mt-8 grid max-w-5xl items-center gap-8 sm:mt-12 sm:gap-12 lg:grid-cols-2">
           <ol className="reveal relative flex w-full max-w-md flex-col lg:justify-self-end">
@@ -583,9 +600,9 @@ function HowItWorks() {
                   <Icon className="size-5" />
                 </div>
                 <div className="pt-1">
-                  <p className="text-xs font-bold text-accent">{t("howItWorks.step", { number: index + 1 })}</p>
-                  <h3 className="mt-1 font-heading text-lg font-black text-foreground sm:text-xl">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p>
+                  <p className={`${pillClass} text-accent`}>{t("howItWorks.step", { number: index + 1 })}</p>
+                  <h3 className={`mt-1 ${blockTitleClass} text-foreground`}>{title}</h3>
+                  <p className={`mt-2 ${bodyClass} text-muted-foreground`}>{copy}</p>
                 </div>
               </li>
             ))}
@@ -597,13 +614,13 @@ function HowItWorks() {
         <div className="reveal mt-8 flex flex-col items-center gap-3 sm:mt-14">
           <a
             href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
-            className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]"
+            className={`group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]`}
           >
             {t("howItWorks.ctaStart")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </a>
           <Link
             href="/create-wedding-invitation-online"
-            className="text-sm font-medium text-muted-foreground underline-offset-4 transition hover:text-primary hover:underline"
+            className={`${noteClass} text-muted-foreground underline-offset-4 transition hover:text-primary hover:underline`}
           >
             {t("howItWorks.ctaHint")}
           </Link>
@@ -621,12 +638,12 @@ function SupportSection() {
   ];
 
   return (
-    <section className="bg-secondary py-8 sm:py-20">
+    <section className={`bg-secondary ${sectionPaddingClass}`}>
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-        <h2 className="reveal font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
+        <h2 className={`reveal ${sectionTitleClass} text-foreground`}>
           {t("support.title")} <span className="font-pattaya font-normal italic text-primary">{t("support.titleAccent")}</span>
         </h2>
-        <p className="reveal mx-auto mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+        <p className={`reveal mx-auto mt-4 max-w-2xl ${sectionDescClass} text-muted-foreground`}>
           {t.rich("support.subtitle", {
             hl: (chunks) => <span className="font-semibold text-primary">{chunks}</span>,
           })}
@@ -641,8 +658,8 @@ function SupportSection() {
                 <Icon className="size-6" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground sm:text-sm">{label}</p>
-                <p className="mt-1 text-base font-semibold text-foreground sm:text-lg">{value}</p>
+                <p className={`${bodySmallClass} text-muted-foreground`}>{label}</p>
+                <p className={`mt-1 ${cardTitleClass} text-foreground`}>{value}</p>
               </div>
             </div>
           ))}
@@ -656,19 +673,21 @@ function GuestsSection() {
   const t = useTranslations("home");
 
   return (
-    <section id="guests" className="relative overflow-hidden bg-background py-8 sm:py-20">
+    <section id="guests" className={`relative overflow-hidden bg-background ${sectionPaddingClass}`}>
       <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_center,rgba(214,64,69,0.14),transparent_55%)]" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Eyebrow và tiêu đề nằm ngoài grid để chiếm hết bề ngang khối, thay vì
             bị bó trong cột trái. */}
         <div className="reveal text-center">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-accent">{t("guests.eyebrow")}</p>
-          <h2 className="mt-3 font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("guests.title")}</h2>
+          <p className={`${eyebrowClass} text-accent`}>{t("guests.eyebrow")}</p>
+          <h2 className={`mt-3 ${sectionTitleClass} text-foreground`}>{t("guests.title")}</h2>
         </div>
-        <div className="mt-8 grid gap-8 sm:mt-12 sm:gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        {/* lg:items-center: ảnh vẫn cao hơn cột chữ, canh giữa theo trục dọc để
+            không bị hụt một khoảng trống ở góc dưới bên trái. */}
+        <div className="mt-8 grid gap-8 sm:mt-12 sm:gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="reveal">
-            <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("guests.subtitle")}</p>
-            <ul className="mt-8 space-y-4 text-foreground">
+            <p className={`${sectionDescClass} text-muted-foreground`}>{t("guests.subtitle")}</p>
+            <ul className={`mt-8 space-y-4 ${bodyClass} text-foreground`}>
               {[
                 t("guests.point1"),
                 t("guests.point2"),
@@ -684,15 +703,20 @@ function GuestsSection() {
             </ul>
           </div>
           <div className="reveal">
+            {/* Ảnh tỉ lệ 1122x1402 (cao gấp 1.25 lần rộng). Để `w-full` trong cột
+                1.1fr thì nó rộng 642px → cao 803px, gấp 2.39 lần chiều cao nội
+                dung cột chữ (336px) nên khối trông lệch hẳn. Chặn ở 420px → cao
+                525px, còn 1.56 lần. `sizes` hạ theo để không tải ảnh to hơn mức
+                thực sự hiển thị. */}
             <Image
               src="/chungdoi/images/rsvp-showcase.png"
               alt={t("guests.title")}
               width={1122}
               height={1402}
-              sizes="(max-width: 1023px) 100vw, 704px"
+              sizes="(max-width: 1023px) 100vw, 420px"
               loading="lazy"
               decoding="async"
-              className="h-auto w-full"
+              className="mx-auto h-auto w-full max-w-[420px]"
             />
           </div>
         </div>
@@ -707,12 +731,12 @@ function TestimonialsSection() {
   const t = useTranslations("home");
 
   return (
-    <section className="bg-background py-8 sm:py-20">
+    <section className={`bg-background ${sectionPaddingClass}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="reveal text-center">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-accent">{t("testimonials.eyebrow")}</p>
-          <h2 className="mt-3 font-heading text-xl font-black text-foreground sm:text-2xl md:text-3xl lg:text-4xl">{t("testimonials.title")}</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{t("testimonials.subtitle")}</p>
+          <p className={`${eyebrowClass} text-accent`}>{t("testimonials.eyebrow")}</p>
+          <h2 className={`mt-3 ${sectionTitleClass} text-foreground`}>{t("testimonials.title")}</h2>
+          <p className={`mt-3 ${sectionDescClass} text-muted-foreground`}>{t("testimonials.subtitle")}</p>
         </div>
         <div className="mt-8 grid gap-5 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3">
           {testimonialKeys.map((key) => (
@@ -725,14 +749,14 @@ function TestimonialsSection() {
                   <Star key={i} className="size-4 fill-primary text-primary" />
                 ))}
               </div>
-              <blockquote className="mt-4 flex-1 text-sm leading-6 text-foreground">“{t(`testimonials.${key}Quote`)}”</blockquote>
+              <blockquote className={`mt-4 flex-1 ${bodyClass} text-foreground`}>“{t(`testimonials.${key}Quote`)}”</blockquote>
               <figcaption className="mt-5 flex items-center gap-3">
                 <span className="flex size-10 items-center justify-center rounded-full bg-secondary font-black text-primary">
                   {t(`testimonials.${key}Author`).charAt(0)}
                 </span>
                 <span>
-                  <span className="block text-sm font-black text-foreground">{t(`testimonials.${key}Author`)}</span>
-                  <span className="block text-xs text-muted-foreground">{t(`testimonials.${key}Role`)}</span>
+                  <span className={`block ${bodyClass} font-black text-foreground`}>{t(`testimonials.${key}Author`)}</span>
+                  <span className={`block ${bodySmallClass} text-muted-foreground`}>{t(`testimonials.${key}Role`)}</span>
                 </span>
               </figcaption>
             </figure>
