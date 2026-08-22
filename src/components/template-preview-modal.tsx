@@ -97,16 +97,10 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
           </button>
         </header>
 
-        <div className="mx-6 mb-3 hidden shrink-0 grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 sm:grid">
-          <TemplateQrCode demoPath={demoPath} name={name} />
-          <div>
-            <h3 className="text-sm font-black leading-4 text-foreground">{modalT("phonePreviewTitle")}</h3>
-            <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
-              {modalT("phonePreviewDescription")}
-            </p>
-          </div>
-        </div>
-
+        {/* Khối QR nằm TRONG cột trái (xem dưới), không phải một dải full-width
+            giữa header và grid. Dải cũ chiếm 104px chiều cao của cả modal, tạo
+            khoảng trống vô nghĩa phía trên cột preview và ép khung preview thấp
+            xuống. Bỏ nó đi thì grid bắt đầu ngay dưới header. */}
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:grid lg:grid-cols-[minmax(0,1fr)_420px] lg:overflow-hidden">
           <section className="flex min-h-0 shrink-0 flex-col bg-card p-5 sm:p-6 lg:overflow-hidden lg:p-6">
             <h2
@@ -155,7 +149,10 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
               </div>
 
               <div className="grid content-start gap-3">
-                <div className="hidden">
+                {/* `hidden sm:grid` giữ đúng hành vi cũ: mobile không hiện QR
+                    (quét QR bằng chính máy đang xem thì vô nghĩa), từ sm trở lên
+                    mới hiện. */}
+                <div className="hidden grid-cols-[80px_1fr] items-center gap-3 rounded-xl bg-secondary/70 p-3 sm:grid">
                   <TemplateQrCode demoPath={demoPath} name={name} />
                   <div>
                     <h3 className="text-sm font-black leading-4 text-foreground">{modalT("phonePreviewTitle")}</h3>
@@ -172,13 +169,23 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
               </div>
             </div>
 
-            <div className="mt-auto grid grid-cols-2 gap-3 pt-4">
+            {/* Mobile xếp DỌC, nút chính ("TẠO THIỆP") lên trên.
+                Lý do: hai nhãn lệch nhau nhiều — "XEM DEMO THIỆP" cần ~132px
+                (chữ 108 + icon 16 + gap 8) còn "TẠO THIỆP" chỉ ~67px. Xếp ngang
+                chia đều thì nút demo thiếu 5-13px ở mọi máy ≤375px nên rớt dòng.
+                Bù bằng cách cho cột demo rộng hơn thì nút phụ lại to hơn nút
+                chính, sai thứ tự ưu tiên. Xếp dọc giải quyết cả hai: mỗi nút
+                được trọn bề ngang (dư 128-196px, không bao giờ rớt dòng) và nút
+                chính chiếm hết chiều ngang ở trên nên nổi rõ nhất.
+                Từ sm trở lên chỗ đã đủ rộng → về lại 2 cột, thứ tự DOM cũ
+                (demo bên trái, tạo bên phải). */}
+            <div className="mt-auto grid grid-cols-1 gap-3 pt-4 sm:grid-cols-2">
               <Link
                 href={{ pathname: "/templates/[slug]/demo", params: { slug: localizedSlug } }}
                 data-ga-event="open_template_demo"
                 data-ga-param-template-id={template.slug}
                 data-ga-param-source="listing_modal"
-                className="inline-flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-full border border-border bg-secondary px-3 py-2.5 text-center text-xs font-black text-foreground transition hover:-translate-y-0.5 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 sm:text-sm"
+                className="order-2 inline-flex min-h-11 min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-border bg-secondary px-3 py-2.5 text-center text-xs font-black text-foreground transition hover:-translate-y-0.5 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 sm:order-none sm:text-sm"
               >
                 {t("demoCta")} <ArrowRight className="size-4 shrink-0" />
               </Link>
@@ -187,12 +194,12 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
                 data-ga-event="select_template"
                 data-ga-param-template-id={template.slug}
                 data-ga-param-source="listing_modal"
-                className="min-w-0"
+                className="order-1 min-w-0 sm:order-none"
               >
                 <input type="hidden" name="templateId" value={template.slug} />
                 <button
                   type="submit"
-                  className="demo-shine relative inline-flex h-full min-h-11 w-full min-w-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-3 py-2.5 text-center text-xs font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 sm:text-sm"
+                  className="demo-shine relative inline-flex h-full min-h-11 w-full min-w-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-full bg-primary px-3 py-2.5 text-center text-xs font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:translate-y-0 sm:text-sm"
                 >
                   {t("useStyle")}
                 </button>
@@ -200,7 +207,12 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
             </div>
           </section>
 
-          <aside className="flex h-[60dvh] min-h-[320px] flex-none flex-col bg-card p-4 sm:h-[65dvh] sm:p-5 lg:h-auto lg:min-h-0 lg:flex-1">
+          {/* Chiều cao khung preview trên mobile: 60dvh cho khung gần vuông
+              (1:1.13 ở 375x667, 1:1.40 ở 390x844) nên thiệp trông lùn và chỉ hé
+              ~13% ảnh. 80dvh đưa tỉ lệ về ~1:1.9, tức dáng màn hình điện thoại,
+              đúng thứ khách cần thấy. `min-h` chỉ là sàn cho viewport thấp
+              (landscape); ở mọi máy dựng đứng thì 80dvh mới là cái quyết định. */}
+          <aside className="flex h-[80dvh] min-h-[420px] flex-none flex-col bg-card p-4 sm:h-[65dvh] sm:p-5 lg:h-auto lg:min-h-0 lg:flex-1">
             <AutoScrollingPreview template={template} alt={modalT("imageAlt", { name })} />
           </aside>
         </div>
