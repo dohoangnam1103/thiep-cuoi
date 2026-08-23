@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { getAnonymousSessionUserId } from "@/lib/auth/anonymous-account";
 import { safeAuthReturnPath } from "@/lib/auth-redirects";
 import { getSession } from "@/lib/session";
 import { AuthForm } from "../AuthForm";
@@ -12,7 +13,13 @@ type LoginPageProps = {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const session = await getSession();
   if (session) {
-    redirect("/dashboard");
+    // An anonymous session must still reach this form. Bouncing it to /dashboard
+    // is what locks a visitor into their cookie-only account: they can never
+    // attach an email, so a paid invitation dies with the cookie.
+    const anonymousUserId = await getAnonymousSessionUserId();
+    if (!anonymousUserId) {
+      redirect("/dashboard");
+    }
   }
 
   const { authError, error, next } = await searchParams;

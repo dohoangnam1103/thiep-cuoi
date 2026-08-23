@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
+import {
+  adoptAnonymousSession,
+  getAnonymousSessionUserId,
+} from "@/lib/auth/anonymous-account";
 import { prisma } from "@/lib/prisma";
 import { createSession, destroySession } from "@/lib/session";
 
@@ -30,7 +34,16 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({ data: { email, passwordHash } });
+  // Someone who already started a draft is signing up from an anonymous
+  // session: give that row credentials instead of creating a second account,
+  // which would strand the draft (and any payment) on the cookie-only row.
+  const anonymousUserId = await getAnonymousSessionUserId();
+  const user = anonymousUserId
+    ? await prisma.user.update({
+        where: { id: anonymousUserId },
+        data: { email, passwordHash },
+      })
+    : await prisma.user.create({ data: { email, passwordHash } });
   await createSession(user.id);
   redirect("/dashboard");
 }
@@ -55,6 +68,7 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
     return { error: "Email hoặc mật khẩu không đúng" };
   }
 
+  await adoptAnonymousSession(user.id);
   await createSession(user.id);
   redirect("/dashboard");
 }
