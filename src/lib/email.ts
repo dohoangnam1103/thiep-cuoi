@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 import { absoluteUrl } from "@/lib/site-url";
 
-export const TRIAL_REMINDER_FROM = "ChungDoi <noreply@thiepmungonline.com>";
+export const TRIAL_REMINDER_FROM = "Thiệp Mừng Online <noreply@thiepmungonline.com>";
 
 function escapeHtml(value: string): string {
   return value
@@ -30,7 +30,7 @@ export function buildTrialReminderEmail(input: {
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(190,24,93,0.12);">
         <tr><td style="background:linear-gradient(135deg,#ec4899,#f472b6);padding:32px 32px 24px;text-align:center;">
-          <div style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">ChungDoi</div>
+          <div style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">Thiệp Mừng Online</div>
           <div style="margin-top:8px;font-size:14px;color:#fce7f3;">Thiệp cưới online</div>
         </td></tr>
         <tr><td style="padding:32px;">
@@ -54,7 +54,7 @@ export function buildTrialReminderEmail(input: {
           </p>
         </td></tr>
         <tr><td style="padding:20px 32px;background:#fdf2f8;text-align:center;">
-          <p style="margin:0;font-size:12px;color:#9ca3af;">© ChungDoi — thiepmungonline.com</p>
+          <p style="margin:0;font-size:12px;color:#9ca3af;">© Thiệp Mừng Online — thiepmungonline.com</p>
         </td></tr>
       </table>
     </td></tr>
