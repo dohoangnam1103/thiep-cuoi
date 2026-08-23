@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NextIntlClientProvider } from "next-intl";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import viMessages from "../../../messages/vi.json";
 import "../globals.css";
@@ -54,9 +54,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                 <Link href="/admin" className="font-heading text-lg text-primary">
                   Quản trị
                 </Link>
-                <Suspense fallback={<div className="h-5" />}>
-                  <AdminNav items={nav} />
-                </Suspense>
+                <AdminNav items={nav} />
                 <form action={adminLogout} className="ml-auto">
                   <button type="submit" className="text-sm text-muted-foreground hover:text-destructive">
                     Đăng xuất
