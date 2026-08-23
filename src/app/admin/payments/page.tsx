@@ -1,6 +1,8 @@
 import { verifyAdmin } from "@/lib/admin-dal";
 import { isPendingPaymentExpired } from "@/lib/payment";
 import { prisma } from "@/lib/prisma";
+import { findUnattributedPayments } from "@/lib/unattributed-payments";
+import { UnattributedPaymentsPanel } from "./UnattributedPaymentsPanel";
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(date);
@@ -13,7 +15,7 @@ function formatVnd(amount: number): string {
 export default async function AdminPaymentsPage() {
   await verifyAdmin();
 
-  const [payments, revenue] = await Promise.all([
+  const [payments, revenue, unattributed] = await Promise.all([
     prisma.payment.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -26,12 +28,14 @@ export default async function AdminPaymentsPage() {
       },
     }),
     prisma.payment.aggregate({ where: { status: "paid" }, _sum: { amount: true } }),
+    findUnattributedPayments(),
   ]);
 
   const totalRevenue = revenue._sum.amount ?? 0;
 
   return (
     <div className="space-y-4">
+      <UnattributedPaymentsPanel paid={unattributed.paid} atRisk={unattributed.atRisk} />
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="font-heading text-2xl text-foreground">Giao dịch ({payments.length})</h1>
         <p className="text-sm text-muted-foreground">
@@ -75,7 +79,13 @@ export default async function AdminPaymentsPage() {
                       <br />
                       {couple}
                     </td>
-                    <td className="px-4 py-3">{payment.invitation.user.email ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      {payment.invitation.user.email ?? (
+                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-700">
+                          chưa gắn email
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3">{formatVnd(payment.amount)}</td>
                     <td className="px-4 py-3">{payment.voucherCode ?? "—"}</td>
                     <td className="px-4 py-3">
