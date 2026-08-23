@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { verifyAdmin } from "@/lib/admin-dal";
+import { REAL_INVITATION_WHERE } from "@/lib/admin-invitation-filters";
 import { prisma } from "@/lib/prisma";
 
 const SYSTEM_EMAIL = "system@demo.local";
@@ -14,7 +15,7 @@ export default async function AdminDashboardPage() {
 
   const [userCount, realInvitations, demoCount, suggestionCount, paidCount, revenue] = await Promise.all([
     prisma.user.count({ where: { email: { not: SYSTEM_EMAIL } } }),
-    prisma.invitation.count({ where: { isDemo: false } }),
+    prisma.invitation.count({ where: REAL_INVITATION_WHERE }),
     prisma.invitation.count({ where: { isDemo: true } }),
     prisma.templateSuggestion.count(),
     prisma.payment.count({ where: { status: "paid" } }),
@@ -23,7 +24,7 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     { label: "Người dùng", value: userCount, href: "/admin/users" },
-    { label: "Thiệp thật", value: realInvitations, href: null },
+    { label: "Thiệp thật", value: realInvitations, href: "/admin/invitations" },
     { label: "Thiệp demo", value: demoCount, href: "/admin/demos" },
     { label: "Gợi ý mẫu", value: suggestionCount, href: "/admin/template-suggestions" },
     { label: "Đơn đã trả", value: paidCount, href: "/admin/payments" },

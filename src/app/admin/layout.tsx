@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 const NAV = [
   { href: "/admin", label: "Tổng quan" },
   { href: "/admin/users", label: "Người dùng" },
+  { href: "/admin/invitations", label: "Thiệp thật" },
   { href: "/admin/demos", label: "Thiệp demo" },
   { href: "/admin/demos?tab=mobile-thumbnail", label: "Thumbnail mobile" },
   { href: "/admin/blogs", label: "Bài viết" },
@@ -49,21 +50,54 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           }}
         >
           {admin ? (
-            <header className="border-b border-border bg-background">
-              <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-                <Link href="/admin" className="font-heading text-lg text-primary">
+            <div className="flex min-h-screen">
+              <aside className="sticky top-0 hidden h-screen w-56 shrink-0 flex-col border-r border-border bg-background lg:flex">
+                <Link
+                  href="/admin"
+                  className="block border-b border-border px-4 py-4 font-heading text-lg text-primary"
+                >
                   Quản trị
                 </Link>
-                <AdminNav items={nav} />
-                <form action={adminLogout} className="ml-auto">
-                  <button type="submit" className="text-sm text-muted-foreground hover:text-destructive">
+                <div className="flex-1 overflow-y-auto p-2">
+                  <AdminNav items={nav} orientation="vertical" />
+                </div>
+                <form action={adminLogout} className="border-t border-border p-2">
+                  <button
+                    type="submit"
+                    className="w-full rounded-lg px-3 py-2 text-left text-sm text-muted-foreground transition hover:bg-muted hover:text-destructive"
+                  >
                     Đăng xuất
                   </button>
                 </form>
+              </aside>
+
+              {/* Below `lg` the sidebar would eat the screen, so the same list
+                  becomes a scrollable strip above the content. */}
+              <div className="min-w-0 flex-1">
+                <header className="border-b border-border bg-background lg:hidden">
+                  <div className="flex items-center gap-3 px-4 py-2">
+                    <Link href="/admin" className="font-heading text-base text-primary">
+                      Quản trị
+                    </Link>
+                    <form action={adminLogout} className="ml-auto">
+                      <button
+                        type="submit"
+                        className="text-sm text-muted-foreground hover:text-destructive"
+                      >
+                        Đăng xuất
+                      </button>
+                    </form>
+                  </div>
+                  <div className="px-2 pb-2">
+                    <AdminNav items={nav} orientation="horizontal" />
+                  </div>
+                </header>
+                <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
               </div>
-            </header>
-          ) : null}
-          <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+            </div>
+          ) : (
+            <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+          )}
         </NextIntlClientProvider>
       </body>
     </html>

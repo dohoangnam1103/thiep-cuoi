@@ -131,10 +131,12 @@ test.describe("admin: mobile template thumbnails", () => {
     await loginAsAdmin(context, seededAdminId());
     await page.goto("/admin/demos");
 
-    const mobileThumbnailLink = page.locator("header").getByRole("link", {
-      name: "Thumbnail mobile",
-      exact: true,
-    });
+    // Scoped by the nav's accessible name rather than a wrapper element: the
+    // nav lives in the sidebar on desktop and in a top strip below `lg`, and
+    // the demos page has a tab called "Thumbnail mobile" of its own.
+    const mobileThumbnailLink = page
+      .getByRole("navigation", { name: "Điều hướng quản trị" })
+      .getByRole("link", { name: "Thumbnail mobile", exact: true });
     await expect(mobileThumbnailLink).toBeVisible();
     await mobileThumbnailLink.click();
 
