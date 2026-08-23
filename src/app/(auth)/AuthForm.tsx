@@ -9,14 +9,21 @@ import type { AuthCopy } from "./auth-copy";
 type AuthFormProps = {
   copy: AuthCopy;
   nextPath: string;
+  notice?: string;
   oauthError?: string;
 };
 
-export function AuthForm({ copy, nextPath, oauthError }: AuthFormProps) {
+export function AuthForm({ copy, nextPath, notice, oauthError }: AuthFormProps) {
   return (
     <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow">
       <h1 className="text-center font-heading text-3xl text-foreground">{copy.loginTitle}</h1>
       <p className="mt-2 text-center text-sm text-muted-foreground">{copy.loginSubtitle}</p>
+
+      {notice ? (
+        <p className="mt-4 rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+          {notice}
+        </p>
+      ) : null}
 
       <button
         type="button"

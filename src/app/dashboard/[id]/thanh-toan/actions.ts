@@ -1,7 +1,8 @@
 "use server";
 
 import type { Payment } from "@/generated/prisma/client";
-import { verifySession } from "@/lib/dal";
+import { getAccountSessionUserId } from "@/lib/auth/anonymous-account";
+import { verifyAccountSession } from "@/lib/dal";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { BANK } from "@/lib/payment";
 import {
@@ -66,10 +67,14 @@ async function preparePayment(payment: Payment): Promise<Payment> {
     : payment;
 }
 
+function checkoutPath(invitationId: string): string {
+  return `/dashboard/${encodeURIComponent(invitationId)}/thanh-toan`;
+}
+
 export async function createOrGetPayment(
   invitationId: string,
 ): Promise<CheckoutPreparation> {
-  const { userId } = await verifySession();
+  const { userId } = await verifyAccountSession(checkoutPath(invitationId));
   const provider = getPaymentProvider();
   const result = await prisma.$transaction(async (db): Promise<CheckoutTxResult> => {
     const invitation = await db.invitation.findFirst({
@@ -169,7 +174,11 @@ export async function applyVoucherToPayment(
   paymentId: string,
   rawCode: string,
 ): Promise<VoucherResult> {
-  const { userId } = await verifySession();
+  // Invoked from the client, so a redirect would strand the visitor mid-form:
+  // report it like any other rejection instead. Reaching this without an
+  // account means the request did not come from the checkout page.
+  const userId = await getAccountSessionUserId();
+  if (!userId) return { ok: false, errorCode: "forbidden" };
   const code = rawCode.trim().toUpperCase();
   if (!code) return { ok: false, errorCode: "voucherRequired" };
 

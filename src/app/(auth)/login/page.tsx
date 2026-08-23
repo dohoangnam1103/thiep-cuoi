@@ -1,30 +1,39 @@
 import { redirect } from "next/navigation";
 
-import { getAnonymousSessionUserId } from "@/lib/auth/anonymous-account";
+import { getAccountSessionUserId } from "@/lib/auth/anonymous-account";
 import { safeAuthReturnPath } from "@/lib/auth-redirects";
-import { getSession } from "@/lib/session";
 import { AuthForm } from "../AuthForm";
 import { authCopy } from "../auth-copy";
 
 type LoginPageProps = {
-  searchParams: Promise<{ authError?: string; error?: string; next?: string }>;
+  searchParams: Promise<{
+    authError?: string;
+    error?: string;
+    next?: string;
+    reason?: string;
+  }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const session = await getSession();
-  if (session) {
-    // An anonymous session must still reach this form. Bouncing it to /dashboard
-    // is what locks a visitor into their cookie-only account: they can never
-    // attach an email, so a paid invitation dies with the cookie.
-    const anonymousUserId = await getAnonymousSessionUserId();
-    if (!anonymousUserId) {
-      redirect("/dashboard");
-    }
+  // Only a session that already belongs to a real account has nothing to do
+  // here. An anonymous session must still reach this form: bouncing it to
+  // /dashboard is what locks a visitor into their cookie-only account, where
+  // they can never attach an email and a paid invitation dies with the cookie.
+  if (await getAccountSessionUserId()) {
+    redirect("/dashboard");
   }
 
-  const { authError, error, next } = await searchParams;
+  const { authError, error, next, reason } = await searchParams;
   const oauthError = authError === "google" || authError === "facebook" || error ? authCopy.oauthError : undefined;
+  const notice = reason === "checkout" ? authCopy.checkoutNotice : undefined;
   const nextPath = safeAuthReturnPath(next);
 
-  return <AuthForm copy={authCopy} nextPath={nextPath} oauthError={oauthError} />;
+  return (
+    <AuthForm
+      copy={authCopy}
+      nextPath={nextPath}
+      notice={notice}
+      oauthError={oauthError}
+    />
+  );
 }

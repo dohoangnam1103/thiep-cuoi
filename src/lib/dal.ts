@@ -1,6 +1,8 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 
+import { getAccountSessionUserId } from "@/lib/auth/anonymous-account";
+import { loginReasonHref } from "@/lib/auth-redirects";
 import { prisma } from "@/lib/prisma";
 import { createSession, getSession } from "@/lib/session";
 
@@ -21,6 +23,27 @@ export async function verifySession(): Promise<{ userId: string }> {
     redirect("/login");
   }
   return session;
+}
+
+/**
+ * Session gate for anything that takes the visitor's money. `verifySession()`
+ * is satisfied by an anonymous cookie-only account, which is how an invitation
+ * gets paid for with no email attached to it: nothing in checkout ever asks who
+ * the buyer is, so a lost cookie leaves us with a payment we cannot trace back
+ * to a person. Money moves only once the session belongs to a real account.
+ *
+ * `returnTo` brings the visitor back to where they were: signing in adopts the
+ * anonymous session, so the invitation they were about to pay for follows them
+ * into the account and keeps its id.
+ */
+export async function verifyAccountSession(
+  returnTo: string,
+): Promise<{ userId: string }> {
+  const userId = await getAccountSessionUserId();
+  if (!userId) {
+    redirect(loginReasonHref("checkout", returnTo));
+  }
+  return { userId };
 }
 
 export async function getOrCreateUserId(): Promise<string> {

@@ -17,11 +17,10 @@ export function isAnonymousUser(user: AnonymityFields | null | undefined): boole
   return user.email === null && user.passwordHash === null;
 }
 
-/**
- * The id of the current session's user when that user is anonymous, so callers
- * can turn it into a real account instead of stranding its invitations.
- */
-export async function getAnonymousSessionUserId(): Promise<string | null> {
+async function loadSessionUser(): Promise<{
+  userId: string;
+  user: AnonymityFields | null;
+} | null> {
   const session = await getSession();
   if (!session) return null;
 
@@ -29,7 +28,29 @@ export async function getAnonymousSessionUserId(): Promise<string | null> {
     where: { id: session.userId },
     select: { email: true, passwordHash: true },
   });
-  return isAnonymousUser(user) ? session.userId : null;
+  return { userId: session.userId, user };
+}
+
+/**
+ * The id of the current session's user when that user is anonymous, so callers
+ * can turn it into a real account instead of stranding its invitations.
+ */
+export async function getAnonymousSessionUserId(): Promise<string | null> {
+  const loaded = await loadSessionUser();
+  if (!loaded) return null;
+  return isAnonymousUser(loaded.user) ? loaded.userId : null;
+}
+
+/**
+ * The id of the current session's user when that user is a real account — a row
+ * carrying an email or a password, so the visitor can prove who they are
+ * without the cookie. Null for an anonymous row and for a cookie pointing at a
+ * user that no longer exists; neither can be contacted or recovered.
+ */
+export async function getAccountSessionUserId(): Promise<string | null> {
+  const loaded = await loadSessionUser();
+  if (!loaded?.user || isAnonymousUser(loaded.user)) return null;
+  return loaded.userId;
 }
 
 /**
