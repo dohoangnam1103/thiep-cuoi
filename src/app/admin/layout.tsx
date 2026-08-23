@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NextIntlClientProvider } from "next-intl";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import viMessages from "../../../messages/vi.json";
 import "../globals.css";
@@ -9,6 +9,7 @@ import { PetalField } from "@/components/petal-field";
 import { getCurrentAdmin } from "@/lib/admin-dal";
 import { appFontVariables } from "@/lib/fonts";
 import { adminLogout } from "./actions";
+import { AdminNav } from "./AdminNav";
 
 export const metadata: Metadata = {
   title: "Quản trị | Thiệp Mừng Online",
@@ -50,14 +51,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           {admin ? (
             <header className="border-b border-border bg-background">
               <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-                <span className="font-heading text-lg text-primary">Quản trị</span>
-                <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                  {nav.map((item) => (
-                    <Link key={item.href} href={item.href} className="text-muted-foreground hover:text-foreground">
-                      {item.label}
-                    </Link>
-                  ))}
-                </nav>
+                <Link href="/admin" className="font-heading text-lg text-primary">
+                  Quản trị
+                </Link>
+                <Suspense fallback={<div className="h-5" />}>
+                  <AdminNav items={nav} />
+                </Suspense>
                 <form action={adminLogout} className="ml-auto">
                   <button type="submit" className="text-sm text-muted-foreground hover:text-destructive">
                     Đăng xuất
