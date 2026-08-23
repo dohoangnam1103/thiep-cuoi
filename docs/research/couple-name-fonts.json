@@ -1,0 +1,1131 @@
+{
+  "capturedAt": "2026-08-23",
+  "source": "https://chungdoi.com/vi/mau-thiep/<slug>/demo",
+  "note": "Computed styles of the couple full-name element at 900px viewport. 'ours' captured from localhost:3000/templates/<slug>/demo?capture=1 before any font restoration.",
+  "templates": [
+    {
+      "slug": "baroque-gold",
+      "viSlug": "hoang-gia-vang",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "43px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(141, 143, 88)",
+        "color": "rgb(141, 143, 88)",
+        "ampersand": {
+          "fontFamily": "\"Alex Brush\", \"The Nautigal\", cursive",
+          "fontSize": "38px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "boho-floral-brown",
+      "viSlug": "hoa-moc-nau",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(74, 40, 22)",
+        "color": "rgb(74, 40, 22)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", serif",
+          "fontSize": "42px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "boho-floral-green",
+      "viSlug": "hoa-moc-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(48, 83, 15)",
+        "color": "rgb(48, 83, 15)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", serif",
+          "fontSize": "42px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "300"
+      }
+    },
+    {
+      "slug": "boho-floral-pink",
+      "viSlug": "hoa-moc-hong",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(157, 109, 99)",
+        "color": "rgb(157, 109, 99)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", serif",
+          "fontSize": "42px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "brocade-flower-red",
+      "viSlug": "gam-hoa-do",
+      "original": {
+        "fontFamily": "\"Playfair Display\", \"Times New Roman\", serif",
+        "fontSize": "64px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(106, 33, 4)",
+        "color": "rgb(106, 33, 4)",
+        "ampersand": {
+          "fontFamily": "\"Alex Brush\", \"The Nautigal\", cursive",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "chateau-blue",
+      "viSlug": "lau-dai-lam",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(18, 52, 103)",
+        "color": "rgb(18, 52, 103)",
+        "ampersand": {
+          "fontFamily": "\"Alex Brush\", \"The Nautigal\", cursive",
+          "fontSize": "32px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "chateau-green",
+      "viSlug": "lau-dai-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(58, 90, 44)",
+        "color": "rgb(58, 90, 44)",
+        "ampersand": {
+          "fontFamily": "\"Alex Brush\", \"The Nautigal\", cursive",
+          "fontSize": "32px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "cherry-blossom-pink",
+      "viSlug": "anh-dao-hong",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "50px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(174, 76, 81)",
+        "color": "rgb(174, 76, 81)",
+        "ampersand": {
+          "fontFamily": "\"The Nautigal\", cursive",
+          "fontSize": "65px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "chibi-red",
+      "viSlug": "chibi-red",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(76, 45, 31)",
+        "color": "rgb(76, 45, 31)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", serif",
+          "fontSize": "45px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "co-ba-red",
+      "viSlug": "co-ba-do",
+      "original": {
+        "fontFamily": "\"SVN-HC Haydon Brush\", cursive",
+        "fontSize": "72px",
+        "fontWeight": "400",
+        "letterSpacing": "1.8px",
+        "textStroke": "0px rgb(195, 42, 41)",
+        "color": "rgb(195, 42, 41)",
+        "ampersand": {
+          "fontFamily": "\"SVN-HC Haydon Brush\", cursive",
+          "fontSize": "77px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "HelveticaNeue, \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "crystal-floral-blue",
+      "viSlug": "hoa-thuy-tinh-lam",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(33, 85, 137)",
+        "color": "rgb(33, 85, 137)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "40px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "double-dragon-blue",
+      "viSlug": "song-long-lam",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(37, 63, 120)",
+        "color": "rgb(37, 63, 120)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "35px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "double-dragon-green",
+      "viSlug": "song-long-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(31, 58, 37)",
+        "color": "rgb(31, 58, 37)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "35px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "double-dragon-red",
+      "viSlug": "song-long-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(136, 41, 37)",
+        "color": "rgb(136, 41, 37)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "35px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "double-phoenix-green",
+      "viSlug": "song-phung-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(25, 71, 45)",
+        "color": "rgb(25, 71, 45)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "48px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "double-phoenix-red",
+      "viSlug": "song-phung-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(113, 0, 1)",
+        "color": "rgb(113, 0, 1)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "48px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "dragon-phoenix-black",
+      "viSlug": "long-phung-huyen",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(255, 198, 98)",
+        "color": "rgb(255, 198, 98)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "dragon-phoenix-blue",
+      "viSlug": "long-phung-lam",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(233, 206, 158)",
+        "color": "rgb(233, 206, 158)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "dragon-phoenix-green",
+      "viSlug": "long-phung-xanh",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(233, 206, 158)",
+        "color": "rgb(233, 206, 158)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "dragon-phoenix-red",
+      "viSlug": "long-phung-do",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(233, 206, 158)",
+        "color": "rgb(233, 206, 158)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "dragon-phoenix-v2-red",
+      "viSlug": "long-phung-v2-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(104, 14, 14)",
+        "color": "rgb(104, 14, 14)",
+        "ampersand": {
+          "fontFamily": "\"The Nautigal\", cursive",
+          "fontSize": "45px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "dragon-phoenix-v3-red",
+      "viSlug": "long-phung-v3-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(255, 190, 137)",
+        "color": "rgb(255, 190, 137)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "40px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "elegant-leaf-green",
+      "viSlug": "thanh-diep-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "50px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(255, 255, 255)",
+        "color": "rgb(255, 255, 255)",
+        "ampersand": {
+          "fontFamily": "Baskerville, \"Times New Roman\", serif",
+          "fontSize": "52px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "glass-garden-green",
+      "viSlug": "vuonkinh-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "43px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(71, 97, 62)",
+        "color": "rgb(71, 97, 62)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "40px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "glass-garden-pink",
+      "viSlug": "vuonkinh-hong",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "43px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(203, 93, 108)",
+        "color": "rgb(203, 93, 108)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "40px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Libre Baskerville\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "hoa-tinh-red",
+      "viSlug": "hoa-tinh-do",
+      "original": {
+        "fontFamily": "\"Patrick Hand\", \"Baloo Bhaijaan\", cursive",
+        "fontSize": "62px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(215, 12, 27)",
+        "color": "rgb(215, 12, 27)",
+        "ampersand": {
+          "fontFamily": "\"Patrick Hand\", \"Baloo Bhaijaan\", cursive",
+          "fontSize": "35px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "jasmine-white",
+      "viSlug": "mai-lan-trang",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(64, 74, 29)",
+        "color": "rgb(64, 74, 29)",
+        "ampersand": {
+          "fontFamily": "Baskerville, \"Times New Roman\", serif",
+          "fontSize": "52px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "minimalism-dark-red",
+      "viSlug": "minimalism-do-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "43px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(236, 228, 216)",
+        "color": "rgb(236, 228, 216)",
+        "ampersand": {
+          "fontFamily": "\"The Nautigal\", cursive",
+          "fontSize": "120px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Baskerville, \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "minimalism-red",
+      "viSlug": "minimalism-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(124, 21, 26)",
+        "color": "rgb(124, 21, 26)",
+        "ampersand": {
+          "fontFamily": "\"The Nautigal\", cursive",
+          "fontSize": "65px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "nhat-binh-red",
+      "viSlug": "nhat-binh-do",
+      "original": {
+        "fontFamily": "\"SVN-HC Pacifico\", cursive",
+        "fontSize": "72px",
+        "fontWeight": "400",
+        "letterSpacing": "1.8px",
+        "textStroke": "4px rgb(248, 200, 139)",
+        "color": "rgb(195, 42, 41)",
+        "ampersand": {
+          "fontFamily": "\"SVN-HC Carosello\", cursive",
+          "fontSize": "77px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"SVN-HC Pacifico\", cursive",
+        "fontSize": "72px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "qasr-gold",
+      "viSlug": "thanhcung-vang",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(84, 78, 39)",
+        "color": "rgb(84, 78, 39)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "40px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "qasr-green",
+      "viSlug": "thanhcung-xanh",
+      "original": {
+        "fontFamily": "\"Viaoda Libre\", \"EB Garamond\", cursive",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(112, 132, 101)",
+        "color": "rgb(112, 132, 101)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "40px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "royal-blue",
+      "viSlug": "hoang-kim-lam",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(225, 188, 124)",
+        "color": "rgb(225, 188, 124)",
+        "ampersand": {
+          "fontFamily": "Baskerville, \"Times New Roman\", serif",
+          "fontSize": "53px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Times New Roman\", Times, serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "royal-green",
+      "viSlug": "hoang-kim-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(225, 188, 124)",
+        "color": "rgb(225, 188, 124)",
+        "ampersand": {
+          "fontFamily": "Baskerville, \"Times New Roman\", serif",
+          "fontSize": "53px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Times New Roman\", Times, serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "royal-red",
+      "viSlug": "hoang-kim-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(225, 188, 124)",
+        "color": "rgb(225, 188, 124)",
+        "ampersand": {
+          "fontFamily": "Baskerville, \"Times New Roman\", serif",
+          "fontSize": "53px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Times New Roman\", Times, serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "silk-flora-brown",
+      "viSlug": "hoa-lua-nau",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(153, 98, 71)",
+        "color": "rgb(153, 98, 71)",
+        "ampersand": {
+          "fontFamily": "\"The Nautigal\", cursive",
+          "fontSize": "84.6px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "song-hy-green",
+      "viSlug": "song-hy-xanh",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(31, 58, 37)",
+        "color": "rgb(31, 58, 37)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "35px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Lora, \"Lora Fallback\", Lora, Georgia, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "song-hy-red",
+      "viSlug": "song-hy-do",
+      "original": {
+        "fontFamily": "\"EB Garamond\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(128, 0, 0)",
+        "color": "rgb(128, 0, 0)",
+        "ampersand": {
+          "fontFamily": "\"EB Garamond\", serif",
+          "fontSize": "35px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "Lora, \"Lora Fallback\", Lora, Georgia, \"Times New Roman\", serif",
+        "fontSize": "42px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "spring-garden-blue",
+      "viSlug": "vuon-xuan-lam",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(72, 108, 125)",
+        "color": "rgb(72, 108, 125)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "spring-garden-green",
+      "viSlug": "vuon-xuan-xanh",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(93, 106, 87)",
+        "color": "rgb(93, 106, 87)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    },
+    {
+      "slug": "spring-garden-red",
+      "viSlug": "vuon-xuan-do",
+      "original": {
+        "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+        "fontSize": "40px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "textStroke": "0px rgb(210, 95, 101)",
+        "color": "rgb(210, 95, 101)",
+        "ampersand": {
+          "fontFamily": "\"UNI Chu truyen thong\", \"Times New Roman\", serif",
+          "fontSize": "50px",
+          "fontWeight": "300"
+        }
+      },
+      "ours": {
+        "fontFamily": "\"Be Vietnam Pro\", \"Be Vietnam Pro Fallback\", \"Be Vietnam Pro\", ui-sans-serif, system-ui, sans-serif",
+        "fontSize": "40px",
+        "fontWeight": "400"
+      }
+    }
+  ],
+  "notOnSource": [
+    {
+      "slug": "maroon-love",
+      "viSlug": "maroon-love",
+      "reason": "names not found"
+    },
+    {
+      "slug": "ao-dai-hue",
+      "viSlug": "ao-dai-hue-tim",
+      "reason": "names not found"
+    },
+    {
+      "slug": "arch-sage",
+      "viSlug": "vom-xanh-thao-moc",
+      "reason": "names not found"
+    },
+    {
+      "slug": "art-deco-gatsby",
+      "viSlug": "gatsby-nghe-thuat",
+      "reason": "names not found"
+    },
+    {
+      "slug": "aurora-glass-dark",
+      "viSlug": "cuc-quang-kinh-toi",
+      "reason": "names not found"
+    },
+    {
+      "slug": "bat-trang-blue",
+      "viSlug": "gom-bat-trang-lam",
+      "reason": "names not found"
+    },
+    {
+      "slug": "botanical-lavender",
+      "viSlug": "thao-moc-oai-huong",
+      "reason": "names not found"
+    },
+    {
+      "slug": "celestial-map",
+      "viSlug": "ban-do-tinh-tuc",
+      "reason": "names not found"
+    },
+    {
+      "slug": "chim-lac-ivory",
+      "viSlug": "chim-lac-ngoc-nga",
+      "reason": "names not found"
+    },
+    {
+      "slug": "cinema-credit",
+      "viSlug": "tua-phim-tinh-yeu",
+      "reason": "names not found"
+    },
+    {
+      "slug": "coastal-mediterranean",
+      "viSlug": "bo-bien-dia-trung-hai",
+      "reason": "names not found"
+    },
+    {
+      "slug": "comic-hero-assemble",
+      "viSlug": "sieu-anh-hung-comic",
+      "reason": "names not found"
+    },
+    {
+      "slug": "detective-conan-casebook",
+      "viSlug": "detective-conan-casebook",
+      "reason": "names not found"
+    },
+    {
+      "slug": "dong-ho-folk",
+      "viSlug": "dong-ho-dan-gian",
+      "reason": "names not found"
+    },
+    {
+      "slug": "doraemon-door",
+      "viSlug": "doraemon-door",
+      "reason": "names not found"
+    },
+    {
+      "slug": "editorial-noir",
+      "viSlug": "hac-ban-tin",
+      "reason": "names not found"
+    },
+    {
+      "slug": "hai-yen-thanh-thu",
+      "viSlug": "hai-yen-thanh-thu",
+      "reason": "names not found"
+    },
+    {
+      "slug": "hang-trong-folk",
+      "viSlug": "hang-trong-phu-quy",
+      "reason": "names not found"
+    },
+    {
+      "slug": "hoa-thu-do-ruou-vang",
+      "viSlug": "hoa-thu-do-ruou-vang",
+      "reason": "names not found"
+    },
+    {
+      "slug": "hoa-thu-hong",
+      "viSlug": "hoa-thu-hong",
+      "reason": "names not found"
+    },
+    {
+      "slug": "hoa-thu-xanh-duong",
+      "viSlug": "hoa-thu-xanh-duong",
+      "reason": "names not found"
+    },
+    {
+      "slug": "hoa-thu-xanh-la",
+      "viSlug": "hoa-thu-xanh-la",
+      "reason": "names not found"
+    },
+    {
+      "slug": "ivory-signature",
+      "viSlug": "dau-an-ngoc-nga",
+      "reason": "names not found"
+    },
+    {
+      "slug": "long-phung-deco",
+      "viSlug": "long-phung-hinh-hoc",
+      "reason": "names not found"
+    },
+    {
+      "slug": "long-phung-gatefold",
+      "viSlug": "long-phung-gatefold",
+      "reason": "names not found"
+    },
+    {
+      "slug": "nguyet-anh-sleeve",
+      "viSlug": "nguyet-anh-sleeve",
+      "reason": "names not found"
+    },
+    {
+      "slug": "phong-thu-be",
+      "viSlug": "phong-thu-be",
+      "reason": "names not found"
+    },
+    {
+      "slug": "phong-thu-do-pastel",
+      "viSlug": "phong-thu-do-pastel",
+      "reason": "names not found"
+    },
+    {
+      "slug": "phong-thu-hong-pastel",
+      "viSlug": "phong-thu-hong-pastel",
+      "reason": "names not found"
+    },
+    {
+      "slug": "phong-thu-lam-pastel",
+      "viSlug": "phong-thu-lam-pastel",
+      "reason": "names not found"
+    },
+    {
+      "slug": "phong-thu-luc-pastel",
+      "viSlug": "phong-thu-luc-pastel",
+      "reason": "names not found"
+    },
+    {
+      "slug": "rap-hy-sai-gon",
+      "viSlug": "rap-hy-sai-gon",
+      "reason": "names not found"
+    },
+    {
+      "slug": "riso-duotone",
+      "viSlug": "riso-hai-mau",
+      "reason": "names not found"
+    },
+    {
+      "slug": "sen-monoline",
+      "viSlug": "sen-muc-mot-net",
+      "reason": "names not found"
+    },
+    {
+      "slug": "son-mai-lacquer",
+      "viSlug": "son-mai-vang-son",
+      "reason": "names not found"
+    },
+    {
+      "slug": "swiss-brutalist",
+      "viSlug": "thuy-si-to-bao",
+      "reason": "names not found"
+    },
+    {
+      "slug": "thanh-duong-anh-sang",
+      "viSlug": "thanh-duong-anh-sang",
+      "reason": "names not found"
+    },
+    {
+      "slug": "thap-nhi-chi-do",
+      "viSlug": "thap-nhi-chi-do",
+      "reason": "names not found"
+    },
+    {
+      "slug": "tho-cam-highland",
+      "viSlug": "tho-cam-vung-cao",
+      "reason": "names not found"
+    },
+    {
+      "slug": "ticket-terracotta",
+      "viSlug": "ve-hen-dat-nung",
+      "reason": "names not found"
+    },
+    {
+      "slug": "trong-dong-dong-son",
+      "viSlug": "trong-dong-dong-son",
+      "reason": "names not found"
+    },
+    {
+      "slug": "truc-chi-minimal",
+      "viSlug": "truc-chi-toa-sang",
+      "reason": "names not found"
+    },
+    {
+      "slug": "y2k-chrome",
+      "viSlug": "chrome-thien-nien-ky",
+      "reason": "names not found"
+    },
+    {
+      "slug": "zen-sand",
+      "viSlug": "tinh-sa",
+      "reason": "names not found"
+    }
+  ]
+}
