@@ -25,7 +25,7 @@ const NAV = [
   { href: "/admin/blogs", label: "Bài viết" },
   { href: "/admin/template-suggestions", label: "Gợi ý mẫu thiệp" },
   { href: "/admin/payments", label: "Giao dịch" },
-  { href: "/admin/vouchers", label: "Voucher" },
+  { href: "/admin/vouchers", label: "Giá" },
 ];
 
 const SUPER_ADMIN_NAV = [
