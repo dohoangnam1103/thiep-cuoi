@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { parseAuditDetailsForDisplay } from "@/lib/admin-audit-view";
 import { SYSTEM_EMAIL } from "@/lib/admin-support-input";
+import { createVietnamDateFormatter } from "@/lib/datetime";
 import { getTemplateLabels } from "@/lib/template-labels";
 import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
 import { templateLabel } from "@/app/editor/[id]/templates";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const dateTimeFormat = new Intl.DateTimeFormat("vi-VN", {
+const dateTimeFormat = createVietnamDateFormatter({
   dateStyle: "medium",
   timeStyle: "short",
 });

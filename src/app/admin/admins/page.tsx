@@ -1,13 +1,12 @@
 import { verifySuperAdmin } from "@/lib/admin-dal";
+import { formatVietnamDateTime } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 import { AdminForm } from "./AdminForm";
 import { deleteAdmin, toggleSuperAdmin } from "./actions";
 
 const rootSuperAdminEmail = "dohoangnamvn@gmail.com";
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(date);
-}
+const formatDate = formatVietnamDateTime;
 
 export default async function AdminsPage() {
   const { adminId } = await verifySuperAdmin();

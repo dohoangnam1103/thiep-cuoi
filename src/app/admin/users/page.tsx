@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { verifyAdmin } from "@/lib/admin-dal";
 import { parseUserSearch, SYSTEM_EMAIL } from "@/lib/admin-support-input";
+import { formatVietnamDate } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -11,9 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium" }).format(date);
-}
+const formatDate = formatVietnamDate;
 
 export default async function AdminUsersPage({
   searchParams,

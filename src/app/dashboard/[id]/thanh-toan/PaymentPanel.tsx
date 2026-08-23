@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Check, Clock3, Copy } from "lucide-react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { trackEvent } from "@/lib/analytics";
 import { BANK, buildVietQrUrl } from "@/lib/payment";
+import {
+  bodyClass,
+  bodySmallClass,
+  dashboardTitleClass,
+  labelClass,
+  sectionDescClass,
+} from "@/lib/typography";
 import {
   applyVoucherToPayment,
   type PaymentInfo,
@@ -22,16 +30,147 @@ function formatDateTime(date: Date): string {
 
 type PaymentTerminalState = "active" | "paid" | "expired" | "superseded";
 
+/**
+ * The pending window is 24h (`PAYMENT_PENDING_EXPIRES_HOURS`), so a per-second
+ * tick would re-render the panel 86 400 times to move a minutes-resolution
+ * label. Half-minute steps plus focus/visibility events keep the countdown
+ * honest when the tab comes back from the background.
+ */
+const CLOCK_RESOLUTION_MS = 30_000;
+
+function subscribeClock(onStoreChange: () => void) {
+  const timer = window.setInterval(onStoreChange, CLOCK_RESOLUTION_MS);
+  window.addEventListener("focus", onStoreChange);
+  document.addEventListener("visibilitychange", onStoreChange);
+
+  return () => {
+    window.clearInterval(timer);
+    window.removeEventListener("focus", onStoreChange);
+    document.removeEventListener("visibilitychange", onStoreChange);
+  };
+}
+
+function getClockSnapshot(): number | null {
+  return Math.floor(Date.now() / CLOCK_RESOLUTION_MS) * CLOCK_RESOLUTION_MS;
+}
+
+function getServerClockSnapshot(): number | null {
+  return null;
+}
+
+const cardClass = "rounded-2xl border border-border bg-card shadow";
+
+/**
+ * Copies one transfer field and confirms in place for ~1.8s. Silently no-ops
+ * where the Clipboard API is unavailable (insecure origin, old in-app browsers)
+ * so the row still renders the value to type by hand.
+ */
+function CopyFieldButton({ value, label }: { value: string; label: string }) {
+  const t = useTranslations("paymentActivation.panel");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1800);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  async function copy() {
+    if (!navigator.clipboard?.writeText) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={`${copied ? t("copied") : t("copy")}: ${label}`}
+      title={copied ? t("copied") : t("copy")}
+      className="grid size-7 shrink-0 place-items-center rounded-full border border-border bg-background text-muted-foreground transition hover:border-primary/45 hover:bg-secondary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+    >
+      {copied ? (
+        <Check className="size-3.5 text-green-600" aria-hidden />
+      ) : (
+        <Copy className="size-3.5" aria-hidden />
+      )}
+    </button>
+  );
+}
+
+function TransferRow({
+  label,
+  value,
+  mono = false,
+  copyable = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+  copyable?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-border/60 py-2 last:border-b-0">
+      <dt className={`shrink-0 ${bodyClass} text-muted-foreground`}>{label}</dt>
+      <dd className="flex min-w-0 items-center gap-2">
+        <span
+          className={`truncate ${bodyClass} font-semibold text-foreground ${
+            mono ? "font-mono tracking-wide" : ""
+          }`}
+        >
+          {value}
+        </span>
+        {copyable ? <CopyFieldButton value={value} label={label} /> : null}
+      </dd>
+    </div>
+  );
+}
+
+/** Time left on the transfer code, at the resolution the clock store ticks. */
+function ExpiryCountdown({ expiresAtMs }: { expiresAtMs: number }) {
+  const t = useTranslations("paymentActivation.panel");
+  const now = useSyncExternalStore(subscribeClock, getClockSnapshot, getServerClockSnapshot);
+  if (now === null) return null;
+  if (now >= expiresAtMs) return null;
+
+  // Truncate rather than round up: the clock snapshot is floored to a 30s
+  // boundary, so rounding up would advertise "24 giờ 1 phút" left on a window
+  // that is 24 hours wide. Never promise more time than the code really has.
+  const totalMinutes = Math.floor((expiresAtMs - now) / 60_000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const remaining =
+    hours > 0
+      ? minutes > 0
+        ? t("remainingHoursMinutes", { hours, minutes })
+        : t("remainingHours", { hours })
+      : minutes > 0
+        ? t("remainingMinutes", { minutes })
+        : t("remainingLessThanMinute");
+
+  return (
+    <span
+      title={t("expiresAtTitle", { time: formatDateTime(new Date(expiresAtMs)) })}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 ${bodySmallClass} font-bold text-secondary-foreground`}
+    >
+      <Clock3 className="size-3" aria-hidden />
+      {t("expiresIn", { remaining })}
+    </span>
+  );
+}
+
 export function PaymentPriceChangedCard() {
   const router = useRouter();
   const t = useTranslations("paymentActivation");
 
   return (
     <div className="mt-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center shadow">
-      <h2 className="font-heading text-2xl font-semibold text-foreground">
-        {t("priceChanged")}
-      </h2>
-      <p className="mt-2 text-muted-foreground">
+      <h2 className={`${dashboardTitleClass} text-foreground`}>{t("priceChanged")}</h2>
+      <p className={`mx-auto mt-2 max-w-md ${sectionDescClass} text-muted-foreground`}>
         {t("priceChangedDescription")}
       </p>
       <button
@@ -145,9 +284,11 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
 
   if (terminalState === "paid") {
     return (
-      <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow">
-        <h2 className="font-heading text-2xl font-semibold text-foreground">Thanh toán thành công</h2>
-        <p className="mt-2 text-muted-foreground">Đang chuyển về danh sách thiệp…</p>
+      <div className={`mt-6 p-8 text-center ${cardClass}`}>
+        <h2 className={`${dashboardTitleClass} text-foreground`}>{t("panel.successTitle")}</h2>
+        <p className={`mt-2 ${sectionDescClass} text-muted-foreground`}>
+          {t("panel.successDescription")}
+        </p>
       </div>
     );
   }
@@ -159,92 +300,107 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
   if (terminalState === "expired") {
     return (
       <div className="mt-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-8 text-center shadow">
-        <h2 className="font-heading text-2xl font-semibold text-foreground">Mã thanh toán đã hết hạn</h2>
-        <p className="mt-2 text-muted-foreground">
-          Mỗi mã thanh toán chỉ có hiệu lực đến {formatDateTime(new Date(payment.expiresAt))}.
-          Tải lại trang để lấy mã chuyển khoản mới.
+        <h2 className={`${dashboardTitleClass} text-foreground`}>{t("panel.expiredTitle")}</h2>
+        <p className={`mx-auto mt-2 max-w-md ${sectionDescClass} text-muted-foreground`}>
+          {t("panel.expiredDescription", { time: formatDateTime(new Date(payment.expiresAt)) })}
         </p>
         <button
           type="button"
           onClick={() => router.refresh()}
           className="mt-5 rounded-full bg-primary px-6 py-2.5 font-bold text-primary-foreground transition hover:bg-primary/90"
         >
-          Lấy mã mới
+          {t("panel.expiredCta")}
         </button>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 grid items-start gap-6 sm:grid-cols-[1fr_1.1fr]">
-      <div className="rounded-2xl border border-border bg-card p-5 shadow">
+    <div className="mt-6 grid gap-4 md:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] md:gap-5">
+      <div className={`flex flex-col items-center justify-center gap-3 p-5 ${cardClass}`}>
         <img
           src={qrUrl}
-          alt="Mã QR chuyển khoản VietQR"
-          className="mx-auto w-full max-w-[280px] rounded-xl"
+          alt={t("panel.qrAlt")}
+          className="aspect-square w-full max-w-[260px] rounded-xl bg-white"
         />
+        <div className="text-center">
+          <p className={`${bodyClass} font-semibold text-foreground`}>{t("panel.qrTitle")}</p>
+          <p className={`mt-0.5 ${bodySmallClass} text-muted-foreground`}>{t("panel.qrHint")}</p>
+        </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-5 shadow">
-        <p className="text-sm text-muted-foreground">Số tiền cần thanh toán</p>
-        <p className="mt-1 font-heading text-3xl font-bold text-foreground">{formatVnd(payment.amount)}</p>
+      <div className={`p-5 ${cardClass}`}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <p className={`${labelClass} text-muted-foreground`}>{t("panel.amountLabel")}</p>
+            <p className="mt-1 font-heading text-3xl font-bold leading-tight text-foreground">
+              {formatVnd(payment.amount)}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 sm:flex-col sm:items-end">
+            <span
+              className={`inline-flex shrink-0 items-center gap-2 rounded-full bg-amber-500/15 px-3 py-1 ${bodySmallClass} font-bold text-amber-700`}
+            >
+              <span className="inline-block size-1.5 animate-pulse rounded-full bg-amber-500" />
+              {t("panel.waiting")}
+            </span>
+            <ExpiryCountdown expiresAtMs={expiresAtMs} />
+          </div>
+        </div>
 
-        <dl className="mt-5 space-y-2 text-sm">
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted-foreground">Ngân hàng</dt>
-            <dd className="font-medium text-foreground">MB Bank</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted-foreground">Số tài khoản</dt>
-            <dd className="font-medium text-foreground">{payment.bankAccount || BANK.account}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted-foreground">Chủ tài khoản</dt>
-            <dd className="font-medium text-foreground">{payment.bankAccountName || BANK.name}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted-foreground">Nội dung CK</dt>
-            <dd className="font-mono font-semibold text-foreground">{payment.code}</dd>
-          </div>
+        <p className={`mt-5 ${labelClass} text-muted-foreground`}>
+          {t("panel.transferHeading")}
+        </p>
+        <dl className="mt-1.5">
+          <TransferRow label={t("panel.bank")} value={t("panel.bankName")} />
+          <TransferRow
+            label={t("panel.account")}
+            value={payment.bankAccount || BANK.account}
+            mono
+            copyable
+          />
+          <TransferRow
+            label={t("panel.accountName")}
+            value={payment.bankAccountName || BANK.name}
+          />
+          <TransferRow label={t("panel.transferContent")} value={payment.code} mono copyable />
         </dl>
 
-        <p className="mt-4 rounded-lg bg-secondary p-3 text-xs text-muted-foreground">
-          Chuyển khoản đúng số tiền và nội dung. Mã này có hiệu lực đến {formatDateTime(new Date(payment.expiresAt))}.
-          Hệ thống tự động xác nhận trong giây lát sau khi nhận được tiền.
+        <p className={`mt-4 rounded-xl bg-secondary/70 px-3.5 py-3 ${bodyClass} text-muted-foreground`}>
+          {t("panel.instruction")}
         </p>
 
-        <div className="mt-5">
+        <div className="mt-4">
           {payment.voucherCode ? (
-            <p className="text-sm text-green-700">Đã áp mã <span className="font-semibold">{payment.voucherCode}</span></p>
+            <p className={`${bodyClass} text-green-700`}>
+              {t.rich("panel.voucherApplied", {
+                code: payment.voucherCode,
+                b: (chunks) => <span className="font-mono font-semibold">{chunks}</span>,
+              })}
+            </p>
           ) : payment.voucherAllowed ? (
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <input
                 value={voucherInput}
                 onChange={(e) => setVoucherInput(e.target.value)}
-                placeholder="Mã giảm giá"
-                className="flex-1 rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                placeholder={t("panel.voucherPlaceholder")}
+                aria-label={t("panel.voucherPlaceholder")}
+                className={`min-w-0 flex-1 rounded-full border border-border bg-background px-4 py-2.5 ${bodyClass} text-foreground outline-none transition placeholder:text-muted-foreground/70 focus:border-primary focus:ring-2 focus:ring-primary/15`}
               />
               <button
                 type="button"
                 onClick={onApplyVoucher}
                 disabled={applying}
-                className="rounded-full bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition hover:bg-muted disabled:opacity-50"
+                className={`shrink-0 whitespace-nowrap rounded-full border border-border bg-secondary px-5 py-2.5 ${bodyClass} font-bold text-secondary-foreground transition hover:border-primary/45 hover:bg-muted disabled:opacity-50`}
               >
-                {applying ? "Đang áp…" : "Áp mã"}
+                {applying ? t("panel.voucherApplying") : t("panel.voucherApply")}
               </button>
             </div>
           ) : null}
           {voucherError ? (
-            <p className="mt-2 text-sm text-red-600">
-              {t(`errors.${voucherError}`)}
-            </p>
+            <p className={`mt-2 ${bodyClass} text-red-600`}>{t(`errors.${voucherError}`)}</p>
           ) : null}
         </div>
-
-        <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="inline-block size-2 animate-pulse rounded-full bg-amber-500" />
-          Đang chờ thanh toán…
-        </p>
       </div>
     </div>
   );

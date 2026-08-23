@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { verifyAdmin } from "@/lib/admin-dal";
+import { formatVietnamDateTime } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 
 import { updateTemplateSuggestionStatus } from "./actions";
@@ -14,9 +15,7 @@ const statusMeta = {
   rejected: { label: "Từ chối", className: "bg-destructive/15 text-destructive" },
 } as const;
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(date);
-}
+const formatDate = formatVietnamDateTime;
 
 export default async function AdminTemplateSuggestionsPage() {
   await verifyAdmin();

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BlogPostForm } from "@/app/admin/blogs/BlogPostForm";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { getAdminBlogPost } from "@/lib/blog-posts";
+import { formatVietnamDateTime } from "@/lib/datetime";
 
 type EditBlogPostPageProps = {
   params: Promise<{ id: string }>;
@@ -23,10 +24,7 @@ export default async function EditBlogPostPage({ params }: EditBlogPostPageProps
         </Link>
         <h1 className="mt-3 font-heading text-2xl text-foreground">Sửa bài viết</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Cập nhật lần cuối {new Intl.DateTimeFormat("vi-VN", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          }).format(post.updatedAt)}
+          Cập nhật lần cuối {formatVietnamDateTime(post.updatedAt)}
         </p>
       </div>
 

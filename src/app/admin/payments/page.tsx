@@ -8,6 +8,7 @@ import {
   parseDateInput,
   parseUserSearch,
 } from "@/lib/admin-support-input";
+import { formatVietnamDateTimeShort } from "@/lib/datetime";
 import { isPendingPaymentExpired } from "@/lib/payment";
 import { prisma } from "@/lib/prisma";
 
@@ -16,9 +17,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "short", timeStyle: "short" }).format(date);
-}
+const formatDate = formatVietnamDateTimeShort;
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + "₫";

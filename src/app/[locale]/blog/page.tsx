@@ -6,6 +6,7 @@ import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { listPublishedBlogPosts } from "@/lib/blog-posts";
+import { createVietnamDateFormatter } from "@/lib/datetime";
 import { pageSeo, staticAlternates } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +41,7 @@ export default async function BlogPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "blog" });
   const posts = await listPublishedBlogPosts();
-  const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
+  const dateFormatter = createVietnamDateFormatter({ dateStyle: "medium" }, locale);
 
   return (
     <main className="min-h-screen bg-background text-foreground">

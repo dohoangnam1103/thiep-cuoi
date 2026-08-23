@@ -11,6 +11,7 @@ import {
   getPublishedBlogPost,
   getRelatedBlogPosts,
 } from "@/lib/blog-posts";
+import { createVietnamDateFormatter } from "@/lib/datetime";
 import { blogAlternates, pageSeo } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +56,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
 
   const related = await getRelatedBlogPosts(post);
   const contentHtml = sanitizeBlogHtml(post.contentHtml);
-  const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: "long" });
+  const dateFormatter = createVietnamDateFormatter({ dateStyle: "long" }, locale);
 
   return (
     <main className="min-h-screen bg-background text-foreground">

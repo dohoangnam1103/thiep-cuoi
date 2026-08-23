@@ -1,4 +1,5 @@
 import { completedTemplateSlugs } from "@/data/chungdoi";
+import { vietnamStartOfDay } from "@/lib/datetime";
 
 export const SYSTEM_EMAIL = "system@demo.local";
 
@@ -6,19 +7,16 @@ export function parseUserSearch(value: string | undefined): string {
   return value?.trim().toLowerCase().slice(0, 120) ?? "";
 }
 
-const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
 /**
- * Reads a `<input type="date">` value as a UTC instant. Admin tables format
- * timestamps with the server's timezone, which is UTC in the container, so
- * anchoring the range at UTC midnight keeps the filter aligned with the dates
- * actually shown in the rows. Returns null for anything unparseable rather than
- * an Invalid Date, which Prisma would reject at query time.
+ * Reads a `<input type="date">` value as the instant that day starts in Vietnam.
+ * Admin tables render timestamps in `Asia/Ho_Chi_Minh`, so the range has to be
+ * anchored to Vietnam midnight for the filter to select exactly the rows whose
+ * displayed date falls inside it. Anchoring at UTC midnight instead — which this
+ * did before — shifted every boundary seven hours and silently pulled in rows
+ * from the neighbouring day.
  */
 export function parseDateInput(value: string | undefined): Date | null {
-  if (!value || !DATE_INPUT_PATTERN.test(value)) return null;
-  const parsed = new Date(`${value}T00:00:00.000Z`);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
+  return vietnamStartOfDay(value);
 }
 
 /** Upper bound for a range whose end date the user means inclusively. */

@@ -1,13 +1,12 @@
 import { verifyAdmin } from "@/lib/admin-dal";
+import { formatVietnamDate } from "@/lib/datetime";
 import { getPaymentPrices } from "@/lib/payment-config";
 import { prisma } from "@/lib/prisma";
 import { ProductPriceForm } from "./ProductPriceForm";
 import { VoucherForm } from "./VoucherForm";
 import { deleteVoucher, toggleVoucher } from "./actions";
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium" }).format(date);
-}
+const formatDate = formatVietnamDate;
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + "₫";

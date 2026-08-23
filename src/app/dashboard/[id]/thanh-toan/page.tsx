@@ -13,9 +13,9 @@ export default async function PaymentPage({ params }: { params: Promise<{ id: st
   const t = await getTranslations("paymentActivation");
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <Link href="/dashboard" className={`${bodyClass} text-muted-foreground transition hover:text-foreground`}>
-        &larr; Về danh sách thiệp
+        {t("backToList")}
       </Link>
       {preparation.kind === "activated" ? (
         <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center shadow">
@@ -34,7 +34,7 @@ export default async function PaymentPage({ params }: { params: Promise<{ id: st
         <PaymentPriceChangedCard />
       ) : (
         <>
-          <h1 className={`mt-3 ${dashboardTitleClass} text-foreground`}>Thanh toán</h1>
+          <h1 className={`mt-3 ${dashboardTitleClass} text-foreground`}>{t("pageTitle")}</h1>
           <PaymentPanel initial={preparation.payment} />
         </>
       )}

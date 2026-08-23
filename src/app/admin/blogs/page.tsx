@@ -8,6 +8,7 @@ import {
   listAdminBlogPosts,
   type AdminBlogFilter,
 } from "@/lib/blog-posts";
+import { formatVietnamDateTime } from "@/lib/datetime";
 import { cn } from "@/lib/utils";
 
 import { BlogRowActions } from "./BlogRowActions";
@@ -33,12 +34,7 @@ const emptyMessages: Record<AdminBlogFilter, string> = {
   trash: "Thùng rác đang trống.",
 };
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
-}
+const formatDate = formatVietnamDateTime;
 
 export default async function AdminBlogsPage({
   searchParams,
