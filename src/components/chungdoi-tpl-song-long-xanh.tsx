@@ -136,15 +136,22 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
         <div className="relative w-full" style={{ backgroundColor: SLX_LINEN }}>
           {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng thẻ,
               không bị cắt bởi overflow-hidden của khung ngoài. */}
-          <div className="mt-6 flex w-full flex-col items-center gap-6 px-2 sm:px-4 md:flex-row md:items-start md:justify-center md:gap-8" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
+          {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile: cỡ chữ dải mobile
+              hạ xuống thay vì xếp dọc. 4 hàng khai tường minh, mỗi cột mượn lại bằng
+              grid-rows-subgrid nên hai nhà thẳng hàng nhau dù một tên xuống dòng. */}
+          <div className="mt-6 grid w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-2 gap-y-1 px-2 sm:px-4 md:gap-x-8" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
             {familyColumns.map((f, i) => (
               <div key={i} className="contents">
-                {i === 1 ? <div className="h-px w-16 self-center md:h-[60px] md:w-px" style={{ backgroundColor: SLX_GREEN }} /> : null}
-                <div className="flex min-w-0 max-w-[160px] flex-1 flex-col items-center gap-1 text-center md:max-w-[280px]">
-                  <span className="text-[14px] md:text-[15px]" style={{ color: SLX_GRAY }}>{f.title} / 부모님</span>
-                  <span className="font-semibold" style={{ color: SLX_GREEN, fontSize: 15 }}>{f.a}</span>
-                  <span className="font-semibold" style={{ color: SLX_GREEN, fontSize: 15 }}>{f.b}</span>
-                  <div className="mt-1 flex flex-col whitespace-pre-line text-[12px] leading-tight md:text-[13px]" style={{ color: SLX_GRAY }}>{f.addr}</div>
+                {i === 1 ? <div className="row-span-4 w-px self-stretch justify-self-center" style={{ backgroundColor: SLX_GREEN }} /> : null}
+                {/* w-full + không justify-self-center ở mobile: cột shrink-to-fit thì
+                    ô lưới rộng hơn hộp cột nên địa chỉ tràn ra ngoài. */}
+                <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center">
+                  <span className="text-[12px] md:text-[15px]" style={{ color: SLX_GRAY }}>{f.title} / 부모님</span>
+                  <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: SLX_GREEN }}>{f.a}</span>
+                  <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: SLX_GREEN }}>{f.b}</span>
+                  {/* w-full: trong ô subgrid, div không khai bề rộng sẽ co theo
+                      max-content nên địa chỉ dài tràn ra ngoài cột. */}
+                  <div className="mt-1 flex w-full max-w-full flex-col whitespace-pre-line text-[11px] leading-tight md:text-[13px]" style={{ color: SLX_GRAY }}>{f.addr}</div>
                 </div>
               </div>
             ))}
@@ -159,10 +166,10 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
             {/* Bỏ font-qellia, set SLX_SERIF cho khớp tên ba mẹ. Khối tên nằm
                 ngoài div đã khai SLX_SERIF nên xoá trắng sẽ rơi về font mặc
                 định của app và vẫn lệch. Cỡ chữ hạ theo vì serif rộng hơn. */}
-            <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: SLX_SERIF, color: SLX_GREEN, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+            <h3 className="font-couple-garamond flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{people[0].birthOrder}</div>
             <div className="font-qellia text-[30px] md:text-[35px]" style={{ color: SLX_GRAY }}>&amp;</div>
-            <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: SLX_SERIF, color: SLX_GREEN, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+            <h3 className="font-couple-garamond flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: SLX_GREEN, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{people[1].birthOrder}</div>
           </div>
 

@@ -10,6 +10,7 @@ import {
   buildVietQrImageUrl,
   FamilyColumn,
   FitText,
+  FitTextGroup,
   formatDate,
   formatWishTime,
   googleCalendarUrl,
@@ -22,6 +23,11 @@ import {
 import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const NB_PACIFICO = '"SVN-HC Pacifico", cursive';
+/**
+ * Thẻ gốc trên chungdoi.com đặt tên cô dâu chú rể ở 72px cố định (cả khung thẻ được
+ * scale lại), nên đây là trần trên; FitText tự co xuống khi khung hẹp.
+ */
+const NB_NAME_MAX_FONT_SIZE = 72;
 const NB_TITLING = '"SVN-HC Built Titling", "Times New Roman", serif';
 const NB_CAROSELLO = '"SVN-HC Carosello", cursive';
 const NB_HELV = 'HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif';
@@ -216,25 +222,39 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
         <section className="relative z-[2] px-6 py-10 md:px-10 md:py-14">
           <NhatBinhSectionCorners nb={NB} />
           <NhatBinhHeading red={RED}>Thông Tin Lễ Cưới</NhatBinhHeading>
-          {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng, không bị cắt. */}
-          <div className="relative mx-auto mt-8 grid w-full max-w-[366px] grid-cols-1 items-start gap-6 text-center md:max-w-[520px] md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:max-w-[600px]">
-            <FamilyColumn {...familyColumns[0]} />
-            <div className="flex w-full items-center justify-center self-stretch md:h-[64px] md:w-0 md:shrink-0 md:px-0">
-              <div className="h-px w-16 md:h-full md:w-px" style={{ backgroundColor: BROWN }} />
+          {/* Nhà gái và nhà trai luôn nằm ngang hàng nhau, kể cả mobile. Trước đây
+              mobile xếp dọc thành hai khối để tên có trọn chiều rộng; giờ chia đôi
+              khung và hạ cỡ chữ (sideBySideOnMobile) thay vì xếp dọc. Gap hẹp lại ở
+              mobile để mỗi cột giành thêm chiều rộng cho tên.
+              4 hàng khai tường minh để FamilyColumn mượn qua grid-rows-subgrid:
+              chức danh / tên bố / tên mẹ / địa chỉ của hai nhà thẳng hàng nhau kể cả
+              khi một tên phải xuống hai dòng. */}
+          <div className="relative mx-auto mt-8 grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 text-center md:max-w-[520px] md:gap-x-6 lg:max-w-[600px]">
+            <FamilyColumn sideBySideOnMobile {...familyColumns[0]} />
+            {/* shrink-0 trên vạch kẻ: ô chứa rộng 0 nên flex-shrink mặc định sẽ bóp
+                w-px về 0 và vạch biến mất. */}
+            <div className="row-span-4 flex w-0 shrink-0 items-center justify-center self-stretch px-0">
+              <div className="h-full w-px shrink-0" style={{ backgroundColor: BROWN }} />
             </div>
-            <FamilyColumn {...familyColumns[1]} />
+            <FamilyColumn sideBySideOnMobile {...familyColumns[1]} />
           </div>
           <div className="mt-10 flex w-full flex-col items-center gap-1 text-center md:gap-2">
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[17px]" style={{ color: BROWN }}>{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             {/* Dùng NB_HELV thay NB_PACIFICO cho khớp tên ba mẹ: thẻ gốc đặt
                 HelveticaNeue nên FamilyColumn đang render tên ba mẹ bằng font này.
                 maxFontSize hạ xuống vì sans rộng hơn brush, để FitText khỏi phải
-                co quá mạnh và giữ được nét viền. */}
-            <FitText maxFontSize={48} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_HELV, color: RED, letterSpacing: "0.025em" }}>{people[0].fullName}</FitText>
-            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>{people[0].birthOrder}</div>
-            <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: NB_CAROSELLO, color: RED }}>&amp;</div>
-            <FitText maxFontSize={48} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:3px_#F8C88B] md:[-webkit-text-stroke:4px_#F8C88B] lg:[-webkit-text-stroke:5px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_HELV, color: RED, letterSpacing: "0.025em" }}>{people[1].fullName}</FitText>
-            <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{people[1].birthOrder}</div>
+                co quá mạnh và giữ được nét viền.
+                FitTextGroup bắt hai tên dùng chung một cỡ chữ — không có nó tên
+                dài bị co lại còn tên ngắn giữ nguyên 48px, hai dòng lệch cỡ.
+                wrapFourWordsOnMobile: tên 4 chữ rớt 2 chữ cuối xuống dòng mới
+                trên mobile, nếu không cỡ chung bị kéo xuống quá nhỏ. */}
+            <FitTextGroup>
+              <FitText wrapFourWordsOnMobile maxFontSize={NB_NAME_MAX_FONT_SIZE} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:2px_#F8C88B] md:[-webkit-text-stroke:3px_#F8C88B] lg:[-webkit-text-stroke:4px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[0].fullName}</FitText>
+              <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: '"HelveticaNeue", sans-serif', color: BROWN }}>{people[0].birthOrder}</div>
+              <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: NB_CAROSELLO, color: RED, fontWeight: 300 }}>&amp;</div>
+              <FitText wrapFourWordsOnMobile maxFontSize={NB_NAME_MAX_FONT_SIZE} className="flex w-[90%] items-center justify-center leading-tight md:w-[95%] md:leading-snug [-webkit-text-stroke:2px_#F8C88B] md:[-webkit-text-stroke:3px_#F8C88B] lg:[-webkit-text-stroke:4px_#F8C88B] [paint-order:stroke_fill]" style={{ fontFamily: NB_PACIFICO, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[1].fullName}</FitText>
+              <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{people[1].birthOrder}</div>
+            </FitTextGroup>
           </div>
           {ceremony ? (
             <div className="mt-10 flex flex-col items-center gap-4 text-center md:gap-5" style={{ fontFamily: NB_HELV, color: BROWN }}>

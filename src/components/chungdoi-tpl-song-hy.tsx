@@ -105,13 +105,20 @@ function SongHyWishForm({ palette }: { palette: SongHyPalette }) {
 
 function SongHyFamilyColumn({ palette, title, a, b, addr }: { palette: SongHyPalette; title: string; a: string; b: string; addr: string }) {
   return (
-    <div className="flex min-w-0 max-w-[160px] flex-1 flex-col items-center gap-1 text-center md:max-w-[280px]">
-      <span className="text-[14px] md:text-[15px]" style={{ color: palette.gray }}>{title}</span>
+    // Hai nhà nằm ngang hàng nhau kể cả mobile, nên cột mượn lưới hàng của khung cha
+    // bằng grid-rows-subgrid để bốn hàng của hai nhà thẳng hàng nhau dù một tên phải
+    // xuống dòng. Cỡ chữ dải mobile hạ thêm vì cột chỉ còn nửa khung.
+    // w-full + không justify-self-center ở mobile: cột shrink-to-fit thì ô lưới rộng hơn
+    // hộp cột, `w-full` của địa chỉ tính theo ô lưới nên tràn ra ngoài cột.
+    <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center">
+      <span className="text-[12px] md:text-[15px]" style={{ color: palette.gray }}>{title}</span>
       {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài
           sẽ bị cắt mất chữ ở hai bên cột hẹp trên mobile. */}
-      <span className="font-semibold" style={{ color: palette.accent, fontSize: 15 }}>{a}</span>
-      <span className="font-semibold" style={{ color: palette.accent, fontSize: 15 }}>{b}</span>
-      {addr ? <div className="mt-1 flex flex-col whitespace-pre-line text-[12px] leading-tight md:text-[13px]" style={{ color: palette.gray }}>{addr}</div> : null}
+      <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: palette.accent }}>{a}</span>
+      <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: palette.accent }}>{b}</span>
+      {/* w-full: trong ô subgrid, div không khai bề rộng sẽ tự co theo max-content nên
+          địa chỉ dài tràn ra ngoài cột. Ràng về 100% cột để nó xuống dòng. */}
+      {addr ? <div className="mt-1 flex w-full max-w-full flex-col whitespace-pre-line text-[11px] leading-tight md:text-[13px]" style={{ color: palette.gray }}>{addr}</div> : null}
     </div>
   );
 }
@@ -241,9 +248,12 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <div className="relative z-10">
           {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng thẻ,
               không bị cắt bởi overflow-hidden của khung ngoài. */}
-          <div className="mt-6 flex w-full flex-col items-center gap-6 px-2 sm:px-4 md:flex-row md:items-start md:justify-center md:gap-8">
+          {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile. 4 hàng khai tường
+              minh để cột mượn qua grid-rows-subgrid; vạch phân cách chuyển thành đường
+              dọc trải hết khối ở mọi bề rộng. */}
+          <div className="mt-6 grid w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-2 gap-y-1 px-2 sm:px-4 md:gap-x-8">
             <SongHyFamilyColumn palette={palette} {...familyColumns[0]} />
-            <div className="h-px w-16 self-center md:h-[60px] md:w-px" style={{ backgroundColor: palette.accent }} />
+            <div className="row-span-4 w-px self-stretch justify-self-center" style={{ backgroundColor: palette.accent }} />
             <SongHyFamilyColumn palette={palette} {...familyColumns[1]} />
           </div>
           <div className="mt-8 flex flex-col gap-2 px-4 text-center text-[16px] uppercase tracking-wider md:text-[20px]" style={{ whiteSpace: "pre-line", color: palette.accent }}>
@@ -253,10 +263,10 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             {/* Bỏ font-art-qellia: thẻ gốc đã đặt font-body-serif nên tên thừa
                 hưởng đúng font mà FamilyColumn đang dùng cho tên ba mẹ. Cỡ chữ hạ
                 theo vì Lora rộng hơn Fz Qellia nên giữ cỡ cũ là tràn khung. */}
-            <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+            <h3 className="font-couple-garamond flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[0].birthOrder}</div>
             <div className="font-art-qellia text-[30px] md:text-[35px]" style={{ color: palette.gray }}>&amp;</div>
-            <h3 className="flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+            <h3 className="font-couple-garamond flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[1].birthOrder}</div>
           </div>
           <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray }}>

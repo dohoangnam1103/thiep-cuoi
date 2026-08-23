@@ -31,6 +31,7 @@ function JasmineWhiteHero({ content }: { content: ChungDoiDemoContent }) {
 export function JasmineWhiteInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
+      coupleNameClass="font-couple-garamond"
       content={content}
       hero={<JasmineWhiteHero content={content} />}
       palette={{

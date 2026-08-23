@@ -35,6 +35,7 @@ import {
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
+  longestCoupleNameLength,
   orderByBrideFirst,
   orderedCouple,
 } from "@/lib/invitation-display";
@@ -205,8 +206,11 @@ function chapterIndexFromUrl(): number {
   return index >= 0 ? index : 0;
 }
 
-function readerNameSizeClass(name: string): string {
-  const length = [...name.trim()].length;
+/**
+ * Nhận độ dài tên dài nhất của cặp (không phải một tên) để cả hai tên dùng chung
+ * một cỡ chữ — xem `longestCoupleNameLength`.
+ */
+function readerNameSizeClass(length: number): string {
   if (length > 36) return "text-[clamp(0.7rem,2.1vw,1.45rem)]";
   if (length > 24) return "text-[clamp(1rem,3vw,2.1rem)]";
   if (length > 15) return "text-[clamp(1.35rem,4vw,3rem)]";
@@ -408,6 +412,10 @@ function CasebookChapterComponent({
   const locale = useLocale();
   const t = useTranslations("detectiveConanCasebook");
   const people = orderedCouple(content);
+  // Một cỡ chữ dùng chung cho cả hai tên, chọn theo tên dài hơn.
+  const coupleNameSizeClass = readerNameSizeClass(
+    longestCoupleNameLength(people[0].shortName, people[1].shortName),
+  );
   const ceremonies = invitationCeremonies(content);
   const calendar = buildCalendar(content.couple.date);
   const weekdays = localizedWeekdays(locale);
@@ -467,14 +475,14 @@ function CasebookChapterComponent({
           data-testid="detective-conan-casebook-couple-names"
         >
           <ConanCasebookFittedName
-            className={readerNameSizeClass(people[0].shortName)}
+            className={coupleNameSizeClass}
             name={people[0].shortName}
           />
           <span className="my-1 block font-sans text-[0.24em] font-bold tracking-[0.14em] text-[#A51F35]">
             {t("and")}
           </span>
           <ConanCasebookFittedName
-            className={readerNameSizeClass(people[1].shortName)}
+            className={coupleNameSizeClass}
             name={people[1].shortName}
           />
         </p>
@@ -943,14 +951,14 @@ function CasebookChapterComponent({
       <p className={styles.copy}>{t("finaleMessage")}</p>
       <p className="mt-3 flex w-full flex-col items-center font-art-built leading-[0.86] text-[#102236] sm:mt-6">
         <ConanCasebookFittedName
-          className={readerNameSizeClass(people[0].shortName)}
+          className={coupleNameSizeClass}
           name={people[0].shortName}
         />
         <span className="my-1 font-sans text-[0.25em] font-bold uppercase tracking-[0.14em] text-[#A51F35]">
           {t("and")}
         </span>
         <ConanCasebookFittedName
-          className={readerNameSizeClass(people[1].shortName)}
+          className={coupleNameSizeClass}
           name={people[1].shortName}
         />
       </p>

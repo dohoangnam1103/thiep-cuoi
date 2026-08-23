@@ -29,7 +29,7 @@ import {
   type DetectiveConanCasebookExperienceState,
   type DetectiveConanCasebookMotionPhase,
 } from "@/data/detective-conan-casebook-pilot";
-import { orderedCouple } from "@/lib/invitation-display";
+import { longestCoupleNameLength, orderedCouple } from "@/lib/invitation-display";
 import { cn } from "@/lib/utils";
 
 const DetectiveConanCasebookScene = dynamic(
@@ -222,8 +222,11 @@ function formatCasebookDate(iso: string, time: string, locale: string): string {
   return `${localized} / ${time}`;
 }
 
-function coverNameSizeClass(name: string): string {
-  const length = [...name.trim()].length;
+/**
+ * Nhận độ dài tên dài nhất của cặp (không phải một tên) để cả hai tên dùng chung
+ * một cỡ chữ — xem `longestCoupleNameLength`.
+ */
+function coverNameSizeClass(length: number): string {
   if (length > 36) {
     return "text-[clamp(0.72rem,3vw,1.8rem)] tracking-[-0.01em]";
   }
@@ -271,6 +274,10 @@ export function DetectiveConanCasebookLab({
   const people = orderedCouple(content);
   const firstName = people[0].shortName;
   const secondName = people[1].shortName;
+  // Một cỡ chữ dùng chung cho cả hai tên, chọn theo tên dài hơn.
+  const coupleNameSizeClass = coverNameSizeClass(
+    longestCoupleNameLength(firstName, secondName),
+  );
   const openingMessage = content.couple.openingMessage ?? "";
   const conjunction = t("and");
   const backTitle = t("backTitle");
@@ -791,14 +798,14 @@ export function DetectiveConanCasebookLab({
           </p>
           <h1 className="mt-2 max-w-full font-art-built font-normal leading-[0.82]">
             <ConanCasebookFittedName
-              className={coverNameSizeClass(firstName)}
+              className={coupleNameSizeClass}
               name={people[0].shortName}
             />
             <span className="my-1 block text-[0.34em] tracking-[0.04em] text-[#D85A63]">
               +
             </span>
             <ConanCasebookFittedName
-              className={coverNameSizeClass(secondName)}
+              className={coupleNameSizeClass}
               name={people[1].shortName}
             />
           </h1>

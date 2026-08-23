@@ -152,6 +152,24 @@ export function orderedCouple(content: ChungDoiDemoContent) {
   return orderByBrideFirst(bride, groom, content.couple.brideFirst);
 }
 
+/**
+ * Số ký tự của tên dài nhất trong cặp.
+ *
+ * Cỡ chữ tên cô dâu và tên chú rể phải luôn bằng nhau. Template nào chọn cỡ chữ
+ * theo độ dài tên thì phải đo theo tên dài nhất rồi áp cùng một cỡ cho cả hai —
+ * đo riêng từng tên khiến tên ngắn giữ cỡ lớn nhất còn tên dài bị hạ xuống, hai
+ * dòng lệch cỡ nhau rõ rệt.
+ *
+ * Đếm theo ký tự Unicode (`[...str]`) nên dấu tiếng Việt tổ hợp không bị tính
+ * thành hai.
+ */
+export function longestCoupleNameLength(...names: string[]): number {
+  return names.reduce(
+    (longest, name) => Math.max(longest, [...name.trim()].length),
+    0,
+  );
+}
+
 export type InvitationGiftAccount = {
   side: CoupleSide;
   /** Bank name as entered, trimmed. */

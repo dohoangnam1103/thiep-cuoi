@@ -61,6 +61,7 @@ function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
 export function BohoFloralPinkInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
+      coupleNameClass="font-couple-garamond"
       content={content}
       hero={<BohoFloralPinkHero content={content} />}
       palette={{

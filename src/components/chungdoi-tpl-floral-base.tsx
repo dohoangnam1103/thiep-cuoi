@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { cn } from "@/lib/utils";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   googleCalendarUrl, InvitationMap, MapDirectionsButton,
@@ -25,6 +26,7 @@ export type FloralPalette = {
   text: string;
   accent: string;
   headingUpper?: boolean;
+  /** Font tên viết tắt ở bìa thiệp. */
   nameFont: CSSProperties;
   ampFont?: CSSProperties;
   welcome?: string;
@@ -46,6 +48,16 @@ type Props = {
   lowerDecor?: FloralDecor;
   footerDecor?: FloralDecor;
   dividerSrc?: string;
+  /**
+   * Class font cho tên đầy đủ của cô dâu chú rể trong thân thiệp (một trong các
+   * `.font-couple-*` ở globals.css). Thẻ gốc trên chungdoi.com đặt tên đầy đủ bằng
+   * font khác với tên viết tắt ở bìa — bảng đối chiếu ở
+   * `docs/research/couple-name-fonts.json`.
+   *
+   * Cố ý không có mặc định: thiệp generated cũng dựng trên khung này nhưng không
+   * clone từ chungdoi.com, nên chúng giữ nguyên font body như trước.
+   */
+  coupleNameClass?: string;
 };
 
 function FloralHeading({ accent, upper, children }: { accent: string; upper: boolean; children: ReactNode }) {
@@ -54,7 +66,7 @@ function FloralHeading({ accent, upper, children }: { accent: string; upper: boo
   );
 }
 
-export function FloralInvitation({ content, palette, hero, albumFirst = false, backdrop = [], headerDecor = [], albumDecor = [], lowerDecor, footerDecor, dividerSrc }: Props) {
+export function FloralInvitation({ content, palette, hero, albumFirst = false, backdrop = [], headerDecor = [], albumDecor = [], lowerDecor, footerDecor, dividerSrc, coupleNameClass }: Props) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const P = palette;
   const muted = hexToRgba(P.accent, 0.72);
@@ -64,8 +76,8 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const amp = P.ampFont || P.nameFont;
 
-  const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
-  const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
+  const groomCol = <FamilyColumn sideBySideOnMobile title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
+  const brideCol = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const orderedPeople = orderByBrideFirst(
     { fullName: couple.brideFullName, birthOrder: couple.brideBirthOrder || "Út Nữ" },
@@ -122,7 +134,11 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
           {albumFirst ? albumSection : null}
           <section className="flex w-full flex-col items-center gap-8">
             <FloralHeading accent={P.accent} upper={P.headingUpper !== false}>Thông Tin Lễ Cưới</FloralHeading>
-            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile. 4 hàng khai
+                tường minh để FamilyColumn mượn qua grid-rows-subgrid, nên chức danh /
+                tên bố / tên mẹ / địa chỉ của hai nhà thẳng hàng nhau dù một tên phải
+                xuống dòng. md:gap-x-10 giữ đúng bề rộng cột như bản flex trước đây. */}
+            <div className="grid w-full grid-cols-2 grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 md:gap-x-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="max-w-xl whitespace-pre-line text-center text-[14px] font-semibold uppercase leading-relaxed tracking-wide md:text-[17px]">
@@ -132,10 +148,10 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
               {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
                   tên ba mẹ đang dùng. Cỡ chữ hạ theo vì font body rộng hơn script
                   nên giữ cỡ cũ là tràn khung. */}
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{orderedPeople[0].fullName}</h3>
+              <h3 className={cn("flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]", coupleNameClass)}>{orderedPeople[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{orderedPeople[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={amp}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{orderedPeople[1].fullName}</h3>
+              <h3 className={cn("flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]", coupleNameClass)}>{orderedPeople[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: muted }}>{orderedPeople[1].birthOrder}</div>
             </div>
             {ceremony ? (

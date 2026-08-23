@@ -30,8 +30,8 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const nameFont = { fontFamily: '"The Nautigal", cursive' };
 
-  const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
-  const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
+  const groomCol = <FamilyColumn sideBySideOnMobile title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
+  const brideCol = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const banks = invitationGiftAccounts(content).map((account) => ({
     label: `${account.birthOrder} - ${account.name}`,
@@ -84,20 +84,24 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
           {/* CEREMONY INFO */}
           <section className="flex w-full flex-col items-center gap-8">
             <LeafHeading>Thông Tin Lễ Cưới</LeafHeading>
-            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile. 4 hàng khai
+                tường minh để FamilyColumn mượn qua grid-rows-subgrid, nên chức danh /
+                tên bố / tên mẹ / địa chỉ của hai nhà thẳng hàng nhau dù một tên phải
+                xuống dòng. md:gap-x-10 giữ đúng bề rộng cột như bản flex trước đây. */}
+            <div className="grid w-full grid-cols-2 grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 md:gap-x-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[18px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2 text-center">
-              {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
-                  tên ba mẹ đang dùng. Cỡ chữ hạ hẳn và bỏ whitespace-nowrap vì
-                  font body rộng hơn script nên tên 4 từ sẽ tràn ngang. */}
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
+              {/* Tên đầy đủ dùng EB Garamond đúng như thẻ gốc trên chungdoi.com.
+                  Trước đây để thừa hưởng font body sans của thẻ nên khác hẳn bản gốc.
+                  Vẫn không dùng whitespace-nowrap để tên 4 từ xuống dòng thay vì tràn. */}
+              <h3 className="font-couple-garamond flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
                 {people[0].fullName}
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[24px] md:text-[32px]" style={nameFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
+              <h3 className="font-couple-garamond flex min-h-[70px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">
                 {people[1].fullName}
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[1].birthOrder}</div>

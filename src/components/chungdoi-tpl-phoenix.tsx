@@ -215,20 +215,23 @@ export function PhoenixInvitation({
           </div>
           <div className="mb-12 flex flex-col items-center gap-6 text-center md:mb-16 md:gap-8">
             <h2 className="relative z-10 text-[20px] font-bold uppercase md:text-[24px]">Thông Tin Lễ Cưới</h2>
-            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-8">
-              <FamilyColumn {...familyColumns[0]} />
-              <div className="h-px w-16 self-center md:h-[60px] md:w-px" style={{ backgroundColor: hexToRgba(M, 0.4) }} />
-              <FamilyColumn {...familyColumns[1]} />
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile. 4 hàng khai
+                tường minh để FamilyColumn mượn qua grid-rows-subgrid; vạch phân cách
+                chuyển thành đường dọc trải hết khối ở mọi bề rộng. */}
+            <div className="grid w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 md:gap-x-8">
+              <FamilyColumn sideBySideOnMobile {...familyColumns[0]} />
+              <div className="row-span-4 w-px self-stretch justify-self-center" style={{ backgroundColor: hexToRgba(M, 0.4) }} />
+              <FamilyColumn sideBySideOnMobile {...familyColumns[1]} />
             </div>
             <p className="whitespace-pre-line text-center text-[14px] uppercase leading-relaxed md:text-[16px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
             <div className="flex w-full flex-col items-center gap-2">
               {/* Bỏ font-qellia: để tên thừa hưởng font body của thẻ, đúng cái
                   FamilyColumn đang dùng cho tên ba mẹ. Bỏ whitespace-nowrap và hạ
                   cỡ vì font body rộng hơn script nên tên 4 từ sẽ tràn ngang. */}
-              <h3 className="flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[0].fullName}</h3>
+              <h3 className="font-couple-garamond flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[0].birthOrder}</div>
               <div className="text-[35px] md:text-[48px]">&amp;</div>
-              <h3 className="flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[1].fullName}</h3>
+              <h3 className="font-couple-garamond flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[1].birthOrder}</div>
             </div>
             <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{invitationCeremonyMessage(content)}</p>

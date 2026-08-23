@@ -49,11 +49,19 @@ function MaroonDateRow({ weekday, day, month }: { weekday: string; day: string; 
 
 function MaroonFamilyColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
   return (
-    <div className="flex min-w-0 max-w-[170px] flex-1 flex-col items-center gap-1.5 text-center md:max-w-[280px]" style={{ color: CREAM, fontFamily: SERIF }}>
-      <span className="text-[15px] md:text-[18px]">{title}</span>
-      <span className="text-[18px] font-semibold md:text-[21px]">{a}</span>
-      <span className="text-[18px] font-semibold md:text-[21px]">{b}</span>
-      {addr ? <div className="mt-1 whitespace-pre-line text-[13px] leading-normal opacity-90 md:text-[15px]">{addr}</div> : null}
+    // Hai nhà nằm ngang hàng nhau kể cả mobile, nên cột chỉ được nửa khung: cỡ chữ
+    // dải mobile hạ xuống, và cột mượn lưới hàng của khung cha bằng grid-rows-subgrid
+    // để bốn hàng của hai nhà thẳng hàng nhau dù một tên phải xuống dòng.
+    // w-full + không justify-self-center ở mobile: nếu cột shrink-to-fit thì bề rộng ô
+    // lưới (track) vẫn lớn hơn hộp cột, nên `w-full` của địa chỉ tính theo track và
+    // tràn ra ngoài cột. Cho cột trải hết track rồi mới cap lại từ md.
+    <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center" style={{ color: CREAM, fontFamily: SERIF }}>
+      <span className="text-[12px] md:text-[18px]">{title}</span>
+      <span className="text-[15px] font-semibold md:text-[21px]">{a}</span>
+      <span className="text-[15px] font-semibold md:text-[21px]">{b}</span>
+      {/* w-full: trong ô subgrid, div không khai bề rộng sẽ tự co theo max-content nên
+          địa chỉ dài tràn ra ngoài cột. Ràng về 100% cột để nó xuống dòng. */}
+      {addr ? <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] leading-normal opacity-90 md:text-[15px]">{addr}</div> : null}
     </div>
   );
 }
@@ -121,9 +129,12 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
           {/* CEREMONY INFO — families */}
           <div className="flex w-full flex-col items-center gap-8">
             <MaroonHeading>Thông tin lễ cưới</MaroonHeading>
-            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile. 4 hàng khai
+                tường minh để cột mượn qua grid-rows-subgrid; vạch phân cách chuyển
+                thành đường dọc trải hết khối ở mọi bề rộng. */}
+            <div className="grid w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 md:gap-x-10">
               <MaroonFamilyColumn {...familyColumns[0]} />
-              <div className="h-px w-16 self-center md:h-[70px] md:w-px" style={{ backgroundColor: hexToRgba(PINK, 0.4) }} />
+              <div className="row-span-4 w-px self-stretch justify-self-center" style={{ backgroundColor: hexToRgba(PINK, 0.4) }} />
               <MaroonFamilyColumn {...familyColumns[1]} />
             </div>
             <div className="whitespace-pre-line text-center text-[16px] uppercase leading-relaxed tracking-wide md:text-[20px]" style={{ color: CREAM }}>

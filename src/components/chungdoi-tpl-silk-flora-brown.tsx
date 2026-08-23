@@ -27,6 +27,7 @@ function SilkFloraBrownHero({ content }: { content: ChungDoiDemoContent }) {
 export function SilkFloraBrownInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
+      coupleNameClass="font-couple-garamond"
       content={content}
       hero={<SilkFloraBrownHero content={content} />}
       palette={{

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { longestCoupleNameLength } from "@/lib/invitation-display";
+
 import { ConanCasebookFittedName } from "./conan-casebook-fitted-name";
 import type { ConanCasebookCoverContent } from "./conan-casebook-scene-types";
 import styles from "./conan-casebook-fallback.module.css";
@@ -16,8 +18,11 @@ export type DetectiveConanCasebookFallbackProps = {
   portraitSrc: string;
 };
 
-function fallbackNameClass(name: string): string {
-  const length = [...name.trim()].length;
+/**
+ * Nhận độ dài tên dài nhất của cặp (không phải một tên) để cả hai tên dùng chung
+ * một cỡ chữ — xem `longestCoupleNameLength`.
+ */
+function fallbackNameClass(length: number): string {
   if (length > 36) return styles.nameExtra;
   if (length > 24) return styles.nameLong;
   if (length > 15) return styles.nameMedium;
@@ -31,6 +36,11 @@ export function DetectiveConanCasebookFallback({
   motion,
   portraitSrc,
 }: DetectiveConanCasebookFallbackProps) {
+  // Một cỡ chữ dùng chung cho cả hai tên, chọn theo tên dài hơn.
+  const coupleNameSizeClass = fallbackNameClass(
+    longestCoupleNameLength(coverContent.firstName, coverContent.secondName),
+  );
+
   return (
     <div
       aria-hidden="true"
@@ -96,12 +106,12 @@ export function DetectiveConanCasebookFallback({
             </div>
             <div className={styles.coupleNames}>
               <ConanCasebookFittedName
-                className={fallbackNameClass(coverContent.firstName)}
+                className={coupleNameSizeClass}
                 name={coverContent.firstName}
               />
               <small>{coverContent.conjunction}</small>
               <ConanCasebookFittedName
-                className={fallbackNameClass(coverContent.secondName)}
+                className={coupleNameSizeClass}
                 name={coverContent.secondName}
               />
             </div>

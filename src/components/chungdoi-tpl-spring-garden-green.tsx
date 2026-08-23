@@ -32,6 +32,7 @@ function SpringGardenGreenHero({ content }: { content: ChungDoiDemoContent }) {
 export function SpringGardenGreenInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
+      coupleNameClass="font-couple-uni"
       content={content}
       hero={<SpringGardenGreenHero content={content} />}
       albumFirst

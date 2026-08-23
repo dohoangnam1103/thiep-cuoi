@@ -233,14 +233,18 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             </h2>
             {/* Mobile: hai họ xếp thành hai dòng để mỗi tên có trọn chiều rộng thẻ,
                 không bị cắt bởi overflow-hidden của khung ngoài. */}
-            <div className="grid w-full max-w-[366px] grid-cols-1 items-start gap-6 text-center md:max-w-[560px] md:grid-cols-2 md:gap-10" style={{ color: GOLD, fontFamily: LPD_BODY }}>
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile: cỡ chữ dải mobile
+                hạ xuống thay vì xếp dọc. Cột này có 5 hàng (chức danh / tên bố / tên mẹ
+                / địa chỉ / địa chỉ dịch), khai tường minh ở khung cha rồi mượn lại bằng
+                grid-rows-subgrid để hai nhà thẳng hàng nhau dù một tên xuống dòng. */}
+            <div className="grid w-full max-w-[366px] grid-cols-2 grid-rows-[auto_auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 text-center md:max-w-[560px] md:gap-x-10" style={{ color: GOLD, fontFamily: LPD_BODY }}>
               {familyColumns.map((family) => (
-                <div key={`${family.father}-${family.mother}`} className="flex flex-col items-center gap-1.5">
-                  <span className="text-[15px] md:text-[18px]">{family.title} <span className="opacity-70">/ 先生與女士</span></span>
-                  <span className="text-[19px] font-semibold md:text-[21px]">{family.father}</span>
-                  <span className="text-[19px] font-semibold md:text-[21px]">{family.mother}</span>
-                  <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{family.address}</div>
-                  <div className="text-[12px] opacity-60 md:text-[13px]">{family.translatedAddress}</div>
+                <div key={`${family.father}-${family.mother}`} className="row-span-5 grid min-w-0 grid-rows-subgrid items-start justify-items-center">
+                  <span className="text-[12px] md:text-[18px]">{family.title} <span className="opacity-70">/ 先生與女士</span></span>
+                  <span className="text-[15px] font-semibold md:text-[21px]">{family.father}</span>
+                  <span className="text-[15px] font-semibold md:text-[21px]">{family.mother}</span>
+                  <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{family.address}</div>
+                  <div className="text-[10px] opacity-60 md:text-[13px]">{family.translatedAddress}</div>
                 </div>
               ))}
             </div>
@@ -260,10 +264,10 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
               {/* Dùng LPD_BODY thay LPD_UNI cho khớp tên ba mẹ. Mẫu này tự khai
                   LPD_BODY cho khối hai họ nên xoá trắng sẽ rơi về font mặc định
                   của app và vẫn lệch. Cỡ chữ hạ theo vì serif rộng hơn. */}
-              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: LPD_BODY, color: GOLD, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
+              <h3 className="font-couple-uni flex min-h-[80px] w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: GOLD, wordBreak: "keep-all" }}>{people[0].fullName}</h3>
               <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>{people[0].birthOrder}</div>
               <div className="text-[35px] md:text-[48px]" style={{ fontFamily: LPD_UNI, color: GOLD }}>&amp;</div>
-              <h3 className="flex min-h-[80px] w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: LPD_BODY, color: GOLD, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
+              <h3 className="font-couple-uni flex min-h-[80px] w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: GOLD, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
               <div className="text-[13px] uppercase opacity-80 md:text-[15px]" style={{ fontFamily: LPD_BODY }}>{people[1].birthOrder}</div>
             </div>
 

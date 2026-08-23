@@ -186,21 +186,24 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
 
             {/* Mobile: hai họ xếp thành hai dòng nên mỗi tên có trọn chiều rộng thẻ,
                 không còn bị cắt. Từ md trở lên mới về lại hai cột như thiết kế gốc. */}
-            <div className="relative grid w-full max-w-[366px] grid-cols-1 items-start gap-6 py-[10px] text-center md:max-w-[520px] md:grid-cols-[1fr_auto_1fr] md:gap-6 md:py-[15px] lg:max-w-[600px] lg:py-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>
-              <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
-                <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[0].title}</span>
-                <span className="text-[20px] font-bold">{familyColumns[0].father}</span>
-                <span className="text-[20px] font-bold">{familyColumns[0].mother}</span>
-                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[0].address}</div>
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile: cỡ chữ dải mobile
+                hạ xuống thay vì xếp dọc. 4 hàng khai tường minh, mỗi cột mượn lại bằng
+                grid-rows-subgrid nên chức danh / tên bố / tên mẹ / địa chỉ của hai nhà
+                thẳng hàng nhau dù một tên phải xuống dòng. Vạch phân cách thành đường
+                dọc trải hết khối ở mọi bề rộng. */}
+            <div className="relative grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 py-[10px] text-center md:max-w-[520px] md:gap-x-6 md:py-[15px] lg:max-w-[600px] lg:py-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>
+              <div className="row-span-4 grid min-h-0 w-full min-w-0 grid-rows-subgrid items-start justify-items-center">
+                <span className="text-[12px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[0].title}</span>
+                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[0].father}</span>
+                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[0].mother}</span>
+                <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[0].address}</div>
               </div>
-              <div className="flex w-full items-center justify-center self-stretch md:h-[64px] md:w-0 md:shrink-0 md:px-0">
-                <div className="h-px w-16 bg-[#542e08] md:h-full md:w-px" />
-              </div>
-              <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5">
-                <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[1].title}</span>
-                <span className="text-[20px] font-bold">{familyColumns[1].father}</span>
-                <span className="text-[20px] font-bold">{familyColumns[1].mother}</span>
-                <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[1].address}</div>
+              <div className="row-span-4 w-px self-stretch justify-self-center bg-[#542e08]" />
+              <div className="row-span-4 grid min-h-0 w-full min-w-0 grid-rows-subgrid items-start justify-items-center">
+                <span className="text-[12px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[1].title}</span>
+                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[1].father}</span>
+                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[1].mother}</span>
+                <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[1].address}</div>
               </div>
             </div>
 
@@ -209,13 +212,15 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             </div>
 
             <div className="relative flex flex-col items-center gap-1 py-[10px] text-center md:gap-2 md:py-[15px] lg:py-[20px]">
-              {/* Dùng COBA_HELV thay COBA_HAYDON cho khớp tên ba mẹ. Mẫu này tự
-                  khai COBA_HELV cho khối hai họ nên xoá trắng sẽ rơi về font mặc
-                  định của app và vẫn lệch. Cỡ chữ hạ theo vì sans rộng hơn brush. */}
-              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: COBA_HELV, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[0].fullName}</h3>
+              {/* Tên cô dâu chú rể giữ COBA_HAYDON đúng như thẻ gốc trên chungdoi.com
+                  (SVN-HC Haydon Brush, weight 400, letter-spacing 0.025em, không viền).
+                  Trước đây đổi sang COBA_HELV cho khớp font tên ba mẹ, nhưng đó là sans
+                  thường nên mất hẳn nét chữ đặc trưng của mẫu. Trần cỡ chữ nâng lại vì
+                  brush hẹp hơn sans. */}
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(28px, 7vw, 56px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[0].fullName}</h3>
               <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{people[0].birthOrder}</div>
-              <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: COBA_HAYDON, color: RED }}>&amp;</div>
-              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(24px, 6vw, 42px)", fontFamily: COBA_HELV, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[1].fullName}</h3>
+              <div className="text-[58px] md:text-[77px] lg:text-[86px]" style={{ fontFamily: COBA_HAYDON, color: RED, fontWeight: 300 }}>&amp;</div>
+              <h3 className="flex w-full items-center justify-center leading-tight md:leading-snug" style={{ fontSize: "clamp(28px, 7vw, 56px)", fontFamily: COBA_HAYDON, color: RED, fontWeight: 400, letterSpacing: "0.025em" }}>{people[1].fullName}</h3>
               <div className="text-[14px] uppercase md:text-[17px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>{people[1].birthOrder}</div>
             </div>
 

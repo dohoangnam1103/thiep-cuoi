@@ -122,6 +122,14 @@ html.lenis body {
   font-display: swap;
 }
 
+/* Thẻ Nhật Bình dùng font này cho dấu "&" giữa hai tên. Trước đây thiếu file nên
+   dấu & rơi về cursive mặc định, khác hẳn bản gốc. */
+@font-face {
+  font-family: "SVN-HC Carosello";
+  src: url("/chungdoi/fonts/SVN-HC-Carosello.otf") format("opentype");
+  font-display: swap;
+}
+
 @font-face {
   font-family: "SVN-HC Haydon Brush";
   src:
@@ -180,6 +188,15 @@ html.lenis body {
 .font-art-lora { font-family: var(--font-lora), "Lora", Georgia, serif; }
 .font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
 .font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
+
+/* Font tên cô dâu chú rể, trích từ thẻ gốc trên chungdoi.com. Bảng đối chiếu từng
+   thiệp nằm ở docs/research/couple-name-fonts.json. Biến next/font đứng trước bản
+   self-host vì bản Google có subset vietnamese nên chắc chắn đủ dấu. */
+.font-couple-garamond { font-family: var(--font-eb-garamond), "EB Garamond", Garamond, serif; }
+.font-couple-uni { font-family: "UNI Chu truyen thong", "Times New Roman", serif; }
+.font-couple-playfair { font-family: var(--font-playfair-display), "Playfair Display", "Times New Roman", serif; }
+.font-couple-patrick { font-family: var(--font-patrick-hand), "Patrick Hand", cursive; }
+.font-couple-viaoda { font-family: "Viaoda Libre", var(--font-eb-garamond), "EB Garamond", cursive; }
 .font-art-built { font-family: "SVN-HC Built Titling", HelveticaNeue, sans-serif; }
 .font-art-alex { font-family: "Alex Brush", "Fz Aghita", cursive; }
 .font-art-pacifico { font-family: "SVN-HC Pacifico", "Pattaya", cursive; }

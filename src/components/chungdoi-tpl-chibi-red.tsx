@@ -31,6 +31,7 @@ function ChibiRedHero({ content }: { content: ChungDoiDemoContent }) {
 export function ChibiRedInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
+      coupleNameClass="font-couple-garamond"
       content={content}
       hero={<ChibiRedHero content={content} />}
       albumFirst

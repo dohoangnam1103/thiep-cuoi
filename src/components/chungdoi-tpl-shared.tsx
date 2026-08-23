@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useCallback, useEffect, useId, useRef, useState } from "react";
+import { createContext, startTransition, type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 
@@ -277,17 +277,145 @@ export function MapDirectionsButton({ query, label = "Chỉ đường", classNam
   );
 }
 
-export function FamilyColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+/**
+ * Số hàng của một cột nhà: chức danh, tên bố, tên mẹ, địa chỉ. Khung cha phải khai
+ * đúng số hàng này để `FamilyColumn` mượn được lưới qua `grid-rows-subgrid`.
+ */
+export const FAMILY_COLUMN_ROWS = 4;
+
+export function FamilyColumn({
+  title,
+  a,
+  b,
+  addr,
+  sideBySideOnMobile = false,
+}: {
+  title: string;
+  a: string;
+  b: string;
+  addr: string;
+  /**
+   * Cột chỉ được nửa chiều rộng thẻ ngay từ mobile (nhà gái và nhà trai nằm ngang
+   * hàng nhau).
+   *
+   * Bật thì cỡ chữ ở dải mobile hạ xuống để tên bố mẹ không tràn cột, và cột mượn
+   * lưới hàng của khung cha bằng `grid-rows-subgrid`: chức danh, tên bố, tên mẹ,
+   * địa chỉ của hai nhà nằm đúng hàng của nhau, tên dài xuống hai dòng cũng không
+   * đẩy lệch cột bên kia. Từ `md` trở lên khung đủ rộng nên cỡ chữ giữ mặc định.
+   *
+   * Tắt (mặc định) thì cột xếp dọc bình thường — các template khác dùng
+   * `FamilyColumn` giữ nguyên layout cũ.
+   */
+  sideBySideOnMobile?: boolean;
+}) {
   return (
-    <div className="flex min-h-0 w-full min-w-0 flex-col items-center gap-1.5 text-center">
-      <span className="text-[15px] font-normal md:text-[18px] lg:text-[19px]">{title}</span>
+    <div
+      className={cn(
+        "min-h-0 w-full min-w-0 text-center",
+        sideBySideOnMobile
+          // Khoảng cách giữa các hàng do khung cha quy định (subgrid bỏ qua gap của
+          // chính nó ở trục được mượn).
+          ? "row-span-4 grid grid-rows-subgrid items-start justify-items-center"
+          : "flex flex-col items-center gap-1.5",
+      )}
+    >
+      <span className={cn("font-normal md:text-[18px] lg:text-[19px]", sideBySideOnMobile ? "text-[12px]" : "text-[15px]")}>{title}</span>
       {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài sẽ bị
           cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên. */}
-      <span className="text-[20px] font-bold">{a}</span>
-      <span className="text-[20px] font-bold">{b}</span>
-      {addr ? <div className="mt-1 w-full max-w-[169px] whitespace-pre-line text-[13px] leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{addr}</div> : null}
+      <span className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{a}</span>
+      <span className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{b}</span>
+      {addr ? <div className={cn("mt-1 w-full whitespace-pre-line leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]", sideBySideOnMobile ? "max-w-full text-[11px]" : "max-w-[169px] text-[13px]")}>{addr}</div> : null}
     </div>
   );
+}
+
+type FitTextRegistry = {
+  report: (id: string, size: number) => void;
+  unregister: (id: string) => void;
+};
+
+const FitTextRegistryContext = createContext<FitTextRegistry | null>(null);
+const FitTextSharedSizeContext = createContext<number | null>(null);
+
+/**
+ * Buộc mọi `FitText` bên trong về cùng một cỡ chữ: cỡ lớn nhất mà *tất cả* các
+ * tên trong nhóm đều vừa khung.
+ *
+ * Mỗi `FitText` tự đo và tự co riêng, nên tên cô dâu dài ("Nguyễn Thị Thanh
+ * Huyền") bị hạ cỡ trong khi tên chú rể ngắn ("Lê Ngọc Anh") vẫn giữ nguyên
+ * `maxFontSize` — hai dòng lệch cỡ nhau rất rõ. Tên cô dâu và chú rể phải luôn
+ * cùng cỡ, nên quyết định cỡ chữ được nâng lên nhóm và lấy `min` của các cỡ
+ * từng thành viên đo được.
+ *
+ * Provider không render thêm DOM nên bọc vào không ảnh hưởng layout.
+ */
+export function FitTextGroup({ children }: { children: ReactNode }) {
+  const [sizes, setSizes] = useState<Record<string, number>>({});
+
+  // Registry giữ nguyên identity để effect báo cáo của thành viên không chạy lại
+  // mỗi lần cỡ chung đổi.
+  const registry = useMemo<FitTextRegistry>(
+    () => ({
+      report: (id, size) => {
+        setSizes((prev) => (prev[id] === size ? prev : { ...prev, [id]: size }));
+      },
+      unregister: (id) => {
+        setSizes((prev) => {
+          if (!(id in prev)) return prev;
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      },
+    }),
+    [],
+  );
+
+  const reported = Object.values(sizes);
+  const sharedFontSize = reported.length > 0 ? Math.min(...reported) : null;
+
+  return (
+    <FitTextRegistryContext.Provider value={registry}>
+      <FitTextSharedSizeContext.Provider value={sharedFontSize}>
+        {children}
+      </FitTextSharedSizeContext.Provider>
+    </FitTextRegistryContext.Provider>
+  );
+}
+
+/** Khớp breakpoint `md` của Tailwind, để `FitText` ngắt dòng cùng nhịp với các class `md:`. */
+function useMobileViewport(): boolean {
+  // Khởi tạo `false` để lần render đầu (server và client) giống nhau, tránh lỗi
+  // hydration; media query chỉ áp sau khi mount.
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const update = () => setMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return mobile;
+}
+
+/**
+ * Tên chia thành các dòng để hiển thị.
+ *
+ * Tên 4 chữ ("Nguyễn Thị Thanh Huyền") giữ trên một dòng ở khung mobile hẹp thì
+ * `FitText` phải co xuống ~26px mới vừa — nhỏ hơn nhiều so với `maxFontSize` và
+ * kéo cả tên còn lại nhỏ theo (cả cặp dùng chung một cỡ). Rớt 2 chữ cuối xuống
+ * dòng mới thì dòng dài nhất ngắn đi gần một nửa, cỡ chữ giữ được gần mức tối đa.
+ *
+ * Chỉ áp cho đúng 4 chữ trên mobile: 2 hoặc 3 chữ vẫn vừa một dòng, còn desktop
+ * thì khung đủ rộng nên không cần ngắt.
+ */
+function fitTextLines(name: string, mobile: boolean): string[] {
+  const trimmed = name.trim();
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  if (!mobile || words.length !== 4) return [trimmed];
+  return [words.slice(0, 2).join(" "), words.slice(2).join(" ")];
 }
 
 export function FitText({
@@ -295,15 +423,25 @@ export function FitText({
   maxFontSize,
   className,
   style,
+  wrapFourWordsOnMobile = false,
 }: {
   children: string;
   maxFontSize: number;
   className?: string;
   style?: CSSProperties;
+  /** Bật quy định rớt 2 chữ cuối của tên 4 chữ xuống dòng mới trên mobile. */
+  wrapFourWordsOnMobile?: boolean;
 }) {
   const outerRef = useRef<HTMLHeadingElement>(null);
   const innerRef = useRef<HTMLSpanElement>(null);
-  const [fontSize, setFontSize] = useState(maxFontSize);
+  const [fittedFontSize, setFittedFontSize] = useState(maxFontSize);
+  const registry = useContext(FitTextRegistryContext);
+  const sharedFontSize = useContext(FitTextSharedSizeContext);
+  const memberId = useId();
+  const mobile = useMobileViewport();
+  const lines = fitTextLines(children, wrapFourWordsOnMobile && mobile);
+  // Đo lại khi cách ngắt dòng đổi: dòng dài nhất thay đổi thì cỡ vừa khung cũng khác.
+  const lineKey = lines.join("\n");
   useEffect(() => {
     const outer = outerRef.current;
     const inner = innerRef.current;
@@ -311,6 +449,9 @@ export function FitText({
     const fit = () => {
       const avail = outer.clientWidth;
       if (!avail) return;
+      // Luôn đo ở `maxFontSize` rồi trả lại: phép đo không phụ thuộc cỡ đang
+      // hiển thị, nên áp cỡ nhóm nhỏ hơn không tạo vòng lặp đo lại.
+      // Với tên nhiều dòng, `scrollWidth` là bề rộng của dòng dài nhất.
       inner.style.fontSize = `${maxFontSize}px`;
       const natural = inner.scrollWidth;
       inner.style.fontSize = "";
@@ -318,7 +459,7 @@ export function FitText({
         natural > avail
           ? Math.max(1, Math.floor((maxFontSize * avail) / natural))
           : maxFontSize;
-      setFontSize(next);
+      setFittedFontSize(next);
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -327,11 +468,39 @@ export function FitText({
       document.fonts.ready.then(fit).catch(() => {});
     }
     return () => ro.disconnect();
-  }, [children, maxFontSize]);
+  }, [lineKey, maxFontSize]);
+
+  useEffect(() => {
+    registry?.report(memberId, fittedFontSize);
+  }, [fittedFontSize, memberId, registry]);
+
+  useEffect(() => {
+    if (!registry) return;
+    return () => registry.unregister(memberId);
+  }, [memberId, registry]);
+
+  // `min` với cỡ tự đo để tên không bị tràn trong lúc thành viên khác của nhóm
+  // chưa báo cáo xong.
+  const fontSize =
+    registry && sharedFontSize !== null
+      ? Math.min(sharedFontSize, fittedFontSize)
+      : fittedFontSize;
+
   return (
-    <h3 ref={outerRef} className={className} style={{ ...style, fontSize }}>
-      <span ref={innerRef} className="inline-block whitespace-nowrap">
-        {children}
+    <h3
+      // Tên bị ngắt thành nhiều span khối nên `textContent` mất dấu cách giữa hai
+      // dòng; aria-label giữ lại tên đầy đủ cho trình đọc màn hình.
+      aria-label={lines.length > 1 ? children.trim() : undefined}
+      className={className}
+      ref={outerRef}
+      style={{ ...style, fontSize }}
+    >
+      <span ref={innerRef} className="inline-block whitespace-nowrap text-center">
+        {lines.length > 1
+          ? lines.map((line, index) => (
+            <span className="block" key={`${index}-${line}`}>{line}</span>
+          ))
+          : children}
       </span>
     </h3>
   );

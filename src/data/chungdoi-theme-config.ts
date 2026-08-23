@@ -1053,8 +1053,8 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       "particleType": "happiness"
     },
     "fonts": {
-      "couple": "\"Pattaya\", cursive",
-      "ampersand": null
+      "couple": "\"SVN-HC Pacifico\", cursive",
+      "ampersand": "\"SVN-HC Carosello\", cursive"
     },
     "sealType": null,
     "decorations": {

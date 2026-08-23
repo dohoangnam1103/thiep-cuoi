@@ -186,10 +186,10 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                       khai BODY_FONT cho khối hai họ nên xoá trắng sẽ rơi về font mặc
                       định của app và vẫn lệch. Bỏ whitespace-nowrap và hạ cỡ vì
                       Baskerville rộng hơn Garamond, tên 4 từ sẽ tràn ngang. */}
-                  <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY_FONT, color: ROSE }}>{people[0].fullName}</h3>
+                  <h3 className="font-couple-garamond flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ color: ROSE }}>{people[0].fullName}</h3>
                   <div className="text-[10px] uppercase tracking-[0.1em]" style={{ ...ORDER_FONT, color: WINE }}>{people[0].birthOrder}</div>
                   <div className="text-[30px] leading-none md:text-[40px]" style={{ ...AMP_FONT, color: ROSE }}>&amp;</div>
-                  <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY_FONT, color: ROSE }}>{people[1].fullName}</h3>
+                  <h3 className="font-couple-garamond flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ color: ROSE }}>{people[1].fullName}</h3>
                   <div className="text-[10px] uppercase tracking-[0.1em]" style={{ ...ORDER_FONT, color: WINE }}>{people[1].birthOrder}</div>
                 </div>
 

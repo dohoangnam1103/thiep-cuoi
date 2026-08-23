@@ -37,6 +37,7 @@ function MinimalismRedHero({ content }: { content: ChungDoiDemoContent }) {
 export function MinimalismRedInvitation({ content }: { content: ChungDoiDemoContent }) {
   return (
     <FloralInvitation
+      coupleNameClass="font-couple-garamond"
       content={content}
       hero={<MinimalismRedHero content={content} />}
       palette={{

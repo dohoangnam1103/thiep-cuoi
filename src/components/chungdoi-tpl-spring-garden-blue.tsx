@@ -107,8 +107,8 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const groomCol = <FamilyColumn title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
-  const brideCol = <FamilyColumn title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
+  const groomCol = <FamilyColumn sideBySideOnMobile title={families.groomParentTitle || "Ông Bà"} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
+  const brideCol = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white">
@@ -136,7 +136,11 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
         <div className="relative z-10 flex w-full flex-col items-center gap-12 px-4 pb-14 pt-12 md:px-10">
           <SectionCard className="flex flex-col items-center gap-8 text-center">
             <SpringHeading>Thông Tin Lễ Cưới</SpringHeading>
-            <div className="flex w-full flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
+            {/* Nhà gái và nhà trai luôn chung một dòng, kể cả mobile. 4 hàng khai
+                tường minh để FamilyColumn mượn qua grid-rows-subgrid, nên chức danh /
+                tên bố / tên mẹ / địa chỉ của hai nhà thẳng hàng nhau dù một tên phải
+                xuống dòng. md:gap-x-10 giữ đúng bề rộng cột như bản flex trước đây. */}
+            <div className="grid w-full grid-cols-2 grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 md:gap-x-10">
               {couple.brideFirst ? (<>{brideCol}{groomCol}</>) : (<>{groomCol}{brideCol}</>)}
             </div>
             <p className="whitespace-pre-line text-[15px] uppercase leading-relaxed tracking-[0.12em] md:text-[19px]">{couple.openingMessage || "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI."}</p>
@@ -144,10 +148,10 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
               {/* Không khai font ở tên: để thừa hưởng font body của thẻ, đúng cái
                   tên ba mẹ đang dùng. Cỡ chữ hạ theo vì font body rộng hơn script
                   nên giữ cỡ cũ là tràn khung. */}
-              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[0].fullName}</h3>
+              <h3 className="font-couple-uni flex min-h-[70px] w-[88%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[0].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{people[0].birthOrder}</div>
               <div className="text-[26px] md:text-[36px]" style={scriptFont}>&amp;</div>
-              <h3 className="flex min-h-[70px] w-[88%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
+              <h3 className="font-couple-uni flex min-h-[70px] w-[88%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.24em] md:text-[13px]" style={{ color: MUTED }}>{people[1].birthOrder}</div>
             </div>
             {ceremony ? (

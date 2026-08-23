@@ -124,17 +124,17 @@ function makeCoverTexture(content: ConanCasebookCoverContent): CanvasTexture {
     context.letterSpacing = "4px";
     context.fillText(content.caseNumber, 600, 282);
 
-    context.fillStyle = "#F5F1E2";
-    const firstNameSize = fitTextSize(
-      context,
-      content.firstName,
-      900,
-      82,
-      10,
-      '"Helvetica Neue", Arial, sans-serif',
+    // Cỡ chữ tên cô dâu và chú rể phải luôn bằng nhau: đo riêng từng tên thì tên
+    // ngắn giữ nguyên 82px còn tên dài bị co xuống, hai dòng lệch cỡ. Lấy cỡ nhỏ
+    // nhất để cả hai vừa khung và cùng cỡ.
+    const nameFontFamily = '"Helvetica Neue", Arial, sans-serif';
+    const coupleNameSize = Math.min(
+      fitTextSize(context, content.firstName, 900, 82, 10, nameFontFamily),
+      fitTextSize(context, content.secondName, 900, 82, 10, nameFontFamily),
     );
-    context.font =
-      `700 ${firstNameSize}px "Helvetica Neue", Arial, sans-serif`;
+
+    context.fillStyle = "#F5F1E2";
+    context.font = `700 ${coupleNameSize}px ${nameFontFamily}`;
     context.fillText(content.firstName, 600, 1192);
 
     context.fillStyle = "#D12B37";
@@ -142,16 +142,7 @@ function makeCoverTexture(content: ConanCasebookCoverContent): CanvasTexture {
     context.fillText(content.conjunction, 600, 1274);
 
     context.fillStyle = "#F5F1E2";
-    const secondNameSize = fitTextSize(
-      context,
-      content.secondName,
-      900,
-      82,
-      10,
-      '"Helvetica Neue", Arial, sans-serif',
-    );
-    context.font =
-      `700 ${secondNameSize}px "Helvetica Neue", Arial, sans-serif`;
+    context.font = `700 ${coupleNameSize}px ${nameFontFamily}`;
     context.fillText(content.secondName, 600, 1365);
 
     context.fillStyle = "rgba(245, 241, 226, 0.78)";

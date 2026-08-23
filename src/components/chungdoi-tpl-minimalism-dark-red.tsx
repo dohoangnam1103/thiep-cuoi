@@ -237,10 +237,10 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
                     cho khối hai họ nên xoá trắng sẽ rơi về font mặc định của app và
                     vẫn lệch. Bỏ whitespace-nowrap và hạ cỡ vì Baskerville rộng hơn
                     Garamond, tên 4 từ sẽ tràn ngang. */}
-                <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY, color: CREAM }}>{people[0].fullName}</h3>
+                <h3 className="font-couple-garamond flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ color: CREAM }}>{people[0].fullName}</h3>
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[0].birthOrder}</div>
                 <div className="text-[35px]" style={{ ...AMP, color: CREAM }}>&amp;</div>
-                <h3 className="flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ ...BODY, color: CREAM }}>{people[1].fullName}</h3>
+                <h3 className="font-couple-garamond flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]" style={{ color: CREAM }}>{people[1].fullName}</h3>
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[1].birthOrder}</div>
               </div>
 
