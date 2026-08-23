@@ -310,6 +310,8 @@ const VARIANTS: Array<{ slug: string; code: string; name: string }> = [
   { slug: "lab/v3", code: "V3", name: "Album lật ngang" },
   { slug: "lab/v4", code: "V4", name: "Tơ hồng" },
   { slug: "lab/v5", code: "V5", name: "Đi về phía nhau" },
+  { slug: "lab/v6", code: "V6", name: "Hành trình về chung một nhà" },
+  { slug: "lab/v8", code: "V8", name: "Một ngày cưới" },
 ];
 
 /** Thanh chuyển nhanh giữa các biến thể, để so sánh không phải sửa URL tay. */

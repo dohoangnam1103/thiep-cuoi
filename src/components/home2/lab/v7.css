@@ -1,0 +1,64 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Biến thể V7 — "Hành trình về chung một nhà"
+
+   Chỉ thêm những thứ KHÔNG diễn đạt được bằng class có sẵn của `home-2.css`:
+   hai tông "hai nhà" của sân khấu, nhịp nhấp nháy của mũi chỉ dẫn cuộn, và
+   khoá 3D cho cụm phong bì. Mọi thứ về chữ, tông nền, kẻ chỉ, nút bấm vẫn dùng
+   nguyên hệ `.hp-*` — không dựng bảng màu thứ hai.
+
+   File này chỉ được import bởi component V7.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.hp-journey {
+  /* Hai nửa nền = hai nhà, trước khi hoà làm một. Suy ra TỪ `--hp-paper` bằng
+     color-mix nên khi đổi màu giấy ở `home-2.css` thì hai nửa tự đi theo, không
+     phải sửa hai chỗ. Lệch nhau rất ít (6%) là có ý: đây là hai nhà cùng một
+     câu chuyện, không phải hai thương hiệu. */
+  --v7-side-a: color-mix(in oklab, var(--hp-paper) 94%, oklch(0.62 0.04 200) 6%);
+  --v7-side-b: color-mix(in oklab, var(--hp-paper) 94%, var(--hp-seal) 6%);
+  /* Sợi tơ hồng phải đọc được trên CẢ nền giấy và nền vang, mà một thẻ SVG phủ
+     nhiều chương thì không đọc được `--hp-accent` của từng chương. Nên chọn một
+     sắc đỏ trung gian, sáng hơn `--hp-seal` để không chìm vào nền vang. */
+  --v7-thread: oklch(0.615 0.168 31);
+  --v7-thread-track: oklch(0.62 0.02 60 / 0.3);
+
+  /* Phong bì và tấm thiệp.
+     Giữ đúng bậc sắc độ đã chốt ở V1: ba lớp phong bì TỐI DẦN từ trong ra ngoài
+     và tấm thiệp SÁNG HƠN HẲN cả ba. Lúc đầu V1 lấy cùng một màu giấy cho cả
+     phong bì và thiệp, chênh nhau chưa tới 5% độ sáng, và cả cụm đọc ra như một
+     cái thùng carton chứ không phải "tấm thiệp sáng được rút khỏi phong bì tối".
+     Ở đây pha từ `--hp-paper` + `--hp-ink` nên vẫn nằm trong bảng màu của trang. */
+  --v7-env-back: color-mix(in oklab, var(--hp-paper) 82%, var(--hp-ink) 18%);
+  --v7-env-front: color-mix(in oklab, var(--hp-paper) 74%, var(--hp-ink) 26%);
+  --v7-env-flap: color-mix(in oklab, var(--hp-paper) 64%, var(--hp-ink) 36%);
+  --v7-card: color-mix(in oklab, var(--hp-paper) 92%, white 8%);
+  --v7-card-cover: color-mix(in oklab, var(--hp-paper) 93%, var(--hp-ink) 7%);
+}
+
+/* Sàn diễn 3D của cụm phong bì. Đặt ở CSS chứ không inline vì `perspective` +
+   `transform-style` phải đi cùng nhau, tách ra là mất chiều sâu. */
+.hp-journey .v7-stage3d {
+  perspective: 1600px;
+}
+
+.hp-journey .v7-solid {
+  transform-style: preserve-3d;
+}
+
+/* Mũi chỉ dẫn cuộn ở hero. Biên độ nhỏ (4px) và chậm — đủ để mắt bắt được là
+   có thể cuộn, không thành chi tiết nhấp nháy gây phân tâm. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes v7-nudge {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  .hp-journey .v7-nudge {
+    animation: v7-nudge 2.4s ease-in-out infinite;
+  }
+}

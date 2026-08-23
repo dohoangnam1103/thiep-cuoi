@@ -19,6 +19,30 @@ const VARIANTS: Array<{
   note?: string;
 }> = [
   {
+    code: "V8",
+    href: "/home-2/lab/v8",
+    name: "Một ngày cưới",
+    motion:
+      "Cuộn = thời gian trong một ngày cưới trôi. Nền đổi tông theo canh giờ (sương sáng → nắng trưa → hoàng hôn → đêm), mỗi giờ một phần lịch trình thật của đám cưới, mặt trời chạy trên cung trời rồi nhường chỗ cho trăng. Ngày khép lại bằng con dấu sáp ép ngày cưới xuống, phong bì mở ra đường link.",
+    strength:
+      "Nghĩa thời gian rất cưới mà chưa biến thể nào có: lịch trình không còn là bullet liệt kê mà thành chính câu chuyện được kể. Nền đổi tông liên tục là thứ giữ mắt, và mạch nền kết đúng vào tông vang tối của chương kế nên trang liền mạch.",
+    weakness:
+      "Sống chết vào nhịp đổi màu: trộn sai tông là cả trang loang như lọc ảnh. Chữ trên nền tối phải đổi hệ cream/gold kịp lúc, lệch một quãng là đọc không rõ.",
+    note: "Bật giảm chuyển động thì sân khấu ghim ở hồi kết (thiệp đã mở, link đã hiện). Thu cửa sổ dưới 860px thì các khối lịch trình xếp dọc về giữa màn hình.",
+  },
+  {
+    code: "V7",
+    href: "/home-2/lab/v7",
+    name: "Hành trình về chung một nhà",
+    motion:
+      "Ghép năm biến thể thành một: xương hành trình của V5, sợi tơ hồng của V4 chạy xuyên phần thân, nhịp một-màn-một-tính-năng của V2, và phong bì mở ra của V1 làm hồi kết.",
+    strength:
+      "Bản duy nhất làm xong từ đầu tới cuối bằng chữ thật, ảnh thiệp thật và art direction thật — phần thân dùng lại đúng các chương của V0 nên không có chỗ nào còn là khối xám.",
+    weakness:
+      "Dài nhất: hero cộng sân khấu 720vh trước khi tới chương 01. Bỏ chương \"Cách hoạt động\" của V0 vì hành trình đã kể đúng ba bước đó.",
+    note: "Thu cửa sổ xuống dưới 860px để xem bố cục chéo. Bật giảm chuyển động thì sân khấu ghim ở hồi 4 và sợi tơ hồng tắt hẳn.",
+  },
+  {
     code: "V0",
     href: "/home-2",
     name: "Ấn phẩm",
@@ -75,6 +99,18 @@ const VARIANTS: Array<{
       "Sống chết vào chất lượng hình hai nhân vật. Bản wireframe chỉ là bóng dáng SVG cho thấy nhịp; bản thật cần hình vẽ tử tế, làm dở là rơi xuống mức hoạt hình rẻ tiền ngay.",
     note: "Thu cửa sổ xuống dưới 860px để xem bản mobile: hai người đi chéo (chú rể từ trên-trái, cô dâu từ dưới-phải), nền chia trên/dưới, và mỗi người để lại vết đường đã đi.",
   },
+  {
+    code: "V6",
+    href: "/home-2/lab/v6",
+    name: "Hành trình về chung một nhà",
+    motion:
+      "Bản ghép: hai người đi từ hai mép (V5) làm xương, sợi tơ hồng vẽ dần xuyên suốt (V4), mỗi quãng đường hiện đúng một tính năng (V2), khép lại bằng phong bì mở nắp rồi mới hiện link chia sẻ (V1).",
+    strength:
+      "Có câu chuyện và một cái đích; thông tin sản phẩm rải đều trên quãng đường nên không đoạn cuộn nào trống; hồi kết có kịch tính của V1 nhưng không phải trả giá 5 màn hình như V1.",
+    weakness:
+      "Nhiều lớp chuyển động nhất trong các biến thể — cần kiểm kỹ trên mobile và với reduced-motion để không rối.",
+    note: "Thu cửa sổ xuống dưới 768px để xem bản mobile: hai người đi chéo, payload info chuyển thành block xếp dọc.",
+  },
 ];
 
 export default async function LabIndex({ params }: { params: Promise<{ locale: Locale }> }) {
@@ -88,16 +124,20 @@ export default async function LabIndex({ params }: { params: Promise<{ locale: L
           Wireframe
         </p>
         <h1 className="mt-5 text-3xl font-semibold leading-tight sm:text-4xl">
-          Năm hướng cho trang chủ
+          Sáu hướng cho trang chủ, và hai bản hoàn chỉnh
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-[#7d766d]">
-          Toàn bộ đều là bản nháp bằng khối xám, không dùng ảnh hay font thật, để
-          chọn <strong className="font-semibold text-[#2f2c29]">kịch bản chuyển động</strong> trước
-          đã. Trang chủ đang chạy ở <code className="text-[#2f2c29]">/</code> không bị ảnh hưởng.
+          V1–V6 là bản nháp bằng khối xám, không dùng ảnh hay font thật, để chọn{" "}
+          <strong className="font-semibold text-[#2f2c29]">kịch bản chuyển động</strong> trước
+          đã. <strong className="font-semibold text-[#2f2c29]">V7</strong> ghép năm bản nháp
+          đó thành một, còn{" "}
+          <strong className="font-semibold text-[#2f2c29]">V8</strong> là hướng mới: cả ngày
+          cưới trôi theo cuộn. Trang chủ đang chạy ở{" "}
+          <code className="text-[#2f2c29]">/</code> không bị ảnh hưởng.
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#7d766d]">
-          Mỗi trang có thanh chuyển nhanh ở trên và thanh tiến độ ở dưới để thấy
-          mình đang ở hồi nào trong kịch bản.
+          Mỗi trang nháp có thanh chuyển nhanh ở trên và thanh tiến độ ở dưới để
+          thấy mình đang ở hồi nào trong kịch bản.
         </p>
 
         <ul className="mt-14 space-y-px">
@@ -138,10 +178,9 @@ export default async function LabIndex({ params }: { params: Promise<{ locale: L
         </ul>
 
         <p className="mt-14 border-t border-[#d5cfc5] pt-7 text-xs leading-relaxed text-[#7d766d]">
-          Chọn được hướng rồi thì bước tiếp là đắp art direction thật lên: font,
-          màu, ảnh thiệp thật, nội dung thật. Cũng có thể ghép — ví dụ lấy màn mở
-          phong bì của V1 làm hero rồi dùng sợi tơ hồng của V4 làm sợi dẫn cho
-          phần thân.
+          V7 là bản đề xuất: lấy hành trình của V5 làm xương, tơ hồng của V4 làm
+          sợi dẫn cho phần thân, và phong bì của V1 làm hồi kết. Năm bản nháp
+          V1–V5 giữ lại để so nhịp, không phải để dùng tiếp.
         </p>
       </div>
     </main>

@@ -1,0 +1,74 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Biến thể V8 — "Một ngày cưới"
+
+   Chỉ thêm những thứ KHÔNG diễn đạt được bằng class có sẵn của `home-2.css`:
+   bốn tông nền của một ngày (sương → trưa → hoàng hôn → đêm), và khoá 3D cho
+   cụm phong bì hồi kết. Mọi thứ về chữ, kẻ chỉ, nút bấm vẫn dùng nguyên hệ
+   `.hp-*` — không dựng bảng màu thứ hai.
+
+   File này chỉ được import bởi component V8.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.hp-day {
+  /* Bốn tông của một ngày. Suy ra TỪ `--hp-paper` bằng color-mix nên khi đổi
+     bảng màu giấy ở `home-2.css` thì cả dải tự đi theo, không phải sửa nhiều
+     chỗ — cùng nguyên tắc với `--v7-side-a/b` của v7.css.
+       dawn  : pha xanh lạnh rất nhạt, sương sớm
+       noon  : vàng kem ấm, nắng trưa
+       dusk  : cam hoàng hôn
+       night : vang sâu — khớp tông chương "kết" của trang nên mạch nền liền */
+  --v8-dawn: color-mix(in oklab, var(--hp-paper) 90%, oklch(0.7 0.05 230) 10%);
+  --v8-noon: color-mix(in oklab, var(--hp-paper) 88%, oklch(0.82 0.09 85) 12%);
+  --v8-dusk: color-mix(in oklab, var(--hp-paper) 78%, oklch(0.66 0.11 45) 22%);
+  --v8-night: var(--hp-wine-deep);
+
+  /* Mặt trời / mặt trăng trên cung trời. Đỏ sáp ban ngày, vàng nhạt ban đêm —
+     cả hai đều là màu có sẵn trong hệ. */
+  --v8-sun: var(--hp-accent);
+  --v8-moon: var(--hp-gold);
+}
+
+/* Sàn diễn 3D của cụm phong bì hồi kết. Đặt ở CSS chứ không inline vì
+   `perspective` + `transform-style` phải đi cùng nhau, tách ra là mất chiều sâu
+   (ghi chú của v7.css). */
+.hp-day .v8-stage3d {
+  perspective: 1600px;
+}
+
+.hp-day .v8-solid {
+  transform-style: preserve-3d;
+}
+
+/* Con dấu ép xuống: nhịp đập nhẹ lúc chạm đáy để đọc ra lực "đóng". Biên độ
+   nhỏ và chỉ chạy một lần theo tiến độ cuộn (JS điều khiển), keyframes này chỉ
+   cho phần rung lì sau khi ép xong. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes v8-seal-thud {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.04);
+    }
+  }
+
+  .hp-day .v8-seal-done {
+    animation: v8-seal-thud 420ms ease-out;
+  }
+
+  /* Mũi chỉ dẫn cuộn ở hero — cùng biên độ với v7-nudge. */
+  @keyframes v8-nudge {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+
+  .hp-day .v8-nudge {
+    animation: v8-nudge 2.4s ease-in-out infinite;
+  }
+}
