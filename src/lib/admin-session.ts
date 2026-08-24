@@ -1,7 +1,14 @@
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
-const COOKIE_NAME = "admin_session";
+/**
+ * Exported so callers that only need to know *whether* an admin is present can
+ * check for the cookie without paying for a JWT verification. `recordInvitationVisit`
+ * does exactly that on the public invitation route.
+ */
+export const ADMIN_SESSION_COOKIE = "admin_session";
+
+const COOKIE_NAME = ADMIN_SESSION_COOKIE;
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
 const secretKey = process.env.SESSION_SECRET;

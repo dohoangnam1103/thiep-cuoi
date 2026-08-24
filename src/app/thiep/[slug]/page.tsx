@@ -5,6 +5,7 @@ import { LayoutDashboard } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 
 import { AnalyticsEventOnView } from "@/components/analytics-interactions";
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
@@ -12,6 +13,7 @@ import { templates } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
 import { getCurrentUserId } from "@/lib/dal";
 import { isInvitationExpired } from "@/lib/invitation-entitlement";
+import { readInvitationVisitSignals, recordInvitationVisit } from "@/lib/invitation-views";
 import { resolveCoupleNames } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { loadPublished } from "@/lib/published-invitation";
@@ -87,6 +89,13 @@ export default async function PublicInvitationPage({
   const { g, published } = await searchParams;
   const invitation = await loadPublished(slug);
   if (!invitation) notFound();
+
+  // Đếm lượt xem cho trang quản trị. Tín hiệu request phải đọc tại đây vì Server
+  // Component không được gọi `cookies`/`headers` bên trong `after`; riêng câu
+  // UPDATE thì hoãn đến sau khi response đã gửi nên khách không chờ thêm gì.
+  // Đặt trước nhánh hết hạn dùng thử để thiệp hết hạn vẫn tính là đã có người mở.
+  const visitSignals = await readInvitationVisitSignals();
+  after(() => recordInvitationVisit(slug, visitSignals));
 
   const currentUserId = await getCurrentUserId();
   const isOwner = currentUserId === invitation.userId;

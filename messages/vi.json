@@ -2047,6 +2047,8 @@
     "activation": "Kích hoạt",
     "effectivePrice": "Giá hiệu lực",
     "updatedAt": "Cập nhật",
+    "viewCount": "Lượt xem",
+    "viewCountHint": "Số lần thiệp được mở, tính cả chủ thiệp. Không tính admin và bot.",
     "actions": "Thao tác",
     "draft": "Bản nháp",
     "published": "Đã xuất bản",

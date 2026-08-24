@@ -33,6 +33,8 @@ const dateFormat = createVietnamDateFormatter({
   timeStyle: "short",
 });
 
+const numberFormat = new Intl.NumberFormat("vi-VN");
+
 const inputClass =
   "rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20";
 
@@ -69,6 +71,7 @@ export default async function AdminInvitationsPage({
         publishedAt: true,
         createdAt: true,
         updatedAt: true,
+        viewCount: true,
         user: { select: { id: true, email: true } },
         content: { select: { groomFullName: true, brideFullName: true } },
       },
@@ -179,13 +182,16 @@ export default async function AdminInvitationsPage({
               <th className="whitespace-nowrap px-4 py-3 font-medium">{t("activation")}</th>
               <th className="whitespace-nowrap px-4 py-3 font-medium">{t("createdAt")}</th>
               <th className="whitespace-nowrap px-4 py-3 font-medium">{t("updatedAt")}</th>
+              <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
+                {t("viewCount")}
+              </th>
               <th className="whitespace-nowrap px-4 py-3 font-medium">{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
             {invitations.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                   {isFiltered ? t("noInvitationsFound") : t("noRealInvitations")}
                 </td>
               </tr>
@@ -251,6 +257,12 @@ export default async function AdminInvitationsPage({
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                       {dateFormat.format(invitation.updatedAt)}
+                    </td>
+                    <td
+                      className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-foreground"
+                      title={t("viewCountHint")}
+                    >
+                      {numberFormat.format(invitation.viewCount)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       {published && invitation.slug ? (
