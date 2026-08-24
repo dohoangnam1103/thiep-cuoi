@@ -446,9 +446,18 @@ export function FitText({
     const outer = outerRef.current;
     const inner = innerRef.current;
     if (!outer || !inner) return;
+    // Bề rộng khung của lần đo gần nhất. Phép đo bên dưới tự đổi layout của
+    // `outer` (đặt tạm `maxFontSize` rồi trả lại) nên ResizeObserver luôn bắn
+    // lại ngay sau mỗi lần đo. Đo lại vô điều kiện thì vòng RO → đo → RO không
+    // bao giờ dừng: chiều cao tên nhảy qua lại mãi, trang không có frame nào ổn
+    // định (Playwright báo "element is not stable" khi chụp preview, máy user
+    // thì relayout liên tục). Cỡ vừa khung chỉ phụ thuộc bề rộng khung, nên bỏ
+    // qua khi bề rộng không đổi là đủ để cắt vòng lặp.
+    let measuredAvail = -1;
     const fit = () => {
       const avail = outer.clientWidth;
-      if (!avail) return;
+      if (!avail || avail === measuredAvail) return;
+      measuredAvail = avail;
       // Luôn đo ở `maxFontSize` rồi trả lại: phép đo không phụ thuộc cỡ đang
       // hiển thị, nên áp cỡ nhóm nhỏ hơn không tạo vòng lặp đo lại.
       // Với tên nhiều dòng, `scrollWidth` là bề rộng của dòng dài nhất.
@@ -461,11 +470,16 @@ export function FitText({
           : maxFontSize;
       setFittedFontSize(next);
     };
+    // Font web đổi metric so với font fallback nên phải đo lại dù khung không đổi.
+    const refit = () => {
+      measuredAvail = -1;
+      fit();
+    };
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(outer);
     if (typeof document !== "undefined" && document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(fit).catch(() => {});
+      document.fonts.ready.then(refit).catch(() => {});
     }
     return () => ro.disconnect();
   }, [lineKey, maxFontSize]);
