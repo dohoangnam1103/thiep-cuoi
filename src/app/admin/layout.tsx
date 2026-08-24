@@ -14,7 +14,6 @@ import { AdminNav } from "./AdminNav";
 export const metadata: Metadata = {
   title: "Quản trị | Thiệp Mừng Online",
   robots: { index: false, follow: false },
-  icons: { icon: "/chungdoi/icon-v2.png" },
 };
 
 const NAV = [

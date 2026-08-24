@@ -58,9 +58,6 @@ export async function generateMetadata({
         follow: true,
       },
     },
-    icons: {
-      icon: "/chungdoi/icon-v2.png",
-    },
     verification: {
       google: "5sP6NNaX9ZwqFeSZiHdojYOOrd455yZVvfJHuZgApO4",
     },

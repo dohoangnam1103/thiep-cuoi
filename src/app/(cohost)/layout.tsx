@@ -7,7 +7,6 @@ import { appFontVariables } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Cùng quản lý khách mời | Thiệp Mừng Online",
   robots: { index: false, follow: false },
-  icons: { icon: "/chungdoi/icon-v2.png" },
 };
 
 export default function CohostLayout({ children }: { children: React.ReactNode }) {

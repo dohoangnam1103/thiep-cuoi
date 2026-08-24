@@ -8,7 +8,6 @@ import { appFontVariables } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Đăng nhập | Thiệp Mừng Online",
   robots: { index: false, follow: false },
-  icons: { icon: "/chungdoi/icon-v2.png" },
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

@@ -11,7 +11,6 @@ import { appFontVariables } from "@/lib/fonts";
 export const metadata: Metadata = {
   title: "Thiệp của tôi | Thiệp Mừng Online",
   robots: { index: false, follow: false },
-  icons: { icon: "/chungdoi/icon-v2.png" },
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
