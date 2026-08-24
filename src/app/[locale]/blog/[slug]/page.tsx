@@ -34,16 +34,15 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
 
   const title = `${post.title} | Thiệp Mừng Online Blog`;
 
-  return {
-    ...pageSeo({
-      title,
-      description: post.excerpt,
-      alternates: blogAlternates(slug, locale),
-      locale,
-      type: "article",
-    }),
-    robots: { index: false, follow: true },
-  };
+  return pageSeo({
+    title,
+    description: post.excerpt,
+    alternates: blogAlternates(slug, locale),
+    locale,
+    type: "article",
+    publishedTime: post.publishedAt?.toISOString(),
+    modifiedTime: post.updatedAt.toISOString(),
+  });
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailProps) {

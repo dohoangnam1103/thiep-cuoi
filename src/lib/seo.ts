@@ -96,6 +96,8 @@ export function pageSeo({
   twitterTitle = openGraphTitle,
   twitterDescription = openGraphDescription,
   type = "website",
+  publishedTime,
+  modifiedTime,
 }: {
   title: string;
   description: string;
@@ -111,6 +113,10 @@ export function pageSeo({
   twitterTitle?: string;
   twitterDescription?: string;
   type?: "website" | "article";
+  /** ISO 8601. Only read when `type` is `"article"`. */
+  publishedTime?: string;
+  /** ISO 8601. Only read when `type` is `"article"`. */
+  modifiedTime?: string;
 }): Metadata {
   const imageUrl = absoluteUrl(image);
   const socialImage = image === SITE_SOCIAL_IMAGE_PATH
@@ -129,19 +135,26 @@ export function pageSeo({
         type: imageType,
       };
 
+  // Split by `type` rather than spreading the timestamps in unconditionally:
+  // Next types `openGraph` as a discriminated union, and `article:*` properties
+  // only exist on the article member. Callers passing `type: "article"` used to
+  // get `og:type=article` with no `article:published_time` at all.
+  const openGraphBase = {
+    title: openGraphTitle,
+    description: openGraphDescription,
+    siteName: "Thiệp Mừng Online",
+    url: alternates.canonical,
+    locale: locale ? openGraphLocale(locale) : undefined,
+    images: [socialImage],
+  };
+
   return {
     title: { absolute: title },
     description,
     alternates,
-    openGraph: {
-      type,
-      title: openGraphTitle,
-      description: openGraphDescription,
-      siteName: "Thiệp Mừng Online",
-      url: alternates.canonical,
-      locale: locale ? openGraphLocale(locale) : undefined,
-      images: [socialImage],
-    },
+    openGraph: type === "article"
+      ? { ...openGraphBase, type: "article", publishedTime, modifiedTime }
+      : { ...openGraphBase, type: "website" },
     twitter: {
       card: "summary_large_image",
       title: twitterTitle,

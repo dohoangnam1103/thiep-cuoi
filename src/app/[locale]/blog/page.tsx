@@ -21,15 +21,12 @@ export async function generateMetadata({
   const title = t("metaTitle");
   const description = t("metaDescription");
 
-  return {
-    ...pageSeo({
-      title,
-      description,
-      alternates: staticAlternates("/blog", locale),
-      locale,
-    }),
-    robots: { index: false, follow: true },
-  };
+  return pageSeo({
+    title,
+    description,
+    alternates: staticAlternates("/blog", locale),
+    locale,
+  });
 }
 
 export default async function BlogPage({
