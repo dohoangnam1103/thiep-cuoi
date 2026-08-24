@@ -29,6 +29,7 @@ loadEnvConfig(ROOT);
 
 const DATA_FILE = path.join(ROOT, "src/data/chungdoi.ts");
 const ROUTE_SLUGS_FILE = path.join(ROOT, "src/data/template-route-slugs.ts");
+const RETIRED_SLUGS_FILE = path.join(ROOT, "src/data/retired-template-slugs.ts");
 const TEMPLATE_MANIFESTS_DIR = path.join(ROOT, "src/data/templates");
 const PREVIEW_VERSION_FILE = path.join(ROOT, "src/data/template-preview-version.ts");
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
@@ -163,6 +164,22 @@ function parseCatalog(source, routeSource, manifestSources = []) {
   }
 
   return templates;
+}
+
+/**
+ * Slug của các mẫu đã rút khỏi catalog — cả slug nguồn và slug route tiếng Việt.
+ *
+ * next.config.ts 301 mọi URL `/mau-thiep/<slug>` và `/mau-thiep/<slug>/demo` của
+ * nhóm này về trang danh sách, nên trang demo không còn tồn tại để chụp: script
+ * sẽ treo ở `waitFor(main#top[data-capture-mode])` rồi timeout. Manifest của
+ * chúng vẫn nằm trong src/data/templates nên phải lọc theo danh sách này.
+ */
+function parseRetiredSlugs(source) {
+  const block = source.match(/retiredTemplateRouteSlugs = \[([\s\S]*?)\] as const/)?.[1];
+  if (!block) {
+    throw new Error("Không đọc được danh sách mẫu đã rút từ src/data/retired-template-slugs.ts");
+  }
+  return new Set([...block.matchAll(/"([^"]+)"/g)].map((match) => match[1]));
 }
 
 function runProcess(command, args, { input, cwd = ROOT } = {}) {
@@ -872,14 +889,19 @@ async function main() {
   const manifestFileNames = (await readdir(TEMPLATE_MANIFESTS_DIR))
     .filter((fileName) => fileName.endsWith(".manifest.ts"))
     .sort((a, b) => a.localeCompare(b));
-  const [source, routeSource, ...manifestSources] = await Promise.all([
+  const [source, routeSource, retiredSource, ...manifestSources] = await Promise.all([
     readFile(DATA_FILE, "utf8"),
     readFile(ROUTE_SLUGS_FILE, "utf8"),
+    readFile(RETIRED_SLUGS_FILE, "utf8"),
     ...manifestFileNames.map((fileName) =>
       readFile(path.join(TEMPLATE_MANIFESTS_DIR, fileName), "utf8"),
     ),
   ]);
   const allTemplates = parseCatalog(source, routeSource, manifestSources);
+  const retiredSlugs = parseRetiredSlugs(retiredSource);
+  const isRetired = (template) =>
+    retiredSlugs.has(template.slug) || retiredSlugs.has(template.route);
+  const liveTemplates = allTemplates.filter((template) => !isRetired(template));
   const templatesBySlug = new Map(allTemplates.map((template) => [template.slug, template]));
   const requested = readOption("--slug")
     ?.split(",")
@@ -887,10 +909,21 @@ async function main() {
     .filter(Boolean);
   const unknown = requested?.filter((slug) => !templatesBySlug.has(slug)) ?? [];
   if (unknown.length) throw new Error(`Template slug không hợp lệ: ${unknown.join(", ")}`);
+  const retiredRequested =
+    requested?.filter((slug) => isRetired(templatesBySlug.get(slug))) ?? [];
+  if (retiredRequested.length) {
+    throw new Error(
+      `Mẫu đã rút khỏi catalog nên trang demo 301 về /mau-thiep, không chụp được: ${retiredRequested.join(", ")}`,
+    );
+  }
 
   const targets = requested?.length
     ? requested.map((slug) => templatesBySlug.get(slug))
-    : allTemplates;
+    : liveTemplates;
+  const retiredCount = allTemplates.length - liveTemplates.length;
+  if (!requested?.length && retiredCount) {
+    console.log(`Bỏ qua ${retiredCount} mẫu đã rút khỏi catalog.`);
+  }
   const writeOutputs = !process.argv.includes("--no-write");
   const skipProductionSync =
     process.argv.includes("--no-sync-production") ||
