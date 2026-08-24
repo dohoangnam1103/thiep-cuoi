@@ -100,6 +100,14 @@ COPY --chown=node:node .next-prebuilt/server.js ./server.js
 # được nếu volume chưa gắn.
 RUN mkdir -p ./public && chown node:node ./public
 
+# .next/cache là mountpoint của named volume giữ cache image-optimizer qua các
+# lần deploy. Phải tạo sẵn với quyền node ở ĐÂY, cùng lý do như ./public:
+# Docker seed volume mới từ đường dẫn nó che, nên nếu path không tồn tại trong
+# image thì volume được tạo root-owned, `node` mất quyền ghi và optimizer
+# re-encode lại mọi ảnh ở mọi request. Artifact .next-prebuilt không mang theo
+# thư mục cache nào, nên COPY ở trên không tạo ra nó.
+RUN mkdir -p ./.next/cache && chown -R node:node ./.next/cache
+
 USER node
 
 EXPOSE 3000
