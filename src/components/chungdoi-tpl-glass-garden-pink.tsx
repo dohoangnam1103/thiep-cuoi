@@ -213,8 +213,8 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                         <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremony.month}</span>
                       </div>
                       <div className="text-[18px] md:text-[24px]" style={{ color: ROSE }}>{ceremony.yearNumber}</div>
-                      {/* Không bọc thêm ngoặc: formatVietnameseLunarDate() đã trả về
-                          chuỗi có sẵn "(Tức ngày ... âm lịch)" nên bọc nữa ra ((...)) */}
+                      {/* Không bọc ngoặc: formatVietnameseLunarDate() trả về chuỗi
+                          trần "Tức ngày ... âm lịch", các template render nguyên văn. */}
                       <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-sm md:tracking-[0.25em]" style={{ color: WINE }}>{ceremony.lunar}</div>
                     </div>
                   </div>

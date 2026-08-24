@@ -160,5 +160,5 @@ export function formatVietnameseLunarDate(isoDate: string): string {
   const day = String(lunar.day).padStart(2, "0");
   const month = String(lunar.month).padStart(2, "0");
   const leap = lunar.leap ? " nhuận" : "";
-  return `(Tức ngày ${day}/${month}${leap} năm ${vietnameseLunarYearName(lunar.year)} âm lịch)`;
+  return `Tức ngày ${day}/${month}${leap} năm ${vietnameseLunarYearName(lunar.year)} âm lịch`;
 }

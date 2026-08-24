@@ -263,7 +263,7 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
                       <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremony.yearNumber}</span>
                     </div>
                   </div>
-                  <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>( {ceremony.lunar} )</div>
+                  <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>{ceremony.lunar}</div>
                 </div>
               ) : null}
             </div>
@@ -313,7 +313,7 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
                         <span className="text-[18px] md:text-[24px]" style={{ ...SERIF, color: CREAM }}>{reception.yearNumber}</span>
                       </div>
                     </div>
-                    <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-base" style={{ ...BODY, color: CREAM_SOFT }}>( {reception.lunar} )</div>
+                    <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-base" style={{ ...BODY, color: CREAM_SOFT }}>{reception.lunar}</div>
                   </>
                 ) : null}
 
