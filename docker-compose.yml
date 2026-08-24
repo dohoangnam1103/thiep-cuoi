@@ -19,6 +19,11 @@ services:
         required: false
     volumes:
       - ./data:/app/data
+      # Optimized images live in .next/cache/images. Without this the cache dies
+      # with the container, so the first hit on the home page after every deploy
+      # re-encodes every template preview. Named volume rather than a bind mount
+      # so it inherits node:node from the image (see Dockerfile).
+      - next-image-cache:/app/.next/cache
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 30s
@@ -53,3 +58,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+
+volumes:
+  next-image-cache:

@@ -81,6 +81,69 @@ docker compose config >/dev/null
 echo "compose_validated=ok"
 REMOTE_COMPOSE
 
+echo "📝 Thêm volume cache image-optimizer vào docker-compose.yml (nếu chưa có)"
+# Khối riêng, không gộp vào khối trên: khối đó SystemExit(0) khi mount public đã
+# có, nên host đã provision từ trước sẽ bỏ qua hết phần còn lại.
+rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_IMAGE_CACHE'
+set -euo pipefail
+app_dir="$1"
+cd "$app_dir"
+
+python3 - <<'PY'
+import re
+import shutil
+import time
+
+path = "docker-compose.yml"
+volume = "next-image-cache"
+mount = f"{volume}:/app/.next/cache"
+
+with open(path, encoding="utf-8") as handle:
+    original = handle.read()
+
+updated = original
+changed = []
+
+# 1. Mount vào service web. Neo vào ./data:/app/data giống mount public.
+if mount not in updated:
+    anchor = re.search(
+        r"^(?P<indent>[ \t]*)- \./data:/app/data[ \t]*$", updated, re.MULTILINE
+    )
+    if anchor is None:
+        raise SystemExit("không tìm thấy dòng './data:/app/data' để chèn mount cache")
+    indent = anchor.group("indent")
+    insertion = f"{anchor.group(0)}\n{indent}- {mount}"
+    updated = updated[: anchor.start()] + insertion + updated[anchor.end() :]
+    changed.append("mount")
+
+# 2. Khai báo named volume ở top level. `^volumes:` cột 0 mới là top-level;
+#    `volumes:` thụt lề là của service, không được nhầm.
+top_level = re.search(r"^volumes:[ \t]*$", updated, re.MULTILINE)
+if top_level is None:
+    updated = updated.rstrip("\n") + f"\n\nvolumes:\n  {volume}:\n"
+    changed.append("volumes_block")
+elif not re.search(rf"^[ \t]+{re.escape(volume)}:", updated, re.MULTILINE):
+    end = top_level.end()
+    updated = updated[:end] + f"\n  {volume}:" + updated[end:]
+    changed.append("volume_entry")
+
+if not changed:
+    print("image_cache=already_present")
+    raise SystemExit(0)
+
+backup = f"{path}.bak-{time.strftime('%Y%m%d%H%M%S')}"
+shutil.copy2(path, backup)
+with open(path, "w", encoding="utf-8") as handle:
+    handle.write(updated)
+
+print(f"image_cache_backup={backup}")
+print("image_cache=" + ",".join(changed))
+PY
+
+docker compose config >/dev/null
+echo "image_cache_validated=ok"
+REMOTE_IMAGE_CACHE
+
 if [[ "$PRUNE_APPLY" == "1" ]]; then
   echo "🧹 Dọn backup cũ (giữ ${BACKUP_RETENTION} bản mới nhất mỗi loại)"
 else

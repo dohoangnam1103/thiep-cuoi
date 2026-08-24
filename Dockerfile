@@ -117,9 +117,16 @@ ENV HOSTNAME="0.0.0.0"
 # Copy production assets
 COPY --from=builder --chown=node:node /app/public ./public
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown node:node .next
+# Set the correct permission for prerender cache.
+#
+# `.next/cache` is created here on purpose even though the build cache is not
+# copied in below: it is the mount point for the persisted image-optimizer
+# cache. Docker seeds a fresh volume from the image path it shadows, so having
+# the directory exist as node:node is what keeps the volume writable by the
+# non-root user. Mount it on an absent path and Docker creates it root-owned,
+# the optimizer silently fails to write, and every deploy re-encodes everything.
+RUN mkdir -p .next/cache
+RUN chown -R node:node .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

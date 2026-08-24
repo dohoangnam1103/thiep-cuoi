@@ -38,6 +38,15 @@ const nextConfig: NextConfig = {
         pathname: "/chungdoi/images/template-previews/**",
       },
     ],
+    // Next 16 defaults to 4h, so optimized bytes were re-derived several times a
+    // day on a machine that pays real CPU for it. 30 days matches the browser
+    // policy set for `/chungdoi/images` in `headers()` below.
+    //
+    // The optimizer keys its cache on the source URL, not the file contents, so
+    // re-exporting an image over the same path serves stale bytes until the TTL
+    // lapses. Template previews already dodge this with the `?v=` bump in
+    // `templatePreviewUrl()`; anything else replaced in place needs the same.
+    minimumCacheTTL: 2592000,
   },
   experimental: {
     // Keep static rendering while adding integrity metadata to built scripts.
@@ -111,6 +120,57 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
           },
           { key: "X-DNS-Prefetch-Control", value: "on" },
+        ],
+      },
+      // Next only sends `immutable` for `/_next/static`; everything under
+      // `public/` goes out with `max-age=0`, so all ~550MB of it was revalidated
+      // on every visit. There is no CDN or reverse proxy to make up for that
+      // either — Cloudflare Tunnel hands requests straight to the Node server.
+      //
+      // Two policies below, split by whether an asset can be replaced in place.
+      {
+        // Fonts, audio and video are only ever added or removed, never rewritten
+        // over the same path, so pinning them for a year is safe.
+        source: "/chungdoi/:dir(fonts|music|videos)/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        // Images do get re-exported over the same filename while a template is
+        // being tuned, so deliberately no `immutable` here: a month-long
+        // max-age still removes the revalidation round-trip, and
+        // stale-while-revalidate lets a replacement propagate in the background
+        // instead of pinning the old bytes for a year with no way to bust them.
+        source: "/chungdoi/:dir(images|templates|labs)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        // Single-segment match, so this covers the icons sitting directly in
+        // /chungdoi (icon-v2.png alone is 1MB and is requested on every page)
+        // without also matching the subdirectories handled above.
+        source: "/chungdoi/:file",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        // Logo and OG image from `site-assets.ts`, plus the prototype captures.
+        // Small, but referenced from every page and every social preview.
+        source: "/:dir(images|thiepmungonline|proto)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, stale-while-revalidate=86400",
+          },
         ],
       },
       {
