@@ -307,7 +307,7 @@ function HeroSection({ createHref }: { createHref: string }) {
           <div className="hero-enter mt-8 flex flex-col items-center gap-4 sm:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href={createHref}
-              className={`group inline-flex items-center gap-3 rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)] sm:px-8 sm:py-4`}
+              className={`demo-shine group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)] sm:px-8 sm:py-4`}
             >
               {t("createNow")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
             </a>
@@ -561,7 +561,7 @@ function TemplateCarousel() {
       <div className="reveal mt-8 flex flex-col items-center gap-3 px-4">
         <a
           href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
-          className={`group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]`}
+          className={`demo-shine group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-primary px-8 py-4 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]`}
         >
           {t("carousel.viewAll")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
         </a>
@@ -614,7 +614,7 @@ function HowItWorks() {
         <div className="reveal mt-8 flex flex-col items-center gap-3 sm:mt-14">
           <a
             href={locale === "vi" ? "/mau-thiep" : `/${locale}/templates`}
-            className={`group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]`}
+            className={`demo-shine group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-primary px-8 py-4 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)]`}
           >
             {t("howItWorks.ctaStart")} <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </a>

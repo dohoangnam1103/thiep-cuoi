@@ -158,7 +158,7 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
                 </div>
                 <Link
                   href="/templates"
-                  className="mt-7 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3.5 text-base font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90"
+                  className="demo-shine relative mt-7 inline-flex items-center justify-center overflow-hidden rounded-xl bg-primary px-6 py-3.5 text-base font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90"
                 >
                   {t("hero.cta")}
                 </Link>
@@ -352,7 +352,7 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
                 href="/templates"
-                className="inline-flex justify-center rounded-xl bg-primary px-7 py-3.5 font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90"
+                className="demo-shine relative inline-flex justify-center overflow-hidden rounded-xl bg-primary px-7 py-3.5 font-black text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90"
               >
                 {t("finalCta.primary")}
               </Link>

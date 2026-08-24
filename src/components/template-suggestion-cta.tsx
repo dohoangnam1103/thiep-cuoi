@@ -155,7 +155,7 @@ export function TemplateSuggestionCta() {
             setError(null);
             setOpen(true);
           }}
-          className={`mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90`}
+          className={`demo-shine relative mt-6 inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90`}
         >
           <Send className="size-5" />
           {t("button")}

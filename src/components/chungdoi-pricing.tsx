@@ -101,7 +101,7 @@ export function ChungDoiPricing({ prices }: { prices: PricingData }) {
             </ul>
             <Link
               href="/templates"
-              className={`mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground transition hover:-translate-y-1 hover:bg-primary/90`}
+              className={`demo-shine relative mt-8 inline-flex items-center gap-2 overflow-hidden rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground transition hover:-translate-y-1 hover:bg-primary/90`}
             >
               {t("startFree")} <ArrowRight className="size-4" />
             </Link>
@@ -175,7 +175,7 @@ export function ChungDoiPricing({ prices }: { prices: PricingData }) {
           <h2 className={`${sectionTitleClass} text-foreground`}>{t("ctaTitle")}</h2>
           <Link
             href="/templates"
-            className={`mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 ${ctaPrimaryClass} text-primary-foreground transition hover:-translate-y-1 hover:bg-primary/90`}
+            className={`demo-shine relative mt-8 inline-flex items-center gap-2 overflow-hidden rounded-full bg-primary px-7 py-3.5 ${ctaPrimaryClass} text-primary-foreground transition hover:-translate-y-1 hover:bg-primary/90`}
           >
             {t("ctaBtn")} <ArrowRight className="size-4" />
           </Link>
