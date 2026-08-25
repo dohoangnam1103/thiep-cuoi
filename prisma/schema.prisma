@@ -39,7 +39,14 @@ model Invitation {
   complimentaryAt    DateTime?
   guestManagerToken  String?   @unique
   publishedAt        DateTime?
+  /// Mốc đã gửi email nhắc "còn 24h cuối dùng thử".
   reminderSentAt     DateTime?
+  /// Mốc đã gửi email nhắc bù sau khi thiệp hết hạn và bị tạm ẩn.
+  ///
+  /// Cột riêng chứ không dùng lại `reminderSentAt`: hai mốc là hai lần gửi khác
+  /// nhau về nội dung và thời điểm, và thiệp nào lọt mốc thứ nhất (publish rồi
+  /// hết hạn trước khi cron kịp chạy một lượt) vẫn phải nhận được mốc thứ hai.
+  expiredReminderSentAt DateTime?
   /// Số lần thiệp được mở, đếm cả chủ thiệp. Chỉ hiển thị trong trang quản trị.
   /// Cập nhật bằng SQL thô để không đụng vào `updatedAt` — xem `src/lib/invitation-views.ts`.
   viewCount          Int       @default(0)

@@ -1,0 +1,12 @@
+-- Mốc đã gửi email nhắc bù sau khi thiệp hết hạn dùng thử và bị tạm ẩn.
+--
+-- Cột riêng thay vì dùng lại `reminderSentAt`: đó là mốc của email "còn 24h cuối",
+-- hai lần gửi khác nhau cả nội dung lẫn thời điểm. Quan trọng hơn, thiệp nào lọt
+-- mốc thứ nhất — publish rồi hết hạn trước khi cron kịp chạy một lượt, hoặc user
+-- chưa gắn email lúc đó — vẫn phải nhận được mốc thứ hai.
+--
+-- Cột nullable nên SQLite thêm được tại chỗ, không phải dựng lại bảng. Thiệp đang
+-- tồn tại nhận NULL, tức là "chưa gửi nhắc bù". Cửa sổ grace trong
+-- `shouldSendExpiredReminder` là thứ chặn không cho lượt chạy đầu bắn mail cho mọi
+-- thiệp từng hết hạn trong quá khứ.
+ALTER TABLE "Invitation" ADD COLUMN "expiredReminderSentAt" DATETIME;

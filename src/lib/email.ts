@@ -12,17 +12,23 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export function buildTrialReminderEmail(input: {
-  recipientName: string;
-  cardName: string;
-  payUrl: string;
-}): { subject: string; html: string } {
-  const name = escapeHtml(input.recipientName || "bạn");
-  const card = escapeHtml(input.cardName);
-  const url = input.payUrl;
-  const subject = `Thiệp cưới "${input.cardName}" — Hôm nay là ngày cuối dùng thử`;
-
-  const html = `<!DOCTYPE html>
+/**
+ * Vỏ HTML dùng chung cho các email nhắc thanh toán.
+ *
+ * Tách ra để hai mốc nhắc (còn 24h, và đã hết hạn) không phải nhân đôi ~40 dòng
+ * table-based layout. Chỉ phần lời văn và nhãn nút là khác nhau.
+ *
+ * `bodyHtml` là HTML đã escape sẵn bởi người gọi — mọi giá trị do người dùng nhập
+ * phải đi qua `escapeHtml` trước khi ghép vào đây.
+ */
+function renderReminderShell(input: {
+  greetingName: string;
+  bodyHtml: string;
+  ctaLabel: string;
+  url: string;
+}): string {
+  const { greetingName, bodyHtml, ctaLabel, url } = input;
+  return `<!DOCTYPE html>
 <html lang="vi">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
 <body style="margin:0;padding:0;background:#fdf2f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -34,18 +40,12 @@ export function buildTrialReminderEmail(input: {
           <div style="margin-top:8px;font-size:14px;color:#fce7f3;">Thiệp cưới online</div>
         </td></tr>
         <tr><td style="padding:32px;">
-          <p style="margin:0 0 16px;font-size:16px;color:#1f2937;">Chào <strong>${name}</strong>,</p>
-          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
-            Hôm nay là <strong>ngày cuối cùng</strong> dùng thử thiệp cưới
-            <strong style="color:#be185d;">"${card}"</strong>. Sau hôm nay, thiệp sẽ tạm ẩn cho tới khi bạn thanh toán.
-          </p>
-          <p style="margin:0 0 28px;font-size:16px;line-height:1.6;color:#374151;">
-            Thanh toán ngay để giữ thiệp online mãi mãi và chia sẻ tới người thân nhé.
-          </p>
+          <p style="margin:0 0 16px;font-size:16px;color:#1f2937;">Chào <strong>${greetingName}</strong>,</p>
+${bodyHtml}
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
             <tr><td style="border-radius:12px;background:#ec4899;">
               <a href="${url}" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;">
-                Thanh toán ngay
+                ${ctaLabel}
               </a>
             </td></tr>
           </table>
@@ -61,22 +61,97 @@ export function buildTrialReminderEmail(input: {
   </table>
 </body>
 </html>`;
+}
+
+export function buildTrialReminderEmail(input: {
+  recipientName: string;
+  cardName: string;
+  payUrl: string;
+}): { subject: string; html: string } {
+  const name = escapeHtml(input.recipientName || "bạn");
+  const card = escapeHtml(input.cardName);
+  const url = input.payUrl;
+  const subject = `Thiệp cưới "${input.cardName}" — Hôm nay là ngày cuối dùng thử`;
+
+  const html = renderReminderShell({
+    greetingName: name,
+    ctaLabel: "Thanh toán ngay",
+    url,
+    bodyHtml: `          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
+            Hôm nay là <strong>ngày cuối cùng</strong> dùng thử thiệp cưới
+            <strong style="color:#be185d;">"${card}"</strong>. Sau hôm nay, thiệp sẽ tạm ẩn cho tới khi bạn thanh toán.
+          </p>
+          <p style="margin:0 0 28px;font-size:16px;line-height:1.6;color:#374151;">
+            Thanh toán ngay để giữ thiệp online mãi mãi và chia sẻ tới người thân nhé.
+          </p>`,
+  });
 
   return { subject, html };
 }
 
-export async function sendTrialReminderEmail(input: {
+/**
+ * Email nhắc bù: thiệp đã hết hạn dùng thử và đang bị tạm ẩn.
+ *
+ * Lời văn cố ý khác mốc "còn 24h": ở đây việc đã xảy ra rồi, nên nói thẳng là
+ * khách mời đang không xem được và thanh toán sẽ mở lại ngay. Không dùng chữ "hôm
+ * nay là ngày cuối" nữa vì sai sự thật và làm người đọc mất tin.
+ */
+export function buildExpiredReminderEmail(input: {
+  recipientName: string;
+  cardName: string;
+  payUrl: string;
+}): { subject: string; html: string } {
+  const name = escapeHtml(input.recipientName || "bạn");
+  const card = escapeHtml(input.cardName);
+  const url = input.payUrl;
+  const subject = `Thiệp cưới "${input.cardName}" đã tạm ẩn — thanh toán để mở lại`;
+
+  const html = renderReminderShell({
+    greetingName: name,
+    ctaLabel: "Mở lại thiệp",
+    url,
+    bodyHtml: `          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
+            Thiệp cưới <strong style="color:#be185d;">"${card}"</strong> đã hết thời gian dùng thử
+            nên hiện <strong>đang tạm ẩn</strong> — khách mời mở link sẽ không xem được nội dung thiệp.
+          </p>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
+            Toàn bộ nội dung, ảnh và lời chúc của bạn vẫn được giữ nguyên. Thanh toán là thiệp
+            hiện lại ngay, và online mãi mãi.
+          </p>
+          <p style="margin:0 0 28px;font-size:16px;line-height:1.6;color:#374151;">
+            Link chia sẻ cũ vẫn dùng được, bạn không cần gửi lại link mới cho ai.
+          </p>`,
+  });
+
+  return { subject, html };
+}
+
+type ReminderKind = "trial-ending" | "expired";
+
+const REMINDER_BUILDERS = {
+  "trial-ending": buildTrialReminderEmail,
+  expired: buildExpiredReminderEmail,
+} as const;
+
+/**
+ * Gửi một email nhắc thanh toán.
+ *
+ * `kind` chọn giữa hai mốc: `trial-ending` cho thiệp còn 24h, `expired` cho thiệp
+ * đã bị tạm ẩn. Link thanh toán giống nhau ở cả hai, chỉ lời văn khác.
+ */
+export async function sendReminderEmail(input: {
   to: string;
   recipientName: string;
   cardName: string;
   invitationId: string;
+  kind: ReminderKind;
 }): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) throw new Error("Thiếu RESEND_API_KEY");
 
   const resend = new Resend(apiKey);
   const payUrl = absoluteUrl(`/dashboard/${input.invitationId}/thanh-toan`);
-  const { subject, html } = buildTrialReminderEmail({
+  const { subject, html } = REMINDER_BUILDERS[input.kind]({
     recipientName: input.recipientName,
     cardName: input.cardName,
     payUrl,
@@ -91,4 +166,14 @@ export async function sendTrialReminderEmail(input: {
   if (error) {
     throw new Error(`Resend lỗi: ${error.message}`);
   }
+}
+
+/** Giữ tên cũ cho mốc "còn 24h" để không phải sửa mọi call site. */
+export async function sendTrialReminderEmail(input: {
+  to: string;
+  recipientName: string;
+  cardName: string;
+  invitationId: string;
+}): Promise<void> {
+  await sendReminderEmail({ ...input, kind: "trial-ending" });
 }
