@@ -630,13 +630,13 @@ REMOTE_CLEANUP
 log_step "cleanup Docker storage"
 
 # ---------------------------------------------------------------------------
-# 9. Đảm bảo hai cron của app đã cài (đối soát payOS + email nhắc thanh toán)
+# 9. Đảm bảo cron đối soát payOS đã cài
 # ---------------------------------------------------------------------------
-# Cả hai gọi HTTP route của app đang chạy, KHÔNG dùng `docker exec ... npm run`.
-# Image production là Next standalone build: trong container chỉ có `server.js`,
+# Gọi HTTP route của app đang chạy, KHÔNG dùng `docker exec ... npm run`. Image
+# production là Next standalone build: trong container chỉ có `server.js`,
 # `node_modules`, `public`, `data` — không có `package.json`, `src/`, `scripts/`
 # hay `tsx`, nên mọi lệnh `npm run` trong đó đều chết với ENOENT.
-echo "⏰ Đảm bảo cron đối soát payOS + email nhắc đã được cài"
+echo "⏰ Đảm bảo cron đối soát payOS đã được cài"
 rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_CRON'
 set -euo pipefail
 app_dir="$1"
@@ -655,11 +655,13 @@ reminder_marker='# thiepmungonline trial reminder emails'
 # phát hiện đủ nhanh trong khi số đơn chưa chốt trong cửa sổ 7 ngày vẫn nhỏ.
 reconcile_job="23 */2 * * * $runner /api/cron/payos-reconcile >> $app_dir/payos-reconcile.log 2>&1 $reconcile_marker"
 
-# Email nhắc 9h sáng. Trước đây job này được ghi trong docs dưới dạng
-# `docker exec ... npm run reminders:trial` nhưng chưa bao giờ chạy được, nên
-# không khách nào từng nhận email nhắc.
-reminder_job="0 9 * * * $runner /api/cron/trial-reminders >> $app_dir/trial-reminders.log 2>&1 $reminder_marker"
-
+# CỐ Ý không cài cron email nhắc ở đây. Host đã có `trigger-trial-reminders.sh`
+# gọi cùng route đó lúc 9h sáng và nó đang chạy tốt (log có ngày gửi được thật).
+# Cài thêm một job nữa cùng phút chỉ tạo nguy cơ hai lượt cùng đọc
+# `reminderSentAt = null` rồi gửi trùng email cho khách.
+#
+# `$reminder_marker` vẫn được dọn ở dưới để xoá job trùng mà bản deploy trước
+# từng cài.
 (
   crontab -l 2>/dev/null \
     | grep -Fv "$reconcile_marker" \
@@ -667,10 +669,10 @@ reminder_job="0 9 * * * $runner /api/cron/trial-reminders >> $app_dir/trial-remi
     | grep -Fv 'npm run reconcile:payos' \
     | grep -Fv 'npm run reminders:trial' \
     || true
-  printf '%s\n%s\n' "$reconcile_job" "$reminder_job"
+  printf '%s\n' "$reconcile_job"
 ) | crontab -
-echo "cron_installed=2"
+echo "cron_installed=1"
 REMOTE_CRON
-log_step "cron đối soát payOS + email nhắc"
+log_step "cron đối soát payOS"
 
 echo "✅ Deploy ${DEPLOYMENT_ID} hoàn tất trong ${SECONDS}s (transport=${TRANSPORT_KIND})."

@@ -255,25 +255,30 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
    Domain `thiepmungonline.com` phải đã verify trên Resend (email gửi từ
    `noreply@thiepmungonline.com`).
 
-2. `scripts/deploy-fast.sh` tự cài cron này, không cần làm tay. Cron mỗi 9h sáng
-   gọi HTTP route của app:
+2. Cron gọi route `/api/cron/trial-reminders` lúc 9h sáng qua một script nằm
+   **trên host** (không có trong repo):
 
    ```bash
-   0 9 * * *  /home/namdo/apps/thiepmungonline/releases/current/scripts/cron-hit-endpoint.sh /api/cron/trial-reminders >> /home/namdo/apps/thiepmungonline/trial-reminders.log 2>&1
+   0 9 * * *  /bin/sh /home/namdo/apps/thiepmungonline/trigger-trial-reminders.sh >> /home/namdo/trial-reminders.log 2>&1
    ```
 
-   Chạy thử ngay một lần:
+   Script đó `docker exec ... node` với một `fetch` inline, mượn `CRON_SECRET`
+   ngay trong container. Đang chạy tốt — kiểm tra bằng
+   `ssh minipc 'tail /home/namdo/trial-reminders.log'`, mỗi dòng là một lượt kèm
+   `{"scanned":..,"sent":..}`.
 
-   ```bash
-   ssh minipc '/home/namdo/apps/thiepmungonline/releases/current/scripts/cron-hit-endpoint.sh /api/cron/trial-reminders'
-   ```
-
-   > ⚠️ Bản cũ của tài liệu này ghi
-   > `docker exec thiepmungonline-web npm run reminders:trial`. Lệnh đó **chưa bao
-   > giờ chạy được**: image production là Next standalone build, trong container
-   > không có `package.json` nên npm thoát ngay với `ENOENT`. Hệ quả là tới
-   > 26/8/2026 chưa khách nào nhận được email nhắc. Đừng quay lại dạng
-   > `docker exec ... npm run ...` cho bất kỳ việc định kỳ nào.
+   > ⚠️ **Không dùng `docker exec ... npm run reminders:trial`.** Bản cũ của tài
+   > liệu này ghi như vậy và lệnh đó không chạy được: image production là Next
+   > standalone build, trong container không có `package.json` nên npm thoát ngay
+   > với `ENOENT`. Cùng lý do đó, mọi việc định kỳ phải gọi HTTP route của app.
+   >
+   > **Nợ kỹ thuật:** `trigger-trial-reminders.sh` chỉ tồn tại trên host, không
+   > nằm trong repo và không do deploy cài lại. Dựng lại máy là email nhắc lặng lẽ
+   > ngừng chạy mà không có gì báo. Nên chuyển sang
+   > `scripts/cron-hit-endpoint.sh /api/cron/trial-reminders` do `deploy-fast.sh`
+   > quản lý, như cron đối soát payOS — nhưng phải xoá job cũ trong cùng một bước,
+   > vì hai lượt chạy cùng phút có thể cùng đọc `reminderSentAt = null` rồi gửi
+   > trùng email cho khách.
 
    Script tự quét thiệp `paid=false`, đã publish, chưa gửi nhắc, hết hạn trong
    24h tới; gửi xong đánh dấu `reminderSentAt` để không gửi trùng. Gửi lỗi thì
