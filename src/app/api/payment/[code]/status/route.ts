@@ -23,7 +23,7 @@ export async function GET(
   let status = payment.status;
   if (payment.provider === "payos" && isPaymentSettleable(payment.status)) {
     try {
-      status = await reconcilePayosPayment(payment);
+      status = await reconcilePayosPayment(payment, "payos-status-poll");
     } catch (error) {
       console.error("Không thể đối soát trạng thái payOS", {
         paymentId: payment.id,

@@ -629,4 +629,48 @@ echo "cron_installed=1"
 REMOTE_CLEANUP
 log_step "cleanup Docker storage"
 
+# ---------------------------------------------------------------------------
+# 9. Đảm bảo hai cron của app đã cài (đối soát payOS + email nhắc thanh toán)
+# ---------------------------------------------------------------------------
+# Cả hai gọi HTTP route của app đang chạy, KHÔNG dùng `docker exec ... npm run`.
+# Image production là Next standalone build: trong container chỉ có `server.js`,
+# `node_modules`, `public`, `data` — không có `package.json`, `src/`, `scripts/`
+# hay `tsx`, nên mọi lệnh `npm run` trong đó đều chết với ENOENT.
+echo "⏰ Đảm bảo cron đối soát payOS + email nhắc đã được cài"
+rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_CRON'
+set -euo pipefail
+app_dir="$1"
+
+runner="$app_dir/releases/current/scripts/cron-hit-endpoint.sh"
+if [[ ! -x "$runner" ]]; then
+  echo "❌ Không thấy $runner (hoặc chưa có quyền chạy)."
+  exit 1
+fi
+
+reconcile_marker='# thiepmungonline payOS reconciliation'
+reminder_marker='# thiepmungonline trial reminder emails'
+
+# Đối soát mỗi 2 tiếng. Webhook payOS là đường xác nhận duy nhất khi khách đã đóng
+# tab; webhook mất thì tiền vào mà thiệp vẫn ẩn và không ai biết. 2 tiếng là mức
+# phát hiện đủ nhanh trong khi số đơn chưa chốt trong cửa sổ 7 ngày vẫn nhỏ.
+reconcile_job="23 */2 * * * $runner /api/cron/payos-reconcile >> $app_dir/payos-reconcile.log 2>&1 $reconcile_marker"
+
+# Email nhắc 9h sáng. Trước đây job này được ghi trong docs dưới dạng
+# `docker exec ... npm run reminders:trial` nhưng chưa bao giờ chạy được, nên
+# không khách nào từng nhận email nhắc.
+reminder_job="0 9 * * * $runner /api/cron/trial-reminders >> $app_dir/trial-reminders.log 2>&1 $reminder_marker"
+
+(
+  crontab -l 2>/dev/null \
+    | grep -Fv "$reconcile_marker" \
+    | grep -Fv "$reminder_marker" \
+    | grep -Fv 'npm run reconcile:payos' \
+    | grep -Fv 'npm run reminders:trial' \
+    || true
+  printf '%s\n%s\n' "$reconcile_job" "$reminder_job"
+) | crontab -
+echo "cron_installed=2"
+REMOTE_CRON
+log_step "cron đối soát payOS + email nhắc"
+
 echo "✅ Deploy ${DEPLOYMENT_ID} hoàn tất trong ${SECONDS}s (transport=${TRANSPORT_KIND})."

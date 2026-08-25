@@ -1,5 +1,4 @@
-import { timingSafeEqual } from "node:crypto";
-
+import { cronUnauthorized, isAuthorizedCronRequest } from "@/lib/cron-auth";
 import { prisma } from "@/lib/prisma";
 import { sendTrialReminderEmail } from "@/lib/email";
 import {
@@ -10,21 +9,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
-function authorized(request: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
-  const header = request.headers.get("authorization") ?? "";
-  const expected = `Bearer ${secret}`;
-  const a = Buffer.from(header);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
-}
-
 export async function POST(request: Request) {
-  if (!authorized(request)) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+  if (!isAuthorizedCronRequest(request)) return cronUnauthorized();
 
   const now = new Date();
   const invitations = await prisma.invitation.findMany({

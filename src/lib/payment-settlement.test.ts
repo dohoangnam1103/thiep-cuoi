@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   cassoReconciliationMetadata,
+  classifySettlementFailure,
   decideCassoSettlement,
   isPaymentSettleable,
 } from "./payment-settlement";
@@ -120,4 +121,76 @@ test("manual reconciliation metadata contains identifiers and money only", () =>
     reason: "underpaid",
   });
   assert.doesNotMatch(JSON.stringify(metadata), /description|account|bank/i);
+});
+
+test("một lần claim thất bại lành tính không bị coi là sự cố", () => {
+  // payOS gửi lại webhook cho giao dịch đã ghi nhận. Nếu coi đây là ca cần đối
+  // soát thì trang quản trị sẽ đầy báo động giả và mất luôn tác dụng cảnh báo.
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "paid", amount: 150_000 },
+      receivedAmount: 150_000,
+    }),
+    { kind: "benign" },
+  );
+  // Đơn biến mất vì thiệp bị xoá (FK cascade) — không còn gì để xử lý.
+  assert.deepEqual(
+    classifySettlementFailure({ payment: null, receivedAmount: 150_000 }),
+    { kind: "benign" },
+  );
+});
+
+test("claim thất bại vì tiền hoặc trạng thái thì phải bị đánh dấu", () => {
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "pending", amount: 150_000 },
+      receivedAmount: 100_000,
+    }),
+    { kind: "flagged", reason: "underpaid" },
+  );
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "superseded", amount: 150_000 },
+      receivedAmount: 150_000,
+    }),
+    { kind: "flagged", reason: "superseded" },
+  );
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "failed", amount: 150_000 },
+      receivedAmount: 150_000,
+    }),
+    { kind: "flagged", reason: "non-settleable" },
+  );
+});
+
+test("trạng thái superseded được xét trước khi xét tiền", () => {
+  // Thứ tự này quan trọng: admin đổi giá là việc của mình, còn trả thiếu là việc
+  // của khách. Báo sai lý do sẽ đẩy người xử lý đi sai hướng.
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "superseded", amount: 150_000 },
+      receivedAmount: 1_000,
+    }),
+    { kind: "flagged", reason: "superseded" },
+  );
+});
+
+test("điều kiện thoả mà vẫn không claim được thì là tranh chấp, không im lặng", () => {
+  // Đơn settle được, tiền đủ, nhưng UPDATE không ăn dòng nào: có ai đó vừa đổi
+  // đơn giữa hai câu lệnh. Không phân loại được thêm nhưng vẫn phải hiện ra.
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "pending", amount: 150_000 },
+      receivedAmount: 150_000,
+    }),
+    { kind: "flagged", reason: "stale-claim" },
+  );
+  assert.deepEqual(
+    classifySettlementFailure({
+      payment: { status: "cancelled", amount: 150_000 },
+      receivedAmount: 150_000,
+    }),
+    { kind: "flagged", reason: "stale-claim" },
+  );
 });

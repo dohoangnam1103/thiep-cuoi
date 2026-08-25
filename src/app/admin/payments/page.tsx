@@ -26,6 +26,27 @@ function formatVnd(amount: number): string {
 const inputClass =
   "rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20";
 
+/**
+ * Mô tả ngắn cho từng lý do trong `PaymentReconciliation`, viết theo góc nhìn
+ * việc cần làm chứ không phải theo tên kỹ thuật — người đọc bảng này đang cần
+ * biết phải xử lý gì với khoản tiền đó.
+ */
+const RECONCILE_REASON_LABELS: Record<string, string> = {
+  underpaid: "khách trả thiếu so với số tiền đơn",
+  "invitation-already-paid": "thiệp đã kích hoạt bởi đơn khác — cần hoàn tiền",
+  superseded: "admin đổi giá khi khách đang chuyển tiền",
+  "non-settleable": "đơn ở trạng thái không cho ghi nhận",
+  expired: "mã chuyển khoản đã quá hạn 24 giờ",
+  "stale-claim": "đơn bị thay đổi giữa lúc ghi nhận",
+};
+
+const RECONCILE_SOURCE_LABELS: Record<string, string> = {
+  "payos-webhook": "webhook payOS",
+  "payos-cron": "cron đối soát",
+  "payos-status-poll": "poll trang thanh toán",
+  "casso-webhook": "webhook Casso",
+};
+
 export default async function AdminPaymentsPage({
   searchParams,
 }: {
@@ -48,7 +69,7 @@ export default async function AdminPaymentsPage({
   };
   const isFiltered = Boolean(search || fromDate || toDate);
 
-  const [payments, revenue] = await Promise.all([
+  const [payments, revenue, reconcileCount] = await Promise.all([
     prisma.payment.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -59,12 +80,25 @@ export default async function AdminPaymentsPage({
             user: { select: { email: true } },
           },
         },
+        // Chỉ cần ca mới nhất để dựng nhãn. Bảng là append-only nên một đơn có
+        // thể có nhiều dòng (webhook gửi lại, rồi cron phát hiện lại), và lần
+        // phát hiện gần nhất là lần phản ánh đúng tình trạng hiện tại.
+        reconciliations: { orderBy: { detectedAt: "desc" }, take: 1 },
       },
     }),
     // Scoped to the same filter so a date range doubles as a revenue report.
     prisma.payment.aggregate({
       where: { ...where, status: "paid" },
       _sum: { amount: true },
+    }),
+    // Đếm riêng để có một con số ở đầu trang. Một nhãn nằm giữa bảng dài thì
+    // không ai thấy, mà đây đúng là những ca khách đã trả tiền và đang chờ.
+    prisma.payment.count({
+      where: {
+        ...where,
+        status: { not: "paid" },
+        reconciliations: { some: {} },
+      },
     }),
   ]);
 
@@ -79,6 +113,19 @@ export default async function AdminPaymentsPage({
           <span className="font-semibold text-foreground">{formatVnd(totalRevenue)}</span>
         </p>
       </div>
+
+      {reconcileCount > 0 ? (
+        <div
+          role="alert"
+          className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-800"
+        >
+          <span className="font-bold">
+            {`${reconcileCount} giao dịch cần đối soát tay.`}
+          </span>{" "}
+          Tiền đã về nhưng thiệp chưa kích hoạt được. Xem cột Trạng thái bên dưới
+          để biết lý do từng đơn.
+        </div>
+      ) : null}
 
       <form method="GET" className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1">
@@ -150,6 +197,10 @@ export default async function AdminPaymentsPage({
                 const bride = c?.brideFullName?.trim();
                 const paid = payment.status === "paid";
                 const expired = payment.status === "pending" && isPendingPaymentExpired(payment.createdAt);
+                // Ca cần đối soát chỉ còn ý nghĩa khi đơn chưa chốt: một đơn
+                // từng bị trả thiếu rồi khách bù cho đủ sẽ thành `paid`, lúc đó
+                // nhãn phải là "Đã trả" chứ không phải báo động cũ.
+                const reconcile = paid ? null : (payment.reconciliations[0] ?? null);
                 return (
                   <tr key={payment.id} className="border-b border-border last:border-0">
                     <td
@@ -197,13 +248,36 @@ export default async function AdminPaymentsPage({
                         className={
                           paid
                             ? "whitespace-nowrap rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-700"
-                            : expired
-                              ? "whitespace-nowrap rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
-                              : "whitespace-nowrap rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-700"
+                            : reconcile
+                              ? "whitespace-nowrap rounded-full bg-rose-500/15 px-2 py-0.5 text-xs font-bold text-rose-700"
+                              : expired
+                                ? "whitespace-nowrap rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                                : "whitespace-nowrap rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-700"
                         }
                       >
-                        {paid ? "Đã trả" : expired ? "Hết hạn" : "Chờ"}
+                        {paid
+                          ? "Đã trả"
+                          : reconcile
+                            ? "Cần đối soát"
+                            : expired
+                              ? "Hết hạn"
+                              : "Chờ"}
                       </span>
+                      {reconcile ? (
+                        <p className="mt-1 max-w-56 text-xs leading-snug text-rose-700">
+                          {RECONCILE_REASON_LABELS[reconcile.reason] ?? reconcile.reason}
+                          <span className="block text-muted-foreground">
+                            {`đã nhận ${formatVnd(reconcile.receivedAmount)} · ${
+                              RECONCILE_SOURCE_LABELS[reconcile.source] ?? reconcile.source
+                            } · ${formatDate(reconcile.detectedAt)}`}
+                          </span>
+                          {reconcile.providerRef ? (
+                            <span className="block font-mono text-muted-foreground">
+                              {`ref ${reconcile.providerRef}`}
+                            </span>
+                          ) : null}
+                        </p>
+                      ) : null}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                       {formatDate(payment.createdAt)}

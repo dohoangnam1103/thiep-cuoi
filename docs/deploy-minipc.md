@@ -255,17 +255,25 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
    Domain `thiepmungonline.com` phải đã verify trên Resend (email gửi từ
    `noreply@thiepmungonline.com`).
 
-2. Script chạy trong container qua `docker exec`. Cron mỗi 9h sáng:
+2. `scripts/deploy-fast.sh` tự cài cron này, không cần làm tay. Cron mỗi 9h sáng
+   gọi HTTP route của app:
 
    ```bash
-   0 9 * * *  docker exec thiepmungonline-web npm run reminders:trial >> /var/log/trial-reminders.log 2>&1
+   0 9 * * *  /home/namdo/apps/thiepmungonline/releases/current/scripts/cron-hit-endpoint.sh /api/cron/trial-reminders >> /home/namdo/apps/thiepmungonline/trial-reminders.log 2>&1
    ```
 
    Chạy thử ngay một lần:
 
    ```bash
-   ssh minipc 'docker exec thiepmungonline-web npm run reminders:trial'
+   ssh minipc '/home/namdo/apps/thiepmungonline/releases/current/scripts/cron-hit-endpoint.sh /api/cron/trial-reminders'
    ```
+
+   > ⚠️ Bản cũ của tài liệu này ghi
+   > `docker exec thiepmungonline-web npm run reminders:trial`. Lệnh đó **chưa bao
+   > giờ chạy được**: image production là Next standalone build, trong container
+   > không có `package.json` nên npm thoát ngay với `ENOENT`. Hệ quả là tới
+   > 26/8/2026 chưa khách nào nhận được email nhắc. Đừng quay lại dạng
+   > `docker exec ... npm run ...` cho bất kỳ việc định kỳ nào.
 
    Script tự quét thiệp `paid=false`, đã publish, chưa gửi nhắc, hết hạn trong
    24h tới; gửi xong đánh dấu `reminderSentAt` để không gửi trùng. Gửi lỗi thì
@@ -279,4 +287,10 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
 - **Email nhắc không gửi**: kiểm tra `RESEND_API_KEY` trong container
   (`docker exec thiepmungonline-web printenv RESEND_API_KEY`) và log
   `/var/log/trial-reminders.log`.
+- **Khách báo đã chuyển tiền mà thiệp vẫn ẩn**: mở `/admin/payments`, ca không tự
+  kích hoạt được sẽ có nhãn **Cần đối soát** kèm lý do. Nếu không thấy nhãn nào
+  thì khả năng cao là webhook payOS bị mất — chạy đối soát tay
+  `ssh minipc '/home/namdo/apps/thiepmungonline/releases/current/scripts/cron-hit-endpoint.sh /api/cron/payos-reconcile'`
+  và xem log `payos-reconcile.log`. Chi tiết trong
+  [deploy-payment.md](./deploy-payment.md).
 - **Build lỗi kiến trúc**: đảm bảo `docker buildx` dùng `--platform linux/amd64`.

@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 
-import { markPaymentPaid } from "@/lib/payment-service";
+import { settlePayment } from "@/lib/payment-service";
 import {
   verifyPayosWebhook,
   type PayosWebhookBody,
@@ -54,24 +54,22 @@ export async function POST(req: Request) {
     raw.data.code === "00" &&
     raw.data.currency === "VND"
   ) {
-    const result = await markPaymentPaid(payment.id, raw.data.amount);
-    if (result.updated) {
+    // `settlePayment` tự ghi lại ca cần đối soát khi không settle được, nên ở
+    // đây không còn nhánh `console.warn` nào nữa. Trước kia nhánh đó là nơi các
+    // khoản tiền trả thiếu hoặc đơn bị admin đổi giá đi vào im lặng.
+    const outcome = await settlePayment({
+      paymentId: payment.id,
+      receivedAmount: raw.data.amount,
+      source: "payos-webhook",
+      providerRef: raw.data.reference,
+    });
+    if (outcome.kind === "settled") {
       console.info("Đã xác nhận thanh toán payOS", {
         paymentId: payment.id,
         orderCode,
         reference: raw.data.reference,
       });
-      if (result.slug) revalidatePath(`/thiep/${result.slug}`);
-    } else {
-      const latest = await prisma.payment.findUnique({
-        where: { id: payment.id },
-        select: { status: true },
-      });
-      console.warn("payment_settlement_not_claimed", {
-        paymentId: payment.id,
-        provider: "payos",
-        localStatus: latest?.status ?? "missing",
-      });
+      if (outcome.slug) revalidatePath(`/thiep/${outcome.slug}`);
     }
   }
 

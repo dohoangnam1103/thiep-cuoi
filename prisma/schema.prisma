@@ -101,10 +101,42 @@ model Payment {
   createdAt               DateTime  @default(now())
   paidAt                  DateTime?
 
-  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  invitation      Invitation              @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  reconciliations PaymentReconciliation[]
 
   @@index([invitationId])
   @@index([provider, status])
+}
+
+/// Một lần tiền đã về nhưng hệ thống không tự kích hoạt được thiệp.
+///
+/// Trước đây các ca này chỉ đi ra `console.warn` trong container, tức là không
+/// ai đọc — trong khi đó chính xác là những ca khách đã trả tiền mà thiệp vẫn
+/// đóng. Bảng này là chỗ để chúng hiện lên `/admin/payments`.
+///
+/// Append-only: mỗi lần webhook hoặc cron phát hiện lại thì ghi thêm một dòng,
+/// không sửa dòng cũ. Lịch sử phát hiện có giá trị khi truy lại sự cố, và việc
+/// không có `resolvedAt` là cố ý — đơn được xử lý xong sẽ tự mang
+/// `status = "paid"`, nhãn trên trang quản trị đọc theo đó.
+model PaymentReconciliation {
+  id             String   @id @default(cuid())
+  paymentId      String
+  /// Xem `ReconciliationReason` trong `src/lib/payment-settlement.ts`.
+  reason         String
+  /// Đường vào đã phát hiện: webhook, cron đối soát, hay poll từ trang thanh toán.
+  source         String
+  expectedAmount Int
+  receivedAmount Int
+  /// `Payment.status` tại thời điểm phát hiện, giữ lại vì nó thay đổi về sau.
+  localStatus    String
+  /// Mã tham chiếu giao dịch của nhà cung cấp, để đối chiếu với sao kê bank.
+  providerRef    String?
+  detectedAt     DateTime @default(now())
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId, detectedAt])
+  @@index([detectedAt])
 }
 
 model Voucher {

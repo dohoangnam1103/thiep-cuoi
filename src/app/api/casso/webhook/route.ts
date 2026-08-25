@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 import { ORDER_CODE_REGEX, verifyCassoSignature } from "@/lib/payment";
-import { markPaymentPaid } from "@/lib/payment-service";
+import { flagForReconciliation, settlePayment } from "@/lib/payment-service";
 import {
   cassoReconciliationMetadata,
   decideCassoSettlement,
@@ -21,16 +21,32 @@ type CassoV2Body = {
   data?: CassoV2Data;
 };
 
-function logReconciliation(input: {
+/**
+ * Luồng Casso chốt quyết định settle TRƯỚC khi gọi `settlePayment`, vì
+ * `decideCassoSettlement` còn xét thêm cửa sổ 24h mà VietQR tĩnh không tự thực
+ * thi được. Nên các ca bị chặn ở đó cần tự ghi vào bảng đối soát, không đi qua
+ * đường ghi sẵn bên trong `settlePayment`.
+ */
+async function reportReconciliation(input: {
   transactionId: number | string | null;
   payment: CassoCandidate;
   receivedAmount: number;
   reason: Extract<CassoDecision, { kind: "reconcile" }>["reason"];
-}): void {
+}): Promise<void> {
   console.warn(
     "payment_manual_reconciliation_required",
     cassoReconciliationMetadata(input),
   );
+  await flagForReconciliation({
+    paymentId: input.payment.id,
+    reason: input.reason,
+    source: "casso-webhook",
+    expectedAmount: input.payment.amount,
+    receivedAmount: input.receivedAmount,
+    localStatus: input.payment.status,
+    providerRef:
+      input.transactionId === null ? null : String(input.transactionId),
+  });
 }
 
 export async function POST(req: Request) {
@@ -74,7 +90,7 @@ export async function POST(req: Request) {
   });
 
   if (decision.kind === "reconcile" && payment) {
-    logReconciliation({
+    await reportReconciliation({
       transactionId: tx?.id ?? null,
       payment,
       receivedAmount: received,
@@ -83,26 +99,16 @@ export async function POST(req: Request) {
   }
 
   if (decision.kind === "settle" && payment) {
-    const result = await markPaymentPaid(payment.id, received);
-    if (result.updated) {
-      if (result.slug) revalidatePath(`/thiep/${result.slug}`);
-    } else {
-      const latest = await prisma.payment.findUnique({
-        where: { id: payment.id },
-      });
-      const latestDecision = decideCassoSettlement({
-        payment: latest,
-        receivedAmount: received,
-        now: new Date(),
-      });
-      if (latest && latestDecision.kind === "reconcile") {
-        logReconciliation({
-          transactionId: tx?.id ?? null,
-          payment: latest,
-          receivedAmount: received,
-          reason: latestDecision.reason,
-        });
-      }
+    // Nhánh claim thất bại không cần xử lý lại ở đây: `settlePayment` đã tự
+    // phân loại và ghi lại, kể cả ca thiệp đã được đơn khác kích hoạt.
+    const outcome = await settlePayment({
+      paymentId: payment.id,
+      receivedAmount: received,
+      source: "casso-webhook",
+      providerRef: tx?.id === undefined ? null : String(tx.id),
+    });
+    if (outcome.kind === "settled" && outcome.slug) {
+      revalidatePath(`/thiep/${outcome.slug}`);
     }
   }
 
