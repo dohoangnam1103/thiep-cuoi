@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { routing } from "@/i18n/routing";
+import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { verifyAccountSession, ownInvitation } from "@/lib/dal";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
@@ -24,7 +25,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
   const locale = hasLocale(routing.locales, requestedLocale)
     ? requestedLocale
     : routing.defaultLocale;
-  const [content, ceremonies, schedule, gallery, musicMessages, templateLabels, mobileThumbnailOverrides] = await Promise.all([
+  const [content, ceremonies, schedule, gallery, musicMessages, templateLabels, mobileThumbnailOverrides, cover3dEnabled] = await Promise.all([
     prisma.invitationContent.findUnique({ where: { invitationId: id } }),
     prisma.ceremonyItem.findMany({ where: { invitationId: id }, orderBy: { sortOrder: "asc" } }),
     prisma.scheduleItem.findMany({ where: { invitationId: id }, orderBy: { sortOrder: "asc" } }),
@@ -32,6 +33,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
     getMusicPickerMessages(locale),
     getTemplateLabels(),
     getTemplateMobileThumbnailOverrides(),
+    getCover3dEnabled(),
   ]);
   const initialTrack = content?.music
     ? await prisma.track.findFirst({
@@ -61,6 +63,7 @@ export default async function EditorPage({ params }: { params: Promise<{ id: str
       initialTrack={initialTrack}
       templateLabels={templateLabels}
       mobileThumbnailOverrides={mobileThumbnailOverrides}
+      cover3dEnabled={cover3dEnabled}
     />
   );
 }

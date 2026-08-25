@@ -14,6 +14,7 @@ import {
 } from "@/data/chungdoi";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
 import { routing, type Locale } from "@/i18n/routing";
+import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { prisma } from "@/lib/prisma";
 import { pageSeo, templateAlternates } from "@/lib/seo";
 import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
@@ -104,10 +105,13 @@ export default async function DemoPage({
   if (!template) notFound();
   const copy = await localizedTemplateCopy(locale, template);
 
-  const invitation = await prisma.invitation.findFirst({
-    where: { isDemo: true, templateId: template.slug },
-    include: { content: true, ceremonies: true, schedule: true, gallery: true, wishes: true },
-  });
+  const [invitation, cover3dEnabled] = await Promise.all([
+    prisma.invitation.findFirst({
+      where: { isDemo: true, templateId: template.slug },
+      include: { content: true, ceremonies: true, schedule: true, gallery: true, wishes: true },
+    }),
+    getCover3dEnabled(),
+  ]);
   const storedContent = invitation ? toDemoContent(invitation) : undefined;
   const fallbackContent = chungdoiDemoContent[template.slug];
   const content = storedContent && fallbackContent
@@ -137,6 +141,7 @@ export default async function DemoPage({
         content={content}
         captureMode={captureMode}
         heading={copy.heading}
+        cover3dEnabled={cover3dEnabled}
       />
       {!captureMode ? (
         <form

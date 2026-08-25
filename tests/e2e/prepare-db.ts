@@ -39,7 +39,15 @@ async function main() {
     await prisma.appConfig.upsert({
       where: { id: "default" },
       update: {},
-      create: { id: "default", productPrice: 150000, repeatCustomerPrice: 99000 },
+      // cover3dEnabled bật cho E2E: bộ templates.spec.ts có ~40 test khẳng định
+      // node chụp/canvas của bìa 3D. Mặc định sản phẩm là tắt (bìa 2D nhanh hơn),
+      // nên phải bật tường minh ở đây để giữ nguyên phạm vi bao phủ đường 3D.
+      create: {
+        id: "default",
+        productPrice: 150000,
+        repeatCustomerPrice: 99000,
+        cover3dEnabled: true,
+      },
     });
 
     const adminHash = await bcrypt.hash("admin123456", 10);

@@ -324,7 +324,7 @@ export function FamilyColumn({
           cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên. */}
       <span className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{a}</span>
       <span className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{b}</span>
-      {addr ? <div className={cn("mt-1 w-full whitespace-pre-line leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]", sideBySideOnMobile ? "max-w-full text-[11px]" : "max-w-[169px] text-[13px]")}>{addr}</div> : null}
+      {addr ? <div className={cn("mt-1 w-full whitespace-pre-line leading-normal md:max-w-[260px] md:text-[14px] lg:max-w-[300px] lg:text-[15px]", sideBySideOnMobile ? "max-w-full text-[10px]" : "max-w-[169px] text-[12px]")}>{addr}</div> : null}
     </div>
   );
 }

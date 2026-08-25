@@ -257,12 +257,16 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
         {
           "className": "w-[230px] md:w-[320px] top-[10px] -left-[20px] md:top-[0px] md:-left-[30px] opacity-55 rotate-[20deg]",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/longphung-v3-red/phung.webp"
+          // Bản `-cover` là ảnh gốc hạ về 640px (= 320px CSS × pixelRatio 2 của
+          // Envelope3D). Bìa chặn màn hình cho tới khi tải xong ảnh này, mà bản
+          // gốc 1241px chỉ để vẽ ở 320px. Thân thiệp vẫn dùng bản gốc — xem
+          // scripts/build-cover-decor-variants.mjs.
+          "src": "/chungdoi/images/themes/_decor/longphung-v3-red/phung-cover.webp"
         },
         {
           "className": "w-[230px] md:w-[320px] bottom-[10px] -right-[20px] md:bottom-[0px] md:-right-[30px] opacity-55 -rotate-[20deg]",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/longphung-v3-red/rong.webp"
+          "src": "/chungdoi/images/themes/_decor/longphung-v3-red/rong-cover.webp"
         }
       ]
     }

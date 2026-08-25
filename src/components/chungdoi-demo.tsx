@@ -18,6 +18,8 @@ import {
 } from "@/components/chungdoi-envelope-decor-policy";
 import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
+import { fitEnvelopeWidth } from "@/components/chungdoi-envelope-constants";
+import { DEFAULT_COVER_3D_ENABLED } from "@/lib/cover-3d";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
 import { PublicGuestMediaDialog } from "@/components/public-guest-media-dialog";
 import {
@@ -969,20 +971,189 @@ function coverPaperColor(tokens: Tokens) {
   return colorToHex(compositeColor(card, opaqueBackground));
 }
 
-/** Cover phong bì: chỉ dùng một renderer WebGL để không swap 3D/2D sau khi tải. */
-function EnvelopeCover({
+/**
+ * Bìa 2D: thẻ thiệp là DOM thật, không có WebGL và không chụp texture.
+ *
+ * Đây là đường mặc định (xem `cover3dEnabled` trong AppConfig). Bìa 3D phải tải
+ * chunk three.js rồi rasterize DOM→SVG→canvas trước khi hiện được gì; đo trên
+ * long-phung-v3-do ở Fast 4G + CPU x4 là ~4,9s so với ~1,5s của bản này, và nhẹ
+ * hơn ~700KB JS. Bản này còn SSR được nên thẻ có sẵn trong HTML.
+ *
+ * Chiều rộng thẻ đi theo `responsiveEnvelopeWidth` bằng CSS breakpoint (SSR được,
+ * không cần đọc window), rồi scale lại bằng `fitEnvelopeWidth` để thẻ không tràn
+ * khỏi viewport thấp — đúng công thức bản 3D dùng, nên hai bìa cùng cỡ ở mọi
+ * breakpoint (đã đo: lệch 0px ở 7 viewport).
+ */
+function EnvelopeCover2D({
   content,
   tokens,
   onOpen,
   opening,
   reducedMotion,
+  decorOverflow,
+  naturalHeight,
+  openingEffect,
+  renderOverflowDecor,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
   onOpen: () => void;
   opening: boolean;
   reducedMotion: boolean;
+  decorOverflow: EnvelopeDecorOverflow;
+  naturalHeight: boolean;
+  openingEffect: ArtOpeningEffect | undefined;
+  renderOverflowDecor: boolean;
 }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    const card = cardRef.current;
+    if (!box || !card) return;
+
+    const measure = () => {
+      // offsetWidth/Height là cỡ LAYOUT nên transform ở thẻ cha không ảnh hưởng.
+      // Nhờ vậy đo được cỡ tự nhiên mà không phải tháo scale ra, và
+      // ResizeObserver theo dõi chính `card` cũng không tự kích lại vòng lặp.
+      const naturalWidth = card.offsetWidth;
+      const naturalCardHeight = card.offsetHeight;
+      if (naturalWidth <= 0 || naturalCardHeight <= 0) return;
+      const fitted = fitEnvelopeWidth({
+        targetWidth: naturalWidth,
+        ratio: naturalCardHeight / naturalWidth,
+        viewportWidth: box.clientWidth,
+        viewportHeight: box.clientHeight,
+      });
+      const next = fitted / naturalWidth;
+      setScale((current) => (Math.abs(current - next) < 0.001 ? current : next));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    observer.observe(card);
+    // Font tên cô dâu chú rể về muộn làm đổi chiều cao thẻ → đo lại, không thì
+    // tỉ lệ dùng để clamp là tỉ lệ của font fallback.
+    if (document.fonts?.ready) void document.fonts.ready.then(measure).catch(() => {});
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={boxRef}
+      data-envelope-renderer="2d"
+      data-envelope-ready="true"
+      className={`absolute inset-0 flex items-center justify-center ${
+        opening ? "pointer-events-none" : ""
+      }`}
+      style={{
+        animation: opening
+          ? `${openingEffect ? "demo-art-envelope-away" : "demo-envelope-away"} ${
+              openingEffect
+                ? reducedMotion
+                  ? openingEffect.reducedMotion.durationMs
+                  : openingEffect.durationMs
+                : 800
+            }ms linear forwards`
+          : undefined,
+      }}
+    >
+      <div style={{ transform: `scale(${scale})` }}>
+        <div ref={cardRef} className="relative w-[310px] sm:w-[340px] md:w-[640px] lg:w-[732px]">
+          {/* Hoa vượt khỏi mép thẻ (họ Vườn Kính): lớp này KHÔNG overflow-hidden,
+              khác lớp decor mặc định trong CoverCard, nên phải tự dựng và tắt lớp
+              trong thẻ đi. Thiếu nó là hoa bị cắt cụt ở mép. */}
+          {renderOverflowDecor ? (
+            <div
+              className="pointer-events-none absolute inset-0 z-[6]"
+              data-envelope-decor-overflow={decorOverflow}
+            >
+              {tokens.cardImages.map((image, index) => (
+                <EnvelopeDecorationArtwork
+                  key={`${image.src}-${index}`}
+                  src={image.src}
+                  className={`pointer-events-none absolute ${image.className}`}
+                  hidden={image.flyOnOpen && opening}
+                />
+              ))}
+            </div>
+          ) : null}
+
+          <Seal tokens={tokens} opening={opening} />
+          <CoverCard
+            content={content}
+            tokens={tokens}
+            onOpen={onOpen}
+            opening={opening}
+            // Chỉ họ Vườn Kính mới ẩn lớp decor trong thẻ, vì lớp không-clip ở
+            // trên đã vẽ thay. Mẫu art KHÔNG được ẩn: `cardImages[0]` của chúng
+            // chính là plate artwork (xem art-template-manifest.ts), ẩn đi là mất
+            // hẳn phần vẽ chính của bìa. Đây đúng là điều bản 3D làm — nó truyền
+            // `hideDecor={renderOverflowDecor}`, không phải renderSeparateDecor.
+            hideDecor={renderOverflowDecor}
+            decorOverflow={decorOverflow}
+            naturalHeight={naturalHeight}
+          />
+
+          {/* Artwork mở thiệp của mẫu art nằm TRÊN lớp decor trong thẻ, clip theo
+              thẻ. Bản 3D phải tách thành plane tĩnh + lớp animate ở tầng cover
+              (định vị theo projectedSize) vì thẻ là texture; ở đây thẻ là DOM nên
+              một lớp lo cả trạng thái tĩnh và lúc mở. */}
+          {openingEffect ? (
+            <div
+              className="pointer-events-none absolute inset-0 z-[7] overflow-hidden rounded-lg"
+              data-opening-static-clip="card"
+            >
+              <OpeningEffectArtwork
+                effect={openingEffect}
+                opening={opening}
+                reducedMotion={reducedMotion}
+              />
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Cover phong bì. `cover3dEnabled` (công tắc ở /admin/settings) quyết định dùng
+ * thẻ 3D WebGL hay thẻ 2D DOM. Khi tắt thì KHÔNG mount Envelope3D, nên chunk
+ * three.js/drei/fiber/html-to-image không được tải — đó mới là chỗ tiết kiệm,
+ * chứ không phải chỉ ẩn canvas đi.
+ *
+ * Vẫn giữ một renderer duy nhất cho mỗi lượt tải: không hiện 2D rồi hoán sang 3D.
+ */
+function EnvelopeCover({
+  content,
+  tokens,
+  onOpen,
+  opening,
+  reducedMotion,
+  cover3dEnabled,
+}: {
+  content: ChungDoiDemoContent;
+  tokens: Tokens;
+  onOpen: () => void;
+  opening: boolean;
+  reducedMotion: boolean;
+  cover3dEnabled: boolean;
+}) {
+  // Ảnh decor bìa nằm trong node chụp của Envelope3D, mà Envelope3D là dynamic
+  // ssr:false → trình duyệt chỉ thấy mấy ảnh này SAU khi tải xong chunk three.js
+  // rồi mount xong: chunk → mount → mới tải ảnh → mới chụp được, mà bìa chặn màn
+  // hình tới hết chuỗi đó. Mấy thẻ <link> dưới được React hoist lên <head> ngay
+  // trong HTML SSR nên ảnh tải song song với chunk thay vì xếp hàng sau nó.
+  // Dùng thẻ JSX chứ không dùng preload() của react-dom: gọi từ client component
+  // thì API đó không phát ra thẻ nào trong HTML (đã thử, <head> trống).
+  const decorPreloadHrefs = tokens.cardImages
+    .map((image) => image.src)
+    .filter((src, index, all) => !isZodiacArtworkPath(src) && all.indexOf(src) === index);
+
   const sizing = envelopeSizingForTemplate(content.slug);
   const naturalHeight = sizing === "responsive-natural";
   const decorOverflow = envelopeDecorOverflowForTemplate(content.slug);
@@ -1011,6 +1182,10 @@ function EnvelopeCover({
   const handleEnvelopeReadyChange = useCallback((ready: boolean) => {
     setEnvelopeReady(ready);
   }, []);
+
+  // Bìa 2D là DOM thuần nên bấm được ngay từ frame đầu; bìa 3D phải chờ chụp
+  // xong texture mới có toạ độ nút để hit-test.
+  const coverInteractive = cover3dEnabled ? envelopeReady : true;
   const coverStyle: CSSProperties & { "--zodiac-art-color"?: string } = {
     background: tokens.background,
     animation: opening
@@ -1026,11 +1201,14 @@ function EnvelopeCover({
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
       style={coverStyle}
     >
+      {decorPreloadHrefs.map((href) => (
+        <link key={href} rel="preload" as="image" href={href} fetchPriority="high" />
+      ))}
       <button
         type="button"
         data-open-invitation-control
         onClick={onOpen}
-        disabled={opening || !envelopeReady}
+        disabled={opening || !coverInteractive}
         className="sr-only focus:fixed focus:bottom-6 focus:left-1/2 focus:z-[100] focus:block focus:h-auto focus:w-auto focus:-translate-x-1/2 focus:overflow-visible focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-neutral-900 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2"
       >
         Mở thiệp
@@ -1048,8 +1226,13 @@ function EnvelopeCover({
       ) : null}
       <ParticleField tokens={tokens} />
       {opening ? <BurstParticles tokens={tokens} /> : null}
-      {opening && !openingEffect ? <OpeningFlyDecor tokens={tokens} size={projectedSize} /> : null}
-      {opening && openingEffect && projectedSize ? (
+      {/* Chỉ đường 3D cần hai lớp này ở tầng cover: thẻ là texture nên hoa bay ra
+          và artwork mở thiệp phải vẽ ngoài thẻ, định vị theo projectedSize. Bản 2D
+          animate ngay trong thẻ DOM (CoverCard tự có lớp fly-out). */}
+      {cover3dEnabled && opening && !openingEffect ? (
+        <OpeningFlyDecor tokens={tokens} size={projectedSize} />
+      ) : null}
+      {cover3dEnabled && opening && openingEffect && projectedSize ? (
         <div
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
@@ -1063,6 +1246,21 @@ function EnvelopeCover({
         </div>
       ) : null}
 
+      {!cover3dEnabled ? (
+        <div className="relative z-10 h-full w-full">
+          <EnvelopeCover2D
+            content={content}
+            tokens={tokens}
+            onOpen={onOpen}
+            opening={opening}
+            reducedMotion={reducedMotion}
+            decorOverflow={decorOverflow}
+            naturalHeight={naturalHeight}
+            openingEffect={openingEffect}
+            renderOverflowDecor={renderOverflowDecor}
+          />
+        </div>
+      ) : (
       <div
         className={`relative z-10 h-full w-full ${opening ? "pointer-events-none" : ""}`}
         data-envelope-renderer="3d"
@@ -1154,6 +1352,7 @@ function EnvelopeCover({
           </p>
         ) : null}
       </div>
+      )}
     </div>
   );
 }
@@ -1419,6 +1618,7 @@ export function ChungDoiDemo({
   captureMode = false,
   previewMode = false,
   heading,
+  cover3dEnabled = DEFAULT_COVER_3D_ENABLED,
 }: {
   template: ChungDoiTemplate;
   content?: ChungDoiDemoContent;
@@ -1426,6 +1626,12 @@ export function ChungDoiDemo({
   captureMode?: boolean;
   previewMode?: boolean;
   heading?: string;
+  /**
+   * Công tắc bìa 3D ở /admin/settings. Server component đọc từ AppConfig rồi
+   * truyền vào. Mặc định lấy theo DEFAULT_COVER_3D_ENABLED (tắt): nếu quên truyền
+   * ở một call site thì hệ quả là bìa nhanh, không phải bìa nặng.
+   */
+  cover3dEnabled?: boolean;
 }) {
   const gatefoldT = useTranslations("gatefoldLab");
   const sleeveT = useTranslations("sleeveLab");
@@ -1873,6 +2079,7 @@ export function ChungDoiDemo({
             opening={opening}
             reducedMotion={prefersReducedMotion}
             onOpen={openInvitation}
+            cover3dEnabled={cover3dEnabled}
           />
         )
       ) : null}

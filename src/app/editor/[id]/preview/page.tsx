@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
+import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { verifyAccountSession, ownInvitation } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { toDemoContent } from "@/lib/to-demo-content";
@@ -20,6 +21,9 @@ export default async function EditorPreviewPage({ params }: { params: Promise<{ 
 
   const template = templates.find((t) => t.slug === invitation.templateId) ?? templates[0];
   const content = toDemoContent(invitation);
+  const cover3dEnabled = await getCover3dEnabled();
 
-  return <ChungDoiDemo template={template} content={content} />;
+  return (
+    <ChungDoiDemo template={template} content={content} cover3dEnabled={cover3dEnabled} />
+  );
 }

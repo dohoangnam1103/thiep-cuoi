@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import viMessages from "../../../../../../messages/vi.json";
 import { verifyAdmin } from "@/lib/admin-dal";
+import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
@@ -24,10 +25,11 @@ export default async function AdminInvitationSupportEditPage({
   await verifyAdmin();
   const { id } = await params;
 
-  const [musicMessages, templateLabels, mobileThumbnailOverrides] = await Promise.all([
+  const [musicMessages, templateLabels, mobileThumbnailOverrides, cover3dEnabled] = await Promise.all([
     getMusicPickerMessages("vi"),
     getTemplateLabels(),
     getTemplateMobileThumbnailOverrides(),
+    getCover3dEnabled(),
   ]);
   const invitation = await prisma.invitation.findFirst({
     where: { id, isDemo: false },
@@ -98,6 +100,7 @@ export default async function AdminInvitationSupportEditPage({
         initialTrack={initialTrack}
         templateLabels={templateLabels}
         mobileThumbnailOverrides={mobileThumbnailOverrides}
+        cover3dEnabled={cover3dEnabled}
       />
     </NextIntlClientProvider>
   );

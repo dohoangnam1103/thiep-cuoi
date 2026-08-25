@@ -172,6 +172,10 @@ model AppConfig {
   aiBaseUrl           String?
   aiApiKeyEncrypted   String?
   aiModel             String?
+  // Bìa thiệp 3D. Mặc định false vì bìa 3D chặn màn hình tới khi tải xong chunk
+  // three.js rồi chụp DOM thành texture — đo được ~4,9s ở Fast 4G, so với ~1,5s
+  // của bìa 2D. Bật lại được ở /admin/settings.
+  cover3dEnabled      Boolean  @default(false)
   updatedAt           DateTime @updatedAt
 }
 

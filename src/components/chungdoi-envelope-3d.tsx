@@ -10,7 +10,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { toCanvas } from "html-to-image";
+import { getFontEmbedCSS, toCanvas } from "html-to-image";
 import {
   CanvasTexture,
   Color,
@@ -109,6 +109,92 @@ const CORNER = 0.08; // bo góc mặt phẳng, độc lập DEPTH
 // Vùng chụp hoa rộng hơn card mỗi phía (px) để chứa phần hoa translate ra ngoài
 // mép. Card region nằm giữa, hoa trồi vào vùng pad này → không bị crop.
 const DECOR_PAD_PX = 220;
+
+// Bìa chỉ hiện sau khi chụp xong, nên mọi lần chờ trong pipeline này đều là thời
+// gian người dùng nhìn màn hình trống. Ba mốc dưới là trần cứng: hết hạn thì chụp
+// luôn với những gì đã có, thà bìa hiện sớm hơi mộc còn hơn treo vô hạn.
+const IMAGE_WARMUP_TIMEOUT_MS = 4000;
+const FONT_WARMUP_TIMEOUT_MS = 2500;
+const FONT_EMBED_TIMEOUT_MS = 4000;
+
+// pixelRatio 2 giữ nguyên: texture map lên plane 3D xoay/zoom được nên cần dư nét.
+const baseCaptureOptions = { pixelRatio: 2 } as const;
+
+/** Resolve null khi hết hạn/lỗi thay vì reject — caller luôn chụp tiếp được. */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value: T | null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(value);
+    };
+    const timer = setTimeout(() => finish(null), ms);
+    promise.then(finish, () => finish(null));
+  });
+}
+
+/**
+ * Bộ (style, weight, family) THỰC SỰ xuất hiện trong node chụp, lấy từ computed
+ * style. Dùng để nạp đúng vài face đó thay vì chờ document.fonts.ready — cái sau
+ * chờ CẢ ~24 file woff2 của next/font trên trang, phần lớn bìa không hề dùng.
+ */
+function collectFontSpecs(root: HTMLElement): string[] {
+  const specs = new Set<string>();
+  const visit = (element: Element) => {
+    const style = getComputedStyle(element);
+    const families = style.fontFamily;
+    if (families) {
+      const weight = style.fontWeight || "400";
+      const slant = style.fontStyle === "italic" ? "italic " : "";
+      for (const part of families.split(",")) {
+        const family = part.trim().replace(/^["']|["']$/g, "");
+        if (family) specs.add(`${slant}${weight} 16px "${family}"`);
+      }
+    }
+    for (const child of element.children) visit(child);
+  };
+  visit(root);
+  return [...specs];
+}
+
+async function warmUpFonts(root: HTMLElement): Promise<void> {
+  const fonts = document.fonts;
+  if (!fonts) return;
+  await withTimeout(
+    Promise.all(
+      collectFontSpecs(root).map((spec) => fonts.load(spec).catch(() => [])),
+    ),
+    FONT_WARMUP_TIMEOUT_MS,
+  );
+}
+
+/**
+ * Chờ mọi <img> trong node tải + decode xong TRƯỚC khi chụp. Đây là thứ thay cho
+ * lượt chụp mồi cũ: html-to-image trượt ảnh ở lượt đầu vì layout chưa chốt khi
+ * ảnh còn đang về. Ép ảnh xong trước thì một lượt chụp là đủ.
+ */
+async function warmUpImages(root: HTMLElement): Promise<void> {
+  const images = Array.from(root.querySelectorAll("img"));
+  if (images.length === 0) return;
+  await withTimeout(
+    Promise.all(
+      images.map(async (image) => {
+        if (image.loading === "lazy") image.loading = "eager";
+        if (!image.complete) {
+          await new Promise<void>((resolve) => {
+            const done = () => resolve();
+            image.addEventListener("load", done, { once: true });
+            image.addEventListener("error", done, { once: true });
+          });
+        }
+        if (typeof image.decode === "function") await image.decode().catch(() => {});
+      }),
+    ),
+    IMAGE_WARMUP_TIMEOUT_MS,
+  );
+}
 const BACK_Z = -(DEPTH / 2);
 
 // Mặt sau vẽ nguyên bằng CanvasTexture (4 nắp + seam + bóng + wax seal) → không
@@ -751,8 +837,11 @@ export default function Envelope3D({
   }, [captureState, onReadyChange]);
 
   // Chụp card DOM (ẩn ngoài màn) → CanvasTexture cho mặt trước 3D.
-  // This effect re-runs when captureState becomes "capturing" (after context loss/restore)
-  // or when captureWidth/naturalSizing changes, or when captureTrigger increments.
+  // Chạy lại khi captureWidth/naturalSizing đổi, hoặc khi captureTrigger tăng
+  // (context loss/restore, tab quay lại). KHÔNG phụ thuộc captureState: trước đây
+  // có nó trong deps nên lúc capture xong set "ready" là deps đổi → effect chạy
+  // lại → chụp trọn bộ lần hai một cách vô ích, và có cửa sổ frontTex=null giữa
+  // hai lần làm bìa nháy. Mọi đường cần chụp lại đều đã bump captureTrigger.
   useEffect(() => {
     let cancelled = false;
     let pendingFrontTexture: Texture | null = null;
@@ -776,10 +865,30 @@ export default function Envelope3D({
         setOverlayTex(null);
         setButtonUv(null);
 
-        if (document.fonts?.ready) await document.fonts.ready;
-        // 2 lượt: html-to-image đôi khi trượt ảnh/font ở lượt đầu (cache lạnh).
-        await toCanvas(node, { pixelRatio: 2, cacheBust: true });
-        const canvas = await toCanvas(node, { pixelRatio: 2, cacheBust: true });
+        // Làm nóng có mục tiêu thay cho lượt chụp mồi: ép ảnh decode xong và nạp
+        // đúng các face font của bìa. Xong hai việc này thì MỘT lượt toCanvas là
+        // đủ nét — trước đây phải chụp 2 lượt chỉ để lượt sau có cache nóng, mà
+        // mỗi lượt là một lần rasterize DOM→SVG ở pixelRatio 2.
+        await warmUpImages(node);
+        if (cancelled) return;
+        await warmUpFonts(node);
+        if (cancelled) return;
+
+        // getFontEmbedCSS quét toàn bộ stylesheet rồi tải từng file font thành
+        // data URL — phần đắt nhất pipeline. Tính MỘT lần rồi truyền lại cho mọi
+        // lượt chụp (front/decor/overlay) qua option fontEmbedCSS.
+        const fontEmbedCSS = await withTimeout(
+          getFontEmbedCSS(node, baseCaptureOptions),
+          FONT_EMBED_TIMEOUT_MS,
+        );
+        if (cancelled) return;
+        const captureOptions: Parameters<typeof toCanvas>[1] =
+          fontEmbedCSS != null ? { ...baseCaptureOptions, fontEmbedCSS } : baseCaptureOptions;
+
+        // KHÔNG cacheBust: asset bìa đều same-origin nên không có chuyện canvas bị
+        // taint, mà bật lên thì mỗi lượt chụp thêm query mới → tải lại toàn bộ
+        // ảnh/font đã nằm sẵn trong cache trình duyệt.
+        const canvas = await toCanvas(node, captureOptions);
         if (cancelled) return;
         pendingFrontTexture = new CanvasTexture(canvas);
         pendingFrontTexture.colorSpace = SRGBColorSpace;
@@ -798,9 +907,10 @@ export default function Envelope3D({
             decorCard.style.height = `${node.getBoundingClientRect().height}px`;
             decorCard.style.aspectRatio = "auto";
           }
+          await warmUpImages(decorNode);
+          if (cancelled) return;
           const decorCanvas = await toCanvas(decorNode, {
-            pixelRatio: 2,
-            cacheBust: true,
+            ...captureOptions,
             backgroundColor: undefined,
           });
           if (cancelled) return;
@@ -815,8 +925,7 @@ export default function Envelope3D({
         const overlayNode = overlayRef.current;
         if (overlayNode) {
           const overlayCanvas = await toCanvas(overlayNode, {
-            pixelRatio: 2,
-            cacheBust: true,
+            ...captureOptions,
             backgroundColor: undefined,
           });
           if (cancelled) return;
@@ -862,7 +971,7 @@ export default function Envelope3D({
       pendingDecorTexture?.dispose();
       pendingOverlayTexture?.dispose();
     };
-  }, [captureWidth, naturalSizing, captureState, captureTrigger]);
+  }, [captureWidth, naturalSizing, captureTrigger]);
 
   useEffect(() => () => {
     frontTexRef.current?.dispose();
