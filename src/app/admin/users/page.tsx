@@ -3,7 +3,8 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { verifyAdmin } from "@/lib/admin-dal";
-import { parseUserSearch, SYSTEM_EMAIL } from "@/lib/admin-support-input";
+import { CUSTOMER_USER_WHERE } from "@/lib/admin-invitation-filters";
+import { parseUserSearch } from "@/lib/admin-support-input";
 import { formatVietnamDate } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 
@@ -24,12 +25,11 @@ export default async function AdminUsersPage({
   const search = parseUserSearch(q);
   const t = await getTranslations("adminSupport");
 
-  // `NOT: { email: SYSTEM_EMAIL }` is intentional: it keeps `email = null`
-  // users in the list. `email: { not: SYSTEM_EMAIL }` would drop them due to
-  // SQL/Prisma null semantics.
+  // `CUSTOMER_USER_WHERE` spells out the `email = null` branch, which is the
+  // only form that keeps anonymous accounts in the list — see its comment.
   const users = await prisma.user.findMany({
     where: {
-      NOT: { email: SYSTEM_EMAIL },
+      ...CUSTOMER_USER_WHERE,
       ...(search ? { email: { contains: search } } : {}),
     },
     orderBy: { createdAt: "desc" },

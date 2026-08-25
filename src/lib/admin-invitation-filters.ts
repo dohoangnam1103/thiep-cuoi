@@ -3,18 +3,26 @@ import type { Prisma } from "@/generated/prisma/client";
 import { SYSTEM_EMAIL } from "@/lib/admin-support-input";
 
 /**
- * What "Thiệp thật" means, defined once so the Tổng quan count and the list
- * page cannot drift apart. `NOT: { email }` rather than `email: { not }` is
- * deliberate: the latter drops users whose email is null on SQL null
- * semantics, and those are exactly the anonymous owners worth seeing.
+ * A real customer account: everyone except the seeded demo owner.
+ *
+ * Measured, not assumed: both `NOT: { email: SYSTEM_EMAIL }` and
+ * `email: { not: SYSTEM_EMAIL }` compile to `email <> 'system@demo.local'`, and
+ * `NULL <> 'x'` is NULL rather than true, so both forms silently drop every
+ * user whose email is null. In the dev database that is 9 of 13 rows — the
+ * anonymous accounts, precisely the ones worth counting. Spelling the null
+ * branch out is the only form that keeps them.
+ */
+export const CUSTOMER_USER_WHERE = {
+  OR: [{ email: null }, { email: { not: SYSTEM_EMAIL } }],
+} satisfies Prisma.UserWhereInput;
+
+/**
+ * What "Thiệp thật" means, defined once so the Tổng quan count, the daily chart
+ * and the list page cannot drift apart.
  */
 export const REAL_INVITATION_WHERE = {
   isDemo: false,
-  // Measured, not assumed: as a relation filter both `NOT: { email }` and
-  // `email: { not }` drop owners whose email is null, because `NULL <> 'x'` is
-  // NULL rather than true. Those owners are anonymous accounts — precisely the
-  // ones worth seeing — so the null branch has to be spelled out.
-  user: { OR: [{ email: null }, { email: { not: SYSTEM_EMAIL } }] },
+  user: CUSTOMER_USER_WHERE,
 } satisfies Prisma.InvitationWhereInput;
 
 export type InvitationSearchable = {

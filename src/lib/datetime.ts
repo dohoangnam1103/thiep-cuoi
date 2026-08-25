@@ -56,6 +56,37 @@ export function formatVietnamDate(date: Date): string {
   return dateMediumFormatter.format(date);
 }
 
+const dayKeyFormatter = createVietnamDateFormatter(
+  { year: "numeric", month: "2-digit", day: "2-digit" },
+  "en-US",
+);
+
+/**
+ * `2026-08-24` — the Vietnamese calendar day an instant belongs to, in a form
+ * that sorts lexicographically and round-trips through `vietnamStartOfDay`.
+ *
+ * Grouping rows by day has to happen in Vietnam time. `toISOString().slice(0, 10)`
+ * would file everything between 17:00 and midnight local under the *next* day,
+ * which is the same seven-hour drift documented at the top of this module.
+ *
+ * Read through `formatToParts` rather than a locale whose pattern happens to be
+ * `YYYY-MM-DD`, so the output does not depend on ICU's idea of `en-CA`.
+ */
+export function vietnamDayKey(date: Date): string {
+  const parts = dayKeyFormatter.formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes): string =>
+    parts.find((candidate) => candidate.type === type)?.value ?? "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+/**
+ * The instant the Vietnamese calendar day containing `date` begins. The `Date`
+ * counterpart to `vietnamStartOfDay`, which takes a `YYYY-MM-DD` string.
+ */
+export function vietnamStartOfDayOf(date: Date): Date {
+  return new Date(`${vietnamDayKey(date)}T00:00:00.000${VIETNAM_UTC_OFFSET}`);
+}
+
 const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
