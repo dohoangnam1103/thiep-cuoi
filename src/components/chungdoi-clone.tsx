@@ -54,6 +54,7 @@ import {
   sectionDescClass,
   sectionTitleClass,
 } from "@/lib/typography";
+import { cn } from "@/lib/utils";
 
 const AuroraBackground = dynamic(() => import("@/components/aurora-background"), { ssr: false });
 
@@ -297,14 +298,48 @@ function HeroSection({ createHref }: { createHref: string }) {
           đi qua sectionPaddingClass. Giữ pt (đầu trang cần thoáng dưới header)
           nhưng hạ pb cho khớp nhịp 48px của các khối còn lại. */}
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-8 pt-6 sm:px-6 sm:pb-12 sm:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-14 lg:pt-16">
-        <div className="flex flex-col justify-center">
-          <h1 className={`hero-enter ${pageTitleClass} max-w-3xl text-foreground`} style={{ "--hero-delay": "160ms" } as CSSProperties}>
-            <span className="shiny-text">{t("hero.title")}</span>
+        {/* Mobile + tablet canh giữa cả khối (h1 + 2 subtitle + trialNote + CTA),
+            từ lg trở lên canh trái. Mốc `lg:` chứ không phải `sm:` vì đó đúng là
+            chỗ grid đổi sang 2 cột (`lg:grid-cols-[1.05fr_0.95fr]`): dưới lg
+            khối chữ chiếm trọn chiều ngang và deck thiệp nằm dưới nên canh giữa
+            mới cân, từ lg mới có cột phải để dạt trái vào. Hàng CTA bên dưới
+            dùng cùng mốc (`items-center lg:items-start`) để lật đồng thời. */}
+        <div className="flex flex-col justify-center text-center lg:text-left">
+          {/* Tiêu đề ngắt cố định 3 dòng bằng "\n" trong messages/vi.json +
+              whitespace-pre-line, nên cần leading rộng hơn mặc định 1.08 của
+              pageTitleClass để 3 dòng không dính nhau. cn() (tailwind-merge)
+              lo phần ghi đè leading. Dòng dài nhất ("Tạo thiệp cưới online")
+              vẫn vừa cột chữ ở mọi breakpoint nên không cần siết tracking. */}
+          {/* `mx-auto lg:mx-0` là bắt buộc, không dư: ở dải tablet (768-1023px)
+              cột chữ rộng hơn max-w-2xl/3xl nên max-width cắt bề rộng hộp và
+              ghim nó về sát trái — text-center chỉ canh chữ bên trong hộp, cả
+              khối vẫn lệch trái tới ~150px. mx-auto đưa hộp về giữa.
+              Cỡ chữ to hơn thang pageTitleClass ở mobile/tablet, vì ở đó tiêu
+              đề đứng một mình giữa trang: 24→30 (mobile) · 36 (sm) · 42 (md+lg).
+              Chỉ `xl:text-5xl` (48px) là giữ của pageTitleClass.
+              - Mốc mobile dùng clamp chứ không phải một bậc cứng: 30px cố định
+                thì dòng dài nhất cần 315px, tràn cột 288px của màn 320px và
+                rơi xuống 4 dòng. clamp co còn ~24px ở 320px rồi mở dần tới
+                30px từ ~420px, nên mọi màn đều đủ chỗ cho 3 dòng.
+              - Phải nâng cả `lg:` lên 42px cùng `md:`, không chỉ md: nếu để lg
+                ở 36px thì khi vượt 1024px tiêu đề lại co nhỏ đi. 42px vẫn vừa
+                cột hẹp nhất của dải lg (483px ở đúng 1024px).
+              Không sửa trực tiếp pageTitleClass vì hero Mẫu thiệp và Pricing
+              dùng chung. */}
+          <h1
+            className={cn(
+              "hero-enter",
+              pageTitleClass,
+              "mx-auto max-w-3xl text-[clamp(1.5rem,7.6vw,1.875rem)] leading-[1.24] text-foreground sm:text-4xl md:text-[2.625rem] lg:mx-0 lg:text-[2.625rem]",
+            )}
+            style={{ "--hero-delay": "160ms" } as CSSProperties}
+          >
+            <span className="shiny-text whitespace-pre-line">{t("hero.title")}</span>
           </h1>
-          <p className={`hero-enter mt-4 max-w-2xl ${sectionDescClass} text-muted-foreground`} style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
-          <p className={`hero-enter mt-2 max-w-2xl ${sectionDescClass} text-muted-foreground`} style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
-          <p className={`hero-enter mt-3 max-w-2xl ${noteClass} text-muted-foreground`} style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
-          <div className="hero-enter mt-8 flex flex-col items-center gap-4 sm:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
+          <p className={`hero-enter mx-auto mt-4 max-w-2xl ${sectionDescClass} text-muted-foreground lg:mx-0`} style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
+          <p className={`hero-enter mx-auto mt-2 max-w-2xl ${sectionDescClass} text-muted-foreground lg:mx-0`} style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
+          <p className={`hero-enter mx-auto mt-3 max-w-2xl ${noteClass} text-muted-foreground lg:mx-0`} style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
+          <div className="hero-enter mt-8 flex flex-col items-center gap-4 lg:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href={createHref}
               className={`demo-shine group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-primary px-6 py-3 ${ctaPrimaryClass} text-primary-foreground shadow-xl transition-all hover:-translate-y-1 hover:bg-primary/90 hover:shadow-[0_12px_28px_rgba(214,69,80,0.4)] sm:px-8 sm:py-4`}
