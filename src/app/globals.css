@@ -779,13 +779,25 @@ html.lenis body {
   }
 }
 
+/* Vệt sáng quét ngang nút CTA.
+ *
+ * `::after` rộng 100% nút, KHÔNG rộng bằng vệt sáng: `translateX(%)` trong
+ * `transform` neo theo bề rộng của chính phần tử được transform. Bản cũ đặt
+ * `width: 2.5rem` nên `translateX(320%)` chỉ đi được 320% × 40px = 128px, cộng
+ * bề rộng vệt ra 168px CỨNG bất kể nút rộng bao nhiêu — nút 253px chỉ được quét
+ * 66%. Cho phần tử rộng 100% rồi vẽ vệt bằng `background-size` thì vệt vẫn hẹp
+ * cố định 2.5rem, còn `100%` lúc này đúng bằng bề rộng nút.
+ *
+ * Hai mốc đều chừa 1rem lề: `skewX` làm vệt lệch ngang tới ±(cao/2)·tan12° ≈ 6px
+ * ở mép trên/dưới, không chừa thì còn sót một sợi trắng ở mép nút suốt 40% chu
+ * kỳ mà animation đang giữ ở 100%. */
 @keyframes demo-shine {
   0% {
-    transform: translateX(-120%) skewX(-12deg);
+    transform: translateX(-3.5rem) skewX(-12deg);
   }
   60%,
   100% {
-    transform: translateX(320%) skewX(-12deg);
+    transform: translateX(calc(100% + 1rem)) skewX(-12deg);
   }
 }
 
@@ -795,8 +807,10 @@ html.lenis body {
   top: 0;
   left: 0;
   height: 100%;
-  width: 2.5rem;
+  width: 100%;
   background: linear-gradient(90deg, transparent, rgb(255 255 255 / 45%), transparent);
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%;
   animation: demo-shine 3s ease-in-out infinite;
   pointer-events: none;
 }
