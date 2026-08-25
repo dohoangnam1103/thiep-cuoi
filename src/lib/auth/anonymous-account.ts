@@ -6,11 +6,12 @@ import { getSession } from "@/lib/session";
 export type AnonymityFields = Pick<User, "email" | "passwordHash">;
 
 /**
- * `getOrCreateUserId()` creates a User row with no credentials at all, so the
- * only way back into that account is the session cookie — which lives 7 days
- * and is never refreshed. A row in that state may be adopted by whatever
- * account the visitor authenticates with; a row that already carries an email
- * or a password belongs to someone and must never be touched.
+ * Trước đây luồng tạo thiệp mint được User row không có credential nào, nên
+ * đường duy nhất trở lại account đó là session cookie — sống 7 ngày và không
+ * bao giờ được gia hạn. Lối tạo đó đã bị chặn (mọi flow tạo thiệp giờ đòi
+ * account thật), nhưng các row cũ trên prod vẫn còn: một row như vậy có thể
+ * được nhận về bởi account mà khách đăng nhập; row đã có email hoặc password là
+ * của một người cụ thể và không bao giờ được chạm vào.
  */
 export function isAnonymousUser(user: AnonymityFields | null | undefined): boolean {
   if (!user) return false;

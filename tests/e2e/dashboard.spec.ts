@@ -23,8 +23,9 @@ function invitationCount(userId: string): number {
 test.describe("dashboard — list & auth", () => {
   test("unauthenticated /dashboard redirects to /login", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForURL("**/login");
-    expect(page.url()).toContain("/login");
+    // Redirect mang theo lý do + đường về, nên URL có query — glob phải nới ra.
+    await page.waitForURL("**/login?**");
+    expect(page.url()).toContain("/login?reason=create&next=%2Fdashboard");
   });
 
   test("new user with no invitations sees the empty state", async ({ page, context }) => {

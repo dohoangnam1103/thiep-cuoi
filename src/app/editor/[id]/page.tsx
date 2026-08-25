@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { routing } from "@/i18n/routing";
-import { verifySession, ownInvitation } from "@/lib/dal";
+import { verifyAccountSession, ownInvitation } from "@/lib/dal";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
@@ -13,7 +13,10 @@ import { EditorForm } from "./EditorForm";
 
 export default async function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { userId } = await verifySession();
+  // Account thật, không nhận session ẩn danh: thiệp phải gắn được với một email
+  // để không chết theo cookie. `next` đưa khách trở lại đúng thiệp này sau khi
+  // đăng nhập — lúc đó thiệp cũ của session ẩn danh cũng đã được nhận về account.
+  const { userId } = await verifyAccountSession(`/editor/${id}`, "create");
   const invitation = await ownInvitation(id, userId);
   if (!invitation) notFound();
 

@@ -25,7 +25,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   const { authError, error, next, reason } = await searchParams;
   const oauthError = authError === "google" || authError === "facebook" || error ? authCopy.oauthError : undefined;
-  const notice = reason === "checkout" ? authCopy.checkoutNotice : undefined;
+  const notice =
+    reason === "checkout"
+      ? authCopy.checkoutNotice
+      : reason === "create"
+        ? authCopy.createNotice
+        : undefined;
   const nextPath = safeAuthReturnPath(next);
 
   return (

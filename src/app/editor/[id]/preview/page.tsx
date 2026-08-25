@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
-import { verifySession, ownInvitation } from "@/lib/dal";
+import { verifyAccountSession, ownInvitation } from "@/lib/dal";
 import { prisma } from "@/lib/prisma";
 import { toDemoContent } from "@/lib/to-demo-content";
 
 export default async function EditorPreviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { userId } = await verifySession();
+  const { userId } = await verifyAccountSession(`/editor/${id}/preview`, "create");
   const owned = await ownInvitation(id, userId);
   if (!owned) notFound();
 

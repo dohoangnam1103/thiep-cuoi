@@ -1,4 +1,4 @@
-import { verifySession } from "@/lib/dal";
+import { verifyAccountSession } from "@/lib/dal";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels, labelFromMap } from "@/lib/template-labels";
@@ -9,7 +9,10 @@ import { NewInvitationButton } from "./NewInvitationButton";
 import { DashboardInvitationCard } from "./DashboardInvitationCard";
 
 export default async function DashboardPage() {
-  const { userId } = await verifySession();
+  // Dashboard là nơi chứa nút "Tạo thiệp mới" nên cũng đòi account thật. Session
+  // ẩn danh cũ đi qua /login một lần là thiệp được nhận về account, thay vì ngồi
+  // trong một danh sách mà bấm vào thiệp nào cũng bị đẩy ra.
+  const { userId } = await verifyAccountSession("/dashboard", "create");
 
   const [invitations, templateLabels, mobileThumbnailOverrides] = await Promise.all([
     prisma.invitation.findMany({

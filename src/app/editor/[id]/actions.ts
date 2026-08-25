@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
-import { verifySession, ownInvitation } from "@/lib/dal";
+import { verifyAccountSession, ownInvitation } from "@/lib/dal";
 import { isGoogleMapsUrl } from "@/lib/google-maps";
 import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
 import { publicationIssue, validateInvitationSlug } from "@/lib/invitation-editor-rules";
@@ -11,8 +11,12 @@ import { prepareInvitationDraft, writeInvitationDraft } from "@/lib/invitation-e
 import { type EditorState, type SlugCheckResult } from "./content-schema";
 import { slugFromFormFields } from "./slug";
 
+/**
+ * Cùng một cửa với trang editor: chỉ account thật được ghi. Session ẩn danh bị
+ * đẩy về /login kèm `next` trỏ lại chính thiệp đang mở.
+ */
 async function requireOwnedInvitation(id: string) {
-  const { userId } = await verifySession();
+  const { userId } = await verifyAccountSession(`/editor/${id}`, "create");
   const invitation = await ownInvitation(id, userId);
   if (!invitation) return null;
   return { invitation, userId };
@@ -23,7 +27,7 @@ export async function resolveGoogleMapsLink(value: string): Promise<{
   resolved: boolean;
   valid: boolean;
 }> {
-  await verifySession();
+  await verifyAccountSession("/dashboard", "create");
   const source = value.trim();
   if (!isGoogleMapsUrl(source) || source.length > 1_200) {
     return { url: source, resolved: false, valid: false };

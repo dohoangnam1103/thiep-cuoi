@@ -677,7 +677,8 @@
     "noAccount": "Chưa có tài khoản?",
     "haveAccount": "Đã có tài khoản?",
     "oauthError": "Không thể đăng nhập bằng mạng xã hội. Vui lòng thử lại.",
-    "checkoutNotice": "Đăng nhập trước khi thanh toán để đơn hàng gắn với email của bạn, tránh mất thiệp khi đổi máy hoặc xoá lịch sử trình duyệt. Thiệp bạn đang làm sẽ được chuyển vào tài khoản, không mất gì cả."
+    "checkoutNotice": "Đăng nhập trước khi thanh toán để đơn hàng gắn với email của bạn, tránh mất thiệp khi đổi máy hoặc xoá lịch sử trình duyệt. Thiệp bạn đang làm sẽ được chuyển vào tài khoản, không mất gì cả.",
+    "createNotice": "Đăng nhập bằng Google để bắt đầu tạo thiệp. Thiệp sẽ gắn với email của bạn nên vẫn còn nguyên khi bạn đổi máy hoặc xoá lịch sử trình duyệt, và bạn quay lại sửa lúc nào cũng được."
   },
   "chrome": {
     "nav": {

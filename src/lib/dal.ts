@@ -2,9 +2,9 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { getAccountSessionUserId } from "@/lib/auth/anonymous-account";
-import { loginReasonHref } from "@/lib/auth-redirects";
+import { loginReasonHref, type AuthReason } from "@/lib/auth-redirects";
 import { prisma } from "@/lib/prisma";
-import { createSession, getSession } from "@/lib/session";
+import { getSession } from "@/lib/session";
 
 export const getCurrentUserId = cache(async () => {
   const session = await getSession();
@@ -26,33 +26,26 @@ export async function verifySession(): Promise<{ userId: string }> {
 }
 
 /**
- * Session gate for anything that takes the visitor's money. `verifySession()`
- * is satisfied by an anonymous cookie-only account, which is how an invitation
- * gets paid for with no email attached to it: nothing in checkout ever asks who
- * the buyer is, so a lost cookie leaves us with a payment we cannot trace back
- * to a person. Money moves only once the session belongs to a real account.
+ * Session gate for anything that takes the visitor's money, and for tạo/sửa
+ * thiệp. `verifySession()` is satisfied by an anonymous cookie-only account,
+ * which is how an invitation gets paid for with no email attached to it:
+ * nothing in checkout ever asks who the buyer is, so a lost cookie leaves us
+ * with a payment we cannot trace back to a person. Work — and money — moves
+ * only once the session belongs to a real account.
  *
  * `returnTo` brings the visitor back to where they were: signing in adopts the
- * anonymous session, so the invitation they were about to pay for follows them
- * into the account and keeps its id.
+ * anonymous session, so the invitation they were about to edit or pay for
+ * follows them into the account and keeps its id.
  */
 export async function verifyAccountSession(
   returnTo: string,
+  reason: AuthReason = "checkout",
 ): Promise<{ userId: string }> {
   const userId = await getAccountSessionUserId();
   if (!userId) {
-    redirect(loginReasonHref("checkout", returnTo));
+    redirect(loginReasonHref(reason, returnTo));
   }
   return { userId };
-}
-
-export async function getOrCreateUserId(): Promise<string> {
-  const session = await getSession();
-  if (session) return session.userId;
-
-  const user = await prisma.user.create({ data: {} });
-  await createSession(user.id);
-  return user.id;
 }
 
 export async function ownInvitation(invitationId: string, userId: string) {
