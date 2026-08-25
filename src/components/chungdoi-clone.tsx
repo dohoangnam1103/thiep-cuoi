@@ -336,9 +336,30 @@ function HeroSection({ createHref }: { createHref: string }) {
           >
             <span className="shiny-text whitespace-pre-line">{t("hero.title")}</span>
           </h1>
-          <p className={`hero-enter mx-auto mt-4 max-w-2xl ${sectionDescClass} text-muted-foreground lg:mx-0`} style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
-          <p className={`hero-enter mx-auto mt-2 max-w-2xl ${sectionDescClass} text-muted-foreground lg:mx-0`} style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
-          <p className={`hero-enter mx-auto mt-3 max-w-2xl ${noteClass} text-muted-foreground lg:mx-0`} style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
+          {/* Ba dòng mô tả siết chặt hơn thang dùng chung: sectionDescClass là
+              1.65/1.7 và noteClass là 1.6, ở hero thì cả ba cùng về 1.3.
+              1.3 là con số đo được chứ không phải phỏng đoán: với Open Sans,
+              chuỗi có dấu chồng ("Dễ", "thiết") ăn 0.883em phía trên baseline và
+              0.241em phía dưới, nên mực hai dòng chỉ bắt đầu chạm nhau ở 1.123.
+              1.3 còn chừa ~2.3px hở ở cỡ 13px — đoạn subtitle2 trên mobile là
+              chỗ duy nhất xuống hai dòng, từ lg trở lên cả ba đều một dòng nên
+              không có nguy cơ đè dấu.
+              - Phải đi qua cn() chứ không ghép template string như trước: nối
+                chuỗi sẽ để cả `leading-[1.65]` và `leading-[1.3]` trong class
+                list rồi phó cho thứ tự CSS quyết định. tailwind-merge bỏ hằng
+                số cũ đi.
+              - Phải viết cả `sm:leading-[1.3]`: tailwind-merge coi mỗi variant
+                là một khoá riêng nên `leading-[1.3]` không ghi đè được
+                `sm:leading-[1.7]` của sectionDescClass, và từ sm trở lên leading
+                cũ sẽ quay lại.
+              Không sửa trực tiếp typography.ts vì mô tả block ở Mẫu thiệp,
+              Pricing và các section khác dùng chung thang đó.
+              Khoảng cách giữa ba dòng hạ theo (16/8/12 → 12/6/10): từ lg cả ba
+              đều gói trong một dòng nên riêng leading gần như không đổi cảm
+              giác, phần trống trải nằm ở margin. */}
+          <p className={cn("hero-enter mx-auto mt-3 max-w-2xl", sectionDescClass, "leading-[1.3] text-muted-foreground sm:leading-[1.3] lg:mx-0")} style={{ "--hero-delay": "240ms" } as CSSProperties}>{t("hero.subtitle")}</p>
+          <p className={cn("hero-enter mx-auto mt-1.5 max-w-2xl", sectionDescClass, "leading-[1.3] text-muted-foreground sm:leading-[1.3] lg:mx-0")} style={{ "--hero-delay": "280ms" } as CSSProperties}>{t("hero.subtitle2")}</p>
+          <p className={cn("hero-enter mx-auto mt-2.5 max-w-2xl", noteClass, "leading-[1.3] text-muted-foreground lg:mx-0")} style={{ "--hero-delay": "320ms" } as CSSProperties}>{t("hero.trialNote")}</p>
           <div className="hero-enter mt-8 flex flex-col items-center gap-4 lg:items-start" style={{ "--hero-delay": "400ms" } as CSSProperties}>
             <a
               href={createHref}
