@@ -354,6 +354,36 @@ html.lenis body {
   }
 }
 
+/*
+ * Chart (recharts): bỏ khung focus khi click, giữ ring khi Tab.
+ *
+ * accessibilityLayer của recharts đánh dấu các <g> bên trong SVG là focusable
+ * (`tabindex="-1"`), nên click vào một cột làm trình duyệt vẽ focus ring mặc
+ * định thành một cái khung bao quanh vùng vẽ — và rule `*` ngay trên đã nhuộm
+ * outline-color thành `--ring` nên nó trông như border đỏ. Đo được: sau click,
+ * activeElement là `<g class="recharts-zIndex-layer_300" tabindex="-1">` với
+ * `outline: auto 5px` và `:focus-visible` không khớp, tức là ring vô nghĩa với
+ * chuột. `[&_.recharts-layer]:outline-hidden` của shadcn không chặn được vì
+ * recharts 3.8 đặt các nhóm này ở class `recharts-zIndex-layer_*`.
+ *
+ * Chỉ tắt ring cho phần tử BÊN TRONG svg, không tắt cho chính
+ * `<svg class="recharts-surface">` — đó là nơi Tab thật sự dừng
+ * (`tabindex="0" role="application"`). Đổi lại phải tự vẽ ring cho surface:
+ * ChartContainer của shadcn đặt `outline-hidden` lên nó nên focus bằng bàn phím
+ * trước đó không hiện gì cả.
+ *
+ * Viết ngoài @layer để thắng utilities layer của Tailwind, vì thứ tự layer quyết
+ * định trước specificity.
+ */
+[data-slot="chart"] svg :focus {
+  outline: none;
+}
+
+[data-slot="chart"] .recharts-surface:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
 @layer utilities {
   .chungdoi-scroll {
     -webkit-overflow-scrolling: touch;
