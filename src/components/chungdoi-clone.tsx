@@ -775,7 +775,7 @@ export function ChungDoiClone() {
   useScrollProgress();
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="font-app-sans min-h-screen bg-background text-foreground">
       <div id="scroll-progress" className="scroll-progress" aria-hidden />
       <SiteHeader onSessionChange={setIsAuthenticated} />
       <HeroSection createHref={createHref} />

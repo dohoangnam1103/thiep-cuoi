@@ -16,7 +16,8 @@ export const metadata: Metadata = {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
-      <body className="min-h-full bg-background text-foreground">
+      {/* Route group riêng, không bọc thiệp nào — áp font shell thẳng ở body. */}
+      <body className="font-app-sans min-h-full bg-background text-foreground">
         <PetalField />
         <NextIntlClientProvider
           locale="vi"

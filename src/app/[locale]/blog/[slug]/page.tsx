@@ -58,7 +58,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
   const dateFormatter = createVietnamDateFormatter({ dateStyle: "long" }, locale);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="font-app-sans min-h-screen bg-background text-foreground">
       <SiteHeader />
 
       <article className="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">

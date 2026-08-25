@@ -57,7 +57,7 @@ export function ChungDoiPricing({ prices }: { prices: PricingData }) {
   const { productPrice, repeatCustomerPrice } = prices;
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="font-app-sans min-h-screen bg-background text-foreground">
       <SiteHeader />
 
       <section className="border-b border-border bg-[radial-gradient(circle_at_15%_-10%,var(--accent),transparent_40%)] py-14 text-center sm:py-20">

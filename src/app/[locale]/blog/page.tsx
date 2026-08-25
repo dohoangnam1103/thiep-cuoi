@@ -41,7 +41,7 @@ export default async function BlogPage({
   const dateFormatter = createVietnamDateFormatter({ dateStyle: "medium" }, locale);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="font-app-sans min-h-screen bg-background text-foreground">
       <SiteHeader />
 
       <section className="border-b border-border bg-secondary py-14 sm:py-20">

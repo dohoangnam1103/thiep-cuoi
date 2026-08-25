@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
-      <body className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+      {/* Route group riêng, không bọc thiệp nào — áp font shell thẳng ở body. */}
+      <body className="font-app-sans min-h-screen bg-background text-foreground flex items-center justify-center p-4">
         <PetalField />
         {children}
         <GoogleAnalytics />

@@ -38,7 +38,7 @@ export function ChungDoiPolicy({ kind }: { kind: PolicyKind }) {
   const config = SECTION_KEYS[kind];
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="font-app-sans min-h-screen bg-background text-foreground">
       <SiteHeader />
 
       <section className="border-b border-border bg-secondary py-14 sm:py-20">

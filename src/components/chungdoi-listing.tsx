@@ -129,7 +129,7 @@ export function ChungDoiListing({
   );
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="font-app-sans min-h-screen bg-background text-foreground">
       <div
         aria-hidden={selected ? true : undefined}
         className={`transition-[filter,transform] duration-200 ease-out ${selected ? "scale-[0.998] blur-[6px]" : "blur-none"}`}

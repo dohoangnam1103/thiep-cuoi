@@ -73,7 +73,9 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/60 p-2 sm:p-4"
+      // `font-app-sans` phải khai lại ở đây: portal gắn vào document.body nên
+      // modal nằm ngoài <main> của trang, không thừa hưởng font shell.
+      className="font-app-sans fixed inset-0 z-[80] flex items-center justify-center bg-foreground/60 p-2 sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="template-detail-title"

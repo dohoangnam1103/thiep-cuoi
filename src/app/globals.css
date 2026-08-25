@@ -179,6 +179,25 @@ html.lenis body {
 .font-body-serif { font-family: var(--font-lora), "Lora", Georgia, "Times New Roman", serif; }
 .font-body-sans { font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; }
 
+/* ── Font mặc định của app shell ─────────────────────────────────────────────
+ * Open Sans cho trang marketing (Home, Mẫu thiệp, Bảng giá, Blog, Hướng dẫn,
+ * Công cụ, Chính sách) + Dashboard. CHỈ khai `font-family`; weight, cỡ chữ,
+ * italic, letter-spacing giữ nguyên như trước.
+ *
+ * Cố tình KHÔNG sửa `body`, `--font-sans` hay `--font-heading`: `[locale]/layout.tsx`
+ * bọc cả `/mau-thiep/[slug]/demo` và `lab/*`, và `ChungDoiDemo` thừa hưởng font
+ * từ `body` — đổi ở đó là mọi thiệp đổi font theo. Vì vậy class này được áp ở
+ * root của từng trang shell, không áp ở layout.
+ *
+ * Khối để NGOÀI mọi `@layer` nên thắng `.font-heading` ở `@layer base` mà không
+ * cần `!important`. Text tự khai font trên chính element (`.font-pattaya` của
+ * "đẹp nhất", `.font-art-*`, `.font-couple-*`) không bị ảnh hưởng.
+ * ────────────────────────────────────────────────────────────────────────── */
+.font-app-sans,
+.font-app-sans .font-heading {
+  font-family: var(--font-open-sans), "Open Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
 .font-art-uni { font-family: "UNI Chu truyen thong", "Fz Qellia", serif; }
 .font-art-haydon { font-family: "SVN-HC Haydon Brush", "Pattaya", cursive; }
 .font-art-new-eddy { font-family: "DFVN New Eddy", "Fz Qellia", serif; }
