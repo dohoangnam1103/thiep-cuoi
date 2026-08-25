@@ -1,6 +1,7 @@
 import type { Payment } from "@/generated/prisma/client";
 import { reconcilePayosPayment } from "@/lib/payment-service";
 import { SETTLEABLE_PAYMENT_STATUSES } from "@/lib/payment-settlement";
+import { isRetryablePayosError } from "@/lib/payos";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -35,6 +36,21 @@ export const PAYOS_RECONCILE_LOOKBACK_DAYS = 7;
  */
 export const PAYOS_RECONCILE_BATCH_LIMIT = 200;
 
+/**
+ * Giãn cách giữa hai lần gọi payOS.
+ *
+ * payOS chặn rate limit bằng `HTTP 429` kèm body `text/html`. Đo trên production:
+ * bắn 8 request liên tiếp thì có request bị chặn, còn giãn 700ms thì 8/8 đi qua.
+ * Đây là job nền không ai đợi, nên chậm vài giây không đổi gì.
+ */
+const REQUEST_SPACING_MS = 700;
+
+/** Số lần thử lại cho một đơn khi gặp lỗi tạm thời (429, 5xx, timeout). */
+const MAX_RETRIES = 2;
+
+/** Chờ lâu hơn sau mỗi lần bị chặn, để không góp thêm vào chính đợt rate limit. */
+const RETRY_BACKOFF_MS = [1_500, 4_000];
+
 export type PayosReconcileSummary = {
   /** Số đơn đã hỏi payOS. */
   scanned: number;
@@ -42,12 +58,18 @@ export type PayosReconcileSummary = {
   settled: number;
   /** Số đơn payOS xác nhận vẫn chưa trả — trạng thái local đã đúng. */
   unchanged: number;
-  /** Số đơn hỏi không được (payOS lỗi, timeout, đơn không tồn tại bên đó). */
+  /** Số đơn hỏi không được kể cả sau khi thử lại. */
   failed: number;
+  /** Số đơn phải thử lại mới xong. Cao đều đặn nghĩa là nên giãn nhịp thêm. */
+  retried: number;
 };
 
 function cutoffFrom(now: Date, lookbackDays: number): Date {
   return new Date(now.getTime() - lookbackDays * 24 * 60 * 60 * 1000);
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -87,27 +109,47 @@ export async function reconcileOutstandingPayosPayments(options?: {
     settled: 0,
     unchanged: 0,
     failed: 0,
+    retried: 0,
   };
 
-  for (const payment of outstanding) {
-    try {
-      const status = await reconcilePayosPayment(payment, "payos-cron");
-      if (status === "paid" && payment.status !== "paid") {
-        summary.settled += 1;
-        console.info("[payos-reconcile] webhook đã mất, đơn vừa được cứu", {
-          paymentId: payment.id,
-          code: payment.code,
-          amount: payment.amount,
-        });
-      } else {
-        summary.unchanged += 1;
+  for (const [index, payment] of outstanding.entries()) {
+    if (index > 0) await sleep(REQUEST_SPACING_MS);
+
+    let lastError: unknown = null;
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt += 1) {
+      if (attempt > 0) {
+        summary.retried += 1;
+        await sleep(RETRY_BACKOFF_MS[attempt - 1] ?? RETRY_BACKOFF_MS.at(-1)!);
       }
-    } catch (error) {
+      try {
+        const status = await reconcilePayosPayment(payment, "payos-cron");
+        lastError = null;
+        if (status === "paid" && payment.status !== "paid") {
+          summary.settled += 1;
+          console.info("[payos-reconcile] webhook đã mất, đơn vừa được cứu", {
+            paymentId: payment.id,
+            code: payment.code,
+            amount: payment.amount,
+          });
+        } else {
+          summary.unchanged += 1;
+        }
+        break;
+      } catch (error) {
+        lastError = error;
+        // Lỗi không đáng thử lại (chữ ký sai, đơn không tồn tại bên payOS) thì
+        // thử thêm chỉ tốn quota và làm nặng thêm đợt rate limit.
+        if (!isRetryablePayosError(error)) break;
+      }
+    }
+
+    if (lastError !== null) {
       summary.failed += 1;
       console.error("[payos-reconcile] không hỏi được payOS", {
         paymentId: payment.id,
         code: payment.code,
-        error: error instanceof Error ? error.message : "unknown",
+        retryable: isRetryablePayosError(lastError),
+        error: lastError instanceof Error ? lastError.message : "unknown",
       });
     }
   }

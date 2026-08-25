@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { isRetryablePayosError, PayosApiError } from "./payos";
 import {
   isReconcileCandidate,
   PAYOS_RECONCILE_LOOKBACK_DAYS,
@@ -55,4 +56,28 @@ test("cửa sổ phải phủ được hạn 24h của link payOS", () => {
     PAYOS_RECONCILE_LOOKBACK_DAYS >= 1,
     `cửa sổ ${PAYOS_RECONCILE_LOOKBACK_DAYS} ngày quá hẹp`,
   );
+});
+
+test("429 và 5xx của payOS là lỗi tạm thời, 4xx khác thì không", () => {
+  // payOS chặn rate limit bằng 429 kèm body text/html. Đo trên production: bắn
+  // liên tiếp thì bị chặn, giãn 700ms thì đi qua hết. Nên 429 phải được coi là
+  // đáng thử lại, nếu không cron sẽ báo lỗi giả mỗi 2 tiếng.
+  assert.equal(isRetryablePayosError(new PayosApiError("chặn", 429)), true);
+  assert.equal(isRetryablePayosError(new PayosApiError("sập", 500)), true);
+  assert.equal(isRetryablePayosError(new PayosApiError("gateway", 502)), true);
+
+  // Chữ ký sai hoặc đơn không tồn tại thì thử lại chỉ tốn quota.
+  assert.equal(isRetryablePayosError(new PayosApiError("không thấy", 404)), false);
+  assert.equal(isRetryablePayosError(new PayosApiError("sai khoá", 401)), false);
+});
+
+test("timeout của AbortSignal cũng là lỗi tạm thời", () => {
+  // `AbortSignal.timeout` ném DOMException tên TimeoutError, không phải
+  // PayosApiError, nên phải nhận diện riêng.
+  const timeout = new Error("The operation was aborted due to timeout");
+  timeout.name = "TimeoutError";
+  assert.equal(isRetryablePayosError(timeout), true);
+
+  assert.equal(isRetryablePayosError(new Error("lỗi thường")), false);
+  assert.equal(isRetryablePayosError(null), false);
 });

@@ -63,6 +63,8 @@ export type PayosWebhookBody = {
   signature: string;
 };
 
+const TOO_MANY_REQUESTS = 429;
+
 export class PayosApiError extends Error {
   constructor(
     message: string,
@@ -72,6 +74,20 @@ export class PayosApiError extends Error {
     super(message);
     this.name = "PayosApiError";
   }
+
+  /** Lỗi phía hạ tầng, thử lại sau là có thể thành công. */
+  get retryable(): boolean {
+    return this.status === TOO_MANY_REQUESTS || this.status >= 500;
+  }
+}
+
+/**
+ * Lỗi đáng thử lại, tính cả timeout của `AbortSignal.timeout` (một `DOMException`
+ * tên `TimeoutError`, không phải `PayosApiError`).
+ */
+export function isRetryablePayosError(error: unknown): boolean {
+  if (error instanceof PayosApiError) return error.retryable;
+  return error instanceof Error && error.name === "TimeoutError";
 }
 
 function getPayosCredentials(): PayosCredentials {
@@ -155,9 +171,26 @@ async function payosRequest<T>(path: string, init?: RequestInit): Promise<PayosA
     signal: AbortSignal.timeout(10_000),
   });
 
-  const raw: unknown = await response.json().catch(() => null);
+  // Đọc text rồi tự parse, thay vì `.json().catch(() => null)`: payOS chặn rate
+  // limit bằng `429` kèm body `text/html` ("Too many requests, please try again
+  // later."). Cách cũ nuốt mã HTTP và báo mọi phản hồi không-JSON thành "dữ liệu
+  // không hợp lệ", nên một đợt bị chặn nhìn y như lỗi hỏng dữ liệu và không ai
+  // biết là chỉ cần gọi thưa hơn.
+  const bodyText = await response.text().catch(() => "");
+  let raw: unknown = null;
+  try {
+    raw = bodyText ? JSON.parse(bodyText) : null;
+  } catch {
+    raw = null;
+  }
+
   if (!isRecord(raw)) {
-    throw new PayosApiError("payOS trả về dữ liệu không hợp lệ", response.status);
+    throw new PayosApiError(
+      response.status === TOO_MANY_REQUESTS
+        ? "payOS chặn vì gọi quá nhanh (HTTP 429)"
+        : `payOS trả về dữ liệu không phải JSON (HTTP ${response.status})`,
+      response.status,
+    );
   }
 
   const code = typeof raw.code === "string" ? raw.code : undefined;
