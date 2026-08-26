@@ -239,12 +239,50 @@ type InvitationMapProps = Omit<ComponentPropsWithoutRef<"iframe">, "src"> & {
   query: string;
 };
 
-export function InvitationMap({ query, title, ...iframeProps }: InvitationMapProps) {
+/**
+ * Bản đồ Google Maps embed với fallback cho Facebook/Messenger in-app browser.
+ *
+ * Facebook webview chặn iframe Google Maps bằng `ERR_BLOCKED_BY_RESPONSE` (Google
+ * trả `X-Frame-Options: SAMEORIGIN` cho một số User-Agent webview). Không thể
+ * detect lỗi iframe từ JS (cross-origin), nên dùng cách khác: detect Facebook
+ * webview từ User-Agent và hiện link mở Maps thay vì iframe.
+ */
+export function InvitationMap({ query, title, className, style, ...iframeProps }: InvitationMapProps) {
+  const [isFacebookWebview, setIsFacebookWebview] = useState(false);
+
+  useEffect(() => {
+    const ua = navigator.userAgent || "";
+    // Facebook in-app browser: FBAN (Facebook App), FBAV (version), Messenger
+    if (/FBAN|FBAV|Messenger/i.test(ua)) {
+      setIsFacebookWebview(true);
+    }
+  }, []);
+
+  if (isFacebookWebview) {
+    return (
+      <a
+        href={directionsUrl(query)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        style={{ ...style, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
+      >
+        <span style={{ fontSize: "14px", opacity: 0.7 }}>
+          📍 Nhấn để mở bản đồ
+        </span>
+      </a>
+    );
+  }
+
   return (
     <iframe
       {...iframeProps}
+      className={className}
+      style={style}
       src={mapEmbedUrl(query)}
       title={title ?? query}
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
     />
   );
 }
