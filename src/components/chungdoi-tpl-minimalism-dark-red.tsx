@@ -162,7 +162,7 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
   }));
 
   return (
-    <div className="flex w-full justify-center overflow-x-clip bg-white">
+    <div className="flex w-full flex-col items-center overflow-x-clip bg-white">
       <div
         data-testid="minimalism-dark-red-template"
         className="relative isolate mx-auto w-full max-w-[480px] overflow-hidden md:max-w-[900px] md:border"
