@@ -162,7 +162,7 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
   }));
 
   return (
-    <div className="flex w-full flex-col items-center overflow-x-clip bg-white">
+    <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
         data-testid="minimalism-dark-red-template"
         className="relative isolate mx-auto w-full max-w-[480px] overflow-hidden md:max-w-[900px] md:border"
@@ -522,24 +522,23 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
           </div>
         ) : null}
 
-        {/* FOOTER — nằm BÊN NGOÀI khung cream, trên nền trắng để tránh bị hoa
-            trang trí bên trong card che. Dòng chữ này ở đáy thiệp nên không cần
-            cạnh tranh với decoration — cứ nằm ở vùng sáng sạch là đủ đọc. */}
+        {/* FOOTER — giữ trong card nhưng padding đủ lớn để tránh hoa decoration ở
+            bottom[-5%], và z-10 cao hơn vân giấy (z-0). */}
+        <footer data-template-footer className="relative z-10 px-6 pb-12 pt-10 text-center">
+          <p className="mx-auto max-w-[280px] text-[13px] leading-relaxed md:max-w-[400px] md:text-[14px]" style={{ ...SERIF, color: WINE, opacity: 0.65 }}>
+            Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
+          </p>
+          <a
+            href="https://thiepmungonline.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-block text-xs opacity-40 transition-opacity hover:opacity-70"
+            style={{ color: WINE }}
+          >
+            ♡ thiepmungonline.com
+          </a>
+        </footer>
       </div>
-      <footer className="flex w-full max-w-[480px] flex-col items-center px-6 pb-8 pt-6 text-center md:max-w-[900px]">
-        <span className="whitespace-pre-line text-[13px] leading-relaxed md:text-[14px]" style={{ ...SERIF, color: WINE, opacity: 0.7 }}>
-          Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
-        </span>
-        <a
-          href="https://thiepmungonline.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 text-xs opacity-50 transition-opacity hover:opacity-70"
-          style={{ color: WINE }}
-        >
-          ♡ thiepmungonline.com
-        </a>
-      </footer>
     </div>
   );
 }
