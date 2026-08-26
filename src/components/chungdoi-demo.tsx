@@ -1603,8 +1603,8 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
         </section>
       ) : null}
 
-      <section className="reveal is-visible mt-16 text-center">
-        <p className="text-sm leading-7">Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</p>
+      <section className="reveal is-visible mt-16 pb-6 text-center">
+        <p className="text-base leading-relaxed" style={{ color: tokens.textSecondary }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</p>
         <a href="https://thiepmungonline.com" target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center gap-1 text-sm font-semibold" style={{ color: tokens.accent }}>♡ thiepmungonline.com</a>
       </section>
     </div>
