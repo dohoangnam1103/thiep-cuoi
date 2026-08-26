@@ -218,6 +218,22 @@ export function Lightbox({
 
 export function mapEmbedUrl(query: string) {
   const trimmed = query.trim();
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+
+  // Có API key → dùng Maps Embed API chính thức. URL này được Google cho phép
+  // embed ở mọi webview kể cả Facebook in-app browser.
+  if (apiKey) {
+    if (isGoogleMapsUrl(trimmed)) {
+      const coords = coordinatesFromGoogleMapsUrl(trimmed);
+      if (coords) {
+        return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${coords}`;
+      }
+    }
+    return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(trimmed)}`;
+  }
+
+  // Fallback không key (dev local, hoặc key chưa set): URL cũ, bị chặn trong
+  // Facebook webview nhưng hoạt động ở browser thường.
   if (isGoogleMapsUrl(trimmed)) {
     const coords = coordinatesFromGoogleMapsUrl(trimmed);
     if (coords) return `https://www.google.com/maps?q=${coords}&output=embed`;
@@ -240,25 +256,25 @@ type InvitationMapProps = Omit<ComponentPropsWithoutRef<"iframe">, "src"> & {
 };
 
 /**
- * Bản đồ Google Maps embed với fallback cho Facebook/Messenger in-app browser.
+ * Bản đồ Google Maps embed.
  *
- * Facebook webview chặn iframe Google Maps bằng `ERR_BLOCKED_BY_RESPONSE` (Google
- * trả `X-Frame-Options: SAMEORIGIN` cho một số User-Agent webview). Không thể
- * detect lỗi iframe từ JS (cross-origin), nên dùng cách khác: detect Facebook
- * webview từ User-Agent và hiện link mở Maps thay vì iframe.
+ * Khi có `NEXT_PUBLIC_GOOGLE_MAPS_KEY`, dùng Maps Embed API chính thức — hoạt động
+ * trong mọi webview kể cả Facebook/Messenger. Khi không có key (dev local), dùng
+ * URL trực tiếp kèm fallback link cho Facebook webview.
  */
 export function InvitationMap({ query, title, className, style, ...iframeProps }: InvitationMapProps) {
+  const hasApiKey = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const [isFacebookWebview, setIsFacebookWebview] = useState(false);
 
   useEffect(() => {
+    if (hasApiKey) return;
     const ua = navigator.userAgent || "";
-    // Facebook in-app browser: FBAN (Facebook App), FBAV (version), Messenger
     if (/FBAN|FBAV|Messenger/i.test(ua)) {
       setIsFacebookWebview(true);
     }
-  }, []);
+  }, [hasApiKey]);
 
-  if (isFacebookWebview) {
+  if (!hasApiKey && isFacebookWebview) {
     return (
       <a
         href={directionsUrl(query)}
