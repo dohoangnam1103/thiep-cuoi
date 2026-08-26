@@ -522,24 +522,24 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
           </div>
         ) : null}
 
-        {/* FOOTER */}
-        <footer data-template-footer className="relative z-10 flex flex-col items-center px-6 pb-10 text-center">
-          <span className="mx-auto flex flex-col items-center gap-1 whitespace-pre-line text-[12px] md:max-w-[560px] md:text-[13px]" style={{ ...SERIF, color: WINE }}>
-            Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
-          </span>
-        </footer>
-        <div className="relative z-20 flex items-center justify-center pb-3">
-          <a
-            href="https://thiepmungonline.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs opacity-50 transition-opacity hover:opacity-70"
-            style={{ color: WINE }}
-          >
-            ♡ thiepmungonline.com
-          </a>
-        </div>
+        {/* FOOTER — nằm BÊN NGOÀI khung cream, trên nền trắng để tránh bị hoa
+            trang trí bên trong card che. Dòng chữ này ở đáy thiệp nên không cần
+            cạnh tranh với decoration — cứ nằm ở vùng sáng sạch là đủ đọc. */}
       </div>
+      <footer className="flex w-full max-w-[480px] flex-col items-center px-6 pb-8 pt-6 text-center md:max-w-[900px]">
+        <span className="whitespace-pre-line text-[13px] leading-relaxed md:text-[14px]" style={{ ...SERIF, color: WINE, opacity: 0.7 }}>
+          Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
+        </span>
+        <a
+          href="https://thiepmungonline.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 text-xs opacity-50 transition-opacity hover:opacity-70"
+          style={{ color: WINE }}
+        >
+          ♡ thiepmungonline.com
+        </a>
+      </footer>
     </div>
   );
 }
