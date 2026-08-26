@@ -524,7 +524,7 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
 
         {/* FOOTER — giữ trong card nhưng padding đủ lớn để tránh hoa decoration ở
             bottom[-5%], và z-10 cao hơn vân giấy (z-0). */}
-        <footer data-template-footer className="relative z-10 px-6 pb-12 pt-10 text-center">
+        <footer data-template-footer className="relative z-10 px-6 pb-12 pt-16 text-center">
           <p className="mx-auto max-w-[280px] text-[13px] leading-relaxed md:max-w-[400px] md:text-[14px]" style={{ ...SERIF, color: WINE, opacity: 0.65 }}>
             Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
           </p>
