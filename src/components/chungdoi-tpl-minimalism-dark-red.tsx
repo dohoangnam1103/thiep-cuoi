@@ -1,5 +1,7 @@
 "use client";
 
+import { createContext, useContext } from "react";
+
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
@@ -15,17 +17,61 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
-const DECOR = "/chungdoi/images/themes/_decor/minimalism-dark-red";
-const THEME = "/chungdoi/images/themes/minimalism-dark-red";
+type MinimalismPalette = {
+  decorPath: string;
+  themePath: string;
+  primary: string;
+  cream: string;
+  creamSoft: string;
+  pageBg: string;
+  deep: string;
+};
 
-/** Đỏ đô — nền của mọi card và chữ trên nền cream. */
-const WINE = "#511419";
-/** Cream — chữ trên card đỏ đô và nền trang. */
-const CREAM = "#ece4d8";
-const CREAM_SOFT = "rgba(236,228,216,0.7)";
-const PAGE_BG = "#fff7eb";
-/** Đỏ sẫm hơn, chỉ dùng cho dòng "Save The Date". */
-const WINE_DEEP = "#590310";
+const DARK_RED_PALETTE: MinimalismPalette = {
+  decorPath: "/chungdoi/images/themes/_decor/minimalism-dark-red",
+  themePath: "/chungdoi/images/themes/minimalism-dark-red",
+  primary: "#511419",
+  cream: "#ece4d8",
+  creamSoft: "rgba(236,228,216,0.7)",
+  pageBg: "#fff7eb",
+  deep: "#590310",
+};
+
+const JADE_PALETTE: MinimalismPalette = {
+  decorPath: "/chungdoi/images/themes/_decor/minimalism-jade",
+  themePath: "/chungdoi/images/themes/minimalism-jade",
+  primary: "#6d9f90",
+  cream: "#f2faf7",
+  creamSoft: "rgba(242,250,247,0.8)",
+  pageBg: "#f8fcfa",
+  deep: "#4d796d",
+};
+
+const SKY_BLUE_PALETTE: MinimalismPalette = {
+  decorPath: "/chungdoi/images/themes/_decor/minimalism-sky-blue",
+  themePath: "/chungdoi/images/themes/minimalism-sky-blue",
+  primary: "#4f8fa8",
+  cream: "#f1f8fb",
+  creamSoft: "rgba(241,248,251,0.76)",
+  pageBg: "#f7fbfd",
+  deep: "#315f75",
+};
+
+const POWDER_PINK_PALETTE: MinimalismPalette = {
+  decorPath: "/chungdoi/images/themes/_decor/minimalism-powder-pink",
+  themePath: "/chungdoi/images/themes/minimalism-powder-pink",
+  primary: "#b47787",
+  cream: "#fff4f6",
+  creamSoft: "rgba(255,244,246,0.78)",
+  pageBg: "#fff9fa",
+  deep: "#865463",
+};
+
+const MinimalismPaletteContext = createContext(DARK_RED_PALETTE);
+
+function useMinimalismPalette() {
+  return useContext(MinimalismPaletteContext);
+}
 
 const SERIF = { fontFamily: '"Times New Roman", serif' };
 const BODY = { fontFamily: '"Baskerville", "Times New Roman", serif' };
@@ -40,9 +86,11 @@ const SCHEDULE_ICONS = [null, "camera", "cake", "cook", null] as const;
 
 /** Watermark lâu đài, mờ 10%, lặp lại ở nhiều mốc dọc trang. */
 function CastleWatermark({ className }: { className: string }) {
+  const { themePath } = useMinimalismPalette();
+
   return (
     <img
-      src={`${THEME}/castle-background.webp`}
+      src={`${themePath}/castle-background.webp`}
       alt=""
       aria-hidden
       loading="lazy"
@@ -63,11 +111,13 @@ function FloatingFlower({
   delay: string;
   rotate?: string;
 }) {
+  const { decorPath } = useMinimalismPalette();
+
   return (
     <span aria-hidden className={`pointer-events-none absolute block ${wrapClassName}`}>
       <span className="block" style={{ animation: `drFloat ${duration} ease-in-out infinite`, animationDelay: delay, willChange: "transform" }}>
         <img
-          src={`${DECOR}/flower2-decoration.webp`}
+          src={`${decorPath}/flower2-decoration.webp`}
           alt=""
           aria-hidden
           loading="lazy"
@@ -79,16 +129,20 @@ function FloatingFlower({
 }
 
 function WineHeading({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const { primary } = useMinimalismPalette();
+
   return (
-    <h2 className={`relative z-10 text-center text-[20px] font-bold uppercase ${className}`} style={{ ...SERIF, color: WINE, letterSpacing: "0.03em" }}>
+    <h2 className={`relative z-10 text-center text-[20px] font-bold uppercase ${className}`} style={{ ...SERIF, color: primary, letterSpacing: "0.03em" }}>
       {children}
     </h2>
   );
 }
 
 function CreamHeading({ children }: { children: React.ReactNode }) {
+  const { cream } = useMinimalismPalette();
+
   return (
-    <h2 className="relative z-10 text-center text-[20px] font-bold uppercase" style={{ ...SERIF, color: CREAM, letterSpacing: "0.03em" }}>
+    <h2 className="relative z-10 text-center text-[20px] font-bold uppercase" style={{ ...SERIF, color: cream, letterSpacing: "0.03em" }}>
       {children}
     </h2>
   );
@@ -104,12 +158,13 @@ function WineCard({
   radius: "13" | "10";
   padding: string;
 }) {
+  const { primary, themePath } = useMinimalismPalette();
   const rounded = radius === "13" ? "rounded-[13px]" : "rounded-[10px]";
   return (
     <div className={`relative overflow-hidden ${rounded} ${padding} shadow-[4px_4px_10px_rgba(0,0,0,0.25)]`}>
-      <div aria-hidden className={`absolute inset-0 ${rounded}`} style={{ backgroundColor: WINE }} />
+      <div aria-hidden className={`absolute inset-0 ${rounded}`} style={{ backgroundColor: primary }} />
       <img
-        src={`${THEME}/paper.webp`}
+        src={`${themePath}/paper.webp`}
         alt=""
         aria-hidden
         loading="lazy"
@@ -121,18 +176,36 @@ function WineCard({
 }
 
 function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  const { cream, creamSoft } = useMinimalismPalette();
+
   return (
     <div className="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center">
-      <span className="text-[12px]" style={{ color: CREAM_SOFT }}>{title}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: CREAM }}>{a}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: CREAM }}>{b}</span>
-      <div className="mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight" style={{ color: CREAM_SOFT }}>{addr}</div>
+      <span className="text-[12px]" style={{ color: creamSoft }}>{title}</span>
+      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: cream }}>{a}</span>
+      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: cream }}>{b}</span>
+      <div className="mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight" style={{ color: creamSoft }}>{addr}</div>
     </div>
   );
 }
 
-/** Faithful rebuild of the Minimalism Đỏ Đô (minimalism-do-do) opened invitation. */
-export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemoContent }) {
+function MinimalismInvitation({
+  content,
+  palette,
+  testId,
+}: {
+  content: ChungDoiDemoContent;
+  palette: MinimalismPalette;
+  testId: string;
+}) {
+  const {
+    decorPath: DECOR,
+    themePath: THEME,
+    primary: WINE,
+    cream: CREAM,
+    creamSoft: CREAM_SOFT,
+    pageBg: PAGE_BG,
+    deep: WINE_DEEP,
+  } = palette;
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const ceremony = formatDate(couple.ceremonyDate);
@@ -162,9 +235,10 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
   }));
 
   return (
-    <div className="flex w-full justify-center overflow-x-clip bg-white">
+    <MinimalismPaletteContext.Provider value={palette}>
+      <div className="flex w-full justify-center overflow-x-clip bg-white">
       <div
-        data-testid="minimalism-dark-red-template"
+        data-testid={testId}
         className="relative isolate mx-auto w-full max-w-[480px] overflow-hidden md:max-w-[900px] md:border"
         style={{ backgroundColor: PAGE_BG, color: WINE, borderColor: `${WINE}22` }}
       >
@@ -538,7 +612,52 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
             ♡ thiepmungonline.com
           </a>
         </footer>
+        </div>
       </div>
-    </div>
+    </MinimalismPaletteContext.Provider>
+  );
+}
+
+/** Faithful rebuild of the Minimalism Đỏ Đô (minimalism-do-do) opened invitation. */
+export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemoContent }) {
+  return (
+    <MinimalismInvitation
+      content={content}
+      palette={DARK_RED_PALETTE}
+      testId="minimalism-dark-red-template"
+    />
+  );
+}
+
+/** Jade-teal variation with the same layout and interaction contract. */
+export function MinimalismJadeInvitation({ content }: { content: ChungDoiDemoContent }) {
+  return (
+    <MinimalismInvitation
+      content={content}
+      palette={JADE_PALETTE}
+      testId="minimalism-jade-template"
+    />
+  );
+}
+
+/** Soft sky-blue variation with low saturation and cloud-white surfaces. */
+export function MinimalismSkyBlueInvitation({ content }: { content: ChungDoiDemoContent }) {
+  return (
+    <MinimalismInvitation
+      content={content}
+      palette={SKY_BLUE_PALETTE}
+      testId="minimalism-sky-blue-template"
+    />
+  );
+}
+
+/** Gentle powder-pink variation with blush florals and warm ivory surfaces. */
+export function MinimalismPowderPinkInvitation({ content }: { content: ChungDoiDemoContent }) {
+  return (
+    <MinimalismInvitation
+      content={content}
+      palette={POWDER_PINK_PALETTE}
+      testId="minimalism-powder-pink-template"
+    />
   );
 }

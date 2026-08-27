@@ -21,6 +21,9 @@ export const BASE_AUDITED_TEMPLATE_SLUGS = [
   "glass-garden-green",
   "glass-garden-pink",
   "minimalism-dark-red",
+  "minimalism-jade",
+  "minimalism-sky-blue",
+  "minimalism-powder-pink",
   "chibi-red",
   "cherry-blossom-pink",
 ] as const;

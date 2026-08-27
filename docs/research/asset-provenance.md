@@ -771,3 +771,35 @@ graded WebP crops are committed.
 CC0 requires no attribution and permits commercial use; Poly Haven does not
 name individual photographers for these panoramas. No runtime request leaves
 the application origin — every crop is self-hosted.
+
+## Minimalism Xanh Ngọc derivative asset pack
+
+The assets under `public/chungdoi/images/themes/_decor/minimalism-jade/` and
+`public/chungdoi/images/giftbox/minimalism-jade/` are project-local derivatives
+of the existing self-hosted `minimalism-dark-red` asset pack. ImageGen was used
+to establish the jade/seafoam/antique-gold art direction; the production WebP
+files were then recolored from the local originals while retaining their exact
+dimensions, silhouettes, and alpha channels. Neutral paper and castle textures
+were copied unchanged into `public/chungdoi/images/themes/minimalism-jade/`.
+The palette was softened in August 2026 at the user's request. ImageGen
+`precise-object-edit` references established a pale mint-jade direction
+(`#CDE7DE`, `#A9D8C8`, `#7FB7A7`); the production WebP assets were regenerated
+deterministically from the local dark-red originals so dimensions and alpha
+channels remain identical while avoiding the earlier saturated teal treatment.
+No competitor asset was downloaded and no runtime request leaves the app.
+
+## Minimalism Xanh Bầu Trời derivative asset pack
+
+The assets under `public/chungdoi/images/themes/_decor/minimalism-sky-blue/`
+and `public/chungdoi/images/giftbox/minimalism-sky-blue/` are project-local
+derivatives of the existing self-hosted `minimalism-dark-red` pack. ImageGen
+established the low-saturation powder-blue, cloud-white, silver-sage and
+antique-gold direction; production WebP files were recolored from the local
+originals to retain exact dimensions, silhouettes and alpha. Neutral paper and
+castle textures were copied unchanged. No competitor asset was downloaded and
+no runtime request leaves the app.
+### Minimalism Hồng Phấn derivative asset pack
+
+- Project paths: `public/chungdoi/images/themes/_decor/minimalism-powder-pink/`, `public/chungdoi/images/themes/minimalism-powder-pink/`, and `public/chungdoi/images/giftbox/minimalism-powder-pink/`.
+- Source: project-local `minimalism-dark-red` artwork. ImageGen `precise-object-edit` references established the blush-pink art direction; production WebP files were recolored deterministically from the local originals to preserve exact dimensions and alpha channels.
+- Palette: powder pink, dusty rose, warm ivory, muted foliage, and antique champagne gold. No additional competitor assets were downloaded.

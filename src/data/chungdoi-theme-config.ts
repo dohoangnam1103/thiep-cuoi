@@ -458,6 +458,129 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       ]
     }
   },
+  "minimalism-jade": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #e5f3ed, #cde7de, #abd5c6)",
+      "cardBg": "rgba(252, 255, 253, 0.97)",
+      "textPrimary": "#4d796d",
+      "textSecondary": "rgba(77, 121, 109, 0.78)",
+      "accent": "#b58b2f",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(109, 159, 144, 0.32)",
+      "buttonBg": "#6d9f90",
+      "buttonText": "#f2faf7",
+      "guestBoxBg": "rgba(169, 216, 200, 0.13)",
+      "guestBoxBorder": "rgba(109, 159, 144, 0.18)",
+      "particleColors": [
+        "#a9d8c8",
+        "#f2faf7",
+        "#c9a24a",
+        "#cde7de"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Viaoda Libre\", \"EB Garamond\", serif",
+      "ampersand": "\"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp"
+        },
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp"
+        }
+      ]
+    }
+  },
+  "minimalism-sky-blue": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #c3e3ed, #9dcddd, #78b4ca)",
+      "cardBg": "rgba(250, 253, 254, 0.97)",
+      "textPrimary": "#315f75",
+      "textSecondary": "rgba(49, 95, 117, 0.78)",
+      "accent": "#b58b2f",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(79, 143, 168, 0.35)",
+      "buttonBg": "#4f8fa8",
+      "buttonText": "#f1f8fb",
+      "guestBoxBg": "rgba(117, 185, 210, 0.1)",
+      "guestBoxBorder": "rgba(79, 143, 168, 0.18)",
+      "particleColors": [
+        "#75b9d2",
+        "#eef7fa",
+        "#c9a24a",
+        "#a9d7e8"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Viaoda Libre\", \"EB Garamond\", serif",
+      "ampersand": "\"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp"
+        },
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp"
+        }
+      ]
+    }
+  },
+  "minimalism-powder-pink": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #f6e1e6, #ebc9d2, #dcaeba)",
+      "cardBg": "rgba(255, 252, 252, 0.97)",
+      "textPrimary": "#865463",
+      "textSecondary": "rgba(134, 84, 99, 0.78)",
+      "accent": "#b58b2f",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(180, 119, 135, 0.32)",
+      "buttonBg": "#b47787",
+      "buttonText": "#fff4f6",
+      "guestBoxBg": "rgba(231, 184, 196, 0.12)",
+      "guestBoxBorder": "rgba(180, 119, 135, 0.18)",
+      "particleColors": [
+        "#e7b8c4",
+        "#fff4f6",
+        "#c9a24a",
+        "#f3dde3"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Viaoda Libre\", \"EB Garamond\", serif",
+      "ampersand": "\"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp"
+        },
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp"
+        }
+      ]
+    }
+  },
   "spring-garden-blue": {
     "theme": {
       "background": "linear-gradient(to bottom right, #f0f7fa, #e8f2f6, #dfedf2)",

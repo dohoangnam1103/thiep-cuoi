@@ -445,6 +445,60 @@ export const templates = [
     "sourceUrl": "https://chungdoi.com/en/templates/minimalism-dark-red"
   },
   {
+    "slug": "minimalism-jade",
+    "name": "Minimalism Xanh Ngọc",
+    "title": "Mẫu thiệp cưới Minimalism Xanh Ngọc | Thiệp Mừng Online",
+    "description": "Thiệp cưới Minimalism Xanh Ngọc giữ bố cục tối giản thanh lịch với sắc mint-jade rất nhẹ, phong bì pastel lồng ảnh cưới và hoa mẫu đơn xanh sương. Miễn phí tạo thiệp.",
+    "category": "Modern",
+    "color": "Green",
+    "isNew": true,
+    "highlights": [
+      "Bố cục tối giản sang trọng với bảng màu mint-jade và trắng kem",
+      "Phong bì xanh ngọc pastel lồng ảnh cưới, dấu sáp tim vàng cổ",
+      "Hoa mẫu đơn xanh sương, lá champagne và typography Viaoda Libre"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_jade.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_jade.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_jade.webp",
+    "sourceUrl": "https://thiepmungonline.com/mau-thiep/minimalism-do-do/demo"
+  },
+  {
+    "slug": "minimalism-sky-blue",
+    "name": "Minimalism Xanh Bầu Trời",
+    "title": "Mẫu thiệp cưới Minimalism Xanh Bầu Trời | Thiệp Mừng Online",
+    "description": "Thiệp cưới Minimalism Xanh Bầu Trời giữ bố cục tối giản thanh lịch với sắc powder blue nhẹ nhàng, phong bì xanh mây và hoa mẫu đơn dịu. Miễn phí tạo thiệp.",
+    "category": "Modern",
+    "color": "Blue",
+    "isNew": true,
+    "highlights": [
+      "Bố cục tối giản với bảng màu xanh trời nhẹ và trắng mây",
+      "Phong bì powder blue lồng ảnh cưới, dấu sáp tim vàng cổ",
+      "Hoa mẫu đơn xanh xám dịu, lá silver sage và typography Viaoda Libre"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_sky_blue.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_sky_blue.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_sky_blue.webp",
+    "sourceUrl": "https://thiepmungonline.com/mau-thiep/minimalism-do-do/demo"
+  },
+  {
+    "slug": "minimalism-powder-pink",
+    "name": "Minimalism Hồng Phấn",
+    "title": "Mẫu thiệp cưới Minimalism Hồng Phấn | Thiệp Mừng Online",
+    "description": "Thiệp cưới Minimalism Hồng Phấn giữ bố cục tối giản thanh lịch với sắc blush pink nhẹ nhàng, phong bì hồng sương và hoa mẫu đơn dịu. Miễn phí tạo thiệp.",
+    "category": "Modern",
+    "color": "Pink",
+    "isNew": true,
+    "highlights": [
+      "Bố cục tối giản với bảng màu hồng phấn và trắng kem",
+      "Phong bì blush pink lồng ảnh cưới, dấu sáp tim vàng cổ",
+      "Hoa mẫu đơn dusty rose dịu, lá champagne và typography Viaoda Libre"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_powder_pink.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_powder_pink.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_powder_pink.webp",
+    "sourceUrl": "https://thiepmungonline.com/mau-thiep/minimalism-do-do/demo"
+  },
+  {
     "slug": "royal-red",
     "name": "Hoàng Kim Đỏ",
     "title": "Royal Red Template - Luxurious Royal Wedding Invitation | Thiệp Mừng Online",
@@ -875,6 +929,9 @@ export const completedTemplateSlugs = new Set<string>([
   "chibi-red",
   "minimalism-red",
   "minimalism-dark-red",
+  "minimalism-jade",
+  "minimalism-sky-blue",
+  "minimalism-powder-pink",
   "cherry-blossom-pink",
   ...generatedTemplateSlugs.filter((slug) => !hiddenTemplateSlugs.has(slug)),
 ]);

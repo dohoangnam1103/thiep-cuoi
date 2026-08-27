@@ -398,6 +398,21 @@ const MOMENTS_STYLES: Record<string, MomentsStyle> = {
     sectionClassName: "w-full bg-[#fff7eb] px-4 py-10 text-[#511419] md:px-10 md:py-14",
     cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#511419]/30",
   },
+  "minimalism-jade": {
+    ...PORTRAIT_RED,
+    sectionClassName: "w-full bg-[#f8fcfa] px-4 py-10 text-[#5f9385] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#6d9f90]/30",
+  },
+  "minimalism-sky-blue": {
+    ...PORTRAIT_RED,
+    sectionClassName: "w-full bg-[#f7fbfd] px-4 py-10 text-[#4f8fa8] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#4f8fa8]/30",
+  },
+  "minimalism-powder-pink": {
+    ...PORTRAIT_RED,
+    sectionClassName: "w-full bg-[#fff9fa] px-4 py-10 text-[#b47787] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#b47787]/30",
+  },
   "cherry-blossom-pink": {
     sectionClassName: "w-full bg-[#fdf3f6] px-6 py-10 text-[#ae4c51] md:px-10 md:py-14",
     headingWrapClassName: "w-full",

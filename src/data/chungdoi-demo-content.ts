@@ -4697,8 +4697,88 @@ const templateDemoContent: Record<string, ChungDoiDemoContent> = {
   ...generatedDemoContent,
 } satisfies Record<string, ChungDoiDemoContent>;
 
+const minimalismJadeDemoContent: ChungDoiDemoContent = {
+  ...templateDemoContent["minimalism-dark-red"],
+  slug: "minimalism-jade",
+  invitationId: "hoanglong-baongoc-minimalism-xanh-ngoc",
+  theme: {
+    ...templateDemoContent["minimalism-dark-red"].theme,
+    primaryColor: "#6d9f90",
+    assetFolder: "minimalism-jade",
+    assets: [
+      "/chungdoi/images/themes/minimalism-jade/castle-background.webp",
+      "/chungdoi/images/themes/minimalism-jade/paper.webp",
+      "/chungdoi/images/themes/minimalism-jade/papernote-background.webp",
+      "/chungdoi/images/themes/_decor/minimalism-jade/envelope-background.webp",
+      "/chungdoi/images/themes/_decor/minimalism-jade/envelope-cover.webp",
+      "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp",
+      "/chungdoi/images/giftbox/minimalism-jade/envelope.webp",
+    ],
+  },
+  dressCodeColors: "#6D9F90,#A9D8C8,#C9A24A,#F2FAF7",
+  wishes: templateDemoContent["minimalism-dark-red"].wishes.map((wish) => ({
+    ...wish,
+    text: wish.text.replace("tông đỏ đô", "tông xanh ngọc"),
+  })),
+};
+
+const minimalismSkyBlueDemoContent: ChungDoiDemoContent = {
+  ...templateDemoContent["minimalism-dark-red"],
+  slug: "minimalism-sky-blue",
+  invitationId: "hoanglong-baongoc-minimalism-xanh-bau-troi",
+  theme: {
+    ...templateDemoContent["minimalism-dark-red"].theme,
+    primaryColor: "#4f8fa8",
+    assetFolder: "minimalism-sky-blue",
+    assets: [
+      "/chungdoi/images/themes/minimalism-sky-blue/castle-background.webp",
+      "/chungdoi/images/themes/minimalism-sky-blue/paper.webp",
+      "/chungdoi/images/themes/minimalism-sky-blue/papernote-background.webp",
+      "/chungdoi/images/themes/_decor/minimalism-sky-blue/envelope-background.webp",
+      "/chungdoi/images/themes/_decor/minimalism-sky-blue/envelope-cover.webp",
+      "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp",
+      "/chungdoi/images/giftbox/minimalism-sky-blue/envelope.webp",
+    ],
+  },
+  dressCodeColors: "#4F8FA8,#75B9D2,#C9A24A,#EEF7FA",
+  wishes: templateDemoContent["minimalism-dark-red"].wishes.map((wish) => ({
+    ...wish,
+    text: wish.text.replace("tông đỏ đô", "tông xanh bầu trời"),
+  })),
+};
+
+const minimalismPowderPinkDemoContent: ChungDoiDemoContent = {
+  ...templateDemoContent["minimalism-dark-red"],
+  slug: "minimalism-powder-pink",
+  invitationId: "hoanglong-baongoc-minimalism-hong-phan",
+  theme: {
+    ...templateDemoContent["minimalism-dark-red"].theme,
+    primaryColor: "#b47787",
+    assetFolder: "minimalism-powder-pink",
+    assets: [
+      "/chungdoi/images/themes/minimalism-powder-pink/castle-background.webp",
+      "/chungdoi/images/themes/minimalism-powder-pink/paper.webp",
+      "/chungdoi/images/themes/minimalism-powder-pink/papernote-background.webp",
+      "/chungdoi/images/themes/_decor/minimalism-powder-pink/envelope-background.webp",
+      "/chungdoi/images/themes/_decor/minimalism-powder-pink/envelope-cover.webp",
+      "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp",
+      "/chungdoi/images/giftbox/minimalism-powder-pink/envelope.webp",
+    ],
+  },
+  dressCodeColors: "#B47787,#E7B8C4,#C9A24A,#FFF4F6",
+  wishes: templateDemoContent["minimalism-dark-red"].wishes.map((wish) => ({
+    ...wish,
+    text: wish.text.replace("tông đỏ đô", "tông hồng phấn"),
+  })),
+};
+
 export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = Object.fromEntries(
-  Object.entries(templateDemoContent).map(([slug, content]) => [
+  Object.entries({
+    ...templateDemoContent,
+    "minimalism-jade": minimalismJadeDemoContent,
+    "minimalism-sky-blue": minimalismSkyBlueDemoContent,
+    "minimalism-powder-pink": minimalismPowderPinkDemoContent,
+  }).map(([slug, content]) => [
     slug,
     { ...content, music: null },
   ]),
