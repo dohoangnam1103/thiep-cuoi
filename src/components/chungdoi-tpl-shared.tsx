@@ -1326,7 +1326,7 @@ export function GiftEnvelope({
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>
-          <div className="gift-modal-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl sm:max-w-xl" style={{ backgroundColor: cardBg }} onClick={(e) => e.stopPropagation()}>
+          <div className="gift-modal-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl sm:max-w-xl" style={{ background: cardBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: dark }}>
               <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]">{heading}</h2>
