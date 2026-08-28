@@ -7,6 +7,13 @@ import { verifyAdmin } from "@/lib/admin-dal";
 import { endOfDayExclusive, parseDateInput, parseUserSearch } from "@/lib/admin-support-input";
 import { formatVietnamDateTimeShort } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
+import {
+  FORECAST_RUN_COUNT,
+  REMINDER_CRON_HOURS,
+  forecastReminders,
+  upcomingCronRuns,
+} from "@/lib/reminder-forecast";
+import { buildCardName } from "@/lib/trial-reminder";
 
 export const metadata: Metadata = {
   title: "Lịch sử email | Quản trị",
@@ -106,7 +113,7 @@ export default async function AdminEmailLogsPage({
   };
   const isFiltered = Boolean(search || fromDate || toDate || type || status || context || runId);
 
-  const [total, sentCount, failedCount, attempts, runs] = await Promise.all([
+  const [total, sentCount, failedCount, attempts, runs, reminderCandidates] = await Promise.all([
     prisma.emailDeliveryAttempt.count({ where }),
     prisma.emailDeliveryAttempt.count({ where: { ...where, status: "sent" } }),
     prisma.emailDeliveryAttempt.count({ where: { ...where, status: "failed" } }),
@@ -133,7 +140,48 @@ export default async function AdminEmailLogsPage({
       orderBy: { startedAt: "desc" },
       take: 12,
     }),
+    // Cùng bộ điều kiện thô mà cron dùng; việc lọc thật do forecastReminders làm
+    // qua chính hai hàm điều kiện của cron.
+    prisma.invitation.findMany({
+      where: {
+        isDemo: false,
+        paid: false,
+        complimentary: false,
+        publishedAt: { not: null },
+      },
+      select: {
+        id: true,
+        templateId: true,
+        paid: true,
+        complimentary: true,
+        publishedAt: true,
+        reminderSentAt: true,
+        expiredReminderSentAt: true,
+        user: { select: { email: true } },
+        content: { select: { brideShortName: true, groomShortName: true } },
+      },
+    }),
   ]);
+
+  const cronRuns = upcomingCronRuns(new Date());
+  const candidateById = new Map(reminderCandidates.map((invitation) => [invitation.id, invitation]));
+  const forecast = forecastReminders(
+    reminderCandidates.map((invitation) => ({
+      invitationId: invitation.id,
+      paid: invitation.paid,
+      complimentary: invitation.complimentary,
+      publishedAt: invitation.publishedAt,
+      reminderSentAt: invitation.reminderSentAt,
+      expiredReminderSentAt: invitation.expiredReminderSentAt,
+      email: invitation.user.email,
+    })),
+    cronRuns,
+  );
+  const forecastCountByRun = new Map<number, number>();
+  for (const entry of forecast) {
+    const key = entry.scheduledAt.getTime();
+    forecastCountByRun.set(key, (forecastCountByRun.get(key) ?? 0) + 1);
+  }
 
   const typeLabel: Record<string, string> = {
     "trial-ending": t("emailTypeTrialEnding"),
@@ -161,6 +209,92 @@ export default async function AdminEmailLogsPage({
           <span>{t("emailRunFailed")}: <strong className="text-rose-700">{failedCount}</strong></span>
         </div>
       </div>
+
+      <section className="space-y-3">
+        <div>
+          <h2 className="font-heading text-lg text-foreground">
+            {t("emailUpcomingTitle", { count: forecast.length })}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("emailUpcomingDescription", { hours: REMINDER_CRON_HOURS.join(", ") })}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {cronRuns.map((run) => {
+            const count = forecastCountByRun.get(run.getTime()) ?? 0;
+            return (
+              <span
+                key={run.toISOString()}
+                className={`rounded-full border px-3 py-1 text-xs ${
+                  count > 0
+                    ? "border-primary/25 bg-primary/10 font-medium text-primary"
+                    : "border-border/70 bg-muted/30 text-muted-foreground"
+                }`}
+              >
+                {formatVietnamDateTimeShort(run)} · {t("emailUpcomingRunCount", { count })}
+              </span>
+            );
+          })}
+        </div>
+
+        {forecast.length === 0 ? (
+          <p className="rounded-2xl border border-border bg-card px-4 py-5 text-sm text-muted-foreground">
+            {t("emailUpcomingNone", { count: FORECAST_RUN_COUNT })}
+          </p>
+        ) : (
+          <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+            <table className="w-full text-sm">
+              <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
+                <tr>
+                  <th className="whitespace-nowrap px-4 py-3 font-medium">{t("emailUpcomingScheduledAt")}</th>
+                  <th className="px-4 py-3 font-medium">{t("emailRecipient")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-medium">{t("emailType")}</th>
+                  <th className="px-4 py-3 font-medium">{t("emailContext")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-medium">{t("emailUpcomingExpiresAt")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {forecast.map((entry) => {
+                  const invitation = candidateById.get(entry.invitationId);
+                  // Tên ngắn, đúng tên sẽ xuất hiện trong email chứ không phải tên đầy đủ.
+                  const cardName = buildCardName(invitation?.content ?? null);
+                  return (
+                    <tr
+                      key={`${entry.invitationId}-${entry.kind}`}
+                      className="border-b border-border align-top last:border-0"
+                    >
+                      <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
+                        {formatVietnamDateTimeShort(entry.scheduledAt)}
+                      </td>
+                      <td className="px-4 py-3 font-medium text-foreground">
+                        {invitation?.user.email ?? t("emailNoUser")}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3">
+                        {typeLabel[entry.kind] ?? entry.kind}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/admin/invitations/${entry.invitationId}/edit`}
+                          className="text-primary hover:underline"
+                        >
+                          <span className="block">{cardName}</span>
+                          {invitation ? (
+                            <span className="block text-xs text-muted-foreground">{invitation.templateId}</span>
+                          ) : null}
+                        </Link>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
+                        {formatVietnamDateTimeShort(entry.expiresAt)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <section className="space-y-3">
         <h2 className="font-heading text-lg text-foreground">{t("emailRunsTitle")}</h2>
