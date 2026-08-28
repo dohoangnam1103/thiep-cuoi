@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildExpiredReminderEmail, buildTrialReminderEmail } from "./email";
+import { signEmailClickToken } from "./email-click";
+import {
+  buildExpiredReminderEmail,
+  buildReminderEmail,
+  buildTrialReminderEmail,
+  reminderDedupeKey,
+} from "./email";
 
 test("subject chứa tên thiệp", () => {
   const { subject } = buildTrialReminderEmail({
@@ -84,4 +90,84 @@ test("mail nhắc bù escape ký tự đặc biệt trong tên", () => {
   assert.ok(!html.includes("A<b>"), "tên chưa được escape");
   assert.ok(html.includes("A&lt;b&gt;"), "thiếu bản đã escape");
   assert.ok(html.includes("X &amp; Y"), "tên thiệp chưa escape");
+});
+
+test("dedupeKey giữ nguyên định dạng đã có trong database production", () => {
+  // Đổi chuỗi này là mọi thiệp từng nhận email sẽ sinh delivery mới và khách nhận
+  // thư nhắc lần hai. Test khoá lại chính giá trị mà route cron đang ghi.
+  assert.equal(
+    reminderDedupeKey("trial-ending", "inv-1"),
+    "trial-reminder:trial-ending:inv-1",
+  );
+  assert.equal(reminderDedupeKey("expired", "inv-1"), "trial-reminder:expired:inv-1");
+});
+
+test("không cấu hình EMAIL_LINK_SECRET thì nút trỏ thẳng vào trang thanh toán", () => {
+  // Suy giảm phải là mất tracking, không phải mất email.
+  const previous = process.env.EMAIL_LINK_SECRET;
+  delete process.env.EMAIL_LINK_SECRET;
+  try {
+    const { html } = buildReminderEmail({
+      recipientName: "Thạch",
+      cardName: "Thạch & Jade",
+      invitationId: "inv-1",
+      kind: "trial-ending",
+    });
+    assert.ok(html.includes("/dashboard/inv-1/thanh-toan"), "thiếu link thanh toán");
+    assert.ok(!html.includes("/api/email/click"), "không được có link tracking");
+  } finally {
+    if (previous === undefined) delete process.env.EMAIL_LINK_SECRET;
+    else process.env.EMAIL_LINK_SECRET = previous;
+  }
+});
+
+test("có secret thì nút đi qua endpoint đo click, dòng text vẫn là URL sạch", () => {
+  const previous = process.env.EMAIL_LINK_SECRET;
+  process.env.EMAIL_LINK_SECRET = "secret-cho-test";
+  try {
+    const { html } = buildReminderEmail({
+      recipientName: "Thạch",
+      cardName: "Thạch & Jade",
+      invitationId: "inv-1",
+      kind: "trial-ending",
+    });
+
+    const token = signEmailClickToken(
+      reminderDedupeKey("trial-ending", "inv-1"),
+      "secret-cho-test",
+    );
+    assert.ok(
+      html.includes(`/api/email/click?t=${encodeURIComponent(token)}`),
+      "nút phải trỏ vào endpoint đo click",
+    );
+    // Dòng "Hoặc mở link" hiện địa chỉ thật của site: khách đọc email tiền bạc mà
+    // thấy URL lạ thì mất tin.
+    assert.ok(
+      html.includes(">http://localhost:3000/dashboard/inv-1/thanh-toan</a>"),
+      "dòng text phải hiện URL sạch",
+    );
+  } finally {
+    if (previous === undefined) delete process.env.EMAIL_LINK_SECRET;
+    else process.env.EMAIL_LINK_SECRET = previous;
+  }
+});
+
+test("hai mốc nhắc mang hai token click khác nhau", () => {
+  const previous = process.env.EMAIL_LINK_SECRET;
+  process.env.EMAIL_LINK_SECRET = "secret-cho-test";
+  try {
+    const args = { recipientName: "Thạch", cardName: "Thạch & Jade", invitationId: "inv-1" };
+    const trial = buildReminderEmail({ ...args, kind: "trial-ending" });
+    const expired = buildReminderEmail({ ...args, kind: "expired" });
+
+    const tokenOf = (html: string) => /\/api\/email\/click\?t=([^"]+)/.exec(html)?.[1];
+    const trialToken = tokenOf(trial.html);
+    const expiredToken = tokenOf(expired.html);
+    assert.ok(trialToken, "mốc 1 thiếu token");
+    assert.ok(expiredToken, "mốc 2 thiếu token");
+    assert.notEqual(trialToken, expiredToken);
+  } finally {
+    if (previous === undefined) delete process.env.EMAIL_LINK_SECRET;
+    else process.env.EMAIL_LINK_SECRET = previous;
+  }
 });

@@ -2519,6 +2519,153 @@ const templateDemoContent: Record<string, ChungDoiDemoContent> = {
     },
     "music": "/chungdoi/music/glass-garden-pink.mp3"
   },
+  "lien-hoa-pink": {
+    "slug": "lien-hoa-pink",
+    "invitationId": "quocbao-hamy-lienhoa",
+    "theme": {
+      "primaryColor": "#c9768e",
+      "fontFamily": "Beau Rivage",
+      "assetFolder": "lien-hoa-pink",
+      "assets": [
+        "/chungdoi/images/themes/lien-hoa-pink/hoa-sen-bg.webp",
+        "/chungdoi/images/themes/lien-hoa-pink/framegold1.webp",
+        "/chungdoi/images/themes/lien-hoa-pink/framegold2.webp",
+        "/chungdoi/images/themes/lien-hoa-pink/calendar-frame.webp",
+        "/chungdoi/images/themes/lien-hoa-pink/golden-line.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/flower2.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/flower3.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/flower4.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/flower-bottom.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/leaf.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/medallion-guest.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/medallion-alcohol.webp",
+        "/chungdoi/images/themes/_decor/lien-hoa-pink/medallion-opening.webp"
+      ]
+    },
+    "couple": {
+      "brideFullName": "Lê Hà My",
+      "groomFullName": "Nguyễn Quốc Bảo",
+      "brideShortName": "Hà My",
+      "groomShortName": "Quốc Bảo",
+      "brideBirthOrder": "Út Nữ",
+      "groomBirthOrder": "Trưởng Nam",
+      "brideFirst": false,
+      "date": "2026-12-19",
+      "time": "18:30",
+      "ceremonyDate": "2026-12-19",
+      "ceremonyTime": "09:00",
+      "ceremonyHeader": "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      "openingMessage": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"
+    },
+    "families": {
+      "brideFather": "Lê Đình Phúc",
+      "brideMother": "Phạm Thị Loan",
+      "brideAddress": "Số 12, đường Trần Quốc Thảo,\nphường Võ Thị Sáu, quận 3, TP. Hồ Chí Minh",
+      "groomFather": "Nguyễn Văn Hùng",
+      "groomMother": "Trần Thị Mai",
+      "groomAddress": "Số 45, đường Nguyễn Đình Chiểu,\nphường Đa Kao, quận 1, TP. Hồ Chí Minh",
+      "brideParentTitle": "Ông Bà",
+      "groomParentTitle": "Ông Bà"
+    },
+    "venue": {
+      "address": "Trung tâm Hội nghị Riverside Palace, 360D Bến Vân Đồn, phường 1, quận 4, TP. Hồ Chí Minh",
+      "mapAddress": "",
+      "banquetTime": "18:30",
+      "welcomeTime": "17:30"
+    },
+    "schedule": [
+      {
+        "time": "17:30",
+        "label": "Đón khách"
+      },
+      {
+        "time": "18:30",
+        "label": "Khai tiệc"
+      },
+      {
+        "time": "18:45",
+        "label": "Rót rượu, cắt bánh"
+      },
+      {
+        "time": "19:00",
+        "label": "Phục vụ món chính"
+      },
+      {
+        "time": "21:00",
+        "label": "Kết thúc tiệc"
+      }
+    ],
+    "dressCodeColors": "#9c1f2c,#560207,#f6ecd9",
+    "albumLayout": "coverflow",
+    "gallery": [
+      "/chungdoi/images/gallery/lien-hoa-pink/photo-1.webp",
+      "/chungdoi/images/gallery/lien-hoa-pink/photo-2.webp",
+      "/chungdoi/images/gallery/lien-hoa-pink/photo-3.webp",
+      "/chungdoi/images/gallery/lien-hoa-pink/photo-4.webp",
+      "/chungdoi/images/gallery/lien-hoa-pink/photo-5.webp"
+    ],
+    "wishes": [
+      {
+        "name": "Minh Anh",
+        "time": "2026-08-06T16:40:28",
+        "text": "Chúc hai bạn trăm năm hạnh phúc, sớm có tin vui nhé!"
+      },
+      {
+        "name": "Thu Trang",
+        "time": "2026-08-06T16:40:28",
+        "text": "Đám cưới đẹp như một đóa sen, chúc mừng Quốc Bảo và Hà My!"
+      },
+      {
+        "name": "Đức Huy",
+        "time": "2026-08-06T16:40:28",
+        "text": "Mừng ngày trọng đại của hai bạn, chúc luôn ngọt ngào bền lâu."
+      },
+      {
+        "name": "Phương Nhi",
+        "time": "2026-08-06T16:40:28",
+        "text": "Chúc cô dâu chú rể mãi yêu thương và thấu hiểu nhau!"
+      },
+      {
+        "name": "Gia Bảo",
+        "time": "2026-08-06T16:40:28",
+        "text": "Hạnh phúc viên mãn nha hai bạn, mong sớm được dự tiệc!"
+      },
+      {
+        "name": "Khánh Linh",
+        "time": "2026-08-06T16:40:28",
+        "text": "Chúc hai bạn xây tổ ấm thật đẹp, trọn đời bên nhau."
+      },
+      {
+        "name": "Tuấn Kiệt",
+        "time": "2026-08-06T16:40:28",
+        "text": "Wow, thiệp cưới xinh quá! Chúc mừng hạnh phúc hai bạn nhé."
+      },
+      {
+        "name": "Bảo Ngọc",
+        "time": "2026-08-06T16:40:28",
+        "text": "Chúc Hà My làm cô dâu thật xinh, hai bạn hạnh phúc trọn đời!"
+      },
+      {
+        "name": "Hoàng Nam",
+        "time": "2026-08-06T16:40:28",
+        "text": "Trăm năm hòa hợp, bách niên giai lão nha hai bạn!"
+      },
+      {
+        "name": "Mỹ Duyên",
+        "time": "2026-08-06T16:40:28",
+        "text": "Chúc hai bạn một hành trình mới thật nhiều yêu thương và may mắn."
+      }
+    ],
+    "bank": {
+      "brideBankName": "MB Bank",
+      "brideAccountNumber": "0908776655",
+      "brideAccountName": "TRAN THUY DUONG",
+      "groomBankName": "BIDV",
+      "groomAccountNumber": "21510009988776",
+      "groomAccountName": "LE HOANG NAM"
+    },
+    "music": "/chungdoi/music/lien-hoa-pink.mp3"
+  },
   "minimalism-dark-red": {
     "slug": "minimalism-dark-red",
     "invitationId": "hoanglong-baongoc-minimalism-do-do",
@@ -4918,12 +5065,189 @@ const minimalismPowderPinkDemoContent: ChungDoiDemoContent = {
   })),
 };
 
+const minimalismPurpleDemoContent: ChungDoiDemoContent = {
+  ...templateDemoContent["minimalism-dark-red"],
+  slug: "minimalism-purple",
+  invitationId: "quocbao-dieulinh-minimalism-tim",
+  theme: {
+    primaryColor: "#7869a0",
+    fontFamily: "Viaoda Libre",
+    assetFolder: "minimalism-purple",
+    assets: [
+      "/chungdoi/images/themes/minimalism-purple/flower-decoration.webp",
+      "/chungdoi/images/themes/minimalism-purple/house-background.webp",
+      "/chungdoi/images/themes/minimalism-purple/envelope-background.webp",
+      "/chungdoi/images/themes/minimalism-purple/envelope-cover.webp",
+      "/chungdoi/images/themes/minimalism-purple/flower1-decoration.webp",
+      "/chungdoi/images/themes/minimalism-purple/flower3-decoration.webp",
+      "/chungdoi/images/themes/minimalism-purple/flower4-decoration.webp",
+      "/chungdoi/images/themes/minimalism-purple/flower4b-decoration.webp",
+      "/chungdoi/images/themes/minimalism-purple/flowerbottom-decoration.webp",
+      "/chungdoi/images/themes/minimalism-purple/paper.webp",
+      "/chungdoi/images/themes/minimalism-purple/cake.webp",
+      "/chungdoi/images/themes/minimalism-purple/music.webp",
+      "/chungdoi/images/themes/minimalism-purple/church.webp",
+      "/chungdoi/images/giftbox/minimalism-purple/envelope.webp",
+    ],
+  },
+  couple: {
+    brideFullName: "Đinh Diệu Linh",
+    groomFullName: "Lý Quốc Bảo",
+    brideShortName: "Diệu Linh",
+    groomShortName: "Quốc Bảo",
+    brideBirthOrder: "Út Nữ",
+    groomBirthOrder: "Trưởng Nam",
+    brideFirst: false,
+    date: "2026-12-19",
+    time: "18:30",
+    ceremonyDate: "2026-12-19",
+    ceremonyTime: "10:00",
+    ceremonyHeader: "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+    openingMessage: "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI",
+  },
+  families: {
+    brideFather: "Đinh Hữu Nam",
+    brideMother: "Phan Thị Kim Yến",
+    brideAddress: "Phường Thảo Điền, TP. Thủ Đức, TP. Hồ Chí Minh",
+    groomFather: "Lý Văn Hoà",
+    groomMother: "Trịnh Thị Bích Vân",
+    groomAddress: "Phường Tân Định, Quận 1, TP. Hồ Chí Minh",
+    brideParentTitle: "Ông Bà",
+    groomParentTitle: "Ông Bà",
+  },
+  venue: {
+    address: "Nhà Hàng Tiệc Cưới Riverside Palace, 360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh",
+    mapAddress: "Riverside Palace, 360D Bến Vân Đồn, Quận 4, TP. Hồ Chí Minh",
+    banquetTime: "18:30",
+    welcomeTime: "17:30",
+  },
+  schedule: [
+    { time: "17:30", label: "Đón khách" },
+    { time: "18:30", label: "Khai tiệc" },
+    { time: "18:45", label: "Rót rượu, cắt bánh" },
+    { time: "19:00", label: "Phục vụ món chính" },
+    { time: "21:00", label: "Kết thúc tiệc" },
+  ],
+  heroImage: "/chungdoi/images/gallery/minimalism-purple/photo-6.jpg",
+  gallery: Array.from({ length: 8 }, (_, index) =>
+    `/chungdoi/images/gallery/minimalism-purple/photo-${index + 1}.jpg`,
+  ),
+  dressCodeColors: "#949789,#7869a0,#b5a0d4",
+  albumLayout: "coverflow",
+  wishes: [
+    { name: "Ngọc Trâm", time: "2026-08-19T16:32:14", text: "Chúc mừng Quốc Bảo và Diệu Linh! Chúc hai bạn trăm năm hạnh phúc, đầu bạc răng long nhé!" },
+    { name: "Minh Khang", time: "2026-08-19T16:32:14", text: "Nhìn ảnh cưới mà xúc động ghê. Chúc hai bạn mãi bên nhau thật hạnh phúc!" },
+    { name: "Thu Hà", time: "2026-08-19T16:32:14", text: "Chúc đôi bạn một đám cưới thật trọn vẹn và một cuộc sống hôn nhân ngập tràn tiếng cười." },
+    { name: "Gia Bảo", time: "2026-08-19T16:32:14", text: "Chúc mừng hạnh phúc hai bạn! Nhất định mình sẽ có mặt đúng giờ để chung vui." },
+    { name: "Phương Anh", time: "2026-08-19T16:32:14", text: "Thiệp đẹp quá trời luôn. Chúc Bảo và Linh sớm có tin vui nha!" },
+    { name: "Hoàng Vũ", time: "2026-08-19T16:32:14", text: "Chúc hai bạn luôn yêu thương và thấu hiểu nhau như ngày đầu. Hạnh phúc nhé!" },
+    { name: "Bảo Châu", time: "2026-08-19T16:32:14", text: "Chúc mừng ngày trọng đại của hai bạn. Mong mọi điều tốt đẹp nhất sẽ đến với gia đình nhỏ." },
+    { name: "Đức Thịnh", time: "2026-08-19T16:32:14", text: "Chúc anh chị trăm năm hạnh phúc, con đàn cháu đống, vạn sự như ý!" },
+    { name: "Kim Ngân", time: "2026-08-19T16:32:14", text: "Chờ mãi mới tới ngày này. Chúc hai bạn thật nhiều sức khoẻ và hạnh phúc bền lâu!" },
+    { name: "Tuấn Kiệt", time: "2026-08-19T16:32:14", text: "Chúc mừng cặp đôi đẹp nhất! Chúc hai bạn một hành trình mới thật rực rỡ." },
+  ],
+  bank: {
+    brideBankName: "Techcombank",
+    brideAccountNumber: "1904455660",
+    brideAccountName: "DINH DIEU LINH",
+    groomBankName: "Vietcombank",
+    groomAccountNumber: "1017788990",
+    groomAccountName: "LY QUOC BAO",
+  },
+  music: "/chungdoi/music/minimalism-purple.mp3",
+};
+
+const sunflowerDemoContent: ChungDoiDemoContent = {
+  slug: "sunflower",
+  invitationId: "vanhoang-myngoc-sunflower",
+  theme: {
+    primaryColor: "#c87916",
+    fontFamily: "Playfair Display",
+    assetFolder: "sunflower",
+    assets: [
+      "/chungdoi/images/themes/sunflower/paper.webp",
+      "/chungdoi/images/themes/sunflower/flower2.webp",
+      "/chungdoi/images/themes/sunflower/flower4.webp",
+      "/chungdoi/images/themes/sunflower/flower5.webp",
+      "/chungdoi/images/themes/sunflower/ring.webp",
+      "/chungdoi/images/themes/sunflower/map.webp",
+      "/chungdoi/images/themes/sunflower/medallion-flower.webp",
+    ],
+  },
+  couple: {
+    brideFullName: "Lý Mỹ Ngọc",
+    groomFullName: "Trần Văn Hoàng",
+    brideShortName: "Mỹ Ngọc",
+    groomShortName: "Văn Hoàng",
+    brideBirthOrder: "Út Nữ",
+    groomBirthOrder: "Trưởng Nam",
+    brideFirst: false,
+    date: "2026-11-14",
+    time: "17:30",
+    ceremonyDate: "2026-11-14",
+    ceremonyTime: "09:00",
+    ceremonyHeader: "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+    openingMessage: "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI",
+  },
+  families: {
+    brideFather: "Lý Thanh Tùng",
+    brideMother: "Đỗ Thị Bích Ngân",
+    brideAddress: "Số 96, đường Nguyễn Tất Thành,\nphường Thành Nhất, TP. Buôn Ma Thuột, Đắk Lắk",
+    groomFather: "Trần Văn Đại",
+    groomMother: "Phan Thị Thu Hà",
+    groomAddress: "Số 24, đường Lê Duẩn,\nphường Tân An, TP. Buôn Ma Thuột, Đắk Lắk",
+    brideParentTitle: "Ông Bà",
+    groomParentTitle: "Ông Bà",
+  },
+  venue: {
+    address: "Trung tâm hội nghị Đắk Lắk, 01 Nguyễn Tất Thành, TP. Buôn Ma Thuột, Đắk Lắk",
+    mapAddress: "Trung tâm hội nghị Đắk Lắk, 01 Nguyễn Tất Thành, TP. Buôn Ma Thuột, Đắk Lắk",
+    banquetTime: "17:30",
+    welcomeTime: "16:30",
+  },
+  schedule: [
+    { time: "16:30", label: "Đón khách" },
+    { time: "17:30", label: "Khai tiệc" },
+    { time: "17:50", label: "Rót rượu, cắt bánh" },
+    { time: "18:15", label: "Phục vụ món chính" },
+    { time: "20:30", label: "Kết thúc tiệc" },
+  ],
+  gallery: Array.from({ length: 6 }, (_, index) =>
+    `/chungdoi/images/gallery/sunflower/photo-${index + 1}.webp`,
+  ),
+  dressCodeColors: "#E3A81C,#F5E3A8,#7C8B5E",
+  albumLayout: "grid",
+  wishes: [
+    { name: "Nguyễn Hạ Vy", time: "2026-07-30T13:00:04", text: "Chúc Văn Hoàng và Mỹ Ngọc trăm năm hạnh phúc, mãi rực rỡ như hoa hướng dương!" },
+    { name: "Trần Gia Bảo", time: "2026-07-30T13:00:04", text: "Mừng hạnh phúc hai bạn! Chúc tổ ấm mới luôn đầy ắp tiếng cười." },
+    { name: "Lê Thuỳ Dương", time: "2026-07-30T13:00:04", text: "Thiệp xinh quá trời! Chúc hai bạn yêu thương nhau đến đầu bạc răng long." },
+    { name: "Phạm Quốc Huy", time: "2026-07-30T13:00:04", text: "Chúc mừng ngày vui của hai bạn. Nhất định mình sẽ có mặt đúng giờ nhé!" },
+    { name: "Võ Ngọc Trâm", time: "2026-07-30T13:00:04", text: "Chúc cô dâu chú rể luôn hướng về nhau như hoa hướng dương hướng về mặt trời." },
+    { name: "Đặng Minh Tuấn", time: "2026-07-30T13:00:04", text: "Chúc hai bạn một đám cưới thật trọn vẹn và cuộc sống hôn nhân thật êm đềm." },
+    { name: "Bùi Khánh Ly", time: "2026-07-30T13:00:04", text: "Mừng hạnh phúc hai em! Chúc hai em luôn nắm tay nhau vượt qua mọi điều." },
+    { name: "Hoàng Nam Phong", time: "2026-07-30T13:00:04", text: "Chúc tình yêu của hai bạn ngày càng nồng nàn và bền chặt theo năm tháng." },
+    { name: "Ngô Thanh Mai", time: "2026-07-30T13:00:04", text: "Chúc hai bạn hạnh phúc viên mãn, sớm có tin vui nhé!" },
+    { name: "Đỗ Hữu Thắng", time: "2026-07-30T13:00:04", text: "Chúc anh chị trăm năm hảo hợp, luôn mạnh khoẻ và bình an." },
+  ],
+  bank: {
+    brideBankName: "ACB",
+    brideAccountNumber: "2748115900",
+    brideAccountName: "LY MY NGOC",
+    groomBankName: "VietinBank",
+    groomAccountNumber: "103872645910",
+    groomAccountName: "TRAN VAN HOANG",
+  },
+  music: "/chungdoi/music/sunflower.mp3",
+};
+
 export const chungdoiDemoContent: Record<string, ChungDoiDemoContent> = Object.fromEntries(
   Object.entries({
     ...templateDemoContent,
     "minimalism-jade": minimalismJadeDemoContent,
     "minimalism-sky-blue": minimalismSkyBlueDemoContent,
     "minimalism-powder-pink": minimalismPowderPinkDemoContent,
+    "minimalism-purple": minimalismPurpleDemoContent,
+    sunflower: sunflowerDemoContent,
   }).map(([slug, content]) => [
     slug,
     { ...content, music: null },

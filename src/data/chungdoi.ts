@@ -427,6 +427,24 @@ export const templates = [
     "sourceUrl": "https://chungdoi.com/en/templates/glass-garden-pink"
   },
   {
+    "slug": "lien-hoa-pink",
+    "name": "Liên Hoa Hồng",
+    "title": "Lien Hoa Pink Template - Watercolour Lotus Wedding Invitation | Thiệp Mừng Online",
+    "description": "Liên Hoa Hồng wedding e-card: watercolour lotus blooms in soft blush pink, a tall gilded frame around the couple's names, a gold-framed mini calendar and a lotus-medallion timeline. Free to create on Thiệp Mừng Online.",
+    "category": "Floral",
+    "color": "Pink",
+    "isNew": true,
+    "highlights": [
+      "Watercolour lotus blooms in a serene blush-pink palette",
+      "Tall gilded frame holding the couple's names in flowing script A repeating lotus wash tinting the whole page",
+      "Gold-framed mini calendar with a heart on the wedding day Wedding-day timeline with lotus medallions beside each hour"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/lien_hoa_pink.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/lien_hoa_pink.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/lien_hoa_pink.webp",
+    "sourceUrl": "https://chungdoi.com/en/templates/lien-hoa-pink"
+  },
+  {
     "slug": "minimalism-dark-red",
     "name": "Minimalism Đỏ Đô",
     "title": "Minimalism Dark Red Template - Minimalist Burgundy Wedding Invitation | Thiệp Mừng Online",
@@ -515,6 +533,42 @@ export const templates = [
     "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_powder_pink.webp",
     "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_powder_pink.webp",
     "sourceUrl": "https://thiepmungonline.com/mau-thiep/minimalism-do-do/demo"
+  },
+  {
+    "slug": "minimalism-purple",
+    "name": "Minimalism Tím",
+    "title": "Mẫu thiệp Minimalism Tím - Thiệp cưới tối giản lãng mạn | Thiệp Mừng Online",
+    "description": "Mẫu thiệp cưới Minimalism Tím trên nền giấy trắng, tông lavender với hoa hồng tím, phong bì lồng ảnh cưới và dấu sáp trái tim mạ vàng.",
+    "category": "Modern",
+    "color": "Purple",
+    "isNew": true,
+    "highlights": [
+      "Bố cục tối giản thanh lịch với bảng màu lavender và trắng giấy",
+      "Phong bì tím lồng ảnh cưới, dấu sáp trái tim mạ vàng",
+      "Hoa hồng tím watercolor, nền dinh thự mờ và typography Viaoda Libre"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_purple.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_purple.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_purple.webp",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/minimalism-tim/demo"
+  },
+  {
+    "slug": "sunflower",
+    "name": "Hoa Hướng Dương",
+    "title": "Mẫu Thiệp Hoa Hướng Dương - Thiệp Cưới Màu Nước Ấm Áp | Thiệp Mừng Online",
+    "description": "Mẫu thiệp cưới Hoa Hướng Dương với hoa vẽ màu nước trên nền kem ấm, tiêu đề tông hổ phách và chữ xanh ô liu.",
+    "category": "Floral",
+    "color": "Yellow",
+    "isNew": true,
+    "highlights": [
+      "Hoa hướng dương watercolor rực rỡ trên nền giấy kem ấm",
+      "Bố cục dọc thanh lịch với chữ hổ phách và xanh ô liu",
+      "Album 6 ảnh, lịch cưới, timeline và phong bì quà đồng bộ"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/sunflower.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/sunflower.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/sunflower.webp",
+    "sourceUrl": "https://chungdoi.com/vi/mau-thiep/hoa-huong-duong/demo"
   },
   {
     "slug": "royal-red",
@@ -943,15 +997,17 @@ export const completedTemplateSlugs = new Set<string>([
   "baroque-gold",
   "glass-garden-green",
   "glass-garden-pink",
+  "lien-hoa-pink",
   "hoa-tinh-red",
   "chibi-red",
   "minimalism-red",
   "minimalism-dark-red",
   "minimalism-green",
   "minimalism-jade",
-
   "minimalism-sky-blue",
   "minimalism-powder-pink",
+  "minimalism-purple",
+  "sunflower",
   "cherry-blossom-pink",
   ...generatedTemplateSlugs.filter((slug) => !hiddenTemplateSlugs.has(slug)),
 ]);

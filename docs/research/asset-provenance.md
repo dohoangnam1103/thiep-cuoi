@@ -803,3 +803,19 @@ no runtime request leaves the app.
 - Project paths: `public/chungdoi/images/themes/_decor/minimalism-powder-pink/`, `public/chungdoi/images/themes/minimalism-powder-pink/`, and `public/chungdoi/images/giftbox/minimalism-powder-pink/`.
 - Source: project-local `minimalism-dark-red` artwork. ImageGen `precise-object-edit` references established the blush-pink art direction; production WebP files were recolored deterministically from the local originals to preserve exact dimensions and alpha channels.
 - Palette: powder pink, dusty rose, warm ivory, muted foliage, and antique champagne gold. No additional competitor assets were downloaded.
+
+## Hoa Thủy Tinh Đỏ clone assets (2026-08-28)
+
+`crystal-floral-red` reproduces the public Chung Đôi demo at
+`https://chungdoi.com/vi/mau-thiep/hoa-thuy-tinh-do/demo`. The eleven decorative
+WebPs under `public/chungdoi/images/themes/crystal-floral-red/` were downloaded
+without modification from `https://chungdoi.com/images/themes/crystal-floral-red/`.
+The gift envelope at
+`public/chungdoi/images/envelope/crystal_floral_red.webp` came from the matching
+`https://chungdoi.com/images/envelope/` path. The seven gallery WebPs under
+`public/chungdoi/images/gallery/crystal-floral-red/` are local copies of the CDN
+images requested by that public demo, and
+`public/chungdoi/music/crystal-floral-red.mp3` is a local copy of
+`https://cdn.chungdoi.com/music/la-anh.mp3`. No runtime request to those source
+hosts is required. Confirm redistribution rights before using these downloaded
+clone assets outside the Chung Đôi/Thiệp Mừng Online product context.

@@ -1,0 +1,180 @@
+import { defineTemplateManifest } from "./template-manifest";
+
+const slug = "royal-v2-green";
+const themeRoot = `/chungdoi/images/themes/${slug}`;
+const gallery = Array.from(
+  { length: 7 },
+  (_, index) => `/chungdoi/images/gallery/${slug}/photo-${index + 1}.webp`,
+);
+const themeAssets = [
+  `${themeRoot}/background.webp`,
+  `${themeRoot}/golden-line.webp`,
+  `${themeRoot}/calendar-heart.webp`,
+  `${themeRoot}/flower1-decoration.webp`,
+  `${themeRoot}/flower2-decoration.webp`,
+  `${themeRoot}/flower3-decoration.webp`,
+  `${themeRoot}/flower4-bottom.webp`,
+  `${themeRoot}/flower5-decoration.webp`,
+  `${themeRoot}/leaf-decoration.webp`,
+  `${themeRoot}/ring.webp`,
+  `${themeRoot}/welcome.webp`,
+  `${themeRoot}/cake.webp`,
+];
+const giftAssets = [
+  `/chungdoi/images/giftbox/${slug}/box.webp`,
+  ...Array.from(
+    { length: 7 },
+    (_, index) => `/chungdoi/images/giftbox/${slug}/decor-${index + 1}.webp`,
+  ),
+];
+
+export const manifest = defineTemplateManifest({
+  slug,
+  viRouteSlug: "hoang-kim-ii-xanh",
+  rendererExport: "RoyalV2GreenInvitation",
+  heroImageCount: 0,
+  catalog: {
+    name: "Royal V2 Green",
+    title: "Royal V2 Green Wedding Invitation - Gold-Framed Forest Elegance | Thiệp Mừng Online",
+    description: "A deep forest-green royal wedding invitation framed in gold with ivory floral artwork and formal serif typography.",
+    category: "Royal",
+    color: "Green",
+    isNew: true,
+    highlights: [
+      "Original ivory-and-gold floral artwork",
+      "Tall gold-framed royal composition",
+      "Heart calendar and illustrated wedding timeline",
+    ],
+  },
+  theme: {
+    theme: {
+      background: "linear-gradient(to bottom right, #071a12, #0a2318, #06150f)",
+      cardBg: "linear-gradient(to bottom right, #103326, #09291d, #071d15)",
+      textPrimary: "#e5e4d0",
+      textSecondary: "rgba(229, 228, 208, 0.72)",
+      accent: "#b7863d",
+      dividerFrom: "transparent",
+      dividerTo: "rgba(183, 134, 61, 0.7)",
+      buttonBg: "#e5e4d0",
+      buttonText: "#143326",
+      guestBoxBg: "rgba(4, 30, 20, 0.74)",
+      guestBoxBorder: "rgba(229, 228, 208, 0.3)",
+      particleColors: ["#e5e4d0", "#b7863d", "#76582c", "#f4ead4"],
+      particleType: "sparkles",
+    },
+    fonts: {
+      couple: "\"EB Garamond\", Garamond, serif",
+      ampersand: "\"EB Garamond\", Garamond, serif",
+    },
+    sealType: "heart",
+    decorations: {
+      cardImages: [
+        {
+          src: `${themeRoot}/flower1-decoration.webp`,
+          className: "w-[220px] md:w-[280px] -top-[75px] -left-[75px] md:-top-[96px] md:-left-[96px] opacity-100",
+          flyOnOpen: true,
+        },
+        {
+          src: `${themeRoot}/flower2-decoration.webp`,
+          className: "w-[220px] md:w-[280px] -bottom-[84px] -right-[76px] md:-bottom-[105px] md:-right-[96px] opacity-100",
+          flyOnOpen: true,
+        },
+      ],
+    },
+  },
+  demoContent: {
+    slug,
+    invitationId: "tuan-kiet-minh-anh-royal-v2-green",
+    theme: {
+      primaryColor: "#e5e4d0",
+      fontFamily: "EB Garamond",
+      assetFolder: slug,
+      assets: themeAssets,
+    },
+    couple: {
+      brideFullName: "Lê Minh Anh",
+      groomFullName: "Trần Tuấn Kiệt",
+      brideShortName: "Minh Anh",
+      groomShortName: "Tuấn Kiệt",
+      brideBirthOrder: "Út Nữ",
+      groomBirthOrder: "Trưởng Nam",
+      brideFirst: false,
+      date: "2026-01-03",
+      time: "18:00",
+      ceremonyDate: "2026-01-03",
+      ceremonyTime: "09:00",
+      ceremonyHeader: "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      ceremonyType: "thanh-hon",
+      openingMessage: "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI",
+    },
+    families: {
+      brideFather: "Lê Văn Thành",
+      brideMother: "Phạm Thị Lan",
+      brideAddress: "Quận 3, TP. Hồ Chí Minh",
+      groomFather: "Trần Quốc Hưng",
+      groomMother: "Nguyễn Thị Hồng",
+      groomAddress: "Quận 1, TP. Hồ Chí Minh",
+      brideParentTitle: "Ông Bà",
+      groomParentTitle: "Ông Bà",
+    },
+    venue: {
+      address: "Trung Tâm Hội Nghị White Palace, 194 Hoàng Văn Thụ, Phường 9, Quận Phú Nhuận, TP. Hồ Chí Minh",
+      mapAddress: "White Palace, 194 Hoàng Văn Thụ, Phường 9, Quận Phú Nhuận, Hồ Chí Minh",
+      banquetTime: "18:00",
+      welcomeTime: "17:30",
+    },
+    schedule: [
+      { time: "17:00", label: "Đón khách" },
+      { time: "18:00", label: "Khai tiệc" },
+      { time: "18:30", label: "Nghi thức cưới" },
+      { time: "19:00", label: "Cắt bánh & nâng ly" },
+      { time: "20:30", label: "Kết thúc tiệc" },
+    ],
+    portraits: {
+      groom: gallery[0],
+      bride: gallery[1],
+    },
+    gallery,
+    heroImage: gallery[0],
+    heroImage2: gallery[1],
+    showHeroImage: false,
+    dressCodeColors: "#001d0f,#e9bd6a,#315739,#f6e8c6",
+    albumLayout: "grid",
+    wishes: [
+      { name: "Dương Khánh Linh", time: "14:47:21 13/7/2026", text: "Chúc cô dâu chú rể trăm năm hạnh phúc, con đàn cháu đống!" },
+      { name: "Ngô Phương Thảo", time: "14:47:21 13/7/2026", text: "Chúc mừng đám cưới! Chúc hai bạn luôn nắm tay nhau đi hết cuộc đời." },
+      { name: "Hoàng Gia Bảo", time: "14:47:21 13/7/2026", text: "Chúc hai bạn xây dựng tổ ấm hạnh phúc, mọi điều tốt lành sẽ đến." },
+      { name: "Bùi Thanh Tâm", time: "14:47:21 13/7/2026", text: "Nhìn thiệp cưới đẹp ghê. Chúc Minh Anh làm cô dâu thật xinh, hạnh phúc mãi mãi!" },
+      { name: "Đặng Quốc Việt", time: "14:47:21 13/7/2026", text: "Trăm năm hạnh phúc, sắt son một lòng. Chúc mừng hai bạn!" },
+      { name: "Võ Thị Mai", time: "14:47:21 13/7/2026", text: "Chúc mừng ngày trọng đại của hai em. Chúc hai em sớm có tin vui nhé!" },
+      { name: "Lê Hoàng Nam", time: "14:47:21 13/7/2026", text: "Chúc anh chị luôn yêu thương và thấu hiểu nhau. Hạnh phúc trọn đời!" },
+      { name: "Phạm Ngọc Lan", time: "14:47:21 13/7/2026", text: "Wow đẹp đôi quá! Chúc mừng cô dâu chú rể, mãi hạnh phúc bên nhau." },
+      { name: "Trần Minh Đức", time: "14:47:21 13/7/2026", text: "Chúc hai bạn một đám cưới thật ấm áp và một cuộc sống viên mãn nhé!" },
+      { name: "Nguyễn Thu Hà", time: "14:47:21 13/7/2026", text: "Chúc mừng hạnh phúc hai bạn! Chúc Tuấn Kiệt và Minh Anh trăm năm hạnh phúc, bên nhau đầu bạc răng long." },
+    ],
+    bank: {
+      brideBankName: "Techcombank",
+      brideAccountNumber: "9988776655",
+      brideAccountName: "LE MINH ANH",
+      groomBankName: "Vietcombank",
+      groomAccountNumber: "1023456789",
+      groomAccountName: "TRAN TUAN KIET",
+    },
+    music: "/chungdoi/music/royal-v2-green.mp3",
+  },
+  i18n: {
+    vi: {
+      name: "Hoàng Kim II Xanh",
+      description: "Thiệp cưới hoàng gia xanh rừng với khung vàng, hoa trắng ánh kim và bố cục trang trọng.",
+    },
+  },
+  assets: [
+    ...themeAssets,
+    ...gallery,
+    ...giftAssets,
+    "/chungdoi/images/template-previews/en/listing/royal_v2_green.webp",
+    "/chungdoi/images/template-previews/en/portrait/royal_v2_green.webp",
+    "/chungdoi/images/template-previews/en/landscape/royal_v2_green.webp",
+    "/chungdoi/music/royal-v2-green.mp3",
+  ],
+});

@@ -56,18 +56,23 @@ const ENVELOPE_TEMPLATE_SLUGS = [
   "minimalism-jade",
   "minimalism-sky-blue",
   "minimalism-powder-pink",
+  "minimalism-purple",
   "cherry-blossom-pink",
   "double-phoenix-green",
   "double-dragon-blue",
   "dragon-phoenix-blue",
   "dragon-phoenix-black",
+  "lien-hoa-pink",
+  "sunflower",
 ] as const;
 
 export const SOURCE_GIFT_VISUAL_SLUGS = [
   ...ENVELOPE_TEMPLATE_SLUGS,
   "chateau-green",
+  "crystal-floral-red",
   "glass-garden-green",
   "glass-garden-pink",
+  "royal-v2-green",
 ] as const;
 
 const envelopeVisuals = Object.fromEntries(
@@ -82,6 +87,10 @@ const envelopeVisuals = Object.fromEntries(
 
 const sourceGiftVisuals: Record<string, GiftVisual> = {
   ...envelopeVisuals,
+  "crystal-floral-red": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/crystal_floral_red.webp",
+  },
   "chateau-green": {
     kind: "giftbox",
     boxImage: "/chungdoi/images/giftbox/chateau-green/box.webp",
@@ -120,6 +129,14 @@ const sourceGiftVisuals: Record<string, GiftVisual> = {
       "/chungdoi/images/giftbox/mini/royal_red.webp",
       "/chungdoi/images/giftbox/mini/double_dragon_red.webp",
     ],
+  },
+  "royal-v2-green": {
+    kind: "giftbox",
+    boxImage: "/chungdoi/images/giftbox/royal-v2-green/box.webp",
+    decorImages: Array.from(
+      { length: 7 },
+      (_, index) => `/chungdoi/images/giftbox/royal-v2-green/decor-${index + 1}.webp`,
+    ),
   },
 };
 

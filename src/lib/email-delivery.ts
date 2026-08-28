@@ -275,3 +275,45 @@ export async function sendTrackedEmail(
     return { deliveryId: claim.id, status: "failed", providerMessageId: null };
   }
 }
+
+/**
+ * Ghi một lần khách bấm nút thanh toán trong email.
+ *
+ * Dùng SQL thô chứ không phải `prisma.emailDelivery.update()` vì
+ * `EmailDelivery.updatedAt` là `@updatedAt`, và `claimDelivery` ở trên đọc đúng cột
+ * đó cho hai việc: điều kiện optimistic concurrency khi nhận lại delivery
+ * (`where: { id, status, updatedAt }`), và mốc 15 phút để coi một delivery `pending`
+ * là bị kẹt. Một cú click đi qua ORM sẽ đẩy `updatedAt` lên và làm delivery trông
+ * như vừa được xử lý, tức là hoãn một lần retry chính đáng. Cùng lý do như
+ * `src/lib/invitation-views.ts`.
+ *
+ * `COALESCE` giữ `firstClickedAt` bất biến sau lần bấm đầu: phễu chuyển đổi so
+ * `Payment.paidAt` với mốc này, nên nó phải là một điểm cố định chứ không được
+ * nhảy về sau mỗi lần khách mở lại thư cũ.
+ *
+ * Không bao giờ ném lỗi. Đây là đường khách đang đi để trả tiền; một câu ghi số
+ * liệu thất bại không được phép chặn redirect sang trang thanh toán.
+ */
+export async function recordEmailClick(
+  deliveryId: string,
+  db: EmailOperationsDb = prisma,
+): Promise<void> {
+  const now = new Date();
+  try {
+    await db.$executeRaw`
+      UPDATE "EmailDelivery"
+      SET "clickCount" = "clickCount" + 1,
+          "firstClickedAt" = COALESCE("firstClickedAt", ${now}),
+          "lastClickedAt" = ${now}
+      WHERE "id" = ${deliveryId}
+    `;
+  } catch (error) {
+    console.error(
+      "EMAIL_CLICK_RECORD_FAILED",
+      JSON.stringify({
+        deliveryId,
+        reason: error instanceof Error ? error.message : "unknown",
+      }),
+    );
+  }
+}

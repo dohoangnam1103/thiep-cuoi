@@ -417,6 +417,84 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       ]
     }
   },
+  "lien-hoa-pink": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #c9768e, #d07d95, #e9b4c4)",
+      "cardBg": "rgba(254, 254, 254, 0.98)",
+      "textPrimary": "#c9768e",
+      "textSecondary": "rgba(208, 125, 149, 0.85)",
+      "accent": "#c9768e",
+      "dividerFrom": "transparent",
+      "dividerTo": "#c9768e",
+      "buttonBg": "#c9768e",
+      "buttonText": "#ffffff",
+      "guestBoxBg": "rgba(201, 118, 142, 0.08)",
+      "guestBoxBorder": "rgba(201, 118, 142, 0.15)",
+      "particleColors": [
+        "#ffffff",
+        "#e9b4c4",
+        "#d07d95",
+        "#c9768e",
+        "#f3d5df"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Beau Rivage\", \"The Nautigal\", cursive",
+      "ampersand": null
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[64%] top-0 left-[-50px] md:left-[-100px] -translate-x-[28%] -translate-y-[26%] -scale-x-100 rotate-[23deg] opacity-90",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/lien-hoa-pink/flower4.webp"
+        },
+        {
+          "className": "w-[64%] bottom-0 right-[-50px] md:right-[-100px] translate-x-[28%] translate-y-[26%] rotate-[-23deg] opacity-90",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/_decor/lien-hoa-pink/flower4.webp"
+        }
+      ]
+    }
+  },
+  "sunflower": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #dfae52, #cf8d22, #b87517)",
+      "cardBg": "rgba(255, 249, 232, 0.98)",
+      "textPrimary": "#c87916",
+      "textSecondary": "rgba(110, 113, 57, 0.86)",
+      "accent": "#c87916",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(200, 121, 22, 0.45)",
+      "buttonBg": "#c87916",
+      "buttonText": "#fff9e8",
+      "guestBoxBg": "rgba(227, 168, 28, 0.08)",
+      "guestBoxBorder": "rgba(110, 113, 57, 0.16)",
+      "particleColors": ["#fff9e8", "#f5e3a8", "#e3a81c", "#7c8b5e"],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Playfair Display\", \"EB Garamond\", serif",
+      "ampersand": "\"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[64%] top-0 left-[-50px] -translate-x-[28%] -translate-y-[24%] rotate-[-18deg] opacity-95 md:left-0 md:top-0 md:w-[34%] md:-translate-x-[30%] md:-translate-y-[22%] md:rotate-[-8deg] md:opacity-[0.88]",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/sunflower/flower4.webp"
+        },
+        {
+          "className": "w-[62%] bottom-0 right-[-50px] translate-x-[28%] translate-y-[26%] -scale-x-100 opacity-95 md:bottom-0 md:right-0 md:w-[32%] md:translate-x-[30%] md:translate-y-[24%] md:opacity-[0.88]",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/sunflower/flower2.webp"
+        }
+      ]
+    }
+  },
   "minimalism-dark-red": {
     "theme": {
       "background": "linear-gradient(to bottom right, #6e1a20, #511419, #380a0e)",
@@ -617,6 +695,47 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
           "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-100",
           "flyOnOpen": true,
           "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp?v=3"
+        }
+      ]
+    }
+  },
+  "minimalism-purple": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #9d8dbd, #7869a0, #625382)",
+      "cardBg": "rgba(253, 251, 255, 0.98)",
+      "textPrimary": "#625382",
+      "textSecondary": "rgba(98, 83, 130, 0.78)",
+      "accent": "#7869a0",
+      "dividerFrom": "transparent",
+      "dividerTo": "rgba(120, 105, 160, 0.35)",
+      "buttonBg": "#7869a0",
+      "buttonText": "#ffffff",
+      "guestBoxBg": "rgba(120, 105, 160, 0.1)",
+      "guestBoxBorder": "rgba(120, 105, 160, 0.18)",
+      "particleColors": [
+        "#b8a8d7",
+        "#f8f4f2",
+        "#d9c9eb",
+        "#7869a0"
+      ],
+      "particleType": "flowers"
+    },
+    "fonts": {
+      "couple": "\"Viaoda Libre\", \"EB Garamond\", serif",
+      "ampersand": "\"The Nautigal\", cursive"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[44%] max-w-[180px] md:max-w-[210px] top-[-8%] left-[-18px] -translate-x-[8%] rotate-[12deg] opacity-100",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/minimalism-purple/flower-decoration.webp"
+        },
+        {
+          "className": "w-[44%] max-w-[180px] md:max-w-[210px] bottom-[-12%] right-[-18px] translate-x-[8%] -scale-x-100 rotate-[-12deg] opacity-100",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/minimalism-purple/flower-decoration.webp"
         }
       ]
     }

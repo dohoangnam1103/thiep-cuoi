@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  ArrowRight,
+  Check,
   CheckCircle2,
   Clock3,
   Play,
   Plus,
-  Star,
-  Zap,
+  Scale,
+  X,
 } from "lucide-react";
 import NextLink from "next/link";
 import { useTranslations } from "next-intl";
@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { ContactFab } from "@/components/chungdoi-chrome";
 import { WeddingGuideVideo } from "@/components/wedding-guide-video";
 import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
+import { parseFaqAnswer } from "@/lib/faq-answer";
 
 import { Home2Footer, Home2Header } from "../chrome";
 import { Shell } from "../primitives";
@@ -30,8 +31,20 @@ import { InstantChapter, Ribbon, TemplatesChapter } from "../sections-top";
 import { V9Hero, V9Journey, type V9TemplateShot } from "./v9-journey";
 import "./v9.css";
 
-const testimonialKeys = ["t1", "t2", "t3", "t4", "t5", "t6"] as const;
-const faqNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+/* Một lời dẫn lớn + ba lời phụ, thay cho sáu thẻ đều nhau cùng gắn 5 sao. Lý do
+   đã ghi trong `sections-bottom.tsx`: sáu lời khen 5/5 giống khuôn là thứ khiến
+   người đọc kết luận ngay là dựng. Lời được chọn làm lời dẫn là lời cụ thể nhất
+   (đếm khách bằng RSVP). Bỏ t1 vì nội dung của nó ("10 phút", "đẹp hơn thiệp
+   giấy") đã là hero stat và cả chương truyền thống; bỏ t3 vì trùng trạm 03. */
+const featuredTestimonial = "t2";
+const supportingTestimonials = ["t4", "t5", "t6"] as const;
+
+/* Sáu câu còn lại sau khi cắt bốn câu chỉ kể lại hành trình: q2 (ba bước tạo
+   thiệp), q3 (không cần biết thiết kế), q5 (thêm ảnh/nhạc/bản đồ/RSVP) và q9
+   (hiển thị tốt trên điện thoại). Sáu câu giữ lại đều trả lời thứ mà không
+   chương nào phía trên trả lời: định nghĩa, cần chuẩn bị gì, sửa sau khi gửi,
+   số khách, cách khách nhận thiệp, và chi phí. */
+const faqNumbers = [1, 4, 6, 7, 8, 10] as const;
 
 export function V9Page({
   shots,
@@ -74,7 +87,7 @@ export function V9Page({
       <main>
         <V9Hero shot={heroShot} createHref={createHref} />
         <V9Journey shots={shots.slice(0, 4)} createHref={createHref} />
-        <GuideChapter />
+        <TraditionChapter />
         <Ribbon templateCount={templateCount} />
         <TemplatesChapter shots={galleryShots} templateCount={templateCount} />
         <InstantChapter templateId={instantTemplateId} />
@@ -111,53 +124,99 @@ function LabStrip() {
   );
 }
 
-function GuideChapter() {
-  const t = useTranslations("home");
-  const steps = [
-    [t("howItWorks.step1Title"), t("howItWorks.step1Copy")],
-    [t("howItWorks.step2Title"), t("howItWorks.step2Copy")],
-    [t("howItWorks.step3Title"), t("howItWorks.step3Copy")],
-  ];
+/**
+ * Chương "truyền thống & tiện lợi".
+ *
+ * Chỗ này trước đây là danh sách 3 bước (chọn mẫu → điền thông tin → gửi thiệp)
+ * đặt ngay dưới hành trình 6 trạm — tức là kể lại lần thứ hai cùng một câu
+ * chuyện, bằng câu ngắn hơn và nhạt hơn. Bỏ hẳn danh sách bước đó. Thay vào là
+ * thứ cả trang chưa nói ở đâu khác: cái gì của thiệp giấy được giữ nguyên, và
+ * cái gì thì không phải làm nữa. Video hướng dẫn là nội dung duy nhất còn giữ
+ * lại từ bản cũ, nên nó được đưa lên làm neo hình ảnh của chương.
+ */
+function TraditionChapter() {
+  const t = useTranslations("homeLabV9.tradition");
+  const keeps = [t("keep1"), t("keep2"), t("keep3"), t("keep4")];
+  const drops = [t("drop1"), t("drop2"), t("drop3"), t("drop4")];
 
   return (
     <section className="hp-paper-2 hp-grain py-[var(--hp-chapter-y)]">
-      <Shell className="grid items-center gap-12 lg:grid-cols-[1fr_0.78fr] lg:gap-20">
-        <div>
-          <p className="hp-label flex items-center gap-3 text-[color:var(--hp-accent)]">
-            <Play className="size-4" strokeWidth={1.5} />
-            {t("howItWorks.title")}
+      <Shell>
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-x-10">
+          <header className="lg:col-span-7">
+            <p className="hp-label flex items-center gap-3 text-[color:var(--hp-accent)]">
+              <Scale className="size-4" strokeWidth={1.5} />
+              {t("eyebrow")}
+            </p>
+            <h2 className="hp-display hp-h2 mt-6 max-w-[34rem]">{t("title")}</h2>
+          </header>
+          <p className="hp-body lg:col-span-4 lg:col-start-9 lg:self-end">
+            {t("lede")}
           </p>
-          <h2 className="hp-display hp-h2 mt-6 max-w-[36rem]">
-            {t("howItWorks.subtitle")}
-          </h2>
-          <ol className="mt-10 border-b border-[color:var(--hp-rule)]">
-            {steps.map(([title, copy], index) => (
-              <li
-                key={title}
-                className="grid grid-cols-[3rem_1fr] gap-4 border-t border-[color:var(--hp-rule)] py-5"
-              >
-                <span className="hp-num text-2xl text-[color:var(--hp-accent)]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span>
-                  <strong className="hp-display hp-h3 block">{title}</strong>
-                  <span className="hp-body-sm mt-1 block">{copy}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-9 flex flex-wrap items-center gap-5">
-            <NextLink href="/mau-thiep" className="hp-btn hp-btn-solid">
-              {t("howItWorks.ctaStart")}
-              <ArrowRight className="size-4" strokeWidth={1.5} />
-            </NextLink>
-            <NextLink href="/tao-thiep-cuoi-online" className="hp-link">
-              {t("howItWorks.ctaHint")}
+        </div>
+
+        <div className="mt-14 grid gap-12 lg:grid-cols-[0.62fr_1.38fr] lg:gap-16">
+          <div className="mx-auto w-full max-w-[19rem] lg:mx-0">
+            <div className="v9-guide-frame aspect-[9/16] w-full overflow-hidden">
+              <WeddingGuideVideo title={t("videoNote")} />
+            </div>
+            <p className="hp-label mt-4 flex items-center gap-2.5">
+              <Play className="size-3.5" strokeWidth={1.5} />
+              {t("videoLabel")}
+            </p>
+            <p className="hp-body-sm mt-2">{t("videoNote")}</p>
+            <NextLink href="/tao-thiep-cuoi-online" className="hp-link mt-6 inline-block">
+              {t("ctaHint")}
             </NextLink>
           </div>
-        </div>
-        <div className="v9-guide-frame mx-auto aspect-[9/16] w-full max-w-[20rem] overflow-hidden">
-          <WeddingGuideVideo title={t("howItWorks.ctaHint")} />
+
+          {/* Hai cột chia hàng bằng subgrid nên các kẻ chỉ ngang khớp nhau qua
+              đường kẻ dọc, dù câu hai bên dài ngắn khác nhau. */}
+          <div className="v9-contrast grid gap-10 sm:gap-0">
+            <div className="sm:pr-10">
+              <p className="hp-label border-b border-[color:var(--hp-rule)] pb-4 text-[color:var(--hp-fg)]">
+                {t("keepTitle")}
+              </p>
+              <ul>
+                {keeps.map((item) => (
+                  <li
+                    key={item}
+                    className="hp-body grid grid-cols-[auto_1fr] gap-x-4 border-b border-[color:var(--hp-rule)] py-5"
+                  >
+                    <Check
+                      aria-hidden
+                      className="mt-[0.3em] size-4 shrink-0 text-[color:var(--hp-accent)]"
+                      strokeWidth={1.75}
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Cột "bỏ được" gạch ngang bằng nét mực đỏ — một cách trình bày
+                không xuất hiện ở bất kỳ chương nào khác của trang. */}
+            <div className="sm:border-l sm:border-[color:var(--hp-rule)] sm:pl-10">
+              <p className="hp-label border-b border-[color:var(--hp-rule)] pb-4">
+                {t("dropTitle")}
+              </p>
+              <ul>
+                {drops.map((item) => (
+                  <li
+                    key={item}
+                    className="hp-body grid grid-cols-[auto_1fr] gap-x-4 border-b border-[color:var(--hp-rule)] py-5"
+                  >
+                    <X
+                      aria-hidden
+                      className="mt-[0.3em] size-4 shrink-0 text-[color:var(--v9-coral)] opacity-55"
+                      strokeWidth={1.75}
+                    />
+                    <span className="v9-drop-item">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </Shell>
     </section>
@@ -166,18 +225,6 @@ function GuideChapter() {
 
 function SupportChapter() {
   const t = useTranslations("home");
-  const cards = [
-    {
-      label: t("support.replyTimeLabel"),
-      value: t("support.replyTimeValue"),
-      Icon: Zap,
-    },
-    {
-      label: t("support.helpEditsLabel"),
-      value: t("support.helpEditsValue"),
-      Icon: CheckCircle2,
-    },
-  ];
 
   return (
     <section className="hp-wine hp-grain py-[var(--hp-chapter-y)]">
@@ -193,16 +240,19 @@ function SupportChapter() {
             })}
           </p>
         </div>
-        <div className="grid gap-px bg-[color:var(--hp-rule)] sm:grid-cols-2 lg:grid-cols-1">
-          {cards.map(({ label, value, Icon }) => (
-            <div key={label} className="flex items-center gap-5 bg-[color:var(--hp-bg)] p-6">
-              <Icon className="size-6 shrink-0 text-[color:var(--hp-accent)]" strokeWidth={1.35} />
-              <div>
-                <p className="hp-body-sm">{label}</p>
-                <p className="hp-display hp-h3 mt-1 text-[color:var(--hp-fg)]">{value}</p>
-              </div>
-            </div>
-          ))}
+        {/* Chỉ còn một thẻ. Thẻ "thời gian phản hồi · dưới 1 phút" đã bị bỏ vì
+            dải số liệu phía trên đã in đúng con số đó ("< 1 phút"). */}
+        <div className="flex items-center gap-5 border border-[color:var(--hp-rule)] bg-[color:var(--hp-bg)] p-7">
+          <CheckCircle2
+            className="size-7 shrink-0 text-[color:var(--hp-accent)]"
+            strokeWidth={1.35}
+          />
+          <div>
+            <p className="hp-body-sm">{t("support.helpEditsLabel")}</p>
+            <p className="hp-display hp-h3 mt-1 text-[color:var(--hp-fg)]">
+              {t("support.helpEditsValue")}
+            </p>
+          </div>
         </div>
       </Shell>
     </section>
@@ -226,22 +276,37 @@ function TestimonialsChapter() {
             {t("testimonials.subtitle")}
           </p>
         </div>
-        <div className="mt-14 grid gap-px bg-[color:var(--hp-rule)] sm:grid-cols-2 lg:grid-cols-3">
-          {testimonialKeys.map((key, index) => (
-            <figure key={key} className="flex min-h-64 flex-col bg-[color:var(--hp-bg)] p-7">
-              <div className="flex gap-1 text-[color:var(--hp-accent)]" aria-hidden>
-                {Array.from({ length: 5 }).map((_, starIndex) => (
-                  <Star key={starIndex} className="size-3.5 fill-current" strokeWidth={1} />
-                ))}
-              </div>
-              <blockquote className="hp-display mt-6 flex-1 text-xl leading-[1.35]">
+        <figure className="mt-14 border-t border-[color:var(--hp-rule)] pt-12">
+          <blockquote className="hp-display hp-display-italic max-w-[52rem] text-[clamp(1.4rem,3.1vw,2.35rem)] leading-[1.28]">
+            “{t(`testimonials.${featuredTestimonial}Quote`)}”
+          </blockquote>
+          <figcaption className="hp-label mt-8 flex flex-wrap items-center gap-x-3">
+            <span className="text-[color:var(--hp-fg)]">
+              {t(`testimonials.${featuredTestimonial}Author`)}
+            </span>
+            <span aria-hidden className="h-px w-6 bg-[color:var(--hp-rule)]" />
+            <span>{t(`testimonials.${featuredTestimonial}Role`)}</span>
+          </figcaption>
+        </figure>
+
+        <div className="mt-16 grid gap-y-10 sm:grid-cols-3 sm:gap-x-10">
+          {supportingTestimonials.map((key, index) => (
+            <figure
+              key={key}
+              className={`border-t border-[color:var(--hp-rule)] pt-7 ${
+                index === 0 ? "" : "sm:border-l sm:border-t-0 sm:pl-10 sm:pt-0"
+              }`}
+            >
+              <blockquote className="hp-body text-[color:var(--hp-fg)]">
                 “{t(`testimonials.${key}Quote`)}”
               </blockquote>
-              <figcaption className="mt-7 border-t border-[color:var(--hp-rule)] pt-5">
-                <p className="hp-label !tracking-[0.16em] text-[color:var(--hp-fg)]">
-                  {String(index + 1).padStart(2, "0")} · {t(`testimonials.${key}Author`)}
-                </p>
-                <p className="hp-body-sm mt-2">{t(`testimonials.${key}Role`)}</p>
+              <figcaption className="hp-label mt-5">
+                <span className="text-[color:var(--hp-fg)]">
+                  {t(`testimonials.${key}Author`)}
+                </span>
+                <span className="mt-1.5 block !tracking-[0.18em]">
+                  {t(`testimonials.${key}Role`)}
+                </span>
               </figcaption>
             </figure>
           ))}
@@ -256,7 +321,7 @@ function FullFaqChapter() {
   const labT = useTranslations("homeLabV9");
   const items = faqNumbers.map((number) => ({
     question: t(`faq.q${number}Q`),
-    answer: t(`faq.q${number}A`),
+    answer: parseFaqAnswer(t(`faq.q${number}A`)),
   }));
 
   return (
@@ -284,7 +349,22 @@ function FullFaqChapter() {
                 </h3>
                 <Plus className="v9-qa-sign mt-1 size-4 shrink-0" strokeWidth={1.5} />
               </summary>
-              <p className="hp-body whitespace-pre-line pb-7 pl-10 pr-8">{item.answer}</p>
+              {/* Câu trả lời trong catalog dùng `\n\n` ngắt khối, `\n` ngắt dòng
+                  danh sách. Không phân tích thì các dòng danh sách in ra thành
+                  một dãy câu rời, mất dấu đầu dòng. */}
+              <div className="hp-body space-y-4 pb-7 pl-10 pr-8">
+                {item.answer.map((block, blockIndex) =>
+                  block.type === "list" ? (
+                    <ul key={blockIndex} className="list-disc space-y-1.5 pl-5">
+                      {block.items.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p key={blockIndex}>{block.text}</p>
+                  ),
+                )}
+              </div>
             </details>
           ))}
         </div>

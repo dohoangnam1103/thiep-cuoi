@@ -142,6 +142,14 @@ model EmailDelivery {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   sentAt            DateTime?
+  /// Lần đầu người nhận bấm nút thanh toán trong thư. Đây là cột mà phễu
+  /// `/admin/email-logs` đọc: nó bất biến sau lần bấm đầu nên tỉ lệ chuyển đổi
+  /// không bị dịch mỗi lần khách mở lại thư cũ.
+  firstClickedAt    DateTime?
+  lastClickedAt     DateTime?
+  /// Tổng số lần bấm, không lọc trùng. Chỉ để nhận ra thư được mở lại nhiều lần;
+  /// đừng dùng làm mẫu số cho bất kỳ tỉ lệ nào.
+  clickCount        Int       @default(0)
 
   user       User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
   invitation Invitation?            @relation(fields: [invitationId], references: [id], onDelete: SetNull)

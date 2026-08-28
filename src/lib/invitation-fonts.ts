@@ -26,6 +26,7 @@ const BODY_FONT_BY_DISPLAY: Readonly<Record<string, InvitationBodyFontClass>> = 
   "font-art-lora": "font-body-serif",
   "font-art-new-eddy": "font-body-serif",
   "font-art-nautigal": "font-body-serif",
+  "font-art-beau-rivage": "font-body-serif",
   "font-art-alex": "font-body-serif",
   "font-art-signora": "font-body-serif",
   "font-art-aghita": "font-body-serif",

@@ -3,9 +3,25 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import type { Prisma } from "@/generated/prisma/client";
+import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
 import { verifyAdmin } from "@/lib/admin-dal";
-import { endOfDayExclusive, parseDateInput, parseUserSearch } from "@/lib/admin-support-input";
+import {
+  adminPageHref,
+  adminPageWindow,
+  adminResetHref,
+  parsePage,
+  parsePerPage,
+  perPageParam,
+} from "@/lib/admin-pagination";
+import {
+  defaultDayFilter,
+  endOfDayExclusive,
+  parseDateInput,
+  parseUserSearch,
+} from "@/lib/admin-support-input";
 import { formatVietnamDateTimeShort } from "@/lib/datetime";
+import { emailClickSecret } from "@/lib/email-click";
+import { funnelRate, loadEmailFunnel, sumEmailFunnel } from "@/lib/email-funnel";
 import { prisma } from "@/lib/prisma";
 import {
   FORECAST_RUN_COUNT,
@@ -19,8 +35,6 @@ export const metadata: Metadata = {
   title: "Lịch sử email | Quản trị",
   robots: { index: false, follow: false },
 };
-
-const PAGE_SIZE = 200;
 
 const inputClass =
   "rounded-lg border border-border bg-background px-3 py-1.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20";
@@ -42,6 +56,18 @@ function includes<T extends readonly string[]>(values: T, value: string | undefi
 function validRunId(value: string | undefined): string | null {
   const candidate = value?.trim() ?? "";
   return /^[a-zA-Z0-9_-]{8,80}$/.test(candidate) ? candidate : null;
+}
+
+/**
+ * Số kèm tỉ lệ so với mẫu số, ví dụ `3 · 30%`.
+ *
+ * Mẫu số 0 in dấu gạch chứ không phải `0%`: chưa gửi thư nào thì chưa đo được gì,
+ * còn "0%" đọc như một kết quả đã đo. Xem `funnelRate`.
+ */
+function withRate(value: number, denominator: number): string {
+  const rate = funnelRate(value, denominator);
+  if (rate === null) return "—";
+  return `${value} · ${Math.round(rate * 100)}%`;
 }
 
 function statusClass(status: string): string {
@@ -80,20 +106,30 @@ export default async function AdminEmailLogsPage({
     status?: string;
     context?: string;
     run?: string;
+    page?: string;
+    perPage?: string;
   }>;
 }) {
   await verifyAdmin();
   const t = await getTranslations("adminSupport");
   const params = await searchParams;
   const search = parseUserSearch(params.q);
-  const fromDate = parseDateInput(params.from);
-  const toDate = parseDateInput(params.to);
   const type = includes(EMAIL_TYPES, params.type) ? params.type : null;
   const status = includes(EMAIL_STATUSES, params.status) ? params.status : null;
   const context = params.context === "with-invitation" || params.context === "without-invitation"
     ? params.context
     : null;
   const runId = validRunId(params.run);
+
+  // Mặc định chỉ xem email của hôm nay — xem `defaultDayFilter` cho lý do và
+  // cho chỗ chuỗi rỗng khác `undefined`. Bấm vào một lượt gửi thì bỏ mặc định:
+  // lượt đó có thể của hôm qua, lọc theo hôm nay sẽ cho ra bảng rỗng khó hiểu.
+  const hasDateParam = params.from !== undefined || params.to !== undefined;
+  const defaultDay = runId ? null : defaultDayFilter(params.from, params.to);
+  const fromValue = defaultDay ?? params.from;
+  const toValue = defaultDay ?? params.to;
+  const fromDate = parseDateInput(fromValue);
+  const toDate = parseDateInput(toValue);
 
   const attemptedAt: Prisma.DateTimeFilter = {
     ...(fromDate ? { gte: fromDate } : {}),
@@ -111,31 +147,14 @@ export default async function AdminEmailLogsPage({
     ...(runId ? { runId } : {}),
     ...(Object.keys(deliveryWhere).length > 0 ? { delivery: { is: deliveryWhere } } : {}),
   };
-  const isFiltered = Boolean(search || fromDate || toDate || type || status || context || runId);
+  // `hasDateParam` chứ không phải `fromDate`: mặc định hôm nay không phải là
+  // một bộ lọc admin đặt ra, nên nó không được làm hiện nút "Xoá lọc".
+  const isFiltered = Boolean(search || hasDateParam || type || status || context || runId);
 
-  const [total, sentCount, failedCount, attempts, runs, reminderCandidates] = await Promise.all([
+  const [total, sentCount, failedCount, runs, reminderCandidates, funnel] = await Promise.all([
     prisma.emailDeliveryAttempt.count({ where }),
     prisma.emailDeliveryAttempt.count({ where: { ...where, status: "sent" } }),
     prisma.emailDeliveryAttempt.count({ where: { ...where, status: "failed" } }),
-    prisma.emailDeliveryAttempt.findMany({
-      where,
-      orderBy: { attemptedAt: "desc" },
-      take: PAGE_SIZE,
-      include: {
-        delivery: {
-          include: {
-            user: { select: { email: true } },
-            invitation: {
-              select: {
-                id: true,
-                templateId: true,
-                content: { select: { brideFullName: true, groomFullName: true } },
-              },
-            },
-          },
-        },
-      },
-    }),
     prisma.emailRun.findMany({
       orderBy: { startedAt: "desc" },
       take: 12,
@@ -161,7 +180,34 @@ export default async function AdminEmailLogsPage({
         content: { select: { brideShortName: true, groomShortName: true } },
       },
     }),
+    // Cố ý không nhận `where` của bảng bên dưới: phễu luôn tính toàn thời gian.
+    loadEmailFunnel(),
   ]);
+
+  const funnelTotal = sumEmailFunnel(funnel);
+  const clickTrackingEnabled = emailClickSecret() !== null;
+
+  const pagination = adminPageWindow(total, parsePage(params.page), parsePerPage(params.perPage));
+  const attempts = await prisma.emailDeliveryAttempt.findMany({
+    where,
+    orderBy: { attemptedAt: "desc" },
+    skip: pagination.skip,
+    take: pagination.take,
+    include: {
+      delivery: {
+        include: {
+          user: { select: { email: true } },
+          invitation: {
+            select: {
+              id: true,
+              templateId: true,
+              content: { select: { brideFullName: true, groomFullName: true } },
+            },
+          },
+        },
+      },
+    },
+  });
 
   const cronRuns = upcomingCronRuns(new Date());
   const candidateById = new Map(reminderCandidates.map((invitation) => [invitation.id, invitation]));
@@ -182,6 +228,28 @@ export default async function AdminEmailLogsPage({
     const key = entry.scheduledAt.getTime();
     forecastCountByRun.set(key, (forecastCountByRun.get(key) ?? 0) + 1);
   }
+
+  /**
+   * Bộ lọc hiện tại dưới dạng query, để link phân trang và link "xem tất cả
+   * thời gian" không làm mất chúng.
+   *
+   * `params.from`/`params.to` giữ nguyên bản, kể cả chuỗi rỗng: đó là cách "xem
+   * tất cả thời gian" sống sót qua các trang thay vì bị mặc định hôm nay đè lại.
+   */
+  const listParams = {
+    q: search || undefined,
+    from: params.from,
+    to: params.to,
+    type: type ?? undefined,
+    status: status ?? undefined,
+    context: context ?? undefined,
+    run: runId ?? undefined,
+  };
+  const allTimeHref = adminPageHref(
+    "/admin/email-logs",
+    { ...listParams, from: "", to: "", perPage: perPageParam(pagination.pageSize) },
+    1,
+  );
 
   const typeLabel: Record<string, string> = {
     "trial-ending": t("emailTypeTrialEnding"),
@@ -209,6 +277,88 @@ export default async function AdminEmailLogsPage({
           <span>{t("emailRunFailed")}: <strong className="text-rose-700">{failedCount}</strong></span>
         </div>
       </div>
+
+      <section className="space-y-3">
+        <div>
+          <h2 className="font-heading text-lg text-foreground">{t("emailFunnelTitle")}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("emailFunnelDescription")}</p>
+        </div>
+
+        {!clickTrackingEnabled ? (
+          <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-800">
+            {t("emailFunnelClickTrackingOff")}
+          </p>
+        ) : null}
+
+        {funnelTotal.sent === 0 ? (
+          <p className="rounded-2xl border border-border bg-card px-4 py-5 text-sm text-muted-foreground">
+            {t("emailFunnelEmpty")}
+          </p>
+        ) : (
+          <>
+            <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+              <table className="w-full text-sm">
+                <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">{t("emailType")}</th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
+                      {t("emailFunnelSent")}
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
+                      {t("emailFunnelClicked")}
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
+                      {t("emailFunnelPaidAfterSent")}
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
+                      {t("emailFunnelPaidAfterClick")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {funnel.map((row) => (
+                    <tr key={row.type} className="border-b border-border last:border-0">
+                      <td className="whitespace-nowrap px-4 py-3">
+                        {typeLabel[row.type] ?? row.type}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right font-medium text-foreground">
+                        {row.sent}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right text-muted-foreground">
+                        {withRate(row.clicked, row.sent)}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right text-emerald-700">
+                        {withRate(row.paidAfterSent, row.sent)}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right text-emerald-700">
+                        {withRate(row.paidAfterClick, row.clicked)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="border-t border-border bg-muted/40 font-medium">
+                  <tr>
+                    <td className="px-4 py-3">{t("emailFunnelTotal")}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-right text-foreground">
+                      {funnelTotal.sent}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-right text-muted-foreground">
+                      {withRate(funnelTotal.clicked, funnelTotal.sent)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-right text-emerald-700">
+                      {withRate(funnelTotal.paidAfterSent, funnelTotal.sent)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-right text-emerald-700">
+                      {withRate(funnelTotal.paidAfterClick, funnelTotal.clicked)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">{t("emailFunnelCaveat")}</p>
+          </>
+        )}
+      </section>
 
       <section className="space-y-3">
         <div>
@@ -343,17 +493,18 @@ export default async function AdminEmailLogsPage({
 
       <form method="GET" className="flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-card p-4">
         {runId ? <input type="hidden" name="run" value={runId} /> : null}
+        <AdminPerPageField pageSize={pagination.pageSize} />
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-search" className="text-xs text-muted-foreground">{t("emailRecipient")}</label>
           <input id="email-log-search" name="q" type="search" defaultValue={search} placeholder="an@gmail.com" className={`w-60 ${inputClass}`} />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-from" className="text-xs text-muted-foreground">{t("emailFromDate")}</label>
-          <input id="email-log-from" name="from" type="date" defaultValue={params.from ?? ""} className={inputClass} />
+          <input id="email-log-from" name="from" type="date" defaultValue={fromValue ?? ""} className={inputClass} />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-to" className="text-xs text-muted-foreground">{t("emailToDate")}</label>
-          <input id="email-log-to" name="to" type="date" defaultValue={params.to ?? ""} className={inputClass} />
+          <input id="email-log-to" name="to" type="date" defaultValue={toValue ?? ""} className={inputClass} />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-type" className="text-xs text-muted-foreground">{t("emailType")}</label>
@@ -378,10 +529,17 @@ export default async function AdminEmailLogsPage({
           </select>
         </div>
         <button type="submit" className="rounded-lg bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90">{t("filterButton")}</button>
-        {isFiltered ? <Link href="/admin/email-logs" className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-secondary">{t("clearFilters")}</Link> : null}
+        {isFiltered ? <Link href={adminResetHref("/admin/email-logs", pagination.pageSize)} className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-secondary">{t("clearFilters")}</Link> : null}
       </form>
 
-      {total > PAGE_SIZE ? <p className="text-sm text-muted-foreground">{t("emailRecentLimit", { shown: attempts.length, total })}</p> : null}
+      {defaultDay ? (
+        <p className="text-sm text-muted-foreground">
+          {t("emailDefaultToday", { date: defaultDay })}{" "}
+          <Link href={allTimeHref} className="text-primary hover:underline">
+            {t("emailShowAllTime")}
+          </Link>
+        </p>
+      ) : null}
 
       <div className="overflow-x-auto rounded-2xl border border-border bg-background">
         <table className="w-full text-sm">
@@ -434,6 +592,8 @@ export default async function AdminEmailLogsPage({
           </tbody>
         </table>
       </div>
+
+      <AdminPagination pagination={pagination} basePath="/admin/email-logs" params={listParams} />
     </div>
   );
 }

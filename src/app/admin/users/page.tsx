@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
+import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { CUSTOMER_USER_WHERE } from "@/lib/admin-invitation-filters";
+import { adminPageWindow, adminResetHref, parsePage, parsePerPage } from "@/lib/admin-pagination";
 import { parseUserSearch } from "@/lib/admin-support-input";
 import { formatVietnamDate } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
@@ -18,21 +20,30 @@ const formatDate = formatVietnamDate;
 export default async function AdminUsersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; perPage?: string }>;
 }) {
   await verifyAdmin();
-  const { q } = await searchParams;
+  const { q, page, perPage } = await searchParams;
   const search = parseUserSearch(q);
   const t = await getTranslations("adminSupport");
 
   // `CUSTOMER_USER_WHERE` spells out the `email = null` branch, which is the
   // only form that keeps anonymous accounts in the list — see its comment.
+  const where = {
+    ...CUSTOMER_USER_WHERE,
+    ...(search ? { email: { contains: search } } : {}),
+  };
+
+  // Đếm trước rồi mới lấy trang: `adminPageWindow` cần tổng để co số trang từ
+  // URL về khoảng hợp lệ, nếu không một link cũ sẽ cho ra bảng rỗng.
+  const total = await prisma.user.count({ where });
+  const pagination = adminPageWindow(total, parsePage(page), parsePerPage(perPage));
+
   const users = await prisma.user.findMany({
-    where: {
-      ...CUSTOMER_USER_WHERE,
-      ...(search ? { email: { contains: search } } : {}),
-    },
+    where,
     orderBy: { createdAt: "desc" },
+    skip: pagination.skip,
+    take: pagination.take,
     select: {
       id: true,
       email: true,
@@ -45,9 +56,10 @@ export default async function AdminUsersPage({
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="font-heading text-2xl font-semibold text-foreground">
-          {t("usersTitle", { count: users.length })}
+          {t("usersTitle", { count: total })}
         </h1>
         <form method="GET" className="flex flex-wrap items-center gap-2">
+          <AdminPerPageField pageSize={pagination.pageSize} />
           <label htmlFor="admin-user-search" className="text-sm text-muted-foreground">
             {t("searchLabel")}
           </label>
@@ -67,7 +79,7 @@ export default async function AdminUsersPage({
           </button>
           {search ? (
             <Link
-              href="/admin/users"
+              href={adminResetHref("/admin/users", pagination.pageSize)}
               className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-secondary"
             >
               {t("clearSearch")}
@@ -111,6 +123,12 @@ export default async function AdminUsersPage({
           </tbody>
         </table>
       </div>
+
+      <AdminPagination
+        pagination={pagination}
+        basePath="/admin/users"
+        params={{ q: search || undefined }}
+      />
     </div>
   );
 }

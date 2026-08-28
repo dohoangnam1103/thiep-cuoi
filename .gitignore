@@ -46,6 +46,9 @@ next-env.d.ts
 /public/uploads
 /data/
 
+# Production DB snapshots pulled from minipc (contain real user data — never commit)
+/backups/
+
 # Vercel
 .vercel
 

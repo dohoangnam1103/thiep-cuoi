@@ -2,6 +2,7 @@ import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
 import { PrismaClient } from "@/generated/prisma/client";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
+import { completedTemplateSlugs } from "@/data/chungdoi";
 import { fromDemoContent } from "@/lib/from-demo-content";
 
 const databaseUrl = process.env.DATABASE_URL ?? "file:./dev.db";
@@ -13,8 +14,12 @@ const SYSTEM_EMAIL = "system@demo.local";
 // Seed lại một slug là GHI ĐÈ: content bị upsert theo bản tĩnh, schedule và
 // gallery bị xoá rồi tạo lại. Chạy trắng cả bảng sẽ thổi bay mọi chỉnh sửa mà
 // admin đã làm trong /admin/demos. Nên khi chỉ cần bù mẫu mới, dùng --missing
-// (chỉ tạo slug chưa có demo row) hoặc --only=<slug,slug>.
-type SeedScope = { onlySlugs: Set<string> | null; missingOnly: boolean };
+// (chỉ tạo slug chưa có demo row) kết hợp --completed hoặc --only=<slug,slug>.
+type SeedScope = {
+  onlySlugs: Set<string> | null;
+  missingOnly: boolean;
+  completedOnly: boolean;
+};
 
 function parseScope(argv: readonly string[]): SeedScope {
   const only = argv.find((arg) => arg.startsWith("--only="));
@@ -29,6 +34,7 @@ function parseScope(argv: readonly string[]): SeedScope {
         )
       : null,
     missingOnly: argv.includes("--missing"),
+    completedOnly: argv.includes("--completed"),
   };
 }
 
@@ -51,6 +57,7 @@ async function main() {
   );
 
   const entries = Object.entries(chungdoiDemoContent).filter(([slug]) => {
+    if (scope.completedOnly && !completedTemplateSlugs.has(slug)) return false;
     if (scope.onlySlugs && !scope.onlySlugs.has(slug)) return false;
     if (scope.missingOnly && existing.has(slug)) return false;
     return true;

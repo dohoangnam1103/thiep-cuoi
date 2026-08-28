@@ -294,6 +294,29 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
    Gửi lỗi thì giữ nguyên mốc để lượt sau retry, nên bốn lượt 12:00-21:00 cũng
    đóng vai trò retry cho lượt 09:00.
 
+3. Đo click nút thanh toán trong email cần thêm một biến vào `.env` của container
+   (`env_file` trong docker-compose nên không phải sửa compose):
+
+   ```
+   EMAIL_LINK_SECRET=<chuỗi random dài, ví dụ openssl rand -hex 32>
+   ```
+
+   Biến này **không bắt buộc**. Thiếu nó thì nút trong email trỏ thẳng vào trang
+   thanh toán như trước và email vẫn gửi bình thường — chỉ là hai cột liên quan tới
+   click trong bảng "Hiệu quả email nhắc thanh toán" ở `/admin/email-logs` sẽ trống,
+   và trang đó tự hiện cảnh báo nhắc. Chọn suy giảm kiểu này vì mất số liệu nhẹ hơn
+   mất email nhắc.
+
+   Có secret rồi thì nút CTA đi qua `/api/email/click?t=<token>`, endpoint ghi lại
+   lần bấm rồi 302 sang `/dashboard/<id>/thanh-toan`. Endpoint công khai đúng như
+   thiết kế: trang thanh toán đứng sau cửa đăng nhập và query string bị mất khi
+   redirect sang `/login`, nên click phải được ghi trước cửa đó. Token là HMAC của
+   `dedupeKey` nên không ai giả được click cho thiệp khác.
+
+   > ⚠️ **Đổi `EMAIL_LINK_SECRET` sẽ làm token trong các email đã gửi hết hiệu lực.**
+   > Khách bấm vào thư cũ vẫn tới được `/dashboard` (không lỗi), nhưng click đó
+   > không được ghi. Chỉ đổi khi thực sự cần.
+
 ## Sự cố thường gặp
 
 - **Public trả 530**: tunnel không tới được origin hoặc DNS trỏ nhầm tunnel khác
@@ -302,6 +325,11 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
 - **Email nhắc không gửi**: kiểm tra `RESEND_API_KEY` trong container
   (`docker exec thiepmungonline-web printenv RESEND_API_KEY`) và log
   `/home/namdo/apps/thiepmungonline/trial-reminders.log`.
+- **Cột click trong bảng phễu luôn bằng 0**: trước tiên xem `/admin/email-logs` có
+  hiện cảnh báo thiếu `EMAIL_LINK_SECRET` không. Nếu đã có secret thì kiểm tra thư
+  gửi ra có thật là link `/api/email/click` chứ không phải link `/dashboard` trực
+  tiếp — `EmailDelivery.html` là bất biến, nên những thư đã tạo TRƯỚC khi bật secret
+  vẫn mang link cũ vĩnh viễn và không bao giờ đo được. Chỉ thư mới có số liệu.
 - **Khách báo đã chuyển tiền mà thiệp vẫn ẩn**: mở `/admin/payments`, ca không tự
   kích hoạt được sẽ có nhãn **Cần đối soát** kèm lý do. Nếu không thấy nhãn nào
   thì khả năng cao là webhook payOS bị mất — chạy đối soát tay

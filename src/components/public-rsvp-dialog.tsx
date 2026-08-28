@@ -32,6 +32,7 @@ export function PublicRsvpDialog({
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
+        data-testid="public-rsvp-trigger"
         className={cn(
           "fixed bottom-5 left-4 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-neutral-900 px-5 text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 sm:left-6",
           triggerClassName,

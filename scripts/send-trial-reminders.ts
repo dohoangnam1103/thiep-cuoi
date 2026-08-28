@@ -7,7 +7,7 @@ import {
   sendTrackedEmail,
   startEmailRun,
 } from "@/lib/email-delivery";
-import { buildReminderEmail } from "@/lib/email";
+import { buildReminderEmail, reminderDedupeKey } from "@/lib/email";
 import {
   buildCardName,
   shouldSendExpiredReminder,
@@ -103,7 +103,7 @@ async function main() {
         const delivery = await sendTrackedEmail(
           {
             runId: run?.id,
-            dedupeKey: `trial-reminder:${kind}:${inv.id}`,
+            dedupeKey: reminderDedupeKey(kind, inv.id),
             type: kind,
             recipientEmail: email as string,
             recipientName,

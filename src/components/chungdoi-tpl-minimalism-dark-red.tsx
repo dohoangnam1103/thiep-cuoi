@@ -14,6 +14,7 @@ import {
   InvitationMap,
   GiftEnvelope,
   SharedWishForm,
+  SharedCountdown,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 
@@ -26,6 +27,13 @@ type MinimalismPalette = {
   creamSoft: string;
   pageBg: string;
   deep: string;
+  houseSrc?: string;
+  envelopeBackgroundSrc?: string;
+  envelopeCoverSrc?: string;
+  noteSrc?: string | null;
+  scheduleIcons?: readonly (string | null)[];
+  footerFlowerSrc?: string;
+  showCountdown?: boolean;
 };
 
 const DARK_RED_PALETTE: MinimalismPalette = {
@@ -72,6 +80,30 @@ const POWDER_PINK_PALETTE: MinimalismPalette = {
   deep: "#865463",
 };
 
+const PURPLE_PALETTE: MinimalismPalette = {
+  decorPath: "/chungdoi/images/themes/minimalism-purple",
+  flowerSrc: "/chungdoi/images/themes/minimalism-purple/flower3-decoration.webp",
+  themePath: "/chungdoi/images/themes/minimalism-purple",
+  primary: "#7869a0",
+  cream: "#f8f4f2",
+  creamSoft: "rgba(248,244,242,0.78)",
+  pageBg: "#fdfdfc",
+  deep: "#625382",
+  houseSrc: "/chungdoi/images/themes/minimalism-purple/house-background.webp",
+  envelopeBackgroundSrc: "/chungdoi/images/themes/minimalism-purple/envelope-background.webp",
+  envelopeCoverSrc: "/chungdoi/images/themes/minimalism-purple/envelope-cover.webp",
+  noteSrc: null,
+  scheduleIcons: [
+    null,
+    "/chungdoi/images/themes/minimalism-purple/cake.webp",
+    "/chungdoi/images/themes/minimalism-purple/music.webp",
+    "/chungdoi/images/themes/minimalism-purple/church.webp",
+    null,
+  ],
+  footerFlowerSrc: "/chungdoi/images/themes/minimalism-purple/flowerbottom-decoration.webp",
+  showCountdown: true,
+};
+
 const MinimalismPaletteContext = createContext(DARK_RED_PALETTE);
 
 function useMinimalismPalette() {
@@ -91,11 +123,11 @@ const SCHEDULE_ICONS = [null, "camera", "cake", "cook", null] as const;
 
 /** Watermark lâu đài, mờ 10%, lặp lại ở nhiều mốc dọc trang. */
 function CastleWatermark({ className }: { className: string }) {
-  const { themePath } = useMinimalismPalette();
+  const { houseSrc, themePath } = useMinimalismPalette();
 
   return (
     <img
-      src={`${themePath}/castle-background.webp`}
+      src={houseSrc ?? `${themePath}/castle-background.webp`}
       alt=""
       aria-hidden
       loading="lazy"
@@ -271,7 +303,7 @@ function MinimalismInvitation({
 
           <div className="relative z-10 mt-24 w-[82%] max-w-[330px] md:mt-28 md:max-w-[420px]">
             <div className="relative aspect-[333/384]">
-              <img src={`${DECOR}/envelope-background.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 z-10 w-full max-w-none" />
+              <img src={palette.envelopeBackgroundSrc ?? `${DECOR}/envelope-background.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 z-10 w-full max-w-none" />
               {heroPhoto ? (
                 <div
                   className="absolute left-[33%] top-[-2%] z-20 w-[64%]"
@@ -283,7 +315,7 @@ function MinimalismInvitation({
                 </div>
               ) : null}
               <FloatingFlower wrapClassName="-left-[2%] -top-[12%] z-[25] w-[42%]" duration="5s" delay="0s" rotate="rotate-[-17deg]" />
-              <img src={`${DECOR}/envelope-cover.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-30 w-full max-w-none" />
+              <img src={palette.envelopeCoverSrc ?? `${DECOR}/envelope-cover.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-0 z-30 w-full max-w-none" />
             </div>
           </div>
 
@@ -413,6 +445,19 @@ function MinimalismInvitation({
                   </div>
                 ) : null}
 
+                {palette.showCountdown ? (
+                  <div className="mt-2 flex flex-col items-center">
+                    <h3 className="text-[15px] font-semibold uppercase tracking-[0.06em] md:text-[17px]" style={{ ...SERIF, color: CREAM }}>
+                      Cùng đếm ngược
+                    </h3>
+                    <SharedCountdown
+                      target={`${couple.date}T${banquetTime || "18:00"}`}
+                      className="mt-2 text-center text-sm md:text-base"
+                      style={{ ...BODY, color: CREAM_SOFT }}
+                    />
+                  </div>
+                ) : null}
+
                 {/* Lịch nằm trên miếng cream, đảo ngược tương phản so với card */}
                 {calendar ? (
                   <div className="mx-auto mt-3 w-fit max-w-full overflow-hidden rounded-[10px] px-4 pb-4 pt-2" style={{ backgroundColor: CREAM }}>
@@ -516,7 +561,7 @@ function MinimalismInvitation({
                 <CreamHeading>Lịch Trình Ngày Cưới</CreamHeading>
                 <ol className="relative mx-auto grid w-full max-w-[460px] grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)] items-center gap-x-6 gap-y-8 md:gap-x-8 md:gap-y-10" style={SERIF}>
                   {schedule.map((s, i) => {
-                    const icon = SCHEDULE_ICONS[i] ?? null;
+                    const icon = palette.scheduleIcons?.[i] ?? SCHEDULE_ICONS[i] ?? null;
                     const isFirst = i === 0;
                     const isLast = i === schedule.length - 1;
                     return (
@@ -525,7 +570,7 @@ function MinimalismInvitation({
                           {icon ? (
                             <span className="relative inline-block">
                               <span aria-hidden className="absolute right-full top-1/2 flex -translate-y-1/2 items-center justify-center" style={{ marginRight: 30 }}>
-                                <img src={`${DECOR}/${icon}.webp`} alt="" aria-hidden loading="lazy" className="block h-10 w-10 shrink-0 object-contain" />
+                                <img src={icon.startsWith("/") ? icon : `${DECOR}/${icon}.webp`} alt="" aria-hidden loading="lazy" className="block h-10 w-10 shrink-0 object-contain" />
                               </span>
                               {s.time}
                             </span>
@@ -552,15 +597,17 @@ function MinimalismInvitation({
 
         {/* WISHES — nằm trên tờ giấy note */}
         <div className="relative z-10 overflow-x-clip">
-          <img
-            src={`${THEME}/papernote-background.webp`}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="pointer-events-none absolute left-1/2 top-[-15px] w-[120%] max-w-[650px] -translate-x-1/2 object-contain opacity-95 drop-shadow-[4px_4px_4px_rgba(0,0,0,0.25)] md:top-[-30px]"
-          />
+          {palette.noteSrc !== null ? (
+            <img
+              src={palette.noteSrc ?? `${THEME}/papernote-background.webp`}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              className="pointer-events-none absolute left-1/2 top-[-15px] w-[120%] max-w-[650px] -translate-x-1/2 object-contain opacity-95 drop-shadow-[4px_4px_4px_rgba(0,0,0,0.25)] md:top-[-30px]"
+            />
+          ) : null}
           <section
-            className="relative z-10 px-6 pb-8 pt-[74px] md:pt-[120px] [&_form]:max-w-[280px] md:[&_form]:max-w-[380px] [&_textarea]:h-[56px] md:[&_textarea]:h-[110px]"
+            className={`relative z-10 px-6 pb-8 [&_form]:max-w-[280px] md:[&_form]:max-w-[380px] [&_textarea]:h-[56px] md:[&_textarea]:h-[110px] ${palette.noteSrc === null ? "mx-auto my-12 w-[88%] max-w-[560px] rounded-[10px] bg-white pt-9 shadow-[4px_4px_10px_rgba(0,0,0,0.2)]" : "pt-[74px] md:pt-[120px]"}`}
             style={{ ...SERIF, color: WINE }}
           >
             <div className="text-center">
@@ -603,7 +650,7 @@ function MinimalismInvitation({
 
         {/* FOOTER — giữ trong card nhưng padding đủ lớn để tránh hoa decoration ở
             bottom[-5%], và z-10 cao hơn vân giấy (z-0). */}
-        <footer data-template-footer className="relative z-10 px-6 pb-12 pt-16 text-center">
+        <footer data-template-footer className="relative z-10 overflow-hidden px-6 pb-12 pt-16 text-center">
           <p className="mx-auto max-w-[280px] text-[13px] leading-relaxed md:max-w-[400px] md:text-[14px]" style={{ ...SERIF, color: WINE, opacity: 0.65 }}>
             Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
           </p>
@@ -616,6 +663,15 @@ function MinimalismInvitation({
           >
             ♡ thiepmungonline.com
           </a>
+          {palette.footerFlowerSrc ? (
+            <img
+              src={palette.footerFlowerSrc}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              className="pointer-events-none -mb-16 mt-10 w-[170%] max-w-none -translate-x-[31%] object-contain"
+            />
+          ) : null}
         </footer>
         </div>
       </div>
@@ -663,6 +719,17 @@ export function MinimalismPowderPinkInvitation({ content }: { content: ChungDoiD
       content={content}
       palette={POWDER_PINK_PALETTE}
       testId="minimalism-powder-pink-template"
+    />
+  );
+}
+
+/** Lavender-purple source variation, rebuilt from the original demo and assets. */
+export function MinimalismPurpleInvitation({ content }: { content: ChungDoiDemoContent }) {
+  return (
+    <MinimalismInvitation
+      content={content}
+      palette={PURPLE_PALETTE}
+      testId="minimalism-purple-template"
     />
   );
 }

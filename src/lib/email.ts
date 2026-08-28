@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 
+import { emailClickUrl } from "@/lib/email-click";
 import { absoluteUrl } from "@/lib/site-url";
 
 export const TRIAL_REMINDER_FROM = "Thiệp Mừng Online <noreply@thiepmungonline.com>";
@@ -20,14 +21,26 @@ function escapeHtml(value: string): string {
  *
  * `bodyHtml` là HTML đã escape sẵn bởi người gọi — mọi giá trị do người dùng nhập
  * phải đi qua `escapeHtml` trước khi ghép vào đây.
+ *
+ * `ctaUrl` và `displayUrl` tách làm hai vì nút bấm đi qua endpoint đo click, còn
+ * dòng "Hoặc mở link" phải hiện URL sạch của chính site. Khách đọc email tiền bạc
+ * mà thấy một địa chỉ lạ thì mất tin, nên chỗ hiển thị không được bọc tracking.
+ * Đánh đổi: click từ dòng text đó không được đếm — chấp nhận được vì gần như ai
+ * cũng bấm nút.
  */
 function renderReminderShell(input: {
   greetingName: string;
   bodyHtml: string;
   ctaLabel: string;
-  url: string;
+  ctaUrl: string;
+  displayUrl: string;
 }): string {
-  const { greetingName, bodyHtml, ctaLabel, url } = input;
+  const { greetingName, bodyHtml, ctaLabel } = input;
+  // Escape cả URL: token click là base64url nên hôm nay không có ký tự cần escape,
+  // nhưng một tham số thứ hai được thêm vào sau này sẽ mang theo `&` và làm hỏng
+  // HTML nếu chỗ này vẫn nội suy thô.
+  const ctaUrl = escapeHtml(input.ctaUrl);
+  const displayUrl = escapeHtml(input.displayUrl);
   return `<!DOCTYPE html>
 <html lang="vi">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
@@ -44,13 +57,13 @@ function renderReminderShell(input: {
 ${bodyHtml}
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
             <tr><td style="border-radius:12px;background:#ec4899;">
-              <a href="${url}" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;">
+              <a href="${ctaUrl}" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;">
                 ${ctaLabel}
               </a>
             </td></tr>
           </table>
           <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#9ca3af;text-align:center;">
-            Hoặc mở link: <a href="${url}" style="color:#ec4899;">${url}</a>
+            Hoặc mở link: <a href="${displayUrl}" style="color:#ec4899;">${displayUrl}</a>
           </p>
         </td></tr>
         <tr><td style="padding:20px 32px;background:#fdf2f8;text-align:center;">
@@ -63,11 +76,24 @@ ${bodyHtml}
 </html>`;
 }
 
-export function buildTrialReminderEmail(input: {
+/**
+ * Nội dung email nhắc.
+ *
+ * `payUrl` là đích thật và cũng là URL hiện cho khách đọc. `ctaUrl` là địa chỉ nút
+ * bấm; bỏ trống thì nút trỏ thẳng vào `payUrl`, tức là mất số liệu click nhưng
+ * email vẫn hoạt động đầy đủ.
+ */
+export type ReminderEmailInput = {
   recipientName: string;
   cardName: string;
   payUrl: string;
-}): { subject: string; html: string } {
+  ctaUrl?: string;
+};
+
+export function buildTrialReminderEmail(input: ReminderEmailInput): {
+  subject: string;
+  html: string;
+} {
   const name = escapeHtml(input.recipientName || "bạn");
   const card = escapeHtml(input.cardName);
   const url = input.payUrl;
@@ -76,7 +102,8 @@ export function buildTrialReminderEmail(input: {
   const html = renderReminderShell({
     greetingName: name,
     ctaLabel: "Thanh toán ngay",
-    url,
+    ctaUrl: input.ctaUrl ?? url,
+    displayUrl: url,
     bodyHtml: `          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
             Hôm nay là <strong>ngày cuối cùng</strong> dùng thử thiệp cưới
             <strong style="color:#be185d;">"${card}"</strong>. Sau hôm nay, thiệp sẽ tạm ẩn cho tới khi bạn thanh toán.
@@ -96,11 +123,10 @@ export function buildTrialReminderEmail(input: {
  * khách mời đang không xem được và thanh toán sẽ mở lại ngay. Không dùng chữ "hôm
  * nay là ngày cuối" nữa vì sai sự thật và làm người đọc mất tin.
  */
-export function buildExpiredReminderEmail(input: {
-  recipientName: string;
-  cardName: string;
-  payUrl: string;
-}): { subject: string; html: string } {
+export function buildExpiredReminderEmail(input: ReminderEmailInput): {
+  subject: string;
+  html: string;
+} {
   const name = escapeHtml(input.recipientName || "bạn");
   const card = escapeHtml(input.cardName);
   const url = input.payUrl;
@@ -109,7 +135,8 @@ export function buildExpiredReminderEmail(input: {
   const html = renderReminderShell({
     greetingName: name,
     ctaLabel: "Mở lại thiệp",
-    url,
+    ctaUrl: input.ctaUrl ?? url,
+    displayUrl: url,
     bodyHtml: `          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
             Thiệp cưới <strong style="color:#be185d;">"${card}"</strong> đã hết thời gian dùng thử
             nên hiện <strong>đang tạm ẩn</strong> — khách mời mở link sẽ không xem được nội dung thiệp.
@@ -133,6 +160,21 @@ const REMINDER_BUILDERS = {
   expired: buildExpiredReminderEmail,
 } as const;
 
+/**
+ * Khoá dedupe của một email nhắc.
+ *
+ * Ở đây chứ không phải viết thẳng trong route cron vì hai chỗ cần đúng cùng một
+ * chuỗi: `sendTrackedEmail` dùng nó làm khoá dedupe, và `emailClickUrl` ký nó
+ * thành token click. Lệch nhau là endpoint click không tìm được delivery.
+ *
+ * **Không được đổi định dạng chuỗi này.** Nó là khoá `EmailDelivery.dedupeKey` đã
+ * nằm trong database production; đổi đi thì mọi thiệp từng nhận email sẽ sinh một
+ * delivery mới và khách nhận thư nhắc lần hai. `email.test.ts` khoá chuỗi này lại.
+ */
+export function reminderDedupeKey(kind: ReminderKind, invitationId: string): string {
+  return `trial-reminder:${kind}:${invitationId}`;
+}
+
 export function buildReminderEmail(input: {
   recipientName: string;
   cardName: string;
@@ -144,6 +186,7 @@ export function buildReminderEmail(input: {
     recipientName: input.recipientName,
     cardName: input.cardName,
     payUrl,
+    ctaUrl: emailClickUrl(reminderDedupeKey(input.kind, input.invitationId), payUrl),
   });
 }
 

@@ -169,6 +169,13 @@ html.lenis body {
   font-display: swap;
 }
 
+/* Thư pháp mảnh của mẫu Liên Hoa Hồng, tải từ bản gốc (OFL, Google Fonts). */
+@font-face {
+  font-family: "Beau Rivage";
+  src: url("/chungdoi/fonts/BeauRivage-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
 /* ── Hệ 2 font cho thiệp ─────────────────────────────────────────────────────
  * Mỗi thiệp chỉ được dùng đúng 2 family: 1 display (.font-art-*) cho tên cô
  * dâu chú rể + heading, và 1 body (.font-body-*) cho toàn bộ text còn lại.
@@ -207,6 +214,7 @@ html.lenis body {
 .font-art-lora { font-family: var(--font-lora), "Lora", Georgia, serif; }
 .font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
 .font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
+.font-art-beau-rivage { font-family: "Beau Rivage", "The Nautigal", cursive; }
 
 /* ── Mẫu Minimalism Xanh — 5 font stack đúng như bản gốc ─────────────────────
  * Bản gốc chungdoi.com khai 5 stack cho mẫu này, KHÔNG theo hệ 2 font ở trên.
@@ -1047,11 +1055,25 @@ html.lenis body {
   }
 }
 
+/* Hoa bay của Hoa Thủy Tinh Đỏ giữ đúng kích thước ảnh tĩnh như bản gốc.
+   `opacity` quan trọng hơn inline hidden để ảnh tĩnh vẫn neo trên bìa khi bản
+   sao mờ phóng ra ngoài. Các mẫu khác tiếp tục dùng hành vi mặc định. */
+.crystal-floral-opening-fly {
+  opacity: 1 !important;
+}
+
+.crystal-floral-opening-fly > img {
+  --demo-fly-start-opacity: 0.7;
+  width: auto !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+
 @keyframes demo-dragon-fly {
   0% {
     transform: scale(1);
     filter: blur(0);
-    opacity: 0.9;
+    opacity: var(--demo-fly-start-opacity, 0.9);
   }
   40% {
     transform: scale(1.6);
@@ -1398,7 +1420,6 @@ html.lenis body {
 .igb-hint {
   animation: igbHintPulse 2s ease-in-out infinite;
 }
-
 
 /* ── Phong bì hộp quà bản source-matched (SourceLayeredGiftArtwork) ──────────
  * Sao đúng tên keyframe, thời lượng và độ trễ từ chungdoi.com. Tách khỏi bộ

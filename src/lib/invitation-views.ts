@@ -2,6 +2,7 @@ import { cookies, headers } from "next/headers";
 
 import { ADMIN_SESSION_COOKIE } from "@/lib/admin-session";
 import { prisma } from "@/lib/prisma";
+import { isAutomatedUserAgent } from "@/lib/user-agent";
 
 /**
  * Đếm số lần một thiệp đã xuất bản được mở, phục vụ cột "Lượt xem" của trang
@@ -38,17 +39,6 @@ const MAX_TRACKED_VISITS = 5000;
  * sau khi deploy, chứ không bao giờ mất một lượt thật.
  */
 const recentVisits = new Map<string, number>();
-
-/**
- * Các tác nhân tự động không được tính là "vào xem".
- *
- * Ba nhóm: bot chung (`bot`/`crawl`/`spider`/`slurp`), bộ sinh link preview của
- * mạng xã hội (nhóm quan trọng nhất với sản phẩm này — thiệp được gửi qua Zalo),
- * và các HTTP client dùng trong script/giám sát, bao gồm cả trình duyệt headless
- * để script chụp ảnh và Lighthouse không đẩy số lên.
- */
-const AUTOMATED_USER_AGENT =
-  /bot|crawl|spider|slurp|facebookexternalhit|facebot|zalo|twitterbot|slackbot|telegrambot|whatsapp|discord|skypeuripreview|embedly|linkedinbot|pinterest|vkshare|preview|lighthouse|headless|phantomjs|curl|wget|python-requests|go-http-client|node-fetch|axios|okhttp|apache-httpclient|pingdom|uptimerobot/i;
 
 export type InvitationVisitSignals = {
   userAgent: string;
@@ -117,7 +107,7 @@ export async function recordInvitationVisit(
   signals: InvitationVisitSignals,
 ): Promise<void> {
   if (signals.isAdmin) return;
-  if (signals.userAgent === "" || AUTOMATED_USER_AGENT.test(signals.userAgent)) return;
+  if (isAutomatedUserAgent(signals.userAgent)) return;
   if (isDuplicateVisit(slug, signals)) return;
 
   try {

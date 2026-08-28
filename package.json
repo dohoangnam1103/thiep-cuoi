@@ -63,6 +63,7 @@
     "seed:tracks": "tsx prisma/seed-tracks.ts",
     "seed:demos": "tsx scripts/seed-demos.ts",
     "seed:demos:missing": "tsx scripts/seed-demos.ts --missing",
+    "seed:demos:completed-missing": "tsx scripts/seed-demos.ts --missing --completed",
     "reminders:trial": "tsx scripts/send-trial-reminders.ts",
     "reconcile:payos": "tsx scripts/reconcile-payos.ts",
     "postinstall": "prisma generate"

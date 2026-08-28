@@ -1,5 +1,5 @@
 import { completedTemplateSlugs } from "@/data/chungdoi";
-import { vietnamStartOfDay } from "@/lib/datetime";
+import { vietnamDayKey, vietnamStartOfDay } from "@/lib/datetime";
 
 export const SYSTEM_EMAIL = "system@demo.local";
 
@@ -22,6 +22,25 @@ export function parseDateInput(value: string | undefined): Date | null {
 /** Upper bound for a range whose end date the user means inclusively. */
 export function endOfDayExclusive(date: Date): Date {
   return new Date(date.getTime() + 24 * 60 * 60 * 1000);
+}
+
+/**
+ * Ngày điền sẵn cho cặp ô lọc ngày khi URL chưa nói gì về ngày — dùng cho trang
+ * lịch sử email, nơi admin gần như chỉ cần lượt gửi vừa chạy chứ không cần cả
+ * lịch sử dài thêm mỗi ngày.
+ *
+ * Trả về `null` nghĩa là "tôn trọng URL". Điểm cốt lõi là phân biệt `undefined`
+ * với chuỗi rỗng: form GET luôn gửi `from=` kể cả khi ô ngày trống, nên chuỗi
+ * rỗng là tín hiệu admin chủ động xoá ngày để xem tất cả thời gian. Nếu mặc
+ * định bắt cả trường hợp đó thì không còn đường nào ra khỏi hôm nay.
+ */
+export function defaultDayFilter(
+  from: string | undefined,
+  to: string | undefined,
+  now: Date = new Date(),
+): string | null {
+  if (from !== undefined || to !== undefined) return null;
+  return vietnamDayKey(now);
 }
 
 export function isAllowedCustomerEmail(email: string | null): boolean {

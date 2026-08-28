@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import type { Prisma } from "@/generated/prisma/client";
+import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
 import { verifyAdmin } from "@/lib/admin-dal";
+import { adminPageWindow, adminResetHref, parsePage, parsePerPage } from "@/lib/admin-pagination";
 import {
   endOfDayExclusive,
   parseDateInput,
@@ -50,11 +52,17 @@ const RECONCILE_SOURCE_LABELS: Record<string, string> = {
 export default async function AdminPaymentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; from?: string; to?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    from?: string;
+    to?: string;
+    page?: string;
+    perPage?: string;
+  }>;
 }) {
   await verifyAdmin();
 
-  const { q, from, to } = await searchParams;
+  const { q, from, to, page, perPage } = await searchParams;
   const search = parseUserSearch(q);
   const fromDate = parseDateInput(from);
   const toDate = parseDateInput(to);
@@ -69,23 +77,10 @@ export default async function AdminPaymentsPage({
   };
   const isFiltered = Boolean(search || fromDate || toDate);
 
-  const [payments, revenue, reconcileCount] = await Promise.all([
-    prisma.payment.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        invitation: {
-          include: {
-            content: { select: { brideFullName: true, groomFullName: true } },
-            user: { select: { email: true } },
-          },
-        },
-        // Chỉ cần ca mới nhất để dựng nhãn. Bảng là append-only nên một đơn có
-        // thể có nhiều dòng (webhook gửi lại, rồi cron phát hiện lại), và lần
-        // phát hiện gần nhất là lần phản ánh đúng tình trạng hiện tại.
-        reconciliations: { orderBy: { detectedAt: "desc" }, take: 1 },
-      },
-    }),
+  // Doanh thu và số ca cần đối soát là thống kê của cả bộ lọc, không phải của
+  // trang đang xem, nên ba truy vấn này không mang `skip`/`take`.
+  const [total, revenue, reconcileCount] = await Promise.all([
+    prisma.payment.count({ where }),
     // Scoped to the same filter so a date range doubles as a revenue report.
     prisma.payment.aggregate({
       where: { ...where, status: "paid" },
@@ -102,12 +97,33 @@ export default async function AdminPaymentsPage({
     }),
   ]);
 
+  const pagination = adminPageWindow(total, parsePage(page), parsePerPage(perPage));
+
+  const payments = await prisma.payment.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    skip: pagination.skip,
+    take: pagination.take,
+    include: {
+      invitation: {
+        include: {
+          content: { select: { brideFullName: true, groomFullName: true } },
+          user: { select: { email: true } },
+        },
+      },
+      // Chỉ cần ca mới nhất để dựng nhãn. Bảng là append-only nên một đơn có
+      // thể có nhiều dòng (webhook gửi lại, rồi cron phát hiện lại), và lần
+      // phát hiện gần nhất là lần phản ánh đúng tình trạng hiện tại.
+      reconciliations: { orderBy: { detectedAt: "desc" }, take: 1 },
+    },
+  });
+
   const totalRevenue = revenue._sum.amount ?? 0;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="font-heading text-2xl text-foreground">Giao dịch ({payments.length})</h1>
+        <h1 className="font-heading text-2xl text-foreground">Giao dịch ({total})</h1>
         <p className="text-sm text-muted-foreground">
           {isFiltered ? "Doanh thu (đã lọc)" : "Tổng doanh thu"}:{" "}
           <span className="font-semibold text-foreground">{formatVnd(totalRevenue)}</span>
@@ -128,6 +144,7 @@ export default async function AdminPaymentsPage({
       ) : null}
 
       <form method="GET" className="flex flex-wrap items-end gap-3">
+        <AdminPerPageField pageSize={pagination.pageSize} />
         <div className="flex flex-col gap-1">
           <label htmlFor="payment-email" className="text-xs text-muted-foreground">
             Email khách
@@ -161,7 +178,7 @@ export default async function AdminPaymentsPage({
         </button>
         {isFiltered ? (
           <Link
-            href="/admin/payments"
+            href={adminResetHref("/admin/payments", pagination.pageSize)}
             className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-secondary"
           >
             Xoá lọc
@@ -292,6 +309,12 @@ export default async function AdminPaymentsPage({
           </tbody>
         </table>
       </div>
+
+      <AdminPagination
+        pagination={pagination}
+        basePath="/admin/payments"
+        params={{ q: search || undefined, from: from || undefined, to: to || undefined }}
+      />
     </div>
   );
 }

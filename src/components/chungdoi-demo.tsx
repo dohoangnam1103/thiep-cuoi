@@ -80,6 +80,7 @@ const MinimalismGreenInvitation = dynamic(() => import("@/components/chungdoi-tp
 const MinimalismJadeInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismJadeInvitation));
 const MinimalismSkyBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismSkyBlueInvitation));
 const MinimalismPowderPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismPowderPinkInvitation));
+const MinimalismPurpleInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismPurpleInvitation));
 const HoaTinhInvitation = dynamic(() => import("@/components/chungdoi-tpl-hoa-tinh-red").then((m) => m.HoaTinhInvitation));
 const JasmineWhiteInvitation = dynamic(() => import("@/components/chungdoi-tpl-jasmine-white").then((m) => m.JasmineWhiteInvitation));
 const MinimalismRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-red").then((m) => m.MinimalismRedInvitation));
@@ -107,6 +108,8 @@ const RoyalBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-roya
 const RoyalGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-royal").then((m) => m.RoyalGreenInvitation));
 const ChateauBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-chateau-blue").then((m) => m.ChateauInvitation));
 const MaroonLoveInvitation = dynamic(() => import("@/components/chungdoi-tpl-maroon-love").then((m) => m.MaroonLoveInvitation));
+const LienHoaPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-lien-hoa-pink").then((m) => m.LienHoaPinkInvitation));
+const SunflowerInvitation = dynamic(() => import("@/components/chungdoi-tpl-sunflower").then((m) => m.SunflowerInvitation));
 
 const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "boho-floral-green": BohoFloralGreenInvitation,
@@ -125,11 +128,14 @@ const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "minimalism-jade": MinimalismJadeInvitation,
   "minimalism-sky-blue": MinimalismSkyBlueInvitation,
   "minimalism-powder-pink": MinimalismPowderPinkInvitation,
+  "minimalism-purple": MinimalismPurpleInvitation,
   "brocade-flower-red": BrocadeFlowerRedInvitation,
   "crystal-floral-blue": CrystalFloralInvitation,
   "baroque-gold": BaroqueGoldInvitation,
   "glass-garden-green": GlassGardenInvitation,
   "glass-garden-pink": GlassGardenPinkInvitation,
+  "lien-hoa-pink": LienHoaPinkInvitation,
+  "sunflower": SunflowerInvitation,
   "chibi-red": ChibiRedInvitation,
   "cherry-blossom-pink": CherryBlossomInvitation,
 } satisfies Record<BaseAuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;

@@ -332,6 +332,11 @@ const MOMENTS_STYLES: Record<string, MomentsStyle> = {
     sectionClassName: "w-full bg-[#fdf6f8] px-4 py-10 text-[#933845] md:px-10 md:py-14",
     cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#CB5D6C]/30",
   },
+  "lien-hoa-pink": {
+    ...PORTRAIT_PINK,
+    sectionClassName: "w-full bg-[#fffafc] px-4 py-10 text-[#804b5b] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#c9768e]/30",
+  },
   "royal-red": ROYAL_RED,
   "nhat-binh-red": {
     sectionClassName: "w-full bg-[#F8F3E0] px-6 py-10 text-[#542E08] md:px-10 md:py-14",

@@ -557,9 +557,10 @@ test.describe("templates — demo pages", () => {
       "boho-floral-green", "boho-floral-pink", "boho-floral-brown",
       "spring-garden-red", "spring-garden-green", "spring-garden-blue",
       "elegant-leaf-green", "jasmine-white", "silk-flora-brown",
-      "hoa-tinh-red", "minimalism-red", "brocade-flower-red",
+      "hoa-tinh-red", "minimalism-red", "minimalism-purple", "brocade-flower-red",
       "crystal-floral-blue", "baroque-gold", "glass-garden-green",
-      "chibi-red", "cherry-blossom-pink",
+      "chibi-red", "cherry-blossom-pink", "lien-hoa-pink",
+      "sunflower",
     ] as const;
 
     for (const slug of slugs) {
@@ -567,6 +568,17 @@ test.describe("templates — demo pages", () => {
       expect(response?.ok(), slug).toBeTruthy();
       await expect(page.locator(`[data-template-renderer="${slug}"]`), slug).toBeAttached();
     }
+  });
+
+  test("Hoa Hướng Dương uses its dedicated renderer and bundled source artwork", async ({ page }) => {
+    await page.goto("/mau-thiep/hoa-huong-duong/demo?open=1&capture=1", { timeout: 60_000 });
+
+    await expect(page.locator('[data-template-renderer="sunflower"]')).toBeAttached();
+    await expect(page.getByTestId("sunflower-template")).toBeVisible();
+    await expect(page.locator('img[src$="/sunflower/flower4.webp"]').first()).toBeVisible();
+    await expect(page.locator('img[src$="/gallery/sunflower/photo-1.webp"]')).toBeVisible();
+    await expect(page.getByTestId("gift-envelope")).toHaveAttribute("data-gift-visual-kind", "layered-image");
+    await expect(page.getByTestId("gift-envelope").locator('img[src$="/giftbox/sunflower/envelope.webp"]').first()).toBeVisible();
   });
 
   test("Hoa Mộc Hồng keeps its source hero and animated footer treatment", async ({ page }) => {
