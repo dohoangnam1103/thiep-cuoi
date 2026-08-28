@@ -24,13 +24,6 @@ export function Cover3dToggleForm({ enabled }: { enabled: boolean }) {
             Bật thì bìa thiệp là thẻ 3D xoay và zoom được. Tắt thì bìa là thẻ 2D phẳng,
             hiện gần như tức thì.
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Đo trên mẫu Long Phụng V3 Đỏ ở mạng 4G:{" "}
-            <span className="font-semibold text-foreground">bìa 3D ~4,9 giây</span> so với{" "}
-            <span className="font-semibold text-foreground">bìa 2D ~1,5 giây</span>, và bìa 3D
-            tải thêm khoảng 700KB JavaScript. Bìa 3D cũng cần WebGL nên máy yếu hoặc
-            trình duyệt chặn WebGL sẽ không xem được.
-          </p>
         </div>
 
         <input type="hidden" name="enabled" value={enabled ? "off" : "on"} />

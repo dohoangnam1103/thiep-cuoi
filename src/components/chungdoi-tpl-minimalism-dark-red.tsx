@@ -19,6 +19,7 @@ import {
 
 type MinimalismPalette = {
   decorPath: string;
+  flowerSrc: string;
   themePath: string;
   primary: string;
   cream: string;
@@ -29,6 +30,7 @@ type MinimalismPalette = {
 
 const DARK_RED_PALETTE: MinimalismPalette = {
   decorPath: "/chungdoi/images/themes/_decor/minimalism-dark-red",
+  flowerSrc: "/chungdoi/images/themes/_decor/minimalism-dark-red/flower2-decoration.webp",
   themePath: "/chungdoi/images/themes/minimalism-dark-red",
   primary: "#511419",
   cream: "#ece4d8",
@@ -39,6 +41,7 @@ const DARK_RED_PALETTE: MinimalismPalette = {
 
 const JADE_PALETTE: MinimalismPalette = {
   decorPath: "/chungdoi/images/themes/_decor/minimalism-jade",
+  flowerSrc: "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp?v=3",
   themePath: "/chungdoi/images/themes/minimalism-jade",
   primary: "#6d9f90",
   cream: "#f2faf7",
@@ -49,6 +52,7 @@ const JADE_PALETTE: MinimalismPalette = {
 
 const SKY_BLUE_PALETTE: MinimalismPalette = {
   decorPath: "/chungdoi/images/themes/_decor/minimalism-sky-blue",
+  flowerSrc: "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp?v=3",
   themePath: "/chungdoi/images/themes/minimalism-sky-blue",
   primary: "#4f8fa8",
   cream: "#f1f8fb",
@@ -59,6 +63,7 @@ const SKY_BLUE_PALETTE: MinimalismPalette = {
 
 const POWDER_PINK_PALETTE: MinimalismPalette = {
   decorPath: "/chungdoi/images/themes/_decor/minimalism-powder-pink",
+  flowerSrc: "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp?v=3",
   themePath: "/chungdoi/images/themes/minimalism-powder-pink",
   primary: "#b47787",
   cream: "#fff4f6",
@@ -111,13 +116,13 @@ function FloatingFlower({
   delay: string;
   rotate?: string;
 }) {
-  const { decorPath } = useMinimalismPalette();
+  const { flowerSrc } = useMinimalismPalette();
 
   return (
     <span aria-hidden className={`pointer-events-none absolute block ${wrapClassName}`}>
       <span className="block" style={{ animation: `drFloat ${duration} ease-in-out infinite`, animationDelay: delay, willChange: "transform" }}>
         <img
-          src={`${decorPath}/flower2-decoration.webp`}
+          src={flowerSrc}
           alt=""
           aria-hidden
           loading="lazy"

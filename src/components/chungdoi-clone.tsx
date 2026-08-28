@@ -154,6 +154,48 @@ function useRevealOnScroll() {
   }, []);
 }
 
+/**
+ * Tiêu đề hero với vệt sáng gradient chạy qua.
+ *
+ * Chỉ cho animation chạy khi tiêu đề còn trong khung nhìn. `.shiny-text` animate
+ * `background-position` — thuộc tính không compositable — nên mỗi frame là một
+ * lượt recalc style + repaint main thread, và animation CSS không tự dừng khi
+ * phần tử cuộn khỏi màn hình. Đo trên production: nó chiếm 41% chi phí main thread
+ * của trang chủ lúc nhàn rỗi; số liệu đầy đủ ở comment cạnh `.shiny-text` trong
+ * globals.css.
+ *
+ * Không đổi được sang `transform` cho compositable: hiệu ứng dựa trên
+ * `background-clip: text` + `color: transparent`, gradient bị cắt theo hình chữ,
+ * nên dời phần tử là dời cả chữ chứ không dời vệt sáng.
+ */
+function HeroShinyTitle({ children }: { children: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        node.dataset.sheenPaused = entry.isIntersecting ? "false" : "true";
+      },
+      // Chạy lại trước khi hero thật sự lộ ra, để cuộn về đầu trang không bắt
+      // gặp một khoảnh khắc vệt sáng đứng im rồi mới nhích.
+      { rootMargin: "200px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  // Không đặt data-sheen-paused ở lần render đầu: hero luôn nằm trong khung nhìn
+  // khi trang vừa mở, nên mặc định "đang chạy" là đúng và không có nháy.
+  return (
+    <span ref={ref} className="shiny-text whitespace-pre-line">
+      {children}
+    </span>
+  );
+}
+
 const heroPreviewTemplates = featuredTemplates.slice(0, 6);
 
 function StackFan() {
@@ -334,7 +376,7 @@ function HeroSection({ createHref }: { createHref: string }) {
             )}
             style={{ "--hero-delay": "160ms" } as CSSProperties}
           >
-            <span className="shiny-text whitespace-pre-line">{t("hero.title")}</span>
+            <HeroShinyTitle>{t("hero.title")}</HeroShinyTitle>
           </h1>
           {/* Ba dòng mô tả siết chặt hơn thang dùng chung: sectionDescClass là
               1.65/1.7 và noteClass là 1.6, ở hero thì cả ba cùng về 1.3.

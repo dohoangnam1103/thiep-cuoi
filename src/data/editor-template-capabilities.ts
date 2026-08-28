@@ -6,6 +6,10 @@ const HERO_IMAGE_TEMPLATE_SLUGS = new Set([
   "song-hy-green",
   "cherry-blossom-pink",
   "dragon-phoenix-v3-red",
+  "minimalism-dark-red",
+  "minimalism-jade",
+  "minimalism-sky-blue",
+  "minimalism-powder-pink",
 ]);
 
 // Templates whose card header shows two photos side by side.

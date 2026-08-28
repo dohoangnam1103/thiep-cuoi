@@ -255,34 +255,44 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
    Domain `thiepmungonline.com` phải đã verify trên Resend (email gửi từ
    `noreply@thiepmungonline.com`).
 
-2. Cron gọi route `/api/cron/trial-reminders` lúc 9h sáng qua một script nằm
-   **trên host** (không có trong repo):
+2. `deploy-fast.sh` cài cron gọi route `/api/cron/trial-reminders` mỗi 3 tiếng
+   trong khung 09:00-21:00 (5 lượt: 09, 12, 15, 18, 21) bằng runner nằm trong repo:
 
    ```bash
-   0 9 * * *  /bin/sh /home/namdo/apps/thiepmungonline/trigger-trial-reminders.sh >> /home/namdo/trial-reminders.log 2>&1
+   0 9,12,15,18,21 * * * /home/namdo/apps/thiepmungonline/releases/current/scripts/cron-hit-endpoint.sh /api/cron/trial-reminders >> /home/namdo/apps/thiepmungonline/trial-reminders.log 2>&1
    ```
 
-   Script đó `docker exec ... node` với một `fetch` inline, mượn `CRON_SECRET`
-   ngay trong container. Đang chạy tốt — kiểm tra bằng
-   `ssh minipc 'tail /home/namdo/trial-reminders.log'`, mỗi dòng là một lượt kèm
-   `{"scanned":..,"sent":..}`.
+   Không chạy đêm vì đây là email gửi khách thật. Hệ quả là lượt 09:00 gánh phần
+   tồn của khung 21:00-09:00 nên gửi nhiều nhất, bốn lượt sau mỗi lượt chỉ xử lý
+   phần mới vào cửa sổ 24h trong 3 tiếng trước đó — thấy rõ trong cột `sentCount`
+   của từng `EmailRun` ở `/admin/email-logs`.
+
+   Runner đọc riêng `CRON_SECRET` từ `.env`, gọi HTTP và chỉ thoát thành công khi
+   route trả 2xx. Kiểm tra bằng
+   `ssh minipc 'tail /home/namdo/apps/thiepmungonline/trial-reminders.log'`.
 
    > ⚠️ **Không dùng `docker exec ... npm run reminders:trial`.** Bản cũ của tài
    > liệu này ghi như vậy và lệnh đó không chạy được: image production là Next
    > standalone build, trong container không có `package.json` nên npm thoát ngay
    > với `ENOENT`. Cùng lý do đó, mọi việc định kỳ phải gọi HTTP route của app.
    >
-   > **Nợ kỹ thuật:** `trigger-trial-reminders.sh` chỉ tồn tại trên host, không
-   > nằm trong repo và không do deploy cài lại. Dựng lại máy là email nhắc lặng lẽ
-   > ngừng chạy mà không có gì báo. Nên chuyển sang
-   > `scripts/cron-hit-endpoint.sh /api/cron/trial-reminders` do `deploy-fast.sh`
-   > quản lý, như cron đối soát payOS — nhưng phải xoá job cũ trong cùng một bước,
-   > vì hai lượt chạy cùng phút có thể cùng đọc `reminderSentAt = null` rồi gửi
-   > trùng email cho khách.
+   `deploy-fast.sh` xoá job legacy gọi `trigger-trial-reminders.sh` trong cùng lần
+   ghi crontab trước khi cài job mới, tránh hai scheduler chạy song song.
 
-   Script tự quét thiệp `paid=false`, đã publish, chưa gửi nhắc, hết hạn trong
-   24h tới; gửi xong đánh dấu `reminderSentAt` để không gửi trùng. Gửi lỗi thì
-   giữ nguyên mốc để lần sau retry.
+   Route tự quét thiệp `paid=false`, đã publish, hết hạn trong 24h tới. Chạy 5
+   lượt/ngày không sinh email trùng vì có ba lớp chặn độc lập:
+
+   1. Marker `reminderSentAt` / `expiredReminderSentAt` trên thiệp — gửi xong là
+      các lượt sau bỏ qua ngay từ bước lọc.
+   2. `EmailDelivery.dedupeKey` unique (`trial-reminder:{kind}:{invitationId}`) —
+      delivery đã `sent` thì không gọi provider nữa. Lớp này tự chữa lớp 1: nếu
+      email đã đi mà ghi marker lỗi, lượt sau đọc `already-sent` rồi ghi lại marker.
+   3. Idempotency key gửi kèm cho Resend (= `EmailDelivery.id`) — chốt cuối ở phía
+      provider. Quá cửa sổ retry an toàn 23h thì delivery chuyển `manual-review`
+      thay vì gọi provider khi key có thể đã hết hiệu lực.
+
+   Gửi lỗi thì giữ nguyên mốc để lượt sau retry, nên bốn lượt 12:00-21:00 cũng
+   đóng vai trò retry cho lượt 09:00.
 
 ## Sự cố thường gặp
 
@@ -291,7 +301,7 @@ Gửi email nhắc user khi thiệp còn 24h cuối dùng thử (free trial 3 ng
 - **Web LAN không lên 200**: xem log `ssh minipc 'docker logs --tail 200 thiepmungonline-web'`.
 - **Email nhắc không gửi**: kiểm tra `RESEND_API_KEY` trong container
   (`docker exec thiepmungonline-web printenv RESEND_API_KEY`) và log
-  `/var/log/trial-reminders.log`.
+  `/home/namdo/apps/thiepmungonline/trial-reminders.log`.
 - **Khách báo đã chuyển tiền mà thiệp vẫn ẩn**: mở `/admin/payments`, ca không tự
   kích hoạt được sẽ có nhãn **Cần đối soát** kèm lý do. Nếu không thấy nhãn nào
   thì khả năng cao là webhook payOS bị mất — chạy đối soát tay

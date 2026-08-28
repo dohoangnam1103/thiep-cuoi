@@ -41,7 +41,10 @@ test("mail nhắc bù nói thiệp ĐÃ ẩn, không nói 'ngày cuối'", () =>
     payUrl: "https://thiepmungonline.com/dashboard/abc/thanh-toan",
   });
   assert.ok(subject.includes("Thạch & Jade"), `subject: ${subject}`);
-  assert.ok(subject.includes("tạm ẩn"), `subject phải nói thiệp đã ẩn: ${subject}`);
+  assert.ok(
+    subject.includes("hết hạn sử dụng"),
+    `subject phải nói thiệp đã hết hạn: ${subject}`,
+  );
   // Lời văn của mốc 1 áp vào thiệp đã hết hạn là sai sự thật và làm mất tin.
   assert.ok(!subject.includes("ngày cuối"), `subject không được nói ngày cuối: ${subject}`);
   assert.ok(!html.includes("Hôm nay là"), "body không được nói hôm nay là ngày cuối");

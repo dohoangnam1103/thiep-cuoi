@@ -11,6 +11,7 @@ import {
   sumDailyValues,
 } from "@/lib/admin-daily-stats";
 import { CUSTOMER_USER_WHERE, REAL_INVITATION_WHERE } from "@/lib/admin-invitation-filters";
+import { vietnamDayKey, vietnamStartOfDayOf } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 import { AdminDailyChart } from "./AdminDailyChart";
 
@@ -37,6 +38,8 @@ export default async function AdminDashboardPage({
   // cannot straddle midnight between two queries.
   const now = new Date();
   const windowStart = dailyWindowStart(range, now);
+  const todayStart = vietnamStartOfDayOf(now);
+  const todayKey = vietnamDayKey(now);
 
   const [
     userCount,
@@ -48,6 +51,8 @@ export default async function AdminDashboardPage({
     newUsers,
     newRealInvitations,
     settledPayments,
+    sentEmailAttemptsToday,
+    failedEmailAttemptsToday,
   ] = await Promise.all([
     prisma.user.count({ where: CUSTOMER_USER_WHERE }),
     prisma.invitation.count({ where: REAL_INVITATION_WHERE }),
@@ -71,6 +76,12 @@ export default async function AdminDashboardPage({
       where: { status: "paid", paidAt: { gte: windowStart } },
       select: { paidAt: true, amount: true },
     }),
+    prisma.emailDeliveryAttempt.count({
+      where: { status: "sent", attemptedAt: { gte: todayStart } },
+    }),
+    prisma.emailDeliveryAttempt.count({
+      where: { status: "failed", attemptedAt: { gte: todayStart } },
+    }),
   ]);
 
   const stats: { label: string; value: string; href: string; valueClass?: string }[] = [
@@ -86,6 +97,16 @@ export default async function AdminDashboardPage({
       // A lifetime total runs to tens of millions, which overflows a sixth of
       // the grid at the size the other cards use.
       valueClass: "text-xl",
+    },
+    {
+      label: t("overviewEmailsSentToday"),
+      value: formatCount(sentEmailAttemptsToday),
+      href: `/admin/email-logs?from=${todayKey}&to=${todayKey}&status=sent`,
+    },
+    {
+      label: t("overviewEmailsFailedToday"),
+      value: formatCount(failedEmailAttemptsToday),
+      href: `/admin/email-logs?from=${todayKey}&to=${todayKey}&status=failed`,
     },
   ];
 
@@ -111,7 +132,7 @@ export default async function AdminDashboardPage({
     <div className="space-y-8">
       <div className="space-y-6">
         <h1 className="font-heading text-2xl text-foreground">Tổng quan</h1>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {stats.map((stat) => (
             <Link key={stat.label} href={stat.href} className="transition hover:opacity-80">
               <div className="rounded-2xl border border-border bg-card p-5">

@@ -19,3 +19,17 @@ test("AdminAuditLog preserves actor and target snapshots", () => {
   assert.match(schema, /@@index\(\[invitationId, createdAt\]\)/);
   assert.match(schema, /@@index\(\[adminId, createdAt\]\)/);
 });
+
+test("email operations retain recipient snapshots and optional invitation context", () => {
+  assert.match(schema, /model EmailRun\s*\{/);
+  assert.match(schema, /model EmailDelivery\s*\{/);
+  assert.match(schema, /model EmailDeliveryAttempt\s*\{/);
+  assert.match(schema, /dedupeKey\s+String\s+@unique/);
+  assert.match(schema, /recipientEmail\s+String/);
+  assert.match(schema, /html\s+String/);
+  assert.match(schema, /invitationId\s+String\?/);
+  assert.match(schema, /status\s+String\s+@default\("running"\)/);
+  assert.match(schema, /errorMessage\s+String\?/);
+  assert.match(schema, /onDelete:\s*SetNull/);
+  assert.match(schema, /@@index\(\[runId, attemptedAt\]\)/);
+});

@@ -1192,6 +1192,121 @@
       "note": "Tạo miễn phí, chỉ thanh toán khi bạn hài lòng"
     }
   },
+  "homeLabV9": {
+    "metadata": {
+      "title": "V9 · Hành trình của một lời mời",
+      "description": "Bản thử nghiệm trang chủ V9: một tấm thiệp cưới du hành qua sáu trạm từ chọn mẫu đến gửi lời mời."
+    },
+    "labStrip": {
+      "label": "Biến thể V9",
+      "name": "Hành trình của một lời mời",
+      "back": "Về danh sách biến thể"
+    },
+    "hero": {
+      "eyebrow": "Thiệp du hành · Bản V9",
+      "titleLead": "Một tấm thiệp,",
+      "titleAccent": "trọn một hành trình",
+      "lede": "Từ lúc hai bạn chọn mẫu đầu tiên đến khi vị khách cuối cùng xác nhận tham dự — mọi điểm dừng của ngày cưới đều nằm gọn trong một đường link.",
+      "ctaPrimary": "Bắt đầu hành trình",
+      "ctaSecondary": "Khám phá mẫu thiệp",
+      "scrollHint": "Cuộn để thiệp lên đường",
+      "stat1": "10 phút hoàn thiện",
+      "stat2": "Dùng thử 3 ngày",
+      "stat3": "Không cần biết thiết kế",
+      "passportLabel": "Hộ chiếu ngày vui",
+      "passportCode": "Thiệp Mừng Online · Việt Nam",
+      "boardingLabel": "Thẻ lên đường",
+      "routeFrom": "Hai người",
+      "routeTo": "Ngày chung đôi",
+      "stampTop": "Khởi hành",
+      "stampBottom": "Ngày thành hôn"
+    },
+    "faqEyebrow": "Hỏi đáp",
+    "card": {
+      "invite": "Trân trọng kính mời",
+      "couple": "Minh & Hà",
+      "date": "20 · 11 · 2026",
+      "passport": "TMO / VI",
+      "flight": "Tuyến TMO–2026",
+      "status": "Đang nhận RSVP",
+      "route": "Hai người",
+      "destination": "Ngày chung đôi"
+    },
+    "journey": {
+      "eyebrow": "Lộ trình tạo thiệp",
+      "title": "Sáu trạm, một lời mời trọn vẹn",
+      "lede": "Mỗi trạm giải quyết đúng một việc, để hai bạn đi từ ý tưởng tới tấm thiệp hoàn chỉnh mà không lạc đường.",
+      "ariaLabel": "Hành trình sáu bước tạo và gửi thiệp cưới online",
+      "routeLabel": "Các trạm trong hành trình tạo thiệp",
+      "progress": "Trạm {current} trên {total}",
+      "ctaStart": "Tạo thiệp của bạn",
+      "ctaTemplates": "Xem toàn bộ mẫu",
+      "ctaFinal": "Cho thiệp khởi hành",
+      "acts": {
+        "departure": {
+          "code": "Trạm 00 · Khởi hành",
+          "short": "Khởi hành",
+          "title": "Bắt đầu từ một lời mời chân thành",
+          "copy": "Không cần biết thiết kế. Chỉ cần mang theo câu chuyện của hai bạn, phần còn lại đã có một lộ trình rõ ràng.",
+          "point1": "Tạo miễn phí và xem trước trước khi quyết định",
+          "point2": "Dùng thử đầy đủ trong 3 ngày"
+        },
+        "choose": {
+          "code": "Trạm 01 · Chọn mẫu",
+          "short": "Chọn mẫu",
+          "title": "Chọn đúng phong cách cho ngày của hai bạn",
+          "copy": "Xem trọn từng mẫu thiệp, từ truyền thống Việt đến tối giản hiện đại, rồi đổi mẫu bất cứ lúc nào trong lúc chỉnh sửa.",
+          "point1": "Xem demo toàn bộ thiệp trước khi chọn",
+          "point2": "Mỗi mẫu đều tối ưu cho điện thoại"
+        },
+        "personalize": {
+          "code": "Trạm 02 · Cá nhân hoá",
+          "short": "Cá nhân hoá",
+          "title": "Điền tên, ngày cưới và dấu ấn riêng",
+          "copy": "Thêm thông tin hai gia đình, ảnh cưới, nhạc nền, lời mời và lịch trình bằng một trình chỉnh sửa đơn giản.",
+          "point1": "Không cần chỉnh bố cục hay viết mã",
+          "point2": "Có thể sửa tiếp sau khi đã xuất bản"
+        },
+        "memories": {
+          "code": "Trạm 03 · Kỷ niệm & chỉ đường",
+          "short": "Kỷ niệm",
+          "title": "Đưa cả câu chuyện và đường đến ngày vui vào thiệp",
+          "copy": "Album, video, bản đồ Google Maps và từng mốc lịch trình giúp khách có đủ thông tin trước khi khởi hành.",
+          "point1": "Ảnh, video và nhạc trong cùng một trải nghiệm",
+          "point2": "Chạm một lần để mở bản đồ chỉ đường"
+        },
+        "rsvp": {
+          "code": "Trạm 04 · Khách mời & RSVP",
+          "short": "RSVP",
+          "title": "Biết ai sẽ đến trước khi bàn tiệc được xếp",
+          "copy": "Mỗi khách có thể nhận một link riêng, xác nhận tham dự, chọn số người đi cùng và để lại ghi chú ngay trên thiệp.",
+          "point1": "Theo dõi phản hồi trong một trang quản lý",
+          "point2": "Cá nhân hoá tên và cách xưng hô từng khách"
+        },
+        "share": {
+          "code": "Trạm 05 · Gửi đi",
+          "short": "Gửi đi",
+          "title": "Một đường link đi tới mọi vị khách",
+          "copy": "Gửi qua Zalo, Messenger, email hoặc mã QR. Nếu đổi giờ hay thay ảnh sau đó, khách vẫn xem đúng nội dung mới trên link cũ.",
+          "point1": "Không cần tải ứng dụng hay đăng nhập để xem",
+          "point2": "Chia sẻ không giới hạn, link chung hoặc link riêng"
+        }
+      },
+      "artifacts": {
+        "editName": "Tên & gia đình",
+        "editDate": "Ngày giờ tổ chức",
+        "editVenue": "Địa điểm & lời mời",
+        "album": "Album kỷ niệm",
+        "map": "Google Maps",
+        "rsvpLabel": "Ví dụ phản hồi RSVP",
+        "rsvpValue": "86 đã phản hồi",
+        "rsvpNote": "72 khách sẽ tham dự",
+        "zalo": "Zalo",
+        "messenger": "Messenger",
+        "email": "Email"
+      }
+    }
+  },
   "listing": {
     "metaTitle": "Mẫu thiệp cưới online | Thiệp Mừng Online",
     "metaDescription": "Kho mẫu thiệp cưới online của Thiệp Mừng Online: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
@@ -2093,6 +2208,53 @@
     "overviewNewInvitations": "Thiệp thật mới",
     "overviewRevenue": "Doanh thu",
     "overviewChartEmpty": "Chưa có dữ liệu trong khoảng này.",
+    "emailLogsNav": "Lịch sử email",
+    "overviewEmailsSentToday": "Email gửi hôm nay",
+    "overviewEmailsFailedToday": "Email lỗi hôm nay",
+    "emailLogsTitle": "Lịch sử email ({count})",
+    "emailLogsDescription": "Dữ liệu bắt đầu được ghi nhận từ khi tính năng này được triển khai.",
+    "emailRunsTitle": "Các lượt gửi gần đây",
+    "emailNoRuns": "Chưa có lượt gửi email nào.",
+    "emailRunStarted": "Bắt đầu",
+    "emailRunFinished": "Kết thúc",
+    "emailRunScanned": "Đã quét",
+    "emailRunSent": "Đã gửi",
+    "emailRunFailed": "Lỗi",
+    "emailRunSkipped": "Bỏ qua",
+    "emailRunStatus": {
+      "running": "Đang chạy",
+      "completed": "Hoàn tất",
+      "completed-with-errors": "Có lỗi",
+      "failed": "Thất bại"
+    },
+    "emailRecipient": "Email người nhận",
+    "emailType": "Loại email",
+    "emailContext": "Ngữ cảnh",
+    "emailAllContexts": "Tất cả ngữ cảnh",
+    "emailWithInvitation": "Có thiệp",
+    "emailWithoutInvitation": "Chưa có thiệp",
+    "emailAllTypes": "Tất cả loại email",
+    "emailAllStatuses": "Tất cả trạng thái",
+    "emailStatusPending": "Đang xử lý",
+    "emailStatusSent": "Thành công",
+    "emailStatusFailed": "Thất bại",
+    "emailStatusBlocked": "Chờ kiểm tra",
+    "emailTypeTrialEnding": "Nhắc còn 24 giờ",
+    "emailTypeExpired": "Nhắc thiệp đã ẩn",
+    "emailTypeWelcome": "Chào mừng",
+    "emailTypeOnboarding": "Onboarding chưa có thiệp",
+    "emailTypeSystem": "Thông báo hệ thống",
+    "emailNoResults": "Không có email nào khớp bộ lọc.",
+    "emailRecentLimit": "Hiển thị {shown}/{total} email mới nhất.",
+    "emailAttempts": "Lần thử",
+    "emailLastAttempt": "Lần thử gần nhất",
+    "emailAttemptedAt": "Thời gian gửi",
+    "emailProviderId": "Mã Resend",
+    "emailLastError": "Lỗi gần nhất",
+    "emailNoInvitation": "Chưa có thiệp",
+    "emailNoUser": "Không gắn tài khoản",
+    "emailFromDate": "Từ ngày",
+    "emailToDate": "Đến ngày",
     "auditTitle": "Lịch sử hỗ trợ",
     "noAudit": "Chưa có thao tác hỗ trợ nào.",
     "auditActor": "{admin} lúc {time}",
@@ -2127,8 +2289,27 @@
       "demos": "Thiệp demo",
       "mobileThumbnails": "Thumbnail mobile"
     },
-    "demosDescription": "Tên mẫu thiệp áp dụng cho trang quản lý, danh sách thiệp của khách, bộ chọn mẫu trong trình chỉnh sửa và cả trang giới thiệu công khai (mọi ngôn ngữ). Để trống để dùng lại tên mặc định theo bản dịch.",
+    "demosDescription": "Tên và thứ tự mẫu thiệp áp dụng cho trang quản lý, danh sách thiệp của khách, bộ chọn mẫu trong trình chỉnh sửa và trang giới thiệu công khai. Để trống tên để dùng lại bản dịch mặc định.",
+    "orderHelp": "Kéo biểu tượng bên trái để đổi thứ tự. Hệ thống tự lưu và áp dụng ngay cho trang Mẫu thiệp.",
+    "orderColumn": "Thứ tự",
+    "dragHandle": "Kéo để đổi vị trí mẫu {name}",
+    "orderSaving": "Đang lưu thứ tự...",
+    "orderSaved": "Đã lưu thứ tự.",
+    "orderErrors": {
+      "invalidData": "Danh sách mẫu vừa thay đổi. Hãy tải lại trang và thử lại.",
+      "saveFailed": "Không thể lưu thứ tự. Vị trí cũ đã được khôi phục."
+    },
     "templateColumn": "Mẫu thiệp",
+    "visibilityColumn": "Hiển thị",
+    "visibilitySwitch": "Bật hoặc tắt hiển thị mẫu {name}",
+    "visibilityOn": "Đang hiện",
+    "visibilityOff": "Đang ẩn",
+    "visibilitySaving": "Đang lưu...",
+    "visibilityErrors": {
+      "invalidData": "Trạng thái hiển thị không hợp lệ.",
+      "templateNotFound": "Không tìm thấy thiệp demo này.",
+      "saveFailed": "Không thể lưu trạng thái hiển thị."
+    },
     "coupleColumn": "Cặp đôi",
     "actionsColumn": "Thao tác",
     "noDemos": "Chưa có thiệp demo nào.",

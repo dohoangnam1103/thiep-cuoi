@@ -649,27 +649,47 @@ fi
 
 reconcile_marker='# thiepmungonline payOS reconciliation'
 reminder_marker='# thiepmungonline trial reminder emails'
+legacy_reminder_marker='# thiepmungonline trial payment reminder'
 
 # Đối soát mỗi 2 tiếng. Webhook payOS là đường xác nhận duy nhất khi khách đã đóng
 # tab; webhook mất thì tiền vào mà thiệp vẫn ẩn và không ai biết. 2 tiếng là mức
 # phát hiện đủ nhanh trong khi số đơn chưa chốt trong cửa sổ 7 ngày vẫn nhỏ.
 reconcile_job="23 */2 * * * $runner /api/cron/payos-reconcile >> $app_dir/payos-reconcile.log 2>&1 $reconcile_marker"
 
-# CỐ Ý không cài cron email nhắc ở đây. Host đã có `trigger-trial-reminders.sh`
-# gọi cùng route đó lúc 9h sáng và nó đang chạy tốt (log có ngày gửi được thật).
-# Cài thêm một job nữa cùng phút chỉ tạo nguy cơ hai lượt cùng đọc
-# `reminderSentAt = null` rồi gửi trùng email cho khách.
+# Năm lượt/ngày, cách nhau 3 tiếng, chỉ trong khung 09:00-21:00.
 #
-# `$reminder_marker` vẫn được dọn ở dưới để xoá job trùng mà bản deploy trước
-# từng cài.
+# Vì sao không phải một lượt/ngày: điều kiện nhắc là "thiệp hết hạn trong 24h tới",
+# nên lượt chạy đầu tiên rơi vào cửa sổ đó sẽ bắt được thiệp. Chạy thưa thì thiệp
+# publish buổi chiều phải đợi tới lượt sáng hôm sau, lúc đó chỉ còn vài tiếng là ẩn
+# — đo trên dữ liệu thật với lịch cũ `0,15 9 * * *`: 19/67 thiệp được cảnh báo dưới
+# 6h, 9 thiệp chỉ ~1h. Mỗi 3 tiếng đưa lead time điển hình về ~21-24h.
+#
+# Vì sao không chạy đêm: đây là email gửi khách thật, không đánh thức người ta lúc
+# 3h sáng. Hệ quả là khung 21:00->09:00 dồn lại, nên lượt 09:00 gửi nhiều nhất còn
+# bốn lượt sau mỗi lượt chỉ xử lý phần mới vào cửa sổ trong 3 tiếng trước đó.
+#
+# Chạy dày hơn KHÔNG sinh email trùng, ba lớp độc lập cùng chặn: marker
+# `reminderSentAt`/`expiredReminderSentAt` trên thiệp, `dedupeKey` unique trên
+# EmailDelivery (status `sent` -> không gọi provider), và idempotency key gửi kèm
+# cho Resend. Bốn lượt sau cũng thay luôn vai trò retry của lượt 09:15 cũ, và vẫn
+# nằm gọn trong cửa sổ retry an toàn 23h của `email-delivery.ts` — quá mốc đó
+# delivery bị chặn thành `manual-review` thay vì mạo hiểm gọi provider lần nữa.
+#
+# Runner kiểm tra HTTP 2xx và nằm trong repo nên dựng lại host không làm cron biến
+# mất. Job legacy `trigger-trial-reminders.sh` được lọc khỏi crontab trong cùng
+# phép ghi để không bao giờ tồn tại hai scheduler.
+reminder_job="0 9,12,15,18,21 * * * $runner /api/cron/trial-reminders >> $app_dir/trial-reminders.log 2>&1 $reminder_marker"
 (
   crontab -l 2>/dev/null \
     | grep -Fv "$reconcile_marker" \
     | grep -Fv "$reminder_marker" \
+    | grep -Fv "$legacy_reminder_marker" \
+    | grep -Fv 'trigger-trial-reminders.sh' \
     | grep -Fv 'npm run reconcile:payos' \
     | grep -Fv 'npm run reminders:trial' \
     || true
   printf '%s\n' "$reconcile_job"
+  printf '%s\n' "$reminder_job"
 ) | crontab -
 echo "cron_installed=1"
 REMOTE_CRON

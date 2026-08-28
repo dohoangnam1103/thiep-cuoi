@@ -487,14 +487,14 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
     "decorations": {
       "cardImages": [
         {
-          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-100",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp"
+          "src": "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp?v=3"
         },
         {
-          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-100",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp"
+          "src": "/chungdoi/images/themes/_decor/minimalism-jade/flower2-decoration.webp?v=3"
         }
       ]
     }
@@ -528,14 +528,14 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
     "decorations": {
       "cardImages": [
         {
-          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-100",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp"
+          "src": "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp?v=3"
         },
         {
-          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-100",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp"
+          "src": "/chungdoi/images/themes/_decor/minimalism-sky-blue/flower2-decoration.webp?v=3"
         }
       ]
     }
@@ -569,14 +569,14 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
     "decorations": {
       "cardImages": [
         {
-          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-80",
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg] opacity-100",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp"
+          "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp?v=3"
         },
         {
-          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-80",
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-18%] md:bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg] opacity-100",
           "flyOnOpen": true,
-          "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp"
+          "src": "/chungdoi/images/themes/_decor/minimalism-powder-pink/flower2-decoration.webp?v=3"
         }
       ]
     }

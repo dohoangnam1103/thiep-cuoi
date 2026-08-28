@@ -11,9 +11,17 @@ import {
   labelFromMap,
 } from "@/lib/template-labels";
 import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
+import {
+  getTemplateDisplayOrder,
+  sortByTemplateDisplayOrder,
+} from "@/lib/template-display-order";
+import {
+  getTemplateVisibilityOverrides,
+  isTemplateVisible,
+} from "@/lib/template-visibility";
 
+import { DemoOrderManager, type DemoOrderItem } from "./DemoOrderManager";
 import { TemplateMobileThumbnailManager } from "./TemplateMobileThumbnailManager";
-import { TemplateNameForm } from "./TemplateNameForm";
 
 export default async function AdminDemosPage({
   searchParams,
@@ -24,7 +32,15 @@ export default async function AdminDemosPage({
   const { tab } = await searchParams;
   const mobileThumbnailTab = tab === "mobile-thumbnail";
 
-  const [demos, labels, overrides, mobileThumbnailUrls, t] = await Promise.all([
+  const [
+    demos,
+    labels,
+    overrides,
+    mobileThumbnailUrls,
+    displayOrder,
+    visibilityOverrides,
+    t,
+  ] = await Promise.all([
     prisma.invitation.findMany({
       where: { isDemo: true },
       orderBy: { templateId: "asc" },
@@ -33,8 +49,36 @@ export default async function AdminDemosPage({
     getTemplateLabels(),
     getTemplateLabelOverrides(),
     getTemplateMobileThumbnailOverrides(),
+    getTemplateDisplayOrder(),
+    getTemplateVisibilityOverrides(),
     getTranslations("adminDemos"),
   ]);
+  const fallbackOrder = Object.fromEntries(
+    completedTemplates.map((template, index) => [template.slug, index]),
+  );
+  const orderedDemos = sortByTemplateDisplayOrder(
+    demos,
+    displayOrder,
+    (demo) => demo.templateId,
+    fallbackOrder,
+  );
+  const demoOrderItems: DemoOrderItem[] = orderedDemos.map((demo) => {
+    const content = demo.content;
+    const couple =
+      content && (content.brideFullName || content.groomFullName)
+        ? `${content.groomFullName} & ${content.brideFullName}`.trim()
+        : "—";
+
+    return {
+      id: demo.id,
+      templateId: demo.templateId,
+      name: labelFromMap(labels, demo.templateId),
+      defaultName: defaultTemplateLabel(demo.templateId),
+      isRenamed: Boolean(overrides[demo.templateId]),
+      isVisible: isTemplateVisible(visibilityOverrides, demo.templateId),
+      couple,
+    };
+  });
   const mobileThumbnailTemplates = completedTemplates.map((template) => ({
     slug: template.slug,
     name: labelFromMap(labels, template.slug),
@@ -80,52 +124,13 @@ export default async function AdminDemosPage({
       ) : (
         <>
           <p className="text-sm text-muted-foreground">{t("demosDescription")}</p>
-          <div className="overflow-x-auto rounded-2xl border border-border bg-background">
-            <table className="w-full text-sm">
-              <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t("templateColumn")}</th>
-                  <th className="px-4 py-3 font-medium">{t("coupleColumn")}</th>
-                  <th className="px-4 py-3 font-medium">{t("actionsColumn")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {demos.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="px-4 py-6 text-center text-muted-foreground">
-                      {t("noDemos")}
-                    </td>
-                  </tr>
-                ) : (
-                  demos.map((demo) => {
-                    const c = demo.content;
-                    const couple =
-                      c && (c.brideFullName || c.groomFullName)
-                        ? `${c.groomFullName} & ${c.brideFullName}`.trim()
-                        : "—";
-                    return (
-                      <tr key={demo.id} className="border-b border-border last:border-0 align-top">
-                        <td className="px-4 py-3">
-                          <TemplateNameForm
-                            templateId={demo.templateId}
-                            name={labelFromMap(labels, demo.templateId)}
-                            defaultName={defaultTemplateLabel(demo.templateId)}
-                            isRenamed={Boolean(overrides[demo.templateId])}
-                          />
-                        </td>
-                        <td className="px-4 py-3">{couple}</td>
-                        <td className="px-4 py-3">
-                          <Link href={`/admin/demos/${demo.id}`} className="text-sm text-primary hover:underline">
-                            {t("edit")}
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+          {demoOrderItems.length ? (
+            <DemoOrderManager initialItems={demoOrderItems} />
+          ) : (
+            <div className="rounded-2xl border border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
+              {t("noDemos")}
+            </div>
+          )}
         </>
       )}
     </div>

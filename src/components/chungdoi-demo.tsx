@@ -541,6 +541,35 @@ function ParticleField({ tokens }: { tokens: Tokens }) {
   );
 }
 
+/**
+ * Mốc thời gian của chuỗi mở thiệp "cổ điển" (mẫu không có `openingEffect`).
+ *
+ * Bản gốc chia làm hai pha rời nhau chứ không chạy chồng: niêm phong vỡ xong
+ * mới tới lúc bìa bay lên. Chạy tất cả cùng lúc là lý do chuỗi cũ trông rối —
+ * bìa đã trôi khỏi màn hình trong khi con dấu còn đang nứt.
+ *
+ *   0ms    pha "opening": demo-seal-break (500) + demo-seal-ring (600)
+ *                         + demo-dragon-fly cho decor (1200)
+ *   500ms  pha "away":    demo-particle-burst (1400) + demo-envelope-away (800)
+ *   1300ms reveal:        tháo bìa, mount thân thiệp
+ *
+ * Mẫu art (`openingEffect`) KHÔNG dùng bảng này: keyframe `demo-art-*` của
+ * chúng đã tự giữ bìa đứng yên tới 48-70% rồi mới bay, tức đã dàn cảnh sẵn
+ * bên trong một pha duy nhất.
+ */
+const SEAL_BREAK_MS = 500;
+const ENVELOPE_AWAY_MS = 800;
+const CLASSIC_OPEN_DURATION_MS = SEAL_BREAK_MS + ENVELOPE_AWAY_MS;
+/** Giảm chuyển động: CSS đã ép mọi animation về 0.01ms nên chờ theo mốc trên
+ *  chỉ là ngồi nhìn bìa đứng im. Cắt còn một nhịp ngắn cho kịp đổi cảnh. */
+const REDUCED_MOTION_OPEN_MS = 200;
+
+/**
+ * `idle` chưa bấm · `opening` con dấu đang vỡ, bìa còn đứng yên ·
+ * `away` bìa đang bay lên.
+ */
+type OpenPhase = "idle" | "opening" | "away";
+
 function Seal({ tokens, opening }: { tokens: Tokens; opening: boolean }) {
   return (
     <>
@@ -561,7 +590,7 @@ function Seal({ tokens, opening }: { tokens: Tokens; opening: boolean }) {
           background: `radial-gradient(circle at 30% 30%, ${tokens.accent}, ${hexToRgba(tokens.accent, 0.85)})`,
           boxShadow: `0 4px 20px ${hexToRgba(tokens.accent, 0.5)}, inset 0 2px 4px rgba(255,255,255,0.3)`,
           animation: opening
-            ? "demo-seal-break 0.5s ease-in forwards"
+            ? "demo-seal-break 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards"
             : "demo-seal-pulse 2s ease-in-out infinite",
         }}
       >
@@ -611,7 +640,7 @@ function BurstParticles({ tokens }: { tokens: Tokens }) {
                 "--dy": `${dy}px`,
                 "--rot-start": `${(i * 37) % 60}deg`,
                 "--rot-end": `${180 + ((i * 53) % 180)}deg`,
-                animation: `demo-particle-burst 1.4s ease-out ${i * 12}ms forwards`,
+                animation: `demo-particle-burst 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${i * 12}ms forwards`,
               } as React.CSSProperties & Record<string, string>
             }
           />
@@ -1000,6 +1029,7 @@ function EnvelopeCover2D({
   naturalHeight,
   openingEffect,
   renderOverflowDecor,
+  envelopeAwayAnimation,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
@@ -1010,6 +1040,9 @@ function EnvelopeCover2D({
   naturalHeight: boolean;
   openingEffect: ArtOpeningEffect | undefined;
   renderOverflowDecor: boolean;
+  /** Chuỗi `animation` cho lúc bìa bay lên, `undefined` khi chưa tới pha đó.
+   *  EnvelopeCover dựng sẵn để bìa 2D và 3D bay bằng đúng một công thức. */
+  envelopeAwayAnimation: string | undefined;
 }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -1055,17 +1088,7 @@ function EnvelopeCover2D({
       className={`absolute inset-0 flex items-center justify-center ${
         opening ? "pointer-events-none" : ""
       }`}
-      style={{
-        animation: opening
-          ? `${openingEffect ? "demo-art-envelope-away" : "demo-envelope-away"} ${
-              openingEffect
-                ? reducedMotion
-                  ? openingEffect.reducedMotion.durationMs
-                  : openingEffect.durationMs
-                : 800
-            }ms linear forwards`
-          : undefined,
-      }}
+      style={{ animation: envelopeAwayAnimation }}
     >
       <div style={{ transform: `scale(${scale})` }}>
         <div ref={cardRef} className="relative w-[310px] sm:w-[340px] md:w-[640px] lg:w-[732px]">
@@ -1138,17 +1161,20 @@ function EnvelopeCover({
   content,
   tokens,
   onOpen,
-  opening,
+  openPhase,
   reducedMotion,
   cover3dEnabled,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
   onOpen: () => void;
-  opening: boolean;
+  openPhase: OpenPhase;
   reducedMotion: boolean;
   cover3dEnabled: boolean;
 }) {
+  // Con dấu nứt, decor bay và việc chặn tương tác bắt đầu ngay từ pha đầu; chỉ
+  // riêng bìa bay lên là phải đợi pha "away".
+  const opening = openPhase !== "idle";
   // Ảnh decor bìa nằm trong node chụp của Envelope3D, mà Envelope3D là dynamic
   // ssr:false → trình duyệt chỉ thấy mấy ảnh này SAU khi tải xong chunk three.js
   // rồi mount xong: chunk → mount → mới tải ảnh → mới chụp được, mà bìa chặn màn
@@ -1170,7 +1196,16 @@ function EnvelopeCover({
     ? reducedMotion
       ? openingEffect.reducedMotion.durationMs
       : openingEffect.durationMs
-    : 800;
+    : ENVELOPE_AWAY_MS;
+
+  // Mẫu art dàn cảnh bên trong keyframe nên bay suốt cả quãng `opening`; mẫu cổ
+  // điển phải đợi pha "away", tức đợi con dấu vỡ xong.
+  const flyingAway = openingEffect ? opening : openPhase === "away";
+  const envelopeAwayAnimation = flyingAway
+    ? openingEffect
+      ? `demo-art-envelope-away ${openingDuration}ms linear forwards`
+      : `demo-envelope-away ${openingDuration}ms ease-in forwards`
+    : undefined;
   const [projectedSize, setProjectedSize] = useState<{ width: number; height: number } | null>(null);
   const [envelopeReady, setEnvelopeReady] = useState(false);
   const handleProjectedSizeChange = useCallback((nextSize: { width: number; height: number }) => {
@@ -1194,7 +1229,10 @@ function EnvelopeCover({
   const coverInteractive = cover3dEnabled ? envelopeReady : true;
   const coverStyle: CSSProperties & { "--zodiac-art-color"?: string } = {
     background: tokens.background,
-    animation: opening
+    // Nền cũng chỉ mờ dần trong pha "away". Trước đây nó mờ ngay từ lúc bấm nút
+    // nên thẻ chịu hai lớp fade cùng lúc (fade của nền × fade của
+    // demo-envelope-away) và tan biến trước khi kịp bay hết màn hình.
+    animation: flyingAway
       ? `${openingEffect ? "demo-art-cover-out" : "demo-cover-out"} ${openingDuration}ms linear forwards`
       : undefined,
     ...(content.slug === ZODIAC_TEMPLATE_SLUG
@@ -1231,7 +1269,8 @@ function EnvelopeCover({
         />
       ) : null}
       <ParticleField tokens={tokens} />
-      {opening ? <BurstParticles tokens={tokens} /> : null}
+      {/* Đợt confetti nổ cùng nhịp bìa bắt đầu bay, không nổ lúc con dấu mới nứt. */}
+      {flyingAway ? <BurstParticles tokens={tokens} /> : null}
       {/* Chỉ đường 3D cần hai lớp này ở tầng cover: thẻ là texture nên hoa bay ra
           và artwork mở thiệp phải vẽ ngoài thẻ, định vị theo projectedSize. Bản 2D
           animate ngay trong thẻ DOM (CoverCard tự có lớp fly-out). */}
@@ -1264,6 +1303,7 @@ function EnvelopeCover({
             naturalHeight={naturalHeight}
             openingEffect={openingEffect}
             renderOverflowDecor={renderOverflowDecor}
+            envelopeAwayAnimation={envelopeAwayAnimation}
           />
         </div>
       ) : (
@@ -1274,11 +1314,7 @@ function EnvelopeCover({
         data-envelope-projected-size={projectedSize
           ? `${Math.round(projectedSize.width)}x${Math.round(projectedSize.height)}`
           : undefined}
-        style={{
-          animation: opening
-            ? `${openingEffect ? "demo-art-envelope-away" : "demo-envelope-away"} ${openingDuration}ms linear forwards`
-            : undefined,
-        }}
+        style={{ animation: envelopeAwayAnimation }}
       >
         <div className="absolute inset-0">
           <Envelope3D
@@ -1664,11 +1700,12 @@ export function ChungDoiDemo({
     || isDetectiveConanCasebookExperience;
 
   const [opened, setOpened] = useState(captureMode || previewMode);
-  const [opening, setOpening] = useState(false);
+  const [openPhase, setOpenPhase] = useState<OpenPhase>("idle");
   const [playing, setPlaying] = useState(false);
   const [audioMuted, setAudioMuted] = useState(false);
   const openingRef = useRef(false);
   const openTimerRef = useRef<number | null>(null);
+  const awayTimerRef = useRef<number | null>(null);
   const autoScrollTimerRef = useRef<number | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -1824,6 +1861,7 @@ export function ChungDoiDemo({
   useEffect(() => {
     return () => {
       if (openTimerRef.current) window.clearTimeout(openTimerRef.current);
+      if (awayTimerRef.current) window.clearTimeout(awayTimerRef.current);
       if (autoScrollTimerRef.current) window.clearTimeout(autoScrollTimerRef.current);
     };
   }, []);
@@ -1886,14 +1924,17 @@ export function ChungDoiDemo({
 
     if (nextState === "closed") {
       openingRef.current = false;
-      setOpening(false);
+      setOpenPhase("idle");
       return;
     }
 
+    // Mẫu "vật lý" (gatefold/sleeve/cửa Doraemon/sổ Conan) tự dàn cảnh trong Lab
+    // riêng và không hề mount EnvelopeCover, nên pha ở đây chỉ cần phân biệt
+    // đang-mở với đứng-yên.
     if (nextState === "opening" || nextState === "handoff") {
       if (!openingRef.current) {
         openingRef.current = true;
-        setOpening(true);
+        setOpenPhase("opening");
         const audio = audioRef.current;
         if (audio) {
           audio.src = content.music ?? DEFAULT_INVITATION_MUSIC;
@@ -1907,7 +1948,7 @@ export function ChungDoiDemo({
     }
 
     openingRef.current = false;
-    setOpening(false);
+    setOpenPhase("idle");
     setOpened(true);
     if (!isPaginatedExperience) {
       autoScrollTimerRef.current = window.setTimeout(() => {
@@ -1964,13 +2005,25 @@ export function ChungDoiDemo({
     window.scrollTo(0, 0);
     root.style.scrollBehavior = originalScrollBehavior;
 
-    setOpening(true);
     const openingEffect = tokens?.openingEffect;
     const revealDelay = openingEffect
       ? prefersReducedMotion
         ? openingEffect.reducedMotion.durationMs
         : openingEffect.durationMs
-      : 800;
+      : prefersReducedMotion
+        ? REDUCED_MOTION_OPEN_MS
+        : CLASSIC_OPEN_DURATION_MS;
+
+    // Chỉ mẫu cổ điển ở chuyển động đầy đủ mới cần mốc giữa: dừng ở pha "opening"
+    // cho con dấu vỡ xong rồi mới sang "away" cho bìa bay. Mẫu art đã tự giữ nhịp
+    // trong keyframe `demo-art-*`, còn giảm chuyển động thì CSS đã ép mọi animation
+    // về gần 0ms — cả hai vào thẳng pha bay, chia pha chỉ làm người xem ngồi chờ.
+    const stagedOpening = !openingEffect && !prefersReducedMotion;
+    setOpenPhase(stagedOpening ? "opening" : "away");
+    if (stagedOpening) {
+      awayTimerRef.current = window.setTimeout(() => setOpenPhase("away"), SEAL_BREAK_MS);
+    }
+
     openTimerRef.current = window.setTimeout(() => {
       setOpened(true);
       autoScrollTimerRef.current = window.setTimeout(() => {
@@ -2010,7 +2063,7 @@ export function ChungDoiDemo({
     }
     openingRef.current = false;
     setAutoScrolling(false);
-    setOpening(false);
+    setOpenPhase("idle");
     setOpened(false);
     if (isDetectiveConanCasebookExperience) {
       setPhysicalReplayVersion((version) => version + 1);
@@ -2087,7 +2140,7 @@ export function ChungDoiDemo({
           <EnvelopeCover
             content={content}
             tokens={tokens}
-            opening={opening}
+            openPhase={openPhase}
             reducedMotion={prefersReducedMotion}
             onOpen={openInvitation}
             cover3dEnabled={cover3dEnabled}

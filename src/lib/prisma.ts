@@ -14,10 +14,24 @@ function createClient() {
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: ReturnType<typeof createClient>;
+  /**
+   * Turbopack giữ `globalThis.prisma` qua hot reload. Nếu vừa chạy
+   * `prisma generate` để thêm model thì client cũ không có delegate mới (ví dụ
+   * `emailDelivery`) dù TypeScript đã thấy nó. Giữ constructor để thay client
+   * đang cache khi module generated được nạp lại.
+   */
+  prismaConstructor?: unknown;
 };
 
-export const prisma = globalForPrisma.prisma ?? createClient();
+const isDevelopment = process.env.NODE_ENV !== "production";
+const cachedPrisma = globalForPrisma.prisma;
+const canReuseClient =
+  cachedPrisma &&
+  (!isDevelopment || globalForPrisma.prismaConstructor === PrismaClient);
 
-if (process.env.NODE_ENV !== "production") {
+export const prisma = canReuseClient && cachedPrisma ? cachedPrisma : createClient();
+
+if (isDevelopment) {
   globalForPrisma.prisma = prisma;
+  globalForPrisma.prismaConstructor = PrismaClient;
 }

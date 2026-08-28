@@ -107,9 +107,30 @@ const mobileThumbnailClearSchema = z.object({
   templateId: z.string().trim().min(1),
 });
 
+const templateDisplayOrderSchema = z
+  .array(z.string().trim().min(1))
+  .min(1)
+  .max(500);
+
+const templateVisibilitySchema = z.object({
+  templateId: z.string().trim().min(1),
+  isVisible: z.boolean(),
+});
+
 export type TemplateMobileThumbnailState =
   | { ok: true; imageUrl?: string }
   | { ok: false; errorCode: "invalidData" | "templateNotFound" | "saveFailed" };
+
+export type TemplateDisplayOrderState =
+  | { ok: true }
+  | { ok: false; errorCode: "invalidData" | "saveFailed" };
+
+export type TemplateVisibilityState =
+  | { ok: true; isVisible: boolean }
+  | {
+      ok: false;
+      errorCode: "invalidData" | "templateNotFound" | "saveFailed";
+    };
 
 function revalidatePublicTemplatePresentation() {
   // Invalidate both the internal App Router paths and the externally visible
@@ -142,6 +163,84 @@ function revalidatePublicTemplatePresentation() {
       }
     }
   }
+}
+
+/** Persists the exact drag-and-drop order shown in the demo manager. */
+export async function saveTemplateDisplayOrder(
+  input: unknown,
+): Promise<TemplateDisplayOrderState> {
+  await verifyAdmin();
+
+  const parsed = templateDisplayOrderSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, errorCode: "invalidData" };
+
+  const slugs = parsed.data;
+  if (new Set(slugs).size !== slugs.length) {
+    return { ok: false, errorCode: "invalidData" };
+  }
+
+  const demos = await prisma.invitation.findMany({
+    where: { isDemo: true },
+    select: { templateId: true },
+  });
+  const demoSlugs = new Set(demos.map((demo) => demo.templateId));
+  if (
+    demoSlugs.size !== slugs.length ||
+    slugs.some((slug) => !demoSlugs.has(slug))
+  ) {
+    return { ok: false, errorCode: "invalidData" };
+  }
+
+  try {
+    await prisma.$transaction(
+      slugs.map((slug, sortOrder) =>
+        prisma.templateDisplayOrder.upsert({
+          where: { slug },
+          create: { slug, sortOrder },
+          update: { sortOrder },
+        }),
+      ),
+    );
+  } catch {
+    return { ok: false, errorCode: "saveFailed" };
+  }
+
+  revalidatePath("/admin/demos");
+  revalidatePublicTemplatePresentation();
+
+  return { ok: true };
+}
+
+/** Shows or hides one demo template from the public template listing. */
+export async function saveTemplateVisibility(
+  input: unknown,
+): Promise<TemplateVisibilityState> {
+  await verifyAdmin();
+
+  const parsed = templateVisibilitySchema.safeParse(input);
+  if (!parsed.success) return { ok: false, errorCode: "invalidData" };
+
+  const { templateId, isVisible } = parsed.data;
+  const demo = await prisma.invitation.findFirst({
+    where: { isDemo: true, templateId },
+    select: { id: true },
+  });
+  if (!demo) return { ok: false, errorCode: "templateNotFound" };
+
+  try {
+    await prisma.templateVisibility.upsert({
+      where: { slug: templateId },
+      create: { slug: templateId, isVisible },
+      update: { isVisible },
+    });
+  } catch {
+    return { ok: false, errorCode: "saveFailed" };
+  }
+
+  revalidatePath("/admin/demos");
+  revalidatePublicTemplatePresentation();
+
+  return { ok: true, isVisible };
 }
 
 export type RenameTemplateState = { error?: string; ok?: boolean; name?: string } | undefined;

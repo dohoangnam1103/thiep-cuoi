@@ -104,7 +104,7 @@ export function buildExpiredReminderEmail(input: {
   const name = escapeHtml(input.recipientName || "bạn");
   const card = escapeHtml(input.cardName);
   const url = input.payUrl;
-  const subject = `Thiệp cưới "${input.cardName}" đã tạm ẩn — thanh toán để mở lại`;
+  const subject = `Thiệp cưới "${input.cardName}" đã hết hạn sử dụng — Vui lòng thanh toán để mở lại`;
 
   const html = renderReminderShell({
     greetingName: name,
@@ -126,12 +126,50 @@ export function buildExpiredReminderEmail(input: {
   return { subject, html };
 }
 
-type ReminderKind = "trial-ending" | "expired";
+export type ReminderKind = "trial-ending" | "expired";
 
 const REMINDER_BUILDERS = {
   "trial-ending": buildTrialReminderEmail,
   expired: buildExpiredReminderEmail,
 } as const;
+
+export function buildReminderEmail(input: {
+  recipientName: string;
+  cardName: string;
+  invitationId: string;
+  kind: ReminderKind;
+}): { subject: string; html: string } {
+  const payUrl = absoluteUrl(`/dashboard/${input.invitationId}/thanh-toan`);
+  return REMINDER_BUILDERS[input.kind]({
+    recipientName: input.recipientName,
+    cardName: input.cardName,
+    payUrl,
+  });
+}
+
+/** Gửi một email đã được dựng sẵn, trả lại message ID của Resend để audit. */
+export async function sendEmailViaResend(input: {
+  to: string;
+  subject: string;
+  html: string;
+  idempotencyKey?: string;
+}): Promise<{ providerMessageId: string | null }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error("Thiếu RESEND_API_KEY");
+
+  const resend = new Resend(apiKey);
+  const { data, error } = await resend.emails.send(
+    {
+      from: TRIAL_REMINDER_FROM,
+      to: input.to,
+      subject: input.subject,
+      html: input.html,
+    },
+    input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : undefined,
+  );
+  if (error) throw new Error(`Resend lỗi: ${error.message}`);
+  return { providerMessageId: data?.id ?? null };
+}
 
 /**
  * Gửi một email nhắc thanh toán.
@@ -145,27 +183,16 @@ export async function sendReminderEmail(input: {
   cardName: string;
   invitationId: string;
   kind: ReminderKind;
-}): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) throw new Error("Thiếu RESEND_API_KEY");
-
-  const resend = new Resend(apiKey);
-  const payUrl = absoluteUrl(`/dashboard/${input.invitationId}/thanh-toan`);
-  const { subject, html } = REMINDER_BUILDERS[input.kind]({
-    recipientName: input.recipientName,
-    cardName: input.cardName,
-    payUrl,
-  });
-
-  const { error } = await resend.emails.send({
-    from: TRIAL_REMINDER_FROM,
+  idempotencyKey?: string;
+}): Promise<{ subject: string; providerMessageId: string | null }> {
+  const { subject, html } = buildReminderEmail(input);
+  const result = await sendEmailViaResend({
     to: input.to,
     subject,
     html,
+    idempotencyKey: input.idempotencyKey,
   });
-  if (error) {
-    throw new Error(`Resend lỗi: ${error.message}`);
-  }
+  return { subject, ...result };
 }
 
 /** Giữ tên cũ cho mốc "còn 24h" để không phải sửa mọi call site. */

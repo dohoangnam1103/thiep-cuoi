@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import viMessages from "../../../messages/vi.json";
@@ -34,8 +35,9 @@ const SUPER_ADMIN_NAV = [
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const admin = await getCurrentAdmin();
-  const nav = admin?.isSuperAdmin ? [...NAV, ...SUPER_ADMIN_NAV] : NAV;
+  const [admin, t] = await Promise.all([getCurrentAdmin(), getTranslations("adminSupport")]);
+  const navItems = [...NAV, { href: "/admin/email-logs", label: t("emailLogsNav") }];
+  const nav = admin?.isSuperAdmin ? [...navItems, ...SUPER_ADMIN_NAV] : navItems;
 
   return (
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
@@ -88,7 +90,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                       </button>
                     </form>
                   </div>
-                  <div className="px-2 pb-2">
+                  {/* No padding here: the strip's fade has to reach the screen
+                      edge to read as "there is more nav over there", so the
+                      strip owns its own inset. */}
+                  <div className="pb-2">
                     <AdminNav items={nav} orientation="horizontal" />
                   </div>
                 </header>

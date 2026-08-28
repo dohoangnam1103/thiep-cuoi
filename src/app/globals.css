@@ -406,6 +406,49 @@ html.lenis body {
     background-color: rgba(0, 0, 0, 0.3);
   }
 
+  /* Dải điều hướng ngang của admin dưới breakpoint lg. Có 13 mục nên nó luôn
+     tràn trên điện thoại, và thanh scroll ngang nằm dưới hàng pill trông như
+     giao diện bị lỗi. Ẩn thanh scroll đi, rồi thay tín hiệu "còn cuộn được"
+     bằng vệt mờ ở đúng phía còn nội dung — hai data attribute do JS bật/tắt
+     theo scrollLeft.
+
+     Fade 0px nghĩa là gradient chuyển từ transparent sang đen trong khoảng
+     rộng 0, tức không có vệt mờ nào — nên trạng thái mặc định (không tràn)
+     nhìn y như khi chưa có mask. */
+  .admin-nav-strip {
+    --admin-nav-fade-start: 0px;
+    --admin-nav-fade-end: 0px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--admin-nav-fade-start),
+      #000 calc(100% - var(--admin-nav-fade-end)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--admin-nav-fade-start),
+      #000 calc(100% - var(--admin-nav-fade-end)),
+      transparent 100%
+    );
+  }
+
+  .admin-nav-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav-strip[data-overflow-start="true"] {
+    --admin-nav-fade-start: 24px;
+  }
+
+  .admin-nav-strip[data-overflow-end="true"] {
+    --admin-nav-fade-end: 24px;
+  }
+
   .font-pattaya {
     font-family: "Pattaya", cursive;
   }
@@ -625,6 +668,28 @@ html.lenis body {
   to {
     background-position: -200% center;
   }
+}
+
+/* `background-position` là thuộc tính Chromium KHÔNG chạy được trên compositor,
+   nên mỗi frame của vệt sáng này là một lượt recalc style + repaint toàn document
+   trên main thread. Animation CSS lại vẫn tick khi phần tử đã cuộn khỏi màn hình,
+   nên cái giá đó phải trả suốt thời gian tab mở, đổi lấy đúng con số 0.
+
+   Đo trên PRODUCTION (thiepmungonline.com) ở scrollY=2200 (hero đã khuất), trang
+   đứng yên, cửa sổ 6000ms, CPU throttle x4: chỉ tạm dừng riêng phần tử này kéo
+   main thread từ 3457ms xuống 2032ms (-41%) và style recalc từ 679 xuống 324
+   (-52%). `ScriptDuration` gần như không đổi (254ms -> 259ms), xác nhận đây là chi
+   phí style/paint thuần, không phải JS.
+
+   Đừng đo con số này ở local `next dev`: trang chủ ở dev KHÔNG hydrate (không có
+   React fiber, embla không khởi tạo, useRevealOnScroll không chạy), nên mọi số
+   liên quan tới JS đo ở đó đều vô nghĩa và sẽ phóng đại tỉ lệ của animation.
+
+   `HeroShinyTitle` bật cờ khi hero ra khỏi viewport. Không ai nhìn thấy phần bị
+   dừng, nên không có thay đổi thị giác nào. Dừng chứ không phải `animation: none`
+   để lúc quay lại vệt sáng chạy tiếp từ đúng vị trí cũ, không nhảy. */
+.shiny-text[data-sheen-paused="true"] {
+  animation-play-state: paused;
 }
 
 .template-carousel-viewport {

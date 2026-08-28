@@ -15,6 +15,7 @@ model User {
   invitations         Invitation[]
   templateSuggestions TemplateSuggestion[]
   adminAuditLogs      AdminAuditLog[]      @relation("AuditTargetUser")
+  emailDeliveries     EmailDelivery[]
 }
 
 model Admin {
@@ -27,20 +28,20 @@ model Admin {
 }
 
 model Invitation {
-  id                 String    @id @default(cuid())
-  userId             String
-  slug               String?   @unique
-  templateId         String
-  status             String    @default("draft")
-  paid               Boolean   @default(false)
-  isDemo             Boolean   @default(false)
-  adminPriceOverride Int?
-  complimentary      Boolean   @default(false)
-  complimentaryAt    DateTime?
-  guestManagerToken  String?   @unique
-  publishedAt        DateTime?
+  id                    String    @id @default(cuid())
+  userId                String
+  slug                  String?   @unique
+  templateId            String
+  status                String    @default("draft")
+  paid                  Boolean   @default(false)
+  isDemo                Boolean   @default(false)
+  adminPriceOverride    Int?
+  complimentary         Boolean   @default(false)
+  complimentaryAt       DateTime?
+  guestManagerToken     String?   @unique
+  publishedAt           DateTime?
   /// Mốc đã gửi email nhắc "còn 24h cuối dùng thử".
-  reminderSentAt     DateTime?
+  reminderSentAt        DateTime?
   /// Mốc đã gửi email nhắc bù sau khi thiệp hết hạn và bị tạm ẩn.
   ///
   /// Cột riêng chứ không dùng lại `reminderSentAt`: hai mốc là hai lần gửi khác
@@ -49,22 +50,23 @@ model Invitation {
   expiredReminderSentAt DateTime?
   /// Số lần thiệp được mở, đếm cả chủ thiệp. Chỉ hiển thị trong trang quản trị.
   /// Cập nhật bằng SQL thô để không đụng vào `updatedAt` — xem `src/lib/invitation-views.ts`.
-  viewCount          Int       @default(0)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  viewCount             Int       @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  content       InvitationContent?
-  ceremonies    CeremonyItem[]
-  schedule      ScheduleItem[]
-  gallery       GalleryPhoto[]
-  wishes        Wish[]
-  guestMedia    GuestMedia[]
-  rsvps         Rsvp[]
-  guests        Guest[]
-  rsvpQuestions RsvpQuestion[]
-  payments      Payment[]
-  adminAuditLogs AdminAuditLog[] @relation("AuditInvitation")
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content         InvitationContent?
+  ceremonies      CeremonyItem[]
+  schedule        ScheduleItem[]
+  gallery         GalleryPhoto[]
+  wishes          Wish[]
+  guestMedia      GuestMedia[]
+  rsvps           Rsvp[]
+  guests          Guest[]
+  rsvpQuestions   RsvpQuestion[]
+  payments        Payment[]
+  adminAuditLogs  AdminAuditLog[]    @relation("AuditInvitation")
+  emailDeliveries EmailDelivery[]
 
   @@index([userId])
   @@index([isDemo])
@@ -88,6 +90,88 @@ model AdminAuditLog {
   @@index([targetUserId, createdAt])
   @@index([invitationId, createdAt])
   @@index([adminId, createdAt])
+}
+
+/// Một lượt gửi email do cron, admin hoặc hệ thống khởi tạo.
+///
+/// `EmailRun` trả lời câu hỏi vận hành theo mốc thời gian, ví dụ: "lượt 09:00
+/// đã quét bao nhiêu thiệp và gửi thành công cho ai?". Các số đếm là snapshot
+/// lúc run kết thúc; danh sách chi tiết nằm ở `EmailDeliveryAttempt`.
+model EmailRun {
+  id           String    @id @default(cuid())
+  source       String
+  trigger      String
+  status       String    @default("running")
+  errorMessage String?
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  scannedCount Int       @default(0)
+  sentCount    Int       @default(0)
+  failedCount  Int       @default(0)
+  skippedCount Int       @default(0)
+
+  attempts EmailDeliveryAttempt[]
+
+  @@index([source, startedAt])
+  @@index([startedAt])
+}
+
+/// Một email logic cần được gửi. Hàng này giữ recipient và ngữ cảnh dưới dạng
+/// snapshot, nên lịch sử vẫn đúng cả khi user đổi email hoặc thiệp bị xoá.
+///
+/// `dedupeKey` khoá từng thư logic ở cấp ứng dụng và đồng thời được gửi cho
+/// Resend như idempotency key. Nhiều `EmailDeliveryAttempt` có thể thuộc cùng
+/// delivery khi provider lỗi và cron thử lại.
+model EmailDelivery {
+  id                String    @id @default(cuid())
+  dedupeKey         String    @unique
+  type              String
+  recipientEmail    String
+  recipientName     String?
+  subject           String
+  /// HTML bất biến của request đầu tiên. Mọi retry phải dùng đúng payload này:
+  /// Resend trả 409 nếu cùng idempotency key nhưng payload thay đổi.
+  html              String
+  userId            String?
+  invitationId      String?
+  status            String    @default("pending")
+  provider          String    @default("resend")
+  providerMessageId String?
+  lastError         String?
+  attemptCount      Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  sentAt            DateTime?
+
+  user       User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  invitation Invitation?            @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+  attempts   EmailDeliveryAttempt[]
+
+  @@index([type, createdAt])
+  @@index([status, createdAt])
+  @@index([recipientEmail, createdAt])
+  @@index([userId, createdAt])
+  @@index([invitationId, createdAt])
+}
+
+/// Một lần xử lý `EmailDelivery`. Thường là một lần gọi provider; status `blocked`
+/// ghi lại việc hệ thống chủ động không gọi vì đã quá cửa sổ retry an toàn.
+/// Append-only để mọi lượt cron trong ngày đều giữ nguyên lịch sử.
+model EmailDeliveryAttempt {
+  id                String   @id @default(cuid())
+  deliveryId        String
+  runId             String?
+  status            String
+  providerMessageId String?
+  errorMessage      String?
+  attemptedAt       DateTime @default(now())
+
+  delivery EmailDelivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  run      EmailRun?     @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  @@index([runId, attemptedAt])
+  @@index([deliveryId, attemptedAt])
+  @@index([status, attemptedAt])
 }
 
 model Payment {
@@ -169,6 +253,24 @@ model TemplateLabel {
 model TemplateMobileThumbnail {
   slug      String   @id
   imageUrl  String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+/// Admin-defined ordering shared by the demo manager and public template list.
+/// An absent row falls back to the built-in order in `completedTemplates`.
+model TemplateDisplayOrder {
+  slug      String   @id
+  sortOrder Int
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// Admin visibility override for public template listings.
+/// An absent row deliberately means visible.
+model TemplateVisibility {
+  slug      String   @id
+  isVisible Boolean  @default(true)
   updatedAt DateTime @default(now()) @updatedAt
 }
 
