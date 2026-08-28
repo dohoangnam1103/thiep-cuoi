@@ -52,6 +52,7 @@ const ENVELOPE_TEMPLATE_SLUGS = [
   "spring-garden-blue",
   "minimalism-red",
   "minimalism-dark-red",
+  "minimalism-green",
   "minimalism-jade",
   "minimalism-sky-blue",
   "minimalism-powder-pink",

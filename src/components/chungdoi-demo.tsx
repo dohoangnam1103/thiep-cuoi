@@ -76,6 +76,7 @@ const ElegantLeafInvitation = dynamic(() => import("@/components/chungdoi-tpl-el
 const GlassGardenInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-green").then((m) => m.GlassGardenInvitation));
 const GlassGardenPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-pink").then((m) => m.GlassGardenPinkInvitation));
 const MinimalismDarkRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismDarkRedInvitation));
+const MinimalismGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-green").then((m) => m.MinimalismGreenInvitation));
 const MinimalismJadeInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismJadeInvitation));
 const MinimalismSkyBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismSkyBlueInvitation));
 const MinimalismPowderPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismPowderPinkInvitation));
@@ -120,6 +121,7 @@ const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "hoa-tinh-red": HoaTinhInvitation,
   "minimalism-red": MinimalismRedInvitation,
   "minimalism-dark-red": MinimalismDarkRedInvitation,
+  "minimalism-green": MinimalismGreenInvitation,
   "minimalism-jade": MinimalismJadeInvitation,
   "minimalism-sky-blue": MinimalismSkyBlueInvitation,
   "minimalism-powder-pink": MinimalismPowderPinkInvitation,

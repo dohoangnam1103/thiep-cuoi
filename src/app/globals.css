@@ -208,6 +208,23 @@ html.lenis body {
 .font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
 .font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
 
+/* ── Mẫu Minimalism Xanh — 5 font stack đúng như bản gốc ─────────────────────
+ * Bản gốc chungdoi.com khai 5 stack cho mẫu này, KHÔNG theo hệ 2 font ở trên.
+ * User yêu cầu clone khớp 100% cả font-family lẫn font-size nên giữ nguyên,
+ * đặt thành class để renderer không phải khai `fontFamily` inline. Chỉ mẫu
+ * `minimalism-green` dùng, không ảnh hưởng mẫu khác.
+ * Baskerville / Times New Roman là font hệ thống, cố ý không self-host.
+ * ────────────────────────────────────────────────────────────────────────── */
+.font-mg-cormorant { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+.font-mg-nautigal { font-family: "The Nautigal", cursive; }
+.font-mg-times { font-family: "Times New Roman", serif; }
+.font-mg-baskerville { font-family: Baskerville, "Times New Roman", serif; }
+.font-mg-garamond { font-family: "EB Garamond", serif; }
+/* Vài chỗ bản gốc KHÔNG khai font nên rơi về stack sans mặc định của Tailwind
+   (lớp phủ "+N" ở album, đốm sáng ✦ và dòng "Nhấn để mở" của hộp quà). Không
+   dùng `font-sans` của repo vì biến đó trỏ Be Vietnam Pro, khác bản gốc. */
+.font-mg-sans { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+
 /* Font tên cô dâu chú rể, trích từ thẻ gốc trên chungdoi.com. Bảng đối chiếu từng
    thiệp nằm ở docs/research/couple-name-fonts.json. Biến next/font đứng trước bản
    self-host vì bản Google có subset vietnamese nên chắc chắn đủ dấu. */
@@ -1380,6 +1397,203 @@ html.lenis body {
 
 .igb-hint {
   animation: igbHintPulse 2s ease-in-out infinite;
+}
+
+
+/* ── Phong bì hộp quà bản source-matched (SourceLayeredGiftArtwork) ──────────
+ * Sao đúng tên keyframe, thời lượng và độ trễ từ chungdoi.com. Tách khỏi bộ
+ * `.igb-*` ở trên vì bản mặc định đang dùng cho ~37 mẫu khác.
+ * `ienv-card` dịch ngang -15% ngay trong keyframe nên đừng canh giữa bằng
+ * transform ở chỗ khác — sẽ chồng lệch.
+ * ────────────────────────────────────────────────────────────────────────── */
+.ienv-shadow {
+  animation: ienvShadowPulse 3s ease-in-out infinite;
+}
+
+.ienv-card {
+  transition: transform 0.35s;
+  transform-origin: 50% 92%;
+  animation: ienvFloatMain 3s ease-in-out infinite;
+}
+
+.ienv-back {
+  transition: rotate 0.3s;
+  animation: ienvFloat 5.2s ease-in-out 0.5s infinite;
+}
+
+.group:hover .ienv-card,
+.group:focus-visible .ienv-card {
+  animation:
+    ienvFloatMain 3s ease-in-out infinite,
+    ienvGrow 0.35s ease forwards,
+    ienvWave 1.1s ease-in-out 0.35s infinite;
+}
+
+.group:hover .ienv-back,
+.group:focus-visible .ienv-back {
+  animation:
+    ienvFloat 5.2s ease-in-out 0.5s infinite,
+    ienvBackWave 2.2s ease-in-out infinite;
+}
+
+.ienv-hint {
+  animation: ienvHintPulse 2s ease-in-out infinite;
+}
+
+.ienv-sparkle,
+.ienv-sparkle-2,
+.ienv-sparkle-3,
+.ienv-sparkle-4 {
+  animation: ienvSparkleAnim 2s ease-in-out infinite;
+}
+
+.ienv-sparkle-2 {
+  animation-delay: 0.6s;
+}
+
+.ienv-sparkle-3 {
+  animation-delay: 1.2s;
+}
+
+.ienv-sparkle-4 {
+  animation-delay: 1.7s;
+}
+
+@keyframes ienvFloat {
+  0%,
+  100% {
+    translate: 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes ienvFloatMain {
+  0%,
+  100% {
+    translate: -15%;
+  }
+  50% {
+    translate: -15% -7px;
+  }
+}
+
+@keyframes ienvShadowPulse {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.28;
+  }
+  50% {
+    transform: scaleX(0.9);
+    opacity: 0.16;
+  }
+}
+
+@keyframes ienvSparkleAnim {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes ienvHintPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes ienvGrow {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ienvWave {
+  0% {
+    transform: scale(1.12) rotate(0deg);
+  }
+  20% {
+    transform: scale(1.12) rotate(-6deg);
+  }
+  40% {
+    transform: scale(1.12) rotate(4.5deg);
+  }
+  60% {
+    transform: scale(1.12) rotate(-3deg);
+  }
+  80% {
+    transform: scale(1.12) rotate(1.5deg);
+  }
+  100% {
+    transform: scale(1.12) rotate(0deg);
+  }
+}
+
+@keyframes ienvBackWave {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  20% {
+    rotate: -1deg;
+  }
+  40% {
+    rotate: 2deg;
+  }
+  60% {
+    rotate: -2.5deg;
+  }
+  80% {
+    rotate: 1.5deg;
+  }
+}
+
+/* ── Hai ảnh nghiêng trong cụm phong bì ở hero mẫu Minimalism Xanh ───────────
+ * Keyframe gộp luôn `translate(-50%)` nên nó vừa canh giữa theo `left` vừa lo
+ * phần bồng bềnh; đừng thêm `-translate-x-1/2` ở markup.
+ * ────────────────────────────────────────────────────────────────────────── */
+.mg-float-g {
+  will-change: transform;
+  animation: mgFloatG 4s ease-in-out infinite;
+}
+
+.mg-float-b {
+  will-change: transform;
+  animation: mgFloatB 4.6s ease-in-out infinite;
+}
+
+@keyframes mgFloatG {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(9.59deg);
+  }
+  50% {
+    transform: translate(-50%, -8px) rotate(9.59deg);
+  }
+}
+
+@keyframes mgFloatB {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(-12.55deg);
+  }
+  50% {
+    transform: translate(-50%, -8px) rotate(-12.55deg);
+  }
 }
 
 /* Two-sided gift card used by GiftFlipCard. */

@@ -37,6 +37,7 @@ export const vietnameseTemplateSlugs = [
   ["spring-garden-blue", "vuon-xuan-lam"],
   ["minimalism-red", "minimalism-do"],
   ["minimalism-dark-red", "minimalism-do-do"],
+  ["minimalism-green", "minimalism-xanh"],
   ["minimalism-jade", "minimalism-xanh-ngoc"],
   ["minimalism-sky-blue", "minimalism-xanh-bau-troi"],
   ["minimalism-powder-pink", "minimalism-hong-phan"],

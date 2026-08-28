@@ -398,6 +398,11 @@ const MOMENTS_STYLES: Record<string, MomentsStyle> = {
     sectionClassName: "w-full bg-[#fff7eb] px-4 py-10 text-[#511419] md:px-10 md:py-14",
     cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#511419]/30",
   },
+  "minimalism-green": {
+    ...PORTRAIT_RED,
+    sectionClassName: "w-full bg-white px-4 py-10 text-[#6b7b4f] md:px-10 md:py-14",
+    cardClassName: "group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-xl border border-[#6b7b4f]/30",
+  },
   "minimalism-jade": {
     ...PORTRAIT_RED,
     sectionClassName: "w-full bg-[#f8fcfa] px-4 py-10 text-[#5f9385] md:px-10 md:py-14",

@@ -445,6 +445,24 @@ export const templates = [
     "sourceUrl": "https://chungdoi.com/en/templates/minimalism-dark-red"
   },
   {
+    "slug": "minimalism-green",
+    "name": "Minimalism Xanh",
+    "title": "Mẫu thiệp cưới Minimalism Xanh | Thiệp Mừng Online",
+    "description": "Thiệp cưới Minimalism Xanh tối giản trên nền giấy trắng với sắc xanh lá thảo mộc, phong bì lồng hai ảnh cưới nghiêng và lịch cưới đánh dấu trái tim. Miễn phí tạo thiệp.",
+    "category": "Modern",
+    "color": "Green",
+    "isNew": true,
+    "highlights": [
+      "Bố cục tối giản trên nền giấy trắng, sắc xanh ô liu và xanh lá nhạt",
+      "Phong bì hero lồng hai ảnh cưới nghiêng ngược chiều, viền trắng bồng bềnh",
+      "Thẻ vòm xanh lá cho thông tin lễ, lịch cưới đánh dấu trái tim và lịch trình có icon"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_green.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_green.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_green.webp",
+    "sourceUrl": "https://chungdoi.com/en/templates/minimalism-green"
+  },
+  {
     "slug": "minimalism-jade",
     "name": "Minimalism Xanh Ngọc",
     "title": "Mẫu thiệp cưới Minimalism Xanh Ngọc | Thiệp Mừng Online",
@@ -929,7 +947,9 @@ export const completedTemplateSlugs = new Set<string>([
   "chibi-red",
   "minimalism-red",
   "minimalism-dark-red",
+  "minimalism-green",
   "minimalism-jade",
+
   "minimalism-sky-blue",
   "minimalism-powder-pink",
   "cherry-blossom-pink",

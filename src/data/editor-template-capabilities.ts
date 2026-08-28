@@ -22,6 +22,8 @@ const DUAL_HERO_IMAGE_TEMPLATE_SLUGS = new Set([
   "boho-floral-brown",
   "elegant-leaf-green",
   "hoa-tinh-red",
+  // Cụm phong bì ở hero lồng hai ảnh nghiêng ngược chiều nhau.
+  "minimalism-green",
 ]);
 
 export function templateSupportsHeroImage(templateSlug: string): boolean {

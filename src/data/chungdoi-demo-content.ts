@@ -2662,6 +2662,152 @@ const templateDemoContent: Record<string, ChungDoiDemoContent> = {
     },
     "music": "/chungdoi/music/minimalism-dark-red.mp3"
   },
+  "minimalism-green": {
+    "slug": "minimalism-green",
+    "invitationId": "dangkhoa-myduyen-minigreen",
+    "theme": {
+      "primaryColor": "#6b7b4f",
+      "fontFamily": "EB Garamond",
+      "assetFolder": "minimalism-green",
+      "assets": [
+        "/chungdoi/images/themes/minimalism-green/flower-background.webp",
+        "/chungdoi/images/themes/minimalism-green/flower-line.webp",
+        "/chungdoi/images/themes/minimalism-green/envelope.webp",
+        "/chungdoi/images/themes/minimalism-green/envelope-cut.webp",
+        "/chungdoi/images/themes/minimalism-green/paper.webp",
+        "/chungdoi/images/themes/minimalism-green/guestbook-background.webp",
+        "/chungdoi/images/themes/minimalism-green/cake.webp",
+        "/chungdoi/images/themes/minimalism-green/home.webp",
+        "/chungdoi/images/themes/minimalism-green/music.webp"
+      ]
+    },
+    "couple": {
+      "brideFullName": "Nguyễn Mỹ Duyên",
+      "groomFullName": "Trần Đăng Khoa",
+      "brideShortName": "Mỹ Duyên",
+      "groomShortName": "Đăng Khoa",
+      "brideBirthOrder": "Út Nữ",
+      "groomBirthOrder": "Trưởng Nam",
+      "brideFirst": false,
+      "date": "2026-12-19",
+      "time": "18:00",
+      "ceremonyDate": "2026-12-19",
+      "ceremonyTime": "11:00",
+      "ceremonyHeader": "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      "openingMessage": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"
+    },
+    "families": {
+      "brideFather": "Nguyễn Văn Nam",
+      "brideMother": "Phạm Thị Lan",
+      "brideAddress": "Khối 2, thị xã Buôn Hồ, tỉnh Đắk Lắk",
+      "groomFather": "Trần Văn Hùng",
+      "groomMother": "Lê Thị Hoa",
+      "groomAddress": "Tổ dân phố 3A, thị trấn Eakar, huyện Eakar, tỉnh Đắk Lắk",
+      "brideParentTitle": "Ông Bà",
+      "groomParentTitle": "Ông Bà"
+    },
+    "venue": {
+      "address": "Riverside Palace, 360 Bến Vân Đồn, Quận 4, TP. HCM",
+      "mapAddress": "Riverside Palace",
+      "banquetTime": "18:00"
+    },
+    "schedule": [
+      {
+        "time": "16:00",
+        "label": "Đón khách"
+      },
+      {
+        "time": "17:00",
+        "label": "Nghi lễ thành hôn"
+      },
+      {
+        "time": "18:00",
+        "label": "Khai tiệc"
+      },
+      {
+        "time": "19:30",
+        "label": "Cắt bánh & rót rượu"
+      },
+      {
+        "time": "21:00",
+        "label": "Kết thúc tiệc"
+      }
+    ],
+    "dressCodeColors": "#6b7b4f,#87a172,#cdd9bd,#e9efe1",
+    "albumLayout": "grid",
+    "heroImage": "/chungdoi/images/gallery/minimalism-green/hero-bride.webp",
+    "heroImage2": "/chungdoi/images/gallery/minimalism-green/hero-groom.webp",
+    "gallery": [
+      "/chungdoi/images/gallery/minimalism-green/photo-1.webp",
+      "/chungdoi/images/gallery/minimalism-green/photo-2.webp",
+      "/chungdoi/images/gallery/minimalism-green/photo-3.webp",
+      "/chungdoi/images/gallery/minimalism-green/photo-4.webp",
+      "/chungdoi/images/gallery/minimalism-green/photo-5.webp",
+      "/chungdoi/images/gallery/minimalism-green/photo-6.webp",
+      "/chungdoi/images/gallery/minimalism-green/photo-7.webp"
+    ],
+    "wishes": [
+      {
+        "name": "Minh Tuấn",
+        "time": "2026-07-09T18:31:14",
+        "text": "Chúc mừng hạnh phúc hai bạn nhé! Trăm năm hạnh phúc, sớm có tin vui!"
+      },
+      {
+        "name": "Thu Hà",
+        "time": "2026-07-09T18:31:14",
+        "text": "Ôi đẹp đôi quá! Chúc hai bạn mãi mãi bên nhau, yêu thương trọn đời."
+      },
+      {
+        "name": "Hoàng Nam",
+        "time": "2026-07-09T18:31:14",
+        "text": "Chúc anh chị trăm năm hạnh phúc, con đàn cháu đống!"
+      },
+      {
+        "name": "Lan Anh",
+        "time": "2026-07-09T18:31:14",
+        "text": "Mừng đám cưới của hai bạn! Chúc luôn vui vẻ và ngập tràn yêu thương."
+      },
+      {
+        "name": "Đức Long",
+        "time": "2026-07-09T18:31:14",
+        "text": "Chúc mừng hai bạn! Chuyện tình đẹp như mơ, hạnh phúc viên mãn."
+      },
+      {
+        "name": "Mỹ Linh",
+        "time": "2026-07-09T18:31:14",
+        "text": "Chúc cô dâu chú rể luôn giữ mãi nụ cười hôm nay nhé!"
+      },
+      {
+        "name": "Quốc Bảo",
+        "time": "2026-07-09T18:31:14",
+        "text": "Trăm năm hạnh phúc, bách niên giai lão! Chúc mừng hai bạn."
+      },
+      {
+        "name": "Phương Thảo",
+        "time": "2026-07-09T18:31:14",
+        "text": "Đám cưới đẹp quá! Chúc hai bạn luôn yêu thương và thấu hiểu nhau."
+      },
+      {
+        "name": "Anh Khoa",
+        "time": "2026-07-09T18:31:14",
+        "text": "Chúc mừng hạnh phúc! Mong hai bạn xây dựng tổ ấm thật viên mãn."
+      },
+      {
+        "name": "Kim Ngân",
+        "time": "2026-07-09T18:31:14",
+        "text": "Chúc hai bạn một hành trình mới thật nhiều niềm vui và may mắn!"
+      }
+    ],
+    "bank": {
+      "brideBankName": "",
+      "brideAccountNumber": "",
+      "brideAccountName": "",
+      "groomBankName": "Vietcombank",
+      "groomAccountNumber": "1023456789",
+      "groomAccountName": "TRAN DANG KHOA"
+    },
+    "music": "/chungdoi/music/minimalism-green.mp3"
+  },
   "royal-red": {
     "slug": "royal-red",
     "invitationId": "quocanh-cattuong",

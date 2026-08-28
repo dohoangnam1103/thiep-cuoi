@@ -458,6 +458,46 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       ]
     }
   },
+  "minimalism-green": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #e9efe1, #dbe6cf, #cdd9bd)",
+      "cardBg": "rgba(255, 255, 255, 0.96)",
+      "textPrimary": "#6b7b4f",
+      "textSecondary": "rgba(107, 123, 79, 0.7)",
+      "accent": "#87a172",
+      "dividerFrom": "transparent",
+      "dividerTo": "#6b7b4f",
+      "buttonBg": "#6b7b4f",
+      "buttonText": "#ffffff",
+      "guestBoxBg": "rgba(107, 123, 79, 0.08)",
+      "guestBoxBorder": "rgba(107, 123, 79, 0.15)",
+      "particleColors": [
+        "#6b7b4f",
+        "#a7bd8f",
+        "#87a172"
+      ],
+      "particleType": "leaves"
+    },
+    "fonts": {
+      "couple": "\"EB Garamond\", serif",
+      "ampersand": "Baskerville, \"Times New Roman\", serif"
+    },
+    "sealType": "heart",
+    "decorations": {
+      "cardImages": [
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] top-[-5%] left-[-10px] -translate-x-[6%] md:-translate-x-[11%] rotate-[25deg]",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/minimalism-green/flower-background.webp"
+        },
+        {
+          "className": "w-[38%] max-w-[150px] md:max-w-[170px] bottom-[-5%] right-[-10px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 -rotate-[25deg]",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/minimalism-green/flower-background.webp"
+        }
+      ]
+    }
+  },
   "minimalism-jade": {
     "theme": {
       "background": "linear-gradient(to bottom right, #e5f3ed, #cde7de, #abd5c6)",

@@ -16,6 +16,7 @@ import {
 import {
   GiftboxArtwork,
   LayeredGiftArtwork,
+  SourceLayeredGiftArtwork,
 } from "@/components/chungdoi-gift-envelope-artwork";
 import { resolveGiftVisual } from "@/data/chungdoi-gift-visuals";
 import {
@@ -591,10 +592,17 @@ export function SharedWishForm({
   accent,
   centered = false,
   labels,
+  fieldBorderColor,
 }: {
   accent: string;
   centered?: boolean;
   labels?: SharedWishFormLabels;
+  /**
+   * Màu viền ô nhập. Mặc định là accent pha 30% như trước, nên các mẫu đang dùng
+   * không đổi gì; mẫu nào cần viền đặc (khớp bản gốc) thì truyền màu vào — không
+   * ghi đè được bằng class vì màu này đặt inline.
+   */
+  fieldBorderColor?: string;
 }) {
   const { formProps, pending, state } = useWishFormBinding();
   const nameId = useId();
@@ -638,9 +646,9 @@ export function SharedWishForm({
     <form noValidate onSubmit={handleSubmit} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
         <label className="sr-only" htmlFor={nameId}>{labels?.nameLabel ?? copy.namePlaceholder}</label>
-        <input id={nameId} name="name" required maxLength={120} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
+        <input id={nameId} name="name" required maxLength={120} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: fieldBorderColor ?? hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
         <label className="sr-only" htmlFor={textId}>{labels?.textLabel ?? copy.textPlaceholder}</label>
-        <textarea id={textId} name="text" rows={3} required maxLength={1000} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
+        <textarea id={textId} name="text" rows={3} required maxLength={1000} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: fieldBorderColor ?? hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
         {validationError || state?.error ? <p role="alert" className="text-[12px]" style={{ color: "#c0392b" }}>{validationError ?? state?.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{copy.success}</p> : null}
         <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
@@ -1242,6 +1250,9 @@ export function GiftEnvelope({
   heading = "Phong Bao Mừng Cưới",
   labelColor,
   openLabel = "Nhấn để mở",
+  artworkVariant = "default",
+  sparkleColor,
+  headingClassName,
 }: {
   templateSlug: string;
   banks: GiftBank[];
@@ -1251,6 +1262,17 @@ export function GiftEnvelope({
   heading?: string;
   labelColor?: string;
   openLabel?: string;
+  /**
+   * `"source"` dựng lại đúng hình học phong bì của chungdoi.com (nút 250×357).
+   * Mặc định giữ bản dùng chung cho ~37 mẫu còn lại — xem
+   * {@link SourceLayeredGiftArtwork}. Chỉ có tác dụng với gift visual
+   * `layered-image`.
+   */
+  artworkVariant?: "default" | "source";
+  /** Màu đốm sáng của biến thể `"source"`; mặc định trắng như bản dùng chung. */
+  sparkleColor?: string;
+  /** Ghi đè class của heading khi mẫu có bộ heading riêng. */
+  headingClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -1267,9 +1289,15 @@ export function GiftEnvelope({
   if (cards.length === 0) return null;
   const muted = labelColor ?? hexToRgba(dark, 0.72);
   const visual = resolveGiftVisual(templateSlug);
+  const sourceArtwork = artworkVariant === "source" && visual.kind === "layered-image";
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <h2 className="text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: dark }}>{heading}</h2>
+      <h2
+        className={headingClassName ?? "text-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]"}
+        style={{ color: dark }}
+      >
+        {heading}
+      </h2>
       <button
         data-testid="gift-envelope"
         data-gift-visual-kind={visual.kind}
@@ -1279,12 +1307,16 @@ export function GiftEnvelope({
         onClick={() => setOpen(true)}
         className={cn(
           "group relative cursor-pointer border-none bg-transparent outline-none",
-          visual.kind === "giftbox" || visual.kind === "layered-image"
-            ? "h-[300px] w-[280px]"
-            : "h-64 w-[200px]",
+          sourceArtwork
+            ? "h-[357px] w-[250px]"
+            : visual.kind === "giftbox" || visual.kind === "layered-image"
+              ? "h-[300px] w-[280px]"
+              : "h-64 w-[200px]",
         )}
       >
-        {visual.kind === "layered-image" ? (
+        {sourceArtwork && visual.kind === "layered-image" ? (
+          <SourceLayeredGiftArtwork visual={visual} sparkleColor={sparkleColor} />
+        ) : visual.kind === "layered-image" ? (
           <LayeredGiftArtwork visual={visual} />
         ) : visual.kind === "giftbox" ? (
           <GiftboxArtwork visual={visual} />
@@ -1322,7 +1354,7 @@ export function GiftEnvelope({
           </div>
         </div>
         )}
-        <p className={`${visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>{openLabel}</p>
+        <p className={`${sourceArtwork ? "ienv-hint bottom-0" : visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>{openLabel}</p>
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>
