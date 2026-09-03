@@ -1,10 +1,13 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 
 import { verifyAdmin } from "@/lib/admin-dal";
-import { updateCover3dEnabled } from "@/lib/cover-3d-config";
+import {
+  COVER_3D_CACHE_TAG,
+  updateCover3dEnabled,
+} from "@/lib/cover-3d-config";
 
 export type Cover3dState = { error?: string; ok?: boolean; enabled?: boolean } | undefined;
 
@@ -29,6 +32,7 @@ export async function updateCover3dAction(
 
   const enabled = parsed.data.enabled === "on";
   await updateCover3dEnabled(enabled);
+  updateTag(COVER_3D_CACHE_TAG);
 
   revalidatePath("/admin/settings");
   // Công tắc đổi cách MỌI trang thiệp render bìa, nên phải xoá cache cả cây route

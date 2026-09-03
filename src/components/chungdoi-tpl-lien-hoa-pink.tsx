@@ -156,11 +156,11 @@ export function LienHoaPinkInvitation({ content }: { content: ChungDoiDemoConten
                 The Wedding Of
               </p>
               <div className="flex w-full justify-center">
-                <span className="font-art-beau-rivage whitespace-nowrap text-[58px] leading-[1.05]">{people[0].shortName}</span>
+                <span data-invitation-short-name className="font-couple-viaoda whitespace-nowrap text-[58px] leading-[1.05]">{people[0].shortName}</span>
               </div>
               <span className="font-art-beau-rivage my-1 text-[36px] leading-none md:my-2">&amp;</span>
               <div className="flex w-full justify-center">
-                <span className="font-art-beau-rivage whitespace-nowrap text-[58px] leading-[1.05]">{people[1].shortName}</span>
+                <span data-invitation-short-name className="font-couple-viaoda whitespace-nowrap text-[58px] leading-[1.05]">{people[1].shortName}</span>
               </div>
             </div>
           </div>

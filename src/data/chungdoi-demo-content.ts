@@ -11,6 +11,7 @@ export type ChungDoiDemoContent = {
   invitationId: string;
   theme: {
     primaryColor: string;
+    userFontFamily?: string | null;
     fontFamily: string | null;
     assetFolder: string | null;
     assets: string[];
@@ -2954,6 +2955,136 @@ const templateDemoContent: Record<string, ChungDoiDemoContent> = {
       "groomAccountName": "TRAN DANG KHOA"
     },
     "music": "/chungdoi/music/minimalism-green.mp3"
+  },
+  "minimalism-brown": {
+    "slug": "minimalism-brown",
+    "invitationId": "hoangnam-thaovy-minibrown",
+    "theme": {
+      "primaryColor": "#7c6a60",
+      "fontFamily": "EB Garamond",
+      "assetFolder": "minimalism-brown",
+      "assets": [
+        "/chungdoi/images/themes/minimalism-brown/leaf-background.webp",
+        "/chungdoi/images/themes/minimalism-brown/house-background.webp",
+        "/chungdoi/images/themes/minimalism-brown/frame-avatar.webp",
+        "/chungdoi/images/themes/minimalism-brown/flower2-decoration.webp",
+        "/chungdoi/images/themes/minimalism-brown/paper.webp",
+        "/chungdoi/images/themes/minimalism-brown/paper-note.webp",
+        "/chungdoi/images/themes/minimalism-brown/gate.webp",
+        "/chungdoi/images/themes/minimalism-brown/cake.webp",
+        "/chungdoi/images/themes/minimalism-brown/water.webp"
+      ]
+    },
+    "couple": {
+      "brideFullName": "Trần Thảo Vy",
+      "groomFullName": "Nguyễn Hoàng Nam",
+      "brideShortName": "Thảo Vy",
+      "groomShortName": "Hoàng Nam",
+      "brideBirthOrder": "Út Nữ",
+      "groomBirthOrder": "Trưởng Nam",
+      "brideFirst": false,
+      "date": "2026-01-03",
+      "time": "18:00",
+      "ceremonyDate": "2026-01-03",
+      "ceremonyTime": "09:00",
+      "ceremonyHeader": "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      "openingMessage": "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI"
+    },
+    "families": {
+      "brideFather": "Trần Quốc Hưng",
+      "brideMother": "Nguyễn Thị Hồng",
+      "brideAddress": "Quận 3, TP. Hồ Chí Minh",
+      "groomFather": "Nguyễn Văn Thành",
+      "groomMother": "Phạm Thị Lan",
+      "groomAddress": "Quận 1, TP. Hồ Chí Minh",
+      "brideParentTitle": "Ông Bà",
+      "groomParentTitle": "Ông Bà"
+    },
+    "venue": {
+      "address": "Trung Tâm Hội Nghị White Palace, 194 Hoàng Văn Thụ, Phường 9, Quận Phú Nhuận, TP. Hồ Chí Minh",
+      "mapAddress": "Trung Tâm Hội Nghị White Palace, 194 Hoàng Văn Thụ, Phường 9, Quận Phú Nhuận, TP. Hồ Chí Minh",
+      "banquetTime": "18:00",
+      "welcomeTime": "17:30"
+    },
+    "schedule": [
+      { "time": "17:00", "label": "Đón khách" },
+      { "time": "18:00", "label": "Khai tiệc" },
+      { "time": "18:30", "label": "Nghi thức cưới" },
+      { "time": "19:00", "label": "Cắt bánh & nâng ly" },
+      { "time": "20:30", "label": "Kết thúc tiệc" }
+    ],
+    "dressCodeColors": "#001A08,#E1BC7C,#3B5D3B,#F5E6C8",
+    "albumLayout": "grid",
+    "heroImage": "/chungdoi/images/gallery/minimalism-brown/hero.webp",
+    "gallery": [
+      "/chungdoi/images/gallery/minimalism-brown/photo-1.webp",
+      "/chungdoi/images/gallery/minimalism-brown/photo-2.webp",
+      "/chungdoi/images/gallery/minimalism-brown/photo-3.webp",
+      "/chungdoi/images/gallery/minimalism-brown/photo-4.webp",
+      "/chungdoi/images/gallery/minimalism-brown/photo-5.webp",
+      "/chungdoi/images/gallery/minimalism-brown/photo-6.webp"
+    ],
+    "wishes": [
+      {
+        "name": "Mỹ Linh",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc hai bạn trăm năm hạnh phúc, vạn sự như ý, một đám cưới thật vui!"
+      },
+      {
+        "name": "Trọng Nhân",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc mừng hai bạn về chung một nhà! Chúc luôn vui vẻ và yêu thương nhau thật nhiều."
+      },
+      {
+        "name": "Phương Vy",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc Nam và Vy mãi ngọt ngào như ngày đầu, hạnh phúc trọn đời bên nhau!"
+      },
+      {
+        "name": "Hải Đăng",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc mừng anh chị! Chúc hai người xây dựng tổ ấm thật hạnh phúc và bền lâu."
+      },
+      {
+        "name": "Ngọc Diệp",
+        "time": "2026-07-14T21:20:27",
+        "text": "Nhìn thiệp mà thấy ấm áp ghê. Chúc hai bạn một hôn lễ thật trọn vẹn và đáng nhớ!"
+      },
+      {
+        "name": "Đức Thịnh",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc cô dâu chú rể trăm năm hạnh phúc, gia đình êm ấm, con cái đủ đầy!"
+      },
+      {
+        "name": "Lan Anh",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc mừng hạnh phúc hai bạn nhé! Mong hai bạn luôn nắm tay nhau đi hết cuộc đời."
+      },
+      {
+        "name": "Quốc Bảo",
+        "time": "2026-07-14T21:20:27",
+        "text": "Mừng đám cưới của cậu mợ! Chúc hai bạn mãi yêu thương và thấu hiểu nhau."
+      },
+      {
+        "name": "Thu Hà",
+        "time": "2026-07-14T21:20:27",
+        "text": "Ôi tấm thiệp đẹp quá! Chúc hai đứa hạnh phúc viên mãn, sớm có tin vui."
+      },
+      {
+        "name": "Minh Tuấn",
+        "time": "2026-07-14T21:20:27",
+        "text": "Chúc mừng Hoàng Nam và Thảo Vy! Chúc hai bạn trăm năm hạnh phúc, đầu bạc răng long nhé!"
+      }
+    ],
+    "bank": {
+      "brideBankName": "Techcombank",
+      "brideAccountNumber": "9988776655",
+      "brideAccountName": "TRAN THAO VY",
+      "groomBankName": "Vietcombank",
+      "groomAccountNumber": "1023456789",
+      "groomAccountName": "NGUYEN HOANG NAM"
+    },
+    "music": "/chungdoi/music/minimalism-brown.mp3"
   },
   "royal-red": {
     "slug": "royal-red",

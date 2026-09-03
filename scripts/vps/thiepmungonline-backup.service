@@ -1,0 +1,10 @@
+[Unit]
+Description=Thiep Mung Online verified SQLite and upload backup
+ConditionPathExists=/srv/thiepmungonline/LIVE
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /srv/thiepmungonline/ops/backup-production.py
+Nice=10
+IOSchedulingClass=idle
+TimeoutStartSec=600

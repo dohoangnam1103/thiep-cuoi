@@ -1,5 +1,6 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { isUsableVietQrAccount } from "@/lib/vietqr";
+import { dedicatedHeroImage } from "@/lib/hero-image-source";
 
 export const DEFAULT_OPENING_MESSAGE = "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI.";
 
@@ -46,7 +47,7 @@ export function invitationCeremonyMessage(content: ChungDoiDemoContent): string 
 
 export function invitationHeroImage(content: ChungDoiDemoContent): string {
   if (content.showHeroImage === false) return "";
-  return content.heroImage?.trim() || content.gallery[0] || "";
+  return dedicatedHeroImage(content.heroImage) || content.gallery.find((photo) => photo.trim()) || "";
 }
 
 export type HeroPhotos = { bride: string; groom: string };
@@ -72,13 +73,13 @@ type HeroPhotoOptions = {
  */
 export function invitationHeroPhotos(
   content: ChungDoiDemoContent,
-  { albumFallback = false, fixedSides = false }: HeroPhotoOptions = {},
+  { albumFallback = true, fixedSides = false }: HeroPhotoOptions = {},
 ): HeroPhotos {
   if (content.showHeroImage === false) return { bride: "", groom: "" };
 
   const photos = {
-    bride: content.heroImage?.trim() || "",
-    groom: content.heroImage2?.trim() || "",
+    bride: dedicatedHeroImage(content.heroImage),
+    groom: dedicatedHeroImage(content.heroImage2),
   };
   if (!albumFallback) return photos;
 

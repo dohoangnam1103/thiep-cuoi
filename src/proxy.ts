@@ -20,6 +20,14 @@ const vietnamesePaths: Record<string, string> = {
 };
 
 export default function proxy(request: NextRequest) {
+  // Legacy capture links must not force every ordinary demo view to render dynamically.
+  if (request.nextUrl.searchParams.get("capture") === "1"
+    && /^\/(?:vi\/)?(?:mau-thiep|templates)\/[^/]+\/demo\/?$/.test(request.nextUrl.pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `${url.pathname.replace(/\/$/, "")}/capture`;
+    url.searchParams.delete("capture");
+    return NextResponse.redirect(url, 307);
+  }
   const destination = canonicalTemplatePath(request.nextUrl.pathname);
   if (destination) {
     const url = request.nextUrl.clone();

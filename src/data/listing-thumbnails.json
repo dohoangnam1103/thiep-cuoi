@@ -1,0 +1,2233 @@
+{
+  "/chungdoi/images/template-previews/en/listing/ao_dai_hue.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ao_dai_hue-602995e95f46-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ao_dai_hue-602995e95f46-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ao_dai_hue-602995e95f46-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ao_dai_hue-602995e95f46-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/arch_sage.webp": {
+    "width": 768,
+    "height": 8269,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/arch_sage-bc68ca5e4f31-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/arch_sage-bc68ca5e4f31-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/arch_sage-bc68ca5e4f31-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/arch_sage-bc68ca5e4f31-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/art_deco_gatsby.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/art_deco_gatsby-4ec1dc1246aa-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/art_deco_gatsby-4ec1dc1246aa-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/art_deco_gatsby-4ec1dc1246aa-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/art_deco_gatsby-4ec1dc1246aa-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/aurora_glass_dark.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/aurora_glass_dark-80a9efd11b11-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/aurora_glass_dark-80a9efd11b11-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/aurora_glass_dark-80a9efd11b11-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/aurora_glass_dark-80a9efd11b11-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/baroque_gold.webp": {
+    "width": 768,
+    "height": 7650,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/baroque_gold-dbe210cda0ef-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/baroque_gold-dbe210cda0ef-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/baroque_gold-dbe210cda0ef-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/baroque_gold-dbe210cda0ef-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/bat_trang_blue.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/bat_trang_blue-45f976c41e05-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/bat_trang_blue-45f976c41e05-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/bat_trang_blue-45f976c41e05-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/bat_trang_blue-45f976c41e05-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/boho_floral_brown.webp": {
+    "width": 768,
+    "height": 7555,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_brown-63717c73c86b-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_brown-63717c73c86b-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_brown-63717c73c86b-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_brown-63717c73c86b-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/boho_floral_green.webp": {
+    "width": 768,
+    "height": 8362,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_green-3b3341a8b2ca-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_green-3b3341a8b2ca-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_green-3b3341a8b2ca-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_green-3b3341a8b2ca-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/boho_floral_pink.webp": {
+    "width": 768,
+    "height": 7512,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_pink-c60efb9fcd51-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_pink-c60efb9fcd51-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_pink-c60efb9fcd51-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/boho_floral_pink-c60efb9fcd51-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/botanical_lavender.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/botanical_lavender-0e847c0cb03e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/botanical_lavender-0e847c0cb03e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/botanical_lavender-0e847c0cb03e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/botanical_lavender-0e847c0cb03e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/brocade_flower_red.webp": {
+    "width": 768,
+    "height": 8091,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/brocade_flower_red-eef74206d9b3-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/brocade_flower_red-eef74206d9b3-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/brocade_flower_red-eef74206d9b3-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/brocade_flower_red-eef74206d9b3-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/celestial_map.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/celestial_map-6d80aec985c3-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/celestial_map-6d80aec985c3-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/celestial_map-6d80aec985c3-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/celestial_map-6d80aec985c3-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/chateau_blue.webp": {
+    "width": 768,
+    "height": 9326,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_blue-dbc6bd7c0618-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_blue-dbc6bd7c0618-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_blue-dbc6bd7c0618-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_blue-dbc6bd7c0618-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/chateau_green.webp": {
+    "width": 768,
+    "height": 9493,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_green-7e9d803ef8cf-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_green-7e9d803ef8cf-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_green-7e9d803ef8cf-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chateau_green-7e9d803ef8cf-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/cherry_blossom_pink.webp": {
+    "width": 768,
+    "height": 8333,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cherry_blossom_pink-1b5b6afc4f5e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cherry_blossom_pink-1b5b6afc4f5e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cherry_blossom_pink-1b5b6afc4f5e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cherry_blossom_pink-1b5b6afc4f5e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/chibi_red.webp": {
+    "width": 768,
+    "height": 7867,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chibi_red-2dd85c3c82b9-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chibi_red-2dd85c3c82b9-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chibi_red-2dd85c3c82b9-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chibi_red-2dd85c3c82b9-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/chim_lac_ivory.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chim_lac_ivory-8a5933904328-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chim_lac_ivory-8a5933904328-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chim_lac_ivory-8a5933904328-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/chim_lac_ivory-8a5933904328-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/cinema_credit.webp": {
+    "width": 768,
+    "height": 11357,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cinema_credit-232f80016146-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cinema_credit-232f80016146-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cinema_credit-232f80016146-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cinema_credit-232f80016146-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/co_ba_red.webp": {
+    "width": 768,
+    "height": 8181,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/co_ba_red-262809a96693-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/co_ba_red-262809a96693-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/co_ba_red-262809a96693-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/co_ba_red-262809a96693-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/coastal_mediterranean.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coastal_mediterranean-859ad5818feb-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coastal_mediterranean-859ad5818feb-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coastal_mediterranean-859ad5818feb-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coastal_mediterranean-859ad5818feb-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/comic_hero_assemble.webp": {
+    "width": 768,
+    "height": 10158,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/comic_hero_assemble-36f088d156bb-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/comic_hero_assemble-36f088d156bb-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/comic_hero_assemble-36f088d156bb-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/comic_hero_assemble-36f088d156bb-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/crystal_floral_blue.webp": {
+    "width": 768,
+    "height": 9219,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_blue-ac9a0fa50185-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_blue-ac9a0fa50185-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_blue-ac9a0fa50185-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_blue-ac9a0fa50185-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/crystal_floral_red.webp": {
+    "width": 768,
+    "height": 9334,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_red-11990aeff0c0-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_red-11990aeff0c0-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_red-11990aeff0c0-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/crystal_floral_red-11990aeff0c0-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/detective_conan_casebook.webp": {
+    "width": 768,
+    "height": 1350,
+    "cropHeight": 1350,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/detective_conan_casebook-eccf1a9a7920-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/detective_conan_casebook-eccf1a9a7920-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/detective_conan_casebook-eccf1a9a7920-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/detective_conan_casebook-eccf1a9a7920-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dong_ho_folk.webp": {
+    "width": 768,
+    "height": 12090,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dong_ho_folk-7947786c3861-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dong_ho_folk-7947786c3861-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dong_ho_folk-7947786c3861-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dong_ho_folk-7947786c3861-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/doraemon_door.webp": {
+    "width": 768,
+    "height": 16224,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/doraemon_door-1def259fc9ae-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/doraemon_door-1def259fc9ae-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/doraemon_door-1def259fc9ae-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/doraemon_door-1def259fc9ae-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/double_dragon_blue.webp": {
+    "width": 768,
+    "height": 7797,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_blue-3f1e65aed5ad-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_blue-3f1e65aed5ad-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_blue-3f1e65aed5ad-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_blue-3f1e65aed5ad-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/double_dragon_green.webp": {
+    "width": 768,
+    "height": 8302,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_green-f0235bc0fbf5-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_green-f0235bc0fbf5-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_green-f0235bc0fbf5-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_green-f0235bc0fbf5-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/double_dragon_red.webp": {
+    "width": 768,
+    "height": 7818,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_red-f5ea345aba2a-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_red-f5ea345aba2a-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_red-f5ea345aba2a-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_dragon_red-f5ea345aba2a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/double_phoenix_green.webp": {
+    "width": 768,
+    "height": 6802,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_green-8de28dcccb8a-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_green-8de28dcccb8a-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_green-8de28dcccb8a-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_green-8de28dcccb8a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/double_phoenix_red.webp": {
+    "width": 768,
+    "height": 7616,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_red-d87e316de4b6-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_red-d87e316de4b6-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_red-d87e316de4b6-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/double_phoenix_red-d87e316de4b6-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dragon_phoenix_black.webp": {
+    "width": 768,
+    "height": 8654,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_black-5b3dd7faa052-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_black-5b3dd7faa052-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_black-5b3dd7faa052-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_black-5b3dd7faa052-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dragon_phoenix_blue.webp": {
+    "width": 768,
+    "height": 8866,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_blue-65eb2b3742fb-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_blue-65eb2b3742fb-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_blue-65eb2b3742fb-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_blue-65eb2b3742fb-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dragon_phoenix_green.webp": {
+    "width": 768,
+    "height": 8288,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_green-86003bdd3b51-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_green-86003bdd3b51-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_green-86003bdd3b51-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_green-86003bdd3b51-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dragon_phoenix_red_480.webp": {
+    "width": 768,
+    "height": 8832,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_red_480-b4f3992d4ede-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_red_480-b4f3992d4ede-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_red_480-b4f3992d4ede-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_red_480-b4f3992d4ede-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dragon_phoenix_v2_red.webp": {
+    "width": 768,
+    "height": 7373,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v2_red-623c275d4cb7-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v2_red-623c275d4cb7-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v2_red-623c275d4cb7-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v2_red-623c275d4cb7-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/dragon_phoenix_v3_red.webp": {
+    "width": 768,
+    "height": 7102,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v3_red-0d7f9ebd3b1c-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v3_red-0d7f9ebd3b1c-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v3_red-0d7f9ebd3b1c-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/dragon_phoenix_v3_red-0d7f9ebd3b1c-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/editorial_noir.webp": {
+    "width": 768,
+    "height": 7910,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/editorial_noir-0da5bdea8921-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/editorial_noir-0da5bdea8921-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/editorial_noir-0da5bdea8921-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/editorial_noir-0da5bdea8921-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/elegant_leaf_green.webp": {
+    "width": 768,
+    "height": 8059,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/elegant_leaf_green-9c5631fed252-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/elegant_leaf_green-9c5631fed252-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/elegant_leaf_green-9c5631fed252-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/elegant_leaf_green-9c5631fed252-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/glass_garden_green.webp": {
+    "width": 768,
+    "height": 8022,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_green-056b59acfe87-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_green-056b59acfe87-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_green-056b59acfe87-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_green-056b59acfe87-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/glass_garden_pink.webp": {
+    "width": 768,
+    "height": 8165,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_pink-ffee72123ec0-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_pink-ffee72123ec0-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_pink-ffee72123ec0-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/glass_garden_pink-ffee72123ec0-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hai_yen_thanh_thu.webp": {
+    "width": 768,
+    "height": 11670,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hai_yen_thanh_thu-1754be22c780-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hai_yen_thanh_thu-1754be22c780-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hai_yen_thanh_thu-1754be22c780-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hai_yen_thanh_thu-1754be22c780-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hang_trong_folk.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hang_trong_folk-7da8cf00c85f-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hang_trong_folk-7da8cf00c85f-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hang_trong_folk-7da8cf00c85f-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hang_trong_folk-7da8cf00c85f-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hoa_kho_orange.webp": {
+    "width": 768,
+    "height": 1050,
+    "cropHeight": 1050,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hoa_thu_do_ruou_vang.webp": {
+    "width": 768,
+    "height": 10597,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_do_ruou_vang-4579f6067198-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_do_ruou_vang-4579f6067198-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_do_ruou_vang-4579f6067198-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_do_ruou_vang-4579f6067198-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hoa_thu_hong.webp": {
+    "width": 768,
+    "height": 10597,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_hong-a06bd03df17e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_hong-a06bd03df17e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_hong-a06bd03df17e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_hong-a06bd03df17e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hoa_thu_xanh_duong.webp": {
+    "width": 768,
+    "height": 10597,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_duong-14d176e61e75-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_duong-14d176e61e75-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_duong-14d176e61e75-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_duong-14d176e61e75-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hoa_thu_xanh_la.webp": {
+    "width": 768,
+    "height": 10597,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_la-c6c450df6f73-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_la-c6c450df6f73-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_la-c6c450df6f73-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_thu_xanh_la-c6c450df6f73-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hoa_tinh_red.webp": {
+    "width": 768,
+    "height": 7338,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_tinh_red-ee0733ae1df4-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_tinh_red-ee0733ae1df4-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_tinh_red-ee0733ae1df4-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_tinh_red-ee0733ae1df4-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/ivory_signature.webp": {
+    "width": 768,
+    "height": 10550,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ivory_signature-136045f4795f-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ivory_signature-136045f4795f-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ivory_signature-136045f4795f-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ivory_signature-136045f4795f-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/jasmine_white.webp": {
+    "width": 768,
+    "height": 8173,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/jasmine_white-b5866b10f22a-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/jasmine_white-b5866b10f22a-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/jasmine_white-b5866b10f22a-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/jasmine_white-b5866b10f22a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/lien_hoa_pink.webp": {
+    "width": 768,
+    "height": 9416,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/lien_hoa_pink-fa0f4c84ab89-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/lien_hoa_pink-fa0f4c84ab89-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/lien_hoa_pink-fa0f4c84ab89-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/lien_hoa_pink-fa0f4c84ab89-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/long_phung_deco.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_deco-642f1dfc7027-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_deco-642f1dfc7027-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_deco-642f1dfc7027-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_deco-642f1dfc7027-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/long_phung_gatefold.webp": {
+    "width": 768,
+    "height": 15605,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_gatefold-08680d029d15-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_gatefold-08680d029d15-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_gatefold-08680d029d15-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/long_phung_gatefold-08680d029d15-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/mahal_gold.webp": {
+    "width": 768,
+    "height": 1642,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/maroon_love.webp": {
+    "width": 768,
+    "height": 6514,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/maroon_love-d1588631bfbc-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/maroon_love-d1588631bfbc-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/maroon_love-d1588631bfbc-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/maroon_love-d1588631bfbc-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_brown.webp": {
+    "width": 768,
+    "height": 8763,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_brown-7f0ff774ec2a-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_brown-7f0ff774ec2a-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_brown-7f0ff774ec2a-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_brown-7f0ff774ec2a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_darkred.webp": {
+    "width": 768,
+    "height": 8502,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_darkred-85a98263cb5b-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_darkred-85a98263cb5b-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_darkred-85a98263cb5b-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_darkred-85a98263cb5b-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_green.webp": {
+    "width": 768,
+    "height": 8874,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_green-2f3b2f7b7cff-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_green-2f3b2f7b7cff-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_green-2f3b2f7b7cff-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_green-2f3b2f7b7cff-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_jade.webp": {
+    "width": 768,
+    "height": 8565,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_jade-1ec86a09ba7e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_jade-1ec86a09ba7e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_jade-1ec86a09ba7e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_jade-1ec86a09ba7e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_powder_pink.webp": {
+    "width": 768,
+    "height": 8565,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_powder_pink-fae38299b5ab-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_powder_pink-fae38299b5ab-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_powder_pink-fae38299b5ab-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_powder_pink-fae38299b5ab-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_purple.webp": {
+    "width": 768,
+    "height": 9395,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_purple-70ca085ae87a-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_purple-70ca085ae87a-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_purple-70ca085ae87a-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_purple-70ca085ae87a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_red.webp": {
+    "width": 768,
+    "height": 7408,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_red-5443fcbf3316-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_red-5443fcbf3316-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_red-5443fcbf3316-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_red-5443fcbf3316-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_sky_blue.webp": {
+    "width": 768,
+    "height": 8565,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_sky_blue-ecf06da6155e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_sky_blue-ecf06da6155e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_sky_blue-ecf06da6155e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_sky_blue-ecf06da6155e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/nguyet_anh_sleeve.webp": {
+    "width": 768,
+    "height": 16339,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nguyet_anh_sleeve-320cdf1262d6-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nguyet_anh_sleeve-320cdf1262d6-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nguyet_anh_sleeve-320cdf1262d6-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nguyet_anh_sleeve-320cdf1262d6-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/nhat_binh_red.webp": {
+    "width": 768,
+    "height": 7834,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nhat_binh_red-1658ab0bf201-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nhat_binh_red-1658ab0bf201-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nhat_binh_red-1658ab0bf201-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/nhat_binh_red-1658ab0bf201-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/phong_thu_be.webp": {
+    "width": 768,
+    "height": 11274,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_be-6b555d3dbcad-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_be-6b555d3dbcad-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_be-6b555d3dbcad-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_be-6b555d3dbcad-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/phong_thu_do_pastel.webp": {
+    "width": 768,
+    "height": 11274,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_do_pastel-5ed9a7dec4f0-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_do_pastel-5ed9a7dec4f0-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_do_pastel-5ed9a7dec4f0-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_do_pastel-5ed9a7dec4f0-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/phong_thu_hong_pastel.webp": {
+    "width": 768,
+    "height": 11274,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_hong_pastel-7633f845bd81-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_hong_pastel-7633f845bd81-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_hong_pastel-7633f845bd81-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_hong_pastel-7633f845bd81-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/phong_thu_lam_pastel.webp": {
+    "width": 768,
+    "height": 11274,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_lam_pastel-1803b86c7090-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_lam_pastel-1803b86c7090-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_lam_pastel-1803b86c7090-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_lam_pastel-1803b86c7090-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/phong_thu_luc_pastel.webp": {
+    "width": 768,
+    "height": 11274,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_luc_pastel-3276224a2c7e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_luc_pastel-3276224a2c7e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_luc_pastel-3276224a2c7e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_luc_pastel-3276224a2c7e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/qasr_gold.webp": {
+    "width": 768,
+    "height": 7808,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_gold-48c16f47cad9-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_gold-48c16f47cad9-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_gold-48c16f47cad9-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_gold-48c16f47cad9-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/qasr_green.webp": {
+    "width": 768,
+    "height": 8715,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_green-4485487568b2-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_green-4485487568b2-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_green-4485487568b2-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/qasr_green-4485487568b2-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/rap_hy_sai_gon.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/rap_hy_sai_gon-a552b5ecddae-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/rap_hy_sai_gon-a552b5ecddae-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/rap_hy_sai_gon-a552b5ecddae-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/rap_hy_sai_gon-a552b5ecddae-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/riso_duotone.webp": {
+    "width": 768,
+    "height": 11936,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/riso_duotone-82af1c1838bf-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/riso_duotone-82af1c1838bf-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/riso_duotone-82af1c1838bf-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/riso_duotone-82af1c1838bf-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/royal_blue.webp": {
+    "width": 768,
+    "height": 6514,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_blue-cad2983f37f3-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_blue-cad2983f37f3-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_blue-cad2983f37f3-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_blue-cad2983f37f3-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/royal_green.webp": {
+    "width": 768,
+    "height": 6514,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_green-6a1a5cb97e11-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_green-6a1a5cb97e11-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_green-6a1a5cb97e11-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_green-6a1a5cb97e11-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/royal_red.webp": {
+    "width": 768,
+    "height": 6514,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_red-879a1344259b-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_red-879a1344259b-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_red-879a1344259b-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_red-879a1344259b-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/royal_v2_green.webp": {
+    "width": 768,
+    "height": 9259,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_v2_green-e1c317016bd6-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_v2_green-e1c317016bd6-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_v2_green-e1c317016bd6-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/royal_v2_green-e1c317016bd6-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/sen_monoline.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sen_monoline-3587f9617bf2-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sen_monoline-3587f9617bf2-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sen_monoline-3587f9617bf2-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sen_monoline-3587f9617bf2-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/silk_flora_brown.webp": {
+    "width": 768,
+    "height": 8229,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/silk_flora_brown-3a7de8dd5cd4-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/silk_flora_brown-3a7de8dd5cd4-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/silk_flora_brown-3a7de8dd5cd4-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/silk_flora_brown-3a7de8dd5cd4-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/son_mai_lacquer.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/son_mai_lacquer-1d7984f16b76-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/son_mai_lacquer-1d7984f16b76-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/son_mai_lacquer-1d7984f16b76-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/son_mai_lacquer-1d7984f16b76-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/song_hy_green.webp": {
+    "width": 768,
+    "height": 7850,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_green-9aa11cdb74aa-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_green-9aa11cdb74aa-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_green-9aa11cdb74aa-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_green-9aa11cdb74aa-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/song_hy_red.webp": {
+    "width": 768,
+    "height": 7517,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_red-2d2401a47b6a-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_red-2d2401a47b6a-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_red-2d2401a47b6a-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/song_hy_red-2d2401a47b6a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/spring_garden_blue.webp": {
+    "width": 768,
+    "height": 9134,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_blue-ae8e62b8497e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_blue-ae8e62b8497e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_blue-ae8e62b8497e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_blue-ae8e62b8497e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/spring_garden_green.webp": {
+    "width": 768,
+    "height": 7662,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_green-3f123ca2bc66-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_green-3f123ca2bc66-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_green-3f123ca2bc66-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_green-3f123ca2bc66-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/spring_garden_red.webp": {
+    "width": 768,
+    "height": 7595,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_red-e6382befb785-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_red-e6382befb785-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_red-e6382befb785-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/spring_garden_red-e6382befb785-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/sunflower.webp": {
+    "width": 768,
+    "height": 8093,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sunflower-8e44f0d98048-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sunflower-8e44f0d98048-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sunflower-8e44f0d98048-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/sunflower-8e44f0d98048-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/swiss_brutalist.webp": {
+    "width": 768,
+    "height": 11933,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/swiss_brutalist-1b9b2ea58849-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/swiss_brutalist-1b9b2ea58849-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/swiss_brutalist-1b9b2ea58849-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/swiss_brutalist-1b9b2ea58849-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/thanh_duong_anh_sang.webp": {
+    "width": 768,
+    "height": 11792,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thanh_duong_anh_sang-e3989f9b4991-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thanh_duong_anh_sang-e3989f9b4991-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thanh_duong_anh_sang-e3989f9b4991-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thanh_duong_anh_sang-e3989f9b4991-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/thap_nhi_chi_do.webp": {
+    "width": 768,
+    "height": 6794,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thap_nhi_chi_do-19a0beb329fb-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thap_nhi_chi_do-19a0beb329fb-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thap_nhi_chi_do-19a0beb329fb-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/thap_nhi_chi_do-19a0beb329fb-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/tho_cam_highland.webp": {
+    "width": 768,
+    "height": 11264,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/tho_cam_highland-87eee79c2341-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/tho_cam_highland-87eee79c2341-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/tho_cam_highland-87eee79c2341-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/tho_cam_highland-87eee79c2341-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/ticket_terracotta.webp": {
+    "width": 768,
+    "height": 6435,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ticket_terracotta-a57c2ee248e5-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ticket_terracotta-a57c2ee248e5-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ticket_terracotta-a57c2ee248e5-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ticket_terracotta-a57c2ee248e5-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/trong_dong_dong_son.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/trong_dong_dong_son-b24a9e992a2c-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/trong_dong_dong_son-b24a9e992a2c-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/trong_dong_dong_son-b24a9e992a2c-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/trong_dong_dong_son-b24a9e992a2c-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/truc_chi_minimal.webp": {
+    "width": 768,
+    "height": 11941,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/truc_chi_minimal-82fa287f06c1-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/truc_chi_minimal-82fa287f06c1-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/truc_chi_minimal-82fa287f06c1-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/truc_chi_minimal-82fa287f06c1-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/y2k_chrome.webp": {
+    "width": 768,
+    "height": 11259,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/y2k_chrome-d4c5d8b7d363-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/y2k_chrome-d4c5d8b7d363-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/y2k_chrome-d4c5d8b7d363-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/y2k_chrome-d4c5d8b7d363-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/zen_sand.webp": {
+    "width": 768,
+    "height": 7859,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/zen_sand-c28b85c2f856-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/zen_sand-c28b85c2f856-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/zen_sand-c28b85c2f856-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/zen_sand-c28b85c2f856-768.webp"
+      }
+    ]
+  }
+}

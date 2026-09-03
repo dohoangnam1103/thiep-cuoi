@@ -1,5 +1,7 @@
 "use client";
 
+import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
+
 import { useGSAP } from "@gsap/react";
 import { Pause, Play, Rotate3D, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -83,6 +85,7 @@ type NguyetAnhSleeveLabProps = {
   content?: ChungDoiDemoContent;
   muted?: boolean;
   onStateChange?: (state: SleeveExperienceState) => void;
+  onCoverReady?: () => void;
   renderBody?: boolean;
   showControls?: boolean;
 };
@@ -290,6 +293,7 @@ export function NguyetAnhSleeveLab({
   content = nguyetAnhSleevePilotContent,
   muted = false,
   onStateChange,
+  onCoverReady,
   renderBody = true,
   showControls = true,
 }: NguyetAnhSleeveLabProps) {
@@ -781,6 +785,7 @@ export function NguyetAnhSleeveLab({
   const canOpen = state === "closed"
     && !backFaceVisible
     && (webglSupported === false || sceneReady);
+  useInvitationCoverReady(stageRef, canOpen, onCoverReady);
   const canFlip = state === "closed"
     && (webglSupported === false || sceneReady);
   const fallbackMotion = reducedMotion

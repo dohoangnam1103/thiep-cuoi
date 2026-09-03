@@ -475,6 +475,7 @@ function CasebookChapterComponent({
           data-testid="detective-conan-casebook-couple-names"
         >
           <ConanCasebookFittedName
+            hero
             className={coupleNameSizeClass}
             name={people[0].shortName}
           />
@@ -482,6 +483,7 @@ function CasebookChapterComponent({
             {t("and")}
           </span>
           <ConanCasebookFittedName
+            hero
             className={coupleNameSizeClass}
             name={people[1].shortName}
           />

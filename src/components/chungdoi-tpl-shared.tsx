@@ -1,8 +1,11 @@
 "use client";
 
+import { useInvitationDetailVisible } from "@/components/prepared-invitation-detail";
+
 import { createContext, startTransition, type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 import type { AlbumLayout } from "@/lib/album-layout";
 
@@ -16,6 +19,7 @@ import {
 import {
   GiftboxArtwork,
   LayeredGiftArtwork,
+  SourceGiftboxArtwork,
   SourceLayeredGiftArtwork,
 } from "@/components/chungdoi-gift-envelope-artwork";
 import { resolveGiftVisual } from "@/data/chungdoi-gift-visuals";
@@ -31,7 +35,6 @@ import {
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { cn } from "@/lib/utils";
-import viMessages from "../../messages/vi.json";
 
 export { buildVietQrImageUrl } from "@/lib/vietqr";
 export { googleCalendarUrl } from "@/lib/google-calendar-url";
@@ -264,6 +267,7 @@ type InvitationMapProps = Omit<ComponentPropsWithoutRef<"iframe">, "src"> & {
  * URL trực tiếp kèm fallback link cho Facebook webview.
  */
 export function InvitationMap({ query, title, className, style, ...iframeProps }: InvitationMapProps) {
+  const detailVisible = useInvitationDetailVisible();
   const hasApiKey = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
   const [isFacebookWebview, setIsFacebookWebview] = useState(false);
 
@@ -296,7 +300,7 @@ export function InvitationMap({ query, title, className, style, ...iframeProps }
       {...iframeProps}
       className={className}
       style={style}
-      src={mapEmbedUrl(query)}
+      src={detailVisible ? mapEmbedUrl(query) : undefined}
       title={title ?? query}
       loading="lazy"
       referrerPolicy="no-referrer-when-downgrade"
@@ -593,6 +597,7 @@ export function SharedWishForm({
   centered = false,
   labels,
   fieldBorderColor,
+  submitTextColor,
 }: {
   accent: string;
   centered?: boolean;
@@ -603,19 +608,25 @@ export function SharedWishForm({
    * ghi đè được bằng class vì màu này đặt inline.
    */
   fieldBorderColor?: string;
+  /**
+   * Màu chữ nút gửi. Mặc định trắng như trước; mẫu nào bản gốc dùng màu ngà thì
+   * truyền vào — cũng không ghi đè được bằng class vì đặt inline.
+   */
+  submitTextColor?: string;
 }) {
   const { formProps, pending, state } = useWishFormBinding();
+  const t = useTranslations("invitationTemplate");
   const nameId = useId();
   const textId = useId();
   const [validationError, setValidationError] = useState<string>();
   const copy = {
-    namePlaceholder: viMessages.invitationTemplate.wishName,
-    nameRequired: viMessages.invitationTemplate.wishNameRequired,
-    textPlaceholder: viMessages.invitationTemplate.wishText,
-    textRequired: viMessages.invitationTemplate.wishTextRequired,
-    success: viMessages.invitationTemplate.wishSuccess,
-    submit: viMessages.invitationTemplate.wishSubmit,
-    pending: viMessages.invitationTemplate.wishPending,
+    namePlaceholder: t("wishName"),
+    nameRequired: t("wishNameRequired"),
+    textPlaceholder: t("wishText"),
+    textRequired: t("wishTextRequired"),
+    success: t("wishSuccess"),
+    submit: t("wishSubmit"),
+    pending: t("wishPending"),
     ...labels,
   };
 
@@ -652,7 +663,7 @@ export function SharedWishForm({
         {validationError || state?.error ? <p role="alert" className="text-[12px]" style={{ color: "#c0392b" }}>{validationError ?? state?.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{copy.success}</p> : null}
         <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
-          <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: "#fff" }}>{pending ? copy.pending : copy.submit}</button>
+          <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: submitTextColor ?? "#fff" }}>{pending ? copy.pending : copy.submit}</button>
         </div>
       </div>
     </form>
@@ -1263,10 +1274,10 @@ export function GiftEnvelope({
   labelColor?: string;
   openLabel?: string;
   /**
-   * `"source"` dựng lại đúng hình học phong bì của chungdoi.com (nút 250×357).
-   * Mặc định giữ bản dùng chung cho ~37 mẫu còn lại — xem
-   * {@link SourceLayeredGiftArtwork}. Chỉ có tác dụng với gift visual
-   * `layered-image`.
+   * `"source"` dựng lại đúng hình học của chungdoi.com — phong bì trong nút
+   * 250×357 ({@link SourceLayeredGiftArtwork}) hoặc hộp quà trong nút 260×280
+   * ({@link SourceGiftboxArtwork}). Mặc định giữ bản dùng chung cho hơn 40 mẫu
+   * còn lại. Chỉ có tác dụng với gift visual `layered-image` và `giftbox`.
    */
   artworkVariant?: "default" | "source";
   /** Màu đốm sáng của biến thể `"source"`; mặc định trắng như bản dùng chung. */
@@ -1289,7 +1300,8 @@ export function GiftEnvelope({
   if (cards.length === 0) return null;
   const muted = labelColor ?? hexToRgba(dark, 0.72);
   const visual = resolveGiftVisual(templateSlug);
-  const sourceArtwork = artworkVariant === "source" && visual.kind === "layered-image";
+  const sourceEnvelope = artworkVariant === "source" && visual.kind === "layered-image";
+  const sourceGiftbox = artworkVariant === "source" && visual.kind === "giftbox";
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <h2
@@ -1307,17 +1319,26 @@ export function GiftEnvelope({
         onClick={() => setOpen(true)}
         className={cn(
           "group relative cursor-pointer border-none bg-transparent outline-none",
-          sourceArtwork
+          sourceEnvelope
             ? "h-[357px] w-[250px]"
-            : visual.kind === "giftbox" || visual.kind === "layered-image"
-              ? "h-[300px] w-[280px]"
-              : "h-64 w-[200px]",
+            : sourceGiftbox
+              ? "h-[280px] w-[260px]"
+              : visual.kind === "giftbox" || visual.kind === "layered-image"
+                ? "h-[300px] w-[280px]"
+                : "h-64 w-[200px]",
         )}
       >
-        {sourceArtwork && visual.kind === "layered-image" ? (
+        {sourceEnvelope && visual.kind === "layered-image" ? (
           <SourceLayeredGiftArtwork visual={visual} sparkleColor={sparkleColor} />
         ) : visual.kind === "layered-image" ? (
           <LayeredGiftArtwork visual={visual} />
+        ) : sourceGiftbox && visual.kind === "giftbox" ? (
+          <SourceGiftboxArtwork
+            visual={visual}
+            sparkleColor={sparkleColor}
+            confettiAccent={accent}
+            confettiDark={dark}
+          />
         ) : visual.kind === "giftbox" ? (
           <GiftboxArtwork visual={visual} />
         ) : (
@@ -1354,7 +1375,7 @@ export function GiftEnvelope({
           </div>
         </div>
         )}
-        <p className={`${sourceArtwork ? "ienv-hint bottom-0" : visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>{openLabel}</p>
+        <p className={`${sourceEnvelope ? "ienv-hint bottom-0" : visual.kind === "procedural" ? "nhat-binh-hint-text -bottom-2" : "igb-hint bottom-0"} absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs font-medium`} style={{ color: muted }}>{openLabel}</p>
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>

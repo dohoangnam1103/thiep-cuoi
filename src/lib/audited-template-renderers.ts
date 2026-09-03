@@ -23,6 +23,7 @@ export const BASE_AUDITED_TEMPLATE_SLUGS = [
   "lien-hoa-pink",
   "minimalism-dark-red",
   "minimalism-green",
+  "minimalism-brown",
   "minimalism-jade",
   "minimalism-sky-blue",
   "minimalism-powder-pink",

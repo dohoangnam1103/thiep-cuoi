@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { NextIntlClientProvider } from "next-intl";
+import { editorMessageNamespaces, selectMessages } from "@/i18n/message-scopes";
 import { notFound } from "next/navigation";
+import { retiredTemplateSlugs } from "@/data/chungdoi";
 
 import viMessages from "../../../../../messages/vi.json";
 import { verifyAdmin } from "@/lib/admin-dal";
@@ -24,7 +26,7 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
     getCover3dEnabled(),
   ]);
   const invitation = await prisma.invitation.findFirst({
-    where: { id, isDemo: true },
+    where: { id, isDemo: true, templateId: { notIn: [...retiredTemplateSlugs] } },
     include: {
       content: true,
       ceremonies: { orderBy: { sortOrder: "asc" } },
@@ -45,7 +47,7 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
       <Link href="/admin/demos" className="text-sm text-primary hover:underline">
         ← Danh sách thiệp demo
       </Link>
-      <NextIntlClientProvider locale="vi" messages={{ editor: viMessages.editor }}>
+      <NextIntlClientProvider locale="vi" messages={selectMessages(viMessages, editorMessageNamespaces)}>
         <EditorForm
           mode="demo-admin"
           saveAction={saveDemo}

@@ -66,9 +66,9 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
             <img src={`${GREEN_BASE}/divider-arrow.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
           </div>
           <div className="relative z-30 mt-14 flex flex-col items-center leading-none md:mt-16" style={{ color: GREEN }}>
-            <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[0].shortName}</span>
+            <span data-invitation-short-name className="text-[42px] md:text-[64px]" style={nameFont}>{people[0].shortName}</span>
             <span className="my-8 text-[25px] md:my-10 md:text-[34px]" style={ampFont}>&amp;</span>
-            <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[1].shortName}</span>
+            <span data-invitation-short-name className="text-[42px] md:text-[64px]" style={nameFont}>{people[1].shortName}</span>
           </div>
           <div data-testid="chateau-green-hero-scene" className="relative -mt-16 mb-20 flex min-h-[420px] w-full shrink-0 items-end justify-center md:mb-0 md:min-h-[650px]">
             {/* clouds behind castle */}

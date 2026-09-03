@@ -82,7 +82,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
                 </div>
                 <div className="text-left">
                   <div className="text-[12px] tracking-widest text-[#4a2816] md:text-[14px]">{heroCards[0].person.birthOrder}</div>
-                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{heroCards[0].person.shortName}</div>
+                  <div data-invitation-short-name className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{heroCards[0].person.shortName}</div>
                 </div>
               </div>
             ) : null}
@@ -96,7 +96,7 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
                 </div>
                 <div className="text-right">
                   <div className="text-[12px] tracking-widest text-[#4a2816] md:text-[14px]">{heroCards[1].person.birthOrder}</div>
-                  <div className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{heroCards[1].person.shortName}</div>
+                  <div data-invitation-short-name className="whitespace-nowrap text-[25px] leading-[1.5] text-[#4a2816] md:text-[32px]" style={heroNameFont}>{heroCards[1].person.shortName}</div>
                 </div>
               </div>
             ) : null}

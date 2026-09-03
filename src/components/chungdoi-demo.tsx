@@ -4,11 +4,11 @@ import Lenis from "lenis";
 import { AudioLines, ChevronsDown, Pause, RotateCcw, VolumeX } from "lucide-react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
-import { NextIntlClientProvider, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { type ComponentType, type CSSProperties, type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
-import { chungdoiDemoContent, type ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import type { ArtOpeningEffect } from "@/data/templates/opening-effect";
 import {
@@ -20,6 +20,9 @@ import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } f
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { fitEnvelopeWidth } from "@/components/chungdoi-envelope-constants";
 import { DEFAULT_COVER_3D_ENABLED } from "@/lib/cover-3d";
+import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
+import { HeroTypographyScope } from "@/components/hero-typography-provider";
+import { PreparedInvitationDetail } from "@/components/prepared-invitation-detail";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
 import { PublicGuestMediaDialog } from "@/components/public-guest-media-dialog";
 import {
@@ -60,7 +63,6 @@ import {
   invitationOpeningMessage,
   orderedCouple,
 } from "@/lib/invitation-display";
-import viMessages from "../../messages/vi.json";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
@@ -77,6 +79,7 @@ const GlassGardenInvitation = dynamic(() => import("@/components/chungdoi-tpl-gl
 const GlassGardenPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-glass-garden-pink").then((m) => m.GlassGardenPinkInvitation));
 const MinimalismDarkRedInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismDarkRedInvitation));
 const MinimalismGreenInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-green").then((m) => m.MinimalismGreenInvitation));
+const MinimalismBrownInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-brown").then((m) => m.MinimalismBrownInvitation));
 const MinimalismJadeInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismJadeInvitation));
 const MinimalismSkyBlueInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismSkyBlueInvitation));
 const MinimalismPowderPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-minimalism-dark-red").then((m) => m.MinimalismPowderPinkInvitation));
@@ -125,6 +128,7 @@ const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "minimalism-red": MinimalismRedInvitation,
   "minimalism-dark-red": MinimalismDarkRedInvitation,
   "minimalism-green": MinimalismGreenInvitation,
+  "minimalism-brown": MinimalismBrownInvitation,
   "minimalism-jade": MinimalismJadeInvitation,
   "minimalism-sky-blue": MinimalismSkyBlueInvitation,
   "minimalism-powder-pink": MinimalismPowderPinkInvitation,
@@ -474,7 +478,7 @@ function resolveTokens(content: ChungDoiDemoContent): Tokens {
     guestBoxBorder: t.guestBoxBorder ?? hexToRgba(t.accent, 0.25),
     particleColors: t.particleColors.length ? t.particleColors : [t.accent],
     particleType: t.particleType,
-    coupleFont: cfg.fonts.couple ?? crawledFont,
+    coupleFont: crawledFont ?? cfg.fonts.couple ?? undefined,
     sealType: cfg.sealType,
     cardImages: resolveZodiacCardImages(cfg.decorations.cardImages, content),
     openingEffect: cfg.openingEffect,
@@ -695,16 +699,44 @@ function OpeningFlyDecor({
   );
 }
 
+function mobileCoverDecorSrc(src: string): string | null {
+  if (src.endsWith("/phung-cover.webp")) {
+    return src.replace("/phung-cover.webp", "/phung-cover-mobile.webp");
+  }
+  if (src.endsWith("/rong-cover.webp")) {
+    return src.replace("/rong-cover.webp", "/rong-cover-mobile.webp");
+  }
+  return null;
+}
+
 function EnvelopeDecorationArtwork({
   src,
   className,
   openingFly = false,
+  coverFly = false,
+  flySource = false,
   animateFly = false,
   hidden = false,
 }: {
   src: string;
   className: string;
+  /**
+   * Bản sao bay của lớp decor NGOÀI thẻ, chỉ có ở bìa 3D (`OpeningFlyDecor`).
+   * Vài test trong templates.spec.ts khoá cứng số lượng
+   * `[data-envelope-opening-fly]`, nên đừng gắn thêm ở chỗ khác.
+   */
   openingFly?: boolean;
+  /**
+   * Bản sao bay TRONG thẻ (lớp fly-out của `CoverCard`, dùng cho bìa 2D). Mốc
+   * neo riêng để `tests/e2e/opening-fly-decor.spec.ts` đo mà không đụng vào hợp
+   * đồng đếm của `data-envelope-opening-fly`.
+   */
+  coverFly?: boolean;
+  /**
+   * Ảnh TĨNH của một decor có `flyOnOpen` — tức bản gốc mà bản sao bay ra phải
+   * khớp kích thước.
+   */
+  flySource?: boolean;
   animateFly?: boolean;
   hidden?: boolean;
 }) {
@@ -719,24 +751,42 @@ function EnvelopeDecorationArtwork({
       <ZodiacMaskArtwork
         src={src}
         data-envelope-opening-fly={openingFly || undefined}
+        data-envelope-cover-fly={coverFly || undefined}
+        data-envelope-fly-source={flySource || undefined}
         className={`aspect-[1952/4105] ${className}`}
         style={style}
       />
     );
   }
 
-  return (
+  const mobileSrc = mobileCoverDecorSrc(src);
+
+  const image = (
     // Asset decor cần giữ kích thước class động của theme khi phóng ra.
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt=""
       aria-hidden="true"
+      fetchPriority={flySource ? "high" : undefined}
       data-envelope-opening-fly={openingFly || undefined}
+      data-envelope-cover-fly={coverFly || undefined}
+      data-envelope-fly-source={flySource || undefined}
       className={className}
       style={style}
     />
   );
+
+  if (mobileSrc) {
+    return (
+      <picture className="contents">
+        <source media="(max-width: 767px)" srcSet={mobileSrc} />
+        {image}
+      </picture>
+    );
+  }
+
+  return image;
 }
 
 /** Chỉ phần thẻ thiệp (không có overlay/particle) — dùng chung cho cover 2D và node chụp texture 3D. */
@@ -792,7 +842,9 @@ function CoverCard({
         />
       ) : null}
 
-      {/* fly-out layer (không clip): bản gốc phía trên ẩn đi, bản này phóng to bay ra */}
+      {/* fly-out layer (không clip): bản gốc phía trên ẩn đi, bản này phóng to bay ra.
+          `coverFly` chỉ để gắn `data-envelope-cover-fly` — mốc neo cho
+          tests/e2e/opening-fly-decor.spec.ts đo bản sao bay có đúng bằng ảnh tĩnh. */}
       {opening && !contentOnly ? (
         <div className="pointer-events-none absolute inset-0 z-20">
           {tokens.cardImages
@@ -802,6 +854,7 @@ function CoverCard({
                 <EnvelopeDecorationArtwork
                   src={img.src}
                   className="block h-auto w-full"
+                  coverFly
                   animateFly
                 />
               </div>
@@ -838,6 +891,7 @@ function CoverCard({
               key={i}
               src={img.src}
               className={`pointer-events-none absolute ${img.className}`}
+              flySource={img.flyOnOpen}
               hidden={img.flyOnOpen && opening}
             />
           ))}
@@ -1113,6 +1167,7 @@ function EnvelopeCover2D({
                   key={`${image.src}-${index}`}
                   src={image.src}
                   className={`pointer-events-none absolute ${image.className}`}
+                  flySource={image.flyOnOpen}
                   hidden={image.flyOnOpen && opening}
                 />
               ))}
@@ -1172,6 +1227,7 @@ function EnvelopeCover({
   openPhase,
   reducedMotion,
   cover3dEnabled,
+  onReady,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
@@ -1179,7 +1235,9 @@ function EnvelopeCover({
   openPhase: OpenPhase;
   reducedMotion: boolean;
   cover3dEnabled: boolean;
+  onReady: () => void;
 }) {
+  const coverRoot = useRef<HTMLDivElement>(null);
   // Con dấu nứt, decor bay và việc chặn tương tác bắt đầu ngay từ pha đầu; chỉ
   // riêng bìa bay lên là phải đợi pha "away".
   const opening = openPhase !== "idle";
@@ -1190,9 +1248,18 @@ function EnvelopeCover({
   // trong HTML SSR nên ảnh tải song song với chunk thay vì xếp hàng sau nó.
   // Dùng thẻ JSX chứ không dùng preload() của react-dom: gọi từ client component
   // thì API đó không phát ra thẻ nào trong HTML (đã thử, <head> trống).
-  const decorPreloadHrefs = tokens.cardImages
+  const decorPreloads = tokens.cardImages
     .map((image) => image.src)
-    .filter((src, index, all) => !isZodiacArtworkPath(src) && all.indexOf(src) === index);
+    .filter((src, index, all) => !isZodiacArtworkPath(src) && all.indexOf(src) === index)
+    .flatMap<{ href: string; media?: string }>((src) => {
+      const mobileSrc = mobileCoverDecorSrc(src);
+      return mobileSrc
+        ? [
+            { href: mobileSrc, media: "(max-width: 767px)" },
+            { href: src, media: "(min-width: 768px)" },
+          ]
+        : [{ href: src, media: undefined }];
+    });
 
   const sizing = envelopeSizingForTemplate(content.slug);
   const naturalHeight = sizing === "responsive-natural";
@@ -1235,6 +1302,7 @@ function EnvelopeCover({
   // Bìa 2D là DOM thuần nên bấm được ngay từ frame đầu; bìa 3D phải chờ chụp
   // xong texture mới có toạ độ nút để hit-test.
   const coverInteractive = cover3dEnabled ? envelopeReady : true;
+  useInvitationCoverReady(coverRoot, coverInteractive, onReady);
   const coverStyle: CSSProperties & { "--zodiac-art-color"?: string } = {
     background: tokens.background,
     // Nền cũng chỉ mờ dần trong pha "away". Trước đây nó mờ ngay từ lúc bấm nút
@@ -1250,11 +1318,19 @@ function EnvelopeCover({
 
   return (
     <div
+      ref={coverRoot}
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden p-4"
       style={coverStyle}
     >
-      {decorPreloadHrefs.map((href) => (
-        <link key={href} rel="preload" as="image" href={href} fetchPriority="high" />
+      {decorPreloads.map(({ href, media }) => (
+        <link
+          key={href}
+          rel="preload"
+          as="image"
+          href={href}
+          media={media}
+          fetchPriority="high"
+        />
       ))}
       <button
         type="button"
@@ -1676,7 +1752,7 @@ export function ChungDoiDemo({
   cover3dEnabled = DEFAULT_COVER_3D_ENABLED,
 }: {
   template: ChungDoiTemplate;
-  content?: ChungDoiDemoContent;
+  content: ChungDoiDemoContent;
   liveForms?: LiveForms;
   captureMode?: boolean;
   previewMode?: boolean;
@@ -1695,7 +1771,10 @@ export function ChungDoiDemo({
   const detectiveConanCasebookT = useTranslations(
     "detectiveConanCasebookLab",
   );
-  const content = contentProp ?? chungdoiDemoContent[template.slug];
+  // Every production/editor call site already provides content. Keeping the
+  // 190KB all-template fallback map in this client module made every invitation
+  // download data for templates it can never render.
+  const content = contentProp;
   const isGatefoldExperience = content?.slug === "long-phung-gatefold";
   const isSleeveExperience = content?.slug === "nguyet-anh-sleeve";
   const isDoraemonDoorExperience = content?.slug === "doraemon-door";
@@ -1708,6 +1787,8 @@ export function ChungDoiDemo({
     || isDetectiveConanCasebookExperience;
 
   const [opened, setOpened] = useState(captureMode || previewMode);
+  const [preparedSlug, setPreparedSlug] = useState<string | null>(null);
+  const handleCoverReady = useCallback(() => setPreparedSlug(content.slug), [content.slug]);
   const [openPhase, setOpenPhase] = useState<OpenPhase>("idle");
   const [playing, setPlaying] = useState(false);
   const [audioMuted, setAudioMuted] = useState(false);
@@ -1970,7 +2051,7 @@ export function ChungDoiDemo({
     previewMode,
   ]);
 
-  if (!content || !tokens) {
+  if (!tokens) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-[#f3e6d0] px-6 text-center">
         <h1 className="text-2xl font-bold text-[#710001]">Demo đang được cập nhật</h1>
@@ -2123,6 +2204,7 @@ export function ChungDoiDemo({
         isGatefoldExperience && !previewMode ? (
           <LongPhungGatefoldLab
             content={content}
+            onCoverReady={handleCoverReady}
             onStateChange={handlePhysicalExperienceStateChange}
             renderBody={false}
             showControls={false}
@@ -2131,6 +2213,7 @@ export function ChungDoiDemo({
         ) : isSleeveExperience && !previewMode ? (
           <NguyetAnhSleeveLab
             content={content}
+            onCoverReady={handleCoverReady}
             onStateChange={handlePhysicalExperienceStateChange}
             renderBody={false}
             showControls={false}
@@ -2139,6 +2222,7 @@ export function ChungDoiDemo({
         ) : isDoraemonDoorExperience && !previewMode ? (
           <DoraemonDoorLab
             content={content}
+            onCoverReady={handleCoverReady}
             onStateChange={handlePhysicalExperienceStateChange}
             renderBody={false}
             showControls={false}
@@ -2152,12 +2236,16 @@ export function ChungDoiDemo({
             reducedMotion={prefersReducedMotion}
             onOpen={openInvitation}
             cover3dEnabled={cover3dEnabled}
+            onReady={handleCoverReady}
           />
         )
       ) : null}
 
-      {opened ? (
-        <>
+      <PreparedInvitationDetail
+        prepare={preparedSlug === content.slug || openPhase !== "idle"}
+        visible={opened}
+      >
+        <HeroTypographyScope slug={content.slug} userFont={content.theme.userFontFamily}>
           {isDetectiveConanCasebookExperience
             && !captureMode
             && !previewMode ? null : isGatefoldExperience ? (
@@ -2173,11 +2261,9 @@ export function ChungDoiDemo({
           <DoraemonDoorInvitation content={content} />
         </div>
       ) : AuditedTemplateRenderer ? (
-        <NextIntlClientProvider locale="vi" messages={{ invitationTemplate: viMessages.invitationTemplate }}>
-          <div className="contents" data-template-renderer={content.slug}>
-            <AuditedTemplateRenderer content={content} />
-          </div>
-        </NextIntlClientProvider>
+        <div className="contents" data-template-renderer={content.slug}>
+          <AuditedTemplateRenderer content={content} />
+        </div>
       ) : content.slug === "double-phoenix-red" || content.slug === "double-phoenix-green" ? (
         <PhoenixInvitation content={content} />
       ) : content.slug === "song-hy-green" ? (
@@ -2233,8 +2319,8 @@ export function ChungDoiDemo({
             <PublicGuestMomentsPortal templateSlug={content.slug} />
             {!captureMode ? <PublicGuestMediaDialog /> : null}
           </GuestMediaGalleryProvider>
-        </>
-      ) : null}
+        </HeroTypographyScope>
+      </PreparedInvitationDetail>
 
       {opened && !captureMode ? (
         <>

@@ -175,6 +175,12 @@ html.lenis body {
   src: url("/chungdoi/fonts/BeauRivage-Regular.ttf") format("truetype");
   font-display: swap;
 }
+/* Chữ "&" giữa hai tên đầy đủ của mẫu Minimalism Nâu (OFL, Google Fonts). */
+@font-face {
+  font-family: "Ms Madi";
+  src: url("/chungdoi/fonts/MsMadi-Regular.ttf") format("truetype");
+  font-display: swap;
+}
 
 /* ── Hệ 2 font cho thiệp ─────────────────────────────────────────────────────
  * Mỗi thiệp chỉ được dùng đúng 2 family: 1 display (.font-art-*) cho tên cô
@@ -216,11 +222,11 @@ html.lenis body {
 .font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
 .font-art-beau-rivage { font-family: "Beau Rivage", "The Nautigal", cursive; }
 
-/* ── Mẫu Minimalism Xanh — 5 font stack đúng như bản gốc ─────────────────────
- * Bản gốc chungdoi.com khai 5 stack cho mẫu này, KHÔNG theo hệ 2 font ở trên.
- * User yêu cầu clone khớp 100% cả font-family lẫn font-size nên giữ nguyên,
- * đặt thành class để renderer không phải khai `fontFamily` inline. Chỉ mẫu
- * `minimalism-green` dùng, không ảnh hưởng mẫu khác.
+/* ── Mẫu Minimalism Xanh / Minimalism Nâu — font stack đúng như bản gốc ──────
+ * Bản gốc chungdoi.com khai 5-6 stack cho hai mẫu này, KHÔNG theo hệ 2 font ở
+ * trên. User yêu cầu clone khớp 100% cả font-family lẫn font-size nên giữ
+ * nguyên, đặt thành class để renderer không phải khai `fontFamily` inline. Chỉ
+ * `minimalism-green` và `minimalism-brown` dùng, không ảnh hưởng mẫu khác.
  * Baskerville / Times New Roman là font hệ thống, cố ý không self-host.
  * ────────────────────────────────────────────────────────────────────────── */
 .font-mg-cormorant { font-family: "Cormorant Garamond", "Times New Roman", serif; }
@@ -232,6 +238,8 @@ html.lenis body {
    (lớp phủ "+N" ở album, đốm sáng ✦ và dòng "Nhấn để mở" của hộp quà). Không
    dùng `font-sans` của repo vì biến đó trỏ Be Vietnam Pro, khác bản gốc. */
 .font-mg-sans { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+/* Chỉ mẫu Minimalism Nâu dùng, cho đúng một ký tự "&" giữa hai tên đầy đủ. */
+.font-mg-msmadi { font-family: "Ms Madi", cursive; }
 
 /* Font tên cô dâu chú rể, trích từ thẻ gốc trên chungdoi.com. Bảng đối chiếu từng
    thiệp nằm ở docs/research/couple-name-fonts.json. Biến next/font đứng trước bản
@@ -472,6 +480,125 @@ html.lenis body {
 
   .admin-nav-strip[data-overflow-end="true"] {
     --admin-nav-fade-end: 24px;
+  }
+
+  /* Bảng quản trị: xem `src/components/admin-table-scroller.tsx` để biết vì sao
+     thanh cuộn thật của bảng bị ẩn và thay bằng một thanh ghim ở đáy màn hình.
+
+     Chỉ ẩn khi `data-proxy="on"` — cờ do component bật sau khi gắn. Trước lúc
+     đó (HTML từ server, hoặc JS lỗi) bảng vẫn giữ thanh cuộn gốc. */
+  .admin-table-viewport {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .admin-table-viewport[data-proxy="on"] {
+    scrollbar-width: none;
+  }
+
+  .admin-table-viewport[data-proxy="on"]::-webkit-scrollbar {
+    height: 0;
+    display: none;
+  }
+
+  /* macOS ẩn thanh cuộn overlay khi đứng yên, nên để mặc định thì thanh ghim
+     này vô hình đúng lúc cần nhìn thấy nhất. Khai báo `::-webkit-scrollbar`
+     buộc WebKit/Blink chuyển sang thanh luôn hiện. */
+  .admin-table-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent)
+      transparent;
+  }
+
+  .admin-table-scrollbar::-webkit-scrollbar {
+    height: 12px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .admin-table-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /* Viền trong suốt + `background-clip: content-box` là cách thu nút kéo lại
+     cho mảnh mà vẫn giữ nguyên vùng bấm 12px. */
+  .admin-table-scrollbar::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+  }
+
+  .admin-table-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in oklab, var(--muted-foreground) 85%, transparent);
+  }
+
+  /* Cột ghim. Kéo ngang mà cột danh tính trôi đi thì đọc được ô bên phải cũng
+     không biết nó thuộc dòng nào, nên cột đầu và cột thao tác đứng yên.
+
+     Chỉ từ 48rem trở lên: trên điện thoại, hai cột ghim chiếm gần hết chiều
+     ngang và phần cuộn được còn lại chỉ vài chục pixel — tệ hơn là không ghim. */
+  @media (min-width: 48rem) {
+    /* Nền phải đục: `sticky` không cắt nội dung phía dưới, nó chỉ nằm trên. */
+    .admin-col-pin-start,
+    .admin-col-pin-end {
+      position: sticky;
+      z-index: 1;
+      background-color: var(--background);
+    }
+
+    .admin-col-pin-start {
+      left: 0;
+    }
+
+    .admin-col-pin-end {
+      right: 0;
+    }
+
+    /* `thead` tô `bg-muted/40`, tức nửa trong suốt. Ô ghim cần chính màu đã hoà
+       lên nền, chứ lấy `var(--muted)` trần là header sẽ lệch tông hai bên. */
+    .admin-table-viewport thead .admin-col-pin-start,
+    .admin-table-viewport thead .admin-col-pin-end {
+      z-index: 2;
+      background-color: color-mix(in oklab, var(--muted) 40%, var(--background));
+    }
+
+    /* Nền đục của ô ghim phủ mất đường kẻ dưới của hàng, nên vẽ lại bằng shadow
+       bên trong ô. */
+    .admin-table-viewport tbody tr:not(:last-child) .admin-col-pin-start,
+    .admin-table-viewport tbody tr:not(:last-child) .admin-col-pin-end {
+      box-shadow: inset 0 -1px 0 var(--border);
+    }
+
+    /* Vệt đổ chỉ hiện ở phía còn nội dung bị che, để lúc bảng vừa khung thì cột
+       ghim nhìn y như cột thường. */
+    .admin-table-viewport[data-overflow-start="true"] .admin-col-pin-start::after,
+    .admin-table-viewport[data-overflow-end="true"] .admin-col-pin-end::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 12px;
+      pointer-events: none;
+    }
+
+    .admin-table-viewport[data-overflow-start="true"] .admin-col-pin-start::after {
+      left: 100%;
+      background: linear-gradient(
+        to right,
+        color-mix(in oklab, var(--foreground) 12%, transparent),
+        transparent
+      );
+    }
+
+    .admin-table-viewport[data-overflow-end="true"] .admin-col-pin-end::after {
+      right: 100%;
+      background: linear-gradient(
+        to left,
+        color-mix(in oklab, var(--foreground) 12%, transparent),
+        transparent
+      );
+    }
   }
 
   .font-pattaya {
@@ -1055,18 +1182,45 @@ html.lenis body {
   }
 }
 
-/* Hoa bay của Hoa Thủy Tinh Đỏ giữ đúng kích thước ảnh tĩnh như bản gốc.
-   `opacity` quan trọng hơn inline hidden để ảnh tĩnh vẫn neo trên bìa khi bản
-   sao mờ phóng ra ngoài. Các mẫu khác tiếp tục dùng hành vi mặc định. */
+/* ── Bản sao "bay ra" của decor bìa: ép đo theo chiều CAO ────────────────────
+ * Lớp bay (OpeningFlyDecor + nhánh fly-out trong CoverCard) bọc ảnh trong một
+ * `div` mang `cardImages[].className` rồi cho ảnh `w-full`. Cách đó chỉ đúng khi
+ * className chốt chiều RỘNG (`w-[38%]`, `w-40`…): div có bề rộng xác định nên
+ * `w-full` giải được. Theme nào chốt chiều CAO (`h-36 w-auto`, `h-[65%] w-auto`)
+ * thì bề rộng của div là shrink-to-fit quanh chính ảnh → vòng lặp, ảnh phình lên
+ * gấp 1.6-5 lần ảnh tĩnh và cú zoom trông rất thô.
+ *
+ * Thêm `envelope-fly-fit-height` vào className của theme đó là hết. Test
+ * `src/data/opening-fly-decor.test.ts` chặn cứng: mọi entry `flyOnOpen` phải có
+ * bề rộng tường minh HOẶC mang class này.
+ *
+ * `--demo-fly-start-opacity: 1` để bản sao bắt đầu ở ĐÚNG opacity của ảnh tĩnh:
+ * wrapper đã mang `opacity-*` của theme rồi, ảnh chỉ cần mờ dần 1 → 0. Theme nào
+ * bản gốc làm khác thì ghi đè riêng như Hoa Thủy Tinh Đỏ / Minimalism Nâu dưới đây.
+ * ────────────────────────────────────────────────────────────────────────── */
+.envelope-fly-fit-height > img {
+  --demo-fly-start-opacity: 1;
+  width: auto !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+
+/* Hoa Thủy Tinh Đỏ: `opacity` quan trọng hơn inline hidden để ảnh tĩnh vẫn neo
+   trên bìa khi bản sao mờ phóng ra ngoài. */
 .crystal-floral-opening-fly {
   opacity: 1 !important;
 }
 
-.crystal-floral-opening-fly > img {
+/* Minimalism Nâu: bản gốc để wrapper opacity 1 và cho chính ảnh bay chạy
+   0.7 → 0.5 → 0. Chỉ nhắm `div` vì class này CŨNG nằm trên thẻ `img` của lớp
+   decor TĨNH, mà ảnh tĩnh phải giữ `opacity-70` như bản gốc. */
+div.minimalism-brown-opening-fly {
+  opacity: 1 !important;
+}
+
+.crystal-floral-opening-fly > img,
+div.minimalism-brown-opening-fly > img {
   --demo-fly-start-opacity: 0.7;
-  width: auto !important;
-  height: 100% !important;
-  max-width: none !important;
 }
 
 @keyframes demo-dragon-fly {
@@ -1617,6 +1771,22 @@ html.lenis body {
   }
 }
 
+/* ── Nhánh hoa / lá bồng bềnh của mẫu Minimalism Nâu ─────────────────────────
+ * Bản gốc chèn keyframe này bằng một thẻ <style> ngay trong thiệp và đặt
+ * `animation` inline với 6 cặp thời lượng/độ trễ khác nhau. Ở đây chỉ khai
+ * keyframe, renderer vẫn đặt thời lượng inline để giữ đúng 6 pha lệch nhau.
+ * Xoay/lật nằm ở thẻ <img> con nên keyframe chỉ lo phần trôi dọc.
+ * ────────────────────────────────────────────────────────────────────────── */
+@keyframes mbFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 /* Two-sided gift card used by GiftFlipCard. */
 .gift-flip-scene {
   perspective: 1200px;
@@ -1682,6 +1852,78 @@ html.lenis body {
 .group:hover .igb-decor-5, .group:focus-visible .igb-decor-5 { animation: igbDecorFlyUp5 1.9s ease-in-out 0.1s infinite; }
 .group:hover .igb-decor-6, .group:focus-visible .igb-decor-6 { animation: igbDecorFlyUp6 1.3s ease-in-out 0.35s infinite; }
 .group:hover .igb-decor-7, .group:focus-visible .igb-decor-7 { animation: igbDecorFlyUp7 1.7s ease-in-out 0.2s infinite; }
+
+/* ── Hộp quà bản source-matched (SourceGiftboxArtwork) ───────────────────────
+ * Bản gốc chungdoi.com thêm vệt bóng đáy, 4 đốm sáng ✦ và một chùm giấy vụn
+ * bay lên khi hover. Bộ `.igb-*` ở trên đang dùng cho 4 mẫu giftbox khác nên
+ * ba nhóm này tách riêng và chỉ bật khi renderer chọn biến thể "source".
+ * ────────────────────────────────────────────────────────────────────────── */
+.igb-shadow { animation: igbShadowPulse 3s ease-in-out infinite; }
+.igb-sparkle { animation: igbSparkleAnim 2s ease-in-out infinite; }
+.igb-sparkle-2 { animation: igbSparkleAnim 2s ease-in-out 0.6s infinite; }
+.igb-sparkle-3 { animation: igbSparkleAnim 2s ease-in-out 1.2s infinite; }
+.igb-sparkle-4 { animation: igbSparkleAnim 2s ease-in-out 1.7s infinite; }
+
+.igb-confetti { opacity: 0; }
+.group:hover .igb-c1, .group:focus-visible .igb-c1 { animation: igbConfettiFly1 1s ease-out 0.05s infinite; }
+.group:hover .igb-c2, .group:focus-visible .igb-c2 { animation: igbConfettiFly2 1.1s ease-out 0.12s infinite; }
+.group:hover .igb-c3, .group:focus-visible .igb-c3 { animation: igbConfettiFly3 0.95s ease-out 0.2s infinite; }
+.group:hover .igb-c4, .group:focus-visible .igb-c4 { animation: igbConfettiFly4 1.15s ease-out 0.3s infinite; }
+.group:hover .igb-c5, .group:focus-visible .igb-c5 { animation: igbConfettiFly5 1.05s ease-out 0.35s infinite; }
+.group:hover .igb-c6, .group:focus-visible .igb-c6 { animation: igbConfettiFly6 1.2s ease-out 0.4s infinite; }
+.group:hover .igb-c7, .group:focus-visible .igb-c7 { animation: igbConfettiFly7 0.9s ease-out 0.5s infinite; }
+.group:hover .igb-c8, .group:focus-visible .igb-c8 { animation: igbConfettiFly8 1.1s ease-out 0.55s infinite; }
+
+@keyframes igbShadowPulse {
+  0%, 100% { transform: scaleX(1); opacity: 0.3; }
+  50% { transform: scaleX(0.9); opacity: 0.18; }
+}
+
+@keyframes igbSparkleAnim {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes igbConfettiFly1 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-55px, -130px) rotate(540deg); opacity: 0; }
+}
+@keyframes igbConfettiFly2 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(46px, -150px) rotate(-460deg); opacity: 0; }
+}
+@keyframes igbConfettiFly3 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-12px, -160px) rotate(620deg); opacity: 0; }
+}
+@keyframes igbConfettiFly4 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(28px, -115px) rotate(-340deg); opacity: 0; }
+}
+@keyframes igbConfettiFly5 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-34px, -105px) rotate(320deg); opacity: 0; }
+}
+@keyframes igbConfettiFly6 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(58px, -88px) rotate(-240deg); opacity: 0; }
+}
+@keyframes igbConfettiFly7 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(8px, -170px) rotate(420deg); opacity: 0; }
+}
+@keyframes igbConfettiFly8 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-46px, -78px) rotate(-200deg); opacity: 0; }
+}
 
 @keyframes igb-gift-bob {
   0%, 100% { transform: translateY(0); }
@@ -2050,3 +2292,35 @@ html.lenis body {
     opacity: 1 !important;
   }
 }
+
+/* Admin defaults are scoped to explicitly marked detail-hero names only. */
+[data-hero-font="Fz Aghita"] [data-invitation-short-name], [data-hero-font="Fz Aghita"] [data-invitation-short-name] *, [data-font-sample="Fz Aghita"] { font-family: "Fz Aghita", serif !important; }
+[data-hero-font="Fz Qellia"] [data-invitation-short-name], [data-hero-font="Fz Qellia"] [data-invitation-short-name] *, [data-font-sample="Fz Qellia"] { font-family: "Fz Qellia", serif !important; }
+[data-hero-font="Pattaya"] [data-invitation-short-name], [data-hero-font="Pattaya"] [data-invitation-short-name] *, [data-font-sample="Pattaya"] { font-family: "Pattaya", serif !important; }
+[data-hero-font="SVN-HC Pacifico"] [data-invitation-short-name], [data-hero-font="SVN-HC Pacifico"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Pacifico"] { font-family: "SVN-HC Pacifico", serif !important; }
+[data-hero-font="SVN-HC Haydon Brush"] [data-invitation-short-name], [data-hero-font="SVN-HC Haydon Brush"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Haydon Brush"] { font-family: "SVN-HC Haydon Brush", serif !important; }
+[data-hero-font="SVN-HC Marvin Visions"] [data-invitation-short-name], [data-hero-font="SVN-HC Marvin Visions"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Marvin Visions"] { font-family: "SVN-HC Marvin Visions", serif !important; }
+[data-hero-font="SVN-HC Built Titling"] [data-invitation-short-name], [data-hero-font="SVN-HC Built Titling"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Built Titling"] { font-family: "SVN-HC Built Titling", serif !important; }
+[data-hero-font="HelveticaNeue"] [data-invitation-short-name], [data-hero-font="HelveticaNeue"] [data-invitation-short-name] *, [data-font-sample="HelveticaNeue"] { font-family: "HelveticaNeue", serif !important; }
+[data-hero-font="The Nautigal"] [data-invitation-short-name], [data-hero-font="The Nautigal"] [data-invitation-short-name] *, [data-font-sample="The Nautigal"] { font-family: "The Nautigal", serif !important; }
+[data-hero-font="Beau Rivage"] [data-invitation-short-name], [data-hero-font="Beau Rivage"] [data-invitation-short-name] *, [data-font-sample="Beau Rivage"] { font-family: "Beau Rivage", serif !important; }
+[data-hero-font="Alex Brush"] [data-invitation-short-name], [data-hero-font="Alex Brush"] [data-invitation-short-name] *, [data-font-sample="Alex Brush"] { font-family: "Alex Brush", serif !important; }
+[data-hero-font="Lora"] [data-invitation-short-name], [data-hero-font="Lora"] [data-invitation-short-name] *, [data-font-sample="Lora"] { font-family: "Lora", serif !important; }
+[data-hero-font="Times New Roman"] [data-invitation-short-name], [data-hero-font="Times New Roman"] [data-invitation-short-name] *, [data-font-sample="Times New Roman"] { font-family: "Times New Roman", serif !important; }
+[data-hero-font="Carattere"] [data-invitation-short-name], [data-hero-font="Carattere"] [data-invitation-short-name] *, [data-font-sample="Carattere"] { font-family: "Carattere", serif !important; }
+[data-hero-font="Whisper"] [data-invitation-short-name], [data-hero-font="Whisper"] [data-invitation-short-name] *, [data-font-sample="Whisper"] { font-family: "Whisper", serif !important; }
+[data-hero-font="Ms Madi"] [data-invitation-short-name], [data-hero-font="Ms Madi"] [data-invitation-short-name] *, [data-font-sample="Ms Madi"] { font-family: "Ms Madi", serif !important; }
+[data-hero-bold="true"] [data-invitation-short-name], [data-hero-bold="true"] [data-invitation-short-name] * { font-weight: 700 !important; }
+[data-hero-bold="false"] [data-invitation-short-name], [data-hero-bold="false"] [data-invitation-short-name] * { font-weight: 400 !important; }
+[data-hero-italic="true"] [data-invitation-short-name], [data-hero-italic="true"] [data-invitation-short-name] * { font-style: italic !important; }
+[data-hero-italic="false"] [data-invitation-short-name], [data-hero-italic="false"] [data-invitation-short-name] * { font-style: normal !important; }
+@font-face { font-family: "Carattere"; src: url("/chungdoi/fonts/Carattere-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Whisper"; src: url("/chungdoi/fonts/Whisper-Regular.ttf") format("truetype"); font-display: swap; }
+[data-hero-font="UNI Chu truyen thong"] [data-invitation-short-name], [data-hero-font="UNI Chu truyen thong"] [data-invitation-short-name] *, [data-font-sample="UNI Chu truyen thong"] { font-family: "UNI Chu truyen thong", serif !important; }
+[data-hero-font="Viaoda Libre"] [data-invitation-short-name], [data-hero-font="Viaoda Libre"] [data-invitation-short-name] *, [data-font-sample="Viaoda Libre"] { font-family: "Viaoda Libre", serif !important; }
+[data-hero-font="EB Garamond"] [data-invitation-short-name], [data-hero-font="EB Garamond"] [data-invitation-short-name] *, [data-font-sample="EB Garamond"] { font-family: "EB Garamond", serif !important; }
+[data-hero-font="Cormorant Garamond"] [data-invitation-short-name], [data-hero-font="Cormorant Garamond"] [data-invitation-short-name] *, [data-font-sample="Cormorant Garamond"] { font-family: "Cormorant Garamond", serif !important; }
+[data-hero-font="Uchen"] [data-invitation-short-name], [data-hero-font="Uchen"] [data-invitation-short-name] *, [data-font-sample="Uchen"] { font-family: "Uchen", serif !important; }
+[data-hero-font="SVN-HC Carosello"] [data-invitation-short-name], [data-hero-font="SVN-HC Carosello"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Carosello"] { font-family: "SVN-HC Carosello", serif !important; }
+[data-hero-font="1FTV VIP Signora"] [data-invitation-short-name], [data-hero-font="1FTV VIP Signora"] [data-invitation-short-name] *, [data-font-sample="1FTV VIP Signora"] { font-family: "1FTV VIP Signora", serif !important; }
+[data-hero-font="DFVN New Eddy"] [data-invitation-short-name], [data-hero-font="DFVN New Eddy"] [data-invitation-short-name] *, [data-font-sample="DFVN New Eddy"] { font-family: "DFVN New Eddy", serif !important; }

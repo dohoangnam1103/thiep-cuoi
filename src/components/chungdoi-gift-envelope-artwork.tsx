@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type {
   GiftboxGiftVisual,
   LayeredImageGiftVisual,
@@ -136,6 +138,144 @@ export function SourceLayeredGiftArtwork({
             zIndex: 2,
             filter: "drop-shadow(0 10px 18px rgba(0,0,0,0.22))",
           }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Đốm sáng của hộp quà bản source: vị trí + cỡ chữ lấy đúng từ bản gốc. */
+const SOURCE_GIFTBOX_SPARKLES = [
+  { className: "igb-sparkle", style: { top: "8%", left: "14%", fontSize: 22 } },
+  { className: "igb-sparkle-2", style: { top: "18%", right: "10%", fontSize: 16 } },
+  { className: "igb-sparkle-3", style: { top: "32%", left: "5%", fontSize: 14 } },
+  { className: "igb-sparkle-4", style: { top: "26%", right: "5%", fontSize: 14 } },
+] as const;
+
+/**
+ * Giấy vụn bay lên khi hover, đúng thứ tự / hình dạng / màu của bản gốc. Hai
+ * mảnh mang màu của mẫu (accent + dark), sáu mảnh còn lại là màu cố định.
+ */
+const SOURCE_GIFTBOX_CONFETTI = [
+  { w: 11, h: 5.5, shape: "bar", color: "#ec4899" },
+  { w: 10, h: 10, shape: "dot", color: "accent" },
+  { w: 11, h: 5.5, shape: "bar", color: "#22c55e" },
+  { w: 9, h: 9, shape: "dot", color: "#3b82f6" },
+  { w: 12, h: 6, shape: "bar", color: "#a855f7" },
+  { w: 10, h: 10, shape: "triangle", color: "#facc15" },
+  { w: 10, h: 5, shape: "bar", color: "dark" },
+  { w: 9, h: 9, shape: "dot", color: "#f97316" },
+] as const;
+
+function confettiStyle(
+  piece: (typeof SOURCE_GIFTBOX_CONFETTI)[number],
+  accent: string,
+  dark: string,
+): CSSProperties {
+  const color = piece.color === "accent" ? accent : piece.color === "dark" ? dark : piece.color;
+  const base: CSSProperties = {
+    position: "absolute",
+    left: "50%",
+    top: 0,
+    marginLeft: -piece.w / 2,
+    marginTop: -piece.h / 2,
+    pointerEvents: "none",
+  };
+  if (piece.shape === "triangle") {
+    return {
+      ...base,
+      width: 0,
+      height: 0,
+      borderLeft: `${piece.w / 2}px solid transparent`,
+      borderRight: `${piece.w / 2}px solid transparent`,
+      borderBottom: `${piece.h}px solid ${color}`,
+    };
+  }
+  return {
+    ...base,
+    width: piece.w,
+    height: piece.h,
+    backgroundColor: color,
+    borderRadius: piece.shape === "dot" ? "50%" : 2,
+  };
+}
+
+/**
+ * Hộp quà dựng lại đúng hình học của chungdoi.com: sân khấu 200×220 trong nút
+ * 260×280, thêm vệt bóng đáy, bốn đốm sáng ✦ và chùm giấy vụn bay lên khi hover.
+ *
+ * Tách khỏi {@link GiftboxArtwork} thay vì sửa tại chỗ vì bản mặc định đang dùng
+ * cho 4 mẫu giftbox khác (chateau-green, glass-garden-*, royal-v2-green); mẫu nào
+ * muốn khớp bản gốc thì tự bật `artworkVariant="source"`.
+ */
+export function SourceGiftboxArtwork({
+  visual,
+  sparkleColor = "#ffffff",
+  confettiAccent = "#ffffff",
+  confettiDark = "#333333",
+}: {
+  visual: GiftboxGiftVisual;
+  sparkleColor?: string;
+  confettiAccent?: string;
+  confettiDark?: string;
+}) {
+  return (
+    <div
+      data-testid="gift-envelope-animation"
+      className="igb-wrapper relative flex h-full w-full items-end justify-center pb-[26px]"
+    >
+      {SOURCE_GIFTBOX_SPARKLES.map((sparkle) => (
+        <span
+          key={sparkle.className}
+          aria-hidden
+          className={`${sparkle.className} pointer-events-none absolute z-20`}
+          style={{ ...sparkle.style, color: sparkleColor }}
+        >
+          ✦
+        </span>
+      ))}
+      {/* Nguồn phun giấy vụn nằm ngay trên nắp hộp, phía sau sân khấu. */}
+      <div aria-hidden className="pointer-events-none absolute bottom-[187px] left-1/2 z-0">
+        {SOURCE_GIFTBOX_CONFETTI.map((piece, index) => (
+          <div
+            key={index}
+            className={`igb-confetti igb-c${index + 1}`}
+            style={confettiStyle(piece, confettiAccent, confettiDark)}
+          />
+        ))}
+      </div>
+      <div className="igb-bob relative h-[220px] w-[200px]" aria-hidden>
+        <div
+          className="igb-shadow pointer-events-none absolute"
+          style={{
+            left: "50%",
+            bottom: -8,
+            width: 144,
+            height: 12,
+            marginLeft: -72,
+            borderRadius: "50%",
+            backgroundColor: "rgba(0,0,0,0.45)",
+            filter: "blur(4px)",
+            zIndex: 0,
+          }}
+        />
+        {visual.decorImages.slice(0, GIFTBOX_DECOR_CLASSES.length).map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className={`igb-decor igb-decor-${index + 1} pointer-events-none absolute drop-shadow-[0_2px_3px_rgba(0,0,0,0.25)] ${GIFTBOX_DECOR_CLASSES[index]}`}
+          />
+        ))}
+        <img
+          data-gift-image="box"
+          src={visual.boxImage}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="igb-box pointer-events-none absolute bottom-0 left-1/2 z-[2] max-h-[220px] w-[170px] -translate-x-1/2 object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.25)]"
         />
       </div>
     </div>

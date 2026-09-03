@@ -95,9 +95,9 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
             <div className="relative mt-6 w-[92%] max-w-[360px] md:mt-9 md:max-w-[520px]">
               <img src={`${BAROQUE_BASE}/khung.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-full object-contain" />
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center uppercase leading-none" style={{ ...nameFont, color: GOLD_DARK }}>
-                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{people[0].shortName}</span>
+                <span data-invitation-short-name className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{people[0].shortName}</span>
                 <span className="my-2 text-[clamp(18px,3vw,24px)] normal-case leading-none md:my-3" style={ampFont}>&amp;</span>
-                <span className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{people[1].shortName}</span>
+                <span data-invitation-short-name className="flex w-[56%] justify-center whitespace-nowrap text-[clamp(28px,5vw,47px)] leading-[1.25]">{people[1].shortName}</span>
               </div>
             </div>
           </header>

@@ -1,0 +1,59 @@
+name: thiepmungonline
+services:
+  web:
+    image: thiepmungonline-web:production
+    container_name: thiepmungonline-web
+    restart: unless-stopped
+    init: true
+    env_file:
+      - path: .env
+        format: raw
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+      DATABASE_URL: file:/app/data/prod.db
+      NEXT_PUBLIC_SITE_URL: https://thiepmungonline.com
+      NODE_OPTIONS: --max-old-space-size=1024
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - 127.0.0.1:3211:3000
+    volumes:
+      - ./data:/app/data
+      - ./releases/current/public:/app/public:ro
+      - next-image-cache:/app/.next/cache
+    mem_limit: 1536m
+    cpus: 3
+    pids_limit: 256
+    stop_grace_period: 60s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/',{signal:AbortSignal.timeout(5000)}).then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 8s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+  tunnel:
+    image: cloudflare/cloudflared:migration-20260831
+    container_name: thiepmungonline-tunnel
+    restart: unless-stopped
+    env_file: tunnel.env
+    command: ["tunnel", "--no-autoupdate", "--metrics", "0.0.0.0:20246", "run"]
+    ports:
+      - 127.0.0.1:20246:20246
+    depends_on:
+      web:
+        condition: service_healthy
+    mem_limit: 192m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+volumes:
+  next-image-cache:

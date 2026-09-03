@@ -1,3 +1,4 @@
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { formatVietnamDate } from "@/lib/datetime";
 import { getPaymentPrices } from "@/lib/payment-config";
@@ -28,7 +29,7 @@ export default async function AdminVouchersPage() {
 
       <VoucherForm />
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
@@ -89,7 +90,7 @@ export default async function AdminVouchersPage() {
             )}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
     </div>
   );
 }

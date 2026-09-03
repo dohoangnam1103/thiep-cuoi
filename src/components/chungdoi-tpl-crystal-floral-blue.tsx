@@ -63,9 +63,9 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
             <div className="relative w-[90%] max-w-[340px] md:max-w-[520px] lg:max-w-[580px]">
               <img src={`${BLUE_BASE}/flower-frame.webp`} alt="" aria-hidden className="relative z-10 block h-auto w-full object-contain" />
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center uppercase leading-none" style={{ ...nameFont, color: "#215589" }}>
-                <span className="flex w-[48%] justify-center whitespace-nowrap text-[clamp(26px,5vw,42px)] leading-[1.25]">{people[0].shortName}</span>
+                <span data-invitation-short-name className="flex w-[48%] justify-center whitespace-nowrap text-[clamp(26px,5vw,42px)] leading-[1.25]">{people[0].shortName}</span>
                 <span className="my-4 text-[clamp(18px,3vw,21px)] normal-case leading-none md:my-8 lg:my-10" style={ampFont}>&amp;</span>
-                <span className="flex w-[48%] justify-center whitespace-nowrap text-[clamp(26px,5vw,42px)] leading-[1.25]">{people[1].shortName}</span>
+                <span data-invitation-short-name className="flex w-[48%] justify-center whitespace-nowrap text-[clamp(26px,5vw,42px)] leading-[1.25]">{people[1].shortName}</span>
               </div>
             </div>
           </header>

@@ -33,7 +33,7 @@
 #   WEB_PORT             cổng LAN                           (3211)
 #   DEPLOYMENT_ID         mã version / cache-bust Next.js   (UTC timestamp)
 #   BACKUP_RETENTION     số bản backup giữ lại              (10)
-#   SKIP_BUILD=1         dùng lại .next có sẵn, không build lại
+#   SKIP_BUILD=1         rejected: deploy must rebuild the source checked for i18n
 #   VERIFY_ASSET         đường dẫn asset public để kiểm tra (/chungdoi/icon-v2.png)
 
 set -euo pipefail
@@ -76,6 +76,10 @@ log_step() {
   LAST_STEP_TS=$now
 }
 
+# Must finish before transport setup, source rsync, backups or remote mutations.
+# Keep this in the shared pipeline so direct deploy-fast and VPS smoke use it too.
+bash scripts/check-deploy-i18n.sh
+
 echo "🚀 Deploy nhanh thiepmungonline → ${REMOTE_APP_DIR} (dpl=${DEPLOYMENT_ID})"
 
 # ---------------------------------------------------------------------------
@@ -96,6 +100,11 @@ fi
 if ! rsh "test -f ${REMOTE_APP_DIR}/docker-compose.yml && grep -q 'releases/current/public:/app/public' ${REMOTE_APP_DIR}/docker-compose.yml"; then
   echo "❌ docker-compose.yml trên Mini PC chưa có bind-mount public/."
   echo "   Chạy một lần: ./scripts/setup-fast-deploy.sh"
+  exit 1
+fi
+
+if ! rsh "test ! -e ${REMOTE_APP_DIR}/RETIRED"; then
+  echo "❌ This production host is retired. Use npm run deploy (VPS)."
   exit 1
 fi
 
@@ -165,6 +174,7 @@ rsync_source() {
     --exclude '/tmp/' \
     --exclude '/.claude/' \
     --exclude '/.deploy-worktree/' \
+    --exclude '/.worktrees/' \
     --exclude '.playwright-mcp' \
     --exclude '.capture' \
     --exclude '/.claude-flow' \
@@ -608,6 +618,13 @@ for path in "/" "$VERIFY_DEMO_PATH"; do
 done
 log_step "verify public"
 
+# VPS uses timezone-explicit systemd timers. Never add duplicate legacy cron jobs.
+if [[ "${MANAGED_SCHEDULERS:-}" == systemd ]]; then
+  rsh 'systemctl is-active --quiet thiepmungonline-payos-reconcile.timer thiepmungonline-trial-reminders.timer thiepmungonline-backup.timer'
+  echo "✅ Deploy ${DEPLOYMENT_ID} complete; existing systemd schedules preserved."
+  exit 0
+fi
+
 # ---------------------------------------------------------------------------
 # 8. Đảm bảo cron dọn Docker storage đã cài (không prune đồng bộ trong deploy)
 # ---------------------------------------------------------------------------
@@ -656,18 +673,10 @@ legacy_reminder_marker='# thiepmungonline trial payment reminder'
 # phát hiện đủ nhanh trong khi số đơn chưa chốt trong cửa sổ 7 ngày vẫn nhỏ.
 reconcile_job="23 */2 * * * $runner /api/cron/payos-reconcile >> $app_dir/payos-reconcile.log 2>&1 $reconcile_marker"
 
-# Năm lượt/ngày, cách nhau 3 tiếng, chỉ trong khung 09:00-21:00.
-#
-# Vì sao không phải một lượt/ngày: điều kiện nhắc là "thiệp hết hạn trong 24h tới",
-# nên lượt chạy đầu tiên rơi vào cửa sổ đó sẽ bắt được thiệp. Chạy thưa thì thiệp
-# publish buổi chiều phải đợi tới lượt sáng hôm sau, lúc đó chỉ còn vài tiếng là ẩn
-# — đo trên dữ liệu thật với lịch cũ `0,15 9 * * *`: 19/67 thiệp được cảnh báo dưới
-# 6h, 9 thiệp chỉ ~1h. Mỗi 3 tiếng đưa lead time điển hình về ~21-24h.
-#
-# Vì sao không chạy đêm: đây là email gửi khách thật, không đánh thức người ta lúc
-# 3h sáng. Hệ quả là khung 21:00->09:00 dồn lại, nên lượt 09:00 gửi nhiều nhất còn
-# bốn lượt sau mỗi lượt chỉ xử lý phần mới vào cửa sổ trong 3 tiếng trước đó.
-#
+# Mỗi giờ từ 09:00 đến 21:00 giờ Việt Nam (13 lượt/ngày).
+# Mỗi lượt chỉ xử lý email mới đủ điều kiện hoặc retry an toàn.
+# Không chạy ban đêm; lượt 09:00 xử lý phần phát sinh sau 21:00 hôm trước.
+# Điều kiện gửi và các marker chống gửi trùng giữ nguyên.
 # Chạy dày hơn KHÔNG sinh email trùng, ba lớp độc lập cùng chặn: marker
 # `reminderSentAt`/`expiredReminderSentAt` trên thiệp, `dedupeKey` unique trên
 # EmailDelivery (status `sent` -> không gọi provider), và idempotency key gửi kèm
@@ -678,7 +687,7 @@ reconcile_job="23 */2 * * * $runner /api/cron/payos-reconcile >> $app_dir/payos-
 # Runner kiểm tra HTTP 2xx và nằm trong repo nên dựng lại host không làm cron biến
 # mất. Job legacy `trigger-trial-reminders.sh` được lọc khỏi crontab trong cùng
 # phép ghi để không bao giờ tồn tại hai scheduler.
-reminder_job="0 9,12,15,18,21 * * * $runner /api/cron/trial-reminders >> $app_dir/trial-reminders.log 2>&1 $reminder_marker"
+reminder_job="0 9,10,11,12,13,14,15,16,17,18,19,20,21 * * * $runner /api/cron/trial-reminders >> $app_dir/trial-reminders.log 2>&1 $reminder_marker"
 (
   crontab -l 2>/dev/null \
     | grep -Fv "$reconcile_marker" \

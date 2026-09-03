@@ -1,5 +1,7 @@
+import { HeroTypographyDefaults } from "@/components/hero-typography-defaults";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
+import { editorMessageNamespaces, selectMessages } from "@/i18n/message-scopes";
 
 import viMessages from "../../../messages/vi.json";
 import "../globals.css";
@@ -21,13 +23,9 @@ export default function EditorLayout({ children }: { children: React.ReactNode }
         <PetalField />
         <NextIntlClientProvider
           locale="vi"
-          messages={{
-            editor: viMessages.editor,
-            trialCountdown: viMessages.trialCountdown,
-            chrome: { footer: viMessages.chrome.footer },
-          }}
+          messages={selectMessages(viMessages, editorMessageNamespaces)}
         >
-          {children}
+          <HeroTypographyDefaults>{children}</HeroTypographyDefaults>
           <ContactFab />
         </NextIntlClientProvider>
         <GoogleAnalytics />

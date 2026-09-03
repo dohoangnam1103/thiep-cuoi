@@ -123,9 +123,9 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
             ))}
             <p className="relative z-30 text-center text-[13px] uppercase tracking-[0.3em] md:text-[16px]" style={{ color: muted }}>{P.welcome || "Welcome To Our Wedding"}</p>
             <div className="relative z-30 mt-4 flex flex-col items-center leading-none" style={{ color: P.text }}>
-              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{orderedShortNames[0]}</span>
+              <span data-invitation-short-name className="text-[54px] md:text-[72px]" style={P.nameFont}>{orderedShortNames[0]}</span>
               <span className="my-1 text-[34px] md:text-[42px]" style={amp}>&amp;</span>
-              <span className="text-[54px] md:text-[72px]" style={P.nameFont}>{orderedShortNames[1]}</span>
+              <span data-invitation-short-name className="text-[54px] md:text-[72px]" style={P.nameFont}>{orderedShortNames[1]}</span>
             </div>
           </header>
         )}

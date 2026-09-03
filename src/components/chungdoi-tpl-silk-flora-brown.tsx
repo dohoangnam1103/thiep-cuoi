@@ -16,9 +16,9 @@ function SilkFloraBrownHero({ content }: { content: ChungDoiDemoContent }) {
       <img src={`${BASE}/top-flower.webp`} alt="" aria-hidden className="pointer-events-none absolute top-0 z-0 ml-[4vw] block h-auto w-auto max-w-[min(420px,calc(96vw-2rem))] -rotate-[30deg] object-contain object-top md:ml-[26vw] md:max-w-[min(560px,calc(72vw-2rem))] lg:ml-[35vw] lg:max-w-[min(600px,calc(63vw-2rem))]" />
       <p className="relative z-10 ml-[6%] whitespace-pre text-left text-[clamp(9px,2.4vw,15px)] uppercase tracking-[0.36em] md:ml-[3%] md:text-[clamp(16px,2.8vw,42px)] lg:text-[clamp(17px,1.85vw,40px)]">The Wedding Of</p>
       <div className="relative z-10 mb-[20px] ml-[4%] mt-[360px] flex w-[48%] flex-col items-center text-center text-[72px] leading-[0.88] md:ml-[11%] md:mt-[410px] md:w-[35%] md:text-[120px]" style={scriptFont}>
-        <span>{compactName(people[0].shortName)}</span>
+        <span data-invitation-short-name>{compactName(people[0].shortName)}</span>
         <span className="my-2 text-[0.72em] md:my-0">&amp;</span>
-        <span>{compactName(people[1].shortName)}</span>
+        <span data-invitation-short-name>{compactName(people[1].shortName)}</span>
       </div>
     </header>
   );

@@ -71,11 +71,11 @@ export function ElegantLeafInvitation({ content }: { content: ChungDoiDemoConten
             ) : null}
             <div className="absolute right-[2%] top-[18%] z-20 w-[45%] text-center">
               <span className="block text-[11px] uppercase tracking-[0.2em]">{people[0].birthOrder}</span>
-              <span className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{people[0].shortName}</span>
+              <span data-invitation-short-name className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{people[0].shortName}</span>
             </div>
             <div className="absolute bottom-[14%] left-[2%] z-20 w-[45%] text-center">
               <span className="block text-[11px] uppercase tracking-[0.2em]">{people[1].birthOrder}</span>
-              <span className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{people[1].shortName}</span>
+              <span data-invitation-short-name className="mt-2 block text-[30px] md:text-[42px]" style={nameFont}>{people[1].shortName}</span>
             </div>
           </div>
         </header>

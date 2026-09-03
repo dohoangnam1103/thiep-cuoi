@@ -9,9 +9,9 @@ const root = process.cwd();
 const demoSource = readFileSync(join(root, "src/components/chungdoi-demo.tsx"), "utf8");
 const wishFormSource = readFileSync(join(root, "src/components/chungdoi-tpl-shared.tsx"), "utf8");
 
-test("audited dynamic template renderers receive invitation translations explicitly", () => {
-  assert.match(demoSource, /NextIntlClientProvider/);
-  assert.match(demoSource, /messages=\{\{ invitationTemplate: viMessages\.invitationTemplate \}\}/);
+test("audited dynamic template renderers inherit the complete invitation translations", () => {
+  assert.doesNotMatch(demoSource, /NextIntlClientProvider/);
+  assert.match(demoSource, /<AuditedTemplateRenderer content=\{content\} \/>/);
 });
 
 test("wish form uses catalog-backed Vietnamese validation messages", () => {

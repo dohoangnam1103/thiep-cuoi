@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import type { Prisma } from "@/generated/prisma/client";
 import { templateLabel } from "@/app/editor/[id]/templates";
 import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifyAdmin } from "@/lib/admin-dal";
 import {
   activationWhere,
@@ -221,26 +222,31 @@ export default async function AdminInvitationsPage({
         ) : null}
       </form>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 font-medium">{t("template")}</th>
+              {/* `min-w`: bị bó hẹp thì tên cô dâu/chú rể xuống tới 5 dòng, làm
+                  bảng cao lên và phải cuộn dọc nhiều hơn hẳn. Chỉ từ `md`, cùng
+                  ngưỡng bật cột ghim — trên điện thoại 192px là quá nhiều. */}
+              <th className="admin-col-pin-start px-4 py-3 font-medium md:min-w-[12rem]">
+                {t("template")}
+              </th>
               <th className="px-4 py-3 font-medium">{t("owner")}</th>
               <th className="whitespace-nowrap px-4 py-3 font-medium">{t("status")}</th>
-              <th className="whitespace-nowrap px-4 py-3 font-medium">{t("activation")}</th>
-              <th className="whitespace-nowrap px-4 py-3 font-medium">{t("createdAt")}</th>
-              <th className="whitespace-nowrap px-4 py-3 font-medium">{t("updatedAt")}</th>
+              <th className="whitespace-nowrap px-4 py-3 font-medium">{t("datesColumn")}</th>
               <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
                 {t("viewCount")}
               </th>
-              <th className="whitespace-nowrap px-4 py-3 font-medium">{t("actions")}</th>
+              <th className="admin-col-pin-end whitespace-nowrap px-4 py-3 font-medium">
+                {t("actions")}
+              </th>
             </tr>
           </thead>
           <tbody>
             {invitations.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">
                   {isFiltered ? t("noInvitationsFound") : t("noRealInvitations")}
                 </td>
               </tr>
@@ -251,7 +257,7 @@ export default async function AdminInvitationsPage({
                 const published = invitation.status === "published";
                 return (
                   <tr key={invitation.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-3">
+                    <td className="admin-col-pin-start px-4 py-3">
                       <Link href={`/admin/invitations/${invitation.id}/edit`} className="group block">
                         <span className="block text-xs text-muted-foreground">
                           {templateLabels[invitation.templateId] ??
@@ -297,15 +303,17 @@ export default async function AdminInvitationsPage({
                       >
                         {statusLabel(invitation.status)}
                       </span>
+                      <span className="mt-1.5 block whitespace-nowrap text-xs text-muted-foreground">
+                        {activationLabel(invitation)}
+                      </span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                      {activationLabel(invitation)}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                      {dateFormat.format(invitation.createdAt)}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                      {dateFormat.format(invitation.updatedAt)}
+                      <span className="block">
+                        {t("createdAt")}: {dateFormat.format(invitation.createdAt)}
+                      </span>
+                      <span className="mt-1.5 block">
+                        {t("updatedAt")}: {dateFormat.format(invitation.updatedAt)}
+                      </span>
                     </td>
                     <td
                       className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-foreground"
@@ -313,7 +321,7 @@ export default async function AdminInvitationsPage({
                     >
                       {numberFormat.format(invitation.viewCount)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="admin-col-pin-end whitespace-nowrap px-4 py-3">
                       {published && invitation.slug ? (
                         <Link
                           href={`/thiep/${invitation.slug}`}
@@ -340,7 +348,7 @@ export default async function AdminInvitationsPage({
             )}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
 
       <AdminPagination
         pagination={pagination}

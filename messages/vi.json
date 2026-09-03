@@ -1240,6 +1240,20 @@
       "videoNote": "Toàn bộ cách tạo và gửi một tấm thiệp, 4 phút",
       "ctaHint": "Đọc hướng dẫn từng bước"
     },
+    "station": {
+      "templatesCta": "Xem tất cả {count} mẫu",
+      "templatesHint": "Bấm một mẫu để xem trọn thiệp",
+      "formNote": "Tên vừa gõ hiện ngay trên tấm thiệp bên cạnh, và được điền sẵn khi bạn bắt đầu.",
+      "featuresTitle": "Có sẵn trong mọi mẫu",
+      "feature1": "Tối ưu cho điện thoại",
+      "feature2": "Chỉ đường Google Maps",
+      "feature3": "Album ảnh và video",
+      "feature4": "Nhạc nền, có nút tắt",
+      "feature5": "Sổ lưu bút cho khách",
+      "feature6": "Hộp quà kèm mã QR",
+      "guestsAlt": "Trang quản lý khách mời: danh sách khách, link mời riêng và thống kê phản hồi",
+      "guestsHint": "Ảnh chụp trang quản lý thật"
+    },
     "card": {
       "invite": "Trân trọng kính mời",
       "couple": "Minh & Hà",
@@ -1261,65 +1275,49 @@
       "ariaLabel": "Hành trình sáu bước tạo và gửi thiệp cưới online",
       "routeLabel": "Các trạm trong hành trình tạo thiệp",
       "progress": "Trạm {current} trên {total}",
-      "ctaStart": "Tạo thiệp của bạn",
-      "ctaTemplates": "Xem toàn bộ mẫu",
+      "mobileHint": "Vuốt ngang để mở từng trang hộ chiếu",
+      "previous": "Về trạm trước",
+      "next": "Tới trạm tiếp theo",
       "ctaFinal": "Cho thiệp khởi hành",
       "acts": {
         "departure": {
           "code": "Trạm 00 · Khởi hành",
           "short": "Khởi hành",
           "title": "Bắt đầu từ một lời mời chân thành",
-          "copy": "Không cần biết thiết kế. Chỉ cần mang theo câu chuyện của hai bạn, phần còn lại đã có một lộ trình rõ ràng.",
-          "point1": "Tạo miễn phí và xem trước trước khi quyết định",
-          "point2": "Dùng thử đầy đủ trong 3 ngày"
+          "copy": "Không cần biết thiết kế. Chỉ cần mang theo câu chuyện của hai bạn, phần còn lại đã có một lộ trình rõ ràng."
         },
         "choose": {
           "code": "Trạm 01 · Chọn mẫu",
           "short": "Chọn mẫu",
           "title": "Chọn đúng phong cách cho ngày của hai bạn",
-          "copy": "Xem trọn từng mẫu thiệp, từ truyền thống Việt đến tối giản hiện đại, rồi đổi mẫu bất cứ lúc nào trong lúc chỉnh sửa.",
-          "point1": "Xem demo toàn bộ thiệp trước khi chọn",
-          "point2": "Mỗi mẫu đều tối ưu cho điện thoại"
+          "copy": "Xem trọn từng mẫu thiệp, từ truyền thống Việt đến tối giản hiện đại, rồi đổi mẫu bất cứ lúc nào trong lúc chỉnh sửa."
         },
         "personalize": {
           "code": "Trạm 02 · Cá nhân hoá",
           "short": "Cá nhân hoá",
           "title": "Điền tên, ngày cưới và dấu ấn riêng",
-          "copy": "Thêm thông tin hai gia đình, ảnh cưới, nhạc nền, lời mời và lịch trình bằng một trình chỉnh sửa đơn giản.",
-          "point1": "Không cần chỉnh bố cục hay viết mã",
-          "point2": "Có thể sửa tiếp sau khi đã xuất bản"
+          "copy": "Thêm thông tin hai gia đình, ảnh cưới, nhạc nền, lời mời và lịch trình bằng một trình chỉnh sửa đơn giản."
         },
         "memories": {
           "code": "Trạm 03 · Kỷ niệm & chỉ đường",
           "short": "Kỷ niệm",
           "title": "Đưa cả câu chuyện và đường đến ngày vui vào thiệp",
-          "copy": "Album, video, bản đồ Google Maps và từng mốc lịch trình giúp khách có đủ thông tin trước khi khởi hành.",
-          "point1": "Ảnh, video và nhạc trong cùng một trải nghiệm",
-          "point2": "Chạm một lần để mở bản đồ chỉ đường"
+          "copy": "Album, video, bản đồ Google Maps và từng mốc lịch trình giúp khách có đủ thông tin trước khi khởi hành."
         },
         "rsvp": {
           "code": "Trạm 04 · Khách mời & RSVP",
           "short": "RSVP",
           "title": "Biết ai sẽ đến trước khi bàn tiệc được xếp",
-          "copy": "Mỗi khách có thể nhận một link riêng, xác nhận tham dự, chọn số người đi cùng và để lại ghi chú ngay trên thiệp.",
-          "point1": "Theo dõi phản hồi trong một trang quản lý",
-          "point2": "Cá nhân hoá tên và cách xưng hô từng khách"
+          "copy": "Mỗi khách có thể nhận một link riêng, xác nhận tham dự, chọn số người đi cùng và để lại ghi chú ngay trên thiệp."
         },
         "share": {
           "code": "Trạm 05 · Gửi đi",
           "short": "Gửi đi",
           "title": "Một đường link đi tới mọi vị khách",
-          "copy": "Gửi qua Zalo, Messenger, email hoặc mã QR. Nếu đổi giờ hay thay ảnh sau đó, khách vẫn xem đúng nội dung mới trên link cũ.",
-          "point1": "Không cần tải ứng dụng hay đăng nhập để xem",
-          "point2": "Chia sẻ không giới hạn, link chung hoặc link riêng"
+          "copy": "Gửi qua Zalo, Messenger, email hoặc mã QR. Nếu đổi giờ hay thay ảnh sau đó, khách vẫn xem đúng nội dung mới trên link cũ."
         }
       },
       "artifacts": {
-        "editName": "Tên & gia đình",
-        "editDate": "Ngày giờ tổ chức",
-        "editVenue": "Địa điểm & lời mời",
-        "album": "Album kỷ niệm",
-        "map": "Google Maps",
         "rsvpLabel": "Ví dụ phản hồi RSVP",
         "rsvpValue": "86 đã phản hồi",
         "rsvpNote": "72 khách sẽ tham dự",
@@ -1327,6 +1325,404 @@
         "messenger": "Messenger",
         "email": "Email"
       }
+    }
+  },
+  "homeLabV10": {
+    "metadata": {
+      "title": "V10 · Kính Hỷ",
+      "description": "Bản thử nghiệm trang chủ V10 theo ngôn ngữ Liquid Glass: trong trẻo, tinh tế và được thiết kế trước hết cho trải nghiệm thiệp cưới trên điện thoại."
+    },
+    "labStrip": {
+      "label": "Biến thể V10",
+      "name": "Kính Hỷ · Liquid Glass",
+      "back": "Về danh sách biến thể"
+    },
+    "hero": {
+      "eyebrow": "Thiệp cưới số · Được chế tác cho hai bạn",
+      "titleLead": "Một lời mời",
+      "titleAccent": "trong veo cảm xúc.",
+      "lede": "Chọn thiết kế hợp với câu chuyện của hai bạn, viết tên lên thiệp và gửi trọn hình ảnh, bản đồ cùng lời mời qua một đường link thanh lịch.",
+      "ctaPrimary": "Tạo thiệp của hai bạn",
+      "ctaSecondary": "Khám phá bộ sưu tập",
+      "note": "Tạo miễn phí · Dùng thử 3 ngày · Tinh chỉnh mọi chi tiết",
+      "envelopeLabel": "Dành riêng cho ngày của chúng mình",
+      "seal": "Hỷ"
+    },
+    "vibe": {
+      "eyebrow": "01 · Chọn mood",
+      "title": "Bốn sắc thái. Một mẫu dành cho hai bạn.",
+      "lede": "Chạm vào từng mẫu để đổi tấm thiệp sống ở phần kế tiếp. Nếu muốn xem kỹ, cả kho {count} mẫu vẫn đang chờ.",
+      "imageAlt": "Xem trước mẫu thiệp {name}",
+      "selected": "Đang được chọn",
+      "tapToSelect": "Chạm để chọn",
+      "demo": "Mở demo trọn mẫu"
+    },
+    "personalize": {
+      "eyebrow": "02 · Viết tên lên thiệp",
+      "title": "Gõ một chữ, tấm thiệp đổi ngay một chữ.",
+      "lede": "Không phải hình minh hoạ giả. Đây là dữ liệu thật sẽ theo hai bạn vào trình chỉnh sửa khi bắt đầu.",
+      "liveLabel": "Thiệp đang cập nhật trực tiếp",
+      "formEyebrow": "Thử ngay trên thiệp",
+      "formTitle": "Tên hai bạn sẽ đứng cạnh nhau thế nào?",
+      "selectedTemplate": "Mẫu đang chọn: {name}",
+      "groomLabel": "Tên chú rể",
+      "groomPlaceholder": "Ví dụ: Minh",
+      "brideLabel": "Tên cô dâu",
+      "bridePlaceholder": "Ví dụ: Hà",
+      "note": "Hai tên và mẫu đang chọn sẽ được điền sẵn. Bạn vẫn có thể đổi mọi nội dung trong trình chỉnh sửa.",
+      "cta": "Tạo thiệp với tên này"
+    },
+    "card": {
+      "badge": "Lời mời ngày vui",
+      "imageAlt": "Mẫu thiệp {name}",
+      "groomFallback": "Minh",
+      "brideFallback": "Hà",
+      "invite": "Trân trọng kính mời",
+      "date": "20 · 11 · 2026",
+      "venue": "18:00 · Tiệc cưới của chúng mình"
+    },
+    "guest": {
+      "eyebrow": "03 · Theo chân lời mời",
+      "title": "Một chiếc điện thoại. Bốn khoảnh khắc của vị khách.",
+      "lede": "Cuộn như bình thường. Chiếc điện thoại đứng yên để cho thấy lời mời đi từ tin nhắn tới xác nhận tham dự ra sao.",
+      "phoneLabel": "Khoảnh khắc {current} / {total}",
+      "phoneAriaLabel": "Minh hoạ hành trình nhận thiệp trên điện thoại",
+      "steps": {
+        "message": {
+          "code": "01 · Tin nhắn đến",
+          "title": "Link thiệp nằm ngay trong cuộc trò chuyện",
+          "copy": "Gửi qua Zalo, Messenger hoặc email. Khách chạm vào link và xem ngay, không cần tải ứng dụng hay đăng nhập."
+        },
+        "invitation": {
+          "code": "02 · Thiệp mở ra",
+          "title": "Mẫu hai bạn chọn trở thành lời mời riêng",
+          "copy": "Tên, ngày cưới và lời mời hiện rõ trên màn hình nhỏ — đúng nơi phần lớn khách sẽ mở thiệp."
+        },
+        "map": {
+          "code": "03 · Xem đường & album",
+          "title": "Mọi thông tin cần trước khi lên đường",
+          "copy": "Bản đồ, giờ đón khách, album ảnh và lịch trình nằm cùng một chỗ để khách không phải tìm lại nhiều tin nhắn."
+        },
+        "rsvp": {
+          "code": "04 · Xác nhận tham dự",
+          "title": "Một cú chạm thay cho nhiều cuộc gọi",
+          "copy": "Khách báo có đến hay không, số người đi cùng và lời nhắn; hai bạn theo dõi phản hồi trong trang quản lý."
+        }
+      },
+      "phone": {
+        "chatApp": "Cuộc trò chuyện ngày vui",
+        "chatMessage": "Tụi mình gửi bạn thiệp cưới nhé! Hẹn gặp bạn trong ngày thật vui của hai đứa.",
+        "previewTitle": "Thiệp cưới của Minh & Hà",
+        "previewUrl": "thiepmungonline.com/thiep/minh-ha",
+        "sent": "Đã gửi an toàn",
+        "mapTitle": "Sảnh tiệc Ánh Dương",
+        "mapDistance": "Cách bạn 18 phút",
+        "albumLabel": "Album kỷ niệm · 24 khoảnh khắc",
+        "rsvpEyebrow": "Xác nhận tham dự",
+        "rsvpTitle": "Bạn sẽ đến chung vui chứ?",
+        "rsvpCopy": "Phản hồi được gửi thẳng về danh sách khách của cô dâu chú rể.",
+        "rsvpChoice": "Có, mình sẽ đến"
+      }
+    },
+    "features": {
+      "eyebrow": "04 · Đủ mọi thứ cần thiết",
+      "title": "Rực rỡ ở ngoài. Gọn gàng ở bên trong.",
+      "lede": "Mỗi mẫu đã sẵn một bộ công cụ cho cả hai phía: hai bạn dễ chỉnh, khách dễ xem và dễ phản hồi.",
+      "items": {
+        "mobile": {
+          "title": "Sinh ra cho điện thoại",
+          "copy": "Bố cục, chữ và nút bấm được tối ưu cho màn hình khách thật sự dùng."
+        },
+        "map": {
+          "title": "Chỉ đường rõ ràng",
+          "copy": "Gắn địa điểm và mở Google Maps ngay từ thiệp."
+        },
+        "album": {
+          "title": "Album kể chuyện",
+          "copy": "Gom ảnh, video và những mốc đáng nhớ vào một hành trình."
+        },
+        "music": {
+          "title": "Nhạc nền có kiểm soát",
+          "copy": "Tạo không khí cho thiệp và luôn có nút tắt dễ thấy."
+        },
+        "guests": {
+          "title": "RSVP về một chỗ",
+          "copy": "Theo dõi người tham dự, số khách đi cùng và ghi chú."
+        },
+        "link": {
+          "title": "Một link, luôn mới",
+          "copy": "Sửa giờ, địa điểm hay ảnh sau khi gửi mà không đổi đường link."
+        }
+      },
+      "proof": {
+        "templateValue": "{count}+",
+        "templateLabel": "mẫu thiệp để bắt đầu",
+        "timeValue": "10 phút",
+        "timeLabel": "để có bản nháp đầu tiên",
+        "trialValue": "3 ngày",
+        "trialLabel": "dùng thử miễn phí"
+      }
+    },
+    "testimonial": {
+      "quote": "RSVP tự động giúp mình nắm chính xác số khách, đỡ gọi điện từng người.",
+      "name": "Tuấn & Linh",
+      "role": "Cưới tháng 5, TP.HCM"
+    },
+    "faq": {
+      "eyebrow": "Hỏi nhanh, đáp gọn",
+      "title": "Ba điều nên biết trước khi bắt đầu.",
+      "lede": "Không có chữ nhỏ giấu ở cuối trang. Đây là cách thiệp hoạt động sau khi hai bạn bấm tạo.",
+      "items": {
+        "edit": {
+          "question": "Gửi thiệp rồi có sửa lại được không?",
+          "answer": "Có. Bạn có thể đổi thời gian, địa điểm, hình ảnh hoặc lời mời trên chính đường link cũ; khách luôn thấy phiên bản mới nhất."
+        },
+        "guest": {
+          "question": "Khách có phải tải ứng dụng hay đăng nhập không?",
+          "answer": "Không. Khách chỉ cần chạm vào đường link để xem thiệp trên trình duyệt, mở bản đồ và gửi RSVP ngay tại đó."
+        },
+        "price": {
+          "question": "Có thể thử trước khi thanh toán không?",
+          "answer": "Có. Hai bạn tạo thiệp và dùng thử miễn phí trong 3 ngày để xem nội dung, hiệu ứng và trải nghiệm trên điện thoại trước khi quyết định."
+        }
+      }
+    },
+    "closing": {
+      "eyebrow": "Từ hai người đến mọi vị khách",
+      "title": "Gói ngày vui trong một lời mời.",
+      "lede": "Chọn thiết kế, viết tên và để tấm thiệp trong veo mang câu chuyện của hai bạn đến từng vị khách.",
+      "cta": "Bắt đầu tấm thiệp",
+      "note": "Tạo miễn phí · Chưa cần thanh toán",
+      "seal": "Song Hỷ"
+    },
+    "registry": {
+      "name": "Kính Hỷ · Liquid Glass",
+      "motion": "Cuộn dọc tự nhiên dẫn qua những lớp kính bán trong suốt: thiệp nổi trong ánh sáng champagne, bộ sưu tập xếp lớp, bản xem trước cập nhật khi gõ và chiếc điện thoại đổi theo hành trình của khách.",
+      "strength": "Ngôn ngữ kính được xây thành một hệ vật liệu thống nhất — highlight quang học, blur có chiều sâu, serif thanh và bảng màu ivory–blush–champagne — để hiện đại nhưng vẫn trang trọng, đặc biệt trên mobile.",
+      "weakness": "Backdrop blur và nhiều lớp trong suốt cần kiểm soát hiệu năng trên thiết bị cũ; bản fallback giữ nền gần đặc để chữ luôn rõ và không phụ thuộc hiệu ứng kính.",
+      "note": "Cuộn native, không Lenis/GSAP pin/custom scroller. Chế độ giảm chuyển động tắt sợi tiến độ và mọi chuyển động trang trí."
+    }
+  },
+  "homeLabV11": {
+    "metadata": {
+      "title": "V11 · Contemporary Wedding Editorial",
+      "description": "Bản thử nghiệm trang chủ V11: một sân khấu cưới đương đại với ảnh editorial tách lớp, chuyển động điện ảnh và hành trình lời mời tương tác."
+    },
+    "labStrip": {
+      "label": "Biến thể V11",
+      "name": "Contemporary Wedding Editorial",
+      "back": "Về danh sách biến thể"
+    },
+    "hero": {
+      "eyebrow": "Thiệp cưới số · Được dàn dựng như một ấn phẩm",
+      "titleLead": "Một lời mời",
+      "titleAccent": "được cảm nhận.",
+      "lede": "Không chỉ gửi ngày giờ và địa điểm. Hãy để câu chuyện của hai bạn mở ra bằng hình ảnh, chuyển động và từng chi tiết được chăm chút.",
+      "ctaPrimary": "Tạo thiệp của hai bạn",
+      "ctaSecondary": "Xem câu chuyện",
+      "note": "Tạo miễn phí · Dùng thử 3 ngày · Không cần biết thiết kế",
+      "scrollHint": "Cuộn để sân khấu chuyển động",
+      "cardEyebrow": "Trân trọng kính mời",
+      "cardNames": "Minh & Hà",
+      "cardDate": "20 · 11 · 2026"
+    },
+    "manifesto": {
+      "ariaLabel": "Tuyên ngôn thiết kế của Home V11",
+      "eyebrow": "Một lời mời đáng nhớ",
+      "lineOne": "Không chỉ được gửi.",
+      "lineTwo": "Được nhớ."
+    },
+    "story": {
+      "eyebrow": "01 · Hai người",
+      "title": "Mọi thiết kế đẹp đều bắt đầu từ một câu chuyện thật.",
+      "lede": "Chọn một không khí hợp với hai bạn. Từ đó, màu sắc, nhịp chuyển động và cách từng khoảnh khắc xuất hiện sẽ cùng nói một ngôn ngữ.",
+      "imageAlt": "Cô dâu và chú rể Việt Nam trong không gian cưới editorial hiện đại",
+      "quote": "Một tấm thiệp đủ tinh tế để người nhận dừng lại, và đủ rõ ràng để họ biết phải làm gì tiếp theo.",
+      "proof": {
+        "templatesLabel": "Mẫu thiệp để bắt đầu",
+        "templatesValue": "{count}+ phong cách",
+        "timeLabel": "Bản nháp đầu tiên",
+        "timeValue": "Khoảng 10 phút",
+        "trialLabel": "Thời gian dùng thử",
+        "trialValue": "Miễn phí 3 ngày"
+      }
+    },
+    "templates": {
+      "eyebrow": "02 · Chọn phong cách",
+      "title": "Một ngày vui, nhiều cách được kể.",
+      "lede": "Chọn chất liệu gần với hai bạn nhất. Mẫu đang chọn sẽ đi cùng tên hai bạn vào bản nháp đầu tiên.",
+      "selected": "Đang chọn",
+      "choose": "Chọn mẫu này",
+      "demo": "Xem trọn mẫu",
+      "all": "Khám phá tất cả {count}+ mẫu thiệp",
+      "imageAlt": "Xem trước mẫu thiệp {name}"
+    },
+    "invitation": {
+      "eyebrow": "03 · Tấm thiệp",
+      "title": "Tên hai bạn trở thành trung tâm.",
+      "lede": "Gõ thử ngay tại đây. Tên vừa nhập xuất hiện trên tấm thiệp sống — cũng là dữ liệu sẽ theo hai bạn vào trình chỉnh sửa.",
+      "liveLabel": "Thiệp đang cập nhật trực tiếp",
+      "cardEyebrow": "Trân trọng kính mời",
+      "cardDate": "20 · 11 · 2026",
+      "cardVenue": "18:00 · Tiệc cưới của chúng mình",
+      "formEyebrow": "Thử ngay trên thiệp",
+      "formTitle": "Hai cái tên sẽ đứng cạnh nhau thế nào?",
+      "groomLabel": "Tên chú rể",
+      "groomPlaceholder": "Ví dụ: Minh",
+      "brideLabel": "Tên cô dâu",
+      "bridePlaceholder": "Ví dụ: Hà",
+      "groomFallback": "Minh",
+      "brideFallback": "Hà",
+      "formNote": "Hai tên và mẫu đầu tiên sẽ được điền sẵn. Bạn vẫn có thể đổi mọi nội dung, hình ảnh và hiệu ứng sau khi bắt đầu.",
+      "cta": "Tạo thiệp với tên này"
+    },
+    "material": {
+      "index": "04",
+      "eyebrow": "04 · Trải nghiệm",
+      "title": "Tinh tế ở ngoài. Rõ ràng ở bên trong.",
+      "lede": "Phần trình diễn khiến người nhận nhớ. Phần công cụ phía sau giúp cả hai bên không phải dò lại thông tin trong nhiều cuộc trò chuyện.",
+      "imageAlt": "Chân dung cô dâu Việt Nam với khăn voan trong ánh sáng kiến trúc",
+      "items": {
+        "map": {
+          "title": "Đường đến ngày vui nằm ngay trong thiệp",
+          "copy": "Địa điểm, giờ đón khách và nút mở Google Maps được đặt đúng lúc khách cần."
+        },
+        "guests": {
+          "title": "Mỗi phản hồi trở về một danh sách",
+          "copy": "Khách xác nhận tham dự, số người đi cùng và lời nhắn; hai bạn không cần gọi hỏi từng người."
+        },
+        "updates": {
+          "title": "Một đường link luôn là phiên bản mới nhất",
+          "copy": "Sửa giờ, địa điểm, câu chữ hay hình ảnh sau khi gửi mà không phải phát lại link."
+        }
+      }
+    },
+    "guest": {
+      "eyebrow": "05 · Người nhận",
+      "title": "Một đường link. Bốn khoảnh khắc liền mạch.",
+      "lede": "Chiếc điện thoại đứng yên để bạn theo dõi lời mời đi từ cuộc trò chuyện đến xác nhận tham dự — không tải ứng dụng, không đăng nhập.",
+      "phoneLabel": "Khoảnh khắc {current} / {total}",
+      "phoneAriaLabel": "Minh hoạ hành trình nhận và phản hồi thiệp cưới trên điện thoại",
+      "steps": {
+        "message": {
+          "code": "01 · Tin nhắn đến",
+          "title": "Lời mời bắt đầu ngay trong cuộc trò chuyện.",
+          "copy": "Gửi qua Zalo, Messenger, email hoặc mã QR. Khách chạm vào đường link và xem thiệp ngay trên trình duyệt."
+        },
+        "invitation": {
+          "code": "02 · Thiệp mở ra",
+          "title": "Câu chuyện của hai bạn vừa vặn trên màn hình nhỏ.",
+          "copy": "Tên, ngày cưới, album và lời mời được tối ưu cho chính chiếc điện thoại mà phần lớn khách sẽ sử dụng."
+        },
+        "map": {
+          "code": "03 · Lên đường",
+          "title": "Địa điểm và lịch trình không còn bị trôi trong tin nhắn.",
+          "copy": "Khách xem giờ đón, mở bản đồ và tìm lại mọi thông tin cần thiết từ cùng một nơi."
+        },
+        "rsvp": {
+          "code": "04 · Hồi đáp",
+          "title": "Một cú chạm thay cho nhiều cuộc gọi.",
+          "copy": "Khách báo có đến hay không, số người đi cùng và lời nhắn; phản hồi xuất hiện ngay trong trang quản lý của hai bạn."
+        }
+      },
+      "phone": {
+        "chatApp": "Cuộc trò chuyện ngày vui",
+        "chatMessage": "Tụi mình gửi bạn thiệp cưới nhé! Hẹn gặp bạn trong ngày thật vui của hai đứa.",
+        "previewTitle": "Thiệp cưới của {groom} & {bride}",
+        "previewUrl": "thiepmungonline.com/thiep/minh-ha",
+        "sent": "Đã gửi an toàn",
+        "inviteEyebrow": "Trân trọng kính mời",
+        "inviteDate": "20 · 11 · 2026",
+        "inviteVenue": "18:00 · Tiệc cưới của chúng mình",
+        "mapEyebrow": "Chỉ đường đến ngày vui",
+        "mapTitle": "Sảnh tiệc Ánh Dương",
+        "mapDistance": "Cách bạn khoảng 18 phút",
+        "rsvpEyebrow": "Xác nhận tham dự",
+        "rsvpTitle": "Bạn sẽ đến chung vui chứ?",
+        "rsvpCopy": "Phản hồi được gửi thẳng về danh sách khách của cô dâu chú rể.",
+        "rsvpChoice": "Có, mình sẽ đến"
+      }
+    },
+    "commerce": {
+      "eyebrow": "06 · Trước khi bắt đầu",
+      "title": "Đẹp để nhớ. Rõ để quyết định.",
+      "proof": {
+        "quote": "Tụi mình làm bản đầu chỉ trong một buổi tối. Khách lớn tuổi vẫn mở được, còn bạn bè thì hỏi ngay ai thiết kế thiệp.",
+        "name": "Tuấn & Linh",
+        "role": "Một cặp đôi đã gửi thiệp online"
+      },
+      "pricing": {
+        "eyebrow": "Bắt đầu không áp lực",
+        "title": "Làm bản nháp miễn phí, chỉ thanh toán khi đã thật sự ưng.",
+        "items": {
+          "trial": {
+            "title": "Dùng thử 3 ngày",
+            "copy": "Mở toàn bộ trình chỉnh sửa để thử nội dung, hình ảnh và hiệu ứng."
+          },
+          "once": {
+            "title": "Thanh toán một lần",
+            "copy": "Không có phí duy trì hàng tháng cho tấm thiệp đã xuất bản."
+          },
+          "forever": {
+            "title": "Link luôn cập nhật",
+            "copy": "Sửa thông tin sau khi gửi mà không cần phát lại một đường link khác."
+          }
+        },
+        "createCta": "Tạo bản nháp miễn phí",
+        "cta": "Xem bảng giá chi tiết"
+      },
+      "faq": {
+        "eyebrow": "Hỏi nhanh trước khi làm",
+        "title": "Ba điều các cặp đôi thường hỏi nhất.",
+        "lede": "Những phần còn lại có thể khám phá trực tiếp trong bản nháp — không cần cam kết trước.",
+        "items": {
+          "edit": {
+            "question": "Sau khi gửi thiệp rồi có sửa được không?",
+            "answer": "Có. Hai bạn có thể đổi nội dung, hình ảnh, thời gian hay địa điểm; khách vẫn xem bản mới nhất từ đường link cũ."
+          },
+          "guest": {
+            "question": "Khách có phải cài ứng dụng hoặc đăng nhập không?",
+            "answer": "Không. Thiệp mở trực tiếp trên trình duyệt điện thoại và khách có thể xem thông tin, bản đồ, album hay phản hồi ngay tại đó."
+          },
+          "price": {
+            "question": "Khi nào tụi mình cần thanh toán?",
+            "answer": "Hai bạn được tạo và thử bản nháp trước. Chỉ khi đã ưng và muốn xuất bản thiệp, hãy chọn gói phù hợp trong bảng giá."
+          }
+        }
+      }
+    },
+    "finale": {
+      "eyebrow": "07 · Hồi đáp",
+      "titleLead": "Mỗi lời hồi đáp",
+      "titleAccent": "trở về cùng một nơi.",
+      "lede": "Từ khoảnh khắc lời mời được mở đến khi vị khách cuối cùng xác nhận, hai bạn luôn nhìn thấy ngày vui đang dần thành hình.",
+      "cta": "Bắt đầu tấm thiệp",
+      "secondaryCta": "Xem bảng giá",
+      "note": "Tạo miễn phí · Chưa cần thanh toán"
+    },
+    "registry": {
+      "name": "Contemporary Wedding Editorial",
+      "motion": "Một sân khấu editorial tách riêng background, cô dâu, chú rể, thiệp và voile để chuyển động theo chiều cuộn. Trang đi qua ảnh couple toàn màn hình, studio gõ tên trực tiếp, hành trình khách trên điện thoại và kết bằng quỹ đạo RSVP.",
+      "strength": "Ảnh cùng một cặp đôi được art-direct nhất quán cho desktop lẫn mobile; lớp raster chỉ đảm nhiệm cảm xúc, còn tên, form, bản đồ, tin nhắn và RSVP vẫn là DOM thật nên vừa trình diễn cao vừa tương tác được.",
+      "weakness": "Hero nhiều lớp và ảnh toàn màn hình cần kiểm soát kích thước tải, compositing và nhịp scrub; mobile phải giảm bớt chuyển động để không che nội dung hay làm nóng thiết bị.",
+      "note": "Cuộn native, GSAP chỉ điều khiển choreography cục bộ. Reduced motion chuyển hero về bố cục tĩnh, dừng mọi loop và giữ nguyên toàn bộ nội dung/CTA."
+    }
+  },
+  "homeLabIndex": {
+    "label": "Phòng thử nghiệm",
+    "heading": "Sáu hướng ban đầu, và năm bản hoàn chỉnh",
+    "intro": "V1–V6 là bản nháp bằng khối xám để chọn kịch bản chuyển động. V7 và V8 phát triển hai hướng đầu tiên thành trang đầy đủ; V9 kể hành trình của một lời mời, V10 thử nghiệm Liquid Glass, còn V11 chuyển sang một sân khấu cưới editorial đương đại. Trang chủ đang chạy ở / không bị ảnh hưởng.",
+    "latest": "Ba bản mới nhất nằm đầu danh sách: mở V11 để xem hướng Contemporary Wedding Editorial trình diễn cao, V10 để đối chiếu với Liquid Glass mobile-first, hoặc V9 để so với kiến trúc journey tách riêng desktop và mobile.",
+    "view": "xem →",
+    "strengthLabel": "Mạnh",
+    "weaknessLabel": "Yếu",
+    "closing": "V11 là hướng đề xuất mới nhất với asset tách lớp và choreography điện ảnh; V10 và V9 giữ lại để đối chiếu hai kiến trúc trước đó. V1–V8 vẫn ở đây để so nhịp và art direction, không ảnh hưởng trang chủ production.",
+    "v9": {
+      "name": "Hành trình của một lời mời",
+      "motion": "Một tấm thiệp đi qua sáu trạm từ chọn mẫu đến gửi đi. Desktop là sân khấu sticky có thiệp du hành; mobile chuyển hẳn sang bộ trang hộ chiếu vuốt ngang bằng native scroll-snap.",
+      "strength": "Mỗi trạm gắn với một tác vụ thật và tấm thiệp tích luỹ nội dung theo hành trình, nên câu chuyện sản phẩm rõ hơn các bản chỉ dùng motion làm trang trí.",
+      "weakness": "Hai kiến trúc desktop/mobile khác nhau làm khối lượng kiểm thử lớn, và story deck ngang trên mobile vẫn đòi hỏi người dùng đổi hướng thao tác.",
+      "note": "Route V9 giữ native scroll trên mobile; desktop dùng hành trình ghim riêng."
     }
   },
   "listing": {
@@ -1567,6 +1963,10 @@
         "name": "Minimalism Xanh",
         "description": "Thiệp cưới Minimalism Xanh tối giản trên nền giấy trắng, sắc xanh lá thảo mộc, phong bì lồng hai ảnh cưới và lịch đánh dấu trái tim. Miễn phí tạo thiệp."
       },
+      "minimalism-brown": {
+        "name": "Minimalism Nâu",
+        "description": "Thiệp cưới Minimalism Nâu tối giản trên nền kem hồng, sắc nâu đất ấm áp, khung gỗ lồng ảnh cưới và lịch đánh dấu trái tim. Miễn phí tạo thiệp."
+      },
       "minimalism-jade": {
         "name": "Minimalism Xanh Ngọc",
         "description": "Thiệp cưới Minimalism Xanh Ngọc với sắc mint-jade thật nhẹ, hoa mẫu đơn xanh sương và phong bì pastel lồng ảnh cưới. Miễn phí tạo thiệp."
@@ -1760,12 +2160,13 @@
     "highlight2": "Dùng thử miễn phí 3 ngày",
     "highlight3": "Thuộc về bạn mãi mãi",
     "planType": "Thanh toán một lần",
+    "originalPrice": "199.000đ",
     "planPay": "Chuyển khoản hoặc QR",
     "planNote1": "Không phí hàng tháng",
     "planNote2": "Đổi mẫu thiệp thoải mái",
     "planNote3": "Thiệp tồn tại mãi mãi",
     "planNote4": "Khách mời không giới hạn",
-    "feature1": "Hiển thị tên khách mời không giới hạn",
+    "feature1": "Hiển thị tên từng khách mời",
     "feature2": "Chỉ đường Google Maps",
     "feature3": "Album ảnh không giới hạn",
     "feature4": "Mã QR nhận quà",
@@ -2221,6 +2622,7 @@
     "status": "Trạng thái",
     "activation": "Kích hoạt",
     "effectivePrice": "Giá hiệu lực",
+    "datesColumn": "Ngày tạo / Cập nhật",
     "updatedAt": "Cập nhật",
     "viewCount": "Lượt xem",
     "viewCountHint": "Số lần thiệp được mở, tính cả chủ thiệp. Không tính admin và bot.",
@@ -2254,6 +2656,7 @@
     "overviewNewUsers": "Người dùng mới",
     "overviewNewInvitations": "Thiệp thật mới",
     "overviewRevenue": "Doanh thu",
+    "overviewRemindersSent": "Email nhắc nhở đã gửi",
     "overviewChartEmpty": "Chưa có dữ liệu trong khoảng này.",
     "emailLogsNav": "Lịch sử email",
     "overviewEmailsSentToday": "Email gửi hôm nay",
@@ -2288,6 +2691,7 @@
     "emailStatusBlocked": "Chờ kiểm tra",
     "emailTypeTrialEnding": "Nhắc còn 24 giờ",
     "emailTypeExpired": "Nhắc thiệp đã ẩn",
+    "emailTypePaymentSuccess": "Cảm ơn thanh toán",
     "emailTypeWelcome": "Chào mừng",
     "emailTypeOnboarding": "Onboarding chưa có thiệp",
     "emailTypeSystem": "Thông báo hệ thống",
@@ -2375,6 +2779,8 @@
       "saveFailed": "Không thể lưu trạng thái hiển thị."
     },
     "coupleColumn": "Cặp đôi",
+    "usageColumn": "Đã dùng",
+    "usageHelp": "Số thiệp thật hiện đang dùng từng mẫu, gồm bản nháp, đã xuất bản và đã thanh toán; không tính demo hoặc thiệp đã xóa. Khi đổi mẫu, thiệp được tính cho mẫu mới.",
     "actionsColumn": "Thao tác",
     "noDemos": "Chưa có thiệp demo nào.",
     "edit": "Sửa",
@@ -2417,6 +2823,7 @@
     "reload": "Tải lại giá mới",
     "panel": {
       "amountLabel": "Số tiền cần thanh toán",
+      "originalPrice": "199.000đ",
       "waiting": "Đang chờ thanh toán",
       "qrTitle": "Quét mã bằng app ngân hàng",
       "qrHint": "Số tiền và nội dung đã có sẵn trong mã",
@@ -2489,6 +2896,8 @@
     },
     "upload": {
       "galleryHelp": "Ảnh nguồn tối đa 50MB; ảnh trên 20MB sẽ được tự động nén xuống dưới 20MB trước khi lưu. Tối đa 30 ảnh.",
+      "heroAlbumFallbackOne": "Mặc định dùng ảnh đầu tiên trong album. Bạn có thể tải ảnh riêng ở đây để thay thế; xoá ảnh riêng để dùng lại ảnh album.",
+      "heroAlbumFallbackTwo": "Mặc định dùng hai ảnh đầu tiên trong album theo thứ tự hiển thị. Ảnh riêng tải lên sẽ được ưu tiên cho từng vị trí; xoá ảnh riêng để dùng lại ảnh album.",
       "sourceTooLarge": "Ảnh nguồn quá lớn để xử lý. Vui lòng chọn ảnh dưới 50MB.",
       "outputTooLarge": "Không thể nén ảnh xuống dưới 20MB. Vui lòng chọn ảnh khác."
     },
@@ -2608,6 +3017,28 @@
       "select": "Chọn",
       "close": "Đóng",
       "error": "Không thể tải thư viện nhạc. Vui lòng thử lại."
+    },
+    "heroTypography": {
+      "title": "Font tên rút gọn",
+      "scope": "Chỉ đổi hai tên rút gọn ở đầu thiệp. Chọn để xem ngay, lưu để áp dụng mặc định cho mẫu.",
+      "font": "Font chữ",
+      "originalFont": "Dùng font gốc của mẫu",
+      "bold": "In đậm",
+      "italic": "In nghiêng",
+      "collapse": "Thu gọn",
+      "reset": "Khôi phục kiểu gốc",
+      "original": "Theo mẫu",
+      "on": "Bật",
+      "off": "Tắt",
+      "styleState": "Đậm: {bold} · Nghiêng: {italic}",
+      "save": "Lưu",
+      "cancel": "Hủy thay đổi",
+      "saving": "Đang lưu…",
+      "saved": "Đã lưu kiểu chữ mặc định cho mẫu.",
+      "unsaved": "Chưa lưu",
+      "failed": "Chưa lưu được. Vui lòng thử lại.",
+      "invalid": "Lựa chọn font không hợp lệ.",
+      "templateChanged": "Hãy lưu thay đổi mẫu thiệp trong trình sửa trước, rồi mở lại xem trước."
     }
   },
   "comicHero": {
@@ -2693,6 +3124,7 @@
     "giftFlipHint": "Nhấn để xem mã QR",
     "giftFlipBack": "Nhấn để quay lại",
     "invitedToWedding": "You are invited to the wedding of",
+    "hoaKhoSaveTheDate": "Save The Date",
     "weddingInformation": "Thông tin lễ cưới",
     "photoAlbum": "Album ảnh",
     "atTime": "Vào lúc {time}",

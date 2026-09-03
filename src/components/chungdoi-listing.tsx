@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
@@ -11,6 +10,7 @@ import { useTemplateMobileThumbnail } from "@/components/template-mobile-thumbna
 import { useTemplateName } from "@/components/template-name-overrides";
 import { TemplatePreviewModal, demoSlug } from "@/components/template-preview-modal";
 import { TemplateSuggestionCta } from "@/components/template-suggestion-cta";
+import { TemplateListingImage } from "@/components/template-listing-image";
 import { HorizontalPillScroller } from "@/components/ui/horizontal-pill-scroller";
 import { Link } from "@/i18n/navigation";
 import {
@@ -23,7 +23,6 @@ import {
   colorTemplateSeoFacets,
   styleTemplateSeoFacets,
 } from "@/data/template-seo-facets";
-import { templatePreviewUrl } from "@/lib/template-preview-url";
 import {
   blockTitleClass,
   bodyClass,
@@ -169,8 +168,8 @@ export function ChungDoiListing({
             <TemplateSeoFacetLinks currentFacetId={facetContent?.facetId} />
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((template) => (
-                <TemplateCard key={template.slug} template={template} onSelect={() => setSelected(template)} />
+              {filtered.map((template, index) => (
+                <TemplateCard key={template.slug} template={template} index={index} onSelect={() => setSelected(template)} />
               ))}
             </div>
 
@@ -326,7 +325,7 @@ function FilterPills({
   );
 }
 
-function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSelect: () => void }) {
+function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplate; index: number; onSelect: () => void }) {
   const t = useTranslations("listing");
   const locale = useLocale();
   const templateName = useTemplateName();
@@ -345,53 +344,16 @@ function TemplateCard({ template, onSelect }: { template: ChungDoiTemplate; onSe
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-border bg-card shadow transition hover:-translate-y-1 hover:shadow-lg">
-      <button
-        onClick={onSelect}
-        data-ga-event="preview_template"
-        data-ga-param-template-id={template.slug}
-        data-ga-param-source="listing_card"
-        className="block w-full text-left"
-      >
-        <div className="relative h-[460px] overflow-hidden rounded-2xl bg-muted">
-          {mobileThumbnailUrl ? (
-            <>
-              <Image
-                src={mobileThumbnailUrl}
-                alt={name}
-                fill
-                sizes="(max-width: 639px) 50vw, 1px"
-                loading="lazy"
-                decoding="async"
-                data-testid={`template-mobile-thumbnail-${template.slug}`}
-                className="block object-cover object-center sm:hidden"
-              />
-              <Image
-                src={templatePreviewUrl(template.listing)}
-                alt={name}
-                width={768}
-                height={listingImageHeight(template.listing)}
-                sizes="(max-width: 639px) 1px, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 208px"
-                loading="lazy"
-                decoding="async"
-                data-testid={`template-listing-thumbnail-${template.slug}`}
-                className="hidden h-auto w-full max-w-none transition-transform duration-[10000ms] ease-in-out group-hover:translate-y-[calc(460px_-_100%)] sm:block"
-              />
-            </>
-          ) : (
-            <Image
-              src={templatePreviewUrl(template.listing)}
-              alt={name}
-              width={768}
-              height={listingImageHeight(template.listing)}
-              sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 208px"
-              loading="lazy"
-              decoding="async"
-              data-testid={`template-listing-thumbnail-${template.slug}`}
-              className="block h-auto w-full max-w-none transition-transform duration-[10000ms] ease-in-out group-hover:translate-y-[calc(460px_-_100%)]"
-            />
-          )}
-        </div>
-      </button>
+      <TemplateListingImage
+          source={template.listing}
+          fallbackHeight={listingImageHeight(template.listing)}
+          alt={name}
+          slug={template.slug}
+          mobileThumbnailUrl={mobileThumbnailUrl}
+          eager={index < 4}
+          highPriority={index === 0}
+          onSelect={onSelect}
+        />
       <div className="p-5">
         <h3 className={`${cardTitleClass} text-foreground`}>
           <Link href={demoHref} className="transition hover:text-primary">

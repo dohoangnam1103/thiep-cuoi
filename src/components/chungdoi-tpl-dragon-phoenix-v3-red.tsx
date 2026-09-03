@@ -70,11 +70,11 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
         {/* Original V3 hero: compact name lockup, swallow ornaments and an arched portrait. */}
         <header data-testid="dragon-phoenix-v3-hero" className="relative z-20 flex w-full flex-col items-center px-4 pb-16 pt-14 sm:px-5 md:pb-20 md:pt-20">
           <div className="relative z-20 flex w-full items-center justify-center gap-4 md:gap-7">
-            <span className="min-w-0 flex-1 text-right font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
+            <span data-invitation-short-name className="min-w-0 flex-1 text-right font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
               {people[0].shortName}
             </span>
             <img src={`${RED_BASE}/chu-hy.webp`} alt="" aria-hidden className="h-14 w-14 shrink-0 object-contain md:h-20 md:w-20" />
-            <span className="min-w-0 flex-1 font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
+            <span data-invitation-short-name className="min-w-0 flex-1 font-serif text-[14px] font-semibold uppercase tracking-[0.12em] md:text-[22px] md:tracking-[0.16em]">
               {people[1].shortName}
             </span>
           </div>

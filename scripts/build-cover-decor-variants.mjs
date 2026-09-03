@@ -29,24 +29,36 @@ const TARGETS = [
   {
     source: "/chungdoi/images/themes/_decor/longphung-v3-red/phung.webp",
     cssWidth: 320, // className: w-[230px] md:w-[320px]
+    suffix: "cover",
+  },
+  {
+    source: "/chungdoi/images/themes/_decor/longphung-v3-red/phung.webp",
+    cssWidth: 230,
+    suffix: "cover-mobile",
   },
   {
     source: "/chungdoi/images/themes/_decor/longphung-v3-red/rong.webp",
     cssWidth: 320, // className: w-[230px] md:w-[320px]
+    suffix: "cover",
+  },
+  {
+    source: "/chungdoi/images/themes/_decor/longphung-v3-red/rong.webp",
+    cssWidth: 230,
+    suffix: "cover-mobile",
   },
 ];
 
-export function coverVariantPath(source) {
+export function coverVariantPath(source, suffix = "cover") {
   const ext = path.extname(source);
-  return `${source.slice(0, -ext.length)}-cover${ext}`;
+  return `${source.slice(0, -ext.length)}-${suffix}${ext}`;
 }
 
 const checkOnly = process.argv.includes("--check");
 let failed = false;
 
-for (const { source, cssWidth } of TARGETS) {
+for (const { source, cssWidth, suffix } of TARGETS) {
   const sourceFile = path.join(PUBLIC_DIR, source);
-  const outputPath = coverVariantPath(source);
+  const outputPath = coverVariantPath(source, suffix);
   const outputFile = path.join(PUBLIC_DIR, outputPath);
 
   if (!existsSync(sourceFile)) {

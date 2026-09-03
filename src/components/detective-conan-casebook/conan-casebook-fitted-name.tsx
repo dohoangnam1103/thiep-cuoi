@@ -33,9 +33,11 @@ const scaleSteps = [
 export function ConanCasebookFittedName({
   className,
   name,
+  hero = false,
 }: {
   className?: string;
   name: string;
+  hero?: boolean;
 }) {
   const lineRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -81,7 +83,7 @@ export function ConanCasebookFittedName({
   }, [fit, name]);
 
   return (
-    <span className={styles.line} ref={lineRef}>
+    <span data-invitation-short-name={hero || undefined} className={styles.line} ref={lineRef}>
       <span
         className={cn(styles.text, scaleClass, className)}
         ref={textRef}

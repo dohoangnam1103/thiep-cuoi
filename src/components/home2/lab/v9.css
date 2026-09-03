@@ -408,6 +408,7 @@
 }
 
 .hp-v9 .v9-route-dot {
+  position: relative;
   z-index: 1;
   width: 0.62rem;
   height: 0.62rem;
@@ -427,6 +428,12 @@
   position: absolute;
   inset: 0;
   z-index: 10;
+  /* Sáu lớp trạm cùng phủ kín màn hình và cùng z-index, nên lớp đứng SAU trong
+     DOM (trạm 05) vẽ trên tất cả các lớp trước. Không tắt pointer-events ở đây
+     thì `Shell` của một trạm chưa mở sẽ ăn hết click của trạm đang mở — trước
+     đây không ai thấy vì trong thẻ trạm chỉ có vài liên kết, còn giờ thẻ trạm
+     chứa lưới mẫu bấm được và form gõ tên. */
+  pointer-events: none;
 }
 
 .hp-v9 .v9-act-shell {
@@ -462,7 +469,163 @@
   letter-spacing: -0.03em;
 }
 
+.hp-v9 .v9-act-copy { max-width: 31rem; }
+
+/* ── Trạm có bằng chứng thật ────────────────────────────────────────────────
+
+   Bốn trạm giữa mang theo tài sản thật (lưới mẫu bấm được, form gõ tên, danh
+   sách tính năng, ảnh trang quản lý) nên thẻ phải rộng hơn và tiêu đề phải nhỏ
+   lại. Ràng buộc cứng: thẻ bị ghim trong khung 100svh, cao dùng được khoảng
+   676px sau khi trừ thanh lộ trình trên và dòng chỉ số dưới — tài sản KHÔNG được
+   đẩy thẻ vượt quá đó, vì không có chỗ nào để cuộn thêm.
+
+   Tiêu đề ở các trạm này hạ từ 4.4vw xuống 3vw: giữ nguyên 4.4vw thì riêng hai
+   dòng tiêu đề đã ăn 126px trong 676px. */
+.hp-v9 .v9-act-layer[data-station="1"] .v9-act-card,
+.hp-v9 .v9-act-layer[data-station="2"] .v9-act-card,
+.hp-v9 .v9-act-layer[data-station="3"] .v9-act-card,
+.hp-v9 .v9-act-layer[data-station="4"] .v9-act-card {
+  width: min(36rem, 44vw);
+}
+
+.hp-v9 .v9-act-layer[data-station="1"] .v9-act-title,
+.hp-v9 .v9-act-layer[data-station="2"] .v9-act-title,
+.hp-v9 .v9-act-layer[data-station="3"] .v9-act-title,
+.hp-v9 .v9-act-layer[data-station="4"] .v9-act-title {
+  font-size: clamp(1.9rem, 3vw, 2.9rem);
+}
+
+.hp-v9 .v9-station-asset { margin-top: 1.6rem; }
+
+.hp-v9 .v9-station-hint {
+  display: block;
+  color: var(--hp-ink-soft);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.hp-v9 .v9-station-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem 1.2rem;
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--hp-rule);
+}
+
+/* Trạm 01 — lưới mẫu thiệp bấm được */
+.hp-v9 .v9-template-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.hp-v9 .v9-template-strip a {
+  display: block;
+  outline-offset: 3px;
+}
+
+.hp-v9 .v9-template-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 0.7;
+  overflow: hidden;
+  border: 1px solid var(--hp-rule);
+  background: var(--hp-paper-2);
+  box-shadow: 0 16px 32px -26px rgb(0 0 0 / 0.5);
+  transition: transform 260ms ease, box-shadow 260ms ease;
+}
+
+.hp-v9 .v9-template-strip a:hover .v9-template-thumb {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 40px -24px rgb(0 0 0 / 0.6);
+}
+
+.hp-v9 .v9-template-name {
+  display: block;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  color: var(--hp-ink);
+  font-size: 0.68rem;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Trạm 02 — form gõ tên */
+.hp-v9 .v9-name-fields {
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.hp-v9 .v9-name-form label { display: block; }
+
+.hp-v9 .v9-name-form input {
+  width: 100%;
+  margin-top: 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--hp-rule);
+  background: transparent;
+  color: var(--hp-ink);
+  font-family: var(--hp-font-display), Georgia, serif;
+  font-size: 1.5rem;
+  outline: none;
+  transition: border-color 200ms ease;
+}
+
+.hp-v9 .v9-name-form input:focus { border-color: var(--v9-coral); }
+
+/* Trạm 03 — những gì có sẵn trong mọi mẫu */
+.hp-v9 .v9-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.7rem 1.4rem;
+  margin-top: 0.9rem;
+}
+
+.hp-v9 .v9-feature-grid li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--hp-ink);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.hp-v9 .v9-feature-grid svg { color: var(--v9-coral); }
+
+/* Trạm 04 — ảnh chụp trang quản lý.
+   Ảnh gốc dọc 1122×1402; để trọn thì cao 760px ở khổ thẻ, vượt khung ghim. Cắt
+   thành khung ngang và neo vào vùng có mấy bảng quản lý bên phải ảnh. */
+.hp-v9 .v9-guests-shot {
+  display: block;
+  position: relative;
+  aspect-ratio: 1.5;
+  overflow: hidden;
+  border: 1px solid var(--hp-rule);
+  background: var(--hp-paper-2);
+  box-shadow: 0 24px 48px -32px rgb(0 0 0 / 0.5);
+}
+
+.hp-v9 .v9-guests-shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 34%;
+}
+
 .hp-v9 .v9-travel-card {
+  /* Thuần trang trí, và nằm ở z-index 22 tức là TRÊN các lớp trạm. Không tắt
+     pointer-events thì ảnh thiệp cùng mấy nhãn con của nó chặn click vào tài sản
+     trong thẻ trạm ở những chỗ hai khối chờm lên nhau. */
+  pointer-events: none;
   /* Giá trị mặc định = trạm 00, để tấm thiệp vẫn đứng đúng chỗ ở frame đầu
      (và cả khi JS không chạy) trước khi vòng lặp cuộn ghi biến thật vào. */
   --v9-card-x: 23vw;
@@ -730,16 +893,10 @@
   opacity: 0;
   transition: opacity 280ms ease, transform 420ms ease;
 }
-.hp-v9 .v9-edit-artifacts {
-  left: -9.5rem;
-  top: 20%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transform: translateX(1rem);
-}
-.hp-v9 .v9-edit-artifacts span,
-.hp-v9 .v9-memory-artifacts span,
+/* Chỉ còn chùm nhãn của trạm 05. Chùm của trạm 02 ("Tên & gia đình"…) và trạm 03
+   ("Album kỷ niệm", "Google Maps") đã bỏ: hai trạm đó giờ có form thật và danh
+   sách thật ngay trong thẻ, nên nhãn nổi chỉ còn là bản nhại đứng cạnh bản thật.
+   Trạm 05 giữ lại vì "gửi đi" không có tài sản nào thay thế được. */
 .hp-v9 .v9-share-artifact span {
   display: flex;
   align-items: center;
@@ -755,17 +912,6 @@
   box-shadow: 0 14px 30px -24px rgb(0 0 0 / 0.45);
   backdrop-filter: blur(10px);
 }
-.hp-v9 [data-act="2"] .v9-edit-artifacts { opacity: 1; transform: none; }
-.hp-v9 .v9-memory-artifacts {
-  right: -8rem;
-  top: 28%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  transform: translateX(-1rem);
-}
-.hp-v9 .v9-memory-artifacts svg { width: 0.9rem; height: 0.9rem; color: var(--v9-coral); }
-.hp-v9 [data-act="3"] .v9-memory-artifacts { opacity: 1; transform: none; }
 /* Trạm 04 không còn thẻ nổi bên ngoài — bảng phản hồi đã nằm trong tấm thiệp
    (xem `.v9-card-rsvp`). */
 .hp-v9 .v9-share-artifact {
@@ -916,68 +1062,695 @@
   .hp-v9 .v9-hero-visual { min-height: 37rem; }
 }
 
+/* ── Mobile: hành trình thành quyển hộ chiếu ─────────────────────────────────
+
+   Dưới 900px thì `v9-page.tsx` mount `V9MobileJourney` thay cho `V9Journey`, tức
+   là DOM khác hẳn — không phải bản desktop bị co lại. Nên khối này KHÔNG còn rule
+   nào cho `.v9-act-*`, `.v9-travel-card`, `.v9-fan-card`, `.v9-template-strip`,
+   `.v9-name-form`, `.v9-guests-shot` hay `.v9-progress-readout`: mấy thứ đó không
+   bao giờ tồn tại ở khổ này nữa. (Trước đây khối này dài 148 dòng chỉ để nhét bản
+   desktop vào khổ hẹp: đẩy tấm thiệp lên 28%, co nó còn scale 0.46, ẩn ô mẫu thứ
+   tư, cắt ảnh dọc thành khung 2.4. Tất cả là hệ quả của việc bắt hai khối chia
+   nhau 480px chiều cao.)
+
+   Lý do đổi, đo ở 390×664: tấm thiệp bay ngang chỉ đi được 179px = 0.96 lần bề
+   rộng chính nó, còn desktop là 662px = 2.30 lần. Chuyển động đó không đọc ra là
+   "bay" nữa. Mobile đổi trục: mỗi trạm một TRANG chiếm trọn màn hình, cuộn xuống
+   thì trang đang xem trượt lên và rời đi. Vẫn là vuốt dọc, không gesture mới. */
 @media (max-width: 899px) {
-  .hp-v9 .v9-journey { height: 670svh; }
-  .hp-v9 .v9-route-progress { top: 5rem; width: calc(100% - 2rem); }
-  .hp-v9 .v9-route-name { display: none; }
-  .hp-v9 .v9-act-shell {
-    align-items: end;
-    justify-items: stretch !important;
-    padding: 0 1rem 4.2rem;
+  /* 100svh khung ghim + 5 đoạn × 90svh. Ngắn hơn desktop (110svh/đoạn) vì trang
+     trượt hết một màn hình là xong, không phải đi ngang 46vw như tấm thiệp. Ở
+     90svh thì một cú vuốt bình thường (~300–500px trên màn 664px) đi được 50–83%
+     một đoạn, tức là vượt ngưỡng SNAP_FORWARD 0.34 → sang đúng một trang. */
+  .hp-v9 .v9-journey--book { height: 550svh; }
+
+  .hp-v9 .v9-scene--book {
+    display: flex;
+    background:
+      radial-gradient(circle at 50% 22%, color-mix(in oklab, var(--v9-coral) 10%, transparent), transparent 22rem),
+      var(--hp-paper);
   }
-  .hp-v9 .v9-act-card {
+
+  .hp-v9 .v9-book {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    padding: 4.6rem 1rem 1rem;
+  }
+
+  /* Thanh lộ trình vào trong quyển, thành cạnh trên của nó — không còn nổi tự do
+     giữa cảnh như bản desktop. */
+  .hp-v9 .v9-journey--book .v9-route-progress {
+    position: static;
+    z-index: auto;
     width: 100%;
-    max-width: 38rem;
-    margin-inline: auto;
-    padding: 1.1rem 1.15rem;
-    border: 1px solid color-mix(in oklab, var(--hp-ink) 13%, transparent);
-    background: color-mix(in oklab, var(--hp-paper) 91%, transparent);
-    box-shadow: 0 24px 55px -36px rgb(0 0 0 / 0.5);
-    backdrop-filter: blur(14px);
+    transform: none;
   }
-  .hp-v9 .v9-act-title { font-size: clamp(1.7rem, 8vw, 2.5rem); }
-  .hp-v9 .v9-act-card .hp-body { font-size: 0.86rem; line-height: 1.58; }
-  .hp-v9 .v9-act-card .hp-body-sm { font-size: 0.74rem; line-height: 1.5; }
-  .hp-v9 .v9-act-card ul { display: none; }
-  .hp-v9 .v9-act-card .hp-btn { padding: 0.72rem 1rem; font-size: 0.68rem; }
-  .hp-v9 .v9-travel-card {
-    top: 37%;
-    width: min(12.5rem, 48vw);
-    transform:
-      translate(-50%, -50%)
-      translateY(-3vh)
-      scale(clamp(0.72, var(--v9-card-scale), 0.84))
-      rotate(var(--v9-card-rotate));
+  .hp-v9 .v9-journey--book .v9-route-name { display: none; }
+  .hp-v9 .v9-journey--book .v9-route-progress button { gap: 0; }
+  .hp-v9 .v9-route-progress button[aria-current="step"] .v9-route-dot::after {
+    content: "";
+    position: absolute;
+    inset: -0.38rem;
+    border: 1px solid currentColor;
+    border-radius: inherit;
+    animation: v9-route-breathe 1.6s ease-out infinite;
   }
-  .hp-v9 .v9-card-artifacts { display: none; }
-  .hp-v9 .v9-card-stamps { --v9-stamp-size: 2rem; }
-  .hp-v9 .v9-fan-card { inset: 1.7rem 0.6rem 3.9rem; }
-  .hp-v9 [data-act="1"] .v9-fan-card-1 { transform: rotate(-10deg) translateX(-2.2rem); }
-  .hp-v9 [data-act="1"] .v9-fan-card-2 { transform: rotate(9deg) translateX(2.2rem); }
+
+  /* Chồng trang. `overflow: hidden` để trang đang rời bị cắt ở cạnh trên thay vì
+     bò lên đè khối hero phía trên. `min-height: 0` là bắt buộc: không có nó thì
+     flex item lấy chiều cao nội dung và chồng trang tràn khỏi khung ghim. */
+  .hp-v9 .v9-page-stack {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin-top: 1.1rem;
+    overflow: hidden;
+    perspective: 70rem;
+  }
+
+  /* Rìa mấy trang còn lại — dấu hiệu đây là một quyển, không phải sáu màn rời. */
+  .hp-v9 .v9-page-edges {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0;
+    left: 0.5rem;
+    z-index: 0;
+    display: grid;
+    gap: 3px;
+  }
+  .hp-v9 .v9-page-edges span {
+    height: 1px;
+    background: color-mix(in oklab, var(--hp-ink) 12%, transparent);
+  }
+  .hp-v9 .v9-page-edges span:nth-child(2) { margin-inline: 0.5rem; }
+  .hp-v9 .v9-page-edges span:nth-child(3) { margin-inline: 1rem; }
+
+  .hp-v9 .v9-page {
+    --v9-page-shift: 100%;
+    --v9-page-opacity: 0;
+    --v9-page-drift: 0%;
+    --v9-page-scale: 0.965;
+    --v9-page-rotate: 0deg;
+    --v9-page-depth: 0;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 88% 10%, color-mix(in oklab, var(--v9-coral) 8%, transparent), transparent 11rem),
+      radial-gradient(circle at 10% 92%, color-mix(in oklab, var(--v9-night) 5%, transparent), transparent 13rem),
+      var(--hp-paper);
+    opacity: var(--v9-page-opacity);
+    transform: translate3d(var(--v9-page-drift), var(--v9-page-shift), 0)
+      scale(var(--v9-page-scale)) rotate(var(--v9-page-rotate));
+    transform-origin: 50% 0;
+    will-change: transform, opacity;
+  }
+
+  /* Số trạm chìm trong giấy như watermark hộ chiếu. Nó làm từng frame có một
+     điểm nhận diện lớn, thay vì chỉ là cùng một bố cục chữ trượt qua sáu lần. */
+  .hp-v9 .v9-page-watermark {
+    position: absolute;
+    right: -0.15rem;
+    top: 5.8rem;
+    z-index: 0;
+    color: color-mix(in oklab, var(--v9-coral) 7%, transparent);
+    font-family: var(--hp-font-display), Georgia, serif;
+    font-size: clamp(6.8rem, 31vw, 8.5rem);
+    font-style: italic;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .hp-v9 .v9-page > :not(.v9-page-watermark) {
+    position: relative;
+    z-index: 1;
+  }
+  /* Mép dưới của trang. Hai trang có nền giấy riêng nên mép và bóng hiện rõ ở
+     đường giao nhau, thay vì để nội dung của hai trạm xuyên qua nhau. */
+  .hp-v9 .v9-page::after {
+    content: "";
+    position: absolute;
+    right: -1rem;
+    bottom: 0;
+    left: -1rem;
+    height: 1.6rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--hp-ink) 16%, transparent);
+    background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--hp-ink) 5%, transparent));
+    box-shadow: 0 1.2rem 2.8rem -1.45rem color-mix(in oklab, var(--v9-night) 48%, transparent);
+    opacity: calc(0.32 + var(--v9-page-depth) * 0.68);
+    pointer-events: none;
+  }
+  /* Trang có index nhỏ nằm TRÊN, nên trang đang rời trượt lên và để lộ trang sau
+     ở dưới nó — giống lật một tờ trong tập. Sáu trạm nên đủ sáu bậc. */
+  .hp-v9 .v9-page[data-station="0"] { z-index: 16; }
+  .hp-v9 .v9-page[data-station="1"] { z-index: 15; }
+  .hp-v9 .v9-page[data-station="2"] { z-index: 14; }
+  .hp-v9 .v9-page[data-station="3"] { z-index: 13; }
+  .hp-v9 .v9-page[data-station="4"] { z-index: 12; }
+  .hp-v9 .v9-page[data-station="5"] { z-index: 11; }
+  /* Trang chưa mở không được ăn cú bấm dành cho trang đang mở. */
+  .hp-v9 .v9-page[data-active="false"] { pointer-events: none; }
+  /* Frame đầu, trước khi ScrollTrigger ghi biến thật: trang 00 đứng sẵn ở chỗ. */
+  .hp-v9 .v9-page[data-station="0"] { --v9-page-shift: 0%; --v9-page-opacity: 1; }
+  /* Trang cuối không có trang nào ở dưới, nên không có mép để lật. */
+  .hp-v9 .v9-page[data-station="5"]::after { display: none; }
+
+  .hp-v9 .v9-page-head { flex: none; }
+  .hp-v9 .v9-page-code {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--v9-coral);
+  }
+  .hp-v9 .v9-page-title {
+    margin-top: 0.55rem;
+    font-size: clamp(1.32rem, 5.6vw, 1.8rem);
+    line-height: 1.16;
+  }
+  /* Ba dòng, không phải hai. Đã thử hai và đo lại: cả sáu câu đều bị cắt giữa ý
+     ("…phần còn lại đã có một lộ…", "…khách vẫn xem đú…"). Mỗi dòng ăn 19px vào
+     chỗ tấm thiệp bên dưới, nhưng câu bị chặt đầu thì trạm mất nghĩa — đắt hơn. */
+  .hp-v9 .v9-page-copy {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    font-size: 0.79rem;
+    line-height: 1.45;
+  }
+
+  /* Phần thân trang: nhận hết chỗ còn lại sau đầu trang. */
+  .hp-v9 .v9-page-body,
+  .hp-v9 .v9-page-card {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-top: 0.9rem;
+  }
+
+  /* ── Trang có tấm thiệp (trạm 00, 02, 05) ─────────────────────────────────
+
+     Tấm thiệp KHÔNG được đặt chiều cao theo tỉ lệ cố định ở đây. Nếu để nguyên
+     `aspect-ratio: 0.71` của khung ảnh thì ở bề rộng 13.5rem tấm thiệp cao 422px,
+     cộng đầu trang 150px và thanh lộ trình là 630px — vừa khít màn 664px và tràn
+     ngay trên mọi màn thấp hơn. Nên đảo lại: tấm thiệp cao đúng bằng chỗ còn lại,
+     khung ảnh trong nó co giãn theo. Bề rộng cố định, chiều cao tuỳ máy. */
+  .hp-v9 .v9-page-card { align-items: center; }
+  .hp-v9 .v9-page-card .v9-invitation {
+    width: min(13.5rem, 58vw);
+    min-height: 0;
+    flex: 1;
+  }
+  .hp-v9 .v9-page-card .v9-card-main {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+  .hp-v9 .v9-page-card .v9-card-media {
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .hp-v9 .v9-page-card .v9-card-caption,
+  .hp-v9 .v9-page-card .v9-card-ticket,
+  .hp-v9 .v9-page-card .v9-card-topline,
+  .hp-v9 .v9-page-card .v9-card-perforation { flex: none; }
+  .hp-v9 .v9-page-card .hp-btn {
+    flex: none;
+    padding: 0.7rem 1.05rem;
+    font-size: 0.68rem;
+  }
+
+  /* ── Trạm 02 · gõ tên thẳng lên thiệp ────────────────────────────────────
+
+     Bản desktop đặt form CẠNH tấm thiệp rồi nối tên qua state. Ở khổ 390px không
+     có chỗ cho hai khối, nên hai ô gõ nằm luôn vào chỗ tên trên thiệp: người dùng
+     viết trực tiếp lên thiệp. Cả trang là một `<form>` thật nên nút vẫn tạo thiệp
+     như cũ. */
+  .hp-v9 .v9-inline-names {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.3rem;
+    grid-column: 1 / -1;
+  }
+  .hp-v9 .v9-inline-names input {
+    width: 100%;
+    min-width: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--v9-night) 35%, transparent);
+    background: transparent;
+    color: var(--v9-night);
+    font-family: var(--font-display), serif;
+    font-size: 0.82rem;
+    text-align: center;
+  }
+  .hp-v9 .v9-inline-names input::placeholder {
+    color: color-mix(in oklab, var(--v9-night) 38%, transparent);
+    font-size: 0.62rem;
+    font-style: italic;
+  }
+  .hp-v9 .v9-inline-names input:focus-visible {
+    outline: none;
+    border-bottom-color: var(--v9-coral);
+  }
+  .hp-v9 .v9-inline-names b { color: color-mix(in oklab, var(--v9-night) 55%, transparent); font-size: 0.7rem; }
+
+  /* ── Trạm 01 · lưới 2×2 mẫu thiệp ────────────────────────────────────────
+
+     Bản desktop nhồi bốn ô vào một dải ngang; ở khổ hẹp từng phải ẩn ô thứ tư vì
+     mỗi ô chỉ còn 78px. Có trọn một trang thì hai cột, mỗi ô ~150px — nhận ra
+     được mẫu. */
+  .hp-v9 .v9-page-templates {
+    display: grid;
+    flex: 1;
+    min-height: 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem 0.8rem;
+  }
+  .hp-v9 .v9-page-templates li { min-height: 0; }
+  .hp-v9 .v9-page-templates a {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+  .hp-v9 .v9-page-templates .v9-template-thumb {
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .hp-v9 .v9-page-templates .v9-template-name { margin-top: 0.35rem; font-size: 0.62rem; }
+  .hp-v9 .v9-journey--book .v9-station-foot {
+    flex: none;
+    margin-top: 0;
+    padding: 0.7rem 4.5rem 0 0;
+  }
+  .hp-v9 .v9-journey--book .v9-station-hint { font-size: 0.6rem; letter-spacing: 0.07em; }
+  /* Bỏ dòng "bấm một mẫu để xem trọn thiệp" ở khổ này. Hai lý do: nó nằm đúng
+     dưới nút chat nổi ở góc phải nên bị che một nửa, và nó nhắc một thao tác đã
+     hiển nhiên khi lưới ảnh chiếm nửa trang. */
+  .hp-v9 .v9-journey--book .v9-station-foot .v9-station-hint { display: none; }
+
+  /* ── Trạm 03 · sáu thứ có sẵn ────────────────────────────────────────────
+
+     Trang này không có tấm thiệp và cũng không nên có: nhồi thiệp vào thì chỉ còn
+     225px cho nó, tức khung ảnh bị bóp còn ~110px và album với bảng phản hồi lại
+     đè lên nhau (đúng lỗi đã phải chữa cho màn 600px).
+
+     Nên sáu cái nhãn được cấp trọn trang thay vì nổi lơ lửng giữa 380px trống ở
+     bản đầu. Một cột, giãn đều hết chiều cao, mỗi mục một dòng có kẻ chân — ra
+     dáng trang liệt kê trong hộ chiếu. Nó thành nhịp thoáng nằm giữa hai trang
+     dày đặc nhất: lưới mẫu ở trạm 01 và ảnh chụp trang quản lý ở trạm 04. */
+  .hp-v9 .v9-journey--book .v9-station-asset { margin-top: 0; }
+  .hp-v9 .v9-page-features .v9-station-asset {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+  }
+  .hp-v9 .v9-page-features .v9-feature-grid {
+    display: grid;
+    flex: 1;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    align-content: space-between;
+    gap: 0;
+    margin-top: 0.7rem;
+  }
+  .hp-v9 .v9-page-features .v9-feature-grid li {
+    align-items: center;
+    gap: 0.7rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--hp-rule);
+    font-size: 0.9rem;
+  }
+  .hp-v9 .v9-page-features .v9-feature-grid li:last-child { border-bottom: 0; }
+  .hp-v9 .v9-page-features .v9-feature-grid svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--v9-coral);
+  }
+
+  /* ── Trạm 04 · ảnh trang quản lý, để nguyên khổ dọc ──────────────────────
+
+     Ảnh gốc 1122×1402 là ảnh DỌC. Bản desktop phải cắt nó thành khung ngang 2.4
+     cho vừa thẻ trạm ghim. Trang mobile cũng dọc như cái ảnh, nên ở đây nó được
+     hiện trọn — không cắt. */
+  .hp-v9 .v9-page-guests { align-items: center; }
+  .hp-v9 .v9-page-shot {
+    display: block;
+    flex: 1;
+    min-height: 0;
+    border: 1px solid var(--hp-rule);
+    background: var(--hp-paper-2);
+    box-shadow: 0 22px 45px -32px rgb(0 0 0 / 0.5);
+  }
+  .hp-v9 .v9-page-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .hp-v9 .v9-book-foot {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding-top: 0.8rem;
+    color: var(--hp-ink-soft);
+    font-size: 0.6rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  /* ── Bên trong tấm thiệp ở khổ này ───────────────────────────────────────
+
+     Tấm thiệp rộng ~216px, tức 0.75 lần bản desktop, nên chữ và mấy khối bên
+     trong phải co theo — nếu không bảng phản hồi che kín ảnh cưới. */
+  .hp-v9 .v9-card-stamps { --v9-stamp-size: 2.1rem; }
   .hp-v9 .v9-card-topline,
-  .hp-v9 .v9-card-ticket { font-size: 0.38rem; min-height: 1.35rem; }
-  .hp-v9 .v9-card-caption { padding: 0.45rem 0.1rem; }
-  .hp-v9 .v9-card-caption strong { font-size: 0.8rem; }
-  /* Tấm thiệp trên mobile chỉ rộng ~0.73 lần bản desktop, nên phần nội dung
-     bên trong thiệp phải co theo — nếu không bảng phản hồi che kín ảnh cưới. */
+  .hp-v9 .v9-card-ticket { font-size: 0.4rem; min-height: 1.4rem; }
+  .hp-v9 .v9-card-caption { padding: 0.5rem 0.1rem; }
+  .hp-v9 .v9-card-caption strong { font-size: 0.86rem; }
   .hp-v9 .v9-card-empty { padding: 0.7rem; }
-  .hp-v9 .v9-card-empty span { font-size: 0.38rem; letter-spacing: 0.1em; }
+  /* To hơn hẳn bản desktop-thu-nhỏ cũ (0.38rem ≈ 6px). Ở trạm 00 khung trống này
+     cao gần 280px mà chỉ có đúng dòng chữ này bên trong: chữ 6px trong khung 280px
+     đọc ra là trang bị lỗi ảnh, không phải "chỗ này đang chờ mẫu thiệp". */
+  .hp-v9 .v9-card-empty span { font-size: 0.58rem; letter-spacing: 0.1em; }
   .hp-v9 .v9-card-album {
-    --v9-album-thumb: 2.3rem;
+    --v9-album-thumb: 2.5rem;
     left: 0.32rem;
     right: 0.32rem;
     bottom: 0.32rem;
-    gap: 0.22rem;
+    gap: 0.24rem;
   }
   .hp-v9 .v9-card-album span { border-width: 1px; }
-  .hp-v9 .v9-card-rsvp { padding: 0.4rem 0.45rem 0.45rem; border-top-width: 1.5px; }
-  .hp-v9 .v9-card-rsvp small { font-size: 0.32rem; letter-spacing: 0.1em; }
-  .hp-v9 .v9-card-rsvp strong { font-size: 0.68rem; }
-  .hp-v9 .v9-card-rsvp span { font-size: 0.34rem; }
-  .hp-v9 [data-has-rsvp] .v9-card-album { --v9-album-lift: -2.8rem; }
-  .hp-v9 .v9-card-live { right: 0.35rem; top: 0.35rem; padding: 0.25rem 0.35rem; font-size: 0.32rem; }
-  .hp-v9 .v9-progress-readout { display: none; }
+  .hp-v9 .v9-card-rsvp { padding: 0.42rem 0.48rem 0.48rem; border-top-width: 1.5px; }
+  .hp-v9 .v9-card-rsvp small { font-size: 0.34rem; letter-spacing: 0.1em; }
+  .hp-v9 .v9-card-rsvp strong { font-size: 0.72rem; }
+  .hp-v9 .v9-card-rsvp span { font-size: 0.36rem; }
+  .hp-v9 [data-has-rsvp] .v9-card-album { --v9-album-lift: -3rem; }
+  .hp-v9 .v9-card-live { right: 0.35rem; top: 0.35rem; padding: 0.25rem 0.35rem; font-size: 0.34rem; }
+
+  /* ── Đường lùi khi người dùng xin ít chuyển động ──────────────────────────
+
+     Cùng cây DOM, CSS tháo chồng trang thành sáu khối xếp dọc đọc bình thường.
+     Không cần một cây riêng như bản desktop (`StaticJourney`), vì chồng trang vốn
+     đã là sáu trang theo đúng thứ tự — chỉ là đang trùng chỗ nhau. */
+  .hp-v9 .v9-journey--book[data-static] { height: auto; }
+  .hp-v9 .v9-journey--book[data-static] .v9-scene--book {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  .hp-v9 .v9-journey--book[data-static] .v9-book { padding-top: 2.4rem; }
+  .hp-v9 .v9-journey--book[data-static] .v9-page-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+    overflow: visible;
+  }
+  .hp-v9 .v9-journey--book[data-static] .v9-page-edges { display: none; }
+  .hp-v9 .v9-journey--book[data-static] .v9-page {
+    position: static;
+    opacity: 1;
+    transform: none;
+  }
+  .hp-v9 .v9-journey--book[data-static] .v9-page::after { display: none; }
+  .hp-v9 .v9-journey--book[data-static] .v9-page-card .v9-invitation,
+  .hp-v9 .v9-journey--book[data-static] .v9-page-templates,
+  .hp-v9 .v9-journey--book[data-static] .v9-page-shot { flex: none; }
+  .hp-v9 .v9-journey--book[data-static] .v9-page-card .v9-card-main { height: auto; }
+  .hp-v9 .v9-journey--book[data-static] .v9-page-card .v9-card-media { aspect-ratio: 0.71; }
+  .hp-v9 .v9-journey--book[data-static] .v9-page-templates .v9-template-thumb { aspect-ratio: 0.7; }
+  .hp-v9 .v9-journey--book[data-static] .v9-book-foot { display: none; }
 }
+
+/* ── Điện thoại màn thấp (≤ 640px cao) ───────────────────────────────────────
+
+   Vì tấm thiệp lấy đúng chỗ còn lại, màn thấp làm khung ảnh trong thiệp bị bóp —
+   đo ở 360×600 nó còn ~110px. Ở mức đó ba ô album (nâng lên 3rem để né bảng phản
+   hồi) rơi vào giữa ảnh và đè lên tên hai họ, còn nhãn "đang nhận RSVP" đè dòng
+   "welcome to our wedding". Nên mấy lớp bên trong thiệp phải co theo chiều cao,
+   không chỉ theo bề ngang. */
+@media (max-width: 899px) and (max-height: 640px) {
+  .hp-v9 .v9-page-copy { font-size: 0.74rem; }
+  .hp-v9 .v9-page-title { font-size: clamp(1.2rem, 5.2vw, 1.6rem); }
+  .hp-v9 .v9-journey--book .v9-station-foot { padding-top: 0.35rem; }
+  .hp-v9 .v9-card-album { --v9-album-thumb: 1.85rem; gap: 0.18rem; }
+  .hp-v9 [data-has-rsvp] .v9-card-album { --v9-album-lift: -2.15rem; }
+  .hp-v9 .v9-card-rsvp { padding: 0.3rem 0.4rem 0.36rem; }
+  .hp-v9 .v9-card-rsvp strong { font-size: 0.6rem; }
+  .hp-v9 .v9-card-rsvp small,
+  .hp-v9 .v9-card-rsvp span { font-size: 0.3rem; }
+  .hp-v9 .v9-card-live { font-size: 0.28rem; padding: 0.2rem 0.28rem; }
+  .hp-v9 .v9-card-caption { padding: 0.35rem 0.1rem; }
+  .hp-v9 .v9-card-caption strong { font-size: 0.76rem; }
+  .hp-v9 .v9-card-stamps { --v9-stamp-size: 1.8rem; }
+}
+
+/* ── Mobile V9 · native passport story deck ────────────────────────────────
+
+   Khối `--book` phía trên là layout thử nghiệm cũ dùng window scroll + sticky.
+   V9MobileJourney hiện mount `--deck`: trang cuộn dọc tự nhiên, chỉ track này
+   overflow ngang và native scroll-snap. Không có rule nào ở đây điều khiển
+   scrollTop/scrollLeft bằng animation. */
+@media (max-width: 899px) {
+  .hp-v9 .v9-journey--deck {
+    height: auto;
+    overflow: hidden;
+    padding: 4.8rem 0 4.2rem;
+    background:
+      radial-gradient(circle at 88% 12%, color-mix(in oklab, var(--v9-coral) 12%, transparent), transparent 18rem),
+      radial-gradient(circle at 5% 85%, color-mix(in oklab, var(--v9-night) 7%, transparent), transparent 22rem),
+      var(--hp-paper);
+  }
+
+  .hp-v9 .v9-deck-shell {
+    --v9-progress: 0;
+    position: relative;
+    width: 100%;
+  }
+
+  .hp-v9 .v9-deck-shell[data-active-index="1"] { --v9-progress: 0.2; }
+  .hp-v9 .v9-deck-shell[data-active-index="2"] { --v9-progress: 0.4; }
+  .hp-v9 .v9-deck-shell[data-active-index="3"] { --v9-progress: 0.6; }
+  .hp-v9 .v9-deck-shell[data-active-index="4"] { --v9-progress: 0.8; }
+  .hp-v9 .v9-deck-shell[data-active-index="5"] { --v9-progress: 1; }
+
+  .hp-v9 .v9-deck-header {
+    display: grid;
+    gap: 1rem;
+    padding-inline: 1rem;
+  }
+
+  .hp-v9 .v9-deck-eyebrow { color: var(--v9-coral-deep); }
+
+  .hp-v9 .v9-deck-heading {
+    max-width: 22rem;
+    margin-top: 0.7rem;
+    font-size: clamp(2.35rem, 11vw, 4.3rem);
+    line-height: 0.96;
+    text-wrap: balance;
+  }
+
+  .hp-v9 .v9-deck-hint {
+    max-width: 19rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--v9-coral);
+    color: var(--hp-ink-soft);
+    font-weight: 650;
+  }
+
+  .hp-v9 .v9-journey--deck .v9-route-progress {
+    position: relative;
+    left: auto;
+    top: auto;
+    z-index: 3;
+    width: auto;
+    margin: 2rem 1rem 1.25rem;
+    transform: none;
+  }
+
+  .hp-v9 .v9-journey--deck .v9-route-name { display: none; }
+  .hp-v9 .v9-journey--deck .v9-route-progress button { gap: 0; }
+
+  .hp-v9 .v9-deck-track {
+    position: relative;
+    display: flex;
+    gap: 0.9rem;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.55rem 3rem 1.8rem 1rem;
+    scroll-padding-inline: 1rem 3rem;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hp-v9 .v9-deck-track::-webkit-scrollbar { display: none; }
+
+  .hp-v9 .v9-deck-track:focus-visible {
+    outline: 2px solid var(--v9-coral);
+    outline-offset: -0.3rem;
+  }
+
+  .hp-v9 .v9-deck-card {
+    position: relative;
+    display: flex;
+    flex: 0 0 clamp(19rem, calc(100vw - 3rem), 30rem);
+    min-height: clamp(38rem, 78svh, 44rem);
+    flex-direction: column;
+    overflow: hidden;
+    padding: 1.25rem 1.15rem 1.35rem;
+    border: 1px solid color-mix(in oklab, var(--hp-ink) 13%, transparent);
+    background:
+      linear-gradient(135deg, color-mix(in oklab, white 28%, transparent), transparent 34%),
+      var(--v9-cream);
+    box-shadow:
+      0 1px 0 color-mix(in oklab, white 70%, transparent) inset,
+      0 28px 55px -35px color-mix(in oklab, var(--v9-night) 55%, transparent);
+    opacity: 0.72;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    transform: translateY(0.45rem) scale(0.965) rotate(-0.25deg);
+    transform-origin: 50% 50%;
+    transition:
+      opacity 260ms ease,
+      transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 420ms ease;
+  }
+
+  .hp-v9 .v9-deck-card:nth-child(even) { transform: translateY(0.45rem) scale(0.965) rotate(0.25deg); }
+
+  .hp-v9 .v9-deck-card[data-active="true"] {
+    opacity: 1;
+    transform: none;
+    box-shadow:
+      0 1px 0 color-mix(in oklab, white 75%, transparent) inset,
+      0 34px 70px -34px color-mix(in oklab, var(--v9-night) 68%, transparent);
+  }
+
+  .hp-v9 .v9-deck-card[data-station="1"],
+  .hp-v9 .v9-deck-card[data-station="4"] {
+    background:
+      radial-gradient(circle at 92% 9%, color-mix(in oklab, var(--v9-coral) 15%, transparent), transparent 10rem),
+      var(--v9-cream);
+  }
+
+  .hp-v9 .v9-deck-card::after {
+    content: "";
+    position: absolute;
+    right: -2.2rem;
+    bottom: -2.2rem;
+    width: 7.5rem;
+    height: 7.5rem;
+    border: 1px solid color-mix(in oklab, var(--v9-coral) 20%, transparent);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 0.45rem color-mix(in oklab, var(--v9-coral) 4%, transparent),
+      0 0 0 1.15rem color-mix(in oklab, var(--v9-coral) 3%, transparent);
+    pointer-events: none;
+  }
+
+  .hp-v9 .v9-deck-card > :not(.v9-page-watermark) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-watermark {
+    right: 0.45rem;
+    top: 0.35rem;
+    color: color-mix(in oklab, var(--v9-coral) 8%, transparent);
+    font-size: clamp(6.5rem, 30vw, 9rem);
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-head {
+    min-height: 9.8rem;
+    transition: opacity 280ms ease, transform 380ms ease;
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-title { max-width: 18rem; }
+  .hp-v9 .v9-deck-card .v9-page-copy { max-width: 32rem; }
+
+  .hp-v9 .v9-deck-card[data-active="false"] .v9-page-head,
+  .hp-v9 .v9-deck-card[data-active="false"] .v9-page-body,
+  .hp-v9 .v9-deck-card[data-active="false"] .v9-page-card {
+    opacity: 0.72;
+    transform: translateY(0.45rem);
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-body,
+  .hp-v9 .v9-deck-card .v9-page-card {
+    margin-top: 0.8rem;
+    transition: opacity 300ms ease 70ms, transform 420ms ease 70ms;
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-card .v9-invitation {
+    width: min(15rem, 72vw);
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-templates { gap: 0.7rem; }
+
+  .hp-v9 .v9-deck-card .v9-station-foot {
+    padding-right: 4rem;
+  }
+
+  .hp-v9 .v9-deck-card .v9-page-shot {
+    max-width: 18rem;
+  }
+
+  .hp-v9 .v9-deck-footer {
+    display: grid;
+    grid-template-columns: 2.8rem minmax(0, 1fr) 2.8rem;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0 1rem;
+  }
+
+  .hp-v9 .v9-deck-footer .v9-book-foot {
+    padding: 0;
+  }
+
+  .hp-v9 .v9-deck-arrow {
+    display: grid;
+    width: 2.8rem;
+    height: 2.8rem;
+    place-items: center;
+    border: 1px solid color-mix(in oklab, var(--hp-ink) 22%, transparent);
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--v9-cream) 88%, transparent);
+    color: var(--v9-night);
+    transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  }
+
+  .hp-v9 .v9-deck-arrow svg { width: 1rem; height: 1rem; }
+  .hp-v9 .v9-deck-arrow:active:not(:disabled) { transform: scale(0.92); }
+  .hp-v9 .v9-deck-arrow:focus-visible { outline: 2px solid var(--v9-coral); outline-offset: 3px; }
+  .hp-v9 .v9-deck-arrow:disabled { opacity: 0.28; }
+}
+
+@media (max-width: 899px) and (prefers-reduced-motion: reduce) {
+  .hp-v9 .v9-deck-card,
+  .hp-v9 .v9-deck-card .v9-page-head,
+  .hp-v9 .v9-deck-card .v9-page-body,
+  .hp-v9 .v9-deck-card .v9-page-card,
+  .hp-v9 .v9-deck-arrow {
+    transition: none;
+  }
+}
+
 
 @media (max-width: 639px) {
   .hp-v9 .v9-hero-grid { padding-top: 3.5rem; }
@@ -992,6 +1765,10 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  @keyframes v9-route-breathe {
+    0% { opacity: 0.7; transform: scale(0.72); }
+    72%, 100% { opacity: 0; transform: scale(1.35); }
+  }
   @keyframes v9-float {
     0%, 100% { translate: 0 0; }
     50% { translate: 0 -7px; }

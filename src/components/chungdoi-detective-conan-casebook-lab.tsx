@@ -1,5 +1,8 @@
 "use client";
 
+import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
+import { PreparedInvitationDetail } from "@/components/prepared-invitation-detail";
+
 import { Pause, Play, Rotate3D, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
@@ -16,6 +19,7 @@ import { gsap } from "gsap";
 
 import { DetectiveConanCasebookFallback } from "@/components/detective-conan-casebook/conan-casebook-fallback";
 import { ConanCasebookFittedName } from "@/components/detective-conan-casebook/conan-casebook-fitted-name";
+import { HeroTypographyScope } from "@/components/hero-typography-provider";
 import { DetectiveConanCasebookReader } from "@/components/detective-conan-casebook/conan-casebook-reader";
 import type {
   ConanCasebookCoverContent,
@@ -258,6 +262,8 @@ export function DetectiveConanCasebookLab({
   const timelineProgressValueRef = useRef(-1);
   const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
   const [sceneReady, setSceneReady] = useState(false);
+  const [coverReady, setCoverReady] = useState(false);
+  const handleCoverReady = useCallback(() => setCoverReady(true), []);
   const [backFaceVisible, setBackFaceVisible] = useState(false);
   const [state, setState] =
     useState<DetectiveConanCasebookExperienceState>("closed");
@@ -739,6 +745,7 @@ export function DetectiveConanCasebookLab({
     && !backFaceVisible
     && isMobile !== null
     && (webglSupported === false || sceneReady);
+  useInvitationCoverReady(stageRef, canOpen, handleCoverReady);
   const fallbackMotion = reducedMotion
     ? "reduced"
     : isMobile
@@ -757,11 +764,15 @@ export function DetectiveConanCasebookLab({
         inert={state === "closed" ? true : undefined}
         className="fixed inset-0 z-40 opacity-0"
       >
-        <DetectiveConanCasebookReader
-          active={readerActive}
-          content={content}
-          productionControls={!showControls}
-        />
+        <PreparedInvitationDetail prepare={coverReady || state !== "closed"} visible={readerActive}>
+          <HeroTypographyScope slug={content.slug} userFont={content.theme.userFontFamily}>
+          <DetectiveConanCasebookReader
+            active={readerActive}
+            content={content}
+            productionControls={!showControls}
+          />
+          </HeroTypographyScope>
+        </PreparedInvitationDetail>
       </div>
 
       <section

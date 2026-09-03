@@ -148,13 +148,13 @@ export function CrystalFloralRedInvitation({
                 className="relative z-10 block h-auto w-full object-contain"
               />
               <div className="font-couple-viaoda absolute inset-0 z-20 flex flex-col items-center justify-center text-center uppercase leading-none text-[#9c1f2c]">
-                <span className="flex w-[50%] justify-center whitespace-nowrap text-[clamp(24px,5vw,42px)] leading-[1.25]">
+                <span data-invitation-short-name className="flex w-[50%] justify-center whitespace-nowrap text-[clamp(24px,5vw,42px)] leading-[1.25]">
                   {people[0].shortName}
                 </span>
                 <span className="font-art-alex my-4 text-[clamp(23px,4vw,34px)] normal-case leading-none md:my-8 lg:my-10">
                   &amp;
                 </span>
-                <span className="flex w-[50%] justify-center whitespace-nowrap text-[clamp(24px,5vw,42px)] leading-[1.25]">
+                <span data-invitation-short-name className="flex w-[50%] justify-center whitespace-nowrap text-[clamp(24px,5vw,42px)] leading-[1.25]">
                   {people[1].shortName}
                 </span>
               </div>

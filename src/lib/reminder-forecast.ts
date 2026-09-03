@@ -11,24 +11,13 @@ import { FREE_TRIAL_MS } from "@/lib/trial";
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 
-/**
- * Giờ Việt Nam mà cron nhắc thanh toán chạy.
- *
- * Phải khớp crontab do `scripts/deploy-fast.sh` cài (`0 9,12,15,18,21 * * *`).
- * Danh sách này KHÔNG điều khiển việc gửi — crontab trên host mới là thứ gửi
- * thật; đây chỉ là bản sao để dự báo cho trang quản trị. `reminder-forecast.test.ts`
- * đọc thẳng deploy-fast.sh rồi so với hằng số này, nên hai nơi không thể âm thầm
- * lệch nhau.
+/** Giờ Việt Nam, khớp timer VPS và cron tương thích trong deploy-fast.sh.
+ * Chỉ phục vụ dự báo admin; timer trên host điều khiển việc gửi thật.
  */
-export const REMINDER_CRON_HOURS = [9, 12, 15, 18, 21] as const;
+export const REMINDER_CRON_HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] as const;
 
-/**
- * Số lượt cron được dự báo.
- *
- * Năm lượt phủ trọn một vòng ngày kể cả khoảng nghỉ đêm 21:00-09:00, nên danh
- * sách luôn trả lời được câu "từ giờ tới sáng mai gửi cho ai".
- */
-export const FORECAST_RUN_COUNT = 5;
+/** Phủ một vòng ngày gồm cả khoảng nghỉ đêm 21:00–09:00. */
+export const FORECAST_RUN_COUNT = REMINDER_CRON_HOURS.length;
 
 export type ForecastCandidate = ReminderCandidate & { invitationId: string };
 

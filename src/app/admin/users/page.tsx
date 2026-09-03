@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { CUSTOMER_USER_WHERE } from "@/lib/admin-invitation-filters";
 import { adminPageWindow, adminResetHref, parsePage, parsePerPage } from "@/lib/admin-pagination";
@@ -88,7 +89,7 @@ export default async function AdminUsersPage({
         </form>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
@@ -122,7 +123,7 @@ export default async function AdminUsersPage({
             )}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
 
       <AdminPagination
         pagination={pagination}

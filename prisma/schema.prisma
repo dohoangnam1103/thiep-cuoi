@@ -554,3 +554,12 @@ model Guest {
 
   @@index([invitationId])
 }
+
+// Admin default: applies only to the two short names in the detail hero.
+model TemplateHeroTypography {
+  slug       String   @id
+  fontFamily String   @default("")
+  bold       Boolean?
+  italic     Boolean?
+  updatedAt  DateTime @updatedAt
+}

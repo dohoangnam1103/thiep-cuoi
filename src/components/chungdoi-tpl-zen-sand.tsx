@@ -90,13 +90,13 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
           <div className="relative flex items-center justify-center">
             <EnsoCircle color="rgba(140, 59, 47, 0.5)" className="h-[190px] w-[190px] md:h-[250px] md:w-[250px]" />
             <div className="absolute flex flex-col items-center">
-              <span className="font-serif text-[22px] leading-tight md:text-[28px]">
+              <span data-invitation-short-name className="font-serif text-[22px] leading-tight md:text-[28px]">
                 {people[0].shortName}
               </span>
               <span className="my-2 text-[11px] tracking-[0.4em] text-[#2c2a26]/50">
                 {t("and")}
               </span>
-              <span className="font-serif text-[22px] leading-tight md:text-[28px]">
+              <span data-invitation-short-name className="font-serif text-[22px] leading-tight md:text-[28px]">
                 {people[1].shortName}
               </span>
             </div>

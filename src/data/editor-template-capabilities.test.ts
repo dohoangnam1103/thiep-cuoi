@@ -9,6 +9,8 @@ import {
 
 const MINIMALISM_TEMPLATE_SLUGS = [
   "minimalism-dark-red",
+  "minimalism-purple",
+  "minimalism-brown",
   "minimalism-jade",
   "minimalism-sky-blue",
   "minimalism-powder-pink",

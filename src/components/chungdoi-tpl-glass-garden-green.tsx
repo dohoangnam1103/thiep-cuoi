@@ -60,9 +60,9 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
         <section className="relative isolate z-20 flex w-full flex-col items-center pb-[110px] pt-16 md:pb-[150px] md:pt-[88px]">
           <div className="relative w-[62%] max-w-[250px]">
             <div className="relative z-20 flex aspect-[239/368] w-full flex-col items-center justify-center gap-3 rounded-[500px] border border-white/35 bg-white/40 px-5 text-center shadow-[inset_1.5px_1.5px_2px_rgba(255,255,255,0.45),inset_-1.5px_-1.5px_3px_rgba(120,140,110,0.12),0_18px_50px_-6px_rgba(53,69,47,0.3),0_6px_20px_2px_rgba(53,69,47,0.14)] backdrop-blur-[7px] md:gap-4" style={{ color: GREEN }}>
-              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{people[0].shortName}</span>
+              <span data-invitation-short-name className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{people[0].shortName}</span>
               <span className="text-[clamp(22px,6vw,32px)] leading-none opacity-90" style={ampFont}>&amp;</span>
-              <span className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{people[1].shortName}</span>
+              <span data-invitation-short-name className="w-full text-[clamp(26px,7.4vw,38px)] leading-none" style={nameFont}>{people[1].shortName}</span>
             </div>
             <img src={`${GREEN_BASE}/flower1-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-0 left-1/2 z-30 h-auto w-[135%] max-w-none -translate-x-1/2 translate-y-[46%] object-contain" />
           </div>

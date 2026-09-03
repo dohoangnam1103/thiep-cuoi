@@ -2,6 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 
+import { resolveArtDisplayFontClass } from "@/lib/art-invitation-typography";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
@@ -161,6 +162,8 @@ function FlowerWash({
 export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
+  const nameFont = "font-art-aghita";
+  const fullNameFont = resolveArtDisplayFontClass(content.theme.fontFamily, F_GARAMOND);
   const ceremony = formatDate(couple.ceremonyDate);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -268,7 +271,7 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
           </div>
 
           <div className="relative z-10 mt-6 flex flex-col items-center gap-1 md:mt-8 md:gap-2">
-            <p className="text-[clamp(41px,12vw,54px)] italic md:text-[70px]" style={{ color: INK }}>
+            <p data-invitation-short-name data-couple-name className={`${nameFont} text-[clamp(41px,12vw,54px)] italic md:text-[70px]`} style={{ color: INK }}>
               {people[0].shortName}
             </p>
             <span
@@ -278,7 +281,7 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
             >
               &amp;
             </span>
-            <p className="text-[clamp(41px,12vw,54px)] italic md:text-[70px]" style={{ color: INK }}>
+            <p data-invitation-short-name data-couple-name className={`${nameFont} text-[clamp(41px,12vw,54px)] italic md:text-[70px]`} style={{ color: INK }}>
               {people[1].shortName}
             </p>
           </div>
@@ -322,7 +325,8 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
               <div className="relative flex w-full min-w-0 flex-col items-center gap-3 text-center md:gap-4">
                 {/* font-normal: bản gốc cho h3 weight 400 chứ không thừa hưởng 300 của body. */}
                 <h3
-                  className={`${F_GARAMOND} flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[36px] font-normal leading-[52px] md:leading-[60px]`}
+                  data-couple-name
+                  className={`${fullNameFont} flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[36px] font-normal leading-[52px] md:leading-[60px]`}
                   style={{ color: "#ffffff" }}
                 >
                   {people[0].fullName}
@@ -335,7 +339,8 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
                 </div>
                 <div className="text-[30px]" style={{ color: "#ffffff" }}>&amp;</div>
                 <h3
-                  className={`${F_GARAMOND} flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[36px] font-normal leading-[52px] md:leading-[60px]`}
+                  data-couple-name
+                  className={`${fullNameFont} flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap text-[36px] font-normal leading-[52px] md:leading-[60px]`}
                   style={{ color: "#ffffff" }}
                 >
                   {people[1].fullName}

@@ -1,4 +1,5 @@
 import { NextIntlClientProvider } from "next-intl";
+import { editorMessageNamespaces, selectMessages } from "@/i18n/message-scopes";
 import { notFound } from "next/navigation";
 
 import viMessages from "../../../../../../messages/vi.json";
@@ -52,24 +53,7 @@ export default async function AdminInvitationSupportEditPage({
   return (
     <NextIntlClientProvider
       locale="vi"
-      messages={{
-        editor: viMessages.editor,
-        gatefoldLab: viMessages.gatefoldLab,
-        sleeveLab: viMessages.sleeveLab,
-        doraemonDoorLab: viMessages.doraemonDoorLab,
-        doraemonDoor: viMessages.doraemonDoor,
-        invitationControls: viMessages.invitationControls,
-        detectiveConanCasebookLab: viMessages.detectiveConanCasebookLab,
-        detectiveConanCasebook: viMessages.detectiveConanCasebook,
-        invitationTemplate: viMessages.invitationTemplate,
-        comicHero: viMessages.comicHero,
-        flowDemoLab: viMessages.flowDemoLab,
-        listing: viMessages.listing,
-        templatePreviewModal: viMessages.templatePreviewModal,
-        trialCountdown: viMessages.trialCountdown,
-        home: viMessages.home,
-        chrome: viMessages.chrome,
-      }}
+      messages={selectMessages(viMessages, editorMessageNamespaces)}
     >
       <EditorForm
         mode="support-admin"

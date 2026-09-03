@@ -1,0 +1,129 @@
+[
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/flower3.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/flower3.webp",
+    "width": 960,
+    "height": 1200,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/flower2.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/flower2.webp",
+    "width": 1200,
+    "height": 960,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/flower4.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/flower4.webp",
+    "width": 858,
+    "height": 1200,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/580c4b6a-6fb8-4e29-86b5-253733fcf6f1.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-1.webp",
+    "width": 1335,
+    "height": 2166,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/66c2f711-de88-4ab9-beab-97551966965d.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-2.webp",
+    "width": 1353,
+    "height": 2166,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/779632a2-ee37-4c2c-9ce8-63ac60b9dbdc.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-3.webp",
+    "width": 1428,
+    "height": 2166,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/d4955f24-e5c0-4e8b-ac47-461887c867cf.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-4.webp",
+    "width": 1601,
+    "height": 2400,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/4f204c5f-64d6-4595-973d-295dac1c24f1.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-5.webp",
+    "width": 1444,
+    "height": 2166,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/cf220ea8-1a15-4afb-80fd-d1566447a456.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-6.webp",
+    "width": 1450,
+    "height": 2166,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/bb7fca4b-0e8a-4c77-a789-48bb81e98def.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-7.webp",
+    "width": 1545,
+    "height": 2400,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://cdn.chungdoi.com/uploads/c19c0b63-6ce5-408b-aeea-8da6ed44703d.webp",
+    "local": "public/chungdoi/images/gallery/hoa-kho-orange/photo-8.webp",
+    "width": 1515,
+    "height": 2400,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/calendar-heart.svg",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/calendar-heart.svg",
+    "width": 21,
+    "height": 19,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/water.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/water.webp",
+    "width": 274,
+    "height": 320,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/cake.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/cake.webp",
+    "width": 225,
+    "height": 320,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/ring.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/ring.webp",
+    "width": 320,
+    "height": 320,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/envelope/hoa_kho_orange.webp",
+    "local": "public/chungdoi/images/envelope/hoa_kho_orange.webp",
+    "width": 420,
+    "height": 613,
+    "hasAlpha": true
+  },
+  {
+    "url": "https://chungdoi.com/images/themes/hoa-kho-orange/paper.webp",
+    "local": "public/chungdoi/images/themes/hoa-kho-orange/paper.webp",
+    "width": 1254,
+    "height": 1254,
+    "hasAlpha": false
+  },
+  {
+    "url": "https://chungdoi.com/fonts/Carattere-Regular.ttf",
+    "local": "public/chungdoi/fonts/Carattere-Regular.ttf"
+  },
+  {
+    "url": "https://chungdoi.com/fonts/Whisper-Regular.ttf",
+    "local": "public/chungdoi/fonts/Whisper-Regular.ttf"
+  }
+]

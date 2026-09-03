@@ -10,6 +10,7 @@ import {
   invitationCouple,
   invitationGiftAccounts,
   invitationHeroPhotos,
+  invitationHeroImage,
   orderByBrideFirst,
   orderedCouple,
   orderedHeroPhotos,
@@ -99,6 +100,43 @@ function heroContent(overrides: {
     },
   };
 }
+
+test("single opening photo follows album changes until a dedicated upload overrides it", () => {
+  const content = heroContent({
+    heroImage: "/chungdoi/images/gallery/minimalism-purple/photo-6.jpg",
+    gallery: ["/uploads/new-first.webp", "/uploads/second.webp"],
+  });
+  assert.equal(invitationHeroImage(content), "/uploads/new-first.webp");
+  content.gallery.reverse();
+  assert.equal(invitationHeroImage(content), "/uploads/second.webp");
+  content.heroImage = "/uploads/dedicated.webp";
+  assert.equal(invitationHeroImage(content), "/uploads/dedicated.webp");
+  content.heroImage = "";
+  assert.equal(invitationHeroImage(content), "/uploads/second.webp");
+  content.showHeroImage = false;
+  assert.equal(invitationHeroImage(content), "");
+});
+
+test("two opening photos default to the live album without copying the template seed", () => {
+  const content = heroContent({
+    heroImage: "/chungdoi/images/gallery/minimalism-green/hero-bride.webp",
+    heroImage2: "/chungdoi/images/gallery/minimalism-green/hero-groom.webp",
+    gallery: ["/uploads/first.webp", "/uploads/second.webp"],
+    brideFirst: false,
+  });
+  assert.deepEqual(orderedHeroPhotos(content), content.gallery);
+  content.gallery.reverse();
+  assert.deepEqual(orderedHeroPhotos(content), content.gallery);
+  content.heroImage2 = "/uploads/groom.webp";
+  assert.deepEqual(orderedHeroPhotos(content), ["/uploads/groom.webp", content.gallery[0]]);
+  content.heroImage = "/uploads/bride.webp";
+  assert.deepEqual(orderedHeroPhotos(content), ["/uploads/groom.webp", "/uploads/bride.webp"]);
+});
+
+test("empty and short albums do not invent opening photos", () => {
+  assert.equal(invitationHeroImage(heroContent({ gallery: [] })), "");
+  assert.deepEqual(orderedHeroPhotos(heroContent({ gallery: ["/one.webp"] })), ["/one.webp", ""]);
+});
 
 test("hero slots belong to a person, not a position", () => {
   const content = heroContent({ heroImage: "/bride.webp", heroImage2: "/groom.webp" });

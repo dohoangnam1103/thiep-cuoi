@@ -1,5 +1,6 @@
 "use server";
 
+import { getDemoFontFamily } from "@/lib/demo-font-default";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -76,12 +77,13 @@ export async function createInvitationForUser(
         throw new AdminSupportMutationError("userNotFound");
       }
 
+      const fontFamily = await getDemoFontFamily(db, templateId);
       const invitation = await db.invitation.create({
         data: {
           userId: target.id,
           templateId,
           status: "draft",
-          content: { create: {} },
+          content: { create: { fontFamily } },
         },
         select: { id: true },
       });

@@ -1,0 +1,12 @@
+[Unit]
+Description=Thiep Mung Online payment reconciliation
+After=docker.service network-online.target
+Wants=network-online.target
+ConditionPathExists=/srv/thiepmungonline/LIVE
+
+[Service]
+Type=oneshot
+Environment=APP_DIR=/srv/thiepmungonline
+Environment=TZ=Asia/Ho_Chi_Minh
+ExecStart=/usr/bin/bash /srv/thiepmungonline/ops/cron-hit-endpoint.sh /api/cron/payos-reconcile
+TimeoutStartSec=920

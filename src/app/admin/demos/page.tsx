@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
-import { completedTemplates } from "@/data/chungdoi";
+import { completedTemplates, retiredTemplateSlugs } from "@/data/chungdoi";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { prisma } from "@/lib/prisma";
 import {
@@ -34,6 +34,7 @@ export default async function AdminDemosPage({
 
   const [
     demos,
+    usageCounts,
     labels,
     overrides,
     mobileThumbnailUrls,
@@ -42,9 +43,14 @@ export default async function AdminDemosPage({
     t,
   ] = await Promise.all([
     prisma.invitation.findMany({
-      where: { isDemo: true },
+      where: { isDemo: true, templateId: { notIn: [...retiredTemplateSlugs] } },
       orderBy: { templateId: "asc" },
       include: { content: { select: { brideFullName: true, groomFullName: true } } },
+    }),
+    prisma.invitation.groupBy({
+      by: ["templateId"],
+      where: { isDemo: false },
+      _count: { _all: true },
     }),
     getTemplateLabels(),
     getTemplateLabelOverrides(),
@@ -53,6 +59,9 @@ export default async function AdminDemosPage({
     getTemplateVisibilityOverrides(),
     getTranslations("adminDemos"),
   ]);
+  const usageByTemplate = new Map(
+    usageCounts.map((row) => [row.templateId, row._count._all]),
+  );
   const fallbackOrder = Object.fromEntries(
     completedTemplates.map((template, index) => [template.slug, index]),
   );
@@ -77,6 +86,7 @@ export default async function AdminDemosPage({
       isRenamed: Boolean(overrides[demo.templateId]),
       isVisible: isTemplateVisible(visibilityOverrides, demo.templateId),
       couple,
+      usageCount: usageByTemplate.get(demo.templateId) ?? 0,
     };
   });
   const mobileThumbnailTemplates = completedTemplates.map((template) => ({

@@ -153,6 +153,67 @@ export function buildExpiredReminderEmail(input: ReminderEmailInput): {
   return { subject, html };
 }
 
+export function buildPaymentSuccessEmail(input: {
+  recipientName: string;
+  cardName: string;
+  accountEmail: string;
+  manageUrl: string;
+}): { subject: string; html: string } {
+  const name = escapeHtml(input.recipientName || "bạn");
+  const card = escapeHtml(input.cardName);
+  const accountEmail = escapeHtml(input.accountEmail);
+  const url = escapeHtml(input.manageUrl);
+  const subject = `Thanh toán thành công — Thiệp cưới "${input.cardName}" đã được kích hoạt`;
+
+  const html = `<!DOCTYPE html>
+<html lang="vi">
+<head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
+<body style="margin:0;padding:0;background:#fdf2f8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fdf2f8;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(190,24,93,0.12);">
+        <tr><td style="background:linear-gradient(135deg,#ec4899,#f472b6);padding:32px 32px 24px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">Thiệp Mừng Online</div>
+          <div style="margin-top:8px;font-size:14px;color:#fce7f3;">Thanh toán thành công</div>
+        </td></tr>
+        <tr><td style="padding:32px;">
+          <p style="margin:0 0 16px;font-size:16px;color:#1f2937;">Chào <strong>${name}</strong>,</p>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#374151;">
+            Cảm ơn bạn đã tin tưởng Thiệp Mừng Online. Thanh toán cho thiệp cưới
+            <strong style="color:#be185d;">"${card}"</strong> đã được xác nhận thành công.
+          </p>
+          <p style="margin:0 0 28px;font-size:16px;line-height:1.6;color:#374151;">
+            Thiệp đã được kích hoạt. Bạn có thể tiếp tục chỉnh sửa, quản lý khách mời và chia sẻ thiệp bất cứ lúc nào.
+          </p>
+          <p style="margin:0 0 28px;padding:16px;border-radius:12px;background:#fdf2f8;font-size:15px;line-height:1.6;color:#374151;">
+            Để quản lý thiệp đã thanh toán, bạn cần đăng nhập bằng đúng email
+            <strong style="color:#be185d;">${accountEmail}</strong>.
+          </p>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+            <tr><td style="border-radius:12px;background:#ec4899;">
+              <a href="${url}" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;">Mở trang quản lý thiệp</a>
+            </td></tr>
+          </table>
+          <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#9ca3af;text-align:center;">
+            Hoặc mở link: <a href="${url}" style="color:#ec4899;">${url}</a>
+          </p>
+        </td></tr>
+        <tr><td style="padding:20px 32px;background:#fdf2f8;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#9ca3af;">© Thiệp Mừng Online — thiepmungonline.com</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  return { subject, html };
+}
+
+export function paymentSuccessDedupeKey(paymentId: string): string {
+  return `payment-success:${paymentId}`;
+}
+
 export type ReminderKind = "trial-ending" | "expired";
 
 const REMINDER_BUILDERS = {

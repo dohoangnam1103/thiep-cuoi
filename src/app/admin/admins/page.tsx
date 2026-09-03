@@ -1,3 +1,4 @@
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifySuperAdmin } from "@/lib/admin-dal";
 import { formatVietnamDateTime } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
@@ -24,7 +25,7 @@ export default async function AdminsPage() {
 
       <AdminForm />
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
@@ -85,7 +86,7 @@ export default async function AdminsPage() {
             })}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
     </div>
   );
 }

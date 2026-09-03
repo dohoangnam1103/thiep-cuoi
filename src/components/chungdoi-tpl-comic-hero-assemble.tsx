@@ -299,7 +299,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
 
               {/* Codename lockup */}
               <div className="relative flex w-full min-w-0 flex-col items-center px-1">
-                <span
+                <span data-invitation-short-name
                   data-comic-cover-name
                   className="block w-full px-1 text-balance break-words text-center text-[clamp(1.65rem,8.5vw,2.625rem)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-[#fffaf0] comic-ink-stroke-lg [text-shadow:5px_5px_0_#d7263d] md:text-[clamp(2.5rem,6vw,4rem)]"
                 >
@@ -308,7 +308,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
                 <span className="my-1 text-[20px] font-bold uppercase text-[#1b4dc1] md:text-[26px]">
                   {t("and")}
                 </span>
-                <span
+                <span data-invitation-short-name
                   data-comic-cover-name
                   className="block w-full px-1 text-balance break-words text-center text-[clamp(1.65rem,8.5vw,2.625rem)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-[#fffaf0] comic-ink-stroke-lg [text-shadow:5px_5px_0_#1b4dc1] md:text-[clamp(2.5rem,6vw,4rem)]"
                 >

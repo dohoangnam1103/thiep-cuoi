@@ -1,6 +1,7 @@
+import { HeroTypographyDefaults } from "@/components/hero-typography-defaults";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { indexableLocales, routing } from "@/i18n/routing";
@@ -17,9 +18,13 @@ import {
 import "../globals.css";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
+import { RouteMessages } from "@/components/route-messages";
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  // Leave locale paths to on-demand generation. Enumerating `vi` here also
+  // prerenders Home/pricing despite their empty page-level param lists, which
+  // would ship the build machine's price/name data to a different runtime DB.
+  return [];
 }
 
 export async function generateMetadata({
@@ -137,7 +142,8 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <PetalField />
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        {/* This boundary also owns error.tsx, outside the page-level providers. */}
+        <RouteMessages namespaces={["errorBoundary"]}><HeroTypographyDefaults>{children}</HeroTypographyDefaults></RouteMessages>
         <GoogleAnalytics />
       </body>
     </html>

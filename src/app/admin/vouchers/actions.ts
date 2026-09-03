@@ -1,12 +1,15 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { verifyAdmin } from "@/lib/admin-dal";
 
-import { updatePaymentPrices } from "@/lib/payment-config";
+import {
+  PUBLIC_PAYMENT_PRICES_CACHE_TAG,
+  updatePaymentPrices,
+} from "@/lib/payment-config";
 
 export type VoucherState = { error?: string; ok?: boolean } | undefined;
 export type ProductPriceState = { error?: string; ok?: boolean } | undefined;
@@ -46,7 +49,10 @@ export async function updateProductPriceAction(
   }
 
   await updatePaymentPrices(parsed.data);
+  updateTag(PUBLIC_PAYMENT_PRICES_CACHE_TAG);
   revalidatePath("/admin/vouchers");
+  revalidatePath("/bang-gia");
+  revalidatePath("/vi/pricing");
   return { ok: true };
 }
 

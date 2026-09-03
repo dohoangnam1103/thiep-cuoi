@@ -1,5 +1,7 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+
 import type { Prisma } from "@/generated/prisma/client";
 import {
   resolveEffectiveInvitationPrice,
@@ -9,6 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { DEFAULT_PRODUCT_PRICE, DEFAULT_REPEAT_CUSTOMER_PRICE } from "@/lib/payment";
 
 const APP_CONFIG_ID = "default";
+export const PUBLIC_PAYMENT_PRICES_CACHE_TAG = "public-payment-prices";
 
 export type PaymentPrices = {
   productPrice: number;
@@ -31,6 +34,13 @@ export async function getPaymentPrices(): Promise<PaymentPrices> {
     repeatCustomerPrice: config?.repeatCustomerPrice ?? DEFAULT_REPEAT_CUSTOMER_PRICE,
   };
 }
+
+/** Giá hiển thị công khai đổi rất ít; tránh chạm SQLite ở mỗi lượt xem bảng giá. */
+export const getPublicPaymentPrices = unstable_cache(
+  getPaymentPrices,
+  ["public-payment-prices-v1"],
+  { revalidate: 300, tags: [PUBLIC_PAYMENT_PRICES_CACHE_TAG] },
+);
 
 export async function getProductPrice(): Promise<number> {
   const { productPrice } = await getPaymentPrices();

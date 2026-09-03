@@ -1,12 +1,13 @@
 "use client";
 
 import { Check, Clock3, Copy } from "lucide-react";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { trackEvent } from "@/lib/analytics";
 import { BANK, buildVietQrUrl } from "@/lib/payment";
+import { createPaymentPoller } from "@/lib/payment-polling";
 import {
   bodyClass,
   bodySmallClass,
@@ -197,7 +198,6 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
     if (Date.now() >= new Date(initial.expiresAt).getTime()) return "expired";
     return "active";
   });
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const qrUrl = payment.provider === "payos"
     ? `/api/payment/${payment.code}/qr`
@@ -221,12 +221,37 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
 
   useEffect(() => {
     if (terminalState !== "active") return;
-    pollRef.current = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/payment/${payment.code}/status`);
-        if (!res.ok) return;
-        const data = (await res.json()) as { status: string };
-        if (data.status === "paid") {
+    const poller = createPaymentPoller({
+      now: Date.now,
+      isVisible: () => document.visibilityState !== "hidden",
+      setTimer: (callback, delay) => window.setTimeout(callback, delay),
+      clearTimer: (handle) => window.clearTimeout(handle as number),
+      request: async (signal) => {
+        // Plain AbortController also works in older mobile/in-app browsers.
+        const requestController = new AbortController();
+        const abort = () => requestController.abort();
+        signal.addEventListener("abort", abort, { once: true });
+        if (signal.aborted) abort();
+        const timeout = window.setTimeout(abort, 10_000);
+        try {
+          const res = await fetch(`/api/payment/${payment.code}/status`, {
+            signal: requestController.signal,
+            cache: "no-store",
+          });
+          if (res.status === 401 || res.status === 403 || res.status === 404) return "unavailable";
+          if (!res.ok) throw new Error("Payment status request failed");
+          const data: unknown = await res.json();
+          if (!data || typeof data !== "object" || !("status" in data) || typeof data.status !== "string") {
+            throw new Error("Invalid payment status response");
+          }
+          return data.status;
+        } finally {
+          window.clearTimeout(timeout);
+          signal.removeEventListener("abort", abort);
+        }
+      },
+      onStatus: (status) => {
+        if (status === "paid") {
           trackEvent("purchase", {
             transaction_id: payment.code,
             currency: "VND",
@@ -234,22 +259,21 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
             coupon: payment.voucherCode || undefined,
           });
           setTerminalState("paid");
-          if (pollRef.current) clearInterval(pollRef.current);
           router.push("/dashboard");
           router.refresh();
-        } else if (data.status === "expired") {
+        } else if (status === "expired") {
           setTerminalState("expired");
-          if (pollRef.current) clearInterval(pollRef.current);
-        } else if (data.status === "superseded") {
+        } else if (status === "superseded") {
           setTerminalState("superseded");
-          if (pollRef.current) clearInterval(pollRef.current);
         }
-      } catch {
-        // ignore transient errors, keep polling
-      }
-    }, 4000);
+        return ["paid", "expired", "superseded", "unavailable"].includes(status);
+      },
+    });
+    const onVisibility = () => poller.visibilityChanged();
+    document.addEventListener("visibilitychange", onVisibility);
     return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
+      document.removeEventListener("visibilitychange", onVisibility);
+      poller.dispose();
     };
   }, [payment.amount, payment.code, payment.voucherCode, router, terminalState]);
 
@@ -333,9 +357,16 @@ export function PaymentPanel({ initial }: { initial: PaymentInfo }) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className={`${labelClass} text-muted-foreground`}>{t("panel.amountLabel")}</p>
-            <p className="mt-1 font-heading text-3xl font-bold leading-tight text-foreground">
-              {formatVnd(payment.amount)}
-            </p>
+            <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p className="font-heading text-3xl font-bold leading-tight text-foreground">
+                {formatVnd(payment.amount)}
+              </p>
+              {payment.amount < 199000 && (
+                <s className={`${bodyClass} whitespace-nowrap text-muted-foreground`}>
+                  {t("panel.originalPrice")}
+                </s>
+              )}
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:flex-col sm:items-end">
             <span

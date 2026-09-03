@@ -204,9 +204,9 @@ export function RoyalV2GreenInvitation({ content }: { content: ChungDoiDemoConte
               </p>
 
               <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center font-couple-garamond leading-[1.05]">
-                <span className="text-[clamp(46px,13vw,72px)]">{people[0].shortName}</span>
+                <span data-invitation-short-name className="text-[clamp(46px,13vw,72px)]">{people[0].shortName}</span>
                 <span className="my-2 text-[clamp(24px,6.6vw,38px)] font-normal">&amp;</span>
-                <span className="text-[clamp(46px,13vw,72px)]">{people[1].shortName}</span>
+                <span data-invitation-short-name className="text-[clamp(46px,13vw,72px)]">{people[1].shortName}</span>
               </div>
             </div>
           </div>

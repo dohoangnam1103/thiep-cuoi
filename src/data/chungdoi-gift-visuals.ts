@@ -72,6 +72,9 @@ export const SOURCE_GIFT_VISUAL_SLUGS = [
   "crystal-floral-red",
   "glass-garden-green",
   "glass-garden-pink",
+  "minimalism-brown",
+  "mahal-gold",
+  "hoa-kho-orange",
   "royal-v2-green",
 ] as const;
 
@@ -87,6 +90,11 @@ const envelopeVisuals = Object.fromEntries(
 
 const sourceGiftVisuals: Record<string, GiftVisual> = {
   ...envelopeVisuals,
+  "hoa-kho-orange": { kind: "layered-image", asset: "/chungdoi/images/envelope/hoa_kho_orange.webp" },
+  "mahal-gold": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/mahal_gold.webp",
+  },
   "crystal-floral-red": {
     kind: "layered-image",
     asset: "/chungdoi/images/envelope/crystal_floral_red.webp",
@@ -115,6 +123,21 @@ const sourceGiftVisuals: Record<string, GiftVisual> = {
       "/chungdoi/images/giftbox/mini/boho_floral_pink.webp",
       "/chungdoi/images/giftbox/mini/brocade_flower_red.webp",
       "/chungdoi/images/giftbox/mini/chateau_green.webp",
+    ],
+  },
+  "minimalism-brown": {
+    kind: "giftbox",
+    boxImage: "/chungdoi/images/giftbox/minimalism-brown/box.webp",
+    decorImages: [
+      "/chungdoi/images/giftbox/mini/hoa_tinh_red.webp",
+      "/chungdoi/images/giftbox/mini/minimalism_red.webp",
+      "/chungdoi/images/giftbox/mini/royal_red.webp",
+      "/chungdoi/images/giftbox/mini/minimalism_green.webp",
+      // Bản gốc trỏ `mini/sunflower_yellow.webp` nhưng file đó 404 ngay trên
+      // chungdoi.com (ảnh hỏng, natural size 0×0), nên dùng ảnh khác cùng bộ.
+      "/chungdoi/images/giftbox/mini/saraya_gold.webp",
+      "/chungdoi/images/giftbox/mini/minimalism_purple.webp",
+      "/chungdoi/images/giftbox/mini/glass_garden_pink.webp",
     ],
   },
   "glass-garden-pink": {

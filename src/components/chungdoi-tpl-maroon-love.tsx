@@ -116,9 +116,9 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
         {/* header — couple names */}
         <header className="relative z-10 flex flex-col items-center justify-center px-6 pb-10 pt-16 text-center md:pt-20">
           <div className="relative z-10 flex flex-col items-center gap-1" style={{ color: CREAM }}>
-            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[0].shortName}</span>
+            <span data-invitation-short-name className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[0].shortName}</span>
             <span className="font-qellia text-[28px] md:text-[34px]">&amp;</span>
-            <span className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[1].shortName}</span>
+            <span data-invitation-short-name className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[1].shortName}</span>
           </div>
           {wedding ? (
             <p className="relative z-10 mt-4 text-[16px] tracking-wide md:text-[18px]" style={{ color: PINK, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.dayNumber} tháng {wedding.monthNumber}, {wedding.yearNumber}</p>

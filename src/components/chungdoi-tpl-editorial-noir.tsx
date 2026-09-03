@@ -100,14 +100,14 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
 
           {/* Tên cặp đôi đặt lệch trục, cỡ chữ rất lớn — trọng tâm thị giác. */}
           <div className="pb-8 pt-10 md:pb-12 md:pt-16">
-            <h2 className="font-serif text-[64px] font-black uppercase leading-[0.86] tracking-[-0.03em] md:text-[112px]">
+            <h2 data-invitation-short-name className="font-serif text-[64px] font-black uppercase leading-[0.86] tracking-[-0.03em] md:text-[112px]">
               {people[0].shortName}
             </h2>
             <div className="my-2 flex items-center gap-4 md:my-4">
               <span className="font-serif text-[28px] italic md:text-[40px]">{t("and")}</span>
               <HairRule color={INK} className="flex-1" />
             </div>
-            <h2 className="pl-[12%] font-serif text-[64px] font-black uppercase leading-[0.86] tracking-[-0.03em] md:pl-[18%] md:text-[112px]">
+            <h2 data-invitation-short-name className="pl-[12%] font-serif text-[64px] font-black uppercase leading-[0.86] tracking-[-0.03em] md:pl-[18%] md:text-[112px]">
               {people[1].shortName}
             </h2>
           </div>

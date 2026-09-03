@@ -22,9 +22,9 @@ function MinimalismRedHero({ content }: { content: ChungDoiDemoContent }) {
           className="relative z-10 ml-[20%] mt-[15px] flex flex-col items-start text-[52px] leading-[0.72] text-black md:ml-[25%] md:mt-[85px] md:text-[76px] lg:ml-[28%] lg:text-[84px]"
           style={scriptFont}
         >
-          <span>{compactName(people[0].shortName)}</span>
+          <span data-invitation-short-name>{compactName(people[0].shortName)}</span>
           <span className="my-3 ml-[18%] md:my-5">&amp;</span>
-          <span>{compactName(people[1].shortName)}</span>
+          <span data-invitation-short-name>{compactName(people[1].shortName)}</span>
         </div>
         <div className="flex w-full justify-center pb-[50px] md:-mt-[70px] md:pb-[75px]">
           <img src={`${BASE}/header-bottom-01.png`} alt="" aria-hidden className="h-auto w-[310px] object-contain md:w-[580px] lg:w-[620px]" />

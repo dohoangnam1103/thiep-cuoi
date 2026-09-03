@@ -113,13 +113,13 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
           </div>
 
           <div className="mt-7 flex flex-col items-center text-center">
-            <span className="font-serif text-[28px] leading-tight md:text-[38px]">
+            <span data-invitation-short-name className="font-serif text-[28px] leading-tight md:text-[38px]">
               {people[0].shortName}
             </span>
             <span className="my-1 text-[13px] uppercase tracking-[0.4em] text-[#a4462d]">
               {t("and")}
             </span>
-            <span className="font-serif text-[28px] leading-tight md:text-[38px]">
+            <span data-invitation-short-name className="font-serif text-[28px] leading-tight md:text-[38px]">
               {people[1].shortName}
             </span>
           </div>

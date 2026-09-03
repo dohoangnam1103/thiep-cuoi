@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiPricing } from "@/components/chungdoi-pricing";
+import { RouteMessages } from "@/components/route-messages";
+import { pricingMessageNamespaces } from "@/i18n/message-scopes";
 import type { Locale } from "@/i18n/routing";
-import { getPaymentPrices } from "@/lib/payment-config";
+import { getPublicPaymentPrices } from "@/lib/payment-config";
 import { pageSeo, staticAlternates } from "@/lib/seo";
 
-// Giá bán do admin sửa trong /admin/vouchers và nằm trong AppConfig. Trang này
-// phải đọc DB ở mỗi request: build trong Docker không có sẵn dev.db (xem
-// .dockerignore), nên prerender sẽ đóng băng một mức giá sai vào HTML.
-export const dynamic = "force-dynamic";
+// Read runtime prices on the first visit; admin price changes invalidate this route.
+export function generateStaticParams() { return []; }
+export const revalidate = 300;
 
 export async function generateMetadata({
   params,
@@ -35,7 +36,11 @@ export default async function PricingPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const prices = await getPaymentPrices();
+  const prices = await getPublicPaymentPrices();
 
-  return <ChungDoiPricing prices={prices} />;
+  return (
+    <RouteMessages namespaces={pricingMessageNamespaces}>
+      <ChungDoiPricing prices={prices} />
+    </RouteMessages>
+  );
 }

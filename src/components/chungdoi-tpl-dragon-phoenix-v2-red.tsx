@@ -72,9 +72,9 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
           </div>
 
           <div className="relative z-20 mt-7 flex flex-col items-center leading-none md:mt-9">
-            <span className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[0]}</span>
+            <span data-invitation-short-name className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[0]}</span>
             <span className="my-1 text-[26px] md:text-[34px]" style={ampFont}>&amp;</span>
-            <span className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[1]}</span>
+            <span data-invitation-short-name className="text-[48px] md:text-[66px]" style={ampFont}>{headerNames[1]}</span>
           </div>
 
           <div className="relative z-10 mt-5 flex h-[245px] w-full max-w-[660px] items-center justify-center md:mt-7 md:h-[310px]">

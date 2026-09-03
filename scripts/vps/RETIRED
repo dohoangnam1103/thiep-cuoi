@@ -1,0 +1,5 @@
+Production moved to 163.223.9.198:/srv/thiepmungonline on 2026-08-31.
+Do not restart this host's thiepmungonline web/tunnel or restore its cron jobs.
+Its database is a frozen rollback checkpoint, NOT the current production DB.
+Rollback requires freezing VPS writes and copying the latest DB/media back first.
+Use docs/deploy-vps.md and npm run deploy in the current local repository.

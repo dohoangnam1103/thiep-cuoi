@@ -29,6 +29,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   serverExternalPackages: ["heic-decode", "libheif-js"],
   images: {
+    qualities: [75, 84, 88, 90, 92],
     localPatterns: [
       {
         pathname: "/**",

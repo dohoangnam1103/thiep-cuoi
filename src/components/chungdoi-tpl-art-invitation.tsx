@@ -140,13 +140,13 @@ function HeroNames({
       <p className={cn("mb-7 text-[10px] font-semibold uppercase tracking-[0.34em]", config.accentTextClass)}>
         {t("invitation")}
       </p>
-      <h2 className={cn("text-balance", config.displayFontClass, config.coupleClass, "text-[clamp(2.75rem,15cqw,4.75rem)]")}>{people[0].shortName}</h2>
+      <h2 data-invitation-short-name className={cn("text-balance", config.displayFontClass, config.coupleClass, "text-[clamp(2.75rem,15cqw,4.75rem)]")}>{people[0].shortName}</h2>
       <div className="my-3 flex items-center gap-4">
         <span className={cn("h-px flex-1", config.accentBgClass)} />
         <span className={cn("text-lg", config.accentTextClass)}>{t("and")}</span>
         <span className={cn("h-px flex-1", config.accentBgClass)} />
       </div>
-      <h2 className={cn("text-balance", config.displayFontClass, config.coupleClass, "text-[clamp(2.75rem,15cqw,4.75rem)]")}>{people[1].shortName}</h2>
+      <h2 data-invitation-short-name className={cn("text-balance", config.displayFontClass, config.coupleClass, "text-[clamp(2.75rem,15cqw,4.75rem)]")}>{people[1].shortName}</h2>
     </div>
   );
 }

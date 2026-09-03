@@ -22,6 +22,7 @@ import Database from "better-sqlite3";
 import { SignJWT } from "jose";
 import { chromium } from "playwright";
 import sharp from "sharp";
+import { rasterizeEmbeddedFrames } from "./lib/capture-embedded-frames.mjs";
 
 const ROOT = process.cwd();
 const { loadEnvConfig } = nextEnv;
@@ -33,7 +34,8 @@ const RETIRED_SLUGS_FILE = path.join(ROOT, "src/data/retired-template-slugs.ts")
 const TEMPLATE_MANIFESTS_DIR = path.join(ROOT, "src/data/templates");
 const PREVIEW_VERSION_FILE = path.join(ROOT, "src/data/template-preview-version.ts");
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
-const MANAGED_SERVER_URL = "http://127.0.0.1:3200";
+// Match Next's normalized rewrite hostname so next-intl rewrites stay internal.
+const MANAGED_SERVER_URL = "http://localhost:3200";
 const CAPTURE_WIDTH = 480;
 const CAPTURE_HEIGHT = 844;
 const CAPTURE_DEVICE_SCALE_FACTOR = 2;
@@ -54,7 +56,9 @@ const PRODUCTION_TABLES = [
 ];
 const EDITOR_UPLOAD_FILENAME = /^[0-9a-f-]{36}\.webp$/;
 const WEBP_QUALITY = Number(process.env.CAPTURE_QUALITY ?? 84);
+const CAPTURE_CONCURRENCY = Number(process.env.CAPTURE_CONCURRENCY ?? 1);
 const VERBOSE = process.env.CAPTURE_VERBOSE === "1";
+const AUDIT_DIR = process.env.CAPTURE_AUDIT_DIR ? path.resolve(process.env.CAPTURE_AUDIT_DIR) : undefined;
 
 function readOption(name) {
   const exactIndex = process.argv.indexOf(name);
@@ -80,9 +84,11 @@ Options:
 Environment:
   CAPTURE_BASE_URL             Dùng server có sẵn thay vì tự khởi động Next.js
   CAPTURE_QUALITY              Chất lượng WebP, mặc định 84
+  CAPTURE_CONCURRENCY          Số mẫu chụp đồng thời, 1–4, mặc định 1
   CAPTURE_VERBOSE=1            Hiện log của Next.js server
-  CAPTURE_PRODUCTION_HOST      SSH host production, mặc định minipc
-  CAPTURE_PRODUCTION_APP_DIR   App production, mặc định /home/namdo/apps/thiepmungonline
+  CAPTURE_AUDIT_DIR            Lưu ảnh từng bản đồ và báo cáo kiểm tra
+  CAPTURE_PRODUCTION_HOST      SSH host production, mặc định root@163.223.9.198
+  CAPTURE_PRODUCTION_APP_DIR   App production, mặc định /srv/thiepmungonline
   CAPTURE_SKIP_PRODUCTION_SYNC=1 Bỏ qua đồng bộ production
   CHROME_PATH                  Đường dẫn Chrome/Chromium tùy chỉnh`);
 }
@@ -174,12 +180,14 @@ function parseCatalog(source, routeSource, manifestSources = []) {
  * sẽ treo ở `waitFor(main#top[data-capture-mode])` rồi timeout. Manifest của
  * chúng vẫn nằm trong src/data/templates nên phải lọc theo danh sách này.
  */
-function parseRetiredSlugs(source) {
-  const block = source.match(/retiredTemplateRouteSlugs = \[([\s\S]*?)\] as const/)?.[1];
-  if (!block) {
+function parseRetiredSlugs(routeSource, catalogSource) {
+  const block = routeSource.match(/retiredTemplateRouteSlugs = \[([\s\S]*?)\] as const/)?.[1];
+  const catalogBlock = catalogSource.match(/retiredTemplateSlugs = new Set<string>\(\[([\s\S]*?)\]\)/)?.[1];
+  if (!block || !catalogBlock) {
     throw new Error("Không đọc được danh sách mẫu đã rút từ src/data/retired-template-slugs.ts");
   }
-  return new Set([...block.matchAll(/"([^"]+)"/g)].map((match) => match[1]));
+  // Some retired demos return 404 directly rather than using a redirect entry.
+  return new Set([...`${block}\n${catalogBlock}`.matchAll(/"([^"]+)"/g)].map((match) => match[1]));
 }
 
 function runProcess(command, args, { input, cwd = ROOT } = {}) {
@@ -224,9 +232,9 @@ function localDatabasePath() {
 }
 
 function productionConnectionConfig() {
-  const host = process.env.CAPTURE_PRODUCTION_HOST ?? "minipc";
+  const host = process.env.CAPTURE_PRODUCTION_HOST ?? "root@163.223.9.198";
   const appDir =
-    process.env.CAPTURE_PRODUCTION_APP_DIR ?? "/home/namdo/apps/thiepmungonline";
+    process.env.CAPTURE_PRODUCTION_APP_DIR ?? "/srv/thiepmungonline";
   if (!/^[a-zA-Z0-9._@-]+$/.test(host)) {
     throw new Error("CAPTURE_PRODUCTION_HOST chứa ký tự không hợp lệ");
   }
@@ -250,6 +258,7 @@ import sys
 database_path = sys.argv[1]
 connection = sqlite3.connect(f"file:{database_path}?mode=ro", uri=True)
 connection.row_factory = sqlite3.Row
+connection.execute("begin")
 
 quick_check = connection.execute("pragma quick_check").fetchone()[0]
 invitations = [
@@ -579,7 +588,7 @@ async function resolveServer() {
   console.log(`Khởi động Next.js tạm tại ${MANAGED_SERVER_URL}...`);
   const child = spawn(
     process.execPath,
-    [nextBin, "dev", "--hostname", "127.0.0.1", "-p", "3200"],
+    [nextBin, "dev", "--hostname", "localhost", "-p", "3200"],
     {
       cwd: ROOT,
       env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
@@ -631,7 +640,8 @@ async function settleInvitation(page) {
       html { scroll-behavior: auto !important; }
       html, body { overflow: visible !important; }
       main#top > audio,
-      main#top > button.fixed { display: none !important; }
+      main#top > button.fixed,
+      nextjs-portal { display: none !important; }
       * { caret-color: transparent !important; }
     `,
   });
@@ -682,36 +692,6 @@ async function settleInvitation(page) {
   }
 }
 
-async function rasterizeEmbeddedFrames(page) {
-  const frames = page.locator("iframe");
-  const count = await frames.count();
-  for (let index = 0; index < count; index += 1) {
-    const frame = frames.nth(index);
-    await frame.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(1_200);
-    const png = await frame.screenshot({ animations: "disabled", type: "png" });
-    const dataUrl = `data:image/png;base64,${png.toString("base64")}`;
-    await frame.evaluate((element, source) => {
-      const image = document.createElement("img");
-      image.src = source;
-      image.alt = element.title || "Bản đồ địa điểm cưới";
-      image.className = element.className;
-      image.style.cssText = element.style.cssText;
-      image.setAttribute("data-captured-iframe", "true");
-      element.replaceWith(image);
-    }, dataUrl);
-  }
-
-  if (count) {
-    await page.evaluate(async () => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      window.dispatchEvent(new Event("scroll"));
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    });
-  }
-}
-
 async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCookie) {
   const context = await browser.newContext({
     viewport: { width: CAPTURE_WIDTH, height: CAPTURE_HEIGHT },
@@ -739,7 +719,7 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
         frame.waitForLoadState("load", { timeout: 15_000 }).catch(() => undefined),
       ),
     );
-    await rasterizeEmbeddedFrames(page);
+    const embeddedFramesAudit = await rasterizeEmbeddedFrames(page, { auditDir: AUDIT_DIR, slug: template.slug });
     await page.waitForTimeout(400);
 
     if (pageErrors.length) {
@@ -761,11 +741,14 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
     const listingPath = path.join(stagingDir, "listing", listingName);
     const portraitPath = path.join(stagingDir, "portrait", portraitName);
     const landscapePath = path.join(stagingDir, "landscape", landscapeName);
+    const pngPath = path.join(stagingDir, "png", listingName.replace(/\.webp$/, ".png"));
     await Promise.all([
       mkdir(path.dirname(listingPath), { recursive: true }),
       mkdir(path.dirname(portraitPath), { recursive: true }),
       mkdir(path.dirname(landscapePath), { recursive: true }),
+      mkdir(path.dirname(pngPath), { recursive: true }),
     ]);
+    await writeFile(pngPath, png);
 
     await sharp(png)
       .resize({ width: OUTPUT_WIDTH })
@@ -832,9 +815,11 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
     return {
       slug: template.slug,
       route: template.route,
+      embeddedFrames: embeddedFramesAudit,
       height: listingMetadata.height,
       size: listingFile.size + portraitFile.size + landscapeFile.size,
       outputs: {
+        png: { stagedPath: pngPath },
         listing: { stagedPath: listingPath },
         portrait: { stagedPath: portraitPath },
         landscape: { stagedPath: landscapePath },
@@ -848,8 +833,11 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
 async function installOutputs(results, templatesBySlug) {
   for (const result of results) {
     const template = templatesBySlug.get(result.slug);
-    for (const kind of ["listing", "portrait", "landscape"]) {
-      const outputPath = path.join(ROOT, "public", template[kind].replace(/^\//, ""));
+    for (const kind of ["png", "listing", "portrait", "landscape"]) {
+      const publicPath = kind === "png"
+        ? template.listing.replace("/listing/", "/png/").replace(/\.webp$/, ".png")
+        : template[kind];
+      const outputPath = path.join(ROOT, "public", publicPath.replace(/^\//, ""));
       await mkdir(path.dirname(outputPath), { recursive: true });
       const pendingPath = `${outputPath}.capture-new`;
       await copyFile(result.outputs[kind].stagedPath, pendingPath);
@@ -885,6 +873,9 @@ async function main() {
   if (!Number.isInteger(WEBP_QUALITY) || WEBP_QUALITY < 1 || WEBP_QUALITY > 100) {
     throw new Error("CAPTURE_QUALITY phải là số nguyên từ 1 đến 100");
   }
+  if (!Number.isInteger(CAPTURE_CONCURRENCY) || CAPTURE_CONCURRENCY < 1 || CAPTURE_CONCURRENCY > 4) {
+    throw new Error("CAPTURE_CONCURRENCY phải là số nguyên từ 1 đến 4");
+  }
 
   const manifestFileNames = (await readdir(TEMPLATE_MANIFESTS_DIR))
     .filter((fileName) => fileName.endsWith(".manifest.ts"))
@@ -898,7 +889,7 @@ async function main() {
     ),
   ]);
   const allTemplates = parseCatalog(source, routeSource, manifestSources);
-  const retiredSlugs = parseRetiredSlugs(retiredSource);
+  const retiredSlugs = parseRetiredSlugs(retiredSource, source);
   const isRetired = (template) =>
     retiredSlugs.has(template.slug) || retiredSlugs.has(template.route);
   const liveTemplates = allTemplates.filter((template) => !isRetired(template));
@@ -953,24 +944,41 @@ async function main() {
       `Chụp ${targets.length} mẫu ở viewport ${CAPTURE_WIDTH}px, xuất ${OUTPUT_WIDTH}px, WebP quality ${WEBP_QUALITY}...`,
     );
     const results = [];
-    for (const [index, template] of targets.entries()) {
-      process.stdout.write(`[${index + 1}/${targets.length}] ${template.slug}... `);
-      const result = await captureTemplate(
-        browser,
-        server.baseUrl,
-        template,
-        stagingDir,
-        sessionCookie,
+    for (let offset = 0; offset < targets.length; offset += CAPTURE_CONCURRENCY) {
+      const batch = await Promise.allSettled(
+        targets.slice(offset, offset + CAPTURE_CONCURRENCY).map(async (template, index) => {
+          const result = await captureTemplate(
+            browser,
+            server.baseUrl,
+            template,
+            stagingDir,
+            sessionCookie,
+          );
+          console.log(`[${offset + index + 1}/${targets.length}] ${template.slug}: ${result.height}px, ${(result.size / 1024).toFixed(0)} KB`);
+          return result;
+        }),
       );
-      results.push(result);
-      console.log(`${result.height}px, ${(result.size / 1024).toFixed(0)} KB`);
+      // Let every context finish before cleanup if any capture fails.
+      const failures = batch.filter((result) => result.status === "rejected");
+      if (failures.length) {
+        throw new Error(failures.map((result) => String(result.reason)).join("\n"));
+      }
+      results.push(...batch.map((result) => result.value));
+    }
+
+    if (AUDIT_DIR) {
+      await mkdir(AUDIT_DIR, { recursive: true });
+      await writeFile(path.join(AUDIT_DIR, "capture-audit.json"), JSON.stringify({
+        baseUrl: server.baseUrl, capturedAt: new Date().toISOString(),
+        templates: results.map(({ slug, route, height, embeddedFrames }) => ({ slug, route, height, embeddedFrames })),
+      }, null, 2));
     }
 
     if (writeOutputs) {
       await installOutputs(results, templatesBySlug);
       const previewVersion = await updatePreviewVersion(results);
       console.log(
-        `Đã cập nhật ${results.length} mẫu trong listing/, portrait/ và landscape/ (version ${previewVersion}).`,
+        `Đã cập nhật ${results.length} mẫu: PNG gốc trong png/ và WebP trong listing/, portrait/, landscape/ (version ${previewVersion}).`,
       );
     } else {
       console.log(

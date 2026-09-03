@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { publicImageSize } from "@/components/home2/listing-sizes";
 import { V9Page } from "@/components/home2/lab/v9-page";
-import type { V9TemplateShot } from "@/components/home2/lab/v9-journey";
+import type { V9TemplateShot } from "@/components/home2/lab/v9-stations";
 import { getVietnameseTemplateSlug, templates } from "@/data/chungdoi";
 import type { Locale } from "@/i18n/routing";
 import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
@@ -68,10 +68,9 @@ export default async function LabV9({
     }),
   );
 
-  const [rsvpImage, languagesImage] = await Promise.all([
-    publicImageSize("/chungdoi/images/rsvp-showcase.png"),
-    publicImageSize("/chungdoi/images/language-showcase.png"),
-  ]);
+  // Chỉ còn ảnh RSVP. `language-showcase.png` không cần đo nữa vì V9 đã bỏ chương
+  // đa ngôn ngữ — `/home-2` vẫn dùng ảnh đó nên file vẫn giữ trong public.
+  const rsvpImage = await publicImageSize("/chungdoi/images/rsvp-showcase.png");
 
   return (
     <div className={displaySerif.variable}>
@@ -80,7 +79,6 @@ export default async function LabV9({
         templateCount={templates.length}
         instantTemplateId={templates[0]?.slug ?? "song-hy-red"}
         rsvpImage={rsvpImage}
-        languagesImage={languagesImage}
       />
     </div>
   );

@@ -1,0 +1,61 @@
+.paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("/chungdoi/images/themes/mahal-gold/paper.webp") top center / 100% auto repeat-y;
+  opacity: 0.4;
+  mix-blend-mode: darken;
+  pointer-events: none;
+}
+@supports (animation-timeline: view()) {
+  .parallax {
+    animation: palace-drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+}
+@keyframes palace-drift {
+  from { transform: translateY(30px); }
+  to { transform: translateY(-30px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .parallax { animation: none; }
+}
+
+/* Match Mahal's transparent guestbook without changing other templates' forms. */
+.guestbook form > div {
+  gap: 16px;
+}
+.guestbook input,
+.guestbook textarea {
+  background-color: transparent;
+  padding: 12px 16px;
+  color: #640e1b;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+.guestbook input::placeholder,
+.guestbook textarea::placeholder {
+  color: #640e1b;
+  opacity: 0.6;
+}
+.guestbook input:focus-visible,
+.guestbook textarea:focus-visible {
+  outline: 2px solid #ab7a45;
+  outline-offset: 2px;
+}
+.guestbook textarea {
+  min-height: 106px;
+  resize: none;
+}
+.guestbook form > div > div {
+  margin-top: 0;
+}
+.guestbook button[type="submit"] {
+  padding: 8px 24px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 14px;
+  line-height: 20px;
+}

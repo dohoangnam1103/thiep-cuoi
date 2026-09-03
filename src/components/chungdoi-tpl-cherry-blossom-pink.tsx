@@ -87,9 +87,9 @@ export function CherryBlossomInvitation({ content }: { content: ChungDoiDemoCont
             </div>
           ) : null}
           <div className="relative z-10 flex flex-col items-center gap-0 text-[65px] leading-[98px] md:text-[91px] md:leading-[137px]" style={{ color: "#ba4a59", ...nameFont }}>
-            <span>{people[0].shortName}</span>
+            <span data-invitation-short-name>{people[0].shortName}</span>
             <span className="mt-1 text-[48px] leading-[72px] md:text-[65px] md:leading-[98px]">&amp;</span>
-            <span>{people[1].shortName}</span>
+            <span data-invitation-short-name>{people[1].shortName}</span>
           </div>
         </header>
 

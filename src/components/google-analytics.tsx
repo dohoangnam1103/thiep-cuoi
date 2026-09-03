@@ -2,15 +2,10 @@ import { GOOGLE_ANALYTICS_ID } from "@/lib/analytics";
 
 export function GoogleAnalytics() {
   return (
-    <>
-      <script
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
-      />
-      <script
-        id="google-analytics"
-        dangerouslySetInnerHTML={{
-          __html: `
+    <script
+      id="google-analytics"
+      dangerouslySetInnerHTML={{
+        __html: `
           window.dataLayer = window.dataLayer || [];
           window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
           window.gtag('js', new Date());
@@ -96,9 +91,29 @@ export function GoogleAnalytics() {
               });
             }).observe(document.documentElement, { childList: true, subtree: true });
           }
+
+          var loadGoogleAnalytics = function() {
+            if (document.getElementById('google-analytics-loader')) return;
+            var script = document.createElement('script');
+            script.id = 'google-analytics-loader';
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}';
+            document.head.appendChild(script);
+          };
+          var scheduleGoogleAnalytics = function() {
+            if ('requestIdleCallback' in window) {
+              window.requestIdleCallback(loadGoogleAnalytics, { timeout: 3000 });
+            } else {
+              window.setTimeout(loadGoogleAnalytics, 1500);
+            }
+          };
+          if (document.readyState === 'complete') {
+            scheduleGoogleAnalytics();
+          } else {
+            window.addEventListener('load', scheduleGoogleAnalytics, { once: true });
+          }
         `,
-        }}
-      />
-    </>
+      }}
+    />
   );
 }

@@ -53,6 +53,7 @@ export default async function AdminDashboardPage({
     settledPayments,
     sentEmailAttemptsToday,
     failedEmailAttemptsToday,
+    sentReminders,
   ] = await Promise.all([
     prisma.user.count({ where: CUSTOMER_USER_WHERE }),
     prisma.invitation.count({ where: REAL_INVITATION_WHERE }),
@@ -60,7 +61,7 @@ export default async function AdminDashboardPage({
     prisma.templateSuggestion.count(),
     prisma.payment.count({ where: { status: "paid" } }),
     prisma.payment.aggregate({ where: { status: "paid" }, _sum: { amount: true } }),
-    // The three series below fetch one column for the window and are bucketed
+    // The series below fetch timestamps for the window and are bucketed
     // in `buildDailySeries`; SQLite cannot truncate a DateTime to a Vietnam day.
     prisma.user.findMany({
       where: { ...CUSTOMER_USER_WHERE, createdAt: { gte: windowStart } },
@@ -81,6 +82,15 @@ export default async function AdminDashboardPage({
     }),
     prisma.emailDeliveryAttempt.count({
       where: { status: "failed", attemptedAt: { gte: todayStart } },
+    }),
+    // Count logical emails, not retry attempts, on their actual send date.
+    prisma.emailDelivery.findMany({
+      where: {
+        type: { in: ["trial-ending", "expired"] },
+        status: "sent",
+        sentAt: { gte: windowStart, lte: now },
+      },
+      select: { sentAt: true },
     }),
   ]);
 
@@ -127,6 +137,11 @@ export default async function AdminDashboardPage({
   );
 
   const rangeTotalLabel = t("overviewRangeTotal", { days: range });
+  const reminderSeries = buildDailySeries(
+    sentReminders.map((delivery) => ({ at: delivery.sentAt })),
+    range,
+    now,
+  );
 
   return (
     <div className="space-y-8">
@@ -206,7 +221,20 @@ export default async function AdminDashboardPage({
           </ChartCard>
 
           <ChartCard
-            className="lg:col-span-2"
+            title={t("overviewRemindersSent")}
+            total={formatCount(sumDailyValues(reminderSeries))}
+            caption={rangeTotalLabel}
+            emptyLabel={t("overviewChartEmpty")}
+            isEmpty={sumDailyValues(reminderSeries) === 0}
+          >
+            <AdminDailyChart
+              data={reminderSeries}
+              seriesLabel={t("overviewRemindersSent")}
+              color="var(--chart-4)"
+            />
+          </ChartCard>
+
+          <ChartCard
             title={t("overviewRevenue")}
             total={formatVnd(sumDailyValues(revenueSeries))}
             caption={rangeTotalLabel}

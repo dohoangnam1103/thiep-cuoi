@@ -131,9 +131,9 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                   "inset 1.5px 1.5px 2px rgba(255,255,255,0.45), inset -1.5px -1.5px 3px rgba(180,120,130,0.12), 0 18px 50px -6px rgba(147,56,69,0.3), 0 6px 20px 2px rgba(147,56,69,0.14)",
               }}
             >
-              <span className="w-full text-[clamp(26px,7.7vw,40px)] leading-none" style={NAME_FONT}>{people[0].shortName}</span>
+              <span data-invitation-short-name className="w-full text-[clamp(26px,7.7vw,40px)] leading-none" style={NAME_FONT}>{people[0].shortName}</span>
               <span className="text-[clamp(19px,5.4vw,28px)] leading-none opacity-90" style={HERO_AMP_FONT}>&amp;</span>
-              <span className="w-full text-[clamp(26px,7.7vw,40px)] leading-none" style={NAME_FONT}>{people[1].shortName}</span>
+              <span data-invitation-short-name className="w-full text-[clamp(26px,7.7vw,40px)] leading-none" style={NAME_FONT}>{people[1].shortName}</span>
             </div>
             <img src={`${PINK_BASE}/flower1-decoration.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-[60px] left-[calc(50%-57px)] z-30 h-auto w-[77%] max-w-none -translate-x-1/2 translate-y-[46%] rotate-[-36deg] object-contain md:bottom-[15.6%] md:left-[27.2%]" />
           </div>

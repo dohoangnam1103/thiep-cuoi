@@ -576,6 +576,51 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
       ]
     }
   },
+  "minimalism-brown": {
+    "theme": {
+      "background": "linear-gradient(to bottom right, #f3e6da, #e8d5c4, #dcc6b2)",
+      "cardBg": "rgba(255, 250, 245, 0.96)",
+      "textPrimary": "#7c6a60",
+      "textSecondary": "rgba(124, 106, 96, 0.72)",
+      "accent": "#7c6a60",
+      "dividerFrom": "transparent",
+      "dividerTo": "#7c6a60",
+      "buttonBg": "#7c6a60",
+      "buttonText": "#ffffff",
+      "guestBoxBg": "rgba(124, 106, 96, 0.08)",
+      "guestBoxBorder": "rgba(124, 106, 96, 0.15)",
+      "particleColors": [
+        "#c9a97e",
+        "#918077",
+        "#b89b78",
+        "#e6d6c4"
+      ],
+      "particleType": "leaves"
+    },
+    "fonts": {
+      "couple": "\"EB Garamond\", serif",
+      "ampersand": "Baskerville, \"Times New Roman\", serif"
+    },
+    "sealType": "heart",
+    "decorations": {
+      // Theme này chốt chiều CAO (`h-36 w-auto`) như bản gốc:
+      // `envelope-fly-fit-height` ép bản sao bay lúc mở thiệp đo theo chiều cao,
+      // `minimalism-brown-opening-fly` giữ đường mờ 0.7 → 0 của bản gốc.
+      // Cả hai đều ở globals.css. Thiếu class đầu, ảnh bay phình gấp ~5 lần.
+      "cardImages": [
+        {
+          "className": "envelope-fly-fit-height minimalism-brown-opening-fly h-36 md:h-32 lg:h-36 w-auto max-w-none top-[-3%] left-[-14px] md:left-[-26px] -translate-x-[6%] md:-translate-x-[11%] opacity-70 rotate-[35deg]",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/minimalism-brown/flower2-decoration.webp"
+        },
+        {
+          "className": "envelope-fly-fit-height minimalism-brown-opening-fly h-36 md:h-32 lg:h-36 w-auto max-w-none bottom-[-5%] right-[-14px] md:right-[-26px] translate-x-[6%] md:translate-x-[11%] -scale-x-100 opacity-70 -rotate-[25deg]",
+          "flyOnOpen": true,
+          "src": "/chungdoi/images/themes/minimalism-brown/flower2-decoration.webp"
+        }
+      ]
+    }
+  },
   "minimalism-jade": {
     "theme": {
       "background": "linear-gradient(to bottom right, #e5f3ed, #cde7de, #abd5c6)",
@@ -2055,14 +2100,17 @@ export const chungdoiThemeConfig: Record<string, ChungDoiThemeConfig> = {
     },
     "sealType": "heart",
     "decorations": {
+      // `envelope-fly-fit-height`: className chốt chiều CAO nên bản sao bay lúc
+      // mở thiệp phải đo theo chiều cao, nếu không nó rộng 522px thay vì 321px và
+      // nhảy opacity 0.25 → 0.9. Xem globals.css.
       "cardImages": [
         {
-          "className": "h-[65%] md:h-[82%] lg:h-[92%] w-auto max-w-none top-1/2 -translate-y-1/2 left-0 -translate-x-[40%] md:-translate-x-[20%] opacity-25 rotate-[25deg]",
+          "className": "envelope-fly-fit-height h-[65%] md:h-[82%] lg:h-[92%] w-auto max-w-none top-1/2 -translate-y-1/2 left-0 -translate-x-[40%] md:-translate-x-[20%] opacity-25 rotate-[25deg]",
           "flyOnOpen": true,
           "src": "/chungdoi/images/themes/_decor/crystal-floral-blue/flower2.webp"
         },
         {
-          "className": "h-[65%] md:h-[82%] lg:h-[92%] w-auto max-w-none top-1/2 -translate-y-1/2 right-0 translate-x-[40%] md:translate-x-[20%] opacity-25 -rotate-[25deg]",
+          "className": "envelope-fly-fit-height h-[65%] md:h-[82%] lg:h-[92%] w-auto max-w-none top-1/2 -translate-y-1/2 right-0 translate-x-[40%] md:translate-x-[20%] opacity-25 -rotate-[25deg]",
           "flyOnOpen": true,
           "src": "/chungdoi/images/themes/_decor/crystal-floral-blue/flower3.webp"
         }

@@ -340,11 +340,11 @@ export const LongPhungGatefoldHandoffHero = forwardRef<
         {t("invitation")}
       </p>
       <h2 className="relative mt-[clamp(1rem,5cqw,1.75rem)] flex max-w-full flex-col items-center font-art-uni text-[clamp(2.3rem,12cqw,4.1rem)] font-normal leading-[1.02] text-[#5A0B12]">
-        <span className="max-w-full text-balance">{people[0].shortName}</span>
+        <span data-invitation-short-name className="max-w-full text-balance">{people[0].shortName}</span>
         <span className="my-[clamp(0.2rem,1.2cqw,0.45rem)] font-art-lora text-[clamp(0.8rem,3.5cqw,1.1rem)] italic leading-[1.2] text-[#B58A3A]">
           {t("and")}
         </span>
-        <span className="max-w-full text-balance">{people[1].shortName}</span>
+        <span data-invitation-short-name className="max-w-full text-balance">{people[1].shortName}</span>
       </h2>
       <p className="relative mt-[clamp(1rem,5cqw,1.75rem)] text-[clamp(0.68rem,2.8cqw,0.82rem)] font-semibold leading-5 text-[#7C1B1B]">
         {dateAndTime}

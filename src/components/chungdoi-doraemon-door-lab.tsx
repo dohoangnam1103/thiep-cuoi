@@ -1,5 +1,7 @@
 "use client";
 
+import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
+
 import { useGSAP } from "@gsap/react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -54,6 +56,7 @@ type DoraemonDoorLabProps = {
   content?: ChungDoiDemoContent;
   muted?: boolean;
   onStateChange?: (state: DoraemonDoorExperienceState) => void;
+  onCoverReady?: () => void;
   renderBody?: boolean;
   showControls?: boolean;
 };
@@ -216,6 +219,7 @@ export function DoraemonDoorLab({
   content = doraemonDoorPilotContent,
   muted = false,
   onStateChange,
+  onCoverReady,
   renderBody = true,
   showControls = true,
 }: DoraemonDoorLabProps) {
@@ -701,6 +705,7 @@ export function DoraemonDoorLab({
   const canOpen = state === "closed"
     && isMobile !== null
     && (webglSupported === false || sceneReady);
+  useInvitationCoverReady(stageRef, canOpen, onCoverReady);
   const fallbackMotion = reducedMotion
     ? "reduced"
     : isMobile

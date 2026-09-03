@@ -68,9 +68,9 @@ export function QasrGoldInvitation({ content }: { content: ChungDoiDemoContent }
         {/* HEADER — source-matched names + castle/couple scene */}
         <header className="relative z-10 flex w-full flex-col items-center px-4 pt-[85px] sm:px-5 md:pt-[100px]">
           <div className="relative z-10 flex w-full items-center justify-center gap-3 whitespace-nowrap leading-none md:gap-6" style={{ color: QASR_GOLD_DARK }}>
-            <span className="text-[34px] md:text-[58px]" style={nameFont}>{people[0].shortName}</span>
+            <span data-invitation-short-name className="text-[34px] md:text-[58px]" style={nameFont}>{people[0].shortName}</span>
             <span className="text-[24px] md:text-[34px]" style={{ ...ampFont, color: QASR_GOLD }}>&amp;</span>
-            <span className="text-[34px] md:text-[58px]" style={nameFont}>{people[1].shortName}</span>
+            <span data-invitation-short-name className="text-[34px] md:text-[58px]" style={nameFont}>{people[1].shortName}</span>
           </div>
           <div data-testid="qasr-gold-hero-scene" className="relative mt-4 flex min-h-[440px] w-full items-end justify-center md:mt-8 md:min-h-[620px]">
             <img src={`${QASR_BASE}/castle.webp`} alt="" aria-hidden className="absolute bottom-[80px] left-1/2 z-0 h-auto w-[720px] max-w-none -translate-x-1/2 object-contain md:bottom-0 md:w-[980px]" />

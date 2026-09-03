@@ -3,6 +3,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { normalizeAlbumLayout } from "@/lib/album-layout";
 import { DEFAULT_OPENING_MESSAGE } from "@/lib/invitation-display";
 import { shortNameFromFullName } from "@/lib/short-name";
+import { dedicatedHeroImage } from "@/lib/hero-image-source";
 
 export type InvitationWithRelations = Prisma.InvitationGetPayload<{
   include: {
@@ -58,6 +59,7 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
     theme: {
       primaryColor: clean(c?.primaryColor) ?? "#c8102e",
       fontFamily: clean(c?.fontFamily),
+      userFontFamily: invitation.isDemo ? null : clean(c?.fontFamily),
       assetFolder: clean(c?.assetFolder),
       assets: [],
     },
@@ -105,8 +107,8 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
     gallery: [...invitation.gallery]
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((g) => g.url),
-    heroImage: c?.heroImage ?? "",
-    heroImage2: c?.heroImage2 ?? "",
+    heroImage: dedicatedHeroImage(c?.heroImage),
+    heroImage2: dedicatedHeroImage(c?.heroImage2),
     showHeroImage: c?.showHeroImage ?? true,
     dressCodeColors: c?.dressCodeColors ?? "",
     albumLayout: normalizeAlbumLayout(c?.albumLayout),

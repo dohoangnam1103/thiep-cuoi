@@ -68,7 +68,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
           </div>
           <div className="absolute bottom-[calc(27%-70px)] left-[5%] z-[7] flex flex-col items-center text-center md:bottom-[calc(27%-125px)] md:left-[calc(5%+150px)]">
             <p className="text-[13px] md:text-[15px]">{bride.birthOrder}</p>
-            <p className="text-[19px] font-bold uppercase md:text-[23px]">{bride.shortName}</p>
+            <p data-invitation-short-name className="text-[19px] font-bold uppercase md:text-[23px]">{bride.shortName}</p>
             <img src={`${BASE}/dau.webp`} alt="" aria-hidden className="mt-[15px] w-[70px] md:mt-[25px] md:w-[85px]" />
           </div>
           <img src={`${BASE}/tim.webp`} alt="" aria-hidden className="pointer-events-none absolute bottom-[calc(10%-20px)] left-[calc(42%-100px)] z-[6] w-[11%] max-w-[48px] md:bottom-[calc(10%-50px)] md:max-w-[58px]" />
@@ -76,7 +76,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
             <img src={`${BASE}/re.webp`} alt="" aria-hidden className="mr-[15px] w-[113px] md:mr-[25px] md:w-[135px]" />
             <div className="text-center">
               <p className="text-[13px] md:text-[15px]">{groom.birthOrder}</p>
-              <p className="text-[19px] font-bold uppercase md:text-[23px]">{groom.shortName}</p>
+              <p data-invitation-short-name className="text-[19px] font-bold uppercase md:text-[23px]">{groom.shortName}</p>
             </div>
           </div>
           <div className="h-[600px] w-full md:h-[840px]" />

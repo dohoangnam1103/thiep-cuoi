@@ -25,9 +25,9 @@ function NameLockup({ content, className = "", font = scriptFont }: { content: C
   const couple = names(content);
   return (
     <div className={`relative z-20 flex flex-col items-center text-center leading-[0.95] ${className}`} style={font}>
-      <span>{couple.groom}</span>
+      <span data-invitation-short-name>{couple.groom}</span>
       <span className="my-2 text-[0.62em]">&amp;</span>
-      <span>{couple.bride}</span>
+      <span data-invitation-short-name>{couple.bride}</span>
     </div>
   );
 }
@@ -46,7 +46,7 @@ function BotanicalPortraitHero({ content, decor, tone }: { content: ChungDoiDemo
             <div className="aspect-[4/5] overflow-hidden border-[6px] border-white bg-white shadow-[0_18px_42px_rgba(74,47,37,0.2)]">
               <img src={gallery[0]} alt={content.couple.groomFullName} className="h-full w-full object-cover" />
             </div>
-            <figcaption className="mt-3 text-right text-[24px] leading-none" style={scriptFont}>{couple.groom}</figcaption>
+            <figcaption data-invitation-short-name className="mt-3 text-right text-[24px] leading-none" style={scriptFont}>{couple.groom}</figcaption>
           </figure>
         ) : null}
         {gallery[1] ? (
@@ -54,7 +54,7 @@ function BotanicalPortraitHero({ content, decor, tone }: { content: ChungDoiDemo
             <div className="aspect-[4/5] overflow-hidden border-[6px] border-white bg-white shadow-[0_18px_42px_rgba(74,47,37,0.2)]">
               <img src={gallery[1]} alt={content.couple.brideFullName} className="h-full w-full object-cover" />
             </div>
-            <figcaption className="mt-3 text-[24px] leading-none" style={scriptFont}>{couple.bride}</figcaption>
+            <figcaption data-invitation-short-name className="mt-3 text-[24px] leading-none" style={scriptFont}>{couple.bride}</figcaption>
           </figure>
         ) : null}
       </div>
@@ -85,11 +85,11 @@ function ElegantLeafHero({ content }: { content: ChungDoiDemoContent }) {
         {gallery[1] ? <img src={gallery[1]} alt={content.couple.brideFullName} className="absolute bottom-14 right-0 aspect-[4/5] w-[55%] rotate-6 border-[6px] border-white object-cover shadow-xl" /> : null}
         <div className="absolute right-0 top-4 z-20 w-[42%] text-center">
           <span className="block text-[10px] uppercase tracking-[0.22em] opacity-70">{content.couple.groomBirthOrder}</span>
-          <span className="mt-2 block text-[25px]" style={scriptFont}>{couple.groom}</span>
+          <span data-invitation-short-name className="mt-2 block text-[25px]" style={scriptFont}>{couple.groom}</span>
         </div>
         <div className="absolute bottom-0 left-0 z-20 w-[44%] text-center">
           <span className="block text-[10px] uppercase tracking-[0.22em] opacity-70">{content.couple.brideBirthOrder}</span>
-          <span className="mt-2 block text-[25px]" style={scriptFont}>{couple.bride}</span>
+          <span data-invitation-short-name className="mt-2 block text-[25px]" style={scriptFont}>{couple.bride}</span>
         </div>
       </div>
     </header>
@@ -122,9 +122,9 @@ function SilkLineHero({ content }: { content: ChungDoiDemoContent }) {
       <img src="/chungdoi/images/themes/silk-flora-brown/top-flower.webp" alt="" aria-hidden className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-top opacity-95" />
       <div className="relative z-10 flex min-h-[760px] items-end justify-start pb-36">
         <div className="flex w-[48%] flex-col items-center text-center text-[34px] leading-[0.95]" style={scriptFont}>
-          <span>{compactName(couple.groom)}</span>
+          <span data-invitation-short-name>{compactName(couple.groom)}</span>
           <span className="my-3 text-[23px]">&amp;</span>
-          <span>{compactName(couple.bride)}</span>
+          <span data-invitation-short-name>{compactName(couple.bride)}</span>
         </div>
       </div>
     </header>

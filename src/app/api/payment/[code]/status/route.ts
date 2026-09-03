@@ -3,6 +3,10 @@ import { isPendingPaymentExpired } from "@/lib/payment";
 import { reconcilePayosPayment } from "@/lib/payment-service";
 import { isPaymentSettleable } from "@/lib/payment-settlement";
 import { prisma } from "@/lib/prisma";
+import { createReconciliationGate } from "@/lib/reconciliation-gate";
+
+const reconcileForStatusPoll = createReconciliationGate();
+const privateHeaders = { "Cache-Control": "private, no-store" };
 
 export async function GET(
   _req: Request,
@@ -17,13 +21,15 @@ export async function GET(
     },
   });
   if (!payment) {
-    return Response.json({ error: "not found" }, { status: 404 });
+    return Response.json({ error: "not found" }, { status: 404, headers: privateHeaders });
   }
 
   let status = payment.status;
   if (payment.provider === "payos" && isPaymentSettleable(payment.status)) {
     try {
-      status = await reconcilePayosPayment(payment, "payos-status-poll");
+      status = await reconcileForStatusPoll(payment.id, () =>
+        reconcilePayosPayment(payment, "payos-status-poll"),
+      ) ?? payment.status;
     } catch (error) {
       console.error("Không thể đối soát trạng thái payOS", {
         paymentId: payment.id,
@@ -36,5 +42,5 @@ export async function GET(
     status === "pending" && isPendingPaymentExpired(payment.createdAt)
       ? "expired"
       : status;
-  return Response.json({ status: visibleStatus });
+  return Response.json({ status: visibleStatus }, { headers: privateHeaders });
 }

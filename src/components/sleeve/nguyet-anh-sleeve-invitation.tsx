@@ -267,11 +267,11 @@ export const NguyetAnhSleeveHandoffHero = forwardRef<
         {t("invitation")}
       </p>
       <h2 className="relative mt-[clamp(1rem,5cqw,1.65rem)] flex max-w-full flex-col items-center font-art-helvetica text-[clamp(2.1rem,11cqw,3.7rem)] font-light leading-[0.92] tracking-[-0.05em] text-[#D7E4EA]">
-        <span className="max-w-full text-balance">{people[0].shortName}</span>
+        <span data-invitation-short-name className="max-w-full text-balance">{people[0].shortName}</span>
         <span className="my-[clamp(0.3rem,1.5cqw,0.55rem)] text-[clamp(0.75rem,3.2cqw,1rem)] font-normal italic leading-[1.2] tracking-normal text-[#78C7D7]">
           {t("and")}
         </span>
-        <span className="max-w-full text-balance">{people[1].shortName}</span>
+        <span data-invitation-short-name className="max-w-full text-balance">{people[1].shortName}</span>
       </h2>
       <p className="relative mt-[clamp(1rem,5cqw,1.7rem)] text-[clamp(0.68rem,2.6cqw,0.82rem)] font-semibold leading-5 text-[#D7E4EA]">
         {dateAndTime}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiListing } from "@/components/chungdoi-listing";
+import { RouteMessages } from "@/components/route-messages";
 import { TemplateMobileThumbnailOverridesProvider } from "@/components/template-mobile-thumbnail-overrides";
 import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
 import { completedTemplates } from "@/data/chungdoi";
@@ -68,10 +69,12 @@ export default async function TemplatesPage({
   );
 
   return (
-    <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
-      <TemplateNameOverridesProvider value={templateNameOverrides}>
-        <ChungDoiListing initialTemplates={orderedTemplates} />
-      </TemplateNameOverridesProvider>
-    </TemplateMobileThumbnailOverridesProvider>
+    <RouteMessages>
+      <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
+        <TemplateNameOverridesProvider value={templateNameOverrides}>
+          <ChungDoiListing initialTemplates={orderedTemplates} />
+        </TemplateNameOverridesProvider>
+      </TemplateMobileThumbnailOverridesProvider>
+    </RouteMessages>
   );
 }

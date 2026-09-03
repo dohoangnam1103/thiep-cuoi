@@ -31,6 +31,11 @@ echo "🔧 Setup fast deploy trên ${REMOTE_TUNNEL_ALIAS} (${REMOTE_LAN_IP})"
 transport_init "$REMOTE_LAN_IP" "$REMOTE_LAN_USER" "$REMOTE_TUNNEL_ALIAS"
 trap transport_close EXIT
 
+if ! rsh "test ! -e ${REMOTE_APP_DIR}/RETIRED"; then
+  echo "❌ This production host is retired. Use npm run deploy:setup (VPS)."
+  exit 1
+fi
+
 if [[ "$TRANSPORT_KIND" == "lan" ]]; then
   echo "✅ Nối LAN trực tiếp tới ${REMOTE_LAN_IP} (bỏ qua Cloudflare tunnel)."
 else

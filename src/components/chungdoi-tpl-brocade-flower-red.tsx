@@ -73,11 +73,11 @@ export function BrocadeFlowerRedInvitation({ content }: { content: ChungDoiDemoC
                 <img src={`${BFR_BASE}/seal.webp`} alt="" aria-hidden className="absolute left-1/2 top-[19%] h-auto w-[24%] max-w-[106px] -translate-x-1/2 object-contain md:max-w-[200px]" />
                 <p className="absolute left-1/2 top-[43%] w-[72%] -translate-x-1/2 -translate-y-1/2 whitespace-pre-line text-center text-[clamp(7px,1.9vw,15px)] uppercase tracking-[0.12em]" style={{ fontFamily: '"Cormorant Garamond", "Times New Roman", serif', color: BFR_DARK }}>The wedding of</p>
                 <div className="absolute left-1/2 top-[52%] flex w-[55%] -translate-x-1/2 -translate-y-1/2 justify-center">
-                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{people[0].shortName}</span>
+                  <span data-invitation-short-name className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{people[0].shortName}</span>
                 </div>
                 <span className="absolute left-1/2 top-[61%] -translate-x-1/2 -translate-y-1/2 text-[clamp(20px,6.5vw,50px)] leading-none" style={{ ...ampFont, color: BFR_DARK }}>&amp;</span>
                 <div className="absolute left-1/2 top-[69%] flex w-[55%] -translate-x-1/2 -translate-y-1/2 justify-center">
-                  <span className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{people[1].shortName}</span>
+                  <span data-invitation-short-name className="whitespace-nowrap text-[clamp(24px,5vw,36px)] uppercase leading-[1.1]" style={{ fontFamily: '"Fz Aghita", "Times New Roman", serif', color: BFR_DARK }}>{people[1].shortName}</span>
                 </div>
               </div>
             </div>

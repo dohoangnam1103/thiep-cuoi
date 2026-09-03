@@ -1,0 +1,10 @@
+[Unit]
+Description=Reconcile payments every two hours (Vietnam time)
+
+[Timer]
+OnCalendar=*-*-* 00/2:23:00 Asia/Ho_Chi_Minh
+Persistent=true
+Unit=thiepmungonline-payos-reconcile.service
+
+[Install]
+WantedBy=timers.target

@@ -1,4 +1,6 @@
 import type { Payment } from "@/generated/prisma/client";
+import { sendTrackedEmail } from "@/lib/email-delivery";
+import { buildPaymentSuccessEmail, paymentSuccessDedupeKey } from "@/lib/email";
 import { BANK, PAYMENT_PENDING_EXPIRES_MS } from "@/lib/payment";
 import {
   cancelPayosPaymentRequest,
@@ -14,6 +16,8 @@ import {
   type SettlementSource,
 } from "@/lib/payment-settlement";
 import { prisma } from "@/lib/prisma";
+import { absoluteUrl } from "@/lib/site-url";
+import { buildCardName } from "@/lib/trial-reminder";
 
 function payosFields(data: PayosPaymentRequest) {
   return {
@@ -249,6 +253,53 @@ export async function settlePayment(input: {
   }
 
   if (claim.kind === "claimed") {
+    try {
+      const recipient = await prisma.invitation.findUnique({
+        where: { id: claim.invitationId },
+        select: {
+          userId: true,
+          user: { select: { email: true } },
+          content: true,
+        },
+      });
+      const email = recipient?.user.email?.trim();
+      if (recipient && email) {
+        const cardName = buildCardName(recipient.content);
+        const recipientName = cardName === "Thiệp cưới của bạn" ? "" : cardName;
+        const { subject, html } = buildPaymentSuccessEmail({
+          recipientName,
+          cardName,
+          accountEmail: email,
+          manageUrl: absoluteUrl("/dashboard"),
+        });
+        const delivery = await sendTrackedEmail({
+          dedupeKey: paymentSuccessDedupeKey(paymentId),
+          type: "payment-success",
+          recipientEmail: email,
+          recipientName,
+          subject,
+          html,
+          userId: recipient.userId,
+          invitationId: claim.invitationId,
+        });
+        if (delivery.status === "failed" || delivery.status === "manual-review") {
+          console.error("Không gửi được email cảm ơn thanh toán", {
+            paymentId,
+            invitationId: claim.invitationId,
+            deliveryId: delivery.deliveryId,
+            status: delivery.status,
+          });
+        }
+      }
+    } catch (error) {
+      // Email là tác vụ phụ: không được biến webhook thành lỗi sau khi tiền và
+      // trạng thái kích hoạt đã được commit thành công.
+      console.error("Không xử lý được email cảm ơn thanh toán", {
+        paymentId,
+        invitationId: claim.invitationId,
+        error: error instanceof Error ? error.message : "unknown",
+      });
+    }
     return {
       kind: "settled",
       invitationId: claim.invitationId,

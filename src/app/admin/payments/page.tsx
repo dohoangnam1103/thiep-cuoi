@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { adminPageWindow, adminResetHref, parsePage, parsePerPage } from "@/lib/admin-pagination";
 import {
@@ -108,7 +109,7 @@ export default async function AdminPaymentsPage({
       invitation: {
         include: {
           content: { select: { brideFullName: true, groomFullName: true } },
-          user: { select: { email: true } },
+          user: { select: { id: true, email: true } },
         },
       },
       // Chỉ cần ca mới nhất để dựng nhãn. Bảng là append-only nên một đơn có
@@ -186,7 +187,7 @@ export default async function AdminPaymentsPage({
         ) : null}
       </form>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
@@ -252,7 +253,14 @@ export default async function AdminPaymentsPage({
                       </Link>
                     </td>
                     <td className="px-4 py-3">
-                      {payment.invitation.user.email ?? (
+                      {payment.invitation.user.email ? (
+                        <Link
+                          href={`/admin/users/${payment.invitation.user.id}`}
+                          className="text-primary hover:underline"
+                        >
+                          {payment.invitation.user.email}
+                        </Link>
+                      ) : (
                         <span className="whitespace-nowrap rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-700">
                           chưa gắn email
                         </span>
@@ -308,7 +316,7 @@ export default async function AdminPaymentsPage({
             )}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
 
       <AdminPagination
         pagination={pagination}

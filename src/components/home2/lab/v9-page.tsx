@@ -20,15 +20,12 @@ import { parseFaqAnswer } from "@/lib/faq-answer";
 
 import { Home2Footer, Home2Header } from "../chrome";
 import { Shell } from "../primitives";
-import {
-  ClosingChapter,
-  FeaturesChapter,
-  GuestsChapter,
-  LanguagesChapter,
-  type ImageSize,
-} from "../sections-bottom";
-import { InstantChapter, Ribbon, TemplatesChapter } from "../sections-top";
-import { V9Hero, V9Journey, type V9TemplateShot } from "./v9-journey";
+import { ClosingChapter, type ImageSize } from "../sections-bottom";
+import { Ribbon } from "../sections-top";
+import { V9Hero, V9Journey } from "./v9-journey";
+import { useIsMobileLayout } from "./v9-journey-motion";
+import { V9MobileJourney } from "./v9-mobile-journey";
+import type { V9TemplateShot } from "./v9-stations";
 import "./v9.css";
 
 /* Một lời dẫn lớn + ba lời phụ, thay cho sáu thẻ đều nhau cùng gắn 5 sao. Lý do
@@ -39,25 +36,27 @@ import "./v9.css";
 const featuredTestimonial = "t2";
 const supportingTestimonials = ["t4", "t5", "t6"] as const;
 
-/* Sáu câu còn lại sau khi cắt bốn câu chỉ kể lại hành trình: q2 (ba bước tạo
-   thiệp), q3 (không cần biết thiết kế), q5 (thêm ảnh/nhạc/bản đồ/RSVP) và q9
-   (hiển thị tốt trên điện thoại). Sáu câu giữ lại đều trả lời thứ mà không
-   chương nào phía trên trả lời: định nghĩa, cần chuẩn bị gì, sửa sau khi gửi,
-   số khách, cách khách nhận thiệp, và chi phí. */
-const faqNumbers = [1, 4, 6, 7, 8, 10] as const;
+/* Năm câu còn lại. Cắt q2 (ba bước tạo thiệp), q3 (không cần biết thiết kế),
+   q5 (thêm ảnh/nhạc/bản đồ/RSVP) và q9 (hiển thị tốt trên điện thoại) vì trùng
+   trực tiếp với các trạm journey. Cắt thêm q7 (gửi được cho bao nhiêu khách) vì
+   trạm 05 đã trả lời gần nguyên văn: "Chia sẻ không giới hạn, link chung hoặc
+   link riêng" — giữ nó lại là để hai chỗ nói cùng một câu.
+
+   Năm câu giữ lại đều trả lời thứ không chương nào phía trên trả lời: thiệp
+   online là gì, cần chuẩn bị gì, sửa được sau khi gửi không, khách nhận thiệp
+   ra sao (câu này còn thêm chi tiết in QR lên thiệp giấy), và chi phí. */
+const faqNumbers = [1, 4, 6, 8, 10] as const;
 
 export function V9Page({
   shots,
   templateCount,
   instantTemplateId,
   rsvpImage,
-  languagesImage,
 }: {
   shots: V9TemplateShot[];
   templateCount: number;
   instantTemplateId: string;
   rsvpImage: ImageSize;
-  languagesImage: ImageSize;
 }) {
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -74,9 +73,9 @@ export function V9Page({
     };
   }, []);
 
+  const isMobile = useIsMobileLayout();
   const createHref = loggedIn ? TEMPLATE_LIST_PATH : loginHref(TEMPLATE_LIST_PATH);
   const heroShot = shots[0];
-  const galleryShots = shots.slice(1, 7);
 
   if (!heroShot) return null;
 
@@ -86,14 +85,36 @@ export function V9Page({
       <Home2Header createHref={createHref} />
       <main>
         <V9Hero shot={heroShot} createHref={createHref} />
-        <V9Journey shots={shots.slice(0, 4)} createHref={createHref} />
+        {/* Bốn mục chi tiết từng nằm ở đây (lưới mẫu, form gõ tên, danh sách tính
+            năng, ảnh trang quản lý) đã dời vào trong chính trạm nói về chúng —
+            xem `v9-station-assets.tsx`. Cấu trúc hai lớp buộc mỗi chủ đề xuất
+            hiện hai lần: hành trình kể, chương dưới chứng minh. Cắt hết câu trùng
+            vẫn không hết, vì cái lặp là do có hai lớp chứ không do cách viết. */}
+        {/* Hai bố cục, chọn ở runtime theo bề ngang màn hình — không phải một bố
+            cục co giãn. Desktop giữ hành trình sticky có tấm thiệp bay; mobile là
+            native story deck vuốt ngang và không điều khiển window scroll. Chọn
+            bằng `matchMedia` để chỉ mount một cây DOM, tránh tải hai bộ ảnh và
+            dựng ScrollTrigger desktop trên điện thoại. `null` là frame đầu (kể
+            cả trên server) khi còn chưa biết khổ màn hình. */}
+        {isMobile === null ? null : isMobile ? (
+          <V9MobileJourney
+            shots={shots.slice(0, 4)}
+            createHref={createHref}
+            templateCount={templateCount}
+            instantTemplateId={instantTemplateId}
+            rsvpImage={rsvpImage}
+          />
+        ) : (
+          <V9Journey
+            shots={shots.slice(0, 4)}
+            createHref={createHref}
+            templateCount={templateCount}
+            instantTemplateId={instantTemplateId}
+            rsvpImage={rsvpImage}
+          />
+        )}
         <TraditionChapter />
         <Ribbon templateCount={templateCount} />
-        <TemplatesChapter shots={galleryShots} templateCount={templateCount} />
-        <InstantChapter templateId={instantTemplateId} />
-        <FeaturesChapter />
-        <GuestsChapter imageSize={rsvpImage} />
-        <LanguagesChapter imageSize={languagesImage} />
         <SupportChapter />
         <TestimonialsChapter />
         <FullFaqChapter />

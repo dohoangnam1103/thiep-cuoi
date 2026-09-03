@@ -19,7 +19,7 @@ A web app for creating and sharing digital wedding invitations (thiệp cưới)
 - **Database:** Prisma 7 + SQLite (better-sqlite3 adapter)
 - **Auth:** session-based (`jose` JWT, `bcryptjs` password hashing)
 - **i18n:** next-intl — Vietnamese only (`messages/vi.json`). en/ko/ja/zh were removed; `src/i18n/routing.ts` serves `vi` with no URL prefix and every other prefix 404s. Copy still goes through the catalog, so do not hardcode strings.
-- **Deployment:** minipc / Docker (see `docs/deploy-minipc.md`)
+- **Deployment:** VPS `163.223.9.198` / Docker (see `docs/deploy-vps.md`). Minipc is retired; do not restart its stale production DB.
 
 ## Commands
 - `npm run dev` — Start dev server
@@ -34,7 +34,7 @@ A web app for creating and sharing digital wedding invitations (thiệp cưới)
 - `npm run prisma:migrate` — Run Prisma migrations (dev)
 - `npm run prisma:generate` — Regenerate Prisma client
 - `npm run test:lightbox` — Playwright check for the demo lightbox
-- `npm run deploy` — Deploy to minipc (`scripts/deploy-fast.sh`, helpers in `scripts/lib/`). `deploy:smoke` runs smoke checks only, `deploy:setup` provisions the host once, `deploy:legacy` is the old `deploy-minipc.sh` path. Details in `docs/deploy-minipc.md`.
+- `npm run deploy` — Deploy to VPS (`scripts/deploy-vps.sh`, existing prebuilt pipeline in `scripts/deploy-fast.sh`). `deploy:smoke` runs smoke checks; `deploy:setup` checks VPS provisioning/timers. Requires at least 6 GiB free before build. `deploy:legacy` is retired-host guarded. Details in `docs/deploy-vps.md`.
 
 ## Code Style
 - TypeScript strict mode, no `any`
@@ -75,12 +75,18 @@ docs/               # deploy guides + research notes
 - Some Prisma writes are wrapped in a data-access layer (`src/lib/dal.ts`) — prefer it over calling the client directly from components.
 - `public/chungdoi/images/template-previews/en/` is **not** a locale folder. It is a legacy directory name inherited from the cloned source and is the only preview directory; leave the path alone.
 
+## Cloning Invitation Templates — Required
+- Before cloning a template or correcting its visual fidelity, read [docs/template-clone-quality.md](docs/template-clone-quality.md). Apply its inspection, implementation, and visual acceptance checklist.
+- Inspect the complete reference on desktop and mobile, including opening cover, calendar, guestbook, gift envelope, and footer. Record each decoration's actual containing block; never copy percentage offsets without checking the parent dimensions.
+- Reuse shared behavior, but explicitly match each template's artwork and styles. Do not silently fall back to generic gift artwork or form styling.
+- Compare every section against the reference at matching viewport, zoom, scroll position, and interaction state before claiming completion. Lint/typecheck passing is not evidence of visual fidelity. Record evidence and any unverified differences in a per-template research note; do not mark incomplete visual checks as passed.
+
 ## Reference Docs — Read On Demand Only
 Do NOT read these unless the current task actually needs them. They are large and cost a lot of context.
 - `docs/research/INSPECTION_GUIDE.md` (36KB) — checklist for reverse-engineering a target website. Only for crawl/clone-a-template tasks.
 - `docs/research/DISTINCTIVE_TEMPLATE_ROADMAP.md` (50KB) — template roadmap.
 - `docs/research/asset-provenance.md` (57KB) — where each public asset came from.
-- `docs/deploy-minipc.md` — deployment. Read before touching deploy scripts.
+- `docs/deploy-vps.md` — current production deployment. Read before touching deploy scripts. `docs/deploy-minipc.md` is historical only.
 - `docs/superpowers/plans/*.md` — historical plan docs, some 80-175KB. Skim by heading, never read whole.
 
 ## Context Efficiency Rules

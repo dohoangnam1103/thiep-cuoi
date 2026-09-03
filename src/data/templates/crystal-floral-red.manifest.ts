@@ -63,14 +63,16 @@ export const manifest = defineTemplateManifest({
     sealType: "heart",
     decorations: {
       cardImages: [
+        // `envelope-fly-fit-height` lo phần đo kích thước (className chốt chiều
+        // cao), `crystal-floral-opening-fly` lo phần opacity. Xem globals.css.
         {
           src: `${themeRoot}/flower2.webp`,
-          className: "crystal-floral-opening-fly h-36 md:h-32 lg:h-36 w-auto max-w-none -top-[5%] -left-[14px] md:-left-[26px] -translate-x-[6%] md:-translate-x-[11%] opacity-100 rotate-[25deg]",
+          className: "envelope-fly-fit-height crystal-floral-opening-fly h-36 md:h-32 lg:h-36 w-auto max-w-none -top-[5%] -left-[14px] md:-left-[26px] -translate-x-[6%] md:-translate-x-[11%] opacity-100 rotate-[25deg]",
           flyOnOpen: true,
         },
         {
           src: `${themeRoot}/flower3.webp`,
-          className: "crystal-floral-opening-fly h-36 md:h-32 lg:h-36 w-auto max-w-none -bottom-[5%] -right-[14px] md:-right-[26px] translate-x-[6%] md:translate-x-[11%] opacity-100 -rotate-[25deg]",
+          className: "envelope-fly-fit-height crystal-floral-opening-fly h-36 md:h-32 lg:h-36 w-auto max-w-none -bottom-[5%] -right-[14px] md:-right-[26px] translate-x-[6%] md:translate-x-[11%] opacity-100 -rotate-[25deg]",
           flyOnOpen: true,
         },
       ],

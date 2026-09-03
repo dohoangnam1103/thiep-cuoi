@@ -449,23 +449,28 @@ test.describe("templates — gallery listing", () => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto("/vi/templates");
 
-      const mobileImage = page.getByTestId(`template-mobile-thumbnail-${templateId}`);
-      const desktopImage = page.getByTestId(`template-listing-thumbnail-${templateId}`);
-      await expect(mobileImage).toBeVisible();
-      await expect(desktopImage).toBeHidden();
-      await expect(mobileImage).toHaveAttribute("src", /00000000-0000-4000-8000-000000000001\.webp/);
+      const image = page.getByTestId(`template-listing-thumbnail-${templateId}`);
+      await expect(image).toBeVisible();
+      await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.currentSrc))
+        .toContain("00000000-0000-4000-8000-000000000001.webp");
+      await expect(page.getByTestId(`template-listing-full-${templateId}`)).toHaveCount(0);
 
       await page.setViewportSize({ width: 1280, height: 900 });
-      await expect(mobileImage).toBeHidden();
-      await expect(desktopImage).toBeVisible();
-      await expect(desktopImage).toHaveAttribute("src", /listing/);
-      await expect(desktopImage).toHaveClass(/group-hover:translate-y/);
+      await expect(image).toBeVisible();
+      await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.currentSrc))
+        .toContain("listing-thumbnails/");
+      await image.hover();
+      const fullImage = page.getByTestId(`template-listing-full-${templateId}`);
+      await expect(fullImage).toHaveAttribute("src", /listing/);
+      await expect(fullImage).toHaveAttribute("data-active", "true");
+      await expect(fullImage).toBeVisible();
 
       db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
       await page.setViewportSize({ width: 390, height: 844 });
       await page.reload();
-      await expect(page.getByTestId(`template-mobile-thumbnail-${templateId}`)).toHaveCount(0);
       await expect(page.getByTestId(`template-listing-thumbnail-${templateId}`)).toBeVisible();
+      await expect.poll(() => page.getByTestId(`template-listing-thumbnail-${templateId}`).evaluate((element: HTMLImageElement) => element.currentSrc))
+        .toContain("listing-thumbnails/");
     } finally {
       db.prepare("DELETE FROM TemplateMobileThumbnail WHERE slug = ?").run(templateId);
     }

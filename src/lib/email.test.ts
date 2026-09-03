@@ -4,10 +4,40 @@ import test from "node:test";
 import { signEmailClickToken } from "./email-click";
 import {
   buildExpiredReminderEmail,
+  buildPaymentSuccessEmail,
   buildReminderEmail,
   buildTrialReminderEmail,
   reminderDedupeKey,
+  paymentSuccessDedupeKey,
 } from "./email";
+
+test("mail thanh toán thành công cảm ơn và dẫn về trang quản lý thiệp", () => {
+  const { subject, html } = buildPaymentSuccessEmail({
+    recipientName: "Thạch",
+    cardName: "Thạch & Jade",
+    accountEmail: "thach@example.com",
+    manageUrl: "https://thiepmungonline.com/dashboard",
+  });
+  assert.ok(subject.includes("Thanh toán thành công"));
+  assert.ok(html.includes("Cảm ơn bạn"));
+  assert.ok(html.includes("Thạch &amp; Jade"));
+  assert.ok(html.includes("Mở trang quản lý thiệp"));
+  assert.ok(html.includes("đăng nhập bằng đúng email"));
+  assert.ok(html.includes("thach@example.com"));
+  assert.ok(html.includes("https://thiepmungonline.com/dashboard"));
+  assert.equal(paymentSuccessDedupeKey("pay-1"), "payment-success:pay-1");
+});
+
+test("mail thanh toán escape email tài khoản trước khi đưa vào HTML", () => {
+  const { html } = buildPaymentSuccessEmail({
+    recipientName: "bạn",
+    cardName: "Thiệp cưới của bạn",
+    accountEmail: 'x<fake>@example.com',
+    manageUrl: "https://thiepmungonline.com/dashboard",
+  });
+  assert.ok(!html.includes("x<fake>@example.com"));
+  assert.ok(html.includes("x&lt;fake&gt;@example.com"));
+});
 
 test("subject chứa tên thiệp", () => {
   const { subject } = buildTrialReminderEmail({

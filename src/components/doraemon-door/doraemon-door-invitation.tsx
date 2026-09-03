@@ -266,13 +266,13 @@ export const DoraemonDoorHandoffHero = forwardRef<
           data-testid="doraemon-door-hero-couple-names"
           className="mt-3 w-full font-art-marvin text-[clamp(2.15rem,10vw,3rem)] leading-[0.84] tracking-[-0.035em] text-[#17334A] sm:w-auto sm:text-[clamp(2.8rem,8vw,7rem)]"
         >
-          <span className="block whitespace-nowrap sm:inline">
+          <span data-invitation-short-name className="block whitespace-nowrap sm:inline">
             {people[0].shortName}
           </span>
           <span className="my-1 block text-[0.42em] text-[#E96F9A] sm:mx-[0.18em] sm:my-0 sm:inline">
             {invitationT("and")}
           </span>
-          <span className="block whitespace-nowrap sm:inline">
+          <span data-invitation-short-name className="block whitespace-nowrap sm:inline">
             {people[1].shortName}
           </span>
         </h2>

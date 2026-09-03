@@ -119,9 +119,9 @@ export function SunflowerInvitation({ content }: { content: ChungDoiDemoContent 
             <p className="text-[12px] font-semibold uppercase tracking-[0.34em] md:text-[15px]">The Wedding Of</p>
           </div>
           <div className="relative z-10 ml-auto mt-20 flex w-[56%] flex-col items-center text-center md:mt-28 md:w-[52%]">
-            <p className="whitespace-nowrap text-[35px] italic uppercase leading-tight md:text-[44px]" style={{ color: GOLD }}>{people[0].shortName}</p>
+            <p data-invitation-short-name className="font-art-aghita whitespace-nowrap text-[35px] italic uppercase leading-tight md:text-[44px]" style={{ color: GOLD }}>{people[0].shortName}</p>
             <p className="font-art-nautigal -my-1 text-[31px] md:text-[42px]">and</p>
-            <p className="whitespace-nowrap text-[35px] italic uppercase leading-tight md:text-[44px]" style={{ color: GOLD }}>{people[1].shortName}</p>
+            <p data-invitation-short-name className="font-art-aghita whitespace-nowrap text-[35px] italic uppercase leading-tight md:text-[44px]" style={{ color: GOLD }}>{people[1].shortName}</p>
           </div>
         </section>
 

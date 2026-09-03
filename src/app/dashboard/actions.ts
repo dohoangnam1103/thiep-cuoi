@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 
+import { getDemoFontFamily } from "@/lib/demo-font-default";
 import { prisma } from "@/lib/prisma";
 import { templates } from "@/data/chungdoi";
 import { getAccountSessionUserId } from "@/lib/auth/anonymous-account";
@@ -42,6 +43,7 @@ export async function createInvitation(formData?: FormData): Promise<void> {
   }
 
   const primaryColor = zodiacTemplatePrimaryColor(templateId);
+  const fontFamily = await getDemoFontFamily(prisma, templateId);
 
   const invitation = await prisma.invitation.create({
     data: {
@@ -50,6 +52,7 @@ export async function createInvitation(formData?: FormData): Promise<void> {
       status: "draft",
       content: {
         create: {
+          fontFamily,
           groomShortName,
           brideShortName,
           ...(primaryColor ? { primaryColor } : {}),

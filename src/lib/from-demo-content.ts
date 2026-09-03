@@ -1,4 +1,5 @@
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { dedicatedHeroImage } from "@/lib/hero-image-source";
 
 export type DemoContentFields = {
   primaryColor: string;
@@ -82,8 +83,8 @@ export function fromDemoContent(demo: ChungDoiDemoContent): DemoSeed {
       ceremonyHeader: couple.ceremonyHeader ?? "",
       ceremonyType: couple.ceremonyType === "vu-quy" ? "vu-quy" : "thanh-hon",
       openingMessage: couple.openingMessage ?? "",
-      heroImage: demo.heroImage ?? "",
-      heroImage2: demo.heroImage2 ?? "",
+      heroImage: dedicatedHeroImage(demo.heroImage),
+      heroImage2: dedicatedHeroImage(demo.heroImage2),
       showHeroImage: demo.showHeroImage ?? true,
       dressCodeColors: demo.dressCodeColors ?? "",
       albumLayout: demo.albumLayout ?? "grid",

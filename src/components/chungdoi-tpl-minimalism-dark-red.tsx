@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -251,7 +251,7 @@ function MinimalismInvitation({
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time;
   const welcomeTime = venue.welcomeTime ?? "";
-  const heroPhoto = content.heroImage || gallery[0];
+  const heroPhoto = invitationHeroImage(content);
   const dressColors = (content.dressCodeColors ?? "")
     .split(",")
     .map((color) => color.trim())
@@ -320,9 +320,9 @@ function MinimalismInvitation({
           </div>
 
           <div className="relative z-10 mt-16 flex flex-col items-center gap-[22px] md:mt-20">
-            <p className="text-[clamp(38px,11vw,46px)] leading-none md:text-[58px]" style={{ ...SCRIPT, color: WINE }}>{people[0].shortName}</p>
+            <p data-invitation-short-name className="text-[clamp(38px,11vw,46px)] leading-none md:text-[58px]" style={{ ...SCRIPT, color: WINE }}>{people[0].shortName}</p>
             <span aria-hidden className="pointer-events-none absolute top-[37%] -translate-y-1/2 text-[92px] leading-none md:text-[120px]" style={{ ...NAUTIGAL, color: hexToRgba(WINE, 0.15) }}>&amp;</span>
-            <p className="text-[clamp(38px,11vw,46px)] leading-none md:text-[58px]" style={{ ...SCRIPT, color: WINE }}>{people[1].shortName}</p>
+            <p data-invitation-short-name className="text-[clamp(38px,11vw,46px)] leading-none md:text-[58px]" style={{ ...SCRIPT, color: WINE }}>{people[1].shortName}</p>
           </div>
         </header>
 
@@ -634,7 +634,10 @@ function MinimalismInvitation({
         {banks.length > 0 ? (
           <div className="relative z-10 overflow-x-clip">
             <CastleWatermark className="left-1/2 top-[6%] w-[155%]" />
-            <section className="relative z-10 flex flex-col items-center px-6 pb-10 pt-8 text-center">
+            {/* pt lớn: tờ giấy note ở khối WISHES là ảnh absolute cao ~0.91× bề
+                rộng (120% khung), nên khi ít lời chúc nó tràn xuống dưới section
+                đó — chừa chỗ để khối quà không bị đè. */}
+            <section className="relative z-10 flex flex-col items-center px-6 pb-10 pt-28 text-center md:pt-36">
               <GiftEnvelope
                 templateSlug={content.slug}
                 banks={banks}

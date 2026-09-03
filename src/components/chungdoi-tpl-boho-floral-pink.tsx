@@ -31,9 +31,9 @@ function BohoFloralPinkHero({ content }: { content: ChungDoiDemoContent }) {
 
       <div className="absolute right-[8%] top-[160px] z-20 flex w-[47%] flex-col items-center text-center md:right-[17%] md:top-[160px] md:w-[32%]">
         <span className="text-[12px] tracking-[0.12em] md:text-[14px]">{people[0].birthOrder}</span>
-        <span className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{people[0].shortName}</span>
+        <span data-invitation-short-name className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{people[0].shortName}</span>
         <span className="mt-3 text-[12px] tracking-[0.12em] md:text-[14px]">{people[1].birthOrder}</span>
-        <span className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{people[1].shortName}</span>
+        <span data-invitation-short-name className="mt-1 text-[29px] leading-tight md:text-[36px]" style={scriptFont}>{people[1].shortName}</span>
       </div>
 
       <div className="relative z-10 mx-auto h-[690px] w-full max-w-[430px] md:ml-[18%] md:h-[650px] md:max-w-[440px]">

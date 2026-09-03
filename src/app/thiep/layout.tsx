@@ -1,4 +1,6 @@
-import { NextIntlClientProvider } from "next-intl";
+import { HeroTypographyDefaults } from "@/components/hero-typography-defaults";
+import { RouteMessages } from "@/components/route-messages";
+import { invitationMessageNamespaces } from "@/i18n/message-scopes";
 
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { PetalField } from "@/components/petal-field";
@@ -13,7 +15,7 @@ export default function ThiepLayout({ children }: { children: React.ReactNode })
         {/* ChungDoiDemo and friends are client components that call
             useTranslations, so the published invitation tree needs its own
             NextIntlClientProvider — this route group is outside [locale]. */}
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <RouteMessages namespaces={invitationMessageNamespaces}><HeroTypographyDefaults>{children}</HeroTypographyDefaults></RouteMessages>
         <GoogleAnalytics />
       </body>
     </html>

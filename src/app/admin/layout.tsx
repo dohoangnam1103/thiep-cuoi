@@ -1,3 +1,4 @@
+import { HeroTypographyDefaults } from "@/components/hero-typography-defaults";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NextIntlClientProvider } from "next-intl";
@@ -97,11 +98,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                     <AdminNav items={nav} orientation="horizontal" />
                   </div>
                 </header>
-                <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+                <main className="mx-auto max-w-6xl px-4 py-6"><HeroTypographyDefaults>{children}</HeroTypographyDefaults></main>
               </div>
             </div>
           ) : (
-            <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+            <main className="mx-auto max-w-6xl px-4 py-6"><HeroTypographyDefaults>{children}</HeroTypographyDefaults></main>
           )}
         </NextIntlClientProvider>
       </body>

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { AdminPagination, AdminPerPageField } from "@/components/admin-pagination";
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifyAdmin } from "@/lib/admin-dal";
 import {
   adminPageHref,
@@ -42,6 +43,7 @@ const inputClass =
 const EMAIL_TYPES = [
   "trial-ending",
   "expired",
+  "payment-success",
   "welcome",
   "onboarding-no-invitation",
   "system-notice",
@@ -254,6 +256,7 @@ export default async function AdminEmailLogsPage({
   const typeLabel: Record<string, string> = {
     "trial-ending": t("emailTypeTrialEnding"),
     expired: t("emailTypeExpired"),
+    "payment-success": t("emailTypePaymentSuccess"),
     welcome: t("emailTypeWelcome"),
     "onboarding-no-invitation": t("emailTypeOnboarding"),
     "system-notice": t("emailTypeSystem"),
@@ -296,7 +299,7 @@ export default async function AdminEmailLogsPage({
           </p>
         ) : (
           <>
-            <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+            <AdminTableScroller>
               <table className="w-full text-sm">
                 <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
                   <tr>
@@ -354,7 +357,7 @@ export default async function AdminEmailLogsPage({
                   </tr>
                 </tfoot>
               </table>
-            </div>
+            </AdminTableScroller>
             <p className="text-xs text-muted-foreground">{t("emailFunnelCaveat")}</p>
           </>
         )}
@@ -393,7 +396,7 @@ export default async function AdminEmailLogsPage({
             {t("emailUpcomingNone", { count: FORECAST_RUN_COUNT })}
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+          <AdminTableScroller>
             <table className="w-full text-sm">
               <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
                 <tr>
@@ -442,7 +445,7 @@ export default async function AdminEmailLogsPage({
                 })}
               </tbody>
             </table>
-          </div>
+          </AdminTableScroller>
         )}
       </section>
 
@@ -541,7 +544,7 @@ export default async function AdminEmailLogsPage({
         </p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
@@ -591,7 +594,7 @@ export default async function AdminEmailLogsPage({
             })}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
 
       <AdminPagination pagination={pagination} basePath="/admin/email-logs" params={listParams} />
     </div>

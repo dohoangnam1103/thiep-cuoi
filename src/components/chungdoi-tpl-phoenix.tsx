@@ -180,8 +180,8 @@ export function PhoenixInvitation({
 
         <header className="relative z-10 flex flex-col items-center justify-center pb-[180px] pt-12 text-center md:pb-[220px] md:pt-16">
           <div className="mb-6 w-full pl-6 text-left text-[36px] uppercase md:mb-8 md:ml-[80px] md:pl-8 md:text-[52px]" style={{ fontFamily: '"Fz Aghita", "Pattaya", cursive' }}>
-            <div className="ml-[15px]">{headerNames[0]}</div>
-            <div className="ml-[50px] mt-[10px]">{headerNames[1]}</div>
+            <div data-invitation-short-name className="ml-[15px]">{headerNames[0]}</div>
+            <div data-invitation-short-name className="ml-[50px] mt-[10px]">{headerNames[1]}</div>
           </div>
           <div
             className="relative flex h-[260px] w-full items-center justify-center md:h-[488px]"

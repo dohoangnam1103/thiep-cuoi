@@ -202,11 +202,11 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             className="relative z-10 flex w-full flex-col items-center px-4"
             style={{ fontFamily: LPD_UNI, color: GOLD }}
           >
-            <span className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
+            <span data-invitation-short-name className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
               {headerNames[0]}
             </span>
             <span className="mt-1 text-[37px] md:text-[50px]">&amp;</span>
-            <span className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
+            <span data-invitation-short-name className="max-w-full text-balance break-words text-[clamp(42px,11.5vw,70px)] leading-[1.1] md:leading-[105px]">
               {headerNames[1]}
             </span>
           </div>

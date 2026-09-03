@@ -106,6 +106,26 @@ test("a zero-amount voucher payment adds nothing to revenue", () => {
   assert.equal(sumDailyValues(series), 0);
 });
 
+test("reminder emails count by send date across Vietnam midnight, skipping unsent rows", () => {
+  const deliveries = [
+    { sentAt: new Date("2026-08-23T16:59:59.000Z") },
+    { sentAt: new Date("2026-08-23T17:00:00.000Z") },
+    { sentAt: LATE_NIGHT_IN_VIETNAM },
+    { sentAt: null },
+  ];
+  for (const range of [7, 30, 90]) {
+    const series = buildDailySeries(
+      deliveries.map((delivery) => ({ at: delivery.sentAt })),
+      range,
+      LATE_NIGHT_IN_VIETNAM,
+    );
+    assert.equal(series.length, range);
+    assert.equal(series.at(-2)?.value, 1);
+    assert.equal(series.at(-1)?.value, 2);
+    assert.equal(sumDailyValues(series), 3);
+  }
+});
+
 test("only the offered ranges survive the URL", () => {
   assert.equal(parseDailyRange("7"), 7);
   assert.equal(parseDailyRange("90"), 90);

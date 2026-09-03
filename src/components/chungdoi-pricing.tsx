@@ -13,7 +13,6 @@ import {
   labelClass,
   noteClass,
   pageTitleClass,
-  pillClass,
   priceAltClass,
   priceMainClass,
   sectionTitleClass,
@@ -80,19 +79,12 @@ export function ChungDoiPricing({ prices }: { prices: PricingData }) {
           <div className="rounded-2xl border border-primary bg-card p-8 shadow-[0_8px_30px_rgb(0_0_0/0.06)] ring-1 ring-primary">
             <div className="flex items-center gap-3">
               <p className={`${labelClass} text-primary`}>{t("planType")}</p>
-              <span className={`rounded-full bg-accent px-3 py-1 ${pillClass} text-accent-foreground`}>-50%</span>
+              <s className="whitespace-nowrap text-sm font-bold text-muted-foreground">{t("originalPrice")}</s>
             </div>
             <p className={`mt-4 ${priceMainClass} text-foreground`}>{formatVnd(productPrice)}</p>
             <p className={`mt-2 ${bodyClass} text-muted-foreground`}>{t("planPay")}</p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {planNotes.map((note) => (
-                <span key={note} className={`rounded-full bg-secondary px-3 py-1 ${pillClass} text-secondary-foreground`}>
-                  {note}
-                </span>
-              ))}
-            </div>
             <ul className="mt-7 grid gap-3 sm:grid-cols-2">
-              {features.map((item) => (
+              {[...planNotes, ...features].map((item) => (
                 <li key={item} className={`flex gap-2 ${bodyClass} text-foreground`}>
                   <Check className="mt-0.5 size-4 shrink-0 text-primary" />
                   {item}
@@ -111,7 +103,7 @@ export function ChungDoiPricing({ prices }: { prices: PricingData }) {
             <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0_0_0/0.06)]">
               <div className="flex items-center justify-between">
                 <p className={`${labelClass} text-muted-foreground`}>{t("secondTitle")}</p>
-                <span className={`rounded-full bg-accent px-3 py-1 ${pillClass} text-accent-foreground`}>-50%</span>
+                <s className="whitespace-nowrap text-sm font-bold text-muted-foreground">{t("originalPrice")}</s>
               </div>
               <p className={`mt-4 ${priceAltClass} text-foreground`}>{formatVnd(repeatCustomerPrice)}</p>
               <p className={`mt-3 ${bodyClass} text-muted-foreground`}>{t("secondNote")}</p>

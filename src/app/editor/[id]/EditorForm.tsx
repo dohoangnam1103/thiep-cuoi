@@ -42,12 +42,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
+import { dedicatedHeroImage } from "@/lib/hero-image-source";
 
 import {
   directionsUrl,
   InvitationMap,
 } from "@/components/chungdoi-tpl-shared";
 import { AdaptiveToaster } from "@/components/adaptive-toaster";
+import { AdminHeroTypography } from "@/app/admin/demos/AdminHeroTypography";
 import { AlbumLayoutPreview } from "@/components/album-layout-preview";
 import { TrialCountdownBanner } from "@/components/trial-countdown-banner";
 import { BankCombobox } from "@/components/ui/bank-combobox";
@@ -316,6 +318,7 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
     theme: {
       primaryColor: read("primaryColor") || "#c8102e",
       fontFamily: read("fontFamily") || null,
+      userFontFamily: read("fontFamily") || null,
       assetFolder: null,
       assets: [],
     },
@@ -1193,7 +1196,7 @@ function HeroImageSlot({
   onUploaded: () => void;
 }) {
   const uploadT = useTranslations("editor.upload");
-  const [url, setUrl] = useState(initialUrl);
+  const [url, setUrl] = useState(() => dedicatedHeroImage(initialUrl));
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const valueInputRef = useRef<HTMLInputElement | null>(null);
@@ -1298,6 +1301,7 @@ function HeroImageUploader({
   initialEnabled: boolean;
   count: 0 | 1 | 2;
 }) {
+  const uploadT = useTranslations("editor.upload");
   const [enabled, setEnabled] = useState(initialEnabled);
   const enabledInputRef = useRef<HTMLInputElement | null>(null);
   const mountedRef = useRef(false);
@@ -1317,8 +1321,8 @@ function HeroImageUploader({
   if (count === 0) {
     return (
       <>
-        <input type="hidden" name="heroImage" value={initialUrl} />
-        <input type="hidden" name="heroImage2" value={initialUrl2} />
+        <input type="hidden" name="heroImage" value={dedicatedHeroImage(initialUrl)} />
+        <input type="hidden" name="heroImage2" value={dedicatedHeroImage(initialUrl2)} />
         {hiddenEnabled}
       </>
     );
@@ -1331,7 +1335,7 @@ function HeroImageUploader({
         <div>
           <p className="text-sm font-semibold text-foreground">Ảnh đầu thiệp</p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {count === 2 ? "Hai ảnh cho phần mở đầu của mẫu thiệp này. Vị trí hiển thị theo thứ tự nhà trai/nhà gái bạn đã chọn." : "Ảnh riêng cho phần mở đầu của mẫu thiệp này."}
+            {uploadT(count === 2 ? "heroAlbumFallbackTwo" : "heroAlbumFallbackOne")}
           </p>
         </div>
         <label className="inline-flex shrink-0 cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
@@ -1353,7 +1357,7 @@ function HeroImageUploader({
       ) : (
         <>
           <HeroImageSlot name="heroImage" initialUrl={initialUrl} dimmed={!enabled} onUploaded={() => setEnabled(true)} />
-          <input type="hidden" name="heroImage2" value={initialUrl2} />
+          <input type="hidden" name="heroImage2" value={dedicatedHeroImage(initialUrl2)} />
         </>
       )}
     </div>
@@ -2919,7 +2923,7 @@ function DemoEditorFormBody({
   const isPublished = status === "published";
 
   return (
-    <>
+    <AdminHeroTypography key={selectedTemplateId} invitationId={invitationId} slug={selectedTemplateId} active={tab === "preview"}>
       <AdaptiveToaster />
       <div className="fixed left-1/2 top-4 z-[120] -translate-x-1/2">
         <TabBar
@@ -3427,7 +3431,7 @@ function DemoEditorFormBody({
           setCeremonyDeleteId(null);
         }}
       />
-    </>
+    </AdminHeroTypography>
   );
 }
 

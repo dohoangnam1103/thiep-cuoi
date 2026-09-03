@@ -68,9 +68,9 @@ export function ChateauInvitation({ content }: { content: ChungDoiDemoContent })
             <img src={`${CHATEAU_BASE}/asset-1.webp`} alt="" aria-hidden className="h-auto w-[56px] scale-x-[-1] object-contain opacity-90 md:w-[80px]" />
           </div>
           <div className="relative z-30 mt-14 flex flex-col items-center leading-none md:mt-16" style={{ color: CHATEAU_NAVY }}>
-            <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[0].shortName}</span>
+            <span data-invitation-short-name className="text-[42px] md:text-[64px]" style={nameFont}>{people[0].shortName}</span>
             <span className="my-8 text-[25px] md:my-10 md:text-[34px]" style={ampFont}>&amp;</span>
-            <span className="text-[42px] md:text-[64px]" style={nameFont}>{people[1].shortName}</span>
+            <span data-invitation-short-name className="text-[42px] md:text-[64px]" style={nameFont}>{people[1].shortName}</span>
           </div>
           <div data-testid="chateau-blue-hero-scene" className="relative -mt-16 mb-10 flex min-h-[430px] w-full shrink-0 items-end justify-center md:-mt-14 md:mb-0 md:min-h-[680px]">
             <img src={`${CHATEAU_BASE}/cloud-1.webp`} alt="" aria-hidden className="pointer-events-none absolute -top-[50%] right-[-28%] z-0 h-auto w-[100%] max-w-none object-contain opacity-90" />

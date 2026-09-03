@@ -1,18 +1,19 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { verifyAdmin } from "@/lib/admin-dal";
-import { completedTemplateSlugs, getVietnameseTemplateSlug } from "@/data/chungdoi";
+import { completedTemplateSlugs, getVietnameseTemplateSlug, retiredTemplateSlugs } from "@/data/chungdoi";
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { templateSeoFacets } from "@/data/template-seo-facets";
 import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
 import { isEditorUploadPublicUrl } from "@/lib/editor-uploads";
 import { defaultTemplateLabel } from "@/lib/template-labels";
+import { PUBLIC_DEMO_CONTENT_CACHE_TAG } from "@/lib/public-demo-content";
 import {
   parseCeremonies,
   parseSchedule,
@@ -24,7 +25,9 @@ import {
 export async function saveDemo(id: string, _prev: EditorState, formData: FormData): Promise<EditorState> {
   await verifyAdmin();
 
-  const invitation = await prisma.invitation.findFirst({ where: { id, isDemo: true } });
+  const invitation = await prisma.invitation.findFirst({
+    where: { id, isDemo: true, templateId: { notIn: [...retiredTemplateSlugs] } },
+  });
   if (!invitation) return { errorCode: "invitationNotFound" };
 
   const parsed = contentSchema.safeParse(Object.fromEntries(formData));
@@ -81,6 +84,7 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
       : []),
   ]);
 
+  updateTag(PUBLIC_DEMO_CONTENT_CACHE_TAG);
   revalidatePath("/admin/demos");
   for (const locale of routing.locales) {
     const slug = locale === "vi" ? getVietnameseTemplateSlug(templateId) : templateId;
@@ -180,7 +184,9 @@ export async function saveTemplateDisplayOrder(
   }
 
   const demos = await prisma.invitation.findMany({
-    where: { isDemo: true },
+    // Validate the same demo set rendered by the manager; retired demos can
+    // remain in the database but are never included in its reorder payload.
+    where: { isDemo: true, templateId: { notIn: [...retiredTemplateSlugs] } },
     select: { templateId: true },
   });
   const demoSlugs = new Set(demos.map((demo) => demo.templateId));
@@ -282,6 +288,10 @@ export async function renameTemplate(
   revalidatePath("/dashboard");
   revalidatePath("/editor", "layout");
   revalidatePublicTemplatePresentation();
+  // Demo metadata contains the name too, and now lives in the route cache.
+  const routeSlug = getVietnameseTemplateSlug(templateId);
+  revalidatePath(`/vi/templates/${routeSlug}/demo`);
+  revalidatePath(`/mau-thiep/${routeSlug}/demo`);
 
   return { ok: true, name: name || defaultTemplateLabel(templateId) };
 }

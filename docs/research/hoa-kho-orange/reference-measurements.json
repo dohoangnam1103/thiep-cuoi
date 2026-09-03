@@ -1,0 +1,169 @@
+{
+  "decor": [
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": null,
+      "vars": "transform: translate(-50%, -50%); --hk-left: 25.7%; --hk-left-md: 25.7%; --hk-top: 21.9%; --hk-top-md: 21.9%; --hk-w: 79.3%; --hk-w-md: 79.3%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": "transform: rotate(10.96deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 84.2%; --hk-left-md: 84.2%; --hk-top: 67.2%; --hk-top-md: 67.2%; --hk-w: 66.78%; --hk-w-md: 66.78%;"
+    },
+    {
+      "file": "flower2.webp",
+      "front": true,
+      "rotation": "transform: rotate(49.35deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 80.6%; --hk-left-md: 80.6%; --hk-top: 17.6%; --hk-top-md: 17.6%; --hk-w: 68.07%; --hk-w-md: 68.07%;"
+    },
+    {
+      "file": "flower4.webp",
+      "front": true,
+      "rotation": "transform: rotate(-8.1deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 19.6%; --hk-left-md: 19.6%; --hk-top: 75%; --hk-top-md: 75%; --hk-w: 53.16%; --hk-w-md: 53.16%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": null,
+      "vars": "transform: translate(-50%, -50%); --hk-left: 14.3%; --hk-left-md: 20%; --hk-top: 76.3%; --hk-top-md: 76.3%; --hk-w: 79.3%; --hk-w-md: 49.166%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": "transform: rotate(10.96deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 94.8%; --hk-left-md: 80%; --hk-top: 22%; --hk-top-md: 40%; --hk-w: 77%; --hk-w-md: 47.74%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": true,
+      "rotation": "transform: rotate(-170.05deg) scaleY(-1);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: -2.6%; --hk-left-md: 14.3%; --hk-top: 44.5%; --hk-top-md: 44.5%; --hk-w: 58.6%; --hk-w-md: 36.332%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": true,
+      "rotation": "transform: rotate(177.5deg) scaleY(-1);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 102.2%; --hk-left-md: 80%; --hk-top: 74.3%; --hk-top-md: 74.3%; --hk-w: 58.6%; --hk-w-md: 36.332%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": null,
+      "vars": "transform: translate(-50%, -50%); --hk-left: 14.3%; --hk-left-md: 14.3%; --hk-top: 74.1%; --hk-top-md: 74.1%; --hk-w: 79.3%; --hk-w-md: 49.166%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": "transform: rotate(10.96deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 94.8%; --hk-left-md: 90%; --hk-top: 26.2%; --hk-top-md: 35%; --hk-w: 77%; --hk-w-md: 47.74%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": true,
+      "rotation": "transform: rotate(2.5deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: -2.5%; --hk-left-md: 14.3%; --hk-top: 32.1%; --hk-top-md: 28%; --hk-w: 58.6%; --hk-w-md: 36.332%;"
+    },
+    {
+      "file": "flower2.webp",
+      "front": true,
+      "rotation": "transform: rotate(-57.96deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 102.3%; --hk-left-md: 80%; --hk-top: 81.4%; --hk-top-md: 80%; --hk-w: 57.2%; --hk-w-md: 35.464%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": null,
+      "vars": "transform: translate(-50%, -50%); --hk-left: 5.8%; --hk-left-md: 5.8%; --hk-top: 75.7%; --hk-top-md: 75.7%; --hk-w: 79.3%; --hk-w-md: 49.166%;"
+    },
+    {
+      "file": "flower3.webp",
+      "front": false,
+      "rotation": "transform: rotate(10.96deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 86.2%; --hk-left-md: 86.2%; --hk-top: 29.1%; --hk-top-md: 29.1%; --hk-w: 77%; --hk-w-md: 47.74%;"
+    },
+    {
+      "file": "flower2.webp",
+      "front": true,
+      "rotation": "transform: rotate(-75.21deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: -4.9%; --hk-left-md: 15%; --hk-top: 23.5%; --hk-top-md: 20%; --hk-w: 57.2%; --hk-w-md: 35.464%;"
+    },
+    {
+      "file": "flower2.webp",
+      "front": true,
+      "rotation": "transform: rotate(-75.21deg);",
+      "vars": "transform: translate(-50%, -50%); --hk-left: 102.6%; --hk-left-md: 102.6%; --hk-top: 71.8%; --hk-top-md: 71.8%; --hk-w: 57.2%; --hk-w-md: 35.464%;"
+    }
+  ],
+  "sections": [
+    {
+      "height": 1018.53125,
+      "text": "Save The DateGia Bảo&Thanh Vân",
+      "width": 898,
+      "x": 823.5,
+      "y": 1
+    },
+    {
+      "height": 803.5,
+      "text": "THÔNG TIN LỄ CƯỚIÔng BàTrần Vă",
+      "width": 898,
+      "x": 823.5,
+      "y": 1019.53125
+    },
+    {
+      "height": 923.5,
+      "text": "THÔNG TIN TIỆC CƯỚITiệc cưới s",
+      "width": 898,
+      "x": 823.5,
+      "y": 2473.03125
+    },
+    {
+      "height": 513.5,
+      "text": "Tiệc cưới sẽ tổ chức tạiNhà hà",
+      "width": 898,
+      "x": 823.5,
+      "y": 3396.53125
+    },
+    {
+      "height": 1320.375,
+      "text": "LỊCH TRÌNH NGÀY CƯỚI17:30Đón k",
+      "width": 898,
+      "x": 823.5,
+      "y": 4132.03125
+    },
+    {
+      "height": 836.5,
+      "text": "Sổ lưu bút🪄GỬI LỜI CHÚCNguyễn",
+      "width": 516,
+      "x": 1014.5,
+      "y": 4557.90625
+    },
+    {
+      "height": 35.5,
+      "text": "Sự hiện diện của quý khách là ",
+      "width": 898,
+      "x": 823.5,
+      "y": 5901.40625
+    }
+  ],
+  "urls": [
+    "https://chungdoi.com/images/themes/hoa-kho-orange/flower3.webp",
+    "https://chungdoi.com/images/themes/hoa-kho-orange/flower2.webp",
+    "https://chungdoi.com/images/themes/hoa-kho-orange/flower4.webp",
+    "https://cdn.chungdoi.com/uploads/580c4b6a-6fb8-4e29-86b5-253733fcf6f1.webp",
+    "https://cdn.chungdoi.com/uploads/66c2f711-de88-4ab9-beab-97551966965d.webp",
+    "https://cdn.chungdoi.com/uploads/779632a2-ee37-4c2c-9ce8-63ac60b9dbdc.webp",
+    "https://cdn.chungdoi.com/uploads/d4955f24-e5c0-4e8b-ac47-461887c867cf.webp",
+    "https://cdn.chungdoi.com/uploads/4f204c5f-64d6-4595-973d-295dac1c24f1.webp",
+    "https://cdn.chungdoi.com/uploads/cf220ea8-1a15-4afb-80fd-d1566447a456.webp",
+    "https://cdn.chungdoi.com/uploads/bb7fca4b-0e8a-4c77-a789-48bb81e98def.webp",
+    "https://cdn.chungdoi.com/uploads/c19c0b63-6ce5-408b-aeea-8da6ed44703d.webp",
+    "https://chungdoi.com/images/themes/hoa-kho-orange/calendar-heart.svg",
+    "https://chungdoi.com/images/themes/hoa-kho-orange/water.webp",
+    "https://chungdoi.com/images/themes/hoa-kho-orange/cake.webp",
+    "https://chungdoi.com/images/themes/hoa-kho-orange/ring.webp",
+    "https://chungdoi.com/images/envelope/hoa_kho_orange.webp"
+  ]
+}

@@ -2,6 +2,7 @@ import { Eye, FilePenLine, ImageIcon, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import { verifyAdmin } from "@/lib/admin-dal";
 import {
   isAdminBlogFilter,
@@ -91,7 +92,7 @@ export default async function AdminBlogsPage({
         ))}
       </nav>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+      <AdminTableScroller>
         <table className="w-full min-w-[960px] text-sm">
           <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
             <tr>
@@ -191,7 +192,7 @@ export default async function AdminBlogsPage({
             })}
           </tbody>
         </table>
-      </div>
+      </AdminTableScroller>
     </div>
   );
 }

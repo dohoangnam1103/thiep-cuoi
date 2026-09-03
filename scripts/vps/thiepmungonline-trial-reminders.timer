@@ -1,0 +1,10 @@
+[Unit]
+Description=Send trial reminders hourly from 09:00 through 21:00 Vietnam time
+
+[Timer]
+OnCalendar=*-*-* 09,10,11,12,13,14,15,16,17,18,19,20,21:00:00 Asia/Ho_Chi_Minh
+Persistent=false
+Unit=thiepmungonline-trial-reminders.service
+
+[Install]
+WantedBy=timers.target

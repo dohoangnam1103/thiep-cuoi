@@ -1,0 +1,10 @@
+[Unit]
+Description=Back up Thiep Mung Online every six hours
+
+[Timer]
+OnCalendar=*-*-* 00/6:41:00 Asia/Ho_Chi_Minh
+Persistent=true
+Unit=thiepmungonline-backup.service
+
+[Install]
+WantedBy=timers.target

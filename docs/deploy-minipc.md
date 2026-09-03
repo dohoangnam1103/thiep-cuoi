@@ -1,5 +1,9 @@
 # Deploy thiepmungonline lên Mini PC
 
+> **Historical after 2026-08-31:** production moved to VPS `163.223.9.198`.
+> Use [deploy-vps.md](./deploy-vps.md). The old web/tunnel and app cron are stopped;
+> do not restart them with the frozen database. `npm run deploy` now targets VPS.
+
 Quy trình deploy web app lên Mini PC (chạy sau Cloudflare Tunnel). Xem thêm
 [cloudflare-deploy.md](./cloudflare-deploy.md) cho phần DNS/tunnel.
 

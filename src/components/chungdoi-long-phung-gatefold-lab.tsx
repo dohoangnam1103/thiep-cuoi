@@ -1,5 +1,7 @@
 "use client";
 
+import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
+
 import { useGSAP } from "@gsap/react";
 import { Pause, Play, RotateCcw, Rotate3D } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -82,6 +84,7 @@ type GatefoldSceneBoundaryState = {
 type LongPhungGatefoldLabProps = {
   content?: ChungDoiDemoContent;
   onStateChange?: (state: GatefoldExperienceState) => void;
+  onCoverReady?: () => void;
   renderBody?: boolean;
   showControls?: boolean;
   muted?: boolean;
@@ -286,6 +289,7 @@ function useMediaQuery(query: string): boolean {
 export function LongPhungGatefoldLab({
   content = longPhungGatefoldPilotContent,
   onStateChange,
+  onCoverReady,
   renderBody = true,
   showControls = true,
   muted = false,
@@ -709,6 +713,7 @@ export function LongPhungGatefoldLab({
   const canOpen = state === "closed"
     && !backFaceVisible
     && (webglSupported === false || sceneReady);
+  useInvitationCoverReady(stageRef, canOpen, onCoverReady);
   const canFlip = state === "closed" && (webglSupported === false || sceneReady);
   const fallbackMotion = reducedMotion ? "reduced" : isMobile ? "mobile" : "desktop";
 

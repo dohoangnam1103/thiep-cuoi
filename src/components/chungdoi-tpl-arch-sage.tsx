@@ -118,11 +118,11 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
               <span className="text-[10px] uppercase tracking-[0.34em] text-[#33402f]/55">
                 {t("saveTheDate")}
               </span>
-              <span className="mt-6 text-center font-serif text-[30px] leading-tight md:text-[40px]">
+              <span data-invitation-short-name className="mt-6 text-center font-serif text-[30px] leading-tight md:text-[40px]">
                 {people[0].shortName}
               </span>
               <LeafSprig color="rgba(107, 127, 106, 0.8)" className="my-3 h-5 w-14" />
-              <span className="text-center font-serif text-[30px] leading-tight md:text-[40px]">
+              <span data-invitation-short-name className="text-center font-serif text-[30px] leading-tight md:text-[40px]">
                 {people[1].shortName}
               </span>
               {reception ? (

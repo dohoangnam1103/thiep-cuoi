@@ -74,6 +74,11 @@ if [[ " ${REMOTE_IPS} " != *" ${EXPECTED_REMOTE_IP} "* ]]; then
 fi
 log_step "xác minh production host"
 
+if ! ssh "${REMOTE_HOST}" "test ! -e ${REMOTE_APP_DIR}/RETIRED"; then
+  echo "❌ This production host is retired. Use npm run deploy (VPS)."
+  exit 1
+fi
+
 echo "📁 Rsync source → ${REMOTE_APP_DIR}/releases/current/"
 rsync -az --delete \
   --exclude '.git' \
@@ -108,6 +113,7 @@ rsync -az --delete \
   --exclude '/tmp/' \
   --exclude '/.claude/' \
   --exclude '/.deploy-worktree/' \
+  --exclude '/.worktrees/' \
   --exclude '.playwright-mcp' \
   --exclude '.capture' \
   --exclude '/.claude-flow' \

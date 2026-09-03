@@ -41,6 +41,9 @@ export const lora = Lora({
   style: ["normal", "italic"],
   subsets: ["latin", "vietnamese"],
   display: "swap",
+  // Invitation-only face: keep it available globally without forcing every
+  // marketing/auth page to preload all styles and subsets.
+  preload: false,
   variable: "--font-lora",
 });
 
@@ -54,6 +57,7 @@ export const ebGaramond = EB_Garamond({
   style: ["normal", "italic"],
   subsets: ["latin", "vietnamese"],
   display: "swap",
+  preload: false,
   variable: "--font-eb-garamond",
 });
 
@@ -63,6 +67,7 @@ export const playfairDisplay = Playfair_Display({
   style: ["normal", "italic"],
   subsets: ["latin", "vietnamese"],
   display: "swap",
+  preload: false,
   variable: "--font-playfair-display",
 });
 
@@ -72,12 +77,14 @@ export const patrickHand = Patrick_Hand({
   style: "normal",
   subsets: ["latin", "vietnamese"],
   display: "swap",
+  preload: false,
   variable: "--font-patrick-hand",
 });
 
 export const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-geist-mono",
 });
 

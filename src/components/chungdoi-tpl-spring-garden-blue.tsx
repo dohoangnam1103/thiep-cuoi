@@ -118,9 +118,9 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
 
         <header className="relative z-20 flex h-[472px] w-full flex-col items-center justify-center px-6 text-center md:h-[650px] md:px-10">
           <div className="flex w-full flex-col items-center gap-6 text-[50px] leading-[75px] md:text-[70px] md:leading-[105px]" style={{ ...nameFont, color: TEXT }}>
-            <span>{people[0].shortName}</span>
+            <span data-invitation-short-name>{people[0].shortName}</span>
             <span className="text-[37px] leading-[56px] md:text-[50px] md:leading-[75px]" style={nameFont}>&amp;</span>
-            <span>{people[1].shortName}</span>
+            <span data-invitation-short-name>{people[1].shortName}</span>
           </div>
         </header>
 

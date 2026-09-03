@@ -33,6 +33,7 @@ import {
   type CSSProperties,
 } from "react";
 
+import { AdminTableScroller } from "@/components/admin-table-scroller";
 import {
   saveTemplateDisplayOrder,
   saveTemplateVisibility,
@@ -48,6 +49,7 @@ export type DemoOrderItem = {
   isRenamed: boolean;
   isVisible: boolean;
   couple: string;
+  usageCount: number;
 };
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -115,6 +117,8 @@ export function DemoOrderManager({
         <OrderSaveStatus status={status} errorCode={errorCode} />
       </div>
 
+      <p className="text-xs text-muted-foreground">{t("usageHelp")}</p>
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -124,7 +128,7 @@ export function DemoOrderManager({
           items={items.map((item) => item.templateId)}
           strategy={verticalListSortingStrategy}
         >
-          <div className="overflow-x-auto rounded-2xl border border-border bg-background">
+          <AdminTableScroller>
             <table className="w-full text-sm">
               <thead className="border-b border-border bg-muted/40 text-left text-muted-foreground">
                 <tr>
@@ -136,6 +140,9 @@ export function DemoOrderManager({
                   </th>
                   <th className="px-4 py-3 font-medium">
                     {t("coupleColumn")}
+                  </th>
+                  <th className="whitespace-nowrap px-4 py-3 text-right font-medium">
+                    {t("usageColumn")}
                   </th>
                   <th className="px-4 py-3 font-medium">
                     {t("actionsColumn")}
@@ -156,7 +163,7 @@ export function DemoOrderManager({
                 ))}
               </tbody>
             </table>
-          </div>
+          </AdminTableScroller>
         </SortableContext>
       </DndContext>
     </section>
@@ -219,6 +226,9 @@ function SortableDemoRow({
         />
       </td>
       <td className="px-4 py-3">{item.couple}</td>
+      <td className="px-4 py-3 text-right font-semibold tabular-nums">
+        {item.usageCount.toLocaleString("vi-VN")}
+      </td>
       <td className="px-4 py-3">
         <Link
           href={`/admin/demos/${item.id}`}

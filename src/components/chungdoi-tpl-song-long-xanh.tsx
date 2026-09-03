@@ -119,13 +119,13 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
               <img src={avatarCards[0].src} alt={avatarCards[0].person.shortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
               <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{avatarCards[0].person.birthOrder} / {avatarCards[0].sideLabel}</div>
-              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[0].person.shortName}</div>
+              <div data-invitation-short-name className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[0].person.shortName}</div>
             </div>
             <div className="w-[52px] shrink-0 sm:w-[70px] md:w-[96px]" />
             <div className="pointer-events-auto flex min-w-0 flex-1 flex-col items-center">
               <img src={avatarCards[1].src} alt={avatarCards[1].person.shortName} className="h-[120px] w-[120px] rounded-full object-cover sm:h-[160px] sm:w-[160px] md:h-[240px] md:w-[240px]" />
               <div className="mt-2 text-center text-xs font-light sm:mt-3 sm:text-sm md:mt-4 md:text-base" style={{ color: SLX_GRAY }}>{avatarCards[1].person.birthOrder} / {avatarCards[1].sideLabel}</div>
-              <div className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[1].person.shortName}</div>
+              <div data-invitation-short-name className="whitespace-nowrap text-2xl sm:text-3xl md:text-4xl" style={{ color: SLX_GREEN, fontFamily: '"Fz Aghita", cursive' }}>{avatarCards[1].person.shortName}</div>
             </div>
           </div>
         </div>

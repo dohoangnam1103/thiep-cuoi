@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import NextLink from "next/link";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import type { Locale } from "@/i18n/routing";
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const VARIANTS: Array<{
+type Variant = {
   code: string;
   href: string;
   name: string;
@@ -17,7 +17,30 @@ const VARIANTS: Array<{
   strength: string;
   weakness: string;
   note?: string;
-}> = [
+};
+
+type CatalogVariant = {
+  code: string;
+  href: string;
+  catalog: "v9" | "v10" | "v11";
+};
+
+const VARIANTS: Array<Variant | CatalogVariant> = [
+  {
+    code: "V11",
+    href: "/home-2/lab/v11",
+    catalog: "v11",
+  },
+  {
+    code: "V10",
+    href: "/home-2/lab/v10",
+    catalog: "v10",
+  },
+  {
+    code: "V9",
+    href: "/home-2/lab/v9",
+    catalog: "v9",
+  },
   {
     code: "V8",
     href: "/home-2/lab/v8",
@@ -117,31 +140,68 @@ export default async function LabIndex({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const [tIndex, tV11, tV10] = await Promise.all([
+    getTranslations({ locale, namespace: "homeLabIndex" }),
+    getTranslations({ locale, namespace: "homeLabV11.registry" }),
+    getTranslations({ locale, namespace: "homeLabV10.registry" }),
+  ]);
+
+  const variants: Variant[] = VARIANTS.map((variant) => {
+    if (!("catalog" in variant)) return variant;
+
+    if (variant.catalog === "v11") {
+      return {
+        code: variant.code,
+        href: variant.href,
+        name: tV11("name"),
+        motion: tV11("motion"),
+        strength: tV11("strength"),
+        weakness: tV11("weakness"),
+        note: tV11("note"),
+      };
+    }
+
+    if (variant.catalog === "v10") {
+      return {
+        code: variant.code,
+        href: variant.href,
+        name: tV10("name"),
+        motion: tV10("motion"),
+        strength: tV10("strength"),
+        weakness: tV10("weakness"),
+        note: tV10("note"),
+      };
+    }
+
+    return {
+      code: variant.code,
+      href: variant.href,
+      name: tIndex("v9.name"),
+      motion: tIndex("v9.motion"),
+      strength: tIndex("v9.strength"),
+      weakness: tIndex("v9.weakness"),
+      note: tIndex("v9.note"),
+    };
+  });
+
   return (
     <main className="min-h-screen bg-[#f4f2ee] px-6 py-16 text-[#2f2c29]">
       <div className="mx-auto max-w-3xl">
         <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#b4453d]">
-          Wireframe
+          {tIndex("label")}
         </p>
         <h1 className="mt-5 text-3xl font-semibold leading-tight sm:text-4xl">
-          Sáu hướng cho trang chủ, và hai bản hoàn chỉnh
+          {tIndex("heading")}
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-[#7d766d]">
-          V1–V6 là bản nháp bằng khối xám, không dùng ảnh hay font thật, để chọn{" "}
-          <strong className="font-semibold text-[#2f2c29]">kịch bản chuyển động</strong> trước
-          đã. <strong className="font-semibold text-[#2f2c29]">V7</strong> ghép năm bản nháp
-          đó thành một, còn{" "}
-          <strong className="font-semibold text-[#2f2c29]">V8</strong> là hướng mới: cả ngày
-          cưới trôi theo cuộn. Trang chủ đang chạy ở{" "}
-          <code className="text-[#2f2c29]">/</code> không bị ảnh hưởng.
+          {tIndex("intro")}
         </p>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-[#7d766d]">
-          Mỗi trang nháp có thanh chuyển nhanh ở trên và thanh tiến độ ở dưới để
-          thấy mình đang ở hồi nào trong kịch bản.
+          {tIndex("latest")}
         </p>
 
         <ul className="mt-14 space-y-px">
-          {VARIANTS.map((variant) => (
+          {variants.map((variant) => (
             <li key={variant.code}>
               <NextLink
                 href={variant.href}
@@ -153,17 +213,21 @@ export default async function LabIndex({ params }: { params: Promise<{ locale: L
                   </span>
                   <h2 className="text-xl font-semibold">{variant.name}</h2>
                   <span className="ml-auto text-xs text-[#7d766d] transition-transform group-hover:translate-x-1">
-                    xem →
+                    {tIndex("view")}
                   </span>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed">{variant.motion}</p>
                 <dl className="mt-5 grid gap-3 text-xs leading-relaxed sm:grid-cols-2">
                   <div>
-                    <dt className="font-bold uppercase tracking-[0.18em] text-[#7d766d]">Mạnh</dt>
+                    <dt className="font-bold uppercase tracking-[0.18em] text-[#7d766d]">
+                      {tIndex("strengthLabel")}
+                    </dt>
                     <dd className="mt-1.5">{variant.strength}</dd>
                   </div>
                   <div>
-                    <dt className="font-bold uppercase tracking-[0.18em] text-[#7d766d]">Yếu</dt>
+                    <dt className="font-bold uppercase tracking-[0.18em] text-[#7d766d]">
+                      {tIndex("weaknessLabel")}
+                    </dt>
                     <dd className="mt-1.5">{variant.weakness}</dd>
                   </div>
                 </dl>
@@ -178,9 +242,7 @@ export default async function LabIndex({ params }: { params: Promise<{ locale: L
         </ul>
 
         <p className="mt-14 border-t border-[#d5cfc5] pt-7 text-xs leading-relaxed text-[#7d766d]">
-          V7 là bản đề xuất: lấy hành trình của V5 làm xương, tơ hồng của V4 làm
-          sợi dẫn cho phần thân, và phong bì của V1 làm hồi kết. Năm bản nháp
-          V1–V5 giữ lại để so nhịp, không phải để dùng tiếp.
+          {tIndex("closing")}
         </p>
       </div>
     </main>

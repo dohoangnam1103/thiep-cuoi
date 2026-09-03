@@ -481,6 +481,24 @@ export const templates = [
     "sourceUrl": "https://chungdoi.com/en/templates/minimalism-green"
   },
   {
+    "slug": "minimalism-brown",
+    "name": "Minimalism Nâu",
+    "title": "Mẫu thiệp cưới Minimalism Nâu | Thiệp Mừng Online",
+    "description": "Thiệp cưới Minimalism Nâu tối giản trên nền kem hồng với sắc nâu đất ấm áp, khung gỗ lồng ảnh cưới và lịch cưới đánh dấu trái tim. Miễn phí tạo thiệp.",
+    "category": "Modern",
+    "color": "Brown",
+    "isNew": true,
+    "highlights": [
+      "Bố cục tối giản trên nền kem hồng, sắc nâu đất và nâu nhạt ấm áp",
+      "Khung gỗ ở hero lồng ảnh cưới nghiêng, nhánh hoa và lá bồng bềnh quanh thẻ",
+      "Ba thẻ giấy nhàu cho thông tin lễ, tiệc và lịch trình, kèm lịch cưới đánh dấu trái tim"
+    ],
+    "listing": "/chungdoi/images/template-previews/en/listing/minimalism_brown.webp",
+    "portrait": "/chungdoi/images/template-previews/en/portrait/minimalism_brown.webp",
+    "landscape": "/chungdoi/images/template-previews/en/landscape/minimalism_brown.webp",
+    "sourceUrl": "https://chungdoi.com/en/templates/minimalism-brown"
+  },
+  {
     "slug": "minimalism-jade",
     "name": "Minimalism Xanh Ngọc",
     "title": "Mẫu thiệp cưới Minimalism Xanh Ngọc | Thiệp Mừng Online",
@@ -913,8 +931,15 @@ export const templates = [
   ...generatedTemplates,
 ] satisfies ChungDoiTemplate[];
 
+// Retain renderers/data for existing invitations, but remove retired demos.
+export const retiredTemplateSlugs = new Set<string>([
+  "thap-nhi-chi-do",
+  "thanh-duong-anh-sang",
+]);
+
 // Templates hidden from production listing (incomplete, pilot, or under revision)
 export const hiddenTemplateSlugs = new Set<string>([
+  ...retiredTemplateSlugs,
   "ao-dai-hue",
   "bat-trang-blue",
   "botanical-lavender",
@@ -1003,6 +1028,7 @@ export const completedTemplateSlugs = new Set<string>([
   "minimalism-red",
   "minimalism-dark-red",
   "minimalism-green",
+  "minimalism-brown",
   "minimalism-jade",
   "minimalism-sky-blue",
   "minimalism-powder-pink",
