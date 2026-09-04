@@ -203,6 +203,10 @@ const originalGiftVisuals: Record<string, GiftVisual> = {
     kind: "layered-image",
     asset: "/chungdoi/images/giftbox/ivory-signature/envelope.webp",
   },
+  "nguyet-bach": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/giftbox/nguyet-bach/envelope.webp",
+  },
 };
 
 const PROCEDURAL_FALLBACK: ProceduralGiftVisual = { kind: "procedural" };

@@ -31,30 +31,31 @@ import { manifest as manifest28 } from "./long-phung-gatefold.manifest";
 import { manifest as manifest29 } from "./mahal-gold.manifest";
 import { manifest as manifest30 } from "./minimalism-dark-blue.manifest";
 import { manifest as manifest31 } from "./nguyet-anh-sleeve.manifest";
-import { manifest as manifest32 } from "./phong-thu-be.manifest";
-import { manifest as manifest33 } from "./phong-thu-do-pastel.manifest";
-import { manifest as manifest34 } from "./phong-thu-hong-pastel.manifest";
-import { manifest as manifest35 } from "./phong-thu-lam-pastel.manifest";
-import { manifest as manifest36 } from "./phong-thu-luc-pastel.manifest";
-import { manifest as manifest37 } from "./porcelain-blue.manifest";
-import { manifest as manifest38 } from "./porcelain-brown.manifest";
-import { manifest as manifest39 } from "./porcelain-red.manifest";
-import { manifest as manifest40 } from "./porcelain-v2-green.manifest";
-import { manifest as manifest41 } from "./porcelain-v2-red.manifest";
-import { manifest as manifest42 } from "./rap-hy-sai-gon.manifest";
-import { manifest as manifest43 } from "./riso-duotone.manifest";
-import { manifest as manifest44 } from "./royal-v2-green.manifest";
-import { manifest as manifest45 } from "./sen-monoline.manifest";
-import { manifest as manifest46 } from "./son-mai-lacquer.manifest";
-import { manifest as manifest47 } from "./swiss-brutalist.manifest";
-import { manifest as manifest48 } from "./thanh-duong-anh-sang.manifest";
-import { manifest as manifest49 } from "./thap-nhi-chi-do.manifest";
-import { manifest as manifest50 } from "./tho-cam-highland.manifest";
-import { manifest as manifest51 } from "./ticket-terracotta.manifest";
-import { manifest as manifest52 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest53 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest54 } from "./y2k-chrome.manifest";
-import { manifest as manifest55 } from "./zen-sand.manifest";
+import { manifest as manifest32 } from "./nguyet-bach.manifest";
+import { manifest as manifest33 } from "./phong-thu-be.manifest";
+import { manifest as manifest34 } from "./phong-thu-do-pastel.manifest";
+import { manifest as manifest35 } from "./phong-thu-hong-pastel.manifest";
+import { manifest as manifest36 } from "./phong-thu-lam-pastel.manifest";
+import { manifest as manifest37 } from "./phong-thu-luc-pastel.manifest";
+import { manifest as manifest38 } from "./porcelain-blue.manifest";
+import { manifest as manifest39 } from "./porcelain-brown.manifest";
+import { manifest as manifest40 } from "./porcelain-red.manifest";
+import { manifest as manifest41 } from "./porcelain-v2-green.manifest";
+import { manifest as manifest42 } from "./porcelain-v2-red.manifest";
+import { manifest as manifest43 } from "./rap-hy-sai-gon.manifest";
+import { manifest as manifest44 } from "./riso-duotone.manifest";
+import { manifest as manifest45 } from "./royal-v2-green.manifest";
+import { manifest as manifest46 } from "./sen-monoline.manifest";
+import { manifest as manifest47 } from "./son-mai-lacquer.manifest";
+import { manifest as manifest48 } from "./swiss-brutalist.manifest";
+import { manifest as manifest49 } from "./thanh-duong-anh-sang.manifest";
+import { manifest as manifest50 } from "./thap-nhi-chi-do.manifest";
+import { manifest as manifest51 } from "./tho-cam-highland.manifest";
+import { manifest as manifest52 } from "./ticket-terracotta.manifest";
+import { manifest as manifest53 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest54 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest55 } from "./y2k-chrome.manifest";
+import { manifest as manifest56 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
@@ -118,6 +119,7 @@ export const generatedTemplateManifests = [
   manifest53,
   manifest54,
   manifest55,
+  manifest56,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];

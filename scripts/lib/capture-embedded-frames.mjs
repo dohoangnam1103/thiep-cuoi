@@ -10,6 +10,27 @@ export function assertMapHasNoError(text) {
   }
 }
 
+/**
+ * NEXT_PUBLIC_GOOGLE_MAPS_KEY is referrer-locked to the production domain, so a
+ * capture served from localhost gets an error page instead of a map. Swap only
+ * the rejected requests for the keyless embed URL — the same fallback the app
+ * itself renders when no key is configured.
+ */
+export async function routeMapEmbedFallback(context) {
+  await context.route(/\/maps\/embed\/v1\//, async (route) => {
+    const query = new URL(route.request().url()).searchParams.get("q");
+    if (!query) return route.continue();
+    const response = await route.fetch();
+    const body = await response.text();
+    if (!MAP_ERROR.test(body)) return route.fulfill({ response, body });
+    await route.fulfill({
+      status: 302,
+      headers: { location: `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed` },
+      body: "",
+    });
+  });
+}
+
 async function waitForGoogleMap(element) {
   const handle = await element.elementHandle();
   const frame = await handle?.contentFrame();

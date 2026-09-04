@@ -31,6 +31,7 @@ import trongDongDongSonAssets from "../../../public/chungdoi/images/themes/_deco
 import trucChiMinimalAssets from "../../../public/chungdoi/images/themes/_decor/truc-chi-minimal/opening-assets.json";
 import thanhDuongAnhSangAssets from "../../../public/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-assets.json";
 import congLaDuaMienTayAssets from "../../../public/chungdoi/images/themes/_decor/cong-la-dua-mien-tay/opening-assets.json";
+import nguyetBachAssets from "../../../public/chungdoi/images/themes/_decor/nguyet-bach/opening-assets.json";
 import y2kChromeAssets from "../../../public/chungdoi/images/themes/_decor/y2k-chrome/opening-assets.json";
 
 import {
@@ -303,6 +304,12 @@ const effectInputs = {
     exits: { "left-frond": [-78, -18, 2.9, -7, 8], "right-frond": [80, -14, 2.9, 7, 8], "areca-cluster": [0, -74, 2.4, 0, 7] },
     peaks: { "left-frond": { yPercent: -6 }, "right-frond": { yPercent: -6 }, "areca-cluster": { yPercent: -10, brightness: 1.24 } },
     origins: { "left-frond": "100% 0%", "right-frond": "0% 0%", "areca-cluster": "50% 0%" },
+  }],
+  "nguyet-bach": [nguyetBachAssets, {
+    durationMs: 1440,
+    exits: { "lunar-halo": [0, -34, 1.9, 0, 6], "ivory-envelope": [0, -40, 2.1, 0, 6], "emboss-monogram": [0, -26, 2.4, 0, 7], "pearl-glints": [0, -22, 1.7, 0, 5] },
+    peaks: { "ivory-envelope": { yPercent: -4 }, "emboss-monogram": { brightness: 1.22 }, "lunar-halo": { brightness: 1.12 } },
+    origins: { "lunar-halo": "50% 50%", "ivory-envelope": "50% 100%", "emboss-monogram": "50% 50%", "pearl-glints": "50% 50%" },
   }],
   ...phongThuMotions,
   ...hoaThuMotions,

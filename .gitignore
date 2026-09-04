@@ -106,3 +106,6 @@ docs/research/original-dom/
 
 # Unreferenced ad-hoc visual QA captures; curated evidence uses named research folders.
 /docs/research/.*-qa-*.png
+
+# Nguyệt Bạch PNG masters: 34 MB duplicating the committed .webp delivery set.
+/public/chungdoi/templates/nguyet-bach/**/*.png

@@ -22,7 +22,7 @@ import Database from "better-sqlite3";
 import { SignJWT } from "jose";
 import { chromium } from "playwright";
 import sharp from "sharp";
-import { rasterizeEmbeddedFrames } from "./lib/capture-embedded-frames.mjs";
+import { rasterizeEmbeddedFrames, routeMapEmbedFallback } from "./lib/capture-embedded-frames.mjs";
 
 const ROOT = process.cwd();
 const { loadEnvConfig } = nextEnv;
@@ -700,6 +700,7 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
     reducedMotion: "reduce",
   });
   if (sessionCookie) await context.addCookies([sessionCookie]);
+  await routeMapEmbedFallback(context);
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));

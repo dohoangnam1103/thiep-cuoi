@@ -54,6 +54,7 @@ const artThemeDurations = {
   "hoa-thu-xanh-duong": 1470,
   "thanh-duong-anh-sang": 1400,
   "cong-la-dua-mien-tay": 1380,
+  "nguyet-bach": 1440,
 } as const;
 
 function createEffect(): ArtOpeningEffect {

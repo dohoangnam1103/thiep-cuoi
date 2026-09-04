@@ -1,0 +1,178 @@
+{
+  "id": "nguyet-bach-ivory",
+  "version": 1,
+  "palette": {
+    "ivory": "#F6F1E8",
+    "charcoal": "#292724",
+    "champagne": "#B89B67",
+    "pearl": "#E9E4DC"
+  },
+  "assets": {
+    "cover": {
+      "masterMobile": {
+        "src": "/chungdoi/templates/nguyet-bach/cover/opening-master-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/cover/opening-master-v1.png",
+        "width": 941,
+        "height": 1672,
+        "alpha": false
+      },
+      "masterDesktop": {
+        "src": "/chungdoi/templates/nguyet-bach/cover/opening-master-desktop-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/cover/opening-master-desktop-v1.png",
+        "width": 1672,
+        "height": 941,
+        "alpha": false
+      },
+      "lunarHalo": {
+        "src": "/chungdoi/templates/nguyet-bach/cover/opening-lunar-halo-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/cover/opening-lunar-halo-v1.png",
+        "width": 1122,
+        "height": 1402,
+        "alpha": true
+      },
+      "pearlGlints": {
+        "src": "/chungdoi/templates/nguyet-bach/cover/opening-pearl-glints-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/cover/opening-pearl-glints-v1.png",
+        "width": 941,
+        "height": 1672,
+        "alpha": true
+      }
+    },
+    "materials": {
+      "interiorBackground": {
+        "src": "/chungdoi/templates/nguyet-bach/materials/interior-background-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/materials/interior-background-v1.png",
+        "width": 941,
+        "height": 1672,
+        "alpha": false
+      },
+      "cottonPaperTile": {
+        "src": "/chungdoi/templates/nguyet-bach/materials/cotton-paper-tile-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/materials/cotton-paper-tile-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "alpha": false
+      },
+      "envelopeLinerPattern": {
+        "src": "/chungdoi/templates/nguyet-bach/materials/envelope-liner-pattern-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/materials/envelope-liner-pattern-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "alpha": false
+      }
+    },
+    "frames": {
+      "heroPhoto": {
+        "src": "/chungdoi/templates/nguyet-bach/frames/hero-photo-frame-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/frames/hero-photo-frame-v1.png",
+        "width": 1122,
+        "height": 1402,
+        "alpha": true
+      },
+      "calendar": {
+        "src": "/chungdoi/templates/nguyet-bach/frames/calendar-frame-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/frames/calendar-frame-v1.png",
+        "width": 1024,
+        "height": 1536,
+        "alpha": true
+      },
+      "rsvp": {
+        "src": "/chungdoi/templates/nguyet-bach/frames/rsvp-card-frame-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/frames/rsvp-card-frame-v1.png",
+        "width": 1024,
+        "height": 1536,
+        "alpha": true
+      },
+      "galleryLandscape": {
+        "src": "/chungdoi/templates/nguyet-bach/frames/gallery-frame-landscape-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/frames/gallery-frame-landscape-v1.png",
+        "width": 1536,
+        "height": 1024,
+        "alpha": true
+      },
+      "map": {
+        "src": "/chungdoi/templates/nguyet-bach/frames/map-frame-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/frames/map-frame-v1.png",
+        "width": 1536,
+        "height": 1024,
+        "alpha": true
+      },
+      "guestbook": {
+        "src": "/chungdoi/templates/nguyet-bach/frames/guestbook-frame-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/frames/guestbook-frame-v1.png",
+        "width": 1536,
+        "height": 1024,
+        "alpha": true
+      }
+    },
+    "ornaments": {
+      "orchidSpray": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/orchid-spray-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/orchid-spray-v1.png",
+        "width": 1024,
+        "height": 1536
+      },
+      "orchidSmallHorizontal": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/orchid-small-horizontal-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/orchid-small-horizontal-v1.png",
+        "width": 2172,
+        "height": 724
+      },
+      "blankMonogramMedallion": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/blank-monogram-medallion-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/blank-monogram-medallion-v1.png",
+        "width": 1536,
+        "height": 1024
+      },
+      "dateHalo": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/date-halo-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/date-halo-v1.png",
+        "width": 1254,
+        "height": 1254
+      },
+      "sectionDivider": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/section-divider-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/section-divider-v1.png",
+        "width": 2172,
+        "height": 724
+      },
+      "footer": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/footer-ornament-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/footer-ornament-v1.png",
+        "width": 2172,
+        "height": 724
+      },
+      "sideWatermark": {
+        "src": "/chungdoi/templates/nguyet-bach/ornaments/side-watermark-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/ornaments/side-watermark-v1.png",
+        "width": 724,
+        "height": 2172
+      }
+    },
+    "gift": {
+      "envelopeClosed": {
+        "src": "/chungdoi/templates/nguyet-bach/gift/envelope-closed-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/gift/envelope-closed-v1.png",
+        "width": 1448,
+        "height": 1086,
+        "alpha": true
+      },
+      "envelopeOpen": {
+        "src": "/chungdoi/templates/nguyet-bach/gift/envelope-open-v1.webp",
+        "source": "/chungdoi/templates/nguyet-bach/gift/envelope-open-v1.png",
+        "width": 1122,
+        "height": 1402,
+        "alpha": true
+      }
+    },
+    "icons": {
+      "calendar": "/chungdoi/templates/nguyet-bach/icons/calendar-v1.webp",
+      "gift": "/chungdoi/templates/nguyet-bach/icons/gift-v1.webp",
+      "mapPin": "/chungdoi/templates/nguyet-bach/icons/map-pin-v1.webp",
+      "timelineWelcome": "/chungdoi/templates/nguyet-bach/icons/timeline-welcome-v1.webp",
+      "timelineCeremony": "/chungdoi/templates/nguyet-bach/icons/timeline-ceremony-v1.webp",
+      "timelineBanquet": "/chungdoi/templates/nguyet-bach/icons/timeline-banquet-v1.webp",
+      "timelinePhoto": "/chungdoi/templates/nguyet-bach/icons/timeline-photo-v1.webp"
+    }
+  }
+}
