@@ -1,0 +1,150 @@
+import { createTemplateDemoContent, defineTemplateManifest } from "./template-manifest";
+
+const slug = "porcelain-blue";
+const themeRoot = `/chungdoi/images/themes/${slug}`;
+const themeAssets = [
+  "floral-tile.webp",
+  "frame-decoration.webp",
+  "cake.webp",
+  "home.webp",
+  "music.webp",
+].map((file) => `${themeRoot}/${file}`);
+const giftDecor = [
+  "qasr_green.webp",
+  "crystal_floral_red.webp",
+  "boho_floral_brown.webp",
+  "crystal_floral_blue.webp",
+  "baroque_v2_darkred.webp",
+  "nhat_binh_red.webp",
+  "minimalism_darkblue.webp",
+].map((file) => `/chungdoi/images/giftbox/mini/${file}`);
+const base = createTemplateDemoContent({
+  slug,
+  primaryColor: "#082f55",
+  fontFamily: "Viaoda Libre",
+  music: "/chungdoi/music/a-thousand-years.mp3",
+  galleryCount: 9,
+  groomFullName: "Đặng Hoài Nam",
+  groomShortName: "Hoài Nam",
+  brideFullName: "Trịnh Mai Chi",
+  brideShortName: "Mai Chi",
+  date: "2026-12-19",
+  time: "18:30",
+});
+const description = "Thiệp cưới Bạch Sứ Lam với hoa văn gốm xanh cổ điển, khung viền thanh lịch và nền giấy kem.";
+
+export const manifest = defineTemplateManifest({
+  slug,
+  viRouteSlug: "bach-su-lam",
+  rendererExport: "PorcelainBlueInvitation",
+  heroImageCount: 0,
+  catalog: {
+    name: "Bạch Sứ Lam",
+    title: "Bạch Sứ Lam - Thiệp Cưới Hoa Văn Xanh Cổ Điển | Thiệp Mừng Online",
+    description,
+    category: "Traditional",
+    color: "Blue",
+    isNew: true,
+    highlights: [
+      "Hoa văn sứ lam cổ điển",
+      "Khung thiệp kem viền navy",
+      "Hộp quà và lịch trình đồng bộ",
+    ],
+  },
+  theme: {
+    theme: {
+      background: `linear-gradient(to right, transparent calc(50% - 451px), #082f55 calc(50% - 451px), #082f55 calc(50% - 449px), transparent calc(50% - 449px), transparent calc(50% + 449px), #082f55 calc(50% + 449px), #082f55 calc(50% + 451px), transparent calc(50% + 451px)), linear-gradient(to right, #f6f3e7 calc(50% - 450px), rgb(246 243 231 / 0%) calc(50% - 450px), rgb(246 243 231 / 0%) calc(50% + 450px), #f6f3e7 calc(50% + 450px)), url("${themeRoot}/floral-tile.webp") 0 0 / 441px auto repeat, #f6f3e7`,
+      cardBg: "#f6f3e7",
+      textPrimary: "#082f55",
+      textSecondary: "rgba(8, 47, 85, 0.78)",
+      accent: "#082f55",
+      dividerFrom: "transparent",
+      dividerTo: "#082f55",
+      buttonBg: "#082f55",
+      buttonText: "#f6f3e7",
+      guestBoxBg: "transparent",
+      guestBoxBorder: "rgba(8, 47, 85, 0.2)",
+      particleColors: ["#082f55", "#6d8ba6", "#f6f3e7"],
+      particleType: "flowers",
+    },
+    fonts: {
+      couple: '"Viaoda Libre", "Times New Roman", serif',
+      ampersand: '"Viaoda Libre", "Times New Roman", serif',
+    },
+    sealType: "heart",
+    decorations: { cardImages: [] },
+  },
+  demoContent: {
+    ...base,
+    theme: {
+      ...base.theme,
+      assetFolder: slug,
+      assets: themeAssets,
+    },
+    showHeroImage: false,
+    albumLayout: "grid",
+    couple: {
+      ...base.couple,
+      brideFirst: false,
+      brideBirthOrder: "Út Nữ",
+      groomBirthOrder: "Trưởng Nam",
+      ceremonyTime: "09:00",
+      ceremonyHeader: "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      openingMessage: "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI",
+    },
+    families: {
+      groomFather: "Đặng Văn Thịnh",
+      groomMother: "Vũ Thị Lan",
+      groomAddress: "Số 18, ngõ 42 phố Trần Quốc Hoàn,\nphường Dịch Vọng Hậu, quận Cầu Giấy, Hà Nội",
+      brideFather: "Trịnh Quốc Bảo",
+      brideMother: "Ngô Thị Hồng Yến",
+      brideAddress: "Số 7, đường Nguyễn Văn Cừ,\nphường Ngọc Lâm, quận Long Biên, Hà Nội",
+      groomParentTitle: "Ông Bà",
+      brideParentTitle: "Ông Bà",
+    },
+    venue: {
+      address: "Trung tâm tiệc cưới Bạch Kim, 175 Nguyễn Văn Linh, phường Gia Thụy, quận Long Biên, Hà Nội",
+      mapAddress: "Trung tâm tiệc cưới Bạch Kim, 175 Nguyễn Văn Linh, Gia Thụy, Long Biên, Hà Nội",
+      welcomeTime: "17:30",
+      banquetTime: "18:30",
+    },
+    schedule: [
+      { time: "17:30", label: "Đón khách" },
+      { time: "18:30", label: "Khai tiệc" },
+      { time: "18:45", label: "Rót rượu, cắt bánh" },
+      { time: "19:00", label: "Phục vụ món chính" },
+      { time: "21:00", label: "Kết thúc tiệc" },
+    ],
+    dressCodeColors: "#061d3b,#0a3c6b,#f6f3e7",
+    wishes: [
+      { name: "Nguyễn Thu Trang", time: "2026-07-28T04:55:41.000Z", text: "Chúc hai bạn trăm năm hạnh phúc, mãi mãi bên nhau nhé!" },
+      { name: "Lê Quang Vinh", time: "2026-07-28T04:55:41.000Z", text: "Chúc mừng Hoài Nam và Mai Chi! Chúc hai bạn xây dựng một mái ấm thật đong đầy tiếng cười." },
+      { name: "Phạm Khánh Huyền", time: "2026-07-28T04:55:41.000Z", text: "Thiệp đẹp quá trời! Chúc hai bạn hạnh phúc viên mãn, sớm sinh quý tử nhé." },
+      { name: "Trần Đức Minh", time: "2026-07-28T04:55:41.000Z", text: "Chúc mừng hạnh phúc hai bạn! Nhất định mình sẽ có mặt đúng giờ." },
+      { name: "Vũ Ngọc Ánh", time: "2026-07-28T04:55:41.000Z", text: "Chúc cô dâu chú rể luôn yêu thương và thấu hiểu nhau như ngày đầu gặp gỡ." },
+      { name: "Đỗ Hoàng Long", time: "2026-07-28T04:55:41.000Z", text: "Chúc hai bạn một đám cưới thật trọn vẹn và một cuộc sống hôn nhân thật êm đềm." },
+      { name: "Bùi Thanh Hằng", time: "2026-07-28T04:55:41.000Z", text: "Mừng hạnh phúc hai em! Chúc hai em luôn nắm tay nhau vượt qua mọi điều trong cuộc sống." },
+      { name: "Hoàng Anh Tuấn", time: "2026-07-28T04:55:41.000Z", text: "Chúc mừng ngày vui của hai bạn. Chúc tình yêu của hai bạn ngày càng nồng nàn, bền chặt." },
+      { name: "Ngô Phương Linh", time: "2026-07-28T04:55:41.000Z", text: "Chúc hai bạn hạnh phúc đến đầu bạc răng long nhé! Yêu hai bạn nhiều lắm." },
+      { name: "Đặng Minh Khoa", time: "2026-07-28T04:55:41.000Z", text: "Chúc anh chị trăm năm hảo hợp, con đàn cháu đống, luôn mạnh khỏe và bình an." },
+    ],
+    bank: {
+      groomBankName: "BIDV",
+      groomAccountNumber: "21510003456789",
+      groomAccountName: "DANG HOAI NAM",
+      brideBankName: "MB Bank",
+      brideAccountNumber: "0904221188",
+      brideAccountName: "TRINH MAI CHI",
+    },
+  },
+  i18n: {
+    vi: { name: "Bạch Sứ Lam", description },
+  },
+  assets: [
+    ...themeAssets,
+    ...base.gallery,
+    "/chungdoi/images/giftbox/porcelain-blue/box.webp",
+    ...giftDecor,
+    "/chungdoi/fonts/ViaodaLibre-Regular.ttf",
+  ],
+});

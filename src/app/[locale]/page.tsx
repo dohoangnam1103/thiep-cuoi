@@ -3,13 +3,15 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ChungDoiClone } from "@/components/chungdoi-clone";
 import { RouteMessages } from "@/components/route-messages";
-import { homeMessageNamespaces } from "@/i18n/message-scopes";
 import { TemplateMobileThumbnailOverridesProvider } from "@/components/template-mobile-thumbnail-overrides";
 import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
+import { TemplateRouteOverridesProvider } from "@/components/template-route-overrides";
+import { homeMessageNamespaces } from "@/i18n/message-scopes";
 import type { Locale } from "@/i18n/routing";
 import { pageSeo, staticAlternates } from "@/lib/seo";
 import { getTemplateLabelOverrides } from "@/lib/template-labels";
 import { getTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
+import { getPublicTemplateRouteOverrides } from "@/lib/template-route-aliases";
 
 export async function generateMetadata({
   params,
@@ -39,16 +41,23 @@ export const revalidate = 300;
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [templateNameOverrides, mobileThumbnailOverrides] = await Promise.all([
+  const [
+    templateNameOverrides,
+    mobileThumbnailOverrides,
+    templateRouteOverrides,
+  ] = await Promise.all([
     getTemplateLabelOverrides(),
     getTemplateMobileThumbnailOverrides(),
+    getPublicTemplateRouteOverrides(),
   ]);
 
   return (
     <RouteMessages namespaces={homeMessageNamespaces}>
       <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
         <TemplateNameOverridesProvider value={templateNameOverrides}>
-          <ChungDoiClone />
+          <TemplateRouteOverridesProvider value={templateRouteOverrides}>
+            <ChungDoiClone />
+          </TemplateRouteOverridesProvider>
         </TemplateNameOverridesProvider>
       </TemplateMobileThumbnailOverridesProvider>
     </RouteMessages>

@@ -9,6 +9,8 @@ import {
   type CassoCandidate,
   type CassoDecision,
 } from "@/lib/payment-settlement";
+import { SLIDESHOW_ORDER_CODE_REGEX } from "@/lib/slideshow/payment";
+import { settleSlideshowPayment } from "@/lib/slideshow/payment-service";
 
 type CassoV2Data = {
   id?: number;
@@ -21,12 +23,6 @@ type CassoV2Body = {
   data?: CassoV2Data;
 };
 
-/**
- * Luồng Casso chốt quyết định settle TRƯỚC khi gọi `settlePayment`, vì
- * `decideCassoSettlement` còn xét thêm cửa sổ 24h mà VietQR tĩnh không tự thực
- * thi được. Nên các ca bị chặn ở đó cần tự ghi vào bảng đối soát, không đi qua
- * đường ghi sẵn bên trong `settlePayment`.
- */
 async function reportReconciliation(input: {
   transactionId: number | string | null;
   payment: CassoCandidate;
@@ -70,45 +66,68 @@ export async function POST(req: Request) {
   const tx = body.data;
   const description = tx?.description ?? "";
   const received = typeof tx?.amount === "number" ? tx.amount : 0;
+  if (received <= 0) return Response.json({ success: true });
 
-  if (received <= 0) {
-    return Response.json({ success: true });
-  }
-
-  const match = description.toUpperCase().match(ORDER_CODE_REGEX);
-  if (!match) {
-    return Response.json({ success: true });
-  }
-
-  const payment = await prisma.payment.findUnique({
-    where: { code: match[0] },
-  });
-  const decision = decideCassoSettlement({
-    payment,
-    receivedAmount: received,
-    now: new Date(),
-  });
-
-  if (decision.kind === "reconcile" && payment) {
-    await reportReconciliation({
+  const normalizedDescription = description.toUpperCase();
+  const invitationMatch = normalizedDescription.match(ORDER_CODE_REGEX);
+  const slideshowMatch = normalizedDescription.match(SLIDESHOW_ORDER_CODE_REGEX);
+  if (invitationMatch && slideshowMatch) {
+    console.warn("casso_ambiguous_payment_codes", {
       transactionId: tx?.id ?? null,
+      invitationCode: invitationMatch[0],
+      slideshowCode: slideshowMatch[0],
+    });
+    return Response.json({ error: "ambiguous payment codes" }, { status: 422 });
+  }
+
+  if (invitationMatch) {
+    const payment = await prisma.payment.findUnique({
+      where: { code: invitationMatch[0] },
+    });
+    const decision = decideCassoSettlement({
       payment,
       receivedAmount: received,
-      reason: decision.reason,
+      now: new Date(),
     });
+
+    if (decision.kind === "reconcile" && payment) {
+      await reportReconciliation({
+        transactionId: tx?.id ?? null,
+        payment,
+        receivedAmount: received,
+        reason: decision.reason,
+      });
+    }
+    if (decision.kind === "settle" && payment) {
+      const outcome = await settlePayment({
+        paymentId: payment.id,
+        receivedAmount: received,
+        source: "casso-webhook",
+        providerRef: tx?.id === undefined ? null : String(tx.id),
+      });
+      if (outcome.kind === "settled" && outcome.slug) {
+        revalidatePath(`/thiep/${outcome.slug}`);
+      }
+    }
+    return Response.json({ success: true });
   }
 
-  if (decision.kind === "settle" && payment) {
-    // Nhánh claim thất bại không cần xử lý lại ở đây: `settlePayment` đã tự
-    // phân loại và ghi lại, kể cả ca thiệp đã được đơn khác kích hoạt.
-    const outcome = await settlePayment({
-      paymentId: payment.id,
-      receivedAmount: received,
-      source: "casso-webhook",
-      providerRef: tx?.id === undefined ? null : String(tx.id),
+  if (slideshowMatch) {
+    const payment = await prisma.slideshowPayment.findFirst({
+      where: { code: slideshowMatch[0], provider: "casso" },
     });
-    if (outcome.kind === "settled" && outcome.slug) {
-      revalidatePath(`/thiep/${outcome.slug}`);
+    if (payment) {
+      const outcome = await settleSlideshowPayment({
+        paymentId: payment.id,
+        receivedAmount: received,
+        source: "casso-webhook",
+        providerRef: tx?.id === undefined ? null : String(tx.id),
+      });
+      if (outcome.kind === "settled") {
+        revalidatePath(`/trinh-chieu/${outcome.projectId}`);
+        revalidatePath(`/trinh-chieu/xem/${outcome.shareToken}`);
+        revalidatePath("/trinh-chieu/du-an");
+      }
     }
   }
 

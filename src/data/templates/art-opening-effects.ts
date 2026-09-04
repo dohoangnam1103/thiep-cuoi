@@ -30,6 +30,7 @@ import thoCamHighlandAssets from "../../../public/chungdoi/images/themes/_decor/
 import trongDongDongSonAssets from "../../../public/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-assets.json";
 import trucChiMinimalAssets from "../../../public/chungdoi/images/themes/_decor/truc-chi-minimal/opening-assets.json";
 import thanhDuongAnhSangAssets from "../../../public/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-assets.json";
+import congLaDuaMienTayAssets from "../../../public/chungdoi/images/themes/_decor/cong-la-dua-mien-tay/opening-assets.json";
 import y2kChromeAssets from "../../../public/chungdoi/images/themes/_decor/y2k-chrome/opening-assets.json";
 
 import {
@@ -296,6 +297,12 @@ const effectInputs = {
     exits: { "rose-glow": [0, -90, 3.2, 0, 10], "dove-pair": [60, -75, 2.8, -8, 9], "light-shaft": [5, -80, 2.4, -5, 8] },
     peaks: { "rose-glow": { yPercent: -10, brightness: 1.4 }, "dove-pair": { xPercent: 8, yPercent: -8, brightness: 1.2 }, "light-shaft": { yPercent: -6 } },
     origins: { "rose-glow": "50% 10%", "dove-pair": "40% 20%", "light-shaft": "50% 7%" },
+  }],
+  "cong-la-dua-mien-tay": [congLaDuaMienTayAssets, {
+    durationMs: 1380,
+    exits: { "left-frond": [-78, -18, 2.9, -7, 8], "right-frond": [80, -14, 2.9, 7, 8], "areca-cluster": [0, -74, 2.4, 0, 7] },
+    peaks: { "left-frond": { yPercent: -6 }, "right-frond": { yPercent: -6 }, "areca-cluster": { yPercent: -10, brightness: 1.24 } },
+    origins: { "left-frond": "100% 0%", "right-frond": "0% 0%", "areca-cluster": "50% 0%" },
   }],
   ...phongThuMotions,
   ...hoaThuMotions,

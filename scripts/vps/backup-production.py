@@ -30,11 +30,16 @@ assert dest.execute("PRAGMA quick_check").fetchone()[0] == "ok"
 dest.close()
 source.close()
 previous = sorted(p for p in parent.iterdir() if re.fullmatch(r"\d{8}T\d{6}Z", p.name) and p != target and (p / "COMPLETE").is_file())
-for name in ["editor-uploads", "guest-media", "blog-media"]:
+for name in ["editor-uploads", "guest-media", "blog-media", "slideshow-media"]:
+    source_dir = root / "data" / name
+    destination_dir = target / name
+    if not source_dir.is_dir():
+        destination_dir.mkdir()
+        continue
     args = ["rsync", "-a"]
     if previous and (previous[-1] / name).is_dir():
         args.append("--link-dest=" + str(previous[-1] / name))
-    args += [str(root / "data" / name) + "/", str(target / name) + "/"]
+    args += [str(source_dir) + "/", str(destination_dir) + "/"]
     subprocess.run(args, check=True)
 for name in [".env", "tunnel.env", "compose.yaml"]:
     shutil.copy2(root / name, target / name)

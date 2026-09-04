@@ -1,0 +1,19 @@
+{
+  "panel": {
+    "x": 12,
+    "y": 128.734375,
+    "width": 366,
+    "height": 586.53125,
+    "top": 128.734375,
+    "right": 378,
+    "bottom": 715.265625,
+    "left": 12
+  },
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "scrollWidth": 390,
+  "bankCards": 2,
+  "closed": true
+}

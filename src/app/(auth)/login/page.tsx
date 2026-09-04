@@ -30,7 +30,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       ? authCopy.checkoutNotice
       : reason === "create"
         ? authCopy.createNotice
-        : undefined;
+        : reason === "slideshow"
+          ? authCopy.slideshowNotice
+          : undefined;
   const nextPath = safeAuthReturnPath(next);
 
   return (

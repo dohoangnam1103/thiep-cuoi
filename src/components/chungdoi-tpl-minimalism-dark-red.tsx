@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -34,6 +34,7 @@ type MinimalismPalette = {
   scheduleIcons?: readonly (string | null)[];
   footerFlowerSrc?: string;
   showCountdown?: boolean;
+  dualHeroPhotos?: boolean;
 };
 
 const DARK_RED_PALETTE: MinimalismPalette = {
@@ -45,6 +46,29 @@ const DARK_RED_PALETTE: MinimalismPalette = {
   creamSoft: "rgba(236,228,216,0.7)",
   pageBg: "#fff7eb",
   deep: "#590310",
+};
+
+const DARK_BLUE_PALETTE: MinimalismPalette = {
+  decorPath: "/chungdoi/images/themes/minimalism-dark-blue",
+  flowerSrc: "/chungdoi/images/themes/minimalism-dark-blue/flower2-decoration.webp",
+  themePath: "/chungdoi/images/themes/minimalism-dark-blue",
+  primary: "#00224c",
+  cream: "#ece4d8",
+  creamSoft: "rgba(236,228,216,0.72)",
+  pageBg: "#f7f3eb",
+  deep: "#001a3c",
+  envelopeBackgroundSrc: "/chungdoi/images/themes/minimalism-dark-blue/envelope-background.webp",
+  envelopeCoverSrc: "/chungdoi/images/themes/minimalism-dark-blue/envelope-cover.webp",
+  noteSrc: null,
+  scheduleIcons: [
+    null,
+    "/chungdoi/images/themes/minimalism-dark-blue/church.webp",
+    "/chungdoi/images/themes/minimalism-dark-blue/cake.webp",
+    "/chungdoi/images/themes/minimalism-dark-blue/cook.webp",
+    null,
+  ],
+  showCountdown: true,
+  dualHeroPhotos: true,
 };
 
 const JADE_PALETTE: MinimalismPalette = {
@@ -245,7 +269,7 @@ function MinimalismInvitation({
   } = palette;
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -304,7 +328,27 @@ function MinimalismInvitation({
           <div className="relative z-10 mt-24 w-[82%] max-w-[330px] md:mt-28 md:max-w-[420px]">
             <div className="relative aspect-[333/384]">
               <img src={palette.envelopeBackgroundSrc ?? `${DECOR}/envelope-background.webp`} alt="" aria-hidden className="pointer-events-none absolute inset-0 z-10 w-full max-w-none" />
-              {heroPhoto ? (
+              {palette.dualHeroPhotos && people[0].heroPhoto ? (
+                <div
+                  className="absolute left-[13%] top-[-1%] z-20 w-[53%]"
+                  style={{ animation: "drFloat 6s ease-in-out infinite", willChange: "transform" }}
+                >
+                  <div className="aspect-[150/180] -rotate-[9deg] border-[7px] border-white bg-white shadow-[2px_2px_4px_rgba(0,0,0,0.25)]">
+                    <img src={people[0].heroPhoto} alt={people[0].shortName} className="h-full w-full object-cover" />
+                  </div>
+                </div>
+              ) : null}
+              {palette.dualHeroPhotos && people[1].heroPhoto ? (
+                <div
+                  className="absolute left-[42%] top-[10%] z-[21] w-[53%]"
+                  style={{ animation: "drFloat 6.5s ease-in-out infinite", animationDelay: "0.4s", willChange: "transform" }}
+                >
+                  <div className="aspect-[150/180] rotate-[11deg] border-[7px] border-white bg-white shadow-[2px_2px_4px_rgba(0,0,0,0.25)]">
+                    <img src={people[1].heroPhoto} alt={people[1].shortName} className="h-full w-full object-cover" />
+                  </div>
+                </div>
+              ) : null}
+              {!palette.dualHeroPhotos && heroPhoto ? (
                 <div
                   className="absolute left-[33%] top-[-2%] z-20 w-[64%]"
                   style={{ animation: "drFloat 6.5s ease-in-out infinite", animationDelay: "0.4s", willChange: "transform" }}
@@ -355,28 +399,33 @@ function MinimalismInvitation({
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[1].birthOrder}</div>
               </div>
 
-              {ceremony ? (
-                <div className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY}>
-                  {couple.ceremonyHeader ? (
-                    <div style={{ color: CREAM_SOFT }}>
-                      <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{couple.ceremonyHeader}</span>
+              <div data-minimalism-dark-red-ceremonies className="flex w-full flex-col items-center gap-8">
+                {ceremonies.map((ceremony, index) => {
+                  const ceremonyDate = formatDate(ceremony.date);
+                  return ceremonyDate ? (
+                    <div key={`${ceremony.title}-${ceremony.date}-${index}`} className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY}>
+                      {ceremony.title ? (
+                        <div style={{ color: CREAM_SOFT }}>
+                          <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{ceremony.title}</span>
+                        </div>
+                      ) : null}
+                      <div className="flex w-full max-w-[180px] items-center justify-between px-0 text-[13px] uppercase md:max-w-[210px] md:text-[15px]" style={{ color: CREAM_SOFT }}>
+                        <span>{ceremony.time ? `Vào lúc ${ceremony.time}` : ""}</span>
+                        <span>{ceremonyDate.weekday}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-4" style={{ color: CREAM }}>
+                        <span className="text-[40px] leading-none md:text-[46px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.day}</span>
+                        <div className="h-[46px] w-px" style={{ backgroundColor: "rgba(236,228,216,0.45)" }} />
+                        <div className="flex flex-col items-start justify-center gap-1 text-left">
+                          <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>Tháng {ceremonyDate.month}</span>
+                          <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.yearNumber}</span>
+                        </div>
+                      </div>
+                      <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>{ceremonyDate.lunar}</div>
                     </div>
-                  ) : null}
-                  <div className="flex w-full max-w-[180px] items-center justify-between px-0 text-[13px] uppercase md:max-w-[210px] md:text-[15px]" style={{ color: CREAM_SOFT }}>
-                    <span>Vào lúc {couple.ceremonyTime}</span>
-                    <span>{ceremony.weekday}</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-4" style={{ color: CREAM }}>
-                    <span className="text-[40px] leading-none md:text-[46px]" style={{ ...SERIF, color: CREAM }}>{ceremony.day}</span>
-                    <div className="h-[46px] w-px" style={{ backgroundColor: "rgba(236,228,216,0.45)" }} />
-                    <div className="flex flex-col items-start justify-center gap-1 text-left">
-                      <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>Tháng {ceremony.month}</span>
-                      <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremony.yearNumber}</span>
-                    </div>
-                  </div>
-                  <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>{ceremony.lunar}</div>
-                </div>
-              ) : null}
+                  ) : null;
+                })}
+              </div>
             </div>
           </WineCard>
         </section>
@@ -689,6 +738,17 @@ export function MinimalismDarkRedInvitation({ content }: { content: ChungDoiDemo
       content={content}
       palette={DARK_RED_PALETTE}
       testId="minimalism-dark-red-template"
+    />
+  );
+}
+
+/** Navy source variation with paired polaroids and blue hydrangea artwork. */
+export function MinimalismDarkBlueInvitation({ content }: { content: ChungDoiDemoContent }) {
+  return (
+    <MinimalismInvitation
+      content={content}
+      palette={DARK_BLUE_PALETTE}
+      testId="minimalism-dark-blue-template"
     />
   );
 }

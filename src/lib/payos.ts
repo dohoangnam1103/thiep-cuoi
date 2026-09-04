@@ -216,12 +216,13 @@ function verifyApiResponse(data: PayosPaymentRequest, signature: string | undefi
   }
 }
 
-export async function createPayosPaymentRequest(input: {
-  invitationId: string;
+export async function createPayosPaymentRequestForPaths(input: {
   orderCode: string;
   description: string;
   amount: number;
   expiresAt: Date;
+  returnPath: string;
+  cancelPath: string;
 }): Promise<PayosPaymentRequest> {
   const { checksumKey } = getPayosCredentials();
   const orderCode = Number(input.orderCode);
@@ -229,12 +230,8 @@ export async function createPayosPaymentRequest(input: {
     throw new Error("Mã đơn payOS không hợp lệ");
   }
 
-  const returnUrl = absoluteUrl(
-    `/dashboard/${input.invitationId}/thanh-toan?payos=success`,
-  );
-  const cancelUrl = absoluteUrl(
-    `/dashboard/${input.invitationId}/thanh-toan?payos=cancel`,
-  );
+  const returnUrl = absoluteUrl(input.returnPath);
+  const cancelUrl = absoluteUrl(input.cancelPath);
   const signatureFields = {
     amount: input.amount,
     cancelUrl,
@@ -254,6 +251,25 @@ export async function createPayosPaymentRequest(input: {
   });
   verifyApiResponse(response.data, response.signature);
   return response.data;
+}
+
+/** Compatibility wrapper for the live invitation checkout. */
+export async function createPayosPaymentRequest(input: {
+  invitationId: string;
+  orderCode: string;
+  description: string;
+  amount: number;
+  expiresAt: Date;
+}): Promise<PayosPaymentRequest> {
+  const path = `/dashboard/${input.invitationId}/thanh-toan`;
+  return createPayosPaymentRequestForPaths({
+    orderCode: input.orderCode,
+    description: input.description,
+    amount: input.amount,
+    expiresAt: input.expiresAt,
+    returnPath: `${path}?payos=success`,
+    cancelPath: `${path}?payos=cancel`,
+  });
 }
 
 export async function getPayosPaymentRequest(

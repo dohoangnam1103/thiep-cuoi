@@ -8,7 +8,8 @@ import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { WeddingFaqSection } from "@/components/chungdoi-faq";
 import { useTemplateMobileThumbnail } from "@/components/template-mobile-thumbnail-overrides";
 import { useTemplateName } from "@/components/template-name-overrides";
-import { TemplatePreviewModal, demoSlug } from "@/components/template-preview-modal";
+import { useTemplateRouteSlug } from "@/components/template-route-overrides";
+import { TemplatePreviewModal } from "@/components/template-preview-modal";
 import { TemplateSuggestionCta } from "@/components/template-suggestion-cta";
 import { TemplateListingImage } from "@/components/template-listing-image";
 import { HorizontalPillScroller } from "@/components/ui/horizontal-pill-scroller";
@@ -329,6 +330,7 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
   const t = useTranslations("listing");
   const locale = useLocale();
   const templateName = useTemplateName();
+  const templateRouteSlug = useTemplateRouteSlug();
   const mobileThumbnailUrl = useTemplateMobileThumbnail(template.slug);
   const isVietnamese = locale === "vi";
   const name = templateName(
@@ -339,7 +341,9 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
   const category = isVietnamese ? t(`categories.${template.category}`) : template.category;
   const demoHref = {
     pathname: "/templates/[slug]/demo" as const,
-    params: { slug: demoSlug(template, locale) },
+    params: {
+      slug: isVietnamese ? templateRouteSlug(template.slug) : template.slug,
+    },
   };
 
   return (

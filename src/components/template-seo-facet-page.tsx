@@ -8,19 +8,23 @@ import {
 } from "@/components/chungdoi-listing";
 import { TemplateMobileThumbnailOverridesProvider } from "@/components/template-mobile-thumbnail-overrides";
 import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
+import { TemplateRouteOverridesProvider } from "@/components/template-route-overrides";
 import {
   findTemplateSeoFacet,
   templatesForSeoFacet,
   type TemplateSeoFacet,
   type TemplateSeoFacetKind,
 } from "@/data/template-seo-facets";
-import { getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { pageSeo, templateFacetAlternates } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site-url";
 import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
 import { getPublicTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
+import {
+  getPublicTemplateRouteOverrides,
+  templateRouteSlugFromMap,
+} from "@/lib/template-route-aliases";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 const TEMPLATE_PREVIEW_WIDTH = 2400;
@@ -102,11 +106,18 @@ export async function TemplateSeoFacetPage({
   if (templates.length === 0) notFound();
 
   setRequestLocale(locale);
-  const [t, listingT, templateNameOverrides, mobileThumbnailOverrides] = await Promise.all([
+  const [
+    t,
+    listingT,
+    templateNameOverrides,
+    mobileThumbnailOverrides,
+    templateRouteOverrides,
+  ] = await Promise.all([
     getTranslations({ locale, namespace: "templateSeoFacets" }),
     getTranslations({ locale, namespace: "listing" }),
     getPublicTemplateNameOverrides(),
     getPublicTemplateMobileThumbnailOverrides(),
+    getPublicTemplateRouteOverrides(),
   ]);
 
   const title = t(`items.${facet.id}.title`);
@@ -122,7 +133,11 @@ export async function TemplateSeoFacetPage({
     const demoPath = getPathname({
       href: {
         pathname: "/templates/[slug]/demo",
-        params: { slug: getVietnameseTemplateSlug(template.slug) },
+        params: {
+          slug: locale === "vi"
+            ? templateRouteSlugFromMap(templateRouteOverrides, template.slug)
+            : template.slug,
+        },
       },
       locale,
     });
@@ -210,13 +225,15 @@ export async function TemplateSeoFacetPage({
   return (
     <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
       <TemplateNameOverridesProvider value={templateNameOverrides}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
-        <ChungDoiListing initialTemplates={templates} facetContent={content} />
+        <TemplateRouteOverridesProvider value={templateRouteOverrides}>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+            }}
+          />
+          <ChungDoiListing initialTemplates={templates} facetContent={content} />
+        </TemplateRouteOverridesProvider>
       </TemplateNameOverridesProvider>
     </TemplateMobileThumbnailOverridesProvider>
   );

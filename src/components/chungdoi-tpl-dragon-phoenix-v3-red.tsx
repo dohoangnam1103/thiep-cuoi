@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
   WEEKDAY_LABELS,
   hexToRgba,
@@ -41,7 +41,7 @@ function RedHeading({ children }: { children: React.ReactNode }) {
 export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const { lightbox, setLightbox } = useLightbox(gallery.length);
@@ -127,15 +127,22 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
               <h3 className="font-couple-garamond flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GOLD_MUTED }}>{people[1].birthOrder}</div>
             </div>
-            {ceremony ? (
-              <div className="flex flex-col items-center gap-1 text-center">
-                <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
-                  <span>{ceremony.weekday}</span><span style={{ color: GOLD }}>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span style={{ color: GOLD }}>|</span><span>Tháng {ceremony.month}</span>
-                </div>
-                <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{ceremony.lunar}</div>
-              </div>
-            ) : null}
+            <div data-dragon-phoenix-v3-ceremonies className="flex w-full flex-col items-center gap-8">
+              {ceremonies.map((ceremony, index) => {
+                const ceremonyDate = formatDate(ceremony.date);
+                return ceremonyDate ? (
+                  <div key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-1 text-center">
+                    {ceremony.title ? <div className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{ceremony.title}</div> : null}
+                    {ceremony.time ? <div className="text-[20px] font-semibold md:text-[30px]">{ceremony.time}</div> : null}
+                    <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                      <span>{ceremonyDate.weekday}</span><span style={{ color: GOLD }}>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span style={{ color: GOLD }}>|</span><span>Tháng {ceremonyDate.month}</span>
+                    </div>
+                    <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                    <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{ceremonyDate.lunar}</div>
+                  </div>
+                ) : null;
+              })}
+            </div>
           </section>
 
           {/* ALBUM */}

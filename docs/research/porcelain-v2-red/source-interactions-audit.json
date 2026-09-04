@@ -1,0 +1,224 @@
+{
+  "route": "bach-su-v2-do",
+  "sourceUrl": "https://chungdoi.com/vi/mau-thiep/bach-su-v2-do/demo",
+  "desktop-album-modal": {
+    "ok": true,
+    "clickedImage": "https://cdn.chungdoi.com/uploads/17ce84ea-7751-42ce-ad5b-cf58325ac9da.webp",
+    "state": {
+      "scrollY": 1762,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "hidden",
+      "overlays": [
+        {
+          "tag": "DIALOG",
+          "role": null,
+          "classes": "modal",
+          "text": "✕1 / 8‹›close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "role": null,
+          "classes": "modal-box max-w-none w-auto h-auto bg-transparent shadow-none p-0 m-0 cursor-pointer",
+          "text": "✕1 / 8‹›",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "tag": "FORM",
+          "role": null,
+          "classes": "modal-backdrop bg-black/85",
+          "text": "close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        }
+      ]
+    }
+  },
+  "desktop-rsvp-modal": {
+    "ok": true,
+    "buttonText": "XÁC NHẬN THAM DỰ",
+    "state": {
+      "scrollY": 3075,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "visible",
+      "overlays": []
+    }
+  },
+  "desktop-map": {
+    "ok": true,
+    "heading": "Tiệc cưới sẽ tổ chức tại",
+    "state": {
+      "scrollY": 40,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "visible",
+      "overlays": []
+    }
+  },
+  "desktop-gift-modal": {
+    "ok": true,
+    "triggerText": "Nhấn để mở",
+    "state": {
+      "scrollY": 5437,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "hidden",
+      "overlays": [
+        {
+          "tag": "DIALOG",
+          "role": null,
+          "classes": "modal modal-bottom sm:modal-middle",
+          "text": "Hộp Quà MừngChú Rể - TRINH GIA BAOVietcombank1029384756TRINH GIA BAOLưu QRCô Dâu - NGO KHANH VYMB Bank8801122334455NGO KHANH VYLưu QRclose",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "role": null,
+          "classes": "modal-box max-w-lg sm:max-w-xl p-0 max-h-[90vh] overflow-y-auto",
+          "text": "Hộp Quà MừngChú Rể - TRINH GIA BAOVietcombank1029384756TRINH GIA BAOLưu QRCô Dâu - NGO KHANH VYMB Bank8801122334455NGO KHANH VYLưu QR",
+          "rect": {
+            "x": 432,
+            "y": 245,
+            "width": 576,
+            "height": 410,
+            "top": 245,
+            "right": 1008,
+            "bottom": 655,
+            "left": 432
+          }
+        },
+        {
+          "tag": "FORM",
+          "role": null,
+          "classes": "modal-backdrop",
+          "text": "close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        }
+      ]
+    }
+  },
+  "mobile-gift-modal": {
+    "ok": true,
+    "triggerText": "Nhấn để mở",
+    "state": {
+      "scrollY": 4477,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "hidden",
+      "overlays": [
+        {
+          "tag": "DIALOG",
+          "role": null,
+          "classes": "modal modal-bottom sm:modal-middle",
+          "text": "Hộp Quà MừngChú Rể - TRINH GIA BAOVietcombank1029384756TRINH GIA BAOLưu QRCô Dâu - NGO KHANH VYMB Bank8801122334455NGO KHANH VYLưu QRclose",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "role": null,
+          "classes": "modal-box max-w-lg sm:max-w-xl p-0 max-h-[90vh] overflow-y-auto",
+          "text": "Hộp Quà MừngChú Rể - TRINH GIA BAOVietcombank1029384756TRINH GIA BAOLưu QRCô Dâu - NGO KHANH VYMB Bank8801122334455NGO KHANH VYLưu QR",
+          "rect": {
+            "x": 0,
+            "y": 218,
+            "width": 390,
+            "height": 626,
+            "top": 218,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        {
+          "tag": "FORM",
+          "role": null,
+          "classes": "modal-backdrop",
+          "text": "close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        }
+      ]
+    }
+  },
+  "desktop-footer": {
+    "ok": true,
+    "footerText": [
+      "",
+      "HỘP QUÀ MỪNG",
+      "✦",
+      "✦",
+      "✦",
+      "✦",
+      "",
+      "Nhấn để mở",
+      "",
+      "Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!",
+      "♡ chungdoi.com",
+      "cdc-9f4b27ae61d3"
+    ],
+    "state": {
+      "scrollY": 55,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "visible",
+      "overlays": []
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { ChungDoiListing } from "@/components/chungdoi-listing";
 import { RouteMessages } from "@/components/route-messages";
 import { TemplateMobileThumbnailOverridesProvider } from "@/components/template-mobile-thumbnail-overrides";
 import { TemplateNameOverridesProvider } from "@/components/template-name-overrides";
+import { TemplateRouteOverridesProvider } from "@/components/template-route-overrides";
 import { completedTemplates } from "@/data/chungdoi";
 import type { Locale } from "@/i18n/routing";
 import { pageSeo, staticAlternates } from "@/lib/seo";
@@ -14,6 +15,7 @@ import {
 } from "@/lib/template-display-order";
 import { getPublicTemplateNameOverrides } from "@/lib/template-labels";
 import { getPublicTemplateMobileThumbnailOverrides } from "@/lib/template-mobile-thumbnails";
+import { getPublicTemplateRouteOverrides } from "@/lib/template-route-aliases";
 import {
   getPublicTemplateVisibilityOverrides,
   isTemplateVisible,
@@ -54,11 +56,13 @@ export default async function TemplatesPage({
     mobileThumbnailOverrides,
     displayOrder,
     visibilityOverrides,
+    templateRouteOverrides,
   ] = await Promise.all([
     getPublicTemplateNameOverrides(),
     getPublicTemplateMobileThumbnailOverrides(),
     getPublicTemplateDisplayOrder(),
     getPublicTemplateVisibilityOverrides(),
+    getPublicTemplateRouteOverrides(),
   ]);
   const orderedTemplates = sortByTemplateDisplayOrder(
     completedTemplates.filter((template) =>
@@ -72,7 +76,9 @@ export default async function TemplatesPage({
     <RouteMessages>
       <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
         <TemplateNameOverridesProvider value={templateNameOverrides}>
-          <ChungDoiListing initialTemplates={orderedTemplates} />
+          <TemplateRouteOverridesProvider value={templateRouteOverrides}>
+            <ChungDoiListing initialTemplates={orderedTemplates} />
+          </TemplateRouteOverridesProvider>
         </TemplateNameOverridesProvider>
       </TemplateMobileThumbnailOverridesProvider>
     </RouteMessages>

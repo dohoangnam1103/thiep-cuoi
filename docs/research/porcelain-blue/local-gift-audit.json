@@ -1,0 +1,9 @@
+{
+  "kind": "giftbox",
+  "opened": true,
+  "bankCards": 2,
+  "bodyOverflow": "hidden",
+  "brokenQr": [],
+  "closed": true,
+  "overflowRestored": ""
+}

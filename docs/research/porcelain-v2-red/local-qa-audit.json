@@ -1,0 +1,108 @@
+{
+  "slug": "porcelain-v2-red",
+  "route": "bach-su-v2-do",
+  "capturedAt": "2026-09-04T15:56:05.597Z",
+  "viewports": {
+    "desktop": {
+      "documentHeight": 6563,
+      "documentWidth": 1440,
+      "innerWidth": 1440,
+      "rootWidth": 900,
+      "brokenImages": [],
+      "footerPresent": true,
+      "giftKind": "layered-image",
+      "giftSlug": "porcelain-v2-red",
+      "consoleErrors": [
+        "console: Failed to load resource: the server responded with a status of 403 ()"
+      ],
+      "sourceHeight": 6337,
+      "heightDifferenceRatio": 0.0357
+    },
+    "mobile": {
+      "documentHeight": 6044,
+      "documentWidth": 390,
+      "innerWidth": 390,
+      "rootWidth": 390,
+      "brokenImages": [],
+      "footerPresent": true,
+      "giftKind": "layered-image",
+      "giftSlug": "porcelain-v2-red",
+      "consoleErrors": [
+        "console: Failed to load resource: the server responded with a status of 403 ()"
+      ],
+      "sourceHeight": 5505,
+      "heightDifferenceRatio": 0.0979
+    },
+    "narrow": {
+      "documentHeight": 6145,
+      "documentWidth": 320,
+      "innerWidth": 320,
+      "rootWidth": 320,
+      "brokenImages": [],
+      "footerPresent": true,
+      "giftKind": "layered-image",
+      "giftSlug": "porcelain-v2-red",
+      "consoleErrors": [
+        "console: Failed to load resource: the server responded with a status of 403 ()"
+      ],
+      "sourceHeight": 5525,
+      "heightDifferenceRatio": 0.1122
+    }
+  },
+  "cover": {
+    "desktop": {
+      "coverRemoved": true,
+      "bodyOverflow": "",
+      "rendererVisible": true
+    },
+    "mobile": {
+      "coverRemoved": true,
+      "bodyOverflow": "",
+      "rendererVisible": true
+    }
+  },
+  "interactions": {
+    "galleryCountLabel": "1 / 8",
+    "rsvpProxyPresent": true,
+    "rsvpDialogOpened": false,
+    "publicRsvpTriggerPresent": false,
+    "guestbookPresent": true,
+    "gift": {
+      "kind": "layered-image",
+      "slug": "porcelain-v2-red",
+      "images": [
+        {
+          "src": "/chungdoi/images/envelope/porcelain_v2_red.webp",
+          "naturalWidth": 420,
+          "naturalHeight": 619
+        },
+        {
+          "src": "/chungdoi/images/envelope/porcelain_v2_red.webp",
+          "naturalWidth": 420,
+          "naturalHeight": 619
+        }
+      ],
+      "expectedAsset": "/chungdoi/images/envelope/porcelain_v2_red.webp",
+      "expectedAssetPresent": true,
+      "bankCardCount": 2,
+      "modalDesktop": {
+        "x": 432,
+        "y": 265,
+        "width": 576,
+        "height": 370
+      },
+      "modalMobile": {
+        "x": 12,
+        "y": 128.734375,
+        "width": 366,
+        "height": 586.53125
+      },
+      "overflowWhileOpen": {
+        "body": "hidden",
+        "html": ""
+      }
+    },
+    "footerText": "Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!\n\n♡ thiepmungonline.com",
+    "failedLocalRequests": []
+  }
+}

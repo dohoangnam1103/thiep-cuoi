@@ -1,0 +1,44 @@
+{
+  "marker": 1,
+  "innerWidth": 390,
+  "scrollWidth": 390,
+  "scrollHeight": 5263,
+  "giftKind": "giftbox",
+  "giftImages": [
+    {
+      "src": "/chungdoi/images/giftbox/mini/qasr_green.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/mini/crystal_floral_red.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/mini/boho_floral_brown.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/mini/crystal_floral_blue.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/mini/baroque_v2_darkred.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/mini/nhat_binh_red.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/mini/minimalism_darkblue.webp",
+      "naturalWidth": 112
+    },
+    {
+      "src": "/chungdoi/images/giftbox/porcelain-blue/box.webp",
+      "naturalWidth": 480
+    }
+  ],
+  "broken": [],
+  "rsvpProxyVisible": true,
+  "failures": []
+}

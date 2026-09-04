@@ -1,0 +1,31 @@
+{
+  "route": "bach-su-nau",
+  "innerWidth": 390,
+  "scrollWidth": 390,
+  "scrollHeight": 5205,
+  "overflowing": [
+    {
+      "tag": "DIV",
+      "classes": "absolute inset-0 rounded-full animate-ping opacity-25",
+      "text": "",
+      "rect": {
+        "x": 294.067138671875,
+        "y": 604.067138671875,
+        "width": 103.86572265625,
+        "height": 103.86572265625,
+        "top": 604.067138671875,
+        "right": 397.932861328125,
+        "bottom": 707.932861328125,
+        "left": 294.067138671875
+      }
+    }
+  ],
+  "gallery": [
+    "https://cdn.chungdoi.com/uploads/d30fe2fc-7c30-4c1c-8515-83142e714040.jpg",
+    "https://cdn.chungdoi.com/uploads/869c2794-6378-4981-a7cb-045489cbc84f.jpg",
+    "https://cdn.chungdoi.com/uploads/d797b1a8-d52e-49a7-9f4f-c6688dd86f98.jpg",
+    "https://cdn.chungdoi.com/uploads/14435a15-ded0-4efd-881d-f274554b148d.jpg"
+  ],
+  "root900": null,
+  "failures": []
+}

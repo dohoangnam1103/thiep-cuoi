@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img">
+  <title>Coi trau kham trai tray wells</title>
+  <defs>
+    <linearGradient id="tray-lacquer" x1="210" y1="160" x2="970" y2="1040" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3a1a25"/>
+      <stop offset="0.55" stop-color="#32151F"/>
+      <stop offset="1" stop-color="#231016"/>
+    </linearGradient>
+    <linearGradient id="tray-shell" x1="160" y1="220" x2="1040" y2="980" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F1E8D8"/>
+      <stop offset="0.5" stop-color="#D8E3DF"/>
+      <stop offset="1" stop-color="#929B98"/>
+    </linearGradient>
+  </defs>
+  <path d="M356 82H844C900 82 950 104 990 144L1056 210C1096 250 1118 300 1118 356V844C1118 900 1096 950 1056 990L990 1056C950 1096 900 1118 844 1118H356C300 1118 250 1096 210 1056L144 990C104 950 82 900 82 844V356C82 300 104 250 144 210L210 144C250 104 300 82 356 82Z" fill="url(#tray-lacquer)"/>
+  <path d="M378 126H822C872 126 917 146 952 181L1019 248C1054 283 1074 328 1074 378V822C1074 872 1054 917 1019 952L952 1019C917 1054 872 1074 822 1074H378C328 1074 283 1054 248 1019L181 952C146 917 126 872 126 822V378C126 328 146 283 181 248L248 181C283 146 328 126 378 126Z" fill="none" stroke="url(#tray-shell)" stroke-width="17" stroke-linejoin="round"/>
+  <path d="M412 184H788C831 184 871 201 902 232L968 298C999 329 1016 369 1016 412V788C1016 831 999 871 968 902L902 968C871 999 831 1016 788 1016H412C369 1016 329 999 298 968L232 902C201 871 184 831 184 788V412C184 369 201 329 232 298L298 232C329 201 369 184 412 184Z" fill="none" stroke="#929B98" stroke-width="5" stroke-linejoin="round" opacity="0.8"/>
+  <path d="M286 287C362 244 463 245 530 297C500 382 413 439 316 431C283 390 272 335 286 287Z" fill="#3b1b26" stroke="#D8E3DF" stroke-width="8"/>
+  <path d="M670 292C744 240 846 232 924 275C946 329 934 390 896 434C798 440 710 384 670 292Z" fill="#3b1b26" stroke="#D8E3DF" stroke-width="8"/>
+  <path d="M292 704C374 653 481 661 548 727C518 814 425 870 326 854C286 813 272 754 292 704Z" fill="#3b1b26" stroke="#D8E3DF" stroke-width="8"/>
+  <path d="M653 734C722 660 831 645 913 690C944 743 938 809 899 856C801 879 702 829 653 734Z" fill="#3b1b26" stroke="#D8E3DF" stroke-width="8"/>
+  <rect x="454" y="454" width="292" height="292" rx="42" fill="#F1E8D8" stroke="#D8E3DF" stroke-width="10"/>
+  <path d="M493 600H707M600 493V707" fill="none" stroke="#929B98" stroke-width="4" opacity="0.32"/>
+  <path d="M342 374C398 350 442 326 490 295M726 310C779 340 824 365 884 383M350 772C402 748 455 736 518 735M701 760C760 744 812 733 872 718" fill="none" stroke="#929B98" stroke-width="5" stroke-linecap="round" opacity="0.52"/>
+  <path d="M382 522C328 558 300 612 301 674C360 663 409 628 435 576C411 579 394 563 382 522Z" fill="#315A42"/>
+  <path d="M320 676C363 630 394 583 416 533" fill="none" stroke="#D8E3DF" stroke-width="6" stroke-linecap="round"/>
+  <path d="M817 521C873 555 907 609 910 674C849 669 793 633 762 579C788 582 807 562 817 521Z" fill="#315A42"/>
+  <path d="M891 677C842 631 806 581 781 530" fill="none" stroke="#D8E3DF" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="590" cy="254" r="13" fill="#B85B52" opacity="0.9"/>
+  <circle cx="621" cy="262" r="10" fill="#F1E8D8" opacity="0.92"/>
+  <circle cx="610" cy="932" r="12" fill="#B85B52" opacity="0.9"/>
+  <circle cx="581" cy="924" r="9" fill="#F1E8D8" opacity="0.92"/>
+</svg>

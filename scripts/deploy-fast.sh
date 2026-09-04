@@ -177,6 +177,8 @@ rsync_source() {
     --exclude '/.worktrees/' \
     --exclude '.playwright-mcp' \
     --exclude '.capture' \
+    --exclude '/.production-archives/' \
+    --exclude '/docs/research/.*-qa-*.png' \
     --exclude '/.claude-flow' \
     --exclude '/.codegraph' \
     --exclude '/.kiro' \
@@ -238,6 +240,13 @@ if [ -d data/guest-media ]; then
   echo "guest_media_snapshot=$snapshot_guest"
 fi
 
+if [ -d data/slideshow-media ]; then
+  snapshot_slideshow="data/backups/slideshow-media-snapshot-${deployment_id}"
+  rm -rf -- "$snapshot_slideshow"
+  cp -al data/slideshow-media "$snapshot_slideshow"
+  echo "slideshow_media_snapshot=$snapshot_slideshow"
+fi
+
 # find trả 0 kể cả khi không khớp gì, nên không làm `set -o pipefail` giết
 # script như `ls glob`. Sắp theo mtime giảm dần rồi bỏ N bản mới nhất.
 prune_group() {
@@ -255,6 +264,7 @@ prune_group 'editor-uploads-predeploy-*.tar.gz'
 prune_group 'guest-media-predeploy-*.tar.gz'
 prune_group 'editor-uploads-snapshot-*'
 prune_group 'guest-media-snapshot-*'
+prune_group 'slideshow-media-snapshot-*'
 echo "backups_mb=$(du -sm data/backups | cut -f1)"
 REMOTE_BACKUP
 }
@@ -281,7 +291,7 @@ if [[ "$parallel_failed" == 1 ]]; then
   exit 1
 fi
 
-grep -E '^(database_backup|uploads_snapshot|guest_media_snapshot|backups_mb)=' "$BACKUP_LOG" | sed 's/^/   /' || true
+grep -E '^(database_backup|uploads_snapshot|guest_media_snapshot|slideshow_media_snapshot|backups_mb)=' "$BACKUP_LOG" | sed 's/^/   /' || true
 rm -f "$BUILD_LOG" "$RSYNC_LOG" "$BACKUP_LOG"
 log_step "build Next + rsync source + backup (song song)"
 

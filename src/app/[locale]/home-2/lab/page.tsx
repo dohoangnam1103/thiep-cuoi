@@ -140,49 +140,61 @@ export default async function LabIndex({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [tIndex, tV11, tV10] = await Promise.all([
+  const [tIndex, tV12, tV11, tV10] = await Promise.all([
     getTranslations({ locale, namespace: "homeLabIndex" }),
+    getTranslations({ locale, namespace: "homeLabV12.registry" }),
     getTranslations({ locale, namespace: "homeLabV11.registry" }),
     getTranslations({ locale, namespace: "homeLabV10.registry" }),
   ]);
 
-  const variants: Variant[] = VARIANTS.map((variant) => {
-    if (!("catalog" in variant)) return variant;
+  const variants: Variant[] = [
+    {
+      code: "V12",
+      href: "/home-2/lab/v12",
+      name: tV12("name"),
+      motion: tV12("motion"),
+      strength: tV12("strength"),
+      weakness: tV12("weakness"),
+      note: tV12("note"),
+    },
+    ...VARIANTS.map((variant): Variant => {
+      if (!("catalog" in variant)) return variant;
 
-    if (variant.catalog === "v11") {
+      if (variant.catalog === "v11") {
+        return {
+          code: variant.code,
+          href: variant.href,
+          name: tV11("name"),
+          motion: tV11("motion"),
+          strength: tV11("strength"),
+          weakness: tV11("weakness"),
+          note: tV11("note"),
+        };
+      }
+
+      if (variant.catalog === "v10") {
+        return {
+          code: variant.code,
+          href: variant.href,
+          name: tV10("name"),
+          motion: tV10("motion"),
+          strength: tV10("strength"),
+          weakness: tV10("weakness"),
+          note: tV10("note"),
+        };
+      }
+
       return {
         code: variant.code,
         href: variant.href,
-        name: tV11("name"),
-        motion: tV11("motion"),
-        strength: tV11("strength"),
-        weakness: tV11("weakness"),
-        note: tV11("note"),
+        name: tIndex("v9.name"),
+        motion: tIndex("v9.motion"),
+        strength: tIndex("v9.strength"),
+        weakness: tIndex("v9.weakness"),
+        note: tIndex("v9.note"),
       };
-    }
-
-    if (variant.catalog === "v10") {
-      return {
-        code: variant.code,
-        href: variant.href,
-        name: tV10("name"),
-        motion: tV10("motion"),
-        strength: tV10("strength"),
-        weakness: tV10("weakness"),
-        note: tV10("note"),
-      };
-    }
-
-    return {
-      code: variant.code,
-      href: variant.href,
-      name: tIndex("v9.name"),
-      motion: tIndex("v9.motion"),
-      strength: tIndex("v9.strength"),
-      weakness: tIndex("v9.weakness"),
-      note: tIndex("v9.note"),
-    };
-  });
+    }),
+  ];
 
   return (
     <main className="min-h-screen bg-[#f4f2ee] px-6 py-16 text-[#2f2c29]">

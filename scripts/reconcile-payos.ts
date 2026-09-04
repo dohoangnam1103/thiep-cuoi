@@ -16,16 +16,24 @@
  */
 import { reconcileOutstandingPayosPayments } from "@/lib/payos-reconcile";
 import { prisma } from "@/lib/prisma";
+import { reconcileOutstandingSlideshowPayosPayments } from "@/lib/slideshow/payment-service";
 
 async function main() {
-  const summary = await reconcileOutstandingPayosPayments();
+  // Chạy tuần tự để không nhân đôi burst request tới payOS. Giữ nguyên lượt
+  // Invitation trước, rồi mới đối soát domain slideshow độc lập.
+  const invitation = await reconcileOutstandingPayosPayments();
   console.log(
-    `Tổng kết: quét ${summary.scanned}, cứu được ${summary.settled}, không đổi ${summary.unchanged}, lỗi ${summary.failed}`,
+    `Thiệp mời: quét ${invitation.scanned}, cứu được ${invitation.settled}, không đổi ${invitation.unchanged}, lỗi ${invitation.failed}`,
+  );
+
+  const slideshow = await reconcileOutstandingSlideshowPayosPayments();
+  console.log(
+    `Slideshow: quét ${slideshow.scanned}, cứu được ${slideshow.settled}, không đổi ${slideshow.unchanged}, lỗi ${slideshow.failed}`,
   );
 
   // Báo lỗi ra exit code để cron log và người vận hành nhìn thấy: hỏi payOS
   // không được trên diện rộng nghĩa là lưới an toàn đang không hoạt động.
-  if (summary.failed > 0) process.exitCode = 1;
+  if (invitation.failed > 0 || slideshow.failed > 0) process.exitCode = 1;
 }
 
 main()

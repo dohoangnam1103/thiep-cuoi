@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" fill="none">
+  <rect x="34" y="34" width="932" height="1432" rx="24" stroke="#C7A96B" stroke-width="3"/>
+  <rect x="54" y="54" width="892" height="1392" rx="18" stroke="#607A68" stroke-opacity=".38"/>
+  <path d="M210 1160V435c0-160 130-290 290-290s290 130 290 290v725" stroke="#607A68" stroke-width="4" stroke-opacity=".7"/>
+  <path d="M250 1160V445c0-138 112-250 250-250s250 112 250 250v715" stroke="#C7A96B" stroke-width="2" stroke-opacity=".75"/>
+  <path d="M92 280c115-8 179-63 205-164M908 280c-115-8-179-63-205-164M92 1220c115 8 179 63 205 164M908 1220c-115 8-179 63-205 164" stroke="#607A68" stroke-width="4" stroke-linecap="round"/>
+  <g fill="#78907C">
+    <ellipse cx="132" cy="242" rx="16" ry="39" transform="rotate(-48 132 242)"/><ellipse cx="177" cy="217" rx="14" ry="35" transform="rotate(-28 177 217)"/><ellipse cx="218" cy="174" rx="13" ry="32" transform="rotate(-12 218 174)"/>
+    <ellipse cx="868" cy="242" rx="16" ry="39" transform="rotate(48 868 242)"/><ellipse cx="823" cy="217" rx="14" ry="35" transform="rotate(28 823 217)"/><ellipse cx="782" cy="174" rx="13" ry="32" transform="rotate(12 782 174)"/>
+    <ellipse cx="132" cy="1258" rx="16" ry="39" transform="rotate(48 132 1258)"/><ellipse cx="177" cy="1283" rx="14" ry="35" transform="rotate(28 177 1283)"/><ellipse cx="218" cy="1326" rx="13" ry="32" transform="rotate(12 218 1326)"/>
+    <ellipse cx="868" cy="1258" rx="16" ry="39" transform="rotate(-48 868 1258)"/><ellipse cx="823" cy="1283" rx="14" ry="35" transform="rotate(-28 823 1283)"/><ellipse cx="782" cy="1326" rx="13" ry="32" transform="rotate(-12 782 1326)"/>
+  </g>
+  <g fill="#FAF7F0" stroke="#C7A96B" stroke-width="2">
+    <circle cx="108" cy="292" r="26"/><circle cx="892" cy="292" r="26"/><circle cx="108" cy="1208" r="26"/><circle cx="892" cy="1208" r="26"/>
+  </g>
+  <g fill="#D8B5AA"><circle cx="108" cy="292" r="7"/><circle cx="892" cy="292" r="7"/><circle cx="108" cy="1208" r="7"/><circle cx="892" cy="1208" r="7"/></g>
+  <path d="M410 1318c35 32 67 48 90 48s55-16 90-48" stroke="#C7A96B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M468 1336c7-18 18-27 32-27s25 9 32 27c-8 20-19 30-32 30s-24-10-32-30Z" fill="#607A68" fill-opacity=".78"/>
+</svg>

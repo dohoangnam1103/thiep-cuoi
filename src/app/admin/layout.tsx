@@ -31,14 +31,18 @@ const NAV = [
   { href: "/admin/settings", label: "Cài đặt" },
 ];
 
-const SUPER_ADMIN_NAV = [
-  { href: "/admin/admins", label: "Admin" },
-];
-
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const [admin, t] = await Promise.all([getCurrentAdmin(), getTranslations("adminSupport")]);
+  const [admin, t, tFunds] = await Promise.all([
+    getCurrentAdmin(),
+    getTranslations("adminSupport"),
+    getTranslations("adminFunds"),
+  ]);
   const navItems = [...NAV, { href: "/admin/email-logs", label: t("emailLogsNav") }];
-  const nav = admin?.isSuperAdmin ? [...navItems, ...SUPER_ADMIN_NAV] : navItems;
+  const superAdminNav = [
+    { href: "/admin/funds", label: tFunds("nav") },
+    { href: "/admin/admins", label: "Admin" },
+  ];
+  const nav = admin?.isSuperAdmin ? [...navItems, ...superAdminNav] : navItems;
 
   return (
     <html lang="vi" className={`${appFontVariables} h-full antialiased`}>
@@ -49,6 +53,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           messages={{
             adminSupport: viMessages.adminSupport,
             adminDemos: viMessages.adminDemos,
+            adminFunds: viMessages.adminFunds,
             editor: { support: viMessages.editor.support },
           }}
         >

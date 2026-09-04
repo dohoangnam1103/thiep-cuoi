@@ -82,8 +82,12 @@ if [ "$DB_ONLY" = "--db-only" ]; then
   echo "==> [5/5] skipping media (--db-only)"
 else
   echo "==> [5/5] syncing uploaded media into data/"
-  for d in editor-uploads guest-media blog-media; do
+  for d in editor-uploads guest-media blog-media slideshow-media; do
     mkdir -p "data/$d"
+    if ! ssh "$HOST" "test -d '$REMOTE_DATA/$d'"; then
+      echo "    $d: chưa có trên production, bỏ qua"
+      continue
+    fi
     # No --delete: prod files are added, local-only extras are left in place.
     # NOTE: macOS ships rsync 2.6.9 which rejects --info=; use --stats.
     rsync -a --stats "$HOST:$REMOTE_DATA/$d/" "data/$d/" \

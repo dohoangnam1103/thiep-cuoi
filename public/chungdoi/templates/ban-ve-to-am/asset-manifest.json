@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "templateId": "ban-ve-to-am",
+  "name": "Vuon Kinh Ngay Thuong - Greenhouse Wedding",
+  "authorship": "Kiro hand-authored first-party SVG",
+  "license": "first-party",
+  "palette": {
+    "ivory": "#FAF7F0",
+    "deepGardenGreen": "#315445",
+    "sage": "#778B7C",
+    "paleSage": "#DFE8DF",
+    "champagneGold": "#C7A96B",
+    "blush": "#D8B5AA"
+  },
+  "assets": [
+    {
+      "runtimePath": "/chungdoi/templates/ban-ve-to-am/cover/garden-frame.svg",
+      "purpose": "Text-free greenhouse arch and botanical frame used on the shared 2D invitation cover and opened hero.",
+      "dimensions": "1000 x 1500",
+      "viewBox": "0 0 1000 1500"
+    },
+    {
+      "runtimePath": "/chungdoi/templates/ban-ve-to-am/ornaments/botanical-divider.svg",
+      "purpose": "Botanical line divider shared by the romantic garden invitation sections.",
+      "dimensions": "1200 x 180",
+      "viewBox": "0 0 1200 180"
+    },
+    {
+      "runtimePath": "/chungdoi/templates/ban-ve-to-am/gift/garden-envelope.svg",
+      "purpose": "Dedicated ivory botanical envelope artwork for the wedding gift section.",
+      "dimensions": "1000 x 800",
+      "viewBox": "0 0 1000 800"
+    }
+  ]
+}

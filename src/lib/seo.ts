@@ -54,12 +54,20 @@ export function blogAlternates(slug: string, locale: AppLocale): Alternates {
   return buildAlternates(() => ({ pathname: "/blog/[slug]", params: { slug } }), locale);
 }
 
-export function templateAlternates(routeSlug: string, locale: AppLocale): Alternates | null {
+export function templateAlternates(
+  routeSlug: string,
+  locale: AppLocale,
+  canonicalVietnameseSlug?: string,
+): Alternates | null {
   const template = findTemplateByRouteSlug(routeSlug);
   if (!template) return null;
   return buildAlternates((locale) => ({
     pathname: "/templates/[slug]/demo",
-    params: { slug: locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug },
+    params: {
+      slug: locale === "vi"
+        ? canonicalVietnameseSlug ?? getVietnameseTemplateSlug(template.slug)
+        : template.slug,
+    },
   }), locale);
 }
 

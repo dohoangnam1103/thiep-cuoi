@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     ".capture/**",
     ".playwright-mcp/**",
     ".deploy-worktree/**",
+    ".worktrees/**",
     "public/proto/**",
     "test-results/**",
     "tests/e2e/.report/**",

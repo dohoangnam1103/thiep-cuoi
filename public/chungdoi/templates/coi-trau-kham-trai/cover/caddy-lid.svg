@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img">
+  <title>Coi trau kham trai caddy lid</title>
+  <defs>
+    <linearGradient id="lid-lacquer" x1="240" y1="150" x2="940" y2="1030" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b1b26"/>
+      <stop offset="0.52" stop-color="#32151F"/>
+      <stop offset="1" stop-color="#271018"/>
+    </linearGradient>
+    <linearGradient id="shell-soft" x1="230" y1="240" x2="980" y2="980" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F1E8D8"/>
+      <stop offset="0.45" stop-color="#D8E3DF"/>
+      <stop offset="1" stop-color="#929B98"/>
+    </linearGradient>
+    <radialGradient id="medallion-ivory" cx="50%" cy="45%" r="58%">
+      <stop offset="0" stop-color="#F1E8D8"/>
+      <stop offset="1" stop-color="#d9d0bf"/>
+    </radialGradient>
+  </defs>
+  <path d="M358 76H842C896 76 946 98 984 136L1064 216C1102 254 1124 304 1124 358V842C1124 896 1102 946 1064 984L984 1064C946 1102 896 1124 842 1124H358C304 1124 254 1102 216 1064L136 984C98 946 76 896 76 842V358C76 304 98 254 136 216L216 136C254 98 304 76 358 76Z" fill="url(#lid-lacquer)"/>
+  <path d="M374 112H826C876 112 922 132 957 167L1033 243C1068 278 1088 324 1088 374V826C1088 876 1068 922 1033 957L957 1033C922 1068 876 1088 826 1088H374C324 1088 278 1068 243 1033L167 957C132 922 112 876 112 826V374C112 324 132 278 167 243L243 167C278 132 324 112 374 112Z" fill="none" stroke="url(#shell-soft)" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M392 158H808C854 158 896 176 929 209L991 271C1024 304 1042 346 1042 392V808C1042 854 1024 896 991 929L929 991C896 1024 854 1042 808 1042H392C346 1042 304 1024 271 991L209 929C176 896 158 854 158 808V392C158 346 176 304 209 271L271 209C304 176 346 158 392 158Z" fill="none" stroke="#929B98" stroke-width="5" stroke-linejoin="round" opacity="0.82"/>
+  <path d="M420 202H780C820 202 858 218 886 246L954 314C982 342 998 380 998 420V780C998 820 982 858 954 886L886 954C858 982 820 998 780 998H420C380 998 342 982 314 954L246 886C218 858 202 820 202 780V420C202 380 218 342 246 314L314 246C342 218 380 202 420 202Z" fill="none" stroke="#D8E3DF" stroke-width="9" stroke-linejoin="round" opacity="0.58"/>
+  <ellipse cx="600" cy="606" rx="218" ry="202" fill="url(#medallion-ivory)" stroke="#D8E3DF" stroke-width="10"/>
+  <ellipse cx="600" cy="606" rx="177" ry="163" fill="none" stroke="#929B98" stroke-width="4" opacity="0.55"/>
+  <path d="M383 360C301 411 264 499 281 590C370 579 446 524 481 443C444 452 410 431 383 360Z" fill="#315A42"/>
+  <path d="M333 595C391 528 434 462 463 391" fill="none" stroke="#D8E3DF" stroke-width="9" stroke-linecap="round"/>
+  <path d="M356 541C323 526 303 499 293 466M393 500C372 474 363 442 366 404M426 454C410 430 405 403 413 374" fill="none" stroke="#D8E3DF" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+  <path d="M814 295C896 335 951 413 954 510C869 516 784 478 732 407C770 407 798 378 814 295Z" fill="#315A42"/>
+  <path d="M912 519C843 465 790 405 752 337" fill="none" stroke="#D8E3DF" stroke-width="8" stroke-linecap="round"/>
+  <path d="M872 471C901 451 915 420 917 384M831 439C847 410 850 377 839 341M792 398C805 371 804 342 790 315" fill="none" stroke="#D8E3DF" stroke-width="5" stroke-linecap="round" opacity="0.82"/>
+  <path d="M733 773C791 751 840 710 870 655" fill="none" stroke="#929B98" stroke-width="10" stroke-linecap="round"/>
+  <path d="M854 656C884 676 900 707 899 744C866 732 842 705 833 670Z" fill="#F1E8D8" stroke="#929B98" stroke-width="4"/>
+  <path d="M800 714C829 729 847 755 852 789C818 781 791 758 778 725Z" fill="#F1E8D8" stroke="#929B98" stroke-width="4"/>
+  <circle cx="875" cy="632" r="21" fill="#B85B52" stroke="#F1E8D8" stroke-width="4"/>
+  <circle cx="912" cy="667" r="17" fill="#B85B52" stroke="#F1E8D8" stroke-width="4"/>
+  <circle cx="842" cy="699" r="15" fill="#B85B52" stroke="#F1E8D8" stroke-width="4"/>
+  <path d="M238 328C268 302 293 278 322 247M879 951C907 923 931 897 962 867" fill="none" stroke="#D8E3DF" stroke-width="6" stroke-linecap="round" opacity="0.48"/>
+</svg>

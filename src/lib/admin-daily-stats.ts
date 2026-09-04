@@ -17,7 +17,7 @@ export const DAILY_RANGE_OPTIONS = [7, 30, 90] as const;
 
 export type DailyRange = (typeof DAILY_RANGE_OPTIONS)[number];
 
-export const DEFAULT_DAILY_RANGE: DailyRange = 30;
+export const DEFAULT_DAILY_RANGE: DailyRange = 7;
 
 /**
  * The range arrives from the URL, so anything outside the known set has to

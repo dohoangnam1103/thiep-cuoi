@@ -1,0 +1,224 @@
+{
+  "route": "bach-su-nau",
+  "sourceUrl": "https://chungdoi.com/vi/mau-thiep/bach-su-nau/demo",
+  "desktop-album-modal": {
+    "ok": true,
+    "clickedImage": "https://cdn.chungdoi.com/uploads/d30fe2fc-7c30-4c1c-8515-83142e714040.jpg",
+    "state": {
+      "scrollY": 1309,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "hidden",
+      "overlays": [
+        {
+          "tag": "DIALOG",
+          "role": null,
+          "classes": "modal",
+          "text": "✕1 / 6‹›close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "role": null,
+          "classes": "modal-box max-w-none w-auto h-auto bg-transparent shadow-none p-0 m-0 cursor-pointer",
+          "text": "✕1 / 6‹›",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "tag": "FORM",
+          "role": null,
+          "classes": "modal-backdrop bg-black/85",
+          "text": "close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        }
+      ]
+    }
+  },
+  "desktop-rsvp-modal": {
+    "ok": true,
+    "buttonText": "XÁC NHẬN THAM DỰ",
+    "state": {
+      "scrollY": 2826,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "visible",
+      "overlays": []
+    }
+  },
+  "desktop-map": {
+    "ok": true,
+    "heading": "Tiệc cưới sẽ tổ chức tại",
+    "state": {
+      "scrollY": 41,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "visible",
+      "overlays": []
+    }
+  },
+  "desktop-gift-modal": {
+    "ok": true,
+    "triggerText": "Nhấn để mở",
+    "state": {
+      "scrollY": 5200,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "hidden",
+      "overlays": [
+        {
+          "tag": "DIALOG",
+          "role": null,
+          "classes": "modal modal-bottom sm:modal-middle",
+          "text": "Hộp Quà MừngChú Rể - NGUYEN DANG KHOAVietcombank0071000812345NGUYEN DANG KHOALưu QRCô Dâu - TRAN THUY DUONGTechcombank19036688991TRAN THUY DUONGLưu QRclose",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "role": null,
+          "classes": "modal-box max-w-lg sm:max-w-xl p-0 max-h-[90vh] overflow-y-auto",
+          "text": "Hộp Quà MừngChú Rể - NGUYEN DANG KHOAVietcombank0071000812345NGUYEN DANG KHOALưu QRCô Dâu - TRAN THUY DUONGTechcombank19036688991TRAN THUY DUONGLưu QR",
+          "rect": {
+            "x": 432,
+            "y": 245,
+            "width": 576,
+            "height": 410,
+            "top": 245,
+            "right": 1008,
+            "bottom": 655,
+            "left": 432
+          }
+        },
+        {
+          "tag": "FORM",
+          "role": null,
+          "classes": "modal-backdrop",
+          "text": "close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 900,
+            "top": 0,
+            "right": 1440,
+            "bottom": 900,
+            "left": 0
+          }
+        }
+      ]
+    }
+  },
+  "mobile-gift-modal": {
+    "ok": true,
+    "triggerText": "Nhấn để mở",
+    "state": {
+      "scrollY": 4361,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "hidden",
+      "overlays": [
+        {
+          "tag": "DIALOG",
+          "role": null,
+          "classes": "modal modal-bottom sm:modal-middle",
+          "text": "Hộp Quà MừngChú Rể - NGUYEN DANG KHOAVietcombank0071000812345NGUYEN DANG KHOALưu QRCô Dâu - TRAN THUY DUONGTechcombank19036688991TRAN THUY DUONGLưu QRclose",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "role": null,
+          "classes": "modal-box max-w-lg sm:max-w-xl p-0 max-h-[90vh] overflow-y-auto",
+          "text": "Hộp Quà MừngChú Rể - NGUYEN DANG KHOAVietcombank0071000812345NGUYEN DANG KHOALưu QRCô Dâu - TRAN THUY DUONGTechcombank19036688991TRAN THUY DUONGLưu QR",
+          "rect": {
+            "x": 0,
+            "y": 218,
+            "width": 390,
+            "height": 626,
+            "top": 218,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        },
+        {
+          "tag": "FORM",
+          "role": null,
+          "classes": "modal-backdrop",
+          "text": "close",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 844,
+            "top": 0,
+            "right": 390,
+            "bottom": 844,
+            "left": 0
+          }
+        }
+      ]
+    }
+  },
+  "desktop-footer": {
+    "ok": true,
+    "footerText": [
+      "",
+      "HỘP QUÀ MỪNG",
+      "✦",
+      "✦",
+      "✦",
+      "✦",
+      "",
+      "Nhấn để mở",
+      "",
+      "Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!",
+      "♡ chungdoi.com",
+      "cdc-9f4b27ae61d3"
+    ],
+    "state": {
+      "scrollY": 51,
+      "bodyOverflow": "visible",
+      "htmlOverflow": "visible",
+      "overlays": []
+    }
+  }
+}

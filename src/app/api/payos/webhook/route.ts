@@ -6,6 +6,7 @@ import {
   type PayosWebhookBody,
 } from "@/lib/payos";
 import { prisma } from "@/lib/prisma";
+import { settleSlideshowPayment } from "@/lib/slideshow/payment-service";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -42,21 +43,27 @@ export async function POST(req: Request) {
   }
 
   const orderCode = String(raw.data.orderCode);
-  const payment = await prisma.payment.findUnique({
-    where: { providerOrderCode: orderCode },
-    select: { id: true, provider: true },
-  });
+  const [payment, slideshowPayment] = await Promise.all([
+    prisma.payment.findUnique({
+      where: { providerOrderCode: orderCode },
+      select: { id: true, provider: true },
+    }),
+    prisma.slideshowPayment.findUnique({
+      where: { providerOrderCode: orderCode },
+      select: { id: true, provider: true },
+    }),
+  ]);
+  if (payment && slideshowPayment) {
+    console.error("Mã payOS trùng giữa invitation và slideshow", { orderCode });
+    return Response.json({ success: true });
+  }
+  const isSuccessfulVndPayment =
+    raw.success
+    && raw.code === "00"
+    && raw.data.code === "00"
+    && raw.data.currency === "VND";
 
-  if (
-    payment?.provider === "payos" &&
-    raw.success &&
-    raw.code === "00" &&
-    raw.data.code === "00" &&
-    raw.data.currency === "VND"
-  ) {
-    // `settlePayment` tự ghi lại ca cần đối soát khi không settle được, nên ở
-    // đây không còn nhánh `console.warn` nào nữa. Trước kia nhánh đó là nơi các
-    // khoản tiền trả thiếu hoặc đơn bị admin đổi giá đi vào im lặng.
+  if (payment?.provider === "payos" && isSuccessfulVndPayment) {
     const outcome = await settlePayment({
       paymentId: payment.id,
       receivedAmount: raw.data.amount,
@@ -70,6 +77,18 @@ export async function POST(req: Request) {
         reference: raw.data.reference,
       });
       if (outcome.slug) revalidatePath(`/thiep/${outcome.slug}`);
+    }
+  } else if (slideshowPayment?.provider === "payos" && isSuccessfulVndPayment) {
+    const outcome = await settleSlideshowPayment({
+      paymentId: slideshowPayment.id,
+      receivedAmount: raw.data.amount,
+      source: "payos-webhook",
+      providerRef: raw.data.reference,
+    });
+    if (outcome.kind === "settled") {
+      revalidatePath(`/trinh-chieu/${outcome.projectId}`);
+      revalidatePath(`/trinh-chieu/xem/${outcome.shareToken}`);
+      revalidatePath("/trinh-chieu/du-an");
     }
   }
 

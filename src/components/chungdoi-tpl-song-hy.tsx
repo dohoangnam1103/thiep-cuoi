@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 
 import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonyMessage, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
@@ -191,6 +191,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
     { title: families.groomParentTitle || "Ông Bà", a: families.groomFather, b: families.groomMother, addr: families.groomAddress },
     couple.brideFirst,
   );
+  const ceremonies = invitationCeremonies(content);
 
   return (
     <div className="font-body-serif relative isolate mx-auto flex w-full max-w-[480px] flex-col overflow-hidden overflow-x-clip md:max-w-[900px] md:border" style={{ backgroundColor: palette.cardBg, borderColor: hexToRgba(palette.accent, 0.13) }}>
@@ -269,14 +270,40 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <h3 className="font-couple-garamond flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[1].birthOrder}</div>
           </div>
-          <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: palette.gray }}>
-            <div style={{ color: palette.accent }}>
-              <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
-            </div>
-            {couple.ceremonyTime ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: palette.gray }}>VÀO LÚC {couple.ceremonyTime}</p> : null}
-            {wedding ? <SongHyDateRow palette={palette} weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
-            {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{wedding.yearNumber}</div> : null}
-            {wedding ? <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: palette.gray }}>{wedding.lunar}</div> : null}
+          <div data-song-hy-ceremonies>
+            {ceremonies.map((ceremony, index) => {
+              const ceremonyDate = formatDate(ceremony.date);
+              return (
+                <section
+                  key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
+                  className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6"
+                  style={{ color: palette.gray }}
+                >
+                  {ceremony.title ? (
+                    <div style={{ color: palette.accent }}>
+                      <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">
+                        {ceremony.title}
+                      </span>
+                    </div>
+                  ) : null}
+                  {ceremony.time ? (
+                    <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: palette.gray }}>
+                      VÀO LÚC {ceremony.time}
+                    </p>
+                  ) : null}
+                  {ceremonyDate ? (
+                    <SongHyDateRow
+                      palette={palette}
+                      weekday={ceremonyDate.weekday.toUpperCase()}
+                      day={ceremonyDate.day}
+                      month={ceremonyDate.month}
+                    />
+                  ) : null}
+                  {ceremonyDate ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{ceremonyDate.yearNumber}</div> : null}
+                  {ceremonyDate ? <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: palette.gray }}>{ceremonyDate.lunar}</div> : null}
+                </section>
+              );
+            })}
           </div>
         </div>
       </div>

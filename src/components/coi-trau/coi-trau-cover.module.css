@@ -1,0 +1,377 @@
+.stage {
+  --caddy-tilt-x: 58deg;
+  --caddy-tilt-y: 0deg;
+  --caddy-size: min(77vw, 34rem);
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 34%, rgb(216 227 223 / 14%), transparent 23%),
+    radial-gradient(circle at 14% 12%, rgb(49 90 66 / 76%), transparent 33%),
+    radial-gradient(circle at 86% 88%, rgb(184 91 82 / 18%), transparent 30%),
+    #180b10;
+  color: #f1e8d8;
+}
+
+.stage::before {
+  position: absolute;
+  inset: -20%;
+  content: "";
+  pointer-events: none;
+  background: conic-gradient(
+    from 214deg at 50% 50%,
+    transparent 0deg,
+    rgb(216 227 223 / 7%) 18deg,
+    transparent 38deg,
+    transparent 190deg,
+    rgb(146 155 152 / 5%) 218deg,
+    transparent 246deg
+  );
+  animation: shellSheen 11s ease-in-out infinite alternate;
+}
+
+.stage::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    radial-gradient(circle at 20% 26%, rgb(241 232 216 / 28%) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 74% 62%, rgb(216 227 223 / 24%) 0 1px, transparent 1.5px);
+  background-size: 4.5rem 4.5rem, 6.25rem 6.25rem;
+}
+
+.stage[data-tilt-x="-2"] { --caddy-tilt-x: 42deg; }
+.stage[data-tilt-x="-1"] { --caddy-tilt-x: 50deg; }
+.stage[data-tilt-x="0"] { --caddy-tilt-x: 58deg; }
+.stage[data-tilt-x="1"] { --caddy-tilt-x: 66deg; }
+.stage[data-tilt-x="2"] { --caddy-tilt-x: 74deg; }
+.stage[data-tilt-y="-4"] { --caddy-tilt-y: -180deg; }
+.stage[data-tilt-y="-3"] { --caddy-tilt-y: -135deg; }
+.stage[data-tilt-y="-2"] { --caddy-tilt-y: -90deg; }
+.stage[data-tilt-y="-1"] { --caddy-tilt-y: -45deg; }
+.stage[data-tilt-y="0"] { --caddy-tilt-y: 0deg; }
+.stage[data-tilt-y="1"] { --caddy-tilt-y: 45deg; }
+.stage[data-tilt-y="2"] { --caddy-tilt-y: 90deg; }
+.stage[data-tilt-y="3"] { --caddy-tilt-y: 135deg; }
+.stage[data-tilt-y="4"] { --caddy-tilt-y: 180deg; }
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  perspective: 1500px;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+  outline: none;
+}
+
+.orbit:focus-visible::after {
+  position: absolute;
+  width: calc(var(--caddy-size) + 1.5rem);
+  aspect-ratio: 1;
+  content: "";
+  border: 1px solid rgb(216 227 223 / 78%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgb(216 227 223 / 12%);
+}
+
+.stage[data-dragging="true"] .orbit {
+  cursor: grabbing;
+}
+
+.rig {
+  position: relative;
+  width: var(--caddy-size);
+  aspect-ratio: 1;
+  transform: rotateX(var(--caddy-tilt-x)) rotateY(var(--caddy-tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 240ms cubic-bezier(0.2, 0.72, 0.25, 1);
+  will-change: transform;
+}
+
+.stage[data-dragging="true"] .rig {
+  transition-duration: 80ms;
+}
+
+.caddyShadow {
+  position: absolute;
+  inset: 9% 4% 1%;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 58%);
+  backface-visibility: hidden;
+  filter: blur(32px);
+  transform: translate3d(0, 26%, -70px) rotateX(-58deg);
+}
+
+.baseEdgeBack,
+.baseEdgeFront,
+.base,
+.lidEdge,
+.lid,
+.backFace {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(18% 2%, 82% 2%, 98% 18%, 98% 82%, 82% 98%, 18% 98%, 2% 82%, 2% 18%);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.baseEdgeBack {
+  background: linear-gradient(145deg, #16090e, #4d2630 48%, #13070b);
+  transform: translateZ(-28px);
+  box-shadow: 0 1.8rem 4.5rem rgb(0 0 0 / 45%);
+}
+
+.baseEdgeFront {
+  background: linear-gradient(145deg, #5c2b37, #211017 44%, #723747 76%, #170a0f);
+  transform: translateZ(-12px);
+}
+
+.base {
+  overflow: hidden;
+  border: 2px solid rgb(216 227 223 / 32%);
+  background: #32151f;
+  transform: translateZ(0);
+  box-shadow:
+    inset 0 0 0 9px rgb(12 5 8 / 28%),
+    inset 0 0 3rem rgb(0 0 0 / 42%);
+}
+
+.trayArtwork,
+.lidArtwork {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.trayArtwork {
+  background-image: url("/chungdoi/templates/coi-trau-kham-trai/interior/tray-wells.svg");
+}
+
+.lidEdge {
+  background: linear-gradient(145deg, #6e3443, #1b0c12 48%, #824052 76%, #1a0b11);
+  transform: translateZ(27px);
+  box-shadow: 0 1.2rem 2.2rem rgb(0 0 0 / 42%);
+}
+
+.lid {
+  overflow: hidden;
+  border: 1px solid rgb(216 227 223 / 42%);
+  background: #32151f;
+  transform: translateZ(42px);
+  box-shadow:
+    inset 0 0 0 7px rgb(12 5 8 / 22%),
+    inset 0 0 3.5rem rgb(0 0 0 / 34%),
+    0 1rem 2.6rem rgb(0 0 0 / 38%);
+  will-change: opacity, transform;
+}
+
+.lidArtwork {
+  background-image: url("/chungdoi/templates/coi-trau-kham-trai/cover/caddy-lid.svg");
+}
+
+.lidSheen {
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    transparent 33%,
+    rgb(216 227 223 / 5%) 43%,
+    rgb(241 232 216 / 22%) 49%,
+    rgb(216 227 223 / 6%) 55%,
+    transparent 65%
+  );
+  transform: translateX(-35%);
+  animation: lidSheen 6.5s ease-in-out infinite;
+}
+
+.lidCopy {
+  position: absolute;
+  inset: 29% 22%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  text-align: center;
+  text-shadow: 0 2px 18px rgb(14 5 9 / 78%);
+}
+
+.backFace {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid rgb(216 227 223 / 34%);
+  background:
+    radial-gradient(circle at 50% 50%, rgb(216 227 223 / 9%), transparent 32%),
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 3.2rem, rgb(146 155 152 / 12%) 3.25rem 3.3rem),
+    #241017;
+  color: #f1e8d8;
+  text-align: center;
+  transform: translateZ(-29px) rotateY(180deg);
+  box-shadow: inset 0 0 4rem rgb(0 0 0 / 52%);
+}
+
+.handoffCard {
+  position: absolute !important;
+  inset: 0;
+  z-index: 10;
+  min-height: 100dvh;
+  pointer-events: none;
+  clip-path: polygon(18% 2%, 82% 2%, 98% 18%, 98% 82%, 82% 98%, 18% 98%, 2% 82%, 2% 18%);
+  transform: translateY(4%) scale(0.255);
+  transform-origin: center;
+  will-change: clip-path, transform;
+}
+
+.stage[data-state="opening"] .rig {
+  animation: caddyRetire 1680ms cubic-bezier(0.42, 0, 0.2, 1) forwards;
+}
+
+.stage[data-state="opening"] .lidEdge,
+.stage[data-state="opening"] .lid {
+  animation: lidRelease 1680ms cubic-bezier(0.4, 0, 0.15, 1) forwards;
+}
+
+.stage[data-state="opening"] .handoffCard {
+  animation: insertHandoff 1680ms cubic-bezier(0.38, 0, 0.12, 1) forwards;
+}
+
+.stage[data-state="handoff"] .rig,
+.stage[data-state="opened"] .rig {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.stage[data-state="handoff"] .handoffCard,
+.stage[data-state="opened"] .handoffCard {
+  clip-path: inset(0);
+  transform: translateY(0) scale(1);
+}
+
+@keyframes shellSheen {
+  from { transform: translate3d(-3%, -1%, 0) rotate(-2deg); }
+  to { transform: translate3d(3%, 1%, 0) rotate(2deg); }
+}
+
+@keyframes lidSheen {
+  0%, 28% { transform: translateX(-44%); opacity: 0; }
+  42% { opacity: 1; }
+  62%, 100% { transform: translateX(46%); opacity: 0; }
+}
+
+@keyframes lidRelease {
+  0%, 9% {
+    opacity: 1;
+    transform: translateZ(42px);
+  }
+  28% {
+    opacity: 1;
+    transform: translate3d(0, -7%, 145px) rotateX(-7deg);
+  }
+  68% {
+    opacity: 1;
+    transform: translate3d(0, -74%, 118px) rotateX(-46deg) scale(0.92);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -126%, 30px) rotateX(-72deg) scale(0.82);
+  }
+}
+
+@keyframes caddyRetire {
+  0% {
+    opacity: 1;
+    transform: rotateX(var(--caddy-tilt-x)) rotateY(var(--caddy-tilt-y));
+  }
+  18% {
+    opacity: 1;
+    transform: rotateX(58deg) rotateY(0deg) scale(0.98);
+  }
+  58% {
+    opacity: 1;
+    transform: translateY(2vh) rotateX(61deg) rotateY(0deg) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(39vh) rotateX(68deg) rotateY(0deg) scale(0.7);
+  }
+}
+
+@keyframes insertHandoff {
+  0%, 25% {
+    clip-path: polygon(18% 2%, 82% 2%, 98% 18%, 98% 82%, 82% 98%, 18% 98%, 2% 82%, 2% 18%);
+    transform: translateY(4%) scale(0.255);
+  }
+  52% {
+    clip-path: polygon(12% 1%, 88% 1%, 99% 12%, 99% 88%, 88% 99%, 12% 99%, 1% 88%, 1% 12%);
+    transform: translateY(-2%) scale(0.46);
+  }
+  82% {
+    clip-path: polygon(4% 0, 96% 0, 100% 4%, 100% 96%, 96% 100%, 4% 100%, 0 96%, 0 4%);
+    transform: translateY(0) scale(0.88);
+  }
+  100% {
+    clip-path: inset(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes caddyRetireReduced {
+  from { opacity: 1; transform: rotateX(58deg) rotateY(0deg) scale(1); }
+  to { opacity: 0; transform: rotateX(58deg) rotateY(0deg) scale(0.94); }
+}
+
+@keyframes lidReleaseReduced {
+  from { opacity: 1; transform: translateZ(42px); }
+  to { opacity: 0; transform: translate3d(0, -8%, 48px); }
+}
+
+@keyframes insertHandoffReduced {
+  from {
+    clip-path: polygon(18% 2%, 82% 2%, 98% 18%, 98% 82%, 82% 98%, 18% 98%, 2% 82%, 2% 18%);
+    transform: scale(0.94);
+  }
+  to { clip-path: inset(0); transform: scale(1); }
+}
+
+@media (max-width: 640px) {
+  .stage { --caddy-size: min(88vw, 26rem); }
+  .lidCopy { inset: 27% 19%; }
+  .caddyShadow { filter: blur(22px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage::before,
+  .lidSheen {
+    animation: none;
+  }
+
+  .rig {
+    transition-duration: 1ms;
+  }
+
+  .stage[data-state="opening"] .rig {
+    animation: caddyRetireReduced 200ms ease-out forwards;
+  }
+
+  .stage[data-state="opening"] .lidEdge,
+  .stage[data-state="opening"] .lid {
+    animation: lidReleaseReduced 200ms ease-out forwards;
+  }
+
+  .stage[data-state="opening"] .handoffCard {
+    animation: insertHandoffReduced 200ms ease-out forwards;
+  }
+}

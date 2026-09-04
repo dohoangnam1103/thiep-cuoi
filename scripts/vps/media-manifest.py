@@ -7,7 +7,7 @@ import sys
 
 root = pathlib.Path(sys.argv[1])
 result = {}
-names = ["."] if "--all" in sys.argv[2:] else ["editor-uploads", "guest-media", "blog-media"]
+names = ["."] if "--all" in sys.argv[2:] else ["editor-uploads", "guest-media", "blog-media", "slideshow-media"]
 for name in names:
     for path in sorted((root / name).rglob("*")):
         if path.is_file():

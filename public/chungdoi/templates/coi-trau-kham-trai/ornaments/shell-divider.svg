@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 180" role="img">
+  <title>Mother of pearl betel divider</title>
+  <defs>
+    <linearGradient id="divider-shell" x1="140" y1="30" x2="1060" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#929B98"/>
+      <stop offset="0.38" stop-color="#D8E3DF"/>
+      <stop offset="0.72" stop-color="#F1E8D8"/>
+      <stop offset="1" stop-color="#929B98"/>
+    </linearGradient>
+  </defs>
+  <path d="M96 92C238 52 372 53 500 91C560 109 639 109 700 91C828 53 962 52 1104 92" fill="none" stroke="url(#divider-shell)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M511 91C461 65 428 33 411 0C383 37 383 80 411 128C448 124 482 111 511 91Z" fill="#315A42"/>
+  <path d="M424 14C451 45 480 70 511 91" fill="none" stroke="#D8E3DF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M691 91C742 64 777 33 794 0C821 38 819 82 789 129C752 124 719 111 691 91Z" fill="#315A42"/>
+  <path d="M781 16C754 47 724 70 691 91" fill="none" stroke="#D8E3DF" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="600" cy="90" r="14" fill="#B85B52" stroke="#F1E8D8" stroke-width="4"/>
+  <circle cx="565" cy="89" r="8" fill="#D8E3DF"/>
+  <circle cx="635" cy="89" r="8" fill="#D8E3DF"/>
+</svg>

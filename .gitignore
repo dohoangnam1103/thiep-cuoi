@@ -100,3 +100,9 @@ docs/research/original-dom/
 
 # Worktree dùng cho deploy, không phải source
 .deploy-worktree/
+
+# Local production rollback/log archives contain operational data and are never source.
+.production-archives/
+
+# Unreferenced ad-hoc visual QA captures; curated evidence uses named research folders.
+/docs/research/.*-qa-*.png

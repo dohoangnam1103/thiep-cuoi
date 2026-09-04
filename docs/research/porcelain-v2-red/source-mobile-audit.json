@@ -1,0 +1,260 @@
+{
+  "route": "bach-su-v2-do",
+  "innerWidth": 390,
+  "scrollWidth": 390,
+  "scrollHeight": 5505,
+  "overflowing": [
+    {
+      "tag": "IMG",
+      "classes": "pointer-events-none absolute h-auto max-w-none z-[2]",
+      "text": "",
+      "rect": {
+        "x": -72.3125,
+        "y": 874.515625,
+        "width": 152.796875,
+        "height": 203.71875,
+        "top": 874.515625,
+        "right": 80.484375,
+        "bottom": 1078.234375,
+        "left": -72.3125
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "pointer-events-none absolute h-auto max-w-none z-[2]",
+      "text": "",
+      "rect": {
+        "x": 301.796875,
+        "y": 1217.28125,
+        "width": 152.796875,
+        "height": 203.71875,
+        "top": 1217.28125,
+        "right": 454.59375,
+        "bottom": 1421,
+        "left": 301.796875
+      }
+    },
+    {
+      "tag": "DIV",
+      "classes": "absolute h-[92%] rounded-2xl overflow-hidden shadow-xl cursor-pointer transition-all ease-in-out ",
+      "text": "",
+      "rect": {
+        "x": 377.13580322265625,
+        "y": 1640.2890625,
+        "width": 21.65234375,
+        "height": 178.4404296875,
+        "top": 1640.2890625,
+        "right": 398.78814697265625,
+        "bottom": 1818.7294921875,
+        "left": 377.13580322265625
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "h-full w-full object-cover",
+      "text": "",
+      "rect": {
+        "x": 377.13580322265625,
+        "y": 1640.2890625,
+        "width": 21.65234375,
+        "height": 178.4404296875,
+        "top": 1640.2890625,
+        "right": 398.78814697265625,
+        "bottom": 1818.7294921875,
+        "left": 377.13580322265625
+      }
+    },
+    {
+      "tag": "DIV",
+      "classes": "absolute h-[92%] rounded-2xl overflow-hidden shadow-xl cursor-pointer transition-all ease-in-out ",
+      "text": "",
+      "rect": {
+        "x": 410.4547424316406,
+        "y": 1651.2227783203125,
+        "width": 89.65213012695312,
+        "height": 156.574462890625,
+        "top": 1651.2227783203125,
+        "right": 500.10687255859375,
+        "bottom": 1807.7972412109375,
+        "left": 410.4547424316406
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "h-full w-full object-cover",
+      "text": "",
+      "rect": {
+        "x": 410.4547424316406,
+        "y": 1651.2227783203125,
+        "width": 89.65213012695312,
+        "height": 156.574462890625,
+        "top": 1651.2227783203125,
+        "right": 500.10687255859375,
+        "bottom": 1807.7972412109375,
+        "left": 410.4547424316406
+      }
+    },
+    {
+      "tag": "DIV",
+      "classes": "absolute h-[92%] rounded-2xl overflow-hidden shadow-xl cursor-pointer transition-all ease-in-out ",
+      "text": "",
+      "rect": {
+        "x": 461.99560546875,
+        "y": 1661.08642578125,
+        "width": 91.1708984375,
+        "height": 136.8486328125,
+        "top": 1661.08642578125,
+        "right": 553.16650390625,
+        "bottom": 1797.93505859375,
+        "left": 461.99560546875
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "h-full w-full object-cover",
+      "text": "",
+      "rect": {
+        "x": 461.99560546875,
+        "y": 1661.08642578125,
+        "width": 91.1708984375,
+        "height": 136.8486328125,
+        "top": 1661.08642578125,
+        "right": 553.16650390625,
+        "bottom": 1797.93505859375,
+        "left": 461.99560546875
+      }
+    },
+    {
+      "tag": "DIV",
+      "classes": "absolute h-[92%] rounded-2xl overflow-hidden shadow-xl cursor-pointer transition-all ease-in-out ",
+      "text": "",
+      "rect": {
+        "x": -110.1180419921875,
+        "y": 1651.2227783203125,
+        "width": 89.65289306640625,
+        "height": 156.574462890625,
+        "top": 1651.2227783203125,
+        "right": -20.46514892578125,
+        "bottom": 1807.7972412109375,
+        "left": -110.1180419921875
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "h-full w-full object-cover",
+      "text": "",
+      "rect": {
+        "x": -110.1180419921875,
+        "y": 1651.2227783203125,
+        "width": 89.65289306640625,
+        "height": 156.574462890625,
+        "top": 1651.2227783203125,
+        "right": -20.46514892578125,
+        "bottom": 1807.7972412109375,
+        "left": -110.1180419921875
+      }
+    },
+    {
+      "tag": "DIV",
+      "classes": "absolute h-[92%] rounded-2xl overflow-hidden shadow-xl cursor-pointer transition-all ease-in-out ",
+      "text": "",
+      "rect": {
+        "x": -8.800872802734375,
+        "y": 1640.2890625,
+        "width": 21.65367889404297,
+        "height": 178.4404296875,
+        "top": 1640.2890625,
+        "right": 12.852806091308594,
+        "bottom": 1818.7294921875,
+        "left": -8.800872802734375
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "h-full w-full object-cover",
+      "text": "",
+      "rect": {
+        "x": -8.800872802734375,
+        "y": 1640.2890625,
+        "width": 21.65367889404297,
+        "height": 178.4404296875,
+        "top": 1640.2890625,
+        "right": 12.852806091308594,
+        "bottom": 1818.7294921875,
+        "left": -8.800872802734375
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "pointer-events-none absolute h-auto max-w-none z-[2]",
+      "text": "",
+      "rect": {
+        "x": -51.40625,
+        "y": 2155.71875,
+        "width": 152.46875,
+        "height": 203.28125,
+        "top": 2155.71875,
+        "right": 101.0625,
+        "bottom": 2359,
+        "left": -51.40625
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "pointer-events-none absolute h-auto max-w-none z-20",
+      "text": "",
+      "rect": {
+        "x": 304.046875,
+        "y": 2694.171875,
+        "width": 152.46875,
+        "height": 203.28125,
+        "top": 2694.171875,
+        "right": 456.515625,
+        "bottom": 2897.453125,
+        "left": 304.046875
+      }
+    },
+    {
+      "tag": "IMG",
+      "classes": "pointer-events-none absolute h-auto max-w-none z-[2]",
+      "text": "",
+      "rect": {
+        "x": 311.125,
+        "y": 3646.703125,
+        "width": 153.4375,
+        "height": 204.578125,
+        "top": 3646.703125,
+        "right": 464.5625,
+        "bottom": 3851.28125,
+        "left": 311.125
+      }
+    },
+    {
+      "tag": "DIV",
+      "classes": "absolute inset-0 rounded-full animate-ping opacity-25",
+      "text": "",
+      "rect": {
+        "x": 290,
+        "y": 600,
+        "width": 112,
+        "height": 112,
+        "top": 600,
+        "right": 402,
+        "bottom": 712,
+        "left": 290
+      }
+    }
+  ],
+  "gallery": [
+    "https://cdn.chungdoi.com/uploads/17ce84ea-7751-42ce-ad5b-cf58325ac9da.webp",
+    "https://cdn.chungdoi.com/uploads/ec7dbf4a-464b-4ce8-acf9-31b17e2c02a2.webp",
+    "https://cdn.chungdoi.com/uploads/afc8a84d-bae9-4cf8-9c47-c11802512685.webp",
+    "https://cdn.chungdoi.com/uploads/c12286e4-d5c9-4505-a039-59db5e2b8639.webp",
+    "https://cdn.chungdoi.com/uploads/cec35085-eef7-46eb-a3d5-a52923d917d6.webp",
+    "https://cdn.chungdoi.com/uploads/6a5e8ee4-9fc5-4ac5-a262-ad285cab00b4.webp",
+    "https://cdn.chungdoi.com/uploads/6be91e7d-803c-4f23-aff6-f949b40b965f.webp",
+    "https://cdn.chungdoi.com/uploads/d2bd604d-b841-4afc-bcd7-f6d11ee59dfc.webp"
+  ],
+  "root900": null,
+  "failures": []
+}

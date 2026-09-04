@@ -3,49 +3,58 @@ import { manifest as manifest0 } from "./ao-dai-hue.manifest";
 import { manifest as manifest1 } from "./arch-sage.manifest";
 import { manifest as manifest2 } from "./art-deco-gatsby.manifest";
 import { manifest as manifest3 } from "./aurora-glass-dark.manifest";
-import { manifest as manifest4 } from "./bat-trang-blue.manifest";
-import { manifest as manifest5 } from "./botanical-lavender.manifest";
-import { manifest as manifest6 } from "./celestial-map.manifest";
-import { manifest as manifest7 } from "./chim-lac-ivory.manifest";
-import { manifest as manifest8 } from "./cinema-credit.manifest";
-import { manifest as manifest9 } from "./coastal-mediterranean.manifest";
-import { manifest as manifest10 } from "./comic-hero-assemble.manifest";
-import { manifest as manifest11 } from "./crystal-floral-red.manifest";
-import { manifest as manifest12 } from "./detective-conan-casebook.manifest";
-import { manifest as manifest13 } from "./dong-ho-folk.manifest";
-import { manifest as manifest14 } from "./doraemon-door.manifest";
-import { manifest as manifest15 } from "./editorial-noir.manifest";
-import { manifest as manifest16 } from "./hai-yen-thanh-thu.manifest";
-import { manifest as manifest17 } from "./hang-trong-folk.manifest";
-import { manifest as manifest18 } from "./hoa-kho-orange.manifest";
-import { manifest as manifest19 } from "./hoa-thu-do-ruou-vang.manifest";
-import { manifest as manifest20 } from "./hoa-thu-hong.manifest";
-import { manifest as manifest21 } from "./hoa-thu-xanh-duong.manifest";
-import { manifest as manifest22 } from "./hoa-thu-xanh-la.manifest";
-import { manifest as manifest23 } from "./ivory-signature.manifest";
-import { manifest as manifest24 } from "./long-phung-deco.manifest";
-import { manifest as manifest25 } from "./long-phung-gatefold.manifest";
-import { manifest as manifest26 } from "./mahal-gold.manifest";
-import { manifest as manifest27 } from "./nguyet-anh-sleeve.manifest";
-import { manifest as manifest28 } from "./phong-thu-be.manifest";
-import { manifest as manifest29 } from "./phong-thu-do-pastel.manifest";
-import { manifest as manifest30 } from "./phong-thu-hong-pastel.manifest";
-import { manifest as manifest31 } from "./phong-thu-lam-pastel.manifest";
-import { manifest as manifest32 } from "./phong-thu-luc-pastel.manifest";
-import { manifest as manifest33 } from "./rap-hy-sai-gon.manifest";
-import { manifest as manifest34 } from "./riso-duotone.manifest";
-import { manifest as manifest35 } from "./royal-v2-green.manifest";
-import { manifest as manifest36 } from "./sen-monoline.manifest";
-import { manifest as manifest37 } from "./son-mai-lacquer.manifest";
-import { manifest as manifest38 } from "./swiss-brutalist.manifest";
-import { manifest as manifest39 } from "./thanh-duong-anh-sang.manifest";
-import { manifest as manifest40 } from "./thap-nhi-chi-do.manifest";
-import { manifest as manifest41 } from "./tho-cam-highland.manifest";
-import { manifest as manifest42 } from "./ticket-terracotta.manifest";
-import { manifest as manifest43 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest44 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest45 } from "./y2k-chrome.manifest";
-import { manifest as manifest46 } from "./zen-sand.manifest";
+import { manifest as manifest4 } from "./ban-ve-to-am.manifest";
+import { manifest as manifest5 } from "./bat-trang-blue.manifest";
+import { manifest as manifest6 } from "./botanical-lavender.manifest";
+import { manifest as manifest7 } from "./celestial-map.manifest";
+import { manifest as manifest8 } from "./chim-lac-ivory.manifest";
+import { manifest as manifest9 } from "./cinema-credit.manifest";
+import { manifest as manifest10 } from "./coastal-mediterranean.manifest";
+import { manifest as manifest11 } from "./coi-trau-kham-trai.manifest";
+import { manifest as manifest12 } from "./comic-hero-assemble.manifest";
+import { manifest as manifest13 } from "./cong-la-dua-mien-tay.manifest";
+import { manifest as manifest14 } from "./crystal-floral-red.manifest";
+import { manifest as manifest15 } from "./detective-conan-casebook.manifest";
+import { manifest as manifest16 } from "./dong-ho-folk.manifest";
+import { manifest as manifest17 } from "./doraemon-door.manifest";
+import { manifest as manifest18 } from "./editorial-noir.manifest";
+import { manifest as manifest19 } from "./hai-yen-thanh-thu.manifest";
+import { manifest as manifest20 } from "./hang-trong-folk.manifest";
+import { manifest as manifest21 } from "./hoa-kho-orange.manifest";
+import { manifest as manifest22 } from "./hoa-thu-do-ruou-vang.manifest";
+import { manifest as manifest23 } from "./hoa-thu-hong.manifest";
+import { manifest as manifest24 } from "./hoa-thu-xanh-duong.manifest";
+import { manifest as manifest25 } from "./hoa-thu-xanh-la.manifest";
+import { manifest as manifest26 } from "./ivory-signature.manifest";
+import { manifest as manifest27 } from "./long-phung-deco.manifest";
+import { manifest as manifest28 } from "./long-phung-gatefold.manifest";
+import { manifest as manifest29 } from "./mahal-gold.manifest";
+import { manifest as manifest30 } from "./minimalism-dark-blue.manifest";
+import { manifest as manifest31 } from "./nguyet-anh-sleeve.manifest";
+import { manifest as manifest32 } from "./phong-thu-be.manifest";
+import { manifest as manifest33 } from "./phong-thu-do-pastel.manifest";
+import { manifest as manifest34 } from "./phong-thu-hong-pastel.manifest";
+import { manifest as manifest35 } from "./phong-thu-lam-pastel.manifest";
+import { manifest as manifest36 } from "./phong-thu-luc-pastel.manifest";
+import { manifest as manifest37 } from "./porcelain-blue.manifest";
+import { manifest as manifest38 } from "./porcelain-brown.manifest";
+import { manifest as manifest39 } from "./porcelain-red.manifest";
+import { manifest as manifest40 } from "./porcelain-v2-green.manifest";
+import { manifest as manifest41 } from "./porcelain-v2-red.manifest";
+import { manifest as manifest42 } from "./rap-hy-sai-gon.manifest";
+import { manifest as manifest43 } from "./riso-duotone.manifest";
+import { manifest as manifest44 } from "./royal-v2-green.manifest";
+import { manifest as manifest45 } from "./sen-monoline.manifest";
+import { manifest as manifest46 } from "./son-mai-lacquer.manifest";
+import { manifest as manifest47 } from "./swiss-brutalist.manifest";
+import { manifest as manifest48 } from "./thanh-duong-anh-sang.manifest";
+import { manifest as manifest49 } from "./thap-nhi-chi-do.manifest";
+import { manifest as manifest50 } from "./tho-cam-highland.manifest";
+import { manifest as manifest51 } from "./ticket-terracotta.manifest";
+import { manifest as manifest52 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest53 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest54 } from "./y2k-chrome.manifest";
+import { manifest as manifest55 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
@@ -100,6 +109,15 @@ export const generatedTemplateManifests = [
   manifest44,
   manifest45,
   manifest46,
+  manifest47,
+  manifest48,
+  manifest49,
+  manifest50,
+  manifest51,
+  manifest52,
+  manifest53,
+  manifest54,
+  manifest55,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];

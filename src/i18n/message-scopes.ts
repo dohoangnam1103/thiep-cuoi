@@ -4,8 +4,9 @@ export const homeMessageNamespaces = ["chrome", "home", "listing", "templatePrev
 export const pricingMessageNamespaces = ["chrome", "pricing"] as const;
 export const invitationMessageNamespaces = [
   "invitationTemplate", "invitationControls", "gatefoldLab", "sleeveLab",
-  "doraemonDoorLab", "doraemonDoor", "detectiveConanCasebookLab",
-  "detectiveConanCasebook", "comicHero",
+  "coiTrauLab", "banVeToAmTemplate", "doraemonDoorLab",
+  "doraemonDoor", "detectiveConanCasebookLab", "detectiveConanCasebook",
+  "comicHero",
 ] as const;
 
 // Every EditorForm entry point also renders invitation previews.

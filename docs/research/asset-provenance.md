@@ -819,3 +819,36 @@ images requested by that public demo, and
 `https://cdn.chungdoi.com/music/la-anh.mp3`. No runtime request to those source
 hosts is required. Confirm redistribution rights before using these downloaded
 clone assets outside the Chung Đôi/Thiệp Mừng Online product context.
+
+## Bạch Sứ Lam (`porcelain-blue`) — 2026-09-04
+
+Theo yêu cầu clone trực tiếp từ `https://chungdoi.com/vi/mau-thiep/bach-su-lam/demo`, artwork theme (`floral-tile.webp`, `frame-decoration.webp`, `cake.webp`, `home.webp`, `music.webp`), hộp quà `porcelain_blue.webp`, bảy mini gift decor và chín ảnh demo từ `cdn.chungdoi.com/uploads/` được lưu cục bộ dưới `public/chungdoi/images/themes/porcelain-blue/`, `public/chungdoi/images/giftbox/` và `public/chungdoi/images/gallery/porcelain-blue/`. URL nguồn, kích thước, vai trò và bằng chứng viewport được ghi chi tiết tại `docs/research/porcelain-blue.md`. Không sao chép API key hay cấu hình dịch vụ của trang nguồn.
+## Bốn biến thể Bạch Sứ (`porcelain-red`, `porcelain-brown`, `porcelain-v2-red`, `porcelain-v2-green`) — 2026-09-04
+
+Theo yêu cầu clone trực tiếp từ bốn demo công khai của Chung Đôi, các artwork dưới đây được lưu cục bộ; runtime không cần gọi `chungdoi.com` hay `cdn.chungdoi.com`. Không sao chép Google Maps API key, canary hoặc tracking pixel. Kiểm tra quyền phân phối lại trước khi dùng các clone asset ngoài ngữ cảnh sản phẩm Chung Đôi/Thiệp Mừng Online.
+
+### Bạch Sứ Đỏ
+
+- Theme `https://chungdoi.com/images/themes/porcelain-red/{frame-decoration,floral-tile,cake,home,music}.webp` → `public/chungdoi/images/themes/porcelain-red/`.
+- Gift `https://chungdoi.com/images/envelope/porcelain_red.webp` → `public/chungdoi/images/envelope/porcelain_red.webp`.
+- Gallery theo thứ tự local `01.webp` … `07.webp`: `https://cdn.chungdoi.com/uploads/b6df2634-2079-42b3-a2d1-936701deba2a.webp`, `https://cdn.chungdoi.com/uploads/d455d6e8-19ba-4c10-a991-7995235f9fba.webp`, `https://cdn.chungdoi.com/uploads/e09d3883-3b29-48b8-931e-1b49d614daa1.webp`, `https://cdn.chungdoi.com/uploads/5b624f5e-0d4c-46b9-9fde-4e33ccf7d504.webp`, `https://cdn.chungdoi.com/uploads/c723b909-d399-4cf1-99a3-3f13c2aebc96.webp`, `https://cdn.chungdoi.com/uploads/80e87f37-77d1-41b0-b6e7-8361959cd88e.webp`, `https://cdn.chungdoi.com/uploads/6741a834-8163-4ae0-b7f8-08eba96c674e.webp` → `public/chungdoi/images/gallery/porcelain-red/`.
+
+### Bạch Sứ Nâu
+
+- Theme `https://chungdoi.com/images/themes/porcelain-brown/{frame-background,floral-tile,calendar-texture,cake,home,music}.webp` → `public/chungdoi/images/themes/porcelain-brown/`.
+- Gift `https://chungdoi.com/images/envelope/porcelain_brown.webp` → `public/chungdoi/images/envelope/porcelain_brown.webp`.
+- Gallery theo thứ tự local `01.jpg` … `06.jpg`: `https://cdn.chungdoi.com/uploads/d30fe2fc-7c30-4c1c-8515-83142e714040.jpg`, `https://cdn.chungdoi.com/uploads/869c2794-6378-4981-a7cb-045489cbc84f.jpg`, `https://cdn.chungdoi.com/uploads/d797b1a8-d52e-49a7-9f4f-c6688dd86f98.jpg`, `https://cdn.chungdoi.com/uploads/14435a15-ded0-4efd-881d-f274554b148d.jpg`, `https://cdn.chungdoi.com/uploads/3a42f7f7-4f7f-4a62-a65c-5da28d132114.jpg`, `https://cdn.chungdoi.com/uploads/8b354eab-5468-4b35-b061-efd15a560a42.jpg` → `public/chungdoi/images/gallery/porcelain-brown/`.
+
+### Bạch Sứ V2 Đỏ
+
+- Theme `https://chungdoi.com/images/themes/porcelain-v2-red/{hero-frame,floral-tile,flower,ring,cake,lamp}.webp` → `public/chungdoi/images/themes/porcelain-v2-red/`.
+- Gift `https://chungdoi.com/images/envelope/porcelain_v2_red.webp` → `public/chungdoi/images/envelope/porcelain_v2_red.webp`.
+- Gallery theo thứ tự local `01.webp` … `08.webp`: `https://cdn.chungdoi.com/uploads/17ce84ea-7751-42ce-ad5b-cf58325ac9da.webp`, `https://cdn.chungdoi.com/uploads/ec7dbf4a-464b-4ce8-acf9-31b17e2c02a2.webp`, `https://cdn.chungdoi.com/uploads/afc8a84d-bae9-4cf8-9c47-c11802512685.webp`, `https://cdn.chungdoi.com/uploads/c12286e4-d5c9-4505-a039-59db5e2b8639.webp`, `https://cdn.chungdoi.com/uploads/cec35085-eef7-46eb-a3d5-a52923d917d6.webp`, `https://cdn.chungdoi.com/uploads/6a5e8ee4-9fc5-4ac5-a262-ad285cab00b4.webp`, `https://cdn.chungdoi.com/uploads/6be91e7d-803c-4f23-aff6-f949b40b965f.webp`, `https://cdn.chungdoi.com/uploads/d2bd604d-b841-4afc-bcd7-f6d11ee59dfc.webp` → `public/chungdoi/images/gallery/porcelain-v2-red/`.
+
+### Bạch Sứ V2 Xanh
+
+- Theme `https://chungdoi.com/images/themes/porcelain-v2-green/{hero-frame,floral-tile,flower,ring,alcohol,heart}.webp` → `public/chungdoi/images/themes/porcelain-v2-green/`.
+- Gift `https://chungdoi.com/images/envelope/porcelain_v2_green.webp` → `public/chungdoi/images/envelope/porcelain_v2_green.webp`.
+- Gallery theo thứ tự local `01.webp` … `08.webp`: `https://cdn.chungdoi.com/uploads/1174458a-fd65-41ed-b86c-626e9366faa2.webp`, `https://cdn.chungdoi.com/uploads/46095f86-8b18-45e5-a976-29bca1a0e81e.webp`, `https://cdn.chungdoi.com/uploads/9c3474ac-7901-4a12-ae86-a25d5c9f19e9.webp`, `https://cdn.chungdoi.com/uploads/6e886222-ae30-4a61-aa29-6a516fe20973.webp`, `https://cdn.chungdoi.com/uploads/1ab169c9-002e-4823-b565-88098c57e4d9.webp`, `https://cdn.chungdoi.com/uploads/069d9196-89c0-46cd-909d-e639c4bedfed.webp`, `https://cdn.chungdoi.com/uploads/51b92bed-5553-4fd0-833f-80eafebedf91.webp`, `https://cdn.chungdoi.com/uploads/3d851ee4-2624-4e33-9c00-e82ae1507c91.webp` → `public/chungdoi/images/gallery/porcelain-v2-green/`.
+
+Chi tiết viewport, geometry, interaction state, broken-resource audit và các giới hạn xác minh nằm trong bốn thư mục `docs/research/porcelain-*` tương ứng.

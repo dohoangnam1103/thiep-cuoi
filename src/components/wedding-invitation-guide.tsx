@@ -23,9 +23,12 @@ import { getTranslations } from "next-intl/server";
 
 import { SiteFooter, SiteHeader } from "@/components/chungdoi-chrome";
 import { WeddingGuideVideo } from "@/components/wedding-guide-video";
-import { getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import {
+  getPublicTemplateRouteOverrides,
+  templateRouteSlugFromMap,
+} from "@/lib/template-route-aliases";
 
 const guideSteps = [
   {
@@ -120,7 +123,10 @@ const features: readonly Feature[] = [
 const faqKeys = ["faq1", "faq2", "faq3", "faq4", "faq5", "faq6", "faq7", "faq8"] as const;
 
 export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
-  const t = await getTranslations({ locale, namespace: "weddingGuide" });
+  const [t, templateRouteOverrides] = await Promise.all([
+    getTranslations({ locale, namespace: "weddingGuide" }),
+    getPublicTemplateRouteOverrides(),
+  ]);
 
   return (
     <main className="font-app-sans min-h-screen bg-background text-foreground">
@@ -219,7 +225,9 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">{t("templates.description")}</p>
             <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
               {featuredTemplates.map((template) => {
-                const routeSlug = locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
+                const routeSlug = locale === "vi"
+                  ? templateRouteSlugFromMap(templateRouteOverrides, template.slug)
+                  : template.slug;
                 return (
                   <Link
                     key={template.key}

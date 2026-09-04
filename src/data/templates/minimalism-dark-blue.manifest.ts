@@ -1,0 +1,166 @@
+import { defineTemplateManifest } from "./template-manifest";
+
+const slug = "minimalism-dark-blue";
+const root = `/chungdoi/images/themes/${slug}`;
+const galleryRoot = `/chungdoi/images/gallery/${slug}`;
+const artwork = [
+  "castle-background",
+  "goldenline2-decoration",
+  "flower-background",
+  "envelope-background",
+  "envelope-cover",
+  "flower2-decoration",
+  "flower3-decoration",
+  "paper",
+  "flower4-decoration",
+  "flower5-decoration",
+  "flower6-decoration",
+  "church",
+  "cake",
+  "cook",
+  "castle2-background",
+  "castle-background-1",
+  "goldenline3-decoration",
+].map((name) => `${root}/${name}.webp`);
+const gallery = Array.from({ length: 9 }, (_, index) => `${galleryRoot}/photo-${index + 1}.webp`);
+const music = "/chungdoi/music/minimalism-dark-red.mp3";
+const description = "Thiệp cưới tối giản trên nền giấy ngà, tông xanh navy với hoa cẩm tú cầu xanh và phong bì lồng hai ảnh cưới.";
+
+export const manifest = defineTemplateManifest({
+  slug,
+  viRouteSlug: "minimalism-xanh-dam",
+  rendererExport: "MinimalismDarkBlueInvitation",
+  heroImageCount: 2,
+  catalog: {
+    name: "Minimalism Xanh Đậm",
+    title: "Minimalism Xanh Đậm | Thiệp Mừng Online",
+    description,
+    category: "Modern",
+    color: "Blue",
+    isNew: true,
+    highlights: [
+      "Nền giấy ngà và sắc xanh navy trang trọng",
+      "Phong bì lồng hai ảnh cưới cùng hoa cẩm tú cầu xanh",
+      "Album coverflow, lịch cưới, lịch trình và hộp quà đồng bộ",
+    ],
+  },
+  theme: {
+    theme: {
+      background: "linear-gradient(to bottom right, #073268, #00224c, #001531)",
+      cardBg: "rgba(247, 243, 235, 0.97)",
+      textPrimary: "#00224c",
+      textSecondary: "rgba(0, 34, 76, 0.78)",
+      accent: "#c9a24a",
+      dividerFrom: "transparent",
+      dividerTo: "rgba(63, 110, 168, 0.38)",
+      buttonBg: "#00224c",
+      buttonText: "#ece4d8",
+      guestBoxBg: "rgba(0, 34, 76, 0.08)",
+      guestBoxBorder: "rgba(0, 34, 76, 0.16)",
+      particleColors: ["#0b3a72", "#3f6ea8", "#c9a24a", "#ece4d8"],
+      particleType: "flowers",
+    },
+    fonts: {
+      couple: '"Viaoda Libre", "EB Garamond", serif',
+      ampersand: '"The Nautigal", cursive',
+    },
+    sealType: "heart",
+    decorations: {
+      cardImages: [
+        {
+          src: `${root}/flower2-decoration.webp`,
+          className: "w-[42%] max-w-[180px] top-[-8%] left-[-12px] -translate-x-[6%] rotate-[-12deg] opacity-100",
+          flyOnOpen: true,
+        },
+        {
+          src: `${root}/flower2-decoration.webp`,
+          className: "w-[42%] max-w-[180px] bottom-[-8%] right-[-12px] translate-x-[6%] -scale-x-100 rotate-[12deg] opacity-100",
+          flyOnOpen: true,
+        },
+      ],
+    },
+  },
+  demoContent: {
+    slug,
+    invitationId: "tuankiet-minhanh-minimalism-xanh-dam",
+    theme: {
+      primaryColor: "#00224c",
+      fontFamily: "Viaoda Libre",
+      assetFolder: slug,
+      assets: [...artwork, `${galleryRoot}/hero.webp`, `${galleryRoot}/hero-2.webp`, ...gallery],
+    },
+    couple: {
+      brideFullName: "Lê Minh Anh",
+      groomFullName: "Trần Tuấn Kiệt",
+      brideShortName: "Minh Anh",
+      groomShortName: "Tuấn Kiệt",
+      brideBirthOrder: "Út Nữ",
+      groomBirthOrder: "Trưởng Nam",
+      brideFirst: false,
+      date: "2026-12-19",
+      time: "18:30",
+      ceremonyDate: "2026-10-10",
+      ceremonyTime: "09:00",
+      ceremonyHeader: "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA",
+      ceremonyType: "thanh-hon",
+      openingMessage: "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI",
+    },
+    families: {
+      groomFather: "Lý Văn Hoà",
+      groomMother: "Trịnh Thị Bích Vân",
+      groomAddress: "Phường Tân Định, Quận 1, TP. Hồ Chí Minh",
+      brideFather: "Đinh Hữu Nam",
+      brideMother: "Phan Thị Kim Yến",
+      brideAddress: "Phường Thảo Điền, TP. Thủ Đức, TP. Hồ Chí Minh",
+      groomParentTitle: "Ông Bà",
+      brideParentTitle: "Ông Bà",
+    },
+    venue: {
+      address: "Nhà Hàng Tiệc Cưới Riverside Palace, 360D Bến Vân Đồn, Phường 1, Quận 4, TP. Hồ Chí Minh",
+      mapAddress: "Riverside Palace, 360D Bến Vân Đồn, Quận 4, Hồ Chí Minh",
+      banquetTime: "18:30",
+      welcomeTime: "17:30",
+    },
+    schedule: [
+      { time: "17:30", label: "Đón khách" },
+      { time: "18:30", label: "Khai tiệc" },
+      { time: "18:45", label: "Rót rượu, cắt bánh" },
+      { time: "19:00", label: "Phục vụ món chính" },
+      { time: "21:00", label: "Kết thúc tiệc" },
+    ],
+    portraits: {
+      groom: `${galleryRoot}/hero-2.webp`,
+      bride: `${galleryRoot}/hero.webp`,
+    },
+    gallery,
+    heroImage: `${galleryRoot}/hero.webp`,
+    heroImage2: `${galleryRoot}/hero-2.webp`,
+    showHeroImage: true,
+    albumLayout: "coverflow",
+    dressCodeColors: "#898c80,#7869a0,#c2b1e8",
+    wishes: [],
+    bank: {
+      groomBankName: "Vietcombank",
+      groomAccountNumber: "1023456789",
+      groomAccountName: "TRAN TUAN KIET",
+      brideBankName: "Techcombank",
+      brideAccountNumber: "9988776655",
+      brideAccountName: "LE MINH ANH",
+    },
+    music,
+  },
+  i18n: {
+    vi: { name: "Minimalism Xanh Đậm", description },
+  },
+  assets: [
+    ...artwork,
+    `${galleryRoot}/hero.webp`,
+    `${galleryRoot}/hero-2.webp`,
+    ...gallery,
+    music,
+    "/chungdoi/images/giftbox/minimalism-dark-blue/envelope.webp",
+    "/chungdoi/images/template-previews/en/listing/minimalism_dark_blue.webp",
+    "/chungdoi/images/template-previews/en/portrait/minimalism_dark_blue.webp",
+    "/chungdoi/images/template-previews/en/landscape/minimalism_dark_blue.webp",
+  ],
+});

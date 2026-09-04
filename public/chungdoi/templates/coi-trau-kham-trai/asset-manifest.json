@@ -1,0 +1,45 @@
+{
+  "templateId": "coi-trau-kham-trai",
+  "name": "Coi Trau Kham Trai - Mieng Trau Mo Loi",
+  "authorship": "Codex CLI hand-authored SVG",
+  "palette": {
+    "lacquerPlum": "#32151F",
+    "betelGreen": "#315A42",
+    "warmIvory": "#F1E8D8",
+    "shellPearl": "#D8E3DF",
+    "agedSilver": "#929B98",
+    "restrainedCoral": "#B85B52"
+  },
+  "assets": [
+    {
+      "runtimePath": "/chungdoi/templates/coi-trau-kham-trai/cover/caddy-lid.svg",
+      "purpose": "Opening cover artwork with soft-octagonal lacquer caddy lid, inlay border, blank medallion, betel arcs, and restrained areca cluster.",
+      "dimensions": "1200 x 1200",
+      "viewBox": "0 0 1200 1200"
+    },
+    {
+      "runtimePath": "/chungdoi/templates/coi-trau-kham-trai/interior/tray-wells.svg",
+      "purpose": "Top-down interior tray artwork with four shallow compartments, blank central ivory insert zone, rim inlay, and sparse botanical details.",
+      "dimensions": "1200 x 1200",
+      "viewBox": "0 0 1200 1200"
+    },
+    {
+      "runtimePath": "/chungdoi/templates/coi-trau-kham-trai/ornaments/betel-vine.svg",
+      "purpose": "Isolated asymmetric betel vine ornament for section edges and vertical framing.",
+      "dimensions": "900 x 1200",
+      "viewBox": "0 0 900 1200"
+    },
+    {
+      "runtimePath": "/chungdoi/templates/coi-trau-kham-trai/ornaments/areca-spray.svg",
+      "purpose": "Isolated areca blossom and fruit spray for accents and ceremonial details.",
+      "dimensions": "900 x 900",
+      "viewBox": "0 0 900 900"
+    },
+    {
+      "runtimePath": "/chungdoi/templates/coi-trau-kham-trai/ornaments/shell-divider.svg",
+      "purpose": "Thin mother-of-pearl divider derived from the betel and areca motif family.",
+      "dimensions": "1200 x 180",
+      "viewBox": "0 0 1200 180"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/data/chungdoi";
 import { getPathname } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
+import { resolvePublicTemplateRoute } from "@/lib/template-route-aliases";
 
 function localeSlug(sourceSlug: string, locale: Locale) {
   return locale === "vi" ? getVietnameseTemplateSlug(sourceSlug) : sourceSlug;
@@ -27,14 +28,20 @@ export default async function TemplatePage({
   const { locale, slug } = await params;
   setRequestLocale(locale);
 
-  const template = findTemplateByRouteSlug(slug);
-  if (!template) notFound();
+  const resolvedRoute = await resolvePublicTemplateRoute(slug);
+  const template = resolvedRoute
+    ? findTemplateByRouteSlug(resolvedRoute.sourceSlug)
+    : undefined;
+  if (!template || !resolvedRoute) notFound();
 
-  permanentRedirect(
+  const canonicalSlug = locale === "vi"
+    ? resolvedRoute.canonicalSlug
+    : template.slug;
+  redirect(
     getPathname({
       href: {
         pathname: "/templates/[slug]/demo",
-        params: { slug: localeSlug(template.slug, locale) },
+        params: { slug: canonicalSlug },
       },
       locale,
     }),

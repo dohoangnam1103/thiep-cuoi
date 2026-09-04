@@ -91,6 +91,29 @@
       }
     ]
   },
+  "/chungdoi/images/template-previews/en/listing/ban_ve_to_am.webp": {
+    "width": 768,
+    "height": 15829,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ban_ve_to_am-7bf6a5c79b10-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ban_ve_to_am-7bf6a5c79b10-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ban_ve_to_am-7bf6a5c79b10-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/ban_ve_to_am-7bf6a5c79b10-768.webp"
+      }
+    ]
+  },
   "/chungdoi/images/template-previews/en/listing/baroque_gold.webp": {
     "width": 768,
     "height": 7650,
@@ -456,6 +479,29 @@
       {
         "width": 768,
         "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coastal_mediterranean-859ad5818feb-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/coi_trau_kham_trai.webp": {
+    "width": 768,
+    "height": 15906,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coi_trau_kham_trai-31ea33bbd721-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coi_trau_kham_trai-31ea33bbd721-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coi_trau_kham_trai-31ea33bbd721-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/coi_trau_kham_trai-31ea33bbd721-768.webp"
       }
     ]
   },
@@ -990,24 +1036,24 @@
   },
   "/chungdoi/images/template-previews/en/listing/hoa_kho_orange.webp": {
     "width": 768,
-    "height": 1050,
-    "cropHeight": 1050,
+    "height": 8269,
+    "cropHeight": 1536,
     "variants": [
       {
         "width": 320,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-320.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-a75f3d601184-320.webp"
       },
       {
         "width": 480,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-480.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-a75f3d601184-480.webp"
       },
       {
         "width": 640,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-640.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-a75f3d601184-640.webp"
       },
       {
         "width": 768,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-966233563b83-768.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_kho_orange-a75f3d601184-768.webp"
       }
     ]
   },
@@ -1243,24 +1289,24 @@
   },
   "/chungdoi/images/template-previews/en/listing/mahal_gold.webp": {
     "width": 768,
-    "height": 1642,
+    "height": 9229,
     "cropHeight": 1536,
     "variants": [
       {
         "width": 320,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-320.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-9c7fb5cb962b-320.webp"
       },
       {
         "width": 480,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-480.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-9c7fb5cb962b-480.webp"
       },
       {
         "width": 640,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-640.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-9c7fb5cb962b-640.webp"
       },
       {
         "width": 768,
-        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-e5d069473956-768.webp"
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/mahal_gold-9c7fb5cb962b-768.webp"
       }
     ]
   },
@@ -1307,6 +1353,21 @@
       {
         "width": 768,
         "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_brown-7f0ff774ec2a-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/minimalism_dark_blue.webp": {
+    "width": 384,
+    "height": 4900,
+    "cropHeight": 768,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_dark_blue-b3a245758647-320.webp"
+      },
+      {
+        "width": 384,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/minimalism_dark_blue-b3a245758647-384.webp"
       }
     ]
   },
@@ -1629,6 +1690,121 @@
       {
         "width": 768,
         "src": "/chungdoi/images/template-previews/en/listing-thumbnails/phong_thu_luc_pastel-3276224a2c7e-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/porcelain_blue.webp": {
+    "width": 768,
+    "height": 8458,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_blue-a0d296c6737b-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_blue-a0d296c6737b-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_blue-a0d296c6737b-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_blue-a0d296c6737b-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/porcelain_brown.webp": {
+    "width": 768,
+    "height": 8773,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_brown-7095f8afcead-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_brown-7095f8afcead-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_brown-7095f8afcead-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_brown-7095f8afcead-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/porcelain_red.webp": {
+    "width": 768,
+    "height": 8715,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_red-ee2753ec14e4-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_red-ee2753ec14e4-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_red-ee2753ec14e4-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_red-ee2753ec14e4-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/porcelain_v2_green.webp": {
+    "width": 768,
+    "height": 9693,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_green-5afa90d0bda6-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_green-5afa90d0bda6-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_green-5afa90d0bda6-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_green-5afa90d0bda6-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/porcelain_v2_red.webp": {
+    "width": 768,
+    "height": 9814,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_red-bc4288b1e007-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_red-bc4288b1e007-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_red-bc4288b1e007-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/porcelain_v2_red-bc4288b1e007-768.webp"
       }
     ]
   },

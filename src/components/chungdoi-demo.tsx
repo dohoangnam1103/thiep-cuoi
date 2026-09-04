@@ -159,7 +159,11 @@ const DetectiveConanCasebookLab = dynamic(
     .then((module) => module.DetectiveConanCasebookLab),
   { ssr: false },
 );
-
+const CoiTrauKhamTraiLab = dynamic(
+  () => import("@/components/chungdoi-coi-trau-kham-trai-lab")
+    .then((module) => module.CoiTrauKhamTraiLab),
+  { ssr: false },
+);
 const VN_DAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const WEEKDAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
@@ -484,6 +488,14 @@ function resolveTokens(content: ChungDoiDemoContent): Tokens {
     openingEffect: cfg.openingEffect,
   };
 }
+
+const PORCELAIN_COVER_TEMPLATE_SLUGS = new Set([
+  "porcelain-blue",
+  "porcelain-red",
+  "porcelain-brown",
+  "porcelain-v2-red",
+  "porcelain-v2-green",
+]);
 
 const RISING_TYPES = new Set(["happiness"]);
 
@@ -936,21 +948,25 @@ function CoverCard({
           <p className="mb-2 text-[16px] font-light" style={{ color: tokens.textSecondary }}>
             {guestSalutation}
           </p>
-          <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: tokens.guestBoxBg }}>
-            <span className="block text-lg font-semibold sm:text-xl" style={{ color: tokens.textPrimary }}>
-              {guestName}
-            </span>
-          </div>
-          {/* Bìa mobile chỉ rộng 310px (340px từ sm) nên chỉ còn 262/292px cho chữ,
-              trong khi câu mặc định cần 293px ở 15px — rớt dòng. Ba mốc dưới đây
-              khớp đúng ba bậc của responsiveEnvelopeWidth (310 / 340 / 640+), nên
-              desktop giữ nguyên 15px. */}
-          <p
-            className="mx-auto max-w-xs text-[13px] font-light sm:text-[14px] md:text-[15px]"
-            style={{ color: tokens.textSecondary }}
-          >
-            {guestMessage}
-          </p>
+          {!PORCELAIN_COVER_TEMPLATE_SLUGS.has(content.slug) ? (
+            <>
+              <div className="mb-2 inline-block rounded-xl px-5 py-2.5" style={{ backgroundColor: tokens.guestBoxBg }}>
+                <span className="block text-lg font-semibold sm:text-xl" style={{ color: tokens.textPrimary }}>
+                  {guestName}
+                </span>
+              </div>
+              {/* Bìa mobile chỉ rộng 310px (340px từ sm) nên chỉ còn 262/292px cho chữ,
+                  trong khi câu mặc định cần 293px ở 15px — rớt dòng. Ba mốc dưới đây
+                  khớp đúng ba bậc của responsiveEnvelopeWidth (310 / 340 / 640+), nên
+                  desktop giữ nguyên 15px. */}
+              <p
+                className="mx-auto max-w-xs text-[13px] font-light sm:text-[14px] md:text-[15px]"
+                style={{ color: tokens.textSecondary }}
+              >
+                {guestMessage}
+              </p>
+            </>
+          ) : null}
         </div>
 
         {/* Bóng nút là một lớp radial-gradient riêng, KHÔNG phải box-shadow: card
@@ -1153,7 +1169,12 @@ function EnvelopeCover2D({
       style={{ animation: envelopeAwayAnimation }}
     >
       <div style={{ transform: `scale(${scale})` }}>
-        <div ref={cardRef} className="relative w-[310px] sm:w-[340px] md:w-[640px] lg:w-[732px]">
+        <div
+          ref={cardRef}
+          className={PORCELAIN_COVER_TEMPLATE_SLUGS.has(content.slug)
+            ? "relative w-[310px] sm:w-[340px] md:w-[520px] lg:w-[600px]"
+            : "relative w-[310px] sm:w-[340px] md:w-[640px] lg:w-[732px]"}
+        >
           {/* Hoa vượt khỏi mép thẻ (họ Vườn Kính): lớp này KHÔNG overflow-hidden,
               khác lớp decor mặc định trong CoverCard, nên phải tự dựng và tắt lớp
               trong thẻ đi. Thiếu nó là hoa bị cắt cụt ở mép. */}
@@ -1262,7 +1283,10 @@ function EnvelopeCover({
     });
 
   const sizing = envelopeSizingForTemplate(content.slug);
-  const naturalHeight = sizing === "responsive-natural";
+  // Khung nhà kính được vẽ theo tỷ lệ 2:3. Giữ card portrait cố định để artwork
+  // phủ trọn bìa thay vì bị co vào giữa card natural-height khổ ngang.
+  const naturalHeight = sizing === "responsive-natural"
+    && content.slug !== "ban-ve-to-am";
   const decorOverflow = envelopeDecorOverflowForTemplate(content.slug);
   const renderOverflowDecor = decorOverflow === "visible" && tokens.cardImages.length > 0;
   const openingEffect = tokens.openingEffect;
@@ -1766,6 +1790,7 @@ export function ChungDoiDemo({
 }) {
   const gatefoldT = useTranslations("gatefoldLab");
   const sleeveT = useTranslations("sleeveLab");
+  const coiTrauT = useTranslations("coiTrauLab");
   const doraemonDoorT = useTranslations("doraemonDoorLab");
   const invitationControlsT = useTranslations("invitationControls");
   const detectiveConanCasebookT = useTranslations(
@@ -1777,12 +1802,24 @@ export function ChungDoiDemo({
   const content = contentProp;
   const isGatefoldExperience = content?.slug === "long-phung-gatefold";
   const isSleeveExperience = content?.slug === "nguyet-anh-sleeve";
+  const isCoiTrauExperience = content?.slug === "coi-trau-kham-trai";
   const isDoraemonDoorExperience = content?.slug === "doraemon-door";
   const isDetectiveConanCasebookExperience =
     content?.slug === "detective-conan-casebook";
   const isPaginatedExperience = isDetectiveConanCasebookExperience;
+  const usesTwoDimensionalCover = content.slug === "ban-ve-to-am";
+  const rendersCeremoniesInsideTemplate = [
+    "song-hy-red",
+    "song-hy-green",
+    "boho-floral-brown",
+    "dragon-phoenix-red",
+    "dragon-phoenix-v3-red",
+    "minimalism-dark-red",
+    "ban-ve-to-am",
+  ].includes(content.slug);
   const isPhysicalExperience = isGatefoldExperience
     || isSleeveExperience
+    || isCoiTrauExperience
     || isDoraemonDoorExperience
     || isDetectiveConanCasebookExperience;
 
@@ -2066,8 +2103,11 @@ export function ChungDoiDemo({
     const people = orderedCouple(content);
     return `${people[0].shortName} & ${people[1].shortName}`;
   })();
-  const AuditedTemplateRenderer = isAuditedTemplateSlug(content.slug)
-    ? AUDITED_TEMPLATE_RENDERERS[content.slug]
+  const auditedSlug = content.slug;
+  const AuditedTemplateRenderer = isAuditedTemplateSlug(auditedSlug)
+    ? AUDITED_TEMPLATE_RENDERERS[
+        auditedSlug as keyof typeof AUDITED_TEMPLATE_RENDERERS
+      ]
     : null;
   const autoScrollLabel = autoScrolling
     ? invitationControlsT("stopAutoScroll")
@@ -2219,6 +2259,13 @@ export function ChungDoiDemo({
             showControls={false}
             muted={audioMuted}
           />
+        ) : isCoiTrauExperience && !previewMode ? (
+          <CoiTrauKhamTraiLab
+            content={content}
+            onCoverReady={handleCoverReady}
+            onStateChange={handlePhysicalExperienceStateChange}
+            muted={audioMuted}
+          />
         ) : isDoraemonDoorExperience && !previewMode ? (
           <DoraemonDoorLab
             content={content}
@@ -2235,7 +2282,7 @@ export function ChungDoiDemo({
             openPhase={openPhase}
             reducedMotion={prefersReducedMotion}
             onOpen={openInvitation}
-            cover3dEnabled={cover3dEnabled}
+            cover3dEnabled={usesTwoDimensionalCover ? false : cover3dEnabled}
             onReady={handleCoverReady}
           />
         )
@@ -2314,7 +2361,9 @@ export function ChungDoiDemo({
         </div>
       )}
 
-          {!isPhysicalExperience ? <AdditionalCeremonies content={content} tokens={tokens} /> : null}
+          {!isPhysicalExperience && !rendersCeremoniesInsideTemplate
+            ? <AdditionalCeremonies content={content} tokens={tokens} />
+            : null}
           <GuestMediaGalleryProvider>
             <PublicGuestMomentsPortal templateSlug={content.slug} />
             {!captureMode ? <PublicGuestMediaDialog /> : null}
@@ -2348,7 +2397,9 @@ export function ChungDoiDemo({
                     ? "long-phung-gatefold-replay-cover"
                     : isSleeveExperience
                       ? "nguyet-anh-sleeve-replay-cover"
-                      : "doraemon-door-replay-cover"
+                      : isCoiTrauExperience
+                        ? "coi-trau-kham-trai-replay-cover"
+                        : "doraemon-door-replay-cover"
                 }
                 onClick={replayPhysicalCover}
                 aria-label={
@@ -2358,7 +2409,9 @@ export function ChungDoiDemo({
                     ? gatefoldT("replayCover")
                     : isSleeveExperience
                       ? sleeveT("replayCover")
-                      : doraemonDoorT("replayCover")
+                      : isCoiTrauExperience
+                        ? coiTrauT("replayCover")
+                        : doraemonDoorT("replayCover")
                 }
                 title={
                   isDetectiveConanCasebookExperience
@@ -2367,7 +2420,9 @@ export function ChungDoiDemo({
                     ? gatefoldT("replayCover")
                     : isSleeveExperience
                       ? sleeveT("replayCover")
-                      : doraemonDoorT("replayCover")
+                      : isCoiTrauExperience
+                        ? coiTrauT("replayCover")
+                        : doraemonDoorT("replayCover")
                 }
                 className={
                   isDetectiveConanCasebookExperience
@@ -2376,7 +2431,9 @@ export function ChungDoiDemo({
                     ? "flex size-12 items-center justify-center rounded-full border border-[#B58A3A]/55 bg-[#17110F]/88 text-[#EAD9B8] shadow-lg shadow-[#17110F]/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B58A3A] active:translate-y-px"
                     : isSleeveExperience
                       ? "flex size-12 items-center justify-center border border-[#78C7D7]/70 bg-[#0B1116]/90 text-[#D7E4EA] shadow-lg shadow-black/35 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#78C7D7] active:translate-y-px"
-                      : "flex size-12 items-center justify-center rounded-full border border-[#B94170]/70 bg-[#E96F9A]/92 text-[#FFF9EE] shadow-lg shadow-[#39BCEB]/25 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17334A] active:translate-y-px"
+                      : isCoiTrauExperience
+                        ? "flex size-12 items-center justify-center rounded-full border border-[#D8E3DF]/55 bg-[#32151F]/92 text-[#F1E8D8] shadow-lg shadow-[#180B10]/40 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D8E3DF] active:translate-y-px"
+                        : "flex size-12 items-center justify-center rounded-full border border-[#B94170]/70 bg-[#E96F9A]/92 text-[#FFF9EE] shadow-lg shadow-[#39BCEB]/25 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17334A] active:translate-y-px"
                 }
               >
                 <RotateCcw aria-hidden className="size-5" strokeWidth={1.5} />

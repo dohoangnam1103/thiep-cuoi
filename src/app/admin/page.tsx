@@ -10,10 +10,13 @@ import {
   parseDailyRange,
   sumDailyValues,
 } from "@/lib/admin-daily-stats";
+import { buildPaymentDelayDistribution, type PaymentDelayBucket } from "@/lib/admin-payment-delay";
 import { CUSTOMER_USER_WHERE, REAL_INVITATION_WHERE } from "@/lib/admin-invitation-filters";
 import { vietnamDayKey, vietnamStartOfDayOf } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 import { AdminDailyChart } from "./AdminDailyChart";
+import { AdminGrowthChart } from "./AdminGrowthChart";
+import { AdminPaymentDelayChart } from "./AdminPaymentDelayChart";
 
 function formatVnd(amount: number): string {
   return new Intl.NumberFormat("vi-VN").format(amount) + "đ";
@@ -54,6 +57,7 @@ export default async function AdminDashboardPage({
     sentEmailAttemptsToday,
     failedEmailAttemptsToday,
     sentReminders,
+    paidUserEvents,
   ] = await Promise.all([
     prisma.user.count({ where: CUSTOMER_USER_WHERE }),
     prisma.invitation.count({ where: REAL_INVITATION_WHERE }),
@@ -91,6 +95,13 @@ export default async function AdminDashboardPage({
         sentAt: { gte: windowStart, lte: now },
       },
       select: { sentAt: true },
+    }),
+    prisma.payment.findMany({
+      where: { status: "paid", paidAt: { not: null }, invitation: REAL_INVITATION_WHERE },
+      select: {
+        paidAt: true,
+        invitation: { select: { createdAt: true, userId: true } },
+      },
     }),
   ]);
 
@@ -142,6 +153,20 @@ export default async function AdminDashboardPage({
     range,
     now,
   );
+  const paymentDelaySeries = buildPaymentDelayDistribution(
+    paidUserEvents.map((payment) => ({
+      userId: payment.invitation.userId,
+      invitationCreatedAt: payment.invitation.createdAt,
+      paidAt: payment.paidAt,
+    })),
+  );
+  const paidUserTotal = paymentDelaySeries.reduce((total, point) => total + point.value, 0);
+  const paymentDelayLabels: Record<PaymentDelayBucket, string> = {
+    "day-0": t("paymentDelayDay0"),
+    "day-1": t("paymentDelayDay1"),
+    "day-2": t("paymentDelayDay2"),
+    "day-3-plus": t("paymentDelayDay3Plus"),
+  };
 
   return (
     <div className="space-y-8">
@@ -193,32 +218,47 @@ export default async function AdminDashboardPage({
 
         <div className="grid gap-4 lg:grid-cols-2">
           <ChartCard
-            title={t("overviewNewUsers")}
-            total={formatCount(sumDailyValues(userSeries))}
+            title={t("overviewGrowth")}
+            total={t("overviewGrowthTotals", {
+              users: formatCount(sumDailyValues(userSeries)),
+              invitations: formatCount(sumDailyValues(invitationSeries)),
+            })}
             caption={rangeTotalLabel}
             emptyLabel={t("overviewChartEmpty")}
-            isEmpty={sumDailyValues(userSeries) === 0}
+            isEmpty={
+              sumDailyValues(userSeries) === 0 && sumDailyValues(invitationSeries) === 0
+            }
           >
-            <AdminDailyChart
-              data={userSeries}
-              seriesLabel={t("overviewNewUsers")}
-              color="var(--chart-1)"
+            <AdminGrowthChart
+              users={userSeries}
+              invitations={invitationSeries}
+              usersLabel={t("overviewNewUsers")}
+              invitationsLabel={t("overviewNewInvitations")}
             />
           </ChartCard>
 
-          <ChartCard
-            title={t("overviewNewInvitations")}
-            total={formatCount(sumDailyValues(invitationSeries))}
-            caption={rangeTotalLabel}
-            emptyLabel={t("overviewChartEmpty")}
-            isEmpty={sumDailyValues(invitationSeries) === 0}
-          >
-            <AdminDailyChart
-              data={invitationSeries}
-              seriesLabel={t("overviewNewInvitations")}
-              color="var(--chart-2)"
-            />
-          </ChartCard>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className="text-sm font-medium text-foreground">{t("paymentDelayChartTitle")}</p>
+              <p className="text-sm text-muted-foreground">
+                {t("paymentDelayPaidUsers")}: {" "}
+                <span className="font-semibold text-foreground">{formatCount(paidUserTotal)}</span>
+              </p>
+            </div>
+            {paidUserTotal === 0 ? (
+              <p className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+                {t("paymentDelayEmpty")}
+              </p>
+            ) : (
+              <div className="mt-4">
+                <AdminPaymentDelayChart
+                  data={paymentDelaySeries}
+                  labels={paymentDelayLabels}
+                  seriesLabel={t("paymentDelayUsers")}
+                />
+              </div>
+            )}
+          </div>
 
           <ChartCard
             title={t("overviewRemindersSent")}

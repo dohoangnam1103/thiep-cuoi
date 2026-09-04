@@ -8,19 +8,17 @@ import { createPortal } from "react-dom";
 
 import { createInvitation } from "@/app/dashboard/actions";
 import { useTemplateName } from "@/components/template-name-overrides";
+import { useTemplateRouteSlug } from "@/components/template-route-overrides";
 import { Link } from "@/i18n/navigation";
-import { getVietnameseTemplateSlug, type ChungDoiTemplate } from "@/data/chungdoi";
+import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { templatePreviewOptimizedUrl } from "@/lib/template-preview-url";
-
-export function demoSlug(template: ChungDoiTemplate, locale: string) {
-  return locale === "vi" ? getVietnameseTemplateSlug(template.slug) : template.slug;
-}
 
 export function TemplatePreviewModal({ template, onClose }: { template: ChungDoiTemplate; onClose: () => void }) {
   const t = useTranslations("listing");
   const modalT = useTranslations("templatePreviewModal");
   const locale = useLocale();
   const templateName = useTemplateName();
+  const templateRouteSlug = useTemplateRouteSlug();
   const isVietnamese = locale === "vi";
   const name = templateName(
     template.slug,
@@ -29,7 +27,9 @@ export function TemplatePreviewModal({ template, onClose }: { template: ChungDoi
   const description = isVietnamese ? t(`templates.${template.slug}.description`) : template.description;
   const category = isVietnamese ? t(`categories.${template.category}`) : template.category;
   const color = isVietnamese ? t(`colors.${template.color}`) : template.color;
-  const localizedSlug = demoSlug(template, locale);
+  const localizedSlug = isVietnamese
+    ? templateRouteSlug(template.slug)
+    : template.slug;
   const demoPath = locale === "vi"
     ? `/mau-thiep/${localizedSlug}/demo`
     : `/${locale}/templates/${localizedSlug}/demo`;

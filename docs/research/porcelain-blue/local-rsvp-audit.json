@@ -1,0 +1,14 @@
+{
+  "publishedRoute": "http://localhost:3000/thiep/porcelain-blue-smoke",
+  "liveTriggerCount": 1,
+  "proxyOpenedDialog": true,
+  "title": "Xác nhận tham dự",
+  "fields": {
+    "name": 1,
+    "attending": 2,
+    "guests": 1,
+    "message": 1
+  },
+  "closed": true,
+  "submitted": false
+}

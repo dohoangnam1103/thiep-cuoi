@@ -52,6 +52,7 @@ const ENVELOPE_TEMPLATE_SLUGS = [
   "spring-garden-blue",
   "minimalism-red",
   "minimalism-dark-red",
+  "minimalism-dark-blue",
   "minimalism-green",
   "minimalism-jade",
   "minimalism-sky-blue",
@@ -75,6 +76,11 @@ export const SOURCE_GIFT_VISUAL_SLUGS = [
   "minimalism-brown",
   "mahal-gold",
   "hoa-kho-orange",
+  "porcelain-blue",
+  "porcelain-red",
+  "porcelain-brown",
+  "porcelain-v2-red",
+  "porcelain-v2-green",
   "royal-v2-green",
 ] as const;
 
@@ -90,6 +96,35 @@ const envelopeVisuals = Object.fromEntries(
 
 const sourceGiftVisuals: Record<string, GiftVisual> = {
   ...envelopeVisuals,
+  "porcelain-blue": {
+    kind: "giftbox",
+    boxImage: "/chungdoi/images/giftbox/porcelain-blue/box.webp",
+    decorImages: [
+      "/chungdoi/images/giftbox/mini/qasr_green.webp",
+      "/chungdoi/images/giftbox/mini/crystal_floral_red.webp",
+      "/chungdoi/images/giftbox/mini/boho_floral_brown.webp",
+      "/chungdoi/images/giftbox/mini/crystal_floral_blue.webp",
+      "/chungdoi/images/giftbox/mini/baroque_v2_darkred.webp",
+      "/chungdoi/images/giftbox/mini/nhat_binh_red.webp",
+      "/chungdoi/images/giftbox/mini/minimalism_darkblue.webp",
+    ],
+  },
+  "porcelain-red": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/porcelain_red.webp",
+  },
+  "porcelain-brown": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/porcelain_brown.webp",
+  },
+  "porcelain-v2-red": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/porcelain_v2_red.webp",
+  },
+  "porcelain-v2-green": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/porcelain_v2_green.webp",
+  },
   "hoa-kho-orange": { kind: "layered-image", asset: "/chungdoi/images/envelope/hoa_kho_orange.webp" },
   "mahal-gold": {
     kind: "layered-image",

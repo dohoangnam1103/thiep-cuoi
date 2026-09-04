@@ -1,26 +1,42 @@
 "use server";
 
+import { Prisma } from "@/generated/prisma/client";
 import { revalidatePath, updateTag } from "next/cache";
-
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
-import { prisma } from "@/lib/prisma";
-import { verifyAdmin } from "@/lib/admin-dal";
-import { completedTemplateSlugs, getVietnameseTemplateSlug, retiredTemplateSlugs } from "@/data/chungdoi";
-import { getPathname } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
-import { templateSeoFacets } from "@/data/template-seo-facets";
-import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
-import { isEditorUploadPublicUrl } from "@/lib/editor-uploads";
-import { defaultTemplateLabel } from "@/lib/template-labels";
-import { PUBLIC_DEMO_CONTENT_CACHE_TAG } from "@/lib/public-demo-content";
 import {
   parseCeremonies,
-  parseSchedule,
   parseGallery,
+  parseSchedule,
   contentSchema,
   type EditorState,
 } from "@/app/editor/[id]/content-schema";
+import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
+import {
+  completedTemplateSlugs,
+  getVietnameseTemplateSlug,
+  retiredTemplateSlugs,
+} from "@/data/chungdoi";
+import { getSourceTemplateSlug } from "@/data/template-route-slugs";
+import { templateSeoFacets } from "@/data/template-seo-facets";
+import { getPathname } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
+import { verifyAdmin } from "@/lib/admin-dal";
+import { isEditorUploadPublicUrl } from "@/lib/editor-uploads";
+import { prisma } from "@/lib/prisma";
+import { PUBLIC_DEMO_CONTENT_CACHE_TAG } from "@/lib/public-demo-content";
+import { defaultTemplateLabel } from "@/lib/template-labels";
+import {
+  getPublicTemplateRouteOverrides,
+  getTemplateRouteOverrides,
+  resolvePublicTemplateRoute,
+  templateRouteSlugFromMap,
+} from "@/lib/template-route-aliases";
+import {
+  isReservedTemplateRouteSlug,
+  slugifyTemplateRoute,
+} from "@/lib/template-route-slug";
 
 export async function saveDemo(id: string, _prev: EditorState, formData: FormData): Promise<EditorState> {
   await verifyAdmin();
@@ -86,9 +102,19 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
 
   updateTag(PUBLIC_DEMO_CONTENT_CACHE_TAG);
   revalidatePath("/admin/demos");
+  const routeOverrides = await getPublicTemplateRouteOverrides();
   for (const locale of routing.locales) {
-    const slug = locale === "vi" ? getVietnameseTemplateSlug(templateId) : templateId;
+    const slug = locale === "vi"
+      ? templateRouteSlugFromMap(routeOverrides, templateId)
+      : templateId;
     revalidatePath(`/${locale}/templates/${slug}/demo`);
+    revalidatePath(getPathname({
+      href: {
+        pathname: "/templates/[slug]/demo",
+        params: { slug },
+      },
+      locale,
+    }));
   }
 
   return { ok: true, persisted: true };
@@ -143,8 +169,13 @@ function revalidatePublicTemplatePresentation() {
   for (const locale of routing.locales) {
     revalidatePath(`/${locale}`);
     revalidatePath(`/${locale}/templates`);
+    revalidatePath(`/${locale}/create-wedding-invitation-online`);
     revalidatePath(getPathname({ href: "/", locale }));
     revalidatePath(getPathname({ href: "/templates", locale }));
+    revalidatePath(getPathname({
+      href: "/create-wedding-invitation-online",
+      locale,
+    }));
     for (const facet of templateSeoFacets) {
       if (facet.kind === "style") {
         revalidatePath(`/${locale}/templates/style/${facet.slug}`);
@@ -251,15 +282,18 @@ export async function saveTemplateVisibility(
 
 export type RenameTemplateState = { error?: string; ok?: boolean; name?: string } | undefined;
 
+class TemplateRouteConflictError extends Error {}
+
 /**
- * Renames a template's display name. An empty name clears the override so the
- * built-in name is used again.
+ * Renames a template and moves its canonical public URL to the slug generated
+ * from that name. Previous URLs remain persisted as aliases.
  */
 export async function renameTemplate(
   _prev: RenameTemplateState,
   formData: FormData,
 ): Promise<RenameTemplateState> {
   await verifyAdmin();
+  const t = await getTranslations("adminDemos");
 
   const parsed = renameSchema.safeParse({
     templateId: formData.get("templateId"),
@@ -274,24 +308,143 @@ export async function renameTemplate(
     return { error: "Mẫu thiệp không tồn tại" };
   }
 
-  if (name) {
-    await prisma.templateLabel.upsert({
-      where: { slug: templateId },
-      create: { slug: templateId, name },
-      update: { name },
+  const defaultRouteSlug = getVietnameseTemplateSlug(templateId);
+  const nextRouteSlug = name ? slugifyTemplateRoute(name) : defaultRouteSlug;
+  if (!nextRouteSlug || isReservedTemplateRouteSlug(nextRouteSlug)) {
+    return { error: t("renameErrors.invalidUrl") };
+  }
+
+  const staticOwner = getSourceTemplateSlug(nextRouteSlug);
+  if (
+    name
+    && staticOwner
+    && (staticOwner !== templateId || nextRouteSlug !== defaultRouteSlug)
+  ) {
+    return { error: t("renameErrors.routeInUse") };
+  }
+
+  const resolvedExistingRoute = name
+    ? await resolvePublicTemplateRoute(nextRouteSlug)
+    : null;
+  if (
+    resolvedExistingRoute
+    && resolvedExistingRoute.sourceSlug !== templateId
+  ) {
+    return { error: t("renameErrors.routeInUse") };
+  }
+
+  const currentRouteOverrides = await getTemplateRouteOverrides();
+  const oldRouteSlug = templateRouteSlugFromMap(
+    currentRouteOverrides,
+    templateId,
+  );
+
+  let persistedRouteSlugs: string[];
+  try {
+    persistedRouteSlugs = await prisma.$transaction(async (db) => {
+      // Make the first statement a write so concurrent renames serialize before
+      // checking alias ownership (important for SQLite's transaction model).
+      await db.templateRouteAlias.updateMany({
+        where: { templateSlug: templateId, canonical: true },
+        data: { canonical: null },
+      });
+
+      const requestedAlias = name
+        ? await db.templateRouteAlias.findUnique({
+            where: { routeSlug: nextRouteSlug },
+            select: { templateSlug: true },
+          })
+        : null;
+      if (requestedAlias && requestedAlias.templateSlug !== templateId) {
+        throw new TemplateRouteConflictError();
+      }
+
+      // Existing TemplateLabel rows predate this table. Preserve their derived
+      // URL as a real historical alias before replacing the label.
+      if (oldRouteSlug !== defaultRouteSlug && oldRouteSlug !== nextRouteSlug) {
+        const oldAlias = await db.templateRouteAlias.findUnique({
+          where: { routeSlug: oldRouteSlug },
+          select: { templateSlug: true },
+        });
+        if (oldAlias && oldAlias.templateSlug !== templateId) {
+          throw new TemplateRouteConflictError();
+        }
+        if (!oldAlias) {
+          await db.templateRouteAlias.create({
+            data: {
+              routeSlug: oldRouteSlug,
+              templateSlug: templateId,
+              canonical: null,
+            },
+          });
+        }
+      }
+
+      if (name) {
+        await db.templateLabel.upsert({
+          where: { slug: templateId },
+          create: { slug: templateId, name },
+          update: { name },
+        });
+        if (requestedAlias) {
+          await db.templateRouteAlias.update({
+            where: { routeSlug: nextRouteSlug },
+            data: { canonical: true },
+          });
+        } else {
+          await db.templateRouteAlias.create({
+            data: {
+              routeSlug: nextRouteSlug,
+              templateSlug: templateId,
+              canonical: true,
+            },
+          });
+        }
+      } else {
+        await db.templateLabel.deleteMany({ where: { slug: templateId } });
+      }
+
+      const aliases = await db.templateRouteAlias.findMany({
+        where: { templateSlug: templateId },
+        orderBy: { routeSlug: "asc" },
+        select: { routeSlug: true },
+      });
+      return aliases.map((alias) => alias.routeSlug);
     });
-  } else {
-    await prisma.templateLabel.deleteMany({ where: { slug: templateId } });
+  } catch (error) {
+    if (
+      error instanceof TemplateRouteConflictError
+      || (
+        error instanceof Prisma.PrismaClientKnownRequestError
+        && error.code === "P2002"
+      )
+    ) {
+      return { error: t("renameErrors.routeInUse") };
+    }
+    console.error("Không thể đổi tên và URL mẫu thiệp", {
+      templateId,
+      error: error instanceof Error ? error.message : "unknown",
+    });
+    return { error: t("renameErrors.saveFailed") };
   }
 
   revalidatePath("/admin/demos");
   revalidatePath("/dashboard");
   revalidatePath("/editor", "layout");
   revalidatePublicTemplatePresentation();
-  // Demo metadata contains the name too, and now lives in the route cache.
-  const routeSlug = getVietnameseTemplateSlug(templateId);
-  revalidatePath(`/vi/templates/${routeSlug}/demo`);
-  revalidatePath(`/mau-thiep/${routeSlug}/demo`);
+
+  for (const routeSlug of new Set([
+    templateId,
+    defaultRouteSlug,
+    oldRouteSlug,
+    nextRouteSlug,
+    ...persistedRouteSlugs,
+  ])) {
+    revalidatePath(`/vi/templates/${routeSlug}`);
+    revalidatePath(`/vi/templates/${routeSlug}/demo`);
+    revalidatePath(`/mau-thiep/${routeSlug}`);
+    revalidatePath(`/mau-thiep/${routeSlug}/demo`);
+  }
 
   return { ok: true, name: name || defaultTemplateLabel(templateId) };
 }

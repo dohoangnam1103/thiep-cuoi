@@ -1,0 +1,31 @@
+{
+  "route": "bach-su-do",
+  "innerWidth": 390,
+  "scrollWidth": 390,
+  "scrollHeight": 5150,
+  "overflowing": [
+    {
+      "tag": "DIV",
+      "classes": "absolute inset-0 rounded-full animate-ping opacity-25",
+      "text": "",
+      "rect": {
+        "x": 292.5780944824219,
+        "y": 602.578125,
+        "width": 106.84378051757812,
+        "height": 106.84375,
+        "top": 602.578125,
+        "right": 399.421875,
+        "bottom": 709.421875,
+        "left": 292.5780944824219
+      }
+    }
+  ],
+  "gallery": [
+    "https://cdn.chungdoi.com/uploads/b6df2634-2079-42b3-a2d1-936701deba2a.webp",
+    "https://cdn.chungdoi.com/uploads/d455d6e8-19ba-4c10-a991-7995235f9fba.webp",
+    "https://cdn.chungdoi.com/uploads/e09d3883-3b29-48b8-931e-1b49d614daa1.webp",
+    "https://cdn.chungdoi.com/uploads/5b624f5e-0d4c-46b9-9fde-4e33ccf7d504.webp"
+  ],
+  "root900": null,
+  "failures": []
+}

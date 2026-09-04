@@ -52,6 +52,7 @@ function facetHref(facet: TemplateSeoFacet): Href {
  */
 export function buildSitemapEntries(
   posts: readonly BlogSitemapPost[],
+  templateRouteSlugs: Readonly<Record<string, string>> = {},
 ): MetadataRoute.Sitemap {
   const staticRoutes: Href[] = [
     "/",
@@ -66,7 +67,10 @@ export function buildSitemapEntries(
   ];
   const templateDemoRoutes: Href[] = completedTemplates.map((template) => ({
     pathname: "/templates/[slug]/demo" as const,
-    params: { slug: getVietnameseTemplateSlug(template.slug) },
+    params: {
+      slug: templateRouteSlugs[template.slug]
+        ?? getVietnameseTemplateSlug(template.slug),
+    },
   }));
   const facetRoutes = templateSeoFacets.map(facetHref);
 

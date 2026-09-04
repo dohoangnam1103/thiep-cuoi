@@ -45,7 +45,7 @@ export function startInvitationHref(intent: StartInvitationIntent = {}): string 
 }
 
 /** Why a visitor was sent to /login, so the form can explain itself. */
-export type AuthReason = "checkout" | "create";
+export type AuthReason = "checkout" | "create" | "slideshow";
 
 export function loginReasonHref(reason: AuthReason, returnTo: string): string {
   return `/login?reason=${reason}&next=${encodeURIComponent(

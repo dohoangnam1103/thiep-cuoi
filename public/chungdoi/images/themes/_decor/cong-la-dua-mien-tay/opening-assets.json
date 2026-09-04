@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/cong-la-dua-mien-tay/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-frond",
+      "src": "/chungdoi/images/themes/_decor/cong-la-dua-mien-tay/opening-left-frond.webp",
+      "rect": {
+        "x": 23,
+        "y": 144,
+        "width": 531,
+        "height": 372
+      }
+    },
+    {
+      "id": "right-frond",
+      "src": "/chungdoi/images/themes/_decor/cong-la-dua-mien-tay/opening-right-frond.webp",
+      "rect": {
+        "x": 476,
+        "y": 141,
+        "width": 529,
+        "height": 375
+      }
+    },
+    {
+      "id": "areca-cluster",
+      "src": "/chungdoi/images/themes/_decor/cong-la-dua-mien-tay/opening-areca-cluster.webp",
+      "rect": {
+        "x": 329,
+        "y": 125,
+        "width": 366,
+        "height": 174
+      }
+    }
+  ]
+}

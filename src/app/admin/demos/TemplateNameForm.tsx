@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 
 import { TEMPLATE_LABEL_MAX_LENGTH } from "@/app/editor/[id]/templates";
@@ -16,6 +17,7 @@ export function TemplateNameForm({
   defaultName: string;
   isRenamed: boolean;
 }) {
+  const t = useTranslations("adminDemos");
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -91,6 +93,7 @@ export function TemplateNameForm({
       <p className="text-xs text-muted-foreground">
         Để trống để dùng lại tên mặc định “{defaultName}”.
       </p>
+      <p className="text-xs text-muted-foreground">{t("renameUrlHelp")}</p>
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </form>
   );

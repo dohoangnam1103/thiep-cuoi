@@ -18,7 +18,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const LPD_UNI = '"UNI Chu truyen thong", "Baskerville", "Times New Roman", serif';
 const LPD_BODY = 'Baskerville, "Times New Roman", serif';
@@ -139,7 +139,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const ENVELOPE = palette.envelope;
   const people = orderedCouple(content);
   const headerNames = people.map((person) => person.shortName);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -272,20 +272,23 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             </div>
 
             {/* ceremony */}
-            <div className="flex flex-col items-center gap-4 text-center" style={{ fontFamily: LPD_BODY, color: GOLD }}>
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-[15px] font-semibold md:text-[19px]" style={{ whiteSpace: "pre-line" }}>{invitationCeremonyMessage(content)}</span>
-                <span className="text-[13px] opacity-70 md:text-[15px]" style={{ whiteSpace: "pre-line" }}>婚禮儀式舉行地點{"\n"}自宅</span>
-              </div>
-              <p className="text-[15px] font-semibold uppercase md:text-[18px]">Vào lúc <span className="opacity-70">/ 時間</span></p>
-              {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
-              {ceremony ? (
-                <>
-                  <LpdDateRow vnWeekday={ceremony.weekday} cnWeekday={LPD_CN_WEEKDAY[(ceremony.dayNumber + new Date(`${couple.ceremonyDate}T00:00:00`).getDay() - ceremony.dayNumber + 7) % 7]} day={ceremony.day} month={ceremony.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
-                  <div className="text-[22px] font-semibold md:text-[26px]">{ceremony.yearNumber}</div>
-                  <div className="text-[14px] opacity-80 md:text-[16px]">{ceremony.lunar}</div>
-                </>
-              ) : null}
+            <div data-dragon-phoenix-ceremonies className="flex w-full flex-col items-center gap-10" style={{ fontFamily: LPD_BODY, color: GOLD }}>
+              {ceremonies.map((ceremony, index) => {
+                const ceremonyDate = formatDate(ceremony.date);
+                return ceremonyDate ? (
+                  <div key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-4 text-center">
+                    <div className="flex flex-col items-center gap-1">
+                      {ceremony.title ? <span className="text-[15px] font-semibold md:text-[19px]" style={{ whiteSpace: "pre-line" }}>{ceremony.title}</span> : null}
+                      <span className="text-[13px] opacity-70 md:text-[15px]" style={{ whiteSpace: "pre-line" }}>婚禮儀式舉行地點{"\n"}自宅</span>
+                    </div>
+                    <p className="text-[15px] font-semibold uppercase md:text-[18px]">Vào lúc <span className="opacity-70">/ 時間</span></p>
+                    {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
+                    <LpdDateRow vnWeekday={ceremonyDate.weekday} cnWeekday={LPD_CN_WEEKDAY[new Date(`${ceremony.date}T00:00:00`).getDay()]} day={ceremonyDate.day} month={ceremonyDate.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
+                    <div className="text-[22px] font-semibold md:text-[26px]">{ceremonyDate.yearNumber}</div>
+                    <div className="text-[14px] opacity-80 md:text-[16px]">{ceremonyDate.lunar}</div>
+                  </div>
+                ) : null;
+              })}
             </div>
 
             {/* Thông tin tiệc cưới */}

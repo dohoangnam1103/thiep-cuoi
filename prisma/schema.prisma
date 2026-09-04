@@ -13,18 +13,94 @@ model User {
   passwordHash        String?
   createdAt           DateTime             @default(now())
   invitations         Invitation[]
+  slideshowProjects   SlideshowProject[]
   templateSuggestions TemplateSuggestion[]
   adminAuditLogs      AdminAuditLog[]      @relation("AuditTargetUser")
   emailDeliveries     EmailDelivery[]
 }
 
+/// Sản phẩm slideshow độc lập. Không dùng chung lifecycle, trial hay billing
+/// với Invitation để tránh thay đổi hành vi production của thiệp mời.
+model SlideshowProject {
+  id                 String   @id @default(cuid())
+  userId             String
+  shareToken         String   @unique
+  creationKey        String?  @unique
+  title              String   @default("Slideshow cưới")
+  templateId         String
+  templateVersion    Int      @default(1)
+  sourceJson         String
+  sceneOverridesJson String   @default("{}")
+  musicUrl           String?
+  revision           Int      @default(0)
+  assetCount         Int      @default(0)
+  assetBytes         Int      @default(0)
+  trialStartedAt     DateTime @default(now())
+  paid               Boolean  @default(false)
+  complimentary      Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets   SlideshowAsset[]
+  payments SlideshowPayment[]
+
+  @@index([userId, updatedAt])
+  @@index([trialStartedAt])
+}
+
+model SlideshowAsset {
+  id           String   @id @default(cuid())
+  projectId    String
+  storageKey   String   @unique
+  originalName String
+  mimeType     String
+  kind         String
+  size         Int
+  createdAt    DateTime @default(now())
+
+  project SlideshowProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+}
+
+model SlideshowPayment {
+  id                      String    @id @default(cuid())
+  projectId               String
+  activeKey               String?   @unique
+  code                    String    @unique
+  amount                  Int
+  status                  String    @default("pending")
+  provider                String    @default("casso")
+  providerOrderCode       String?   @unique
+  providerPaymentLinkId   String?   @unique
+  providerCheckoutUrl     String?
+  providerQrCode          String?
+  providerBankBin         String?
+  providerBankAccount     String?
+  providerBankAccountName String?
+  reviewReason            String?
+  receivedAmount          Int?
+  providerRef             String?
+  reviewDetectedAt        DateTime?
+  createdAt               DateTime  @default(now())
+  paidAt                  DateTime?
+
+  project SlideshowProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+  @@index([provider, status])
+}
+
 model Admin {
-  id           String          @id @default(cuid())
-  email        String          @unique
-  passwordHash String
-  isSuperAdmin Boolean         @default(false)
-  createdAt    DateTime        @default(now())
-  auditLogs    AdminAuditLog[]
+  id                  String                      @id @default(cuid())
+  email               String                      @unique
+  passwordHash        String
+  isSuperAdmin        Boolean                     @default(false)
+  createdAt           DateTime                    @default(now())
+  auditLogs           AdminAuditLog[]
+  fundWithdrawals     ProjectFundWithdrawal[]     @relation("ProjectFundWithdrawalCreator")
+  fundWithdrawalVoids ProjectFundWithdrawalVoid[] @relation("ProjectFundWithdrawalVoider")
 }
 
 model Invitation {
@@ -90,6 +166,60 @@ model AdminAuditLog {
   @@index([targetUserId, createdAt])
   @@index([invitationId, createdAt])
   @@index([adminId, createdAt])
+}
+
+/// Một lần tiền đã được rút khỏi tài khoản dự án ở bên ngoài hệ thống.
+/// Bản ghi đã tạo là bất biến: nếu nhập sai thì tạo `ProjectFundWithdrawalVoid`
+/// để lịch sử và người thực hiện vẫn truy xuất được.
+model ProjectFundWithdrawal {
+  id                  String   @id @default(cuid())
+  requestKey          String   @unique
+  payloadHash         String
+  amount              Int
+  withdrawnAt         DateTime
+  purpose             String
+  bankReference       String   @unique
+  note                String?
+  createdByAdminId    String?
+  createdByAdminEmail String
+  createdAt           DateTime @default(now())
+
+  createdBy   Admin?                     @relation("ProjectFundWithdrawalCreator", fields: [createdByAdminId], references: [id], onDelete: SetNull)
+  allocations ProjectFundAllocation[]
+  void        ProjectFundWithdrawalVoid?
+
+  @@index([withdrawnAt, createdAt])
+  @@index([createdByAdminId, createdAt])
+}
+
+/// Cách một lần rút tiền được chia cho từng người hoặc từng nơi nhận.
+/// Tổng các dòng luôn phải bằng `ProjectFundWithdrawal.amount`.
+model ProjectFundAllocation {
+  id           String @id @default(cuid())
+  withdrawalId String
+  recipient    String
+  amount       Int
+  note         String?
+  sortOrder    Int    @default(0)
+
+  withdrawal ProjectFundWithdrawal @relation(fields: [withdrawalId], references: [id], onDelete: Cascade)
+
+  @@index([withdrawalId, sortOrder])
+}
+
+/// Dấu hủy append-only cho một lần rút bị nhập sai. Không xóa bản ghi gốc.
+model ProjectFundWithdrawalVoid {
+  id                  String   @id @default(cuid())
+  withdrawalId        String   @unique
+  reason              String
+  createdByAdminId    String?
+  createdByAdminEmail String
+  createdAt           DateTime @default(now())
+
+  withdrawal ProjectFundWithdrawal @relation(fields: [withdrawalId], references: [id], onDelete: Restrict)
+  createdBy  Admin?                 @relation("ProjectFundWithdrawalVoider", fields: [createdByAdminId], references: [id], onDelete: SetNull)
+
+  @@index([createdByAdminId, createdAt])
 }
 
 /// Một lượt gửi email do cron, admin hoặc hệ thống khởi tạo.
@@ -254,6 +384,19 @@ model TemplateLabel {
   slug      String   @id
   name      String
   updatedAt DateTime @default(now()) @updatedAt
+}
+
+/// Public template-demo routes. `canonical = true` marks the current URL;
+/// historical aliases use NULL so SQLite's compound unique index permits many.
+model TemplateRouteAlias {
+  routeSlug    String   @id
+  templateSlug String
+  canonical    Boolean?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([templateSlug, canonical])
+  @@index([templateSlug])
 }
 
 /// An optional, admin-provided thumbnail that is shown only on small screens.

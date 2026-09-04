@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { createInvitation } from "@/app/dashboard/actions";
@@ -14,11 +14,13 @@ import {
   type ChungDoiTemplate,
 } from "@/data/chungdoi";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
+import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getCachedPublicDemoContent } from "@/lib/public-demo-content";
 import { pageSeo, templateAlternates } from "@/lib/seo";
 import { getTemplateLabelOverrides } from "@/lib/template-labels";
+import { resolvePublicTemplateRoute } from "@/lib/template-route-aliases";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
 
 const TEMPLATE_PREVIEW_WIDTH = 2400;
@@ -54,14 +56,21 @@ export async function publicDemoMetadata({
   params: Promise<{ locale: Locale; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const template = findTemplateByRouteSlug(slug);
+  const resolvedRoute = await resolvePublicTemplateRoute(slug);
+  const template = resolvedRoute
+    ? findTemplateByRouteSlug(resolvedRoute.sourceSlug)
+    : undefined;
 
-  if (!template || retiredTemplateSlugs.has(template.slug)) {
+  if (!template || !resolvedRoute || retiredTemplateSlugs.has(template.slug)) {
     return { title: { absolute: "Demo | Thiệp Mừng Online" } };
   }
 
   const copy = await localizedTemplateCopy(locale, template);
-  const alternates = templateAlternates(slug, locale);
+  const alternates = templateAlternates(
+    template.slug,
+    locale,
+    resolvedRoute.canonicalSlug,
+  );
   if (!alternates) {
     return { title: { absolute: "Demo | Thiệp Mừng Online" } };
   }
@@ -90,8 +99,27 @@ export async function PublicTemplateDemo({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "demoCta" });
 
-  const template = findTemplateByRouteSlug(slug);
-  if (!template || retiredTemplateSlugs.has(template.slug)) notFound();
+  const resolvedRoute = await resolvePublicTemplateRoute(slug);
+  const template = resolvedRoute
+    ? findTemplateByRouteSlug(resolvedRoute.sourceSlug)
+    : undefined;
+  if (!template || !resolvedRoute || retiredTemplateSlugs.has(template.slug)) {
+    notFound();
+  }
+
+  const canonicalSlug = locale === "vi"
+    ? resolvedRoute.canonicalSlug
+    : template.slug;
+  if (!captureMode && slug !== canonicalSlug) {
+    redirect(getPathname({
+      href: {
+        pathname: "/templates/[slug]/demo",
+        params: { slug: canonicalSlug },
+      },
+      locale,
+    }));
+  }
+
   const copy = await localizedTemplateCopy(locale, template);
 
   const [storedContent, cover3dEnabled] = await Promise.all([

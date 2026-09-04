@@ -1,0 +1,1439 @@
+@font-face {
+  font-family: "Porcelain Viaoda";
+  src: url("/chungdoi/fonts/ViaodaLibre-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Porcelain Alex Brush";
+  src: url("/chungdoi/fonts/AlexBrush-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Porcelain EB Garamond";
+  src: url("/chungdoi/fonts/EBGaramond-Variable.ttf") format("truetype");
+  font-display: swap;
+}
+
+.page {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  overflow-x: clip;
+  background: #fff;
+}
+
+.invitation {
+  --porcelain-primary: #082f55;
+  --porcelain-secondary: #082f55;
+  --porcelain-paper: #f6f3e7;
+  --porcelain-body: #082f55;
+  --porcelain-pattern-image: url("/chungdoi/images/themes/porcelain-blue/floral-tile.webp");
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 900px;
+  overflow: hidden;
+  border-inline: 1px solid color-mix(in srgb, var(--porcelain-primary) 48%, transparent);
+  background: var(--porcelain-paper);
+  color: var(--porcelain-body);
+  font-family: Baskerville, "Times New Roman", serif;
+}
+
+.blue {
+  --porcelain-primary: #082f55;
+  --porcelain-secondary: #082f55;
+  --porcelain-paper: #f6f3e7;
+  --porcelain-body: #082f55;
+  --porcelain-pattern-image: url("/chungdoi/images/themes/porcelain-blue/floral-tile.webp");
+}
+
+.red {
+  --porcelain-primary: #af3e42;
+  --porcelain-secondary: #af3e42;
+  --porcelain-paper: #f2eee2;
+  --porcelain-body: #af3e42;
+  --porcelain-pattern-image: url("/chungdoi/images/themes/porcelain-red/floral-tile.webp");
+}
+
+.brown {
+  --porcelain-primary: #8d6f32;
+  --porcelain-secondary: #8d6f32;
+  --porcelain-paper: #fcfbf8;
+  --porcelain-body: #8d6f32;
+  --porcelain-pattern-image: url("/chungdoi/images/themes/porcelain-brown/floral-tile.webp");
+  font-family: "Porcelain EB Garamond", Baskerville, "Times New Roman", serif;
+}
+
+.v2Red {
+  --porcelain-primary: #8f262d;
+  --porcelain-secondary: #654e2f;
+  --porcelain-paper: #fefaf0;
+  --porcelain-body: #654e2f;
+  --porcelain-pattern-image: url("/chungdoi/images/themes/porcelain-v2-red/floral-tile.webp");
+}
+
+.v2Green {
+  --porcelain-primary: #464f1e;
+  --porcelain-secondary: #bc9b63;
+  --porcelain-paper: #fff7eb;
+  --porcelain-body: #464f1e;
+  --porcelain-pattern-image: url("/chungdoi/images/themes/porcelain-v2-green/floral-tile.webp");
+}
+
+.pattern {
+  background-color: var(--porcelain-paper);
+  background-image: var(--porcelain-pattern-image);
+  background-position: top center;
+  background-repeat: repeat;
+  background-size: 450px auto;
+}
+
+.heroStage {
+  position: relative;
+  display: flex;
+  min-height: 740px;
+  align-items: center;
+  justify-content: center;
+  padding: 54px 0 64px;
+}
+
+.heroFrame {
+  position: relative;
+  width: min(56%, 505px);
+  aspect-ratio: 1122 / 1402;
+}
+
+.red .heroFrame {
+  width: min(55%, 489px);
+  aspect-ratio: 1266 / 1900;
+}
+
+.brown .heroFrame {
+  width: min(50%, 440px);
+  aspect-ratio: 1122 / 1549;
+}
+
+.heroPanel {
+  position: absolute;
+  inset: 4.8% 4.2% 4.2%;
+  background: var(--porcelain-paper);
+}
+
+.brown .heroPanel {
+  display: none;
+}
+
+.frameArtwork {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.heroCopy {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--porcelain-primary);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.saveDate {
+  margin-top: 14%;
+  font-family: "Times New Roman", serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.shortNames {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  display: flex;
+  width: 82%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.shortName {
+  width: 100%;
+  font-family: "Porcelain Viaoda", "Times New Roman", serif;
+  font-size: clamp(29px, 3.1vw, 38px);
+  line-height: 1.2;
+}
+
+.ampersand {
+  font-family: "Porcelain Viaoda", "Times New Roman", serif;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.invitation[data-porcelain-layout="v2"] .heroStage {
+  min-height: 750px;
+  padding: 35px 0;
+}
+
+.v2Red .heroFrame {
+  width: min(45%, 400px);
+  aspect-ratio: 900 / 1530;
+}
+
+.v2Green .heroFrame {
+  width: min(50%, 440px);
+  aspect-ratio: 880 / 1320;
+}
+
+.invitation[data-porcelain-layout="v2"] .saveDate {
+  margin-top: 18%;
+  color: var(--porcelain-secondary);
+  font-size: 14px;
+}
+
+.invitation[data-porcelain-layout="v2"] .shortNames {
+  top: 48%;
+  gap: 24px;
+}
+
+.invitation[data-porcelain-layout="v2"] .shortName {
+  color: var(--porcelain-primary);
+  font-family: "Times New Roman", serif;
+  font-size: clamp(29px, 3vw, 36px);
+  font-style: italic;
+}
+
+.invitation[data-porcelain-layout="v2"] .ampersand {
+  color: var(--porcelain-secondary);
+  font-family: "Times New Roman", serif;
+  font-size: 36px;
+  font-style: italic;
+}
+
+.patternBlock {
+  position: relative;
+  padding: 0 20px 48px;
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  border: 1.5px solid var(--porcelain-primary);
+  background: var(--porcelain-paper);
+  padding: 44px 48px;
+  text-align: center;
+}
+
+.invitation[data-porcelain-layout="v2"] .panel {
+  width: 83%;
+  border-radius: 13px;
+  padding: 40px 32px;
+  color: var(--porcelain-body);
+}
+
+.panel > :not(.flowerLayer),
+.schedule > :not(.flowerLayer) {
+  position: relative;
+  z-index: 3;
+}
+
+.heading {
+  color: var(--porcelain-primary);
+  font-family: "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.invitation[data-porcelain-layout="v2"] .panel > .heading {
+  font-size: 20px;
+}
+
+.families {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: repeat(4, auto);
+  width: 100%;
+  margin-top: 34px;
+  column-gap: 24px;
+  row-gap: 3px;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.familyDivider {
+  align-self: center;
+  width: 1px;
+  height: 50px;
+  grid-row: span 4;
+  background: color-mix(in srgb, var(--porcelain-primary) 45%, transparent);
+}
+
+.openingMessage {
+  margin-top: 42px;
+  white-space: pre-line;
+  font-size: 14px;
+  line-height: 1.65;
+  text-transform: uppercase;
+}
+
+.fullNames {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.fullName {
+  display: flex;
+  min-height: 76px;
+  width: 92%;
+  align-items: center;
+  justify-content: center;
+  color: var(--porcelain-primary);
+  font-family: "Porcelain Viaoda", "Times New Roman", serif;
+  font-size: 38px;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.invitation[data-porcelain-layout="v2"] .fullName {
+  min-height: 68px;
+  color: var(--porcelain-primary);
+  font-family: "Porcelain Alex Brush", "Porcelain Viaoda", cursive;
+  font-size: 42px;
+  text-transform: none;
+}
+
+.birthOrder {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.fullAmpersand {
+  margin: 4px 0;
+  color: var(--porcelain-primary);
+  font-family: "Porcelain Viaoda", "Times New Roman", serif;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.invitation[data-porcelain-layout="v2"] .fullAmpersand {
+  font-family: "Porcelain Alex Brush", cursive;
+}
+
+.ceremonyDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 32px;
+  gap: 12px;
+}
+
+.ceremonyHeader {
+  white-space: pre-line;
+  font-size: 14px;
+  line-height: 1.65;
+  text-transform: uppercase;
+}
+
+.dateMeta {
+  display: flex;
+  width: 100%;
+  max-width: 220px;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.dateNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.day {
+  color: var(--porcelain-primary);
+  font-family: "Times New Roman", serif;
+  font-size: 54px;
+  line-height: 1;
+}
+
+.monthYear {
+  display: flex;
+  min-height: 54px;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid var(--porcelain-primary);
+  padding-left: 12px;
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.lunar {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.flowerLayer {
+  pointer-events: none;
+  position: absolute !important;
+  inset: 0;
+  z-index: 2 !important;
+  overflow: visible;
+}
+
+.flower {
+  position: absolute;
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+}
+
+.ceremonyFlowerLeft {
+  top: 40%;
+  left: -28%;
+  width: 36%;
+}
+
+.ceremonyFlowerRight {
+  right: -19%;
+  bottom: 4%;
+  width: 32%;
+  transform: rotate(180deg);
+}
+
+.receptionFlowerLeft {
+  top: 43%;
+  left: -27%;
+  width: 35%;
+}
+
+.receptionFlowerRight {
+  right: -18%;
+  bottom: 3%;
+  width: 31%;
+  transform: rotate(180deg);
+}
+
+.scheduleFlowerLeft {
+  top: -18%;
+  right: -20%;
+  width: 34%;
+  transform: rotate(180deg);
+}
+
+.plainSection {
+  position: relative;
+  border-top: 1.5px solid var(--porcelain-primary);
+  border-bottom: 1.5px solid var(--porcelain-primary);
+  background: var(--porcelain-paper);
+  padding: 40px 24px 48px;
+}
+
+.album {
+  width: 100%;
+  max-width: 560px;
+  margin: 28px auto 0;
+}
+
+.invitation[data-porcelain-layout="v2"] .plainSection {
+  min-height: 682px;
+  border-color: color-mix(in srgb, var(--porcelain-primary) 42%, transparent);
+  padding: 40px 24px;
+}
+
+.invitation[data-porcelain-layout="v2"] .album {
+  max-width: 900px;
+  margin-top: 36px;
+}
+
+.receptionPattern {
+  border-bottom: 1px solid color-mix(in srgb, var(--porcelain-primary) 40%, transparent);
+}
+
+.receptionPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.invitation[data-porcelain-layout="v2"] .receptionPattern .patternBlock {
+  padding-top: 30px;
+  padding-bottom: 58px;
+  text-align: center;
+}
+
+.invitation[data-porcelain-layout="v2"] .receptionPanel {
+  gap: 25px;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--porcelain-primary) 12%, transparent);
+}
+
+.subheading {
+  font-family: "Times New Roman", serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.arrivalTimes {
+  display: flex;
+  justify-content: center;
+  gap: 42px;
+  text-align: center;
+}
+
+.arrivalLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.arrivalTime {
+  margin-top: 5px;
+  color: var(--porcelain-primary);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.countdownBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdownTitle {
+  color: var(--porcelain-secondary);
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.calendar {
+  width: 100%;
+  max-width: 360px;
+  border-radius: 0;
+  background-color: var(--porcelain-primary);
+  padding: 18px 14px 16px;
+  color: var(--porcelain-paper);
+}
+
+.brown .calendar {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--porcelain-primary) 86%, transparent), color-mix(in srgb, var(--porcelain-primary) 86%, transparent)),
+    url("/chungdoi/images/themes/porcelain-brown/calendar-texture.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+.invitation[data-porcelain-layout="v2"] .calendar {
+  border-radius: 10px;
+  padding: 20px 14px 18px;
+}
+
+.calendarTitle {
+  border-bottom: 1px solid color-mix(in srgb, var(--porcelain-paper) 25%, transparent);
+  padding: 3px 0 14px;
+  font-family: "Times New Roman", serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.weekdays,
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+
+.weekdays {
+  border-bottom: 1px solid color-mix(in srgb, var(--porcelain-paper) 55%, transparent);
+  padding: 9px 0;
+  font-size: 10px;
+  opacity: 0.82;
+}
+
+.calendarGrid {
+  padding-top: 8px;
+  row-gap: 2px;
+  font-size: 12px;
+}
+
+.calendarCell {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+}
+
+.highlight {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  color: var(--porcelain-primary);
+  font-weight: 700;
+}
+
+.highlight::before {
+  content: "♥";
+  position: absolute;
+  z-index: -1;
+  color: var(--porcelain-paper);
+  font-size: 31px;
+  line-height: 1;
+}
+
+.calendarLink {
+  color: var(--porcelain-primary);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.rsvpButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--porcelain-primary);
+  padding: 10px 32px;
+  color: var(--porcelain-paper);
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  transition: transform 180ms ease;
+}
+
+.rsvpButton:hover {
+  transform: scale(1.03);
+}
+
+.rsvpButtonOutside {
+  position: relative;
+  z-index: 4;
+  margin: -1px auto 0;
+  transform: translateY(50%);
+}
+
+.rsvpButtonOutside:hover {
+  transform: translateY(50%) scale(1.03);
+}
+
+.venueSection {
+  position: relative;
+  border-top: 1.5px solid var(--porcelain-primary);
+  background: var(--porcelain-paper);
+  padding: 48px 24px 62px;
+  text-align: center;
+}
+
+.invitation[data-porcelain-layout="v2"] .venueSection {
+  min-height: 1040px;
+  border-top: 0;
+  padding-top: 62px;
+}
+
+.venueHeading {
+  color: var(--porcelain-primary);
+  font-family: "Times New Roman", serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.address {
+  max-width: 470px;
+  margin: 16px auto 0;
+  white-space: pre-line;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.mapFrame {
+  width: 100%;
+  max-width: 660px;
+  margin: 28px auto 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--porcelain-primary) 18%, transparent);
+}
+
+.dressCode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 54px;
+}
+
+.invitation[data-porcelain-layout="v2"] .dressCode {
+  margin-top: 170px;
+}
+
+.v2Red .dressCode .heading,
+.v2Green .dressCode .heading {
+  color: var(--porcelain-secondary);
+}
+
+.dressSubtitle {
+  font-size: 15px;
+  opacity: 0.78;
+}
+
+.swatches {
+  display: flex;
+  gap: 20px;
+  margin-top: 14px;
+}
+
+.swatch {
+  width: 48px;
+  height: 48px;
+  color: color-mix(in srgb, var(--porcelain-primary) 22%, transparent);
+  filter: drop-shadow(0 3px 3px rgb(0 0 0 / 18%));
+}
+
+.schedule {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  margin: 64px auto 0;
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+  align-items: center;
+  margin-top: 32px;
+  column-gap: 34px;
+  row-gap: 30px;
+}
+
+.timelineTime {
+  font-size: 17px;
+  text-align: right;
+}
+
+.timelineTimeInner {
+  position: relative;
+  display: inline-block;
+}
+
+.timelineIcon {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 26px);
+  width: 35px;
+  height: 35px;
+  transform: translateY(-50%);
+  object-fit: contain;
+}
+
+.timelineRail {
+  position: relative;
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+}
+
+.timelineLine {
+  position: absolute;
+  top: -30px;
+  bottom: -30px;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--porcelain-primary) 40%, transparent);
+}
+
+.timelineLineFirst {
+  top: 50%;
+}
+
+.timelineLineLast {
+  bottom: 50%;
+}
+
+.timelineDot {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: var(--porcelain-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--porcelain-primary) 12%, transparent);
+}
+
+.timelineLabel {
+  font-size: 15px;
+  text-align: left;
+}
+
+.schedulePattern {
+  position: relative;
+  border-block: 1px solid color-mix(in srgb, var(--porcelain-primary) 46%, transparent);
+  padding: 30px 20px;
+}
+
+.scheduleCard {
+  position: relative;
+  width: 83%;
+  max-width: 560px;
+  margin: 0 auto;
+  border: 1.5px solid var(--porcelain-primary);
+  border-radius: 13px;
+  background: var(--porcelain-paper);
+  padding: 38px 42px 44px;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--porcelain-primary) 12%, transparent);
+}
+
+.scheduleCard .schedule {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.scheduleCard .heading {
+  font-size: 24px;
+}
+
+.guestbook {
+  width: 100%;
+  max-width: 600px;
+  margin: 64px auto 0;
+}
+
+.guestbookSection {
+  background: var(--porcelain-paper);
+  padding: 52px 24px 58px;
+  text-align: center;
+}
+
+.guestbookSection .guestbook {
+  margin-top: 0;
+}
+
+.v2Red .guestbookSection .heading {
+  color: var(--porcelain-secondary);
+}
+
+.guestbook :global(form) {
+  max-width: 380px;
+}
+
+.guestbook :global(input),
+.guestbook :global(textarea) {
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: var(--porcelain-body) !important;
+  font-family: Baskerville, "Times New Roman", serif;
+}
+
+.guestbook :global(textarea) {
+  min-height: 106px;
+}
+
+.wishList {
+  max-height: 500px;
+  margin-top: 32px;
+  padding-right: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.wish {
+  border: 1px solid color-mix(in srgb, var(--porcelain-primary) 34%, transparent);
+  border-radius: 5px;
+  background: rgb(255 255 255 / 44%);
+  padding: 15px 16px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.wish + .wish {
+  margin-top: 12px;
+}
+
+.wishMeta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.wishName {
+  color: var(--porcelain-primary);
+  font-weight: 700;
+}
+
+.wishTime {
+  flex: none;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.wishText {
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.giftSection {
+  position: relative;
+  border-top: 1.5px solid var(--porcelain-primary);
+  padding: 46px 20px 70px;
+}
+
+.giftCard {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  border: 1.5px solid var(--porcelain-primary);
+  background: var(--porcelain-paper);
+  padding: 42px 28px 30px;
+  text-align: center;
+}
+
+.giftHeading {
+  color: var(--porcelain-primary) !important;
+  font-family: "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.invitation[data-porcelain-layout="v2"] .giftSection {
+  border-top: 0;
+  background: var(--porcelain-paper);
+  padding: 0;
+}
+
+.invitation[data-porcelain-layout="v2"] .giftCard {
+  display: flex;
+  min-height: 790px;
+  max-width: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  border: 0;
+  padding: 62px 20px 48px;
+}
+
+.invitation[data-porcelain-layout="v2"] .giftHeading {
+  color: var(--porcelain-primary) !important;
+}
+
+.v2Red .giftHeading {
+  color: var(--porcelain-secondary) !important;
+}
+
+.footer {
+  margin-top: 28px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.invitation[data-porcelain-layout="v2"] .footer {
+  margin-top: 42px;
+}
+
+.brand {
+  display: inline-block;
+  margin-top: 24px;
+  color: var(--porcelain-primary);
+  font-size: 12px;
+  opacity: 0.48;
+}
+
+.v2FooterStrip {
+  height: 52px;
+  border-top: 1px solid color-mix(in srgb, var(--porcelain-primary) 45%, transparent);
+}
+
+@media (max-width: 767px) {
+  .invitation {
+    border-inline: 0;
+  }
+
+  .heroStage {
+    min-height: 570px;
+    padding: 36px 0 48px;
+  }
+
+  .heroFrame,
+  .red .heroFrame,
+  .brown .heroFrame {
+    width: calc(100% - 28px);
+    max-width: 390px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .heroStage {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .v2Red .heroFrame,
+  .v2Green .heroFrame {
+    width: 100%;
+    max-width: none;
+  }
+
+  .saveDate {
+    font-size: 13px;
+  }
+
+  .shortNames {
+    gap: 12px;
+  }
+
+  .shortName {
+    font-size: clamp(27px, 9vw, 35px);
+  }
+
+  .ampersand {
+    font-size: 24px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .saveDate {
+    font-size: 12px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .shortNames {
+    gap: 20px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .shortName {
+    font-size: clamp(27px, 8vw, 33px);
+  }
+
+  .patternBlock {
+    padding: 0 16px 38px;
+  }
+
+  .panel {
+    padding: 34px 18px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .panel {
+    width: calc(100% - 70px);
+    padding: 32px 20px;
+  }
+
+  .heading {
+    font-size: 21px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .panel > .heading {
+    font-size: 19px;
+  }
+
+  .families {
+    margin-top: 28px;
+    column-gap: 10px;
+    font-size: 10px;
+  }
+
+  .openingMessage {
+    margin-top: 32px;
+    font-size: 12px;
+  }
+
+  .fullName {
+    min-height: 66px;
+    width: 100%;
+    font-size: 31px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .fullName {
+    min-height: 64px;
+    font-size: 37px;
+  }
+
+  .ceremonyHeader {
+    font-size: 12px;
+  }
+
+  .dateMeta {
+    max-width: 198px;
+    font-size: 11px;
+  }
+
+  .day {
+    font-size: 48px;
+  }
+
+  .monthYear {
+    font-size: 13px;
+  }
+
+  .lunar {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .ceremonyFlowerLeft {
+    top: 38%;
+    left: -31%;
+    width: 48%;
+  }
+
+  .ceremonyFlowerRight {
+    right: -27%;
+    bottom: 4%;
+    width: 43%;
+  }
+
+  .receptionFlowerLeft {
+    top: 41%;
+    left: -28%;
+    width: 45%;
+  }
+
+  .receptionFlowerRight {
+    right: -28%;
+    bottom: 4%;
+    width: 43%;
+  }
+
+  .scheduleFlowerLeft {
+    top: -10%;
+    right: -28%;
+    width: 44%;
+  }
+
+  .plainSection {
+    padding: 34px 16px 40px;
+  }
+
+  .album {
+    margin-top: 24px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .plainSection {
+    min-height: 500px;
+    padding: 34px 0 30px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .album {
+    margin-top: 28px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .receptionPattern .patternBlock {
+    padding: 28px 0 50px;
+  }
+
+  .subheading {
+    font-size: 16px;
+  }
+
+  .arrivalTimes {
+    gap: 28px;
+  }
+
+  .calendar {
+    max-width: 320px;
+    padding-inline: 10px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .calendar {
+    max-width: 300px;
+  }
+
+  .rsvpButtonOutside {
+    min-width: 198px;
+  }
+
+  .venueSection {
+    padding: 42px 16px 48px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .venueSection {
+    min-height: 960px;
+    padding-top: 60px;
+  }
+
+  .mapFrame {
+    margin-top: 22px;
+  }
+
+  .dressCode {
+    margin-top: 44px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .dressCode {
+    margin-top: 150px;
+  }
+
+  .swatch {
+    width: 42px;
+    height: 42px;
+  }
+
+  .schedule,
+  .guestbook {
+    margin-top: 52px;
+  }
+
+  .timeline {
+    column-gap: 24px;
+  }
+
+  .timelineIcon {
+    right: calc(100% + 17px);
+    width: 31px;
+    height: 31px;
+  }
+
+  .timelineTime {
+    font-size: 15px;
+  }
+
+  .timelineLabel {
+    font-size: 13px;
+  }
+
+  .schedulePattern {
+    padding: 28px 0;
+  }
+
+  .scheduleCard {
+    width: calc(100% - 70px);
+    padding: 34px 18px 38px;
+  }
+
+  .scheduleCard .heading {
+    font-size: 21px;
+  }
+
+  .scheduleCard .timeline {
+    column-gap: 20px;
+  }
+
+  .guestbookSection {
+    padding: 44px 16px 50px;
+  }
+
+  .wishMeta {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .giftSection {
+    padding: 38px 16px 54px;
+  }
+
+  .giftCard {
+    padding: 36px 16px 26px;
+  }
+
+  .invitation[data-porcelain-layout="v2"] .giftCard {
+    min-height: 760px;
+    padding: 52px 16px 42px;
+  }
+
+  .v2FooterStrip {
+    height: 44px;
+  }
+}
+
+/* Source-audited hero geometry for the four cloned porcelain variants.
+   Porcelain Blue intentionally keeps the legacy shared measurements above. */
+.red {
+  --hero-save-top: 8.6%;
+  --hero-names-top: 54.3%;
+  --hero-name-gap: 16px;
+  --hero-amp-size: 28px;
+}
+
+.brown {
+  --hero-save-top: 20%;
+  --hero-names-top: 56.2%;
+  --hero-name-gap: 16px;
+  --hero-amp-size: 28px;
+}
+
+.v2Red {
+  --hero-save-top: 23.7%;
+  --hero-names-top: 50.7%;
+  --hero-name-gap: 28px;
+  --hero-amp-size: 48px;
+}
+
+.v2Green {
+  --hero-save-top: 24.7%;
+  --hero-names-top: 48.2%;
+  --hero-name-gap: 28px;
+  --hero-amp-size: 48px;
+}
+
+.invitation.red .heroStage,
+.invitation.brown .heroStage,
+.invitation.v2Red .heroStage,
+.invitation.v2Green .heroStage {
+  min-height: 0;
+}
+
+.invitation.red .heroStage,
+.invitation.brown .heroStage {
+  padding: 131px 0 132px;
+}
+
+.invitation.v2Red .heroStage {
+  padding: 155px 0 140px;
+}
+
+.invitation.v2Green .heroStage {
+  padding: 125px 0 175px;
+}
+
+.red .heroFrame {
+  width: min(42.3%, 380px);
+  aspect-ratio: 380 / 511.375;
+  overflow: visible;
+}
+
+.red .frameArtwork {
+  inset: auto;
+  top: -9.7%;
+  left: -14.4%;
+  width: 128.8%;
+  max-width: none;
+  height: 119.4%;
+  object-fit: fill;
+}
+
+.brown .heroFrame {
+  width: min(50%, 440px);
+  aspect-ratio: 440 / 607.969;
+}
+
+.v2Red .heroFrame {
+  width: min(45%, 400px);
+  aspect-ratio: 400 / 680.125;
+}
+
+.v2Green .heroFrame {
+  width: min(50%, 440px);
+  aspect-ratio: 2 / 3;
+}
+
+.invitation.red .saveDate,
+.invitation.brown .saveDate,
+.invitation.v2Red .saveDate,
+.invitation.v2Green .saveDate {
+  position: absolute;
+  top: var(--hero-save-top);
+  left: 50%;
+  width: 100%;
+  margin: 0;
+  transform: translateX(-50%);
+  line-height: 1.2;
+}
+
+.invitation.red .shortNames,
+.invitation.brown .shortNames,
+.invitation.v2Red .shortNames,
+.invitation.v2Green .shortNames {
+  top: var(--hero-names-top);
+  margin: 0;
+  gap: var(--hero-name-gap);
+}
+
+.invitation.red .ampersand,
+.invitation.brown .ampersand,
+.invitation.v2Red .ampersand,
+.invitation.v2Green .ampersand {
+  font-size: var(--hero-amp-size);
+}
+
+.invitation.v2Red .ampersand,
+.invitation.v2Green .ampersand {
+  font-family: "Porcelain Alex Brush", cursive;
+  font-style: normal;
+}
+
+@media (max-width: 767px) {
+  .red {
+    --hero-save-top: 14.2%;
+    --hero-names-top: 54.1%;
+    --hero-name-gap: 12px;
+    --hero-amp-size: 24px;
+  }
+
+  .brown {
+    --hero-save-top: 25%;
+    --hero-names-top: 59.2%;
+    --hero-name-gap: 12px;
+    --hero-amp-size: 24px;
+  }
+
+  .v2Red {
+    --hero-save-top: 40.4%;
+    --hero-names-top: 64.6%;
+    --hero-name-gap: 20px;
+    --hero-amp-size: 42px;
+  }
+
+  .v2Green {
+    --hero-save-top: 29%;
+    --hero-names-top: 58%;
+    --hero-name-gap: 20px;
+    --hero-amp-size: 42px;
+  }
+
+  .invitation.red .heroStage,
+  .invitation.brown .heroStage {
+    min-height: 0;
+    padding: 74.5px 0 77.5px;
+  }
+
+  .red .heroFrame {
+    width: 77.5%;
+    max-width: none;
+  }
+
+  .brown .heroFrame {
+    width: 83.2%;
+    max-width: none;
+  }
+
+  .invitation.v2Red .heroStage,
+  .invitation.v2Green .heroStage {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .v2Red .heroFrame,
+  .v2Green .heroFrame {
+    width: 100%;
+    max-width: none;
+  }
+}

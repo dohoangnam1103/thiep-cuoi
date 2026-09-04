@@ -25,3 +25,17 @@ test("Song Hỷ hides wedding gift section when no VietQR account exists", () =>
   assert.match(giftSection, /\{banks\.length > 0 \? \(/);
   assert.match(giftSection, /Phong Bao Mừng Cưới/);
 });
+
+test("Song Hỷ renders every ceremony inside its wedding-information section", () => {
+  const ceremonySection = section(
+    "<SongHyBand palette={palette}>THÔNG TIN LỄ CƯỚI</SongHyBand>",
+    "{albumShown.length > 0 ? (",
+  );
+
+  assert.match(source, /const ceremonies = invitationCeremonies\(content\)/);
+  assert.match(ceremonySection, /data-song-hy-ceremonies/);
+  assert.match(ceremonySection, /ceremonies\.map/);
+  assert.match(ceremonySection, /ceremony\.title/);
+  assert.match(ceremonySection, /ceremony\.time/);
+  assert.match(ceremonySection, /formatDate\(ceremony\.date\)/);
+});

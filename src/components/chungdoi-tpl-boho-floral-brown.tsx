@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, invitationHeroPhotos, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, invitationHeroPhotos, orderedCouple } from "@/lib/invitation-display";
 import {
   hexToRgba, formatDate, buildCalendar, formatWishTime,
   AlbumGallery, googleCalendarUrl, InvitationMap, MapDirectionsButton,
@@ -35,7 +35,7 @@ function BohoDivider() {
 export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -130,17 +130,22 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{people[1].birthOrder}</div>
             </div>
-            {ceremony ? (
-              <div className="flex flex-col items-center gap-1 text-center">
-                {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
-                {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
-                <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
-                  <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
-                </div>
-                <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
-              </div>
-            ) : null}
+            <div data-boho-ceremonies className="flex w-full flex-col items-center gap-8">
+              {ceremonies.map((ceremony, index) => {
+                const ceremonyDate = formatDate(ceremony.date);
+                return ceremonyDate ? (
+                  <div key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-1 text-center">
+                    {ceremony.title ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{ceremony.title}</span> : null}
+                    {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
+                    <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                      <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>Tháng {ceremonyDate.month}</span>
+                    </div>
+                    <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                    <div className="text-xs opacity-75 md:text-sm">{ceremonyDate.lunar}</div>
+                  </div>
+                ) : null;
+              })}
+            </div>
           </section>
 
           {/* ALBUM */}

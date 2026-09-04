@@ -274,9 +274,10 @@ export function InvitationMap({ query, title, className, style, ...iframeProps }
   useEffect(() => {
     if (hasApiKey) return;
     const ua = navigator.userAgent || "";
-    if (/FBAN|FBAV|Messenger/i.test(ua)) {
-      setIsFacebookWebview(true);
-    }
+    if (!/FBAN|FBAV|Messenger/i.test(ua)) return;
+
+    const frame = requestAnimationFrame(() => setIsFacebookWebview(true));
+    return () => cancelAnimationFrame(frame);
   }, [hasApiKey]);
 
   if (!hasApiKey && isFacebookWebview) {
@@ -1051,6 +1052,7 @@ export function GiftQrGrid({
   copyNumberLabel = "Sao chép STK",
   numberCopiedLabel = "Đã sao chép",
   headingClassName,
+  stacked = false,
 }: {
   banks: GiftBank[];
   heading?: string;
@@ -1060,6 +1062,7 @@ export function GiftQrGrid({
   copyNumberLabel?: string;
   numberCopiedLabel?: string;
   headingClassName?: string;
+  stacked?: boolean;
 }) {
   const cards = giftCardsWithQr(banks);
   if (cards.length === 0) return null;
@@ -1072,10 +1075,21 @@ export function GiftQrGrid({
       >
         {heading}
       </h2>
-      <div className="flex w-full flex-row flex-wrap items-start justify-center gap-4 sm:gap-8">
+      <div
+        className={cn(
+          "flex w-full justify-center gap-4 sm:gap-8",
+          stacked ? "flex-col flex-nowrap items-center" : "flex-row flex-wrap items-start",
+        )}
+      >
         {cards.map(({ gift, qr }) => {
           return (
-            <div key={gift.label} className="flex max-w-[200px] flex-1 flex-col items-center">
+            <div
+              key={gift.label}
+              className={cn(
+                "flex max-w-[200px] flex-col items-center",
+                stacked ? "w-full flex-none" : "flex-1",
+              )}
+            >
               <h3 className="mb-2 flex min-h-8 items-start justify-center text-xs font-semibold" style={{ color: accent }}>{gift.label}</h3>
               <div className={cn("size-32 bg-white p-2 shadow-lg sm:size-40", radiusClass)}>
                 <img src={qr} alt={`QR - ${gift.label}`} className="h-full w-full object-contain" />

@@ -21,7 +21,10 @@ export async function verifyAdmin(): Promise<{
   return { adminId: admin.id, adminEmail: admin.email };
 }
 
-export async function verifySuperAdmin(): Promise<{ adminId: string }> {
+export async function verifySuperAdmin(): Promise<{
+  adminId: string;
+  adminEmail: string;
+}> {
   const admin = await getCurrentAdmin();
   if (!admin) {
     redirect("/admin/login");
@@ -29,5 +32,5 @@ export async function verifySuperAdmin(): Promise<{ adminId: string }> {
   if (!admin.isSuperAdmin) {
     redirect("/admin");
   }
-  return { adminId: admin.id };
+  return { adminId: admin.id, adminEmail: admin.email };
 }
