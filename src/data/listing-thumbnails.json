@@ -528,6 +528,29 @@
       }
     ]
   },
+  "/chungdoi/images/template-previews/en/listing/cong_la_dua_mien_tay.webp": {
+    "width": 768,
+    "height": 12458,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cong_la_dua_mien_tay-cfd8ff94d3ac-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cong_la_dua_mien_tay-cfd8ff94d3ac-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cong_la_dua_mien_tay-cfd8ff94d3ac-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/cong_la_dua_mien_tay-cfd8ff94d3ac-768.webp"
+      }
+    ]
+  },
   "/chungdoi/images/template-previews/en/listing/crystal_floral_blue.webp": {
     "width": 768,
     "height": 9219,
