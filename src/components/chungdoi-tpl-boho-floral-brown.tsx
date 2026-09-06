@@ -130,11 +130,11 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
               </h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: BROWN_MUTED }}>{people[1].birthOrder}</div>
             </div>
-            <div data-boho-ceremonies className="flex w-full flex-col items-center gap-8">
+            <div data-template-ceremonies data-boho-ceremonies className="flex w-full flex-col items-center gap-8">
               {ceremonies.map((ceremony, index) => {
                 const ceremonyDate = formatDate(ceremony.date);
                 return ceremonyDate ? (
-                  <div key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-1 text-center">
+                  <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-1 text-center">
                     {ceremony.title ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{ceremony.title}</span> : null}
                     {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
                     <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">

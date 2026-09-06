@@ -88,6 +88,7 @@ export function createPorcelainTemplateManifest({
     slug,
     viRouteSlug,
     rendererExport,
+    ceremonyRendering: "inline-all",
     heroImageCount: 0,
     catalog: {
       name,

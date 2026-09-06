@@ -1,0 +1,41 @@
+import assert from "node:assert/strict";
+import { writeFile } from "node:fs/promises";
+import { chromium } from "playwright";
+
+const base = "http://localhost:3000";
+const output = "docs/research/to-hong";
+const browser = await chromium.launch();
+try {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "no-preference", recordVideo: { dir: output, size: { width: 390, height: 844 } } });
+  const page = await context.newPage();
+  await page.goto(`${base}/mau-thiep/to-hong/demo`, { waitUntil: "networkidle" });
+  await page.locator("[data-to-hong-cover]").getByRole("button", { name: "Mở thiệp", exact: true }).click();
+  await page.waitForTimeout(300);
+  assert.equal(await page.locator('[data-to-hong-cover][data-opening="true"]').count(), 1);
+  assert.ok(await page.locator("[data-to-hong-cover]").evaluate((el) => el.getAnimations({ subtree: true }).length) >= 5);
+  await page.screenshot({ path: `${output}/motion-opening.png` });
+  await page.locator("[data-to-hong-cover]").waitFor({ state: "hidden" });
+  await page.waitForTimeout(2200);
+  assert.equal(await page.evaluate(() => scrollY), 0, "Opening does not start automatic scrolling");
+  assert.ok(await page.locator("audio").evaluateAll((items) => items.every((item) => item.paused)), "Opening does not start audio");
+  const paths = page.locator("[data-to-hong-thread] path");
+  const before = await paths.nth(1).evaluate((el) => parseFloat(getComputedStyle(el).strokeDashoffset));
+  await page.locator('[data-to-hong-section="ceremony"]').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(850);
+  const after = await paths.nth(1).evaluate((el) => parseFloat(getComputedStyle(el).strokeDashoffset));
+  assert.ok(after < before, "Thread draws as the guest scrolls");
+  await page.getByTestId("gift-envelope").first().click();
+  await page.waitForTimeout(100);
+  const dialog = page.getByRole("dialog");
+  assert.ok(await dialog.evaluate((el) => el.getAnimations({ subtree: true }).length) > 0);
+  await page.waitForTimeout(750);
+  assert.equal(await dialog.evaluate((el) => el.getAnimations({ subtree: true }).filter((a) => a.playState === "running").length), 0, "QR becomes stationary");
+  await page.keyboard.press("Escape");
+  await page.goto(`${base}/mau-thiep/to-hong/demo`, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Xem ngay", exact: true }).click();
+  await page.locator('[data-invitation-detail="visible"]').waitFor();
+  assert.equal(await page.locator("[data-to-hong-cover]").count(), 0);
+  await context.close();
+  await writeFile(`${output}/motion-audit.json`, JSON.stringify({ openingLayers: true, threadProgress: { before, after }, qrUnfoldAndSettle: true, skip: true, musicOptIn: true, noAutoScroll: true, video: await page.video().path() }, null, 2));
+  console.log("Passed: layered opening, scroll thread, QR settle, skip, no automatic music/scroll.");
+} finally { await browser.close(); }

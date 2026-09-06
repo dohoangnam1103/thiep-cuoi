@@ -270,11 +270,12 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <h3 className="font-couple-garamond flex w-full items-center justify-center leading-[1.2] md:leading-[64px]" style={{ fontSize: "clamp(24px, 6vw, 42px)", color: palette.accent, wordBreak: "keep-all" }}>{people[1].fullName}</h3>
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: palette.gray }}>{people[1].birthOrder}</div>
           </div>
-          <div data-song-hy-ceremonies>
+          <div data-template-ceremonies data-song-hy-ceremonies>
             {ceremonies.map((ceremony, index) => {
               const ceremonyDate = formatDate(ceremony.date);
               return (
                 <section
+                  data-template-ceremony-item
                   key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
                   className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6"
                   style={{ color: palette.gray }}

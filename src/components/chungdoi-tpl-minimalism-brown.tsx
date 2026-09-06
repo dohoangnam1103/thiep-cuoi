@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
   buildCalendar,
   formatDate,
@@ -181,7 +181,7 @@ function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: stri
 export function MinimalismBrownInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -414,15 +414,22 @@ export function MinimalismBrownInvitation({ content }: { content: ChungDoiDemoCo
                 </div>
               </div>
 
-              <div className={`${F_BASKERVILLE} relative flex flex-col items-center gap-4 text-center md:gap-5`}>
-                <div className="flex flex-col items-center gap-2" style={{ color: MUTED }}>
-                  <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">
-                    {couple.ceremonyHeader}
-                  </span>
-                  <p className="mb-2 text-[16px] font-normal uppercase md:text-[18px]">VÀO LÚC</p>
-                </div>
-                <div className="text-[20px] md:text-[30px]" style={{ color: INK }}>{couple.ceremonyTime}</div>
-                {ceremony ? dateStrip(ceremony, false) : null}
+              <div data-template-ceremonies data-minimalism-brown-ceremonies className={`${F_BASKERVILLE} relative flex flex-col items-center gap-8 text-center md:gap-10`}>
+                {ceremonies.map((ceremony, index) => {
+                  const ceremonyDate = formatDate(ceremony.date);
+                  return (
+                    <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`} className="flex flex-col items-center gap-4 md:gap-5">
+                      <div className="flex flex-col items-center gap-2" style={{ color: MUTED }}>
+                        <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">
+                          {ceremony.title}
+                        </span>
+                        <p className="mb-2 text-[16px] font-normal uppercase md:text-[18px]">VÀO LÚC</p>
+                      </div>
+                      <div className="text-[20px] md:text-[30px]" style={{ color: INK }}>{ceremony.time}</div>
+                      {ceremonyDate ? dateStrip(ceremonyDate, false) : null}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </PaperCard>

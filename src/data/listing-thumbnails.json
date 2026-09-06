@@ -1195,6 +1195,29 @@
       }
     ]
   },
+  "/chungdoi/images/template-previews/en/listing/hy_uoc.webp": {
+    "width": 768,
+    "height": 9867,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hy_uoc-15acee62ab63-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hy_uoc-15acee62ab63-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hy_uoc-15acee62ab63-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hy_uoc-15acee62ab63-768.webp"
+      }
+    ]
+  },
   "/chungdoi/images/template-previews/en/listing/ivory_signature.webp": {
     "width": 768,
     "height": 10550,
@@ -2360,6 +2383,29 @@
       }
     ]
   },
+  "/chungdoi/images/template-previews/en/listing/to_hong.webp": {
+    "width": 768,
+    "height": 1870,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/to_hong-4182312e3890-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/to_hong-4182312e3890-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/to_hong-4182312e3890-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/to_hong-4182312e3890-768.webp"
+      }
+    ]
+  },
   "/chungdoi/images/template-previews/en/listing/trong_dong_dong_son.webp": {
     "width": 768,
     "height": 11941,
@@ -2403,6 +2449,29 @@
       {
         "width": 768,
         "src": "/chungdoi/images/template-previews/en/listing-thumbnails/truc_chi_minimal-82fa287f06c1-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/uyen_uong.webp": {
+    "width": 768,
+    "height": 11464,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/uyen_uong-5cda6a09b851-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/uyen_uong-5cda6a09b851-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/uyen_uong-5cda6a09b851-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/uyen_uong-5cda6a09b851-768.webp"
       }
     ]
   },

@@ -21,6 +21,7 @@ import { AUDITED_TEMPLATE_SLUGS } from "@/lib/audited-template-renderers";
 import { ZODIAC_IDS, zodiacArtworkPath } from "@/lib/zodiac";
 import {
   generatedListingMessages,
+  generatedTemplateCeremonyRendering,
   generatedTemplateManifests,
   generatedTemplateSlugs,
 } from "./generated-data";
@@ -273,6 +274,16 @@ test("generated template manifests are wired through every public data registry"
   assert.equal(new Set(generatedTemplateSlugs).size, generatedTemplateSlugs.length);
 
   for (const manifest of generatedTemplateManifests) {
+    assert.ok(
+      manifest.ceremonyRendering === "inline-all"
+        || manifest.ceremonyRendering === "post-template",
+      `${manifest.slug}: ceremony rendering mode`,
+    );
+    assert.equal(
+      generatedTemplateCeremonyRendering[manifest.slug],
+      manifest.ceremonyRendering,
+      `${manifest.slug}: generated ceremony capability`,
+    );
     assert.equal(catalogSlugs.has(manifest.slug), true, `${manifest.slug}: catalog`);
     assert.equal(
       completedTemplateSlugs.has(manifest.slug),
@@ -355,7 +366,7 @@ test("new art templates have localized renderers and captured preview variants",
   assert.match(sharedRendererSource, /data-parallax="artwork"/);
   assert.match(sharedRendererSource, /pointer-events-none fixed/);
   assert.match(sharedRendererSource, /max-w-\[760px\].*text-center/);
-  assert.match(sharedRendererSource, /SharedWishForm accent=\{config\.accentHex\} centered/);
+  assert.match(sharedRendererSource, /SharedWishForm accent=\{config\.accentHex\}[^>]*centered/);
   assert.doesNotMatch(sharedRendererSource, /text-left/);
   assert.doesNotMatch(sharedRendererSource, /space-y-5 px-4 pb-8", config\.surfaceClass/);
   assert.doesNotMatch(sharedRendererSource, /px-6 py-10 text-center sm:px-9 sm:py-12", config\.surfaceClass/);

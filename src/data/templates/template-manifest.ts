@@ -13,10 +13,23 @@ export type TemplateListingMessage = {
   description: string;
 };
 
+/**
+ * `inline-all` means the template renderer owns the complete ceremony list and
+ * renders every item returned by `invitationCeremonies(content)` in its native
+ * ceremony section. `post-template` keeps the shared compatibility block for
+ * renderers that still only display the first ceremony.
+ *
+ * This field is intentionally required: a new bespoke clone must make the
+ * choice next to its renderer manifest instead of relying on a distant slug
+ * allowlist in `ChungDoiDemo`.
+ */
+export type TemplateCeremonyRendering = "inline-all" | "post-template";
+
 export type TemplateManifest = {
   slug: string;
   viRouteSlug: string;
   rendererExport: string;
+  ceremonyRendering: TemplateCeremonyRendering;
   heroImageCount?: 0 | 1 | 2;
   catalog: Omit<
     ChungDoiTemplate,

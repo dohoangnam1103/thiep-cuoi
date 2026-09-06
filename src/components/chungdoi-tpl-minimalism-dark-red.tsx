@@ -399,11 +399,11 @@ function MinimalismInvitation({
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[1].birthOrder}</div>
               </div>
 
-              <div data-minimalism-dark-red-ceremonies className="flex w-full flex-col items-center gap-8">
+              <div data-template-ceremonies data-minimalism-dark-red-ceremonies className="flex w-full flex-col items-center gap-8">
                 {ceremonies.map((ceremony, index) => {
                   const ceremonyDate = formatDate(ceremony.date);
                   return ceremonyDate ? (
-                    <div key={`${ceremony.title}-${ceremony.date}-${index}`} className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY}>
+                    <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY}>
                       {ceremony.title ? (
                         <div style={{ color: CREAM_SOFT }}>
                           <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{ceremony.title}</span>

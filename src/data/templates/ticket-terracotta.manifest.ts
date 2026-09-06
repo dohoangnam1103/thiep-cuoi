@@ -8,7 +8,7 @@ const slug = "ticket-terracotta";
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "ve-hen-dat-nung",
-  rendererExport: "TicketTerracottaInvitation",
+  rendererExport: "TicketTerracottaInvitation", ceremonyRendering: "post-template",
   catalog: {
     name: "Ticket Terracotta",
     title: "Ticket Terracotta Wedding Invitation - Boarding Pass Layout | Thiệp Mừng Online",

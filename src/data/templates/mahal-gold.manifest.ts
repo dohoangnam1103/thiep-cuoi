@@ -13,7 +13,7 @@ const base = createTemplateDemoContent({
 const description = "Thiệp cưới cung điện vàng bên hồ, khung vòm Ấn Độ và hoa đỏ trên nền giấy kem cổ điển.";
 
 export const manifest = defineTemplateManifest({
-  slug, viRouteSlug: "mahal-vang", rendererExport: "MahalGoldInvitation", heroImageCount: 0,
+  slug, viRouteSlug: "mahal-vang", rendererExport: "MahalGoldInvitation", ceremonyRendering: "post-template", heroImageCount: 0,
   catalog: {
     name: "Mahal Vàng", title: "Mahal Vàng | Thiệp Mừng Online", description,
     category: "Royal", color: "Gold", isNew: true,

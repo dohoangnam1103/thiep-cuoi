@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   buildCalendar,
   FamilyColumn,
@@ -33,7 +33,7 @@ function GreenHeading({ children }: { children: React.ReactNode }) {
 export function GlassGardenInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -110,15 +110,26 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
               <h3 className="font-couple-garamond flex min-h-[80px] w-[80%] items-center justify-center text-[30px] leading-[1.15] md:text-[40px]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: GREEN_MUTED }}>{people[1].birthOrder}</div>
             </div>
-            {ceremony ? (
-              <div className="flex flex-col items-center gap-1 text-center">
-                {couple.ceremonyHeader ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{couple.ceremonyHeader}</span> : null}
-                {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
-                <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
-                  <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
-                </div>
-                <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
-                <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GREEN_MUTED }}>{ceremony.lunar}</div>
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies data-glass-garden-green-ceremonies className="flex flex-col items-center gap-8 text-center md:gap-10">
+                {ceremonies.map((ceremony, index) => {
+                  const ceremonyDate = formatDate(ceremony.date);
+                  return (
+                    <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`} className="flex flex-col items-center gap-1 text-center">
+                      {ceremony.title ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{ceremony.title}</span> : null}
+                      {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
+                      {ceremonyDate ? (
+                        <>
+                          <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                            <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>Tháng {ceremonyDate.month}</span>
+                          </div>
+                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                          <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GREEN_MUTED }}>{ceremonyDate.lunar}</div>
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
             ) : null}
           </section>

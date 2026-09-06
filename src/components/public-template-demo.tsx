@@ -161,7 +161,9 @@ export async function PublicTemplateDemo({
           data-ga-event="select_template"
           data-ga-param-template-id={template.slug}
           data-ga-param-source="template_demo"
-          className="fixed right-3 top-3 z-[95] sm:right-5 sm:top-5"
+          className={template.slug === "hy-uoc"
+            ? "absolute left-1/2 top-3 z-[95] -translate-x-1/2 sm:top-5"
+            : "fixed right-3 top-3 z-[95] sm:right-5 sm:top-5"}
         >
           <input type="hidden" name="templateId" value={template.slug} />
           <button

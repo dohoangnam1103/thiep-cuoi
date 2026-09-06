@@ -66,24 +66,35 @@ function fallbackImage(fontData: Buffer, family: string) {
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const invitation = await loadPublished(slug);
-  const fallbackFontData = await loadFont("Lora-Regular.ttf");
+  // Lora-Regular.ttf trong bộ asset là variable font. Parser font của
+  // @vercel/og hiện lỗi ở bảng fvar ("reading '256'"), làm stream ảnh trả 502.
+  // Viaoda Libre là font tĩnh, có đủ dấu tiếng Việt và đã được kiểm tra qua
+  // ImageResponse; chỉ dùng làm fallback render OG, không đổi font trong thiệp.
+  const fallbackFont = { family: "Viaoda Libre", file: "ViaodaLibre-Regular.ttf" };
+  const fallbackFontData = await loadFont(fallbackFont.file);
 
   if (!invitation?.content) {
-    return fallbackImage(fallbackFontData, "Lora");
+    return fallbackImage(fallbackFontData, fallbackFont.family);
   }
 
   const { content } = invitation;
   const names = resolveCoupleNames(content);
   const date = resolveOgDate(content.date);
-  const font = resolveOgFont(invitation.templateId);
+  let font = resolveOgFont(invitation.templateId);
   const theme = resolveOgTheme(invitation.templateId, content.primaryColor);
+
+  // Mọi template chưa có font OG riêng trước đây đều rơi về Lora. Chặn file
+  // không tương thích tại biên render để cả thiệp cũ lẫn fallback 404 đều có ảnh.
+  if (font.file === "Lora-Regular.ttf") {
+    font = { ...fallbackFont };
+  }
 
   let fontData: Buffer;
   try {
     fontData = await loadFont(font.file);
   } catch {
     fontData = fallbackFontData;
-    font.family = "Lora";
+    font = { ...fallbackFont };
   }
 
   const decorUris = (

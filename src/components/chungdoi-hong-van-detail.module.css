@@ -1,0 +1,213 @@
+.page {
+  color: #fff4df;
+  background-color: #fffaf2;
+  min-height: 100%;
+}
+
+.column {
+  color: #fff4df;
+  background-color: #5c0812;
+  background-image: radial-gradient(ellipse 100% 720px at 50% 0, #ae262e 0%, transparent 100%);
+  box-shadow: 0 0 0 1px rgb(126 24 35 / 18%), 0 18px 60px rgb(54 10 13 / 18%);
+  min-height: 100dvh;
+}
+
+.page form :is(input:not([type="hidden"]), textarea, select) {
+  border-radius: 16px;
+  background-color: #fff7eb;
+  color: #5b1019;
+}
+
+.surface {
+  background-color: rgb(101 17 27 / 95%);
+}
+
+.page [data-portrait-frame] {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 3 / 4;
+  margin-inline: auto;
+}
+
+.page [data-portrait-frame-artwork] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 2;
+  /* The artwork canvas matches the portrait frame ratio. Keep it at its
+     native scale so the inner opening hugs the uploaded photo instead of
+     leaving a wide burgundy moat around it. */
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.page [data-portrait-frame] [data-hero-portrait] {
+  z-index: 1;
+  box-shadow: 0 8px 28px rgb(33 0 5 / 35%);
+}
+
+/* Each arrangement belongs to its heading, so optional/long sections cannot
+   leave a repeating rail or cut a bouquet at a section boundary. */
+.page [data-section-bouquet] {
+  height: 170px;
+  margin-bottom: 12px;
+  isolation: isolate;
+}
+
+@media (min-width: 640px) {
+  .page [data-section-bouquet] {
+    width: calc(100% + 180px);
+    margin-left: -90px;
+  }
+
+}
+
+.page [data-section-bouquet] img {
+  width: 300px;
+  height: 300px;
+  max-width: none;
+  left: 8px;
+  bottom: -82px;
+  opacity: 0.92;
+  z-index: 2;
+  filter: drop-shadow(0 12px 16px rgb(24 0 4 / 25%));
+}
+
+.page [data-section-bouquet] :global(.bouquet-variant) {
+  display: none;
+}
+
+.page section:nth-of-type(3n + 1) [data-section-bouquet] :global(.bouquet-variant-0),
+.page section:nth-of-type(3n + 2) [data-section-bouquet] :global(.bouquet-variant-1),
+.page section:nth-of-type(3n) [data-section-bouquet] :global(.bouquet-variant-2) {
+  display: block;
+}
+
+.page footer [data-section-bouquet] :global(.bouquet-variant-0) {
+  display: block;
+}
+
+.page footer [data-section-bouquet] :global(.bouquet-variant-1) {
+  display: none;
+}
+
+.page section:nth-of-type(even) [data-section-bouquet] img {
+  left: auto;
+  right: 8px;
+  transform: scaleX(-1);
+}
+
+.page section:nth-of-type(3n) [data-section-bouquet] img {
+  width: 280px;
+  height: 280px;
+  bottom: -64px;
+}
+
+.page footer > [data-section-bouquet] {
+  height: 320px;
+}
+
+/* Keep the detail editorial: flowers support the invitation, countdown and
+   album moments only. Dense clusters belong to the opening banner above. */
+.page section:nth-of-type(5) [data-section-bouquet],
+.page section:nth-of-type(6) [data-section-bouquet],
+.page section:nth-of-type(7) [data-section-bouquet],
+.page section:nth-of-type(8) [data-section-bouquet] {
+  display: none;
+}
+
+.page footer > [data-section-bouquet] img {
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.page [data-artwork-hero] :global(.hero-bouquet) {
+  position: absolute;
+  z-index: 5;
+  width: 245px;
+  height: 245px;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.96;
+  filter: drop-shadow(0 12px 12px rgb(68 5 12 / 24%));
+}
+
+.page [data-artwork-hero] :global(.hero-bouquet-a) { left: -12px; top: 24px; }
+.page [data-artwork-hero] :global(.hero-bouquet-b) { right: -18px; top: 18px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-c) { right: -30px; top: 220px; width: 220px; height: 220px; }
+.page [data-artwork-hero] :global(.hero-bouquet-d) { left: -35px; top: 390px; width: 220px; height: 220px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-e) { right: -22px; top: 440px; width: 235px; height: 235px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-f) { left: -18px; bottom: 10px; width: 230px; height: 230px; }
+.page [data-artwork-hero] :global(.hero-bouquet-g) { left: -24px; top: 210px; width: 185px; height: 185px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-h) { right: -24px; top: 370px; width: 185px; height: 185px; }
+.page [data-artwork-hero] :global(.hero-bouquet-i) { left: 50%; top: -112px; width: 285px; height: 285px; transform: translateX(-50%); }
+
+.page [data-artwork-hero-content] {
+  padding-top: 190px;
+  padding-bottom: 190px;
+}
+
+@media (max-width: 639px) {
+  .column {
+    box-shadow: none;
+  }
+
+  .page [data-section-bouquet] {
+    height: 155px;
+    margin-bottom: 18px;
+  }
+
+  .page [data-section-bouquet] img,
+  .page section:nth-of-type(3n) [data-section-bouquet] img {
+    width: 180px;
+    height: 180px;
+    left: 0;
+    bottom: 0;
+  }
+
+  .page section:nth-of-type(even) [data-section-bouquet] img {
+    left: auto;
+    right: 0;
+  }
+
+  .page footer > [data-section-bouquet] {
+    height: 230px;
+  }
+
+  .page footer > [data-section-bouquet] img {
+    left: 50%;
+    width: 230px;
+    height: 230px;
+  }
+
+  .page [data-portrait-frame-artwork] {
+    transform: scale(1);
+  }
+
+  .page [data-artwork-hero] :global(.hero-bouquet) { width: 170px; height: 170px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-a) { left: -28px; top: 10px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-b) { right: -34px; top: 12px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-c),
+  .page [data-artwork-hero] :global(.hero-bouquet-d),
+  .page [data-artwork-hero] :global(.hero-bouquet-e),
+  .page [data-artwork-hero] :global(.hero-bouquet-g),
+  .page [data-artwork-hero] :global(.hero-bouquet-h) { display: none; }
+  .page [data-artwork-hero] :global(.hero-bouquet-f) { left: auto; right: -30px; bottom: 10px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-i) { display: none; }
+
+  .page [data-artwork-hero-content] {
+    padding-top: 185px;
+    padding-bottom: 190px;
+  }
+}

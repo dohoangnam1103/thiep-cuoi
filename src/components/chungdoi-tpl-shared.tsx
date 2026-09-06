@@ -113,13 +113,19 @@ export function Lightbox({
   index,
   setIndex,
   accent = "#ffffff",
+  modal = false,
 }: {
   gallery: string[];
   index: number | null;
   setIndex: Dispatch<SetStateAction<number | null>>;
   accent?: string;
+  modal?: boolean;
 }) {
   const count = gallery.length;
+  const t = useTranslations("invitationTemplate");
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const open = index !== null;
   const step = useCallback((dir: number) => {
     setIndex((v) => (v === null ? v : (v + dir + count) % count));
   }, [count, setIndex]);
@@ -140,28 +146,76 @@ export function Lightbox({
   }, [resetZoom, setIndex]);
 
   useEffect(() => {
+    if (!open || !modal) return;
+    const previousFocus = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.body.style.overflow = originalOverflow;
+      previousFocus?.focus();
+    };
+  }, [modal, open]);
+
+  useEffect(() => {
     if (index === null) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft") navigate(-1);
-      if (event.key === "ArrowRight") navigate(1);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        navigate(-1);
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        navigate(1);
+        return;
+      }
+      if (!modal || event.key !== "Tab") return;
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        "button:not([disabled]), a[href], [tabindex]:not([tabindex='-1'])",
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [close, index, navigate]);
+  }, [close, index, modal, navigate]);
 
   if (index === null) return null;
 
   return createPortal((
     <div
+      ref={dialogRef}
       data-testid="wedding-lightbox"
+      role={modal ? "dialog" : undefined}
+      aria-modal={modal ? "true" : undefined}
+      aria-label={modal ? t("lightboxLabel") : undefined}
+      tabIndex={modal ? -1 : undefined}
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black/90"
       onClick={close}
     >
-      <button type="button" aria-label="Đóng" onClick={(e) => { e.stopPropagation(); close(); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
+      <button ref={closeButtonRef} type="button" aria-label={t("lightboxClose")} onClick={(e) => { e.stopPropagation(); close(); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
       <div className="absolute top-5 z-10 text-sm text-white/80">{index + 1} / {count}</div>
-      <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); navigate(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
-      <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); navigate(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
+      <button type="button" aria-label={t("lightboxPrevious")} onClick={(e) => { e.stopPropagation(); navigate(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
+      <button type="button" aria-label={t("lightboxNext")} onClick={(e) => { e.stopPropagation(); navigate(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
 
       <div
         data-testid="wedding-lightbox-track"
@@ -186,7 +240,7 @@ export function Lightbox({
             <img
               ref={i === index ? zoom.imageRef : undefined}
               src={src}
-              alt={`Wedding photo ${i + 1}`}
+              alt={t("lightboxPhotoAlt", { index: i + 1 })}
               data-testid={i === index ? "wedding-lightbox-image" : undefined}
               data-zoom-scale={i === index ? zoom.scale.toFixed(2) : undefined}
               draggable={false}
@@ -212,7 +266,7 @@ export function Lightbox({
       <div className="absolute bottom-4 z-10 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
         {gallery.map((src, i) => (
           <button key={src} type="button" onClick={() => { zoom.resetZoom(false); setIndex(i); }} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === index ? accent : "transparent", opacity: i === index ? 1 : 0.6 }}>
-            <img src={src} alt={`Thumbnail ${i + 1}`} draggable={false} className="h-full w-full object-cover" />
+            <img src={src} alt={t("lightboxThumbnailAlt", { index: i + 1 })} draggable={false} className="h-full w-full object-cover" />
           </button>
         ))}
       </div>
@@ -599,10 +653,12 @@ export function SharedWishForm({
   labels,
   fieldBorderColor,
   submitTextColor,
+  previewNotice,
 }: {
   accent: string;
   centered?: boolean;
   labels?: SharedWishFormLabels;
+  previewNotice?: string;
   /**
    * Màu viền ô nhập. Mặc định là accent pha 30% như trước, nên các mẫu đang dùng
    * không đổi gì; mẫu nào cần viền đặc (khớp bản gốc) thì truyền màu vào — không
@@ -615,10 +671,12 @@ export function SharedWishForm({
    */
   submitTextColor?: string;
 }) {
-  const { formProps, pending, state } = useWishFormBinding();
+  const { formProps, isLive, pending, state } = useWishFormBinding();
   const t = useTranslations("invitationTemplate");
   const nameId = useId();
   const textId = useId();
+  const previewNoticeId = useId();
+  const previewOnly = Boolean(previewNotice && !isLive);
   const [validationError, setValidationError] = useState<string>();
   const copy = {
     namePlaceholder: t("wishName"),
@@ -655,16 +713,21 @@ export function SharedWishForm({
   }
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
+    <form noValidate onSubmit={handleSubmit} aria-describedby={previewOnly ? previewNoticeId : undefined} className="mx-auto mt-6 w-full max-w-full md:max-w-[600px]">
       <div className="flex flex-col gap-3">
         <label className="sr-only" htmlFor={nameId}>{labels?.nameLabel ?? copy.namePlaceholder}</label>
-        <input id={nameId} name="name" required maxLength={120} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: fieldBorderColor ?? hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
+        <input id={nameId} name="name" required maxLength={120} disabled={previewOnly} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b] disabled:cursor-not-allowed disabled:bg-white/60 disabled:text-[#67726b]", centered && "text-center")} style={{ borderColor: fieldBorderColor ?? hexToRgba(accent, 0.3) }} placeholder={copy.namePlaceholder} />
         <label className="sr-only" htmlFor={textId}>{labels?.textLabel ?? copy.textPlaceholder}</label>
-        <textarea id={textId} name="text" rows={3} required maxLength={1000} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]", centered && "text-center")} style={{ borderColor: fieldBorderColor ?? hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
+        <textarea id={textId} name="text" rows={3} required maxLength={1000} disabled={previewOnly} onInput={() => setValidationError(undefined)} className={cn("w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b] disabled:cursor-not-allowed disabled:bg-white/60 disabled:text-[#67726b]", centered && "text-center")} style={{ borderColor: fieldBorderColor ?? hexToRgba(accent, 0.3) }} placeholder={copy.textPlaceholder} />
+        {previewOnly ? (
+          <p id={previewNoticeId} className="text-center text-[12px] leading-relaxed" style={{ color: hexToRgba(accent, 0.78) }}>
+            {previewNotice}
+          </p>
+        ) : null}
         {validationError || state?.error ? <p role="alert" className="text-[12px]" style={{ color: "#c0392b" }}>{validationError ?? state?.error}</p> : null}
         {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{copy.success}</p> : null}
         <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
-          <button type="submit" disabled={pending} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60" style={{ backgroundColor: accent, color: submitTextColor ?? "#fff" }}>{pending ? copy.pending : copy.submit}</button>
+          <button type="submit" disabled={pending || previewOnly} className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:cursor-not-allowed disabled:opacity-60" style={{ backgroundColor: accent, color: submitTextColor ?? "#fff" }}>{pending ? copy.pending : copy.submit}</button>
         </div>
       </div>
     </form>
@@ -682,6 +745,9 @@ export function SharedRsvpForm({
   centered = false,
   className,
   heading,
+  previewFallback,
+  successContent,
+  submitTextColor,
 }: {
   accent: string;
   centered?: boolean;
@@ -689,6 +755,10 @@ export function SharedRsvpForm({
   /** Rendered above the fields, inside the same null-check, so templates never
    * leave an orphan section heading when the form is hidden in preview. */
   heading?: ReactNode;
+  previewFallback?: ReactNode;
+  /** Optional template artwork, shown only after the bound action succeeds. */
+  successContent?: ReactNode;
+  submitTextColor?: string;
 }) {
   const { isLive, formProps, pending, state, guest, questions, labels } = useRsvpFormBinding();
   const nameId = useId();
@@ -697,7 +767,7 @@ export function SharedRsvpForm({
   const sideId = useId();
   const messageId = useId();
 
-  if (!isLive || !labels) return null;
+  if (!isLive || !labels) return previewFallback ?? null;
 
   const fieldClass = cn(
     "w-full rounded-[6px] border bg-white/90 px-4 py-2 text-[13px] text-[#17201b] outline-none placeholder:text-[#67726b]",
@@ -775,12 +845,13 @@ export function SharedRsvpForm({
 
           {state?.error ? <p className="text-[12px]" style={{ color: "#c0392b" }}>{state.error}</p> : null}
           {state?.ok ? <p className="text-[12px]" style={{ color: accent }}>{labels.success}</p> : null}
+          {state?.ok ? successContent : null}
           <div className={cn("mt-2 flex items-center", centered ? "justify-center" : "justify-end")}>
             <button
               type="submit"
               disabled={pending}
               className="rounded-full px-4 py-1.5 text-[11px] font-semibold uppercase disabled:opacity-60"
-              style={{ backgroundColor: accent, color: "#fff" }}
+              style={{ backgroundColor: accent, color: submitTextColor ?? "#fff" }}
             >
               {pending ? labels.submitting : labels.submit}
             </button>
@@ -1125,6 +1196,7 @@ export function GiftFlipCard({
   accent,
   dark,
   faceClassName,
+  frontImage,
   frontTitle,
   frontHint,
   backHint,
@@ -1138,6 +1210,7 @@ export function GiftFlipCard({
   dark: string;
   /** Surface class for both faces so the card inherits the template palette. */
   faceClassName?: string;
+  frontImage?: string;
   frontTitle: string;
   frontHint: string;
   backHint: string;
@@ -1174,7 +1247,7 @@ export function GiftFlipCard({
           className={cn("gift-flip-face absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-[1.5rem] border p-6 text-center", faceClassName)}
           style={{ borderColor: hexToRgba(accent, 0.28) }}
         >
-          <span className="flex h-16 w-16 items-center justify-center rounded-full text-2xl" style={{ backgroundColor: hexToRgba(accent, 0.12), color: accent }}>♡</span>
+          {frontImage ? <img src={frontImage} alt="" className="h-28 w-36 object-contain drop-shadow-md" /> : <span className="flex h-16 w-16 items-center justify-center rounded-full text-2xl" style={{ backgroundColor: hexToRgba(accent, 0.12), color: accent }}>♡</span>}
           <p className="text-[15px] font-semibold leading-6" style={{ color: dark }}>{frontTitle}</p>
           <p className="text-[11px] uppercase tracking-wide" style={{ color: hexToRgba(dark, 0.6) }}>{frontHint}</p>
         </div>
@@ -1430,18 +1503,22 @@ export function AlbumGallery({
   accent,
   gridAspect = "aspect-[3/4]",
   radiusClass = "rounded-xl",
+  gridVariant = "default",
+  modalLightbox = false,
 }: {
   photos: string[];
   layout?: AlbumLayout;
   accent: string;
   gridAspect?: string;
   radiusClass?: string;
+  gridVariant?: "default" | "feature";
+  modalLightbox?: boolean;
 }) {
   const { lightbox, setLightbox } = useLightbox(photos.length);
   if (photos.length === 0) return null;
 
   const border = hexToRgba(accent, 0.3);
-  const lightboxEl = <Lightbox gallery={photos} index={lightbox} setIndex={setLightbox} accent={accent} />;
+  const lightboxEl = <Lightbox gallery={photos} index={lightbox} setIndex={setLightbox} accent={accent} modal={modalLightbox} />;
 
   if (layout === "coverflow") {
     return (
@@ -1490,6 +1567,36 @@ export function AlbumGallery({
             </button>
           ))}
         </div>
+        {lightboxEl}
+      </div>
+    );
+  }
+
+  if (gridVariant === "feature") {
+    const shown = photos.slice(0, 3);
+    const extra = Math.max(0, photos.length - shown.length);
+    return (
+      <div className="mx-auto grid w-full max-w-[560px] grid-cols-2 gap-3 md:gap-4">
+        {shown.map((src, i) => (
+          <button
+            key={src}
+            type="button"
+            onClick={() => setLightbox(i)}
+            className={cn(
+              "group relative cursor-pointer overflow-hidden border",
+              radiusClass,
+              i === 0 ? "col-span-2 aspect-[16/10]" : "aspect-[4/5]",
+            )}
+            style={{ borderColor: border }}
+          >
+            <img alt={`Ảnh cưới ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
+            {i === shown.length - 1 && extra > 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                <span className="text-lg font-semibold text-white">+{extra}</span>
+              </div>
+            ) : null}
+          </button>
+        ))}
         {lightboxEl}
       </div>
     );

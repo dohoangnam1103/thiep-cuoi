@@ -212,9 +212,10 @@ export function BanVeToAmInvitation({
           </SectionHeading>
           <BotanicalDivider inverse />
 
-          <div className={styles.ceremonyGrid}>
+          <div data-template-ceremonies className={styles.ceremonyGrid}>
             {ceremonies.map((ceremony, index) => (
               <article
+                data-template-ceremony-item
                 className={cn(
                   styles.ceremonyCard,
                   ceremonies.length === 1 && styles.ceremonyCardWide,

@@ -128,6 +128,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "coi-trau-kham-trai",
   rendererExport: "CoiTrauKhamTraiInvitation",
+  ceremonyRendering: "inline-all",
   heroImageCount: 1,
   catalog: {
     name: "Cơi Trầu Khảm Trai",

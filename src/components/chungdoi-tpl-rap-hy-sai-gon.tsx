@@ -20,7 +20,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
@@ -60,7 +60,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const heroImage = invitationHeroImage(content);
-  const ceremonyDate = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const receptionDate = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -149,16 +149,25 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
         <section className="bg-[#17110d] px-5 py-20 text-[#fff1cf] sm:px-10">
           <div className="mx-auto max-w-[760px]">
             <PopHeading number="02" invert>{t("ceremony")}</PopHeading>
-            <div className="mt-12 grid gap-8 sm:grid-cols-2">
-              <article className="relative overflow-hidden border-[3px] border-[#fff1cf] bg-[#d7192d] p-7 shadow-[9px_9px_0_#12b9c7]">
-                <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#f5d83d]/20">01</span>
-                <h3 className="font-art-marvin relative text-4xl uppercase text-[#f5d83d]">{t("ceremony")}</h3>
-                <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{invitationCeremonyMessage(content)}</p>
-                {ceremonyDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{ceremonyDate.day}.{ceremonyDate.month}</p> : null}
-                <p className="tabular-nums relative mt-2 text-sm font-bold">{couple.ceremonyTime}</p>
-              </article>
+            <div data-template-ceremonies className="mt-12 grid gap-8 sm:grid-cols-2">
+              {ceremonies.map((ceremony, index) => {
+                const ceremonyDate = formatDate(ceremony.date);
+                return (
+                  <article
+                    key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
+                    data-template-ceremony-item
+                    className="relative overflow-hidden border-[3px] border-[#fff1cf] bg-[#d7192d] p-7 shadow-[9px_9px_0_#12b9c7]"
+                  >
+                    <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#f5d83d]/20">{String(index + 1).padStart(2, "0")}</span>
+                    <h3 className="font-art-marvin relative text-4xl uppercase text-[#f5d83d]">{t("ceremony")}</h3>
+                    <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{ceremony.title}</p>
+                    {ceremonyDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{ceremonyDate.day}.{ceremonyDate.month}</p> : null}
+                    <p className="tabular-nums relative mt-2 text-sm font-bold">{ceremony.time}</p>
+                  </article>
+                );
+              })}
               <article className="relative overflow-hidden border-[3px] border-[#17110d] bg-[#f5d83d] p-7 text-[#17110d] shadow-[9px_9px_0_#d7192d] sm:translate-y-10">
-                <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#12b9c7]/35">02</span>
+                <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#12b9c7]/35">{String(ceremonies.length + 1).padStart(2, "0")}</span>
                 <h3 className="font-art-marvin relative text-4xl uppercase text-[#d7192d]">{t("reception")}</h3>
                 <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{venue.address}</p>
                 {receptionDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{receptionDate.day}.{receptionDate.month}</p> : null}

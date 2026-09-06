@@ -1,0 +1,104 @@
+[
+  {
+    "file": "cover-border.svg",
+    "width": 390,
+    "height": 780,
+    "bytes": 231
+  },
+  {
+    "file": "date-band-red.svg",
+    "width": 640,
+    "height": 140,
+    "bytes": 347
+  },
+  {
+    "file": "divider-gold.svg",
+    "width": 360,
+    "height": 28,
+    "bytes": 242
+  },
+  {
+    "file": "double-happiness-cream.svg",
+    "width": 200,
+    "height": 184,
+    "bytes": 554
+  },
+  {
+    "file": "double-happiness-gold.svg",
+    "width": 200,
+    "height": 184,
+    "bytes": 554
+  },
+  {
+    "file": "double-happiness-red.svg",
+    "width": 200,
+    "height": 184,
+    "bytes": 554
+  },
+  {
+    "file": "envelope-back.webp",
+    "width": 971,
+    "height": 1619,
+    "bytes": 200048
+  },
+  {
+    "file": "envelope-flap.svg",
+    "width": 300,
+    "height": 145,
+    "bytes": 196
+  },
+  {
+    "file": "envelope-front.webp",
+    "width": 971,
+    "height": 1619,
+    "bytes": 239010
+  },
+  {
+    "file": "envelope-liner.svg",
+    "width": 300,
+    "height": 500,
+    "bytes": 191
+  },
+  {
+    "file": "nameplate-ivory.svg",
+    "width": 320,
+    "height": 88,
+    "bytes": 335
+  },
+  {
+    "file": "paper-ivory.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 242726
+  },
+  {
+    "file": "paper-red.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 310950
+  },
+  {
+    "file": "peony-corner-gold.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 508094
+  },
+  {
+    "file": "peony-sprig-gold.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 361826
+  },
+  {
+    "file": "photo-arch-frame.svg",
+    "width": 300,
+    "height": 330,
+    "bytes": 270
+  },
+  {
+    "file": "qr-card-ivory.svg",
+    "width": 300,
+    "height": 420,
+    "bytes": 326
+  }
+]

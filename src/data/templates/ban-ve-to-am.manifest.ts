@@ -128,6 +128,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "ban-ve-to-am",
   rendererExport: "BanVeToAmInvitation",
+  ceremonyRendering: "inline-all",
   heroImageCount: 1,
   catalog: {
     name: "Vườn Kính Ngày Thương",

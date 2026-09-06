@@ -25,41 +25,46 @@ import { manifest as manifest22 } from "./hoa-thu-do-ruou-vang.manifest";
 import { manifest as manifest23 } from "./hoa-thu-hong.manifest";
 import { manifest as manifest24 } from "./hoa-thu-xanh-duong.manifest";
 import { manifest as manifest25 } from "./hoa-thu-xanh-la.manifest";
-import { manifest as manifest26 } from "./ivory-signature.manifest";
-import { manifest as manifest27 } from "./long-phung-deco.manifest";
-import { manifest as manifest28 } from "./long-phung-gatefold.manifest";
-import { manifest as manifest29 } from "./mahal-gold.manifest";
-import { manifest as manifest30 } from "./minimalism-dark-blue.manifest";
-import { manifest as manifest31 } from "./nguyet-anh-sleeve.manifest";
-import { manifest as manifest32 } from "./nguyet-bach.manifest";
-import { manifest as manifest33 } from "./phong-thu-be.manifest";
-import { manifest as manifest34 } from "./phong-thu-do-pastel.manifest";
-import { manifest as manifest35 } from "./phong-thu-hong-pastel.manifest";
-import { manifest as manifest36 } from "./phong-thu-lam-pastel.manifest";
-import { manifest as manifest37 } from "./phong-thu-luc-pastel.manifest";
-import { manifest as manifest38 } from "./porcelain-blue.manifest";
-import { manifest as manifest39 } from "./porcelain-brown.manifest";
-import { manifest as manifest40 } from "./porcelain-red.manifest";
-import { manifest as manifest41 } from "./porcelain-v2-green.manifest";
-import { manifest as manifest42 } from "./porcelain-v2-red.manifest";
-import { manifest as manifest43 } from "./rap-hy-sai-gon.manifest";
-import { manifest as manifest44 } from "./riso-duotone.manifest";
-import { manifest as manifest45 } from "./royal-v2-green.manifest";
-import { manifest as manifest46 } from "./sen-monoline.manifest";
-import { manifest as manifest47 } from "./son-mai-lacquer.manifest";
-import { manifest as manifest48 } from "./swiss-brutalist.manifest";
-import { manifest as manifest49 } from "./thanh-duong-anh-sang.manifest";
-import { manifest as manifest50 } from "./thap-nhi-chi-do.manifest";
-import { manifest as manifest51 } from "./tho-cam-highland.manifest";
-import { manifest as manifest52 } from "./ticket-terracotta.manifest";
-import { manifest as manifest53 } from "./trong-dong-dong-son.manifest";
-import { manifest as manifest54 } from "./truc-chi-minimal.manifest";
-import { manifest as manifest55 } from "./y2k-chrome.manifest";
-import { manifest as manifest56 } from "./zen-sand.manifest";
+import { manifest as manifest26 } from "./hong-van-rose.manifest";
+import { manifest as manifest27 } from "./hy-uoc.manifest";
+import { manifest as manifest28 } from "./ivory-signature.manifest";
+import { manifest as manifest29 } from "./long-phung-deco.manifest";
+import { manifest as manifest30 } from "./long-phung-gatefold.manifest";
+import { manifest as manifest31 } from "./mahal-gold.manifest";
+import { manifest as manifest32 } from "./minimalism-dark-blue.manifest";
+import { manifest as manifest33 } from "./nguyet-anh-sleeve.manifest";
+import { manifest as manifest34 } from "./nguyet-bach.manifest";
+import { manifest as manifest35 } from "./phong-thu-be.manifest";
+import { manifest as manifest36 } from "./phong-thu-do-pastel.manifest";
+import { manifest as manifest37 } from "./phong-thu-hong-pastel.manifest";
+import { manifest as manifest38 } from "./phong-thu-lam-pastel.manifest";
+import { manifest as manifest39 } from "./phong-thu-luc-pastel.manifest";
+import { manifest as manifest40 } from "./porcelain-blue.manifest";
+import { manifest as manifest41 } from "./porcelain-brown.manifest";
+import { manifest as manifest42 } from "./porcelain-red.manifest";
+import { manifest as manifest43 } from "./porcelain-v2-green.manifest";
+import { manifest as manifest44 } from "./porcelain-v2-red.manifest";
+import { manifest as manifest45 } from "./rap-hy-sai-gon.manifest";
+import { manifest as manifest46 } from "./riso-duotone.manifest";
+import { manifest as manifest47 } from "./royal-v2-green.manifest";
+import { manifest as manifest48 } from "./sen-monoline.manifest";
+import { manifest as manifest49 } from "./son-mai-lacquer.manifest";
+import { manifest as manifest50 } from "./swiss-brutalist.manifest";
+import { manifest as manifest51 } from "./thanh-duong-anh-sang.manifest";
+import { manifest as manifest52 } from "./thap-nhi-chi-do.manifest";
+import { manifest as manifest53 } from "./tho-cam-highland.manifest";
+import { manifest as manifest54 } from "./ticket-terracotta.manifest";
+import { manifest as manifest55 } from "./to-hong.manifest";
+import { manifest as manifest56 } from "./trong-dong-dong-son.manifest";
+import { manifest as manifest57 } from "./truc-chi-minimal.manifest";
+import { manifest as manifest58 } from "./uyen-uong.manifest";
+import { manifest as manifest59 } from "./y2k-chrome.manifest";
+import { manifest as manifest60 } from "./zen-sand.manifest";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import type { ChungDoiThemeConfig } from "@/data/chungdoi-theme-config";
 import type { ChungDoiTemplate } from "@/data/chungdoi";
+import type { TemplateCeremonyRendering } from "./template-manifest";
 import { TEMPLATE_MANIFEST_LOCALES } from "./template-manifest";
 
 export const generatedTemplateManifests = [
@@ -120,6 +125,10 @@ export const generatedTemplateManifests = [
   manifest54,
   manifest55,
   manifest56,
+  manifest57,
+  manifest58,
+  manifest59,
+  manifest60,
 ] as const;
 
 export type GeneratedTemplateSlug = (typeof generatedTemplateManifests)[number]["slug"];
@@ -153,6 +162,10 @@ export const generatedDemoContent = Object.fromEntries(
 export const generatedThemeConfigs = Object.fromEntries(
   generatedTemplateManifests.map((manifest) => [manifest.slug, manifest.theme]),
 ) as unknown as Record<GeneratedTemplateSlug, ChungDoiThemeConfig>;
+
+export const generatedTemplateCeremonyRendering = Object.fromEntries(
+  generatedTemplateManifests.map((manifest) => [manifest.slug, manifest.ceremonyRendering]),
+) as unknown as Record<GeneratedTemplateSlug, TemplateCeremonyRendering>;
 
 export const generatedListingMessages = Object.fromEntries(
   TEMPLATE_MANIFEST_LOCALES.map((locale) => [

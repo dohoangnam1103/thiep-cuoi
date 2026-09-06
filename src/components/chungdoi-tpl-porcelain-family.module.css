@@ -356,6 +356,11 @@
   text-transform: uppercase;
 }
 
+.ceremonyList {
+  display: grid;
+  gap: 32px;
+}
+
 .dateMeta {
   display: flex;
   width: 100%;

@@ -9,8 +9,8 @@ import {
   DressCode,
   formatDate,
   formatWishTime,
-  GiftFlipCard,
   GiftQrGrid,
+  GiftEnvelope,
   googleCalendarUrl,
   InvitationMap,
   MapDirectionsButton,
@@ -21,7 +21,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
@@ -100,6 +100,20 @@ export type ArtInvitationConfig = {
   /** `"flip"` renders the gift section as two-sided cards instead of the flat
    * QR grid. Defaults to `"grid"` so existing templates are untouched. */
   giftLayout?: "grid" | "flip";
+  parallaxArtwork?: boolean;
+  detailArtwork?: string;
+  heroArtwork?: boolean;
+  heroHeightClass?: string;
+  portraitClass?: string;
+  portraitFrameArtwork?: string;
+  coupleRules?: boolean;
+  portraitBorder?: boolean;
+  giftFrontArtwork?: string;
+  sectionArtwork?: string;
+  sectionArtworkBouquet?: boolean;
+  sectionArtworkVariants?: string[];
+  formSubmitTextColor?: string;
+  columnClass?: string;
 };
 
 function contentRadiusClass() {
@@ -141,10 +155,10 @@ function HeroNames({
         {t("invitation")}
       </p>
       <h2 data-invitation-short-name className={cn("text-balance", config.displayFontClass, config.coupleClass, "text-[clamp(2.75rem,15cqw,4.75rem)]")}>{people[0].shortName}</h2>
-      <div className="my-3 flex items-center gap-4">
-        <span className={cn("h-px flex-1", config.accentBgClass)} />
+      <div className="my-3 flex items-center justify-center gap-4">
+        {config.coupleRules !== false ? <span className={cn("h-px flex-1", config.accentBgClass)} /> : null}
         <span className={cn("text-lg", config.accentTextClass)}>{t("and")}</span>
-        <span className={cn("h-px flex-1", config.accentBgClass)} />
+        {config.coupleRules !== false ? <span className={cn("h-px flex-1", config.accentBgClass)} /> : null}
       </div>
       <h2 data-invitation-short-name className={cn("text-balance", config.displayFontClass, config.coupleClass, "text-[clamp(2.75rem,15cqw,4.75rem)]")}>{people[1].shortName}</h2>
     </div>
@@ -171,22 +185,24 @@ function HeroPortraits({
   if (!visiblePhotos.length) return null;
 
   return (
-    <div className="space-y-5 px-4 pb-8">
+    <div data-hero-portraits className="space-y-5 px-4 pb-8">
       {visiblePhotos.map((photo, index) => {
         const person = usesTwoPhotos ? people[index] : null;
         const alt = t("weddingPhotoAlt", {
           couple: person?.shortName || `${people[0].shortName} ${t("and")} ${people[1].shortName}`,
         });
 
-        return (
+        const portrait = (
           <figure
             key={`${photo}-${index}`}
+            data-hero-portrait
             className={cn(
-              "invitation-photo-reveal relative aspect-[4/5] overflow-hidden border",
-              config.borderClass,
+              "invitation-photo-reveal relative overflow-hidden",
+              config.portraitBorder !== false ? cn("border", config.borderClass) : "border-0",
               contentRadiusClass(),
               usesTwoPhotos && index === 0 ? "mr-auto w-[86%] max-w-[680px]" : "ml-auto w-[86%] max-w-[680px]",
               !usesTwoPhotos && "mx-auto w-full max-w-[720px]",
+              config.portraitClass ?? "aspect-[4/5]",
             )}
           >
             <img
@@ -196,6 +212,19 @@ function HeroPortraits({
             />
           </figure>
         );
+
+        return config.portraitFrameArtwork ? (
+          <div key={`${photo}-${index}`} data-portrait-frame>
+            <img
+              src={config.portraitFrameArtwork}
+              alt=""
+              aria-hidden="true"
+              data-portrait-frame-artwork
+              loading="lazy"
+            />
+            {portrait}
+          </div>
+        ) : portrait;
       })}
     </div>
   );
@@ -220,20 +249,36 @@ function ArtworkHero({
       <div
         data-artwork-hero="true"
         className={cn(
-          "relative flex min-h-[clamp(760px,100svh,1080px)] flex-col justify-end overflow-hidden",
+          "relative flex flex-col justify-end overflow-hidden",
+          config.heroHeightClass ?? "min-h-[clamp(760px,100svh,1080px)]",
           config.heroClass,
         )}
       >
-        <img
-          src={config.artwork}
-          alt=""
-          aria-hidden="true"
-          className={cn(
-            "invitation-hero-artwork invitation-hero-parallax absolute inset-0 h-full w-full object-cover object-center",
-            config.imageClass,
-          )}
-        />
-        <div className="relative z-10 px-6 pb-14 pt-36 text-center sm:px-9 sm:pb-20">
+        {config.heroArtwork !== false ? (
+          <img
+            src={config.artwork}
+            alt=""
+            aria-hidden="true"
+            className={cn(
+              "invitation-hero-artwork invitation-hero-parallax absolute inset-0 h-full w-full object-cover object-center",
+              config.imageClass,
+            )}
+          />
+        ) : null}
+        {config.detailArtwork ? (
+          <>
+            <img src={config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-a" />
+            <img src={config.sectionArtworkVariants?.[0] ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-b" />
+            <img src={config.sectionArtworkVariants?.[1] ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-c" />
+            <img src={config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-d" />
+            <img src={config.sectionArtworkVariants?.[0] ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-e" />
+            <img src={config.sectionArtworkVariants?.[1] ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-f" />
+            <img src={config.sectionArtwork ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-g" />
+            <img src={config.sectionArtworkVariants?.[0] ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-h" />
+            <img src={config.sectionArtwork ?? config.detailArtwork} alt="" aria-hidden="true" className="hero-bouquet hero-bouquet-i" />
+          </>
+        ) : null}
+        <div data-artwork-hero-content className="relative z-10 px-6 pb-14 pt-36 text-center sm:px-9 sm:pb-20">
           <span className={cn("text-xs tabular-nums tracking-[0.2em]", config.mutedClass)}>
             {dateLine}
           </span>
@@ -250,6 +295,25 @@ function ArtworkHero({
   );
 }
 
+function SectionFlowers({ src, bouquet = false, variants = [] }: { src: string; bouquet?: boolean; variants?: string[] }) {
+  if (bouquet) {
+    return (
+      <div data-section-bouquet aria-hidden="true" className="pointer-events-none relative">
+        {[src, ...variants].map((artwork, index) => (
+          <img key={artwork} src={artwork} alt="" loading="lazy" className={`bouquet-variant bouquet-variant-${index} absolute object-contain`} />
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div data-section-flowers aria-hidden="true" className="pointer-events-none mx-auto mb-5 flex w-fit items-center justify-center gap-1 px-5 py-3">
+      <img src={src} alt="" loading="lazy" className="h-14 w-12 -rotate-[24deg] object-contain sm:h-16 sm:w-14" />
+      <img src={src} alt="" loading="lazy" className="h-20 w-[70px] object-contain sm:h-24 sm:w-20" />
+      <img src={src} alt="" loading="lazy" className="h-14 w-12 rotate-[24deg] object-contain sm:h-16 sm:w-14" />
+    </div>
+  );
+}
+
 function SectionHeading({
   children,
   config,
@@ -258,9 +322,12 @@ function SectionHeading({
   config: ArtInvitationConfig;
 }) {
   return (
-    <h2 className={cn("text-balance", config.displayFontClass, config.headingClass, config.inkClass, "text-[clamp(1.75rem,8cqw,2.5rem)]")}>
-      {children}
-    </h2>
+    <>
+      {config.sectionArtwork ? <SectionFlowers src={config.sectionArtwork} variants={config.sectionArtworkVariants} bouquet={config.sectionArtworkBouquet} /> : null}
+      <h2 className={cn("text-balance", config.displayFontClass, config.headingClass, config.inkClass, "text-[clamp(1.75rem,8cqw,2.5rem)]")}>
+        {children}
+      </h2>
+    </>
   );
 }
 
@@ -311,7 +378,7 @@ export function ArtInvitation({
   const bodyFontClass = invitationBodyFontClass(displayFontClass);
   const effectiveConfig = { ...config, displayFontClass };
   const people = orderedCouple(content);
-  const ceremonyDate = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const receptionDate = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -348,9 +415,9 @@ export function ArtInvitation({
     <main className={cn("relative z-40 min-h-[100dvh] w-full overflow-hidden", bodyFontClass, config.pageClass)}>
       <div
         data-invitation-column="true"
-        className="relative mx-auto w-full max-w-[900px] [container-type:inline-size]"
+        className={cn("relative mx-auto w-full max-w-[900px] [container-type:inline-size]", config.columnClass)}
       >
-        <ParallaxArtwork config={config} />
+        {config.parallaxArtwork !== false ? <ParallaxArtwork config={config} /> : null}
         <ArtworkHero config={effectiveConfig} content={content} t={t} />
 
         <div className="relative z-30 mx-auto w-full max-w-[760px] px-5 py-16 text-center sm:px-8 sm:py-20">
@@ -373,14 +440,21 @@ export function ArtInvitation({
           </div>
         </section>
 
-        <section className="mt-20 space-y-5">
-          <EventCard
-            label={t("ceremony")}
-            message={invitationCeremonyMessage(content)}
-            date={ceremonyDate}
-            time={couple.ceremonyTime}
-            config={effectiveConfig}
-          />
+        <section data-template-ceremonies data-art-ceremonies className="mt-20 space-y-5">
+          {ceremonies.map((ceremony, index) => (
+            <div
+              key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
+              data-template-ceremony-item
+            >
+              <EventCard
+                label={t("ceremony")}
+                message={ceremony.title}
+                date={formatDate(ceremony.date)}
+                time={ceremony.time}
+                config={effectiveConfig}
+              />
+            </div>
+          ))}
           <EventCard
             label={t("reception")}
             message={venue.address}
@@ -480,6 +554,7 @@ export function ArtInvitation({
 
         <SharedRsvpForm
           accent={config.accentHex}
+          submitTextColor={config.formSubmitTextColor}
           centered
           className="mt-20"
           heading={<SectionHeading config={effectiveConfig}>{t("rsvpHeading")}</SectionHeading>}
@@ -487,7 +562,7 @@ export function ArtInvitation({
 
         <section className="mt-20">
           <SectionHeading config={effectiveConfig}>{t("guestbook")}</SectionHeading>
-          <SharedWishForm accent={config.accentHex} centered />
+          <SharedWishForm accent={config.accentHex} submitTextColor={config.formSubmitTextColor} centered />
           <SharedWishList
             wishes={wishes}
             accent={config.accentHex}
@@ -507,23 +582,17 @@ export function ArtInvitation({
           <section className="mt-20">
             {config.giftLayout === "flip" ? (
               <>
-                <SectionHeading config={effectiveConfig}>{t("gift")}</SectionHeading>
-                <div className="mt-8 flex flex-wrap items-start justify-center gap-6">
-                  {banks.map((gift) => (
-                    <GiftFlipCard
-                      key={gift.label}
-                      bank={gift}
-                      accent={config.accentHex}
-                      dark={config.inkHex}
-                      faceClassName={config.surfaceClass}
-                      frontTitle={t("giftFlipFront")}
-                      frontHint={t("giftFlipHint")}
-                      backHint={t("giftFlipBack")}
-                      copyNumberLabel={t("copyAccount")}
-                      numberCopiedLabel={t("accountCopied")}
-                    />
-                  ))}
-                </div>
+                <GiftEnvelope
+                  templateSlug={content.slug}
+                  banks={banks}
+                  accent={config.accentHex}
+                  dark="#6b101c"
+                  cardBg="#fff7eb"
+                  heading={t("gift")}
+                  openLabel={t("giftFlipHint")}
+                  labelColor="#6b101c"
+                  headingClassName={cn("text-center text-xl font-normal md:text-2xl", effectiveConfig.displayFontClass)}
+                />
               </>
             ) : (
               <GiftQrGrid
@@ -540,6 +609,7 @@ export function ArtInvitation({
         ) : null}
 
         <footer className={cn("mt-24 border-t pt-10 text-center", config.borderClass)}>
+          {config.sectionArtwork ? <SectionFlowers src={config.sectionArtwork} variants={config.sectionArtworkVariants} bouquet={config.sectionArtworkBouquet} /> : null}
           <p className={cn("text-sm leading-7", config.mutedClass)}>{t("presenceHonor")}</p>
           {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
           <p className={cn("mt-4 flex flex-col items-center text-lg font-semibold leading-snug", config.inkClass)}>

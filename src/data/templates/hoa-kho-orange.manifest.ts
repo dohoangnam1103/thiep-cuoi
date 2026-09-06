@@ -6,7 +6,7 @@ const artwork = ["paper.webp", "flower2.webp", "flower3.webp", "flower4.webp", "
 const base = createTemplateDemoContent({ slug, primaryColor: "#4c611b", fontFamily: "Carattere", music: "/chungdoi/music/a-thousand-years.mp3", galleryCount: 8, groomFullName: "Trần Gia Bảo", groomShortName: "Gia Bảo", brideFullName: "Lý Thanh Vân", brideShortName: "Thanh Vân", date: "2026-12-19", time: "19:30" });
 const description = "Thiệp cưới hoa khô cam, lá xanh ô-liu và khung vòm trên nền giấy kem, phong cách mộc mạc ấm áp.";
 export const manifest = defineTemplateManifest({
-  slug, viRouteSlug: "hoa-kho-cam", rendererExport: "HoaKhoOrangeInvitation", heroImageCount: 0,
+  slug, viRouteSlug: "hoa-kho-cam", rendererExport: "HoaKhoOrangeInvitation", ceremonyRendering: "post-template", heroImageCount: 0,
   catalog: { name: "Hoa Khô Cam", title: "Hoa Khô Cam | Thiệp Mừng Online", description, category: "Botanical", color: "Orange", isNew: true, highlights: ["Hoa cam nhiều lớp quanh khung vòm", "Nền giấy kem và viền xanh ô-liu", "Lịch trái tim và phong bao đồng bộ"] },
   theme: {
     theme: { background: "#ce8d49", cardBg: "#faf4e8", textPrimary: "#4c611b", textSecondary: "#74794c", accent: "#4c611b", dividerFrom: "transparent", dividerTo: "#ce8d49", buttonBg: "#4c611b", buttonText: "#faf4e8", guestBoxBg: "transparent", guestBoxBorder: "#ce8d4944", particleColors: ["#f26100", "#4c611b", "#faf4e8"], particleType: "flowers" },

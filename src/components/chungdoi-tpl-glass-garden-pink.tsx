@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -60,12 +60,12 @@ function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: stri
 export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time;
-  const welcomeTime = couple.ceremonyTime || banquetTime;
+  const welcomeTime = ceremonies[0]?.time || banquetTime;
   const dressColors = (content.dressCodeColors ?? "")
     .split(",")
     .map((color) => color.trim())
@@ -193,30 +193,39 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                   <div className="text-[10px] uppercase tracking-[0.1em]" style={{ ...ORDER_FONT, color: WINE }}>{people[1].birthOrder}</div>
                 </div>
 
-                {ceremony ? (
-                  <div className="relative flex w-full flex-col items-center">
-                    <div className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY_FONT}>
-                      <div className="flex flex-col items-center gap-2" style={{ color: WINE }}>
-                        {couple.ceremonyHeader ? (
-                          <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{couple.ceremonyHeader}</span>
-                        ) : null}
-                        <p className="mb-2 text-[16px] font-normal uppercase md:text-[18px]">Vào lúc</p>
-                      </div>
-                      {couple.ceremonyTime ? (
-                        <div className="text-[20px] md:text-[30px]" style={{ color: ROSE }}>{couple.ceremonyTime}</div>
-                      ) : null}
-                      <div className="flex items-center gap-6" style={{ color: ROSE }}>
-                        <span className="text-right text-[12px] uppercase md:text-[16px]">{ceremony.weekday}</span>
-                        <span className="flex items-center justify-center text-[20px] leading-none md:text-[28px]" style={{ color: WINE, opacity: 0.5 }}>|</span>
-                        <span className="text-[30px] md:text-[40px]">{ceremony.day}</span>
-                        <span className="flex items-center justify-center text-[20px] leading-none md:text-[28px]" style={{ color: WINE, opacity: 0.5 }}>|</span>
-                        <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremony.month}</span>
-                      </div>
-                      <div className="text-[18px] md:text-[24px]" style={{ color: ROSE }}>{ceremony.yearNumber}</div>
-                      {/* Không bọc ngoặc: formatVietnameseLunarDate() trả về chuỗi
-                          trần "Tức ngày ... âm lịch", các template render nguyên văn. */}
-                      <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-sm md:tracking-[0.25em]" style={{ color: WINE }}>{ceremony.lunar}</div>
-                    </div>
+                {ceremonies.length > 0 ? (
+                  <div data-template-ceremonies data-glass-garden-pink-ceremonies className="relative flex w-full flex-col items-center gap-8 md:gap-10">
+                    {ceremonies.map((ceremony, index) => {
+                      const ceremonyDate = formatDate(ceremony.date);
+                      return (
+                        <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`} className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY_FONT}>
+                          <div className="flex flex-col items-center gap-2" style={{ color: WINE }}>
+                            {ceremony.title ? (
+                              <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{ceremony.title}</span>
+                            ) : null}
+                            <p className="mb-2 text-[16px] font-normal uppercase md:text-[18px]">Vào lúc</p>
+                          </div>
+                          {ceremony.time ? (
+                            <div className="text-[20px] md:text-[30px]" style={{ color: ROSE }}>{ceremony.time}</div>
+                          ) : null}
+                          {ceremonyDate ? (
+                            <>
+                              <div className="flex items-center gap-6" style={{ color: ROSE }}>
+                                <span className="text-right text-[12px] uppercase md:text-[16px]">{ceremonyDate.weekday}</span>
+                                <span className="flex items-center justify-center text-[20px] leading-none md:text-[28px]" style={{ color: WINE, opacity: 0.5 }}>|</span>
+                                <span className="text-[30px] md:text-[40px]">{ceremonyDate.day}</span>
+                                <span className="flex items-center justify-center text-[20px] leading-none md:text-[28px]" style={{ color: WINE, opacity: 0.5 }}>|</span>
+                                <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremonyDate.month}</span>
+                              </div>
+                              <div className="text-[18px] md:text-[24px]" style={{ color: ROSE }}>{ceremonyDate.yearNumber}</div>
+                              {/* Không bọc ngoặc: formatVietnameseLunarDate() trả về chuỗi
+                                  trần "Tức ngày ... âm lịch", các template render nguyên văn. */}
+                              <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-sm md:tracking-[0.25em]" style={{ color: WINE }}>{ceremonyDate.lunar}</div>
+                            </>
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : null}
               </div>

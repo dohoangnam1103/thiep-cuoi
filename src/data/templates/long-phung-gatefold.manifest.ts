@@ -6,7 +6,7 @@ const slug = "long-phung-gatefold";
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "long-phung-gatefold",
-  rendererExport: "LongPhungGatefoldInvitation",
+  rendererExport: "LongPhungGatefoldInvitation", ceremonyRendering: "inline-all",
   heroImageCount: 2,
   catalog: {
     name: "Long Phụng Gatefold",

@@ -5,7 +5,7 @@ import { AudioLines, ChevronsDown, Pause, RotateCcw, VolumeX } from "lucide-reac
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { type ComponentType, type CSSProperties, type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -16,6 +16,13 @@ import {
   glassGardenTemplateSlugs,
   type EnvelopeDecorOverflow,
 } from "@/components/chungdoi-envelope-decor-policy";
+import {
+  SINGLE_PANEL_COVER_AWAY_MS,
+  coverVariantForTemplate,
+} from "@/components/chungdoi-cover-variant-policy";
+import { UyenUongCover } from "@/components/chungdoi-uyen-uong-cover";
+import { ToHongCover } from "@/components/chungdoi-to-hong-cover";
+import { HongVanCover } from "@/components/chungdoi-hong-van-cover";
 import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { fitEnvelopeWidth } from "@/components/chungdoi-envelope-constants";
@@ -44,7 +51,6 @@ import { LongPhungGatefoldInvitation } from "@/components/chungdoi-tpl-long-phun
 import { NguyetAnhSleeveInvitation } from "@/components/chungdoi-tpl-nguyet-anh-sleeve";
 import { DoraemonDoorInvitation } from "@/components/chungdoi-tpl-doraemon-door";
 import {
-  isAuditedTemplateSlug,
   type AuditedTemplateSlug,
   type BaseAuditedTemplateSlug,
 } from "@/lib/audited-template-renderers";
@@ -63,6 +69,10 @@ import {
   invitationOpeningMessage,
   orderedCouple,
 } from "@/lib/invitation-display";
+import {
+  templateRendererEntry,
+  type TemplateRendererEntry,
+} from "@/components/template-renderer-entry";
 
 const BaroqueGoldInvitation = dynamic(() => import("@/components/chungdoi-tpl-baroque-gold").then((m) => m.BaroqueGoldInvitation));
 const BohoFloralInvitation = dynamic(() => import("@/components/chungdoi-tpl-boho-floral-brown").then((m) => m.BohoFloralInvitation));
@@ -115,39 +125,73 @@ const LienHoaPinkInvitation = dynamic(() => import("@/components/chungdoi-tpl-li
 const SunflowerInvitation = dynamic(() => import("@/components/chungdoi-tpl-sunflower").then((m) => m.SunflowerInvitation));
 
 const BASE_AUDITED_TEMPLATE_RENDERERS = {
-  "boho-floral-green": BohoFloralGreenInvitation,
-  "boho-floral-pink": BohoFloralPinkInvitation,
-  "boho-floral-brown": BohoFloralInvitation,
-  "spring-garden-red": SpringGardenRedInvitation,
-  "spring-garden-green": SpringGardenGreenInvitation,
-  "spring-garden-blue": SpringGardenBlueInvitation,
-  "elegant-leaf-green": ElegantLeafInvitation,
-  "jasmine-white": JasmineWhiteInvitation,
-  "silk-flora-brown": SilkFloraBrownInvitation,
-  "hoa-tinh-red": HoaTinhInvitation,
-  "minimalism-red": MinimalismRedInvitation,
-  "minimalism-dark-red": MinimalismDarkRedInvitation,
-  "minimalism-green": MinimalismGreenInvitation,
-  "minimalism-brown": MinimalismBrownInvitation,
-  "minimalism-jade": MinimalismJadeInvitation,
-  "minimalism-sky-blue": MinimalismSkyBlueInvitation,
-  "minimalism-powder-pink": MinimalismPowderPinkInvitation,
-  "minimalism-purple": MinimalismPurpleInvitation,
-  "brocade-flower-red": BrocadeFlowerRedInvitation,
-  "crystal-floral-blue": CrystalFloralInvitation,
-  "baroque-gold": BaroqueGoldInvitation,
-  "glass-garden-green": GlassGardenInvitation,
-  "glass-garden-pink": GlassGardenPinkInvitation,
-  "lien-hoa-pink": LienHoaPinkInvitation,
-  "sunflower": SunflowerInvitation,
-  "chibi-red": ChibiRedInvitation,
-  "cherry-blossom-pink": CherryBlossomInvitation,
-} satisfies Record<BaseAuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
+  "boho-floral-green": templateRendererEntry(BohoFloralGreenInvitation, "post-template"),
+  "boho-floral-pink": templateRendererEntry(BohoFloralPinkInvitation, "inline-all"),
+  "boho-floral-brown": templateRendererEntry(BohoFloralInvitation, "inline-all"),
+  "spring-garden-red": templateRendererEntry(SpringGardenRedInvitation, "post-template"),
+  "spring-garden-green": templateRendererEntry(SpringGardenGreenInvitation, "inline-all"),
+  "spring-garden-blue": templateRendererEntry(SpringGardenBlueInvitation, "post-template"),
+  "elegant-leaf-green": templateRendererEntry(ElegantLeafInvitation, "post-template"),
+  "jasmine-white": templateRendererEntry(JasmineWhiteInvitation, "inline-all"),
+  "silk-flora-brown": templateRendererEntry(SilkFloraBrownInvitation, "inline-all"),
+  "hoa-tinh-red": templateRendererEntry(HoaTinhInvitation, "post-template"),
+  "minimalism-red": templateRendererEntry(MinimalismRedInvitation, "inline-all"),
+  "minimalism-dark-red": templateRendererEntry(MinimalismDarkRedInvitation, "inline-all"),
+  "minimalism-green": templateRendererEntry(MinimalismGreenInvitation, "post-template"),
+  "minimalism-brown": templateRendererEntry(MinimalismBrownInvitation, "inline-all"),
+  "minimalism-jade": templateRendererEntry(MinimalismJadeInvitation, "inline-all"),
+  "minimalism-sky-blue": templateRendererEntry(MinimalismSkyBlueInvitation, "inline-all"),
+  "minimalism-powder-pink": templateRendererEntry(MinimalismPowderPinkInvitation, "inline-all"),
+  "minimalism-purple": templateRendererEntry(MinimalismPurpleInvitation, "inline-all"),
+  "brocade-flower-red": templateRendererEntry(BrocadeFlowerRedInvitation, "post-template"),
+  "crystal-floral-blue": templateRendererEntry(CrystalFloralInvitation, "post-template"),
+  "baroque-gold": templateRendererEntry(BaroqueGoldInvitation, "post-template"),
+  "glass-garden-green": templateRendererEntry(GlassGardenInvitation, "inline-all"),
+  "glass-garden-pink": templateRendererEntry(GlassGardenPinkInvitation, "inline-all"),
+  "lien-hoa-pink": templateRendererEntry(LienHoaPinkInvitation, "post-template"),
+  "sunflower": templateRendererEntry(SunflowerInvitation, "post-template"),
+  "chibi-red": templateRendererEntry(ChibiRedInvitation, "inline-all"),
+  "cherry-blossom-pink": templateRendererEntry(CherryBlossomInvitation, "post-template"),
+} satisfies Record<BaseAuditedTemplateSlug, TemplateRendererEntry>;
+
+// These renderers predate the manifest registry. Their ceremony mode lives
+// beside the component so a legacy alias cannot drift from its renderer.
+const LEGACY_TEMPLATE_RENDERERS = {
+  "double-phoenix-red": templateRendererEntry(PhoenixInvitation, "post-template"),
+  "double-phoenix-green": templateRendererEntry(PhoenixInvitation, "post-template"),
+  "song-hy-green": templateRendererEntry(SongHyGreenInvitation, "inline-all"),
+  "song-hy-red": templateRendererEntry(SongHyRedInvitation, "inline-all"),
+  "nhat-binh-red": templateRendererEntry(NhatBinhInvitation, "post-template"),
+  "co-ba-red": templateRendererEntry(CoBaInvitation, "post-template"),
+  "dragon-phoenix-red": templateRendererEntry(DragonPhoenixRedInvitation, "inline-all"),
+  "dragon-phoenix-green": templateRendererEntry(DragonPhoenixGreenInvitation, "inline-all"),
+  "dragon-phoenix-blue": templateRendererEntry(DragonPhoenixBlueInvitation, "inline-all"),
+  "dragon-phoenix-black": templateRendererEntry(DragonPhoenixBlackInvitation, "inline-all"),
+  "double-dragon-red": templateRendererEntry(DoubleDragonRedInvitation, "post-template"),
+  "double-dragon-blue": templateRendererEntry(DoubleDragonBlueInvitation, "post-template"),
+  "double-dragon-green": templateRendererEntry(SongLongXanhInvitation, "post-template"),
+  "royal-red": templateRendererEntry(RoyalRedInvitation, "post-template"),
+  "royal-blue": templateRendererEntry(RoyalBlueInvitation, "post-template"),
+  "royal-green": templateRendererEntry(RoyalGreenInvitation, "post-template"),
+  "maroon-love": templateRendererEntry(MaroonLoveInvitation, "post-template"),
+  "chateau-blue": templateRendererEntry(ChateauBlueInvitation, "post-template"),
+  "chateau-green": templateRendererEntry(ChateauGreenInvitation, "post-template"),
+  "qasr-green": templateRendererEntry(QasrGreenInvitation, "post-template"),
+  "qasr-gold": templateRendererEntry(QasrGoldInvitation, "post-template"),
+  "dragon-phoenix-v2-red": templateRendererEntry(DragonPhoenixV2Invitation, "post-template"),
+  "dragon-phoenix-v3-red": templateRendererEntry(DragonPhoenixV3Invitation, "inline-all"),
+} satisfies Record<string, TemplateRendererEntry>;
 
 const AUDITED_TEMPLATE_RENDERERS = {
   ...BASE_AUDITED_TEMPLATE_RENDERERS,
   ...GENERATED_TEMPLATE_RENDERERS,
-} satisfies Record<AuditedTemplateSlug, ComponentType<{ content: ChungDoiDemoContent }>>;
+} satisfies Record<AuditedTemplateSlug, TemplateRendererEntry>;
+
+const TEMPLATE_RENDERERS = {
+  ...LEGACY_TEMPLATE_RENDERERS,
+  ...AUDITED_TEMPLATE_RENDERERS,
+} satisfies Record<string, TemplateRendererEntry>;
+
 const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
 const DoraemonDoorLab = dynamic(
   () => import("@/components/chungdoi-doraemon-door-lab")
@@ -822,6 +866,9 @@ function CoverCard({
   naturalHeight?: boolean;
 }) {
   const liveForms = useLiveForms();
+  if (content.slug === "uyen-uong") return <UyenUongCover content={content} onOpen={onOpen} />;
+  if (content.slug === "hong-van-rose") return <HongVanCover content={content} onOpen={onOpen} />;
+  const hyUocCover = content.slug === "hy-uoc";
   const date = formatDate(content.couple.date);
   const names = content.couple.brideFirst
     ? [content.couple.brideShortName, content.couple.groomShortName]
@@ -839,10 +886,12 @@ function CoverCard({
 
   return (
     <div
-      className="relative rounded-lg"
+      className={hyUocCover ? "relative rounded-[4px]" : "relative rounded-lg"}
       style={{
-        aspectRatio: naturalHeight ? undefined : "3 / 4.5",
-        boxShadow: "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)",
+        aspectRatio: naturalHeight ? undefined : hyUocCover ? "31 / 54" : "3 / 4.5",
+        boxShadow: hyUocCover
+          ? "0 22px 48px -18px rgba(52,37,31,0.55)"
+          : "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)",
       }}
     >
       {/* composited theme layer (behind everything). Content-only capture bỏ
@@ -916,9 +965,19 @@ function CoverCard({
         data-envelope-card-content
         className={naturalHeight
           ? "relative z-10 px-6 pb-14 pt-28 text-center md:pb-8 md:pt-24"
-          : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
+          : hyUocCover
+            ? "absolute inset-0 z-10 flex flex-col items-center justify-center px-8 py-7 text-center"
+            : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
       >
-        <div className="mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl" style={{ color: tokens.textPrimary }}>
+        {hyUocCover ? (
+          <img
+            alt=""
+            aria-hidden="true"
+            src="/chungdoi/images/themes/hy-uoc/double-happiness-cream.svg"
+            className="mb-4 h-12 w-auto sm:h-14"
+          />
+        ) : null}
+        <div className={hyUocCover ? "mb-4 flex flex-col items-center text-3xl leading-tight sm:text-4xl" : "mb-2 flex flex-col items-center text-3xl leading-tight sm:text-4xl"} style={{ color: tokens.textPrimary }}>
           <span className="block w-full" style={nameStyle}>
             {names[0]}
           </span>
@@ -930,13 +989,15 @@ function CoverCard({
           </span>
         </div>
 
-        <div className="mb-3 flex items-center justify-center gap-3">
-          <span className="h-px w-10" style={{ background: `linear-gradient(to right, ${tokens.dividerFrom}, ${tokens.accent})` }} />
-          <span className="text-sm" style={{ color: tokens.accent, opacity: 0.7 }}>
-            ❦
-          </span>
-          <span className="h-px w-10" style={{ background: `linear-gradient(to left, ${tokens.dividerFrom}, ${tokens.accent})` }} />
-        </div>
+        {!hyUocCover ? (
+          <div className="mb-3 flex items-center justify-center gap-3">
+            <span className="h-px w-10" style={{ background: `linear-gradient(to right, ${tokens.dividerFrom}, ${tokens.accent})` }} />
+            <span className="text-sm" style={{ color: tokens.accent, opacity: 0.7 }}>
+              ❦
+            </span>
+            <span className="h-px w-10" style={{ background: `linear-gradient(to left, ${tokens.dividerFrom}, ${tokens.accent})` }} />
+          </div>
+        ) : null}
 
         {date ? (
           <p className="mb-5 text-[18px]" style={{ color: tokens.textSecondary }}>
@@ -1108,6 +1169,7 @@ function EnvelopeCover2D({
   openingEffect,
   renderOverflowDecor,
   envelopeAwayAnimation,
+  showSeal,
 }: {
   content: ChungDoiDemoContent;
   tokens: Tokens;
@@ -1121,6 +1183,8 @@ function EnvelopeCover2D({
   /** Chuỗi `animation` cho lúc bìa bay lên, `undefined` khi chưa tới pha đó.
    *  EnvelopeCover dựng sẵn để bìa 2D và 3D bay bằng đúng một công thức. */
   envelopeAwayAnimation: string | undefined;
+  /** Bìa liền một mặt không có niêm phong nào để vỡ, nên không vẽ con dấu. */
+  showSeal: boolean;
 }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -1171,9 +1235,11 @@ function EnvelopeCover2D({
       <div style={{ transform: `scale(${scale})` }}>
         <div
           ref={cardRef}
-          className={PORCELAIN_COVER_TEMPLATE_SLUGS.has(content.slug)
-            ? "relative w-[310px] sm:w-[340px] md:w-[520px] lg:w-[600px]"
-            : "relative w-[310px] sm:w-[340px] md:w-[640px] lg:w-[732px]"}
+          className={content.slug === "hy-uoc" || content.slug === "uyen-uong"
+            ? "relative w-[310px] sm:w-[340px] md:w-[400px]"
+            : PORCELAIN_COVER_TEMPLATE_SLUGS.has(content.slug)
+              ? "relative w-[310px] sm:w-[340px] md:w-[520px] lg:w-[600px]"
+              : "relative w-[310px] sm:w-[340px] md:w-[640px] lg:w-[732px]"}
         >
           {/* Hoa vượt khỏi mép thẻ (họ Vườn Kính): lớp này KHÔNG overflow-hidden,
               khác lớp decor mặc định trong CoverCard, nên phải tự dựng và tắt lớp
@@ -1195,7 +1261,7 @@ function EnvelopeCover2D({
             </div>
           ) : null}
 
-          <Seal tokens={tokens} opening={opening} />
+          {showSeal ? <Seal tokens={tokens} opening={opening} /> : null}
           <CoverCard
             content={content}
             tokens={tokens}
@@ -1286,24 +1352,35 @@ function EnvelopeCover({
   // Khung nhà kính được vẽ theo tỷ lệ 2:3. Giữ card portrait cố định để artwork
   // phủ trọn bìa thay vì bị co vào giữa card natural-height khổ ngang.
   const naturalHeight = sizing === "responsive-natural"
-    && content.slug !== "ban-ve-to-am";
+    && content.slug !== "ban-ve-to-am"
+    && content.slug !== "hy-uoc";
   const decorOverflow = envelopeDecorOverflowForTemplate(content.slug);
   const renderOverflowDecor = decorOverflow === "visible" && tokens.cardImages.length > 0;
-  const openingEffect = tokens.openingEffect;
+  // Hồng Vân dùng bìa hoa hồng DOM riêng; không phủ thêm plate/layer art chung
+  // lên trên vì sẽ tạo một khung thừa ở phía trên bìa.
+  const openingEffect = content.slug === "hong-van-rose" ? undefined : tokens.openingEffect;
   const renderSeparateDecor = renderOverflowDecor || Boolean(openingEffect);
+  // Bìa liền một mặt không có con dấu nên không có pha chờ nào phía trước: bấm là
+  // trượt. Xem chungdoi-cover-variant-policy.ts.
+  const singlePanelCover = coverVariantForTemplate(content.slug) === "single-panel";
   const openingDuration = openingEffect
     ? reducedMotion
       ? openingEffect.reducedMotion.durationMs
       : openingEffect.durationMs
-    : ENVELOPE_AWAY_MS;
+    : singlePanelCover
+      ? SINGLE_PANEL_COVER_AWAY_MS
+      : ENVELOPE_AWAY_MS;
 
   // Mẫu art dàn cảnh bên trong keyframe nên bay suốt cả quãng `opening`; mẫu cổ
-  // điển phải đợi pha "away", tức đợi con dấu vỡ xong.
-  const flyingAway = openingEffect ? opening : openPhase === "away";
+  // điển phải đợi pha "away", tức đợi con dấu vỡ xong. Bìa liền một mặt cũng bay
+  // ngay vì openInvitation() đã cho nó vào thẳng pha "away".
+  const flyingAway = openingEffect || singlePanelCover ? opening : openPhase === "away";
   const envelopeAwayAnimation = flyingAway
     ? openingEffect
       ? `demo-art-envelope-away ${openingDuration}ms linear forwards`
-      : `demo-envelope-away ${openingDuration}ms ease-in forwards`
+      : singlePanelCover
+        ? `demo-single-panel-cover-away ${openingDuration}ms cubic-bezier(0.32, 0, 0.67, 0) forwards`
+        : `demo-envelope-away ${openingDuration}ms ease-in forwards`
     : undefined;
   const [projectedSize, setProjectedSize] = useState<{ width: number; height: number } | null>(null);
   const [envelopeReady, setEnvelopeReady] = useState(false);
@@ -1376,9 +1453,9 @@ function EnvelopeCover({
           }}
         />
       ) : null}
-      <ParticleField tokens={tokens} />
+      {content.slug !== "hy-uoc" ? <ParticleField tokens={tokens} /> : null}
       {/* Đợt confetti nổ cùng nhịp bìa bắt đầu bay, không nổ lúc con dấu mới nứt. */}
-      {flyingAway ? <BurstParticles tokens={tokens} /> : null}
+      {flyingAway && content.slug !== "hy-uoc" ? <BurstParticles tokens={tokens} /> : null}
       {/* Chỉ đường 3D cần hai lớp này ở tầng cover: thẻ là texture nên hoa bay ra
           và artwork mở thiệp phải vẽ ngoài thẻ, định vị theo projectedSize. Bản 2D
           animate ngay trong thẻ DOM (CoverCard tự có lớp fly-out). */}
@@ -1412,6 +1489,7 @@ function EnvelopeCover({
             openingEffect={openingEffect}
             renderOverflowDecor={renderOverflowDecor}
             envelopeAwayAnimation={envelopeAwayAnimation}
+            showSeal={!singlePanelCover}
           />
         </div>
       ) : (
@@ -1807,16 +1885,12 @@ export function ChungDoiDemo({
   const isDetectiveConanCasebookExperience =
     content?.slug === "detective-conan-casebook";
   const isPaginatedExperience = isDetectiveConanCasebookExperience;
-  const usesTwoDimensionalCover = content.slug === "ban-ve-to-am";
-  const rendersCeremoniesInsideTemplate = [
-    "song-hy-red",
-    "song-hy-green",
-    "boho-floral-brown",
-    "dragon-phoenix-red",
-    "dragon-phoenix-v3-red",
-    "minimalism-dark-red",
-    "ban-ve-to-am",
-  ].includes(content.slug);
+  const usesTwoDimensionalCover = content.slug === "ban-ve-to-am" || content.slug === "hy-uoc" || content.slug === "uyen-uong";
+  const rendererEntry = TEMPLATE_RENDERERS[
+    content.slug as keyof typeof TEMPLATE_RENDERERS
+  ];
+  const rendersCeremoniesInsideTemplate =
+    rendererEntry?.ceremonyRendering === "inline-all";
   const isPhysicalExperience = isGatefoldExperience
     || isSleeveExperience
     || isCoiTrauExperience
@@ -1887,13 +1961,15 @@ export function ChungDoiDemo({
   useEffect(() => {
     if (
       !opened
-      || (!isDoraemonDoorExperience && !isDetectiveConanCasebookExperience)
+      || (!isDoraemonDoorExperience && !isDetectiveConanCasebookExperience && content.slug !== "to-hong")
     ) {
       return;
     }
 
     const frame = window.requestAnimationFrame(() => {
-      const focusTarget = isDetectiveConanCasebookExperience
+      const focusTarget = content.slug === "to-hong"
+        ? document.querySelector<HTMLElement>("[data-to-hong-focus]")
+        : isDetectiveConanCasebookExperience
         ? document.querySelector<HTMLElement>(
           '[data-testid="detective-conan-casebook-reader"] '
           + '[data-position="current"] [data-chapter-heading]',
@@ -1905,6 +1981,7 @@ export function ChungDoiDemo({
     });
     return () => window.cancelAnimationFrame(frame);
   }, [
+    content.slug,
     isDetectiveConanCasebookExperience,
     isDoraemonDoorExperience,
     opened,
@@ -2076,7 +2153,7 @@ export function ChungDoiDemo({
     openingRef.current = false;
     setOpenPhase("idle");
     setOpened(true);
-    if (!isPaginatedExperience) {
+    if (!isPaginatedExperience && content.slug !== "hy-uoc") {
       autoScrollTimerRef.current = window.setTimeout(() => {
         if (!previewMode) setAutoScrolling(true);
       }, 2000);
@@ -2103,12 +2180,7 @@ export function ChungDoiDemo({
     const people = orderedCouple(content);
     return `${people[0].shortName} & ${people[1].shortName}`;
   })();
-  const auditedSlug = content.slug;
-  const AuditedTemplateRenderer = isAuditedTemplateSlug(auditedSlug)
-    ? AUDITED_TEMPLATE_RENDERERS[
-        auditedSlug as keyof typeof AUDITED_TEMPLATE_RENDERERS
-      ]
-    : null;
+  const AuditedTemplateRenderer = rendererEntry?.component ?? null;
   const autoScrollLabel = autoScrolling
     ? invitationControlsT("stopAutoScroll")
     : atInvitationEnd
@@ -2135,19 +2207,25 @@ export function ChungDoiDemo({
     root.style.scrollBehavior = originalScrollBehavior;
 
     const openingEffect = tokens?.openingEffect;
-    const revealDelay = openingEffect
+    // Bìa liền một mặt: không con dấu, không mảnh nào bay riêng — bấm là cả tấm
+    // trượt lên trong một nhịp. Xem chungdoi-cover-variant-policy.ts.
+    const singlePanelCover = coverVariantForTemplate(content.slug) === "single-panel";
+    const revealDelay = content.slug === "to-hong" ? 0 : openingEffect
       ? prefersReducedMotion
         ? openingEffect.reducedMotion.durationMs
         : openingEffect.durationMs
       : prefersReducedMotion
         ? REDUCED_MOTION_OPEN_MS
-        : CLASSIC_OPEN_DURATION_MS;
+        : singlePanelCover
+          ? SINGLE_PANEL_COVER_AWAY_MS
+          : CLASSIC_OPEN_DURATION_MS;
 
     // Chỉ mẫu cổ điển ở chuyển động đầy đủ mới cần mốc giữa: dừng ở pha "opening"
     // cho con dấu vỡ xong rồi mới sang "away" cho bìa bay. Mẫu art đã tự giữ nhịp
-    // trong keyframe `demo-art-*`, còn giảm chuyển động thì CSS đã ép mọi animation
-    // về gần 0ms — cả hai vào thẳng pha bay, chia pha chỉ làm người xem ngồi chờ.
-    const stagedOpening = !openingEffect && !prefersReducedMotion;
+    // trong keyframe `demo-art-*`, bìa liền một mặt không có pha con dấu, còn giảm
+    // chuyển động thì CSS đã ép mọi animation về gần 0ms — tất cả vào thẳng pha
+    // bay, chia pha chỉ làm người xem ngồi chờ.
+    const stagedOpening = !openingEffect && !singlePanelCover && !prefersReducedMotion;
     setOpenPhase(stagedOpening ? "opening" : "away");
     if (stagedOpening) {
       awayTimerRef.current = window.setTimeout(() => setOpenPhase("away"), SEAL_BREAK_MS);
@@ -2155,10 +2233,15 @@ export function ChungDoiDemo({
 
     openTimerRef.current = window.setTimeout(() => {
       setOpened(true);
-      autoScrollTimerRef.current = window.setTimeout(() => {
-        if (!previewMode) setAutoScrolling(true);
-      }, 2000);
+      if (content.slug !== "hy-uoc" && content.slug !== "to-hong" && !previewMode) {
+        autoScrollTimerRef.current = window.setTimeout(() => {
+          setAutoScrolling(true);
+        }, 2000);
+      }
     }, revealDelay);
+    if (content.slug === "to-hong") {
+      return;
+    }
     const audio = getInteractiveAudio();
     if (audio) {
       audio.play().then(() => {
@@ -2201,7 +2284,7 @@ export function ChungDoiDemo({
   }
 
   function toggleAutoScroll() {
-    if (previewMode || !opened) return;
+    if (previewMode || !opened || content.slug === "hy-uoc") return;
     if (autoScrollingRef.current) {
       setAutoScrolling(false);
       return;
@@ -2276,7 +2359,7 @@ export function ChungDoiDemo({
             muted={audioMuted}
           />
         ) : (
-          <EnvelopeCover
+          content.slug === "to-hong" ? <ToHongCover content={content} onOpen={openInvitation} onReady={handleCoverReady} /> : <EnvelopeCover
             content={content}
             tokens={tokens}
             openPhase={openPhase}
@@ -2311,50 +2394,6 @@ export function ChungDoiDemo({
         <div className="contents" data-template-renderer={content.slug}>
           <AuditedTemplateRenderer content={content} />
         </div>
-      ) : content.slug === "double-phoenix-red" || content.slug === "double-phoenix-green" ? (
-        <PhoenixInvitation content={content} />
-      ) : content.slug === "song-hy-green" ? (
-        <SongHyGreenInvitation content={content} />
-      ) : content.slug === "song-hy-red" ? (
-        <SongHyRedInvitation content={content} />
-      ) : content.slug === "nhat-binh-red" ? (
-        <NhatBinhInvitation content={content} />
-      ) : content.slug === "co-ba-red" ? (
-        <CoBaInvitation content={content} />
-      ) : content.slug === "dragon-phoenix-red" ? (
-        <DragonPhoenixRedInvitation content={content} />
-      ) : content.slug === "dragon-phoenix-green" ? (
-        <DragonPhoenixGreenInvitation content={content} />
-      ) : content.slug === "dragon-phoenix-blue" ? (
-        <DragonPhoenixBlueInvitation content={content} />
-      ) : content.slug === "dragon-phoenix-black" ? (
-        <DragonPhoenixBlackInvitation content={content} />
-      ) : content.slug === "double-dragon-red" ? (
-        <DoubleDragonRedInvitation content={content} />
-      ) : content.slug === "double-dragon-blue" ? (
-        <DoubleDragonBlueInvitation content={content} />
-      ) : content.slug === "double-dragon-green" ? (
-        <SongLongXanhInvitation content={content} />
-      ) : content.slug === "royal-red" ? (
-        <RoyalRedInvitation content={content} />
-      ) : content.slug === "royal-blue" ? (
-        <RoyalBlueInvitation content={content} />
-      ) : content.slug === "royal-green" ? (
-        <RoyalGreenInvitation content={content} />
-      ) : content.slug === "maroon-love" ? (
-        <MaroonLoveInvitation content={content} />
-      ) : content.slug === "chateau-blue" ? (
-        <ChateauBlueInvitation content={content} />
-      ) : content.slug === "chateau-green" ? (
-        <ChateauGreenInvitation content={content} />
-      ) : content.slug === "qasr-green" ? (
-        <QasrGreenInvitation content={content} />
-      ) : content.slug === "qasr-gold" ? (
-        <QasrGoldInvitation content={content} />
-      ) : content.slug === "dragon-phoenix-v2-red" ? (
-        <DragonPhoenixV2Invitation content={content} />
-      ) : content.slug === "dragon-phoenix-v3-red" ? (
-        <DragonPhoenixV3Invitation content={content} />
       ) : (
         <div className="mx-auto max-w-[520px]" style={{ background: tokens.cardBg, minHeight: "100vh" }}>
           <InvitationBody content={content} tokens={tokens} />
@@ -2373,18 +2412,22 @@ export function ChungDoiDemo({
 
       {opened && !captureMode ? (
         <>
-          <PublicRsvpDialog
-            triggerClassName={
-              isPaginatedExperience
-                ? "bottom-auto left-3 top-3 sm:left-4"
-                : undefined
-            }
-          />
+          {content.slug !== "hy-uoc" ? (
+            <PublicRsvpDialog
+              triggerClassName={
+                isPaginatedExperience
+                  ? "bottom-auto left-3 top-3 sm:left-4"
+                  : undefined
+              }
+            />
+          ) : null}
           <div
             className={
-              isPaginatedExperience
-                ? "fixed right-3 top-20 z-40 flex flex-col items-end gap-3 sm:right-4"
-                : "fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:right-6"
+              content.slug === "hy-uoc"
+                ? "absolute left-3 top-3 z-40 flex flex-col items-start gap-3"
+                : isPaginatedExperience
+                  ? "fixed right-3 top-20 z-40 flex flex-col items-end gap-3 sm:right-4"
+                  : "fixed bottom-5 right-4 z-40 flex flex-col items-end gap-3 sm:right-6"
             }
           >
             {isPhysicalExperience && !previewMode ? (
@@ -2439,7 +2482,7 @@ export function ChungDoiDemo({
                 <RotateCcw aria-hidden className="size-5" strokeWidth={1.5} />
               </button>
             ) : null}
-            {!isPaginatedExperience && !previewMode ? (
+            {!isPaginatedExperience && !previewMode && content.slug !== "hy-uoc" ? (
               <button
                 type="button"
                 data-testid="invitation-auto-scroll-toggle"

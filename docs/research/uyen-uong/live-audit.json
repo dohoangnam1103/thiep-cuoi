@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-06T02:06:54.758Z",
+  "localOnly": true,
+  "longNames320px": true,
+  "brideFirst": true,
+  "emptySections": true,
+  "wishValidation": true,
+  "wishPersisted": true,
+  "rsvpPersisted": {
+    "attending": true,
+    "guests": 2
+  },
+  "editorAccess": true,
+  "fixturesDeletedOnExit": true
+}

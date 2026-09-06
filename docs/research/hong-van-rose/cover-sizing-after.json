@@ -1,0 +1,225 @@
+{
+  "results": [
+    {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "width": 732,
+      "height": 518,
+      "x": 594,
+      "y": 281,
+      "parentWidth": 732,
+      "naturalWidth": 732,
+      "naturalHeight": 518,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "width": 732,
+      "height": 518,
+      "x": 354,
+      "y": 191,
+      "parentWidth": 732,
+      "naturalWidth": 732,
+      "naturalHeight": 518,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "width": 732,
+      "height": 518,
+      "x": 274,
+      "y": 101,
+      "parentWidth": 732,
+      "naturalWidth": 732,
+      "naturalHeight": 518,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "width": 732,
+      "height": 518,
+      "x": 146,
+      "y": 125,
+      "parentWidth": 732,
+      "naturalWidth": 732,
+      "naturalHeight": 518,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "width": 640,
+      "height": 518,
+      "x": 64,
+      "y": 253,
+      "parentWidth": 640,
+      "naturalWidth": 640,
+      "naturalHeight": 518,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 767,
+        "height": 1024
+      },
+      "width": 340,
+      "height": 556,
+      "x": 213.5,
+      "y": 234,
+      "parentWidth": 340,
+      "naturalWidth": 340,
+      "naturalHeight": 556,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 640,
+        "height": 960
+      },
+      "width": 340,
+      "height": 556,
+      "x": 150,
+      "y": 202,
+      "parentWidth": 340,
+      "naturalWidth": 340,
+      "naturalHeight": 556,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 639,
+        "height": 960
+      },
+      "width": 310,
+      "height": 538,
+      "x": 164.5,
+      "y": 211,
+      "parentWidth": 310,
+      "naturalWidth": 310,
+      "naturalHeight": 538,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "width": 310,
+      "height": 538,
+      "x": 40,
+      "y": 153,
+      "parentWidth": 310,
+      "naturalWidth": 310,
+      "naturalHeight": 538,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 667
+      },
+      "width": 310,
+      "height": 538,
+      "x": 32.5,
+      "y": 64.5,
+      "parentWidth": 310,
+      "naturalWidth": 310,
+      "naturalHeight": 538,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "width": 253.5316162109375,
+      "height": 440,
+      "x": 33.23419952392578,
+      "y": 64,
+      "parentWidth": 253.5316162109375,
+      "naturalWidth": 310,
+      "naturalHeight": 538,
+      "centerError": 0.00000762939453125,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "width": 323.70654296875,
+      "height": 262,
+      "x": 260.146728515625,
+      "y": 64,
+      "parentWidth": 323.70654296875,
+      "naturalWidth": 640,
+      "naturalHeight": 518,
+      "centerError": 0,
+      "fits": true,
+      "buttonInside": true,
+      "titleInside": true,
+      "overflow": false
+    }
+  ],
+  "longNames": {
+    "height": 538,
+    "naturalHeight": 538,
+    "inside": true
+  }
+}

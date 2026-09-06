@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-06T05:12:41.762Z",
+  "base": "http://localhost:3000",
+  "results": [
+    {
+      "width": 390,
+      "sections": 11,
+      "cover": true,
+      "calendarSixRows": true,
+      "album": true,
+      "giftDialogsAndFocus": true,
+      "previewForm": true,
+      "overflow": false,
+      "brokenImages": [],
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "sections": 11,
+      "cover": true,
+      "calendarSixRows": true,
+      "album": true,
+      "giftDialogsAndFocus": true,
+      "previewForm": true,
+      "overflow": false,
+      "brokenImages": [],
+      "errors": []
+    },
+    {
+      "width": 320,
+      "sections": 11,
+      "cover": true,
+      "calendarSixRows": true,
+      "album": true,
+      "giftDialogsAndFocus": true,
+      "previewForm": true,
+      "overflow": false,
+      "brokenImages": [],
+      "errors": []
+    }
+  ]
+}

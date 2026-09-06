@@ -1,0 +1,36 @@
+{
+  "method": "Built-in image_gen",
+  "date": "2026-09-05",
+  "assets": [
+    {
+      "name": "paper-red",
+      "prompt": "Generate one production web design texture asset, square 1024x1024. Full bleed uniform deep cinnabar red #990F16 fine premium wedding paper grain, matching traditional red Vietnamese wedding stationery. Very fine subtle fibers, subdued tactile matte paper, evenly illuminated front-on. Absolutely NO text, symbols, border, flowers, objects, crease, center seam, vignette, lighting gradient or shadows. This is a flat material texture, not a mockup. All four edges similar tone. Not required mathematically seamless; intended background-size cover.",
+      "source": "/Users/namdo/.codex/generated_images/01a06f26-6b1c-7720-9d96-687edb746cc4/exec-c09b6fb4-e4b8-448e-a486-0e7011782602.png"
+    },
+    {
+      "name": "paper-ivory",
+      "prompt": "Generate one production web texture asset, square 1024x1024. Full bleed uniform warm ivory cream #F8F0DF premium wedding paper. Very subtle fine organic paper grain, restrained tactile matte fibers, evenly illuminated front-on. Absolutely NO text, symbols, border, flowers, objects, crease, center seam, vignette, lighting gradient or shadows. This is a flat material texture not a mockup. All four edges similar tone. Not required mathematically seamless, background-size cover.",
+      "source": "/Users/namdo/.codex/generated_images/01a06f26-6b1c-7720-9d96-687edb746cc4/exec-bbeb2762-ff1c-4705-b1ea-b9eb7b52d7ea.png"
+    },
+    {
+      "name": "peony-corner-gold",
+      "prompt": "Production isolated decorative PNG asset on genuine TRANSPARENT background. One delicate Vietnamese wedding stationery peony engraving in muted antique gold #B58A4B. L-shaped upper-left corner composition: a large open peony at upper left, two smaller buds and gracefully trailing fine leaves extending right across top and down left side. Center and bottom right remain completely transparent. Fine clean gold outline petals, NO solid white or colored petal fill, no background paper, no rectangle, no text, no border, no shadows. Entire flower and leaf tips contained within canvas with 5 percent transparent padding; no clipping. 1024x1024. Elegant precise engraved botanical line art, restrained enough for a red wedding invitation cover.",
+      "source": "/Users/namdo/.codex/generated_images/01a06f26-6b1c-7720-9d96-687edb746cc4/exec-e846d34d-0067-41d3-8f9d-0c3e85a13cc1.png"
+    },
+    {
+      "name": "peony-sprig-gold",
+      "prompt": "Production isolated decorative PNG asset on genuine TRANSPARENT background. A single small graceful peony botanical sprig in muted antique gold #B58A4B, one open flower, one small bud, a few leaves and a curving stem. Delicate precise outline engraving, NO filled white petals, no background, no text, no shadows or frames. Vertical diagonal composition growing upward to the right, entire tips inside canvas with 8 percent transparent padding. 1024x1024. Used at lower right of a wedding photo arch on ivory paper. Match refined traditional Vietnamese red and cream wedding stationery.",
+      "source": "/Users/namdo/.codex/generated_images/01a06f26-6b1c-7720-9d96-687edb746cc4/exec-1a39eff0-1df1-41e7-aea4-6f457b124383.png"
+    },
+    {
+      "name": "envelope-front",
+      "prompt": "Production isolated image asset, portrait 1024x1536, genuine TRANSPARENT background. One single RED WEDDING MONEY ENVELOPE FRONT FACE, completely straight-on orthographic view, rectangle occupies x=10%-90%, y=6%-94% of canvas. Rich matte cinnabar red #990F16 very fine paper grain. Thin muted antique gold inset border with small geometric traditional corner flourishes. Delicate gold engraved peony at bottom left restricted to lowest quarter. Front surface completely continuous: NO flap, NO triangle seams, NO round seals, NO text, NO characters, NO nameplate, NO symbols. Upper center and lower center blank for separately layered real typography and double happiness emblem. Minimal realistic thickness at bottom edge, no cast shadow outside silhouette. Clean cutout transparent everywhere outside envelope. Fine expensive Vietnamese wedding stationery, flat front view, no props.",
+      "source": "/Users/namdo/.codex/generated_images/01a06f26-6b1c-7720-9d96-687edb746cc4/exec-4bfc0bc9-5e52-4ddb-a8ea-2aaa045a4169.png"
+    },
+    {
+      "name": "envelope-back",
+      "prompt": "Production isolated image asset, portrait 1024x1536, genuine TRANSPARENT background. One single RED WEDDING MONEY ENVELOPE BACK FACE, completely straight-on orthographic view. Rectangle occupies x=10%-90%, y=6%-94% canvas. Matte cinnabar red #990F16 fine paper grain. A closed triangular folding flap in upper third, neat fold seams, restrained thin antique gold line along flap edges. NO seal, NO text, NO symbols, NO flowers, NO nameplate, no props. Minimal paper thickness, no external cast shadow. This is optional back-face illustration for the same slim rectangular Vietnamese wedding money envelope; clean cutout transparent outside silhouette. Entire envelope contained in frame.",
+      "source": "/Users/namdo/.codex/generated_images/01a06f26-6b1c-7720-9d96-687edb746cc4/exec-a542fb89-330a-4f04-bb7f-b1d0543a78fa.png"
+    }
+  ]
+}

@@ -39,6 +39,7 @@ export function createArtTemplateManifest<const TSlug extends string>(
     slug: input.slug,
     viRouteSlug: input.viRouteSlug,
     rendererExport: input.rendererExport,
+    ceremonyRendering: "inline-all",
     heroImageCount: input.heroImageCount,
     catalog: {
       name: input.name,

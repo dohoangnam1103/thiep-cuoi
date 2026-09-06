@@ -1,0 +1,25 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "capturedAt": "2026-09-06T02:02:11.489Z",
+  "templates": [
+    {
+      "slug": "uyen-uong",
+      "route": "uyen-uong",
+      "height": 11464,
+      "embeddedFrames": [
+        {
+          "index": 0,
+          "googleMap": true,
+          "loadedTiles": 1,
+          "box": {
+            "x": 24,
+            "y": 4480.109375,
+            "width": 432,
+            "height": 310
+          },
+          "file": "uyen-uong-frame-0.png"
+        }
+      ]
+    }
+  ]
+}

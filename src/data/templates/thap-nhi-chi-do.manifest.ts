@@ -28,7 +28,7 @@ const baseDemoContent = createTemplateDemoContent({
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "thap-nhi-chi-do",
-  rendererExport: "ThapNhiChiInvitation",
+  rendererExport: "ThapNhiChiInvitation", ceremonyRendering: "post-template",
   heroImageCount: 0,
   catalog: {
     name: "Vietnamese Zodiac Red",

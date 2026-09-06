@@ -8,7 +8,7 @@ const slug = "zen-sand";
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "tinh-sa",
-  rendererExport: "ZenSandInvitation",
+  rendererExport: "ZenSandInvitation", ceremonyRendering: "post-template",
   catalog: {
     name: "Zen Sand",
     title: "Zen Sand Wedding Invitation - Quiet Japanese Minimalism | Thiệp Mừng Online",

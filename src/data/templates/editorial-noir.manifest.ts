@@ -9,6 +9,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "hac-ban-tin",
   rendererExport: "EditorialNoirInvitation",
+  ceremonyRendering: "post-template",
   catalog: {
     name: "Editorial Noir",
     title: "Editorial Noir Wedding Invitation - Bold Magazine Layout | Thiệp Mừng Online",

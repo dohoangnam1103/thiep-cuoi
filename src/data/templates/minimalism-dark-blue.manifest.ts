@@ -29,7 +29,7 @@ const description = "Thiệp cưới tối giản trên nền giấy ngà, tông
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "minimalism-xanh-dam",
-  rendererExport: "MinimalismDarkBlueInvitation",
+  rendererExport: "MinimalismDarkBlueInvitation", ceremonyRendering: "inline-all",
   heroImageCount: 2,
   catalog: {
     name: "Minimalism Xanh Đậm",

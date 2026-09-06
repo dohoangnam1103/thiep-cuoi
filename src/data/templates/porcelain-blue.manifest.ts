@@ -36,7 +36,7 @@ const description = "Thiệp cưới Bạch Sứ Lam với hoa văn gốm xanh c
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "bach-su-lam",
-  rendererExport: "PorcelainBlueInvitation",
+  rendererExport: "PorcelainBlueInvitation", ceremonyRendering: "inline-all",
   heroImageCount: 0,
   catalog: {
     name: "Bạch Sứ Lam",

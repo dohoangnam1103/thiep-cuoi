@@ -1162,6 +1162,25 @@ html.lenis body {
   }
 }
 
+/* Bìa liền một mặt (xem chungdoi-cover-variant-policy.ts): cả tấm bìa trượt
+ * thẳng lên trong một nhịp, không nghiêng và không nhún trước như
+ * `demo-envelope-away` — mẫu này không có con dấu để "bật" ra nên mọi cử động
+ * phụ chỉ làm mất cảm giác một tờ giấy liền. Giữ opacity 1 tới 82% để tấm bìa
+ * còn thấy rõ đúng lúc nó rời khung. */
+@keyframes demo-single-panel-cover-away {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-112vh);
+    opacity: 0;
+  }
+}
+
 @keyframes demo-cover-out {
   0%,
   55% {

@@ -9,6 +9,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "doraemon-door",
   rendererExport: "DoraemonDoorInvitation",
+  ceremonyRendering: "inline-all",
   heroImageCount: 0,
   catalog: {
     name: "Doraemon Door",

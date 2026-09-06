@@ -1,0 +1,422 @@
+[
+  {
+    "route": "song-hy-do",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "width": 732,
+    "height": 517.5,
+    "x": 354,
+    "y": 191.25,
+    "naturalWidth": 732,
+    "naturalHeight": 518,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 56.001708984375,
+        "height": 56.00177001953125
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 732,
+        "height": 517.5
+      }
+    ]
+  },
+  {
+    "route": "song-hy-do",
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "width": 732,
+    "height": 517.5,
+    "x": 146,
+    "y": 125.25,
+    "naturalWidth": 732,
+    "naturalHeight": 518,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 57.34423828125,
+        "height": 57.344268798828125
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 732,
+        "height": 517.5
+      }
+    ]
+  },
+  {
+    "route": "song-hy-do",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "width": 640,
+    "height": 517.5,
+    "x": 64,
+    "y": 253.25,
+    "naturalWidth": 640,
+    "naturalHeight": 518,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 59.12969970703125,
+        "height": 59.12969970703125
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 640,
+        "height": 517.5
+      }
+    ]
+  },
+  {
+    "route": "song-hy-do",
+    "viewport": {
+      "width": 640,
+      "height": 960
+    },
+    "width": 340,
+    "height": 556,
+    "x": 150,
+    "y": 202,
+    "naturalWidth": 340,
+    "naturalHeight": 556,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 59.130859375,
+        "height": 59.130859375
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 340,
+        "height": 556
+      }
+    ]
+  },
+  {
+    "route": "song-hy-do",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "width": 310,
+    "height": 537.5,
+    "x": 40,
+    "y": 153.25,
+    "naturalWidth": 310,
+    "naturalHeight": 538,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 57.487396240234375,
+        "height": 57.487396240234375
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 310,
+        "height": 537.5
+      }
+    ]
+  },
+  {
+    "route": "song-hy-do",
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "width": 253.5316162109375,
+    "height": 439.591064453125,
+    "x": 33.23419952392578,
+    "y": 64.2044677734375,
+    "naturalWidth": 310,
+    "naturalHeight": 538,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 45.82305908203125,
+        "height": 45.82305908203125
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 253.5316162109375,
+        "height": 439.591064453125
+      }
+    ]
+  },
+  {
+    "route": "gam-hoa-do",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "width": 732,
+    "height": 517.5,
+    "x": 354,
+    "y": 191.25,
+    "naturalWidth": 732,
+    "naturalHeight": 518,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 56.529296875,
+        "height": 56.529296875
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 732,
+        "height": 517.5
+      }
+    ]
+  },
+  {
+    "route": "gam-hoa-do",
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "width": 732,
+    "height": 517.5,
+    "x": 146,
+    "y": 125.25,
+    "naturalWidth": 732,
+    "naturalHeight": 518,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 57.251922607421875,
+        "height": 57.251922607421875
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 732,
+        "height": 517.5
+      }
+    ]
+  },
+  {
+    "route": "gam-hoa-do",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "width": 640,
+    "height": 517.5,
+    "x": 64,
+    "y": 253.25,
+    "naturalWidth": 640,
+    "naturalHeight": 518,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 59.036376953125,
+        "height": 59.036376953125
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 640,
+        "height": 517.5
+      }
+    ]
+  },
+  {
+    "route": "gam-hoa-do",
+    "viewport": {
+      "width": 640,
+      "height": 960
+    },
+    "width": 340,
+    "height": 556,
+    "x": 150,
+    "y": 202,
+    "naturalWidth": 340,
+    "naturalHeight": 556,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 59.209014892578125,
+        "height": 59.20903015136719
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 340,
+        "height": 556
+      }
+    ]
+  },
+  {
+    "route": "gam-hoa-do",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "width": 310,
+    "height": 537.5,
+    "x": 40,
+    "y": 153.25,
+    "naturalWidth": 310,
+    "naturalHeight": 538,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 57.53822326660156,
+        "height": 57.53822326660156
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 310,
+        "height": 537.5
+      }
+    ]
+  },
+  {
+    "route": "gam-hoa-do",
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "width": 253.5316162109375,
+    "height": 439.591064453125,
+    "x": 33.23419952392578,
+    "y": 64.2044677734375,
+    "naturalWidth": 310,
+    "naturalHeight": 538,
+    "children": [
+      {
+        "class": "absolute left-1/2 top-[50px] z-30 flex size-14 items-center justify-center rounded-full",
+        "width": 45.80255126953125,
+        "height": 45.80255889892578
+      },
+      {
+        "class": "relative rounded-lg",
+        "width": 253.5316162109375,
+        "height": 439.591064453125
+      }
+    ]
+  },
+  {
+    "route": "hong-van-hoa-hong",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "width": 980,
+    "height": 612.5,
+    "x": 230,
+    "y": 143.75,
+    "naturalWidth": 980,
+    "naturalHeight": 613,
+    "children": [
+      {
+        "class": "relative aspect-[4/5] w-[min(86vw,520px)] overflow-hidden rounded-[2rem] border border-[#d7a85b]/70 bg-[#7b111d] shadow-[0_28px_80px_-18px_rgba(0,0,0,.7)] sm:aspect-[16/10] sm:w-[min(82vw,980px)]",
+        "width": 980,
+        "height": 612.5
+      }
+    ]
+  },
+  {
+    "route": "hong-van-hoa-hong",
+    "viewport": {
+      "width": 1024,
+      "height": 768
+    },
+    "width": 980,
+    "height": 524.78125,
+    "x": 22,
+    "y": 121.609375,
+    "naturalWidth": 980,
+    "naturalHeight": 525,
+    "children": [
+      {
+        "class": "relative aspect-[4/5] w-[min(86vw,520px)] overflow-hidden rounded-[2rem] border border-[#d7a85b]/70 bg-[#7b111d] shadow-[0_28px_80px_-18px_rgba(0,0,0,.7)] sm:aspect-[16/10] sm:w-[min(82vw,980px)]",
+        "width": 839.671875,
+        "height": 524.78125
+      }
+    ]
+  },
+  {
+    "route": "hong-van-hoa-hong",
+    "viewport": {
+      "width": 768,
+      "height": 1024
+    },
+    "width": 736,
+    "height": 295.596923828125,
+    "x": 16,
+    "y": 364.2015380859375,
+    "naturalWidth": 980,
+    "naturalHeight": 394,
+    "children": [
+      {
+        "class": "relative aspect-[4/5] w-[min(86vw,520px)] overflow-hidden rounded-[2rem] border border-[#d7a85b]/70 bg-[#7b111d] shadow-[0_28px_80px_-18px_rgba(0,0,0,.7)] sm:aspect-[16/10] sm:w-[min(82vw,980px)]",
+        "width": 472.9551086425781,
+        "height": 295.596923828125
+      }
+    ]
+  },
+  {
+    "route": "hong-van-hoa-hong",
+    "viewport": {
+      "width": 640,
+      "height": 960
+    },
+    "width": 524.796875,
+    "height": 327.984375,
+    "x": 57.59375,
+    "y": 316,
+    "naturalWidth": 525,
+    "naturalHeight": 328,
+    "children": [
+      {
+        "class": "relative aspect-[4/5] w-[min(86vw,520px)] overflow-hidden rounded-[2rem] border border-[#d7a85b]/70 bg-[#7b111d] shadow-[0_28px_80px_-18px_rgba(0,0,0,.7)] sm:aspect-[16/10] sm:w-[min(82vw,980px)]",
+        "width": 524.796875,
+        "height": 327.984375
+      }
+    ]
+  },
+  {
+    "route": "hong-van-hoa-hong",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "width": 335.390625,
+    "height": 419.234375,
+    "x": 27.296875,
+    "y": 212.375,
+    "naturalWidth": 335,
+    "naturalHeight": 419,
+    "children": [
+      {
+        "class": "relative aspect-[4/5] w-[min(86vw,520px)] overflow-hidden rounded-[2rem] border border-[#d7a85b]/70 bg-[#7b111d] shadow-[0_28px_80px_-18px_rgba(0,0,0,.7)] sm:aspect-[16/10] sm:w-[min(82vw,980px)]",
+        "width": 335.390625,
+        "height": 419.234375
+      }
+    ]
+  },
+  {
+    "route": "hong-van-hoa-hong",
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "width": 275.1875,
+    "height": 343.984375,
+    "x": 22.40625,
+    "y": 112,
+    "naturalWidth": 275,
+    "naturalHeight": 344,
+    "children": [
+      {
+        "class": "relative aspect-[4/5] w-[min(86vw,520px)] overflow-hidden rounded-[2rem] border border-[#d7a85b]/70 bg-[#7b111d] shadow-[0_28px_80px_-18px_rgba(0,0,0,.7)] sm:aspect-[16/10] sm:w-[min(82vw,980px)]",
+        "width": 275.1875,
+        "height": 343.984375
+      }
+    ]
+  }
+]

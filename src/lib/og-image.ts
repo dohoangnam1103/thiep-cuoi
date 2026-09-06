@@ -30,6 +30,7 @@ const FONT_FILE_BY_FAMILY: Record<string, string> = {
   "1FTV VIP Signora": "1FTV-VIP-Signora-Regular.otf",
   "SVN-HC Haydon Brush": "SVN-HC-Haydon-Brush.otf",
   Lora: "Lora-Regular.ttf",
+  "Viaoda Libre": "ViaodaLibre-Regular.ttf",
   "The Nautigal": "TheNautigal-Regular.ttf",
   "SVN-HC Built Titling": "SVN-HC-Built-Titling.otf",
   "Alex Brush": "AlexBrush-Regular.ttf",

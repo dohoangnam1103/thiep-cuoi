@@ -31,7 +31,7 @@ const giftAssets = [
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "hoang-kim-ii-xanh",
-  rendererExport: "RoyalV2GreenInvitation",
+  rendererExport: "RoyalV2GreenInvitation", ceremonyRendering: "post-template",
   heroImageCount: 0,
   catalog: {
     name: "Royal V2 Green",

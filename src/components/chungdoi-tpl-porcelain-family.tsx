@@ -19,7 +19,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 
 import styles from "./chungdoi-tpl-porcelain-family.module.css";
 
@@ -360,6 +360,7 @@ export function PorcelainFamilyInvitation({
   const t = useTranslations("invitationTemplate");
   const config = porcelainTemplateConfigs[templateSlug];
   const { couple, families, venue, gallery } = content;
+  const ceremonies = invitationCeremonies(content);
   const people = orderedCouple(content);
   const mapQuery = venue.mapAddress || venue.address;
   const dressColors = (content.dressCodeColors ?? "")
@@ -443,9 +444,16 @@ export function PorcelainFamilyInvitation({
                 </FitText>
                 <p className={styles.birthOrder}>{people[1].birthOrder}</p>
               </div>
-              <div>
-                <p className={styles.ceremonyHeader}>{couple.ceremonyHeader}</p>
-                <DateComposition date={couple.ceremonyDate} time={couple.ceremonyTime} ceremony />
+              <div data-template-ceremonies className={styles.ceremonyList}>
+                {ceremonies.map((ceremony, index) => (
+                  <div
+                    key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
+                    data-template-ceremony-item
+                  >
+                    <p className={styles.ceremonyHeader}>{ceremony.title}</p>
+                    <DateComposition date={ceremony.date} time={ceremony.time} ceremony />
+                  </div>
+                ))}
               </div>
             </section>
           </div>

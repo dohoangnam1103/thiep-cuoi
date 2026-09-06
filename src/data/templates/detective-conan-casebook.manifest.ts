@@ -17,6 +17,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "detective-conan-casebook",
   rendererExport: "DetectiveConanCasebookInvitation",
+  ceremonyRendering: "inline-all",
   heroImageCount: 0,
   catalog: {
     name: "Hồ Sơ Hôn Lễ 4869",

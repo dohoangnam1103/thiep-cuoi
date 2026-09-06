@@ -6,7 +6,7 @@ const slug = "nguyet-anh-sleeve";
 export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "nguyet-anh-sleeve",
-  rendererExport: "NguyetAnhSleeveInvitation",
+  rendererExport: "NguyetAnhSleeveInvitation", ceremonyRendering: "inline-all",
   heroImageCount: 2,
   catalog: {
     name: "Nguyệt Ảnh Sleeve",
