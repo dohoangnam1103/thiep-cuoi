@@ -1,0 +1,432 @@
+[
+  {
+    "slug": "minimalism-green",
+    "width": 320,
+    "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+    "form": {
+      "x": 24,
+      "y": 91.15625,
+      "width": 272,
+      "height": 196,
+      "top": 91.15625,
+      "right": 296,
+      "bottom": 287.15625,
+      "left": 24
+    },
+    "image": {
+      "x": 6.40625,
+      "y": -24.84375,
+      "width": 307.1875,
+      "height": 278.828125,
+      "top": -24.84375,
+      "right": 313.59375,
+      "bottom": 253.984375,
+      "left": 6.40625
+    },
+    "list": {
+      "x": 24,
+      "y": 342.15625,
+      "width": 272,
+      "height": 500,
+      "top": 342.15625,
+      "right": 296,
+      "bottom": 842.15625,
+      "left": 24
+    },
+    "formGap": 55,
+    "artworkGap": 88.171875,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 55
+    }
+  },
+  {
+    "slug": "minimalism-brown",
+    "width": 320,
+    "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+    "form": {
+      "x": 24,
+      "y": 81,
+      "width": 272,
+      "height": 206,
+      "top": 81,
+      "right": 296,
+      "bottom": 287,
+      "left": 24
+    },
+    "image": {
+      "x": 0,
+      "y": 29,
+      "width": 320,
+      "height": 235.265625,
+      "top": 29,
+      "right": 320,
+      "bottom": 264.265625,
+      "left": 0
+    },
+    "list": {
+      "x": 24,
+      "y": 352,
+      "width": 272,
+      "height": 500,
+      "top": 352,
+      "right": 296,
+      "bottom": 852,
+      "left": 24
+    },
+    "formGap": 65,
+    "artworkGap": 87.734375,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 65
+    }
+  },
+  {
+    "slug": "minimalism-green",
+    "width": 390,
+    "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+    "form": {
+      "x": 45,
+      "y": 91.59375,
+      "width": 300,
+      "height": 196,
+      "top": 91.59375,
+      "right": 345,
+      "bottom": 287.59375,
+      "left": 45
+    },
+    "image": {
+      "x": 7.796875,
+      "y": -24.40625,
+      "width": 374.390625,
+      "height": 339.828125,
+      "top": -24.40625,
+      "right": 382.1875,
+      "bottom": 315.421875,
+      "left": 7.796875
+    },
+    "list": {
+      "x": 24,
+      "y": 342.59375,
+      "width": 342,
+      "height": 500,
+      "top": 342.59375,
+      "right": 366,
+      "bottom": 842.59375,
+      "left": 24
+    },
+    "formGap": 55,
+    "artworkGap": 27.171875,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 55
+    }
+  },
+  {
+    "slug": "minimalism-brown",
+    "width": 390,
+    "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+    "form": {
+      "x": 45,
+      "y": 81.125,
+      "width": 300,
+      "height": 206,
+      "top": 81.125,
+      "right": 345,
+      "bottom": 287.125,
+      "left": 45
+    },
+    "image": {
+      "x": 0,
+      "y": 29.125,
+      "width": 390,
+      "height": 286.734375,
+      "top": 29.125,
+      "right": 390,
+      "bottom": 315.859375,
+      "left": 0
+    },
+    "list": {
+      "x": 24,
+      "y": 352.125,
+      "width": 342,
+      "height": 500,
+      "top": 352.125,
+      "right": 366,
+      "bottom": 852.125,
+      "left": 24
+    },
+    "formGap": 65,
+    "artworkGap": 36.265625,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 65
+    }
+  },
+  {
+    "slug": "minimalism-brown",
+    "width": 439,
+    "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+    "form": {
+      "x": 69.5,
+      "y": 69.5625,
+      "width": 300,
+      "height": 206,
+      "top": 69.5625,
+      "right": 369.5,
+      "bottom": 275.5625,
+      "left": 69.5
+    },
+    "image": {
+      "x": 0,
+      "y": 17.5625,
+      "width": 439,
+      "height": 322.765625,
+      "top": 17.5625,
+      "right": 439,
+      "bottom": 340.328125,
+      "left": 0
+    },
+    "list": {
+      "x": 24,
+      "y": 364.328125,
+      "width": 391,
+      "height": 500,
+      "top": 364.328125,
+      "right": 415,
+      "bottom": 864.328125,
+      "left": 24
+    },
+    "formGap": 88.765625,
+    "artworkGap": 24,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 65
+    }
+  },
+  {
+    "slug": "minimalism-green",
+    "width": 439,
+    "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+    "form": {
+      "x": 69.5,
+      "y": 71.90625,
+      "width": 300,
+      "height": 196,
+      "top": 71.90625,
+      "right": 369.5,
+      "bottom": 267.90625,
+      "left": 69.5
+    },
+    "image": {
+      "x": 8.78125,
+      "y": -44.09375,
+      "width": 421.4375,
+      "height": 382.53125,
+      "top": -44.09375,
+      "right": 430.21875,
+      "bottom": 338.4375,
+      "left": 8.78125
+    },
+    "list": {
+      "x": 24,
+      "y": 362.4375,
+      "width": 391,
+      "height": 500,
+      "top": 362.4375,
+      "right": 415,
+      "bottom": 862.4375,
+      "left": 24
+    },
+    "formGap": 94.53125,
+    "artworkGap": 24,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 64.53125
+    }
+  },
+  {
+    "slug": "minimalism-brown",
+    "width": 480,
+    "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+    "form": {
+      "x": 90,
+      "y": 55,
+      "width": 300,
+      "height": 206,
+      "top": 55,
+      "right": 390,
+      "bottom": 261,
+      "left": 90
+    },
+    "image": {
+      "x": 0,
+      "y": 3,
+      "width": 480,
+      "height": 352.90625,
+      "top": 3,
+      "right": 480,
+      "bottom": 355.90625,
+      "left": 0
+    },
+    "list": {
+      "x": 24,
+      "y": 379.90625,
+      "width": 432,
+      "height": 500,
+      "top": 379.90625,
+      "right": 456,
+      "bottom": 879.90625,
+      "left": 24
+    },
+    "formGap": 118.90625,
+    "artworkGap": 24,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 88.90625
+    }
+  },
+  {
+    "slug": "minimalism-green",
+    "width": 480,
+    "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+    "form": {
+      "x": 90,
+      "y": 54.34375,
+      "width": 300,
+      "height": 196,
+      "top": 54.34375,
+      "right": 390,
+      "bottom": 250.34375,
+      "left": 90
+    },
+    "image": {
+      "x": 9.59375,
+      "y": -61.65625,
+      "width": 460.796875,
+      "height": 418.25,
+      "top": -61.65625,
+      "right": 470.390625,
+      "bottom": 356.59375,
+      "left": 9.59375
+    },
+    "list": {
+      "x": 24,
+      "y": 380.59375,
+      "width": 432,
+      "height": 500,
+      "top": 380.59375,
+      "right": 456,
+      "bottom": 880.59375,
+      "left": 24
+    },
+    "formGap": 130.25,
+    "artworkGap": 24,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 100.25
+    }
+  },
+  {
+    "slug": "minimalism-green",
+    "width": 1440,
+    "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+    "form": {
+      "x": 495,
+      "y": 157.984375,
+      "width": 450,
+      "height": 236,
+      "top": 157.984375,
+      "right": 945,
+      "bottom": 393.984375,
+      "left": 495
+    },
+    "image": {
+      "x": 455,
+      "y": -20.015625,
+      "width": 530,
+      "height": 481.0625,
+      "top": -20.015625,
+      "right": 985,
+      "bottom": 461.046875,
+      "left": 455
+    },
+    "list": {
+      "x": 420,
+      "y": 493.984375,
+      "width": 600,
+      "height": 500,
+      "top": 493.984375,
+      "right": 1020,
+      "bottom": 993.984375,
+      "left": 420
+    },
+    "formGap": 100,
+    "artworkGap": 32.9375,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 100
+    }
+  },
+  {
+    "slug": "minimalism-brown",
+    "width": 1440,
+    "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+    "form": {
+      "x": 520,
+      "y": 112.515625,
+      "width": 400,
+      "height": 296,
+      "top": 112.515625,
+      "right": 920,
+      "bottom": 408.515625,
+      "left": 520
+    },
+    "image": {
+      "x": 395,
+      "y": 13.515625,
+      "width": 650,
+      "height": 477.890625,
+      "top": 13.515625,
+      "right": 1045,
+      "bottom": 491.40625,
+      "left": 395
+    },
+    "list": {
+      "x": 420,
+      "y": 538.515625,
+      "width": 600,
+      "height": 500,
+      "top": 538.515625,
+      "right": 1020,
+      "bottom": 1038.515625,
+      "left": 420
+    },
+    "formGap": 130,
+    "artworkGap": 47.109375,
+    "overflow": false,
+    "wishes": 10,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 130
+    }
+  }
+]

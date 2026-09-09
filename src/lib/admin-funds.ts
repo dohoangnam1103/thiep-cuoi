@@ -6,6 +6,8 @@ export type ProjectFundSummary = {
   totalRevenue: number;
   totalWithdrawn: number;
   recordedBalance: number;
+  taxReserve: number;
+  remainingBalance: number;
   activeWithdrawalCount: number;
   voidedWithdrawalCount: number;
   paidWithoutDateCount: number;
@@ -50,13 +52,18 @@ export async function getProjectFundSummary(): Promise<ProjectFundSummary> {
   const slideshowAmount = slideshowRevenue._sum.amount ?? 0;
   const totalRevenue = invitationAmount + slideshowAmount;
   const totalWithdrawn = activeWithdrawals._sum.amount ?? 0;
+  const recordedBalance = totalRevenue - totalWithdrawn;
+  // Reserve 10% of all collected revenue, rounded once to whole VND.
+  const taxReserve = Math.round(totalRevenue / 10);
 
   return {
     invitationRevenue: invitationAmount,
     slideshowRevenue: slideshowAmount,
     totalRevenue,
     totalWithdrawn,
-    recordedBalance: totalRevenue - totalWithdrawn,
+    recordedBalance,
+    taxReserve,
+    remainingBalance: recordedBalance - taxReserve,
     activeWithdrawalCount,
     voidedWithdrawalCount,
     paidWithoutDateCount: invitationPaidWithoutDate + slideshowPaidWithoutDate,

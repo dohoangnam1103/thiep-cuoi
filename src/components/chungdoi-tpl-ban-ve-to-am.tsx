@@ -488,7 +488,7 @@ export function BanVeToAmInvitation({
             <small>{invitationT("and")}</small>
             <span>{people[1].shortName}</span>
           </p>
-          <p className={styles.brand}>{invitationT("brandDomain")}</p>
+          <p data-invitation-clearance="margin" className={styles.brand}>{invitationT("brandDomain")}</p>
         </div>
       </footer>
     </main>

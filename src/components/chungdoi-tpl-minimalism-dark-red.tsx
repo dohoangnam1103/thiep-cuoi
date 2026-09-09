@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import guestbookStyles from "./minimalism-guestbook.module.css";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
@@ -646,25 +647,29 @@ function MinimalismInvitation({
 
         {/* WISHES — nằm trên tờ giấy note */}
         <div className="relative z-10 overflow-x-clip">
-          {palette.noteSrc !== null ? (
-            <img
-              src={palette.noteSrc ?? `${THEME}/papernote-background.webp`}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              className="pointer-events-none absolute left-1/2 top-[-15px] w-[120%] max-w-[650px] -translate-x-1/2 object-contain opacity-95 drop-shadow-[4px_4px_4px_rgba(0,0,0,0.25)] md:top-[-30px]"
-            />
-          ) : null}
           <section
-            className={`relative z-10 px-6 pb-8 [&_form]:max-w-[280px] md:[&_form]:max-w-[380px] [&_textarea]:h-[56px] md:[&_textarea]:h-[110px] ${palette.noteSrc === null ? "mx-auto my-12 w-[88%] max-w-[560px] rounded-[10px] bg-white pt-9 shadow-[4px_4px_10px_rgba(0,0,0,0.2)]" : "pt-[74px] md:pt-[120px]"}`}
+            data-minimalism-guestbook
+            className={`relative z-10 pb-8 [&_form]:max-w-[280px] md:[&_form]:max-w-[380px] [&_textarea]:h-[56px] md:[&_textarea]:h-[110px] ${palette.noteSrc === null ? "mx-auto my-12 w-[88%] max-w-[560px] rounded-[10px] bg-white shadow-[4px_4px_10px_rgba(0,0,0,0.2)]" : ""}`}
             style={{ ...SERIF, color: WINE }}
           >
-            <div className="text-center">
-              <WineHeading className="md:text-[24px]">Sổ Lưu Bút</WineHeading>
+            {/* Size the paper from the form while keeping its bouquet undistorted. */}
+            <div className={palette.noteSrc === null ? "grid grid-cols-1 items-start" : guestbookStyles.paperFrame}>
+              {palette.noteSrc !== null ? (
+                <div
+                  data-guestbook-paper
+                  aria-hidden
+                  className={guestbookStyles.paperArtwork}
+                />
+              ) : null}
+              <div className={`relative z-10 col-start-1 row-start-1 px-6 ${palette.noteSrc === null ? "pt-9" : `pt-[74px] md:pt-[120px] ${guestbookStyles.paperContent}`}`}>
+                <div className="text-center">
+                  <WineHeading className="md:text-[24px]">Sổ Lưu Bút</WineHeading>
+                </div>
+                <SharedWishForm accent={WINE} />
+              </div>
             </div>
-            <SharedWishForm accent={WINE} />
             {wishes.length > 0 ? (
-              <div className="chungdoi-scroll touch-pan-y mx-auto mt-8 max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
+              <div className="chungdoi-scroll touch-pan-y mx-auto mt-8 max-h-[500px] w-[calc(100%-3rem)] space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
                   <div key={`${w.name}-${i}`} className="rounded-[8px] border p-4 text-sm" style={{ borderColor: hexToRgba(WINE, 0.33), backgroundColor: "rgba(255,255,255,0.55)" }}>
                     <div className="flex items-start justify-between">
@@ -683,9 +688,6 @@ function MinimalismInvitation({
         {banks.length > 0 ? (
           <div className="relative z-10 overflow-x-clip">
             <CastleWatermark className="left-1/2 top-[6%] w-[155%]" />
-            {/* pt lớn: tờ giấy note ở khối WISHES là ảnh absolute cao ~0.91× bề
-                rộng (120% khung), nên khi ít lời chúc nó tràn xuống dưới section
-                đó — chừa chỗ để khối quà không bị đè. */}
             <section className="relative z-10 flex flex-col items-center px-6 pb-10 pt-28 text-center md:pt-36">
               <GiftEnvelope
                 templateSlug={content.slug}

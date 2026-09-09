@@ -1,0 +1,882 @@
+[
+  {
+    "slug": "minimalism-dark-red",
+    "width": 320,
+    "url": "http://localhost:3001/thiep/van-quoc-ha-nhung-20092026",
+    "form": {
+      "x": 24,
+      "y": 292.5,
+      "width": 272,
+      "height": 154,
+      "top": 292.5,
+      "right": 296,
+      "bottom": 446.5,
+      "left": 24
+    },
+    "image": {
+      "x": -32,
+      "y": 149.5,
+      "width": 384,
+      "height": 380.265625,
+      "top": 149.5,
+      "right": 352,
+      "bottom": 529.765625,
+      "left": -32
+    },
+    "list": {
+      "x": 24,
+      "y": 561.765625,
+      "width": 272,
+      "height": 84.75,
+      "top": 561.765625,
+      "right": 296,
+      "bottom": 646.515625,
+      "left": 24
+    },
+    "formGap": 115.265625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 1,
+    "paperGap": 31.997944894249827,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 115.265625
+    }
+  },
+  {
+    "slug": "minimalism-jade",
+    "width": 320,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-ngoc/demo",
+    "form": {
+      "x": 24,
+      "y": 85.5,
+      "width": 272,
+      "height": 154,
+      "top": 85.5,
+      "right": 296,
+      "bottom": 239.5,
+      "left": 24
+    },
+    "image": {
+      "x": -32,
+      "y": -57.5,
+      "width": 384,
+      "height": 380.265625,
+      "top": -57.5,
+      "right": 352,
+      "bottom": 322.765625,
+      "left": -32
+    },
+    "list": {
+      "x": 24,
+      "y": 354.765625,
+      "width": 272,
+      "height": 500,
+      "top": 354.765625,
+      "right": 296,
+      "bottom": 854.765625,
+      "left": 24
+    },
+    "formGap": 115.265625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.997944894249827,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 115.265625
+    }
+  },
+  {
+    "slug": "minimalism-dark-red",
+    "width": 390,
+    "url": "http://localhost:3001/thiep/van-quoc-ha-nhung-20092026",
+    "form": {
+      "x": 55,
+      "y": 287.484375,
+      "width": 280,
+      "height": 154,
+      "top": 287.484375,
+      "right": 335,
+      "bottom": 441.484375,
+      "left": 55
+    },
+    "image": {
+      "x": -39,
+      "y": 144.484375,
+      "width": 468,
+      "height": 391.46875,
+      "top": 144.484375,
+      "right": 429,
+      "bottom": 535.953125,
+      "left": -39
+    },
+    "list": {
+      "x": 24,
+      "y": 567.953125,
+      "width": 342,
+      "height": 84.75,
+      "top": 567.953125,
+      "right": 366,
+      "bottom": 652.703125,
+      "left": 24
+    },
+    "formGap": 126.46875,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 1,
+    "paperGap": 31.986264871116987,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 126.46875
+    }
+  },
+  {
+    "slug": "minimalism-jade",
+    "width": 390,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-ngoc/demo",
+    "form": {
+      "x": 55,
+      "y": 79.984375,
+      "width": 280,
+      "height": 154,
+      "top": 79.984375,
+      "right": 335,
+      "bottom": 233.984375,
+      "left": 55
+    },
+    "image": {
+      "x": -39,
+      "y": -63.015625,
+      "width": 468,
+      "height": 391.46875,
+      "top": -63.015625,
+      "right": 429,
+      "bottom": 328.453125,
+      "left": -39
+    },
+    "list": {
+      "x": 24,
+      "y": 360.453125,
+      "width": 342,
+      "height": 500,
+      "top": 360.453125,
+      "right": 366,
+      "bottom": 860.453125,
+      "left": 24
+    },
+    "formGap": 126.46875,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.986264871116987,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 126.46875
+    }
+  },
+  {
+    "slug": "minimalism-dark-red",
+    "width": 439,
+    "url": "http://localhost:3001/thiep/van-quoc-ha-nhung-20092026",
+    "form": {
+      "x": 79.5,
+      "y": 283.015625,
+      "width": 280,
+      "height": 154,
+      "top": 283.015625,
+      "right": 359.5,
+      "bottom": 437.015625,
+      "left": 79.5
+    },
+    "image": {
+      "x": -43.8984375,
+      "y": 140.015625,
+      "width": 526.796875,
+      "height": 399.328125,
+      "top": 140.015625,
+      "right": 482.8984375,
+      "bottom": 539.34375,
+      "left": -43.8984375
+    },
+    "list": {
+      "x": 24,
+      "y": 571.34375,
+      "width": 391,
+      "height": 84.75,
+      "top": 571.34375,
+      "right": 415,
+      "bottom": 656.09375,
+      "left": 24
+    },
+    "formGap": 134.328125,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 1,
+    "paperGap": 31.995693572372772,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 134.328125
+    }
+  },
+  {
+    "slug": "minimalism-jade",
+    "width": 439,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-ngoc/demo",
+    "form": {
+      "x": 79.5,
+      "y": 75.515625,
+      "width": 280,
+      "height": 154,
+      "top": 75.515625,
+      "right": 359.5,
+      "bottom": 229.515625,
+      "left": 79.5
+    },
+    "image": {
+      "x": -43.8984375,
+      "y": -67.484375,
+      "width": 526.796875,
+      "height": 399.328125,
+      "top": -67.484375,
+      "right": 482.8984375,
+      "bottom": 331.84375,
+      "left": -43.8984375
+    },
+    "list": {
+      "x": 24,
+      "y": 363.84375,
+      "width": 391,
+      "height": 500,
+      "top": 363.84375,
+      "right": 415,
+      "bottom": 863.84375,
+      "left": 24
+    },
+    "formGap": 134.328125,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.995693572372772,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 134.328125
+    }
+  },
+  {
+    "slug": "minimalism-dark-red",
+    "width": 480,
+    "url": "http://localhost:3001/thiep/van-quoc-ha-nhung-20092026",
+    "form": {
+      "x": 100,
+      "y": 280.53125,
+      "width": 280,
+      "height": 154,
+      "top": 280.53125,
+      "right": 380,
+      "bottom": 434.53125,
+      "left": 100
+    },
+    "image": {
+      "x": -48,
+      "y": 137.53125,
+      "width": 576,
+      "height": 405.890625,
+      "top": 137.53125,
+      "right": 528,
+      "bottom": 543.421875,
+      "left": -48
+    },
+    "list": {
+      "x": 24,
+      "y": 575.421875,
+      "width": 432,
+      "height": 84.75,
+      "top": 575.421875,
+      "right": 456,
+      "bottom": 660.171875,
+      "left": 24
+    },
+    "formGap": 140.890625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 1,
+    "paperGap": 31.98910484137474,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 140.890625
+    }
+  },
+  {
+    "slug": "minimalism-jade",
+    "width": 480,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-ngoc/demo",
+    "form": {
+      "x": 100,
+      "y": 73.03125,
+      "width": 280,
+      "height": 154,
+      "top": 73.03125,
+      "right": 380,
+      "bottom": 227.03125,
+      "left": 100
+    },
+    "image": {
+      "x": -48,
+      "y": -69.96875,
+      "width": 576,
+      "height": 405.890625,
+      "top": -69.96875,
+      "right": 528,
+      "bottom": 335.921875,
+      "left": -48
+    },
+    "list": {
+      "x": 24,
+      "y": 367.921875,
+      "width": 432,
+      "height": 500,
+      "top": 367.921875,
+      "right": 456,
+      "bottom": 867.921875,
+      "left": 24
+    },
+    "formGap": 140.890625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.98910484137474,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 140.890625
+    }
+  },
+  {
+    "slug": "minimalism-dark-red",
+    "width": 1440,
+    "url": "http://localhost:3001/thiep/van-quoc-ha-nhung-20092026",
+    "form": {
+      "x": 530,
+      "y": 352.3125,
+      "width": 380,
+      "height": 208,
+      "top": 352.3125,
+      "right": 910,
+      "bottom": 560.3125,
+      "left": 530
+    },
+    "image": {
+      "x": 395,
+      "y": 142.3125,
+      "width": 650,
+      "height": 536.765625,
+      "top": 142.3125,
+      "right": 1045,
+      "bottom": 679.078125,
+      "left": 395
+    },
+    "list": {
+      "x": 420,
+      "y": 711.078125,
+      "width": 600,
+      "height": 84.75,
+      "top": 711.078125,
+      "right": 1020,
+      "bottom": 795.828125,
+      "left": 420
+    },
+    "formGap": 150.765625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 1,
+    "paperGap": 31.98439565432909,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 150.765625
+    }
+  },
+  {
+    "slug": "minimalism-jade",
+    "width": 1440,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-ngoc/demo",
+    "form": {
+      "x": 530,
+      "y": 144.6875,
+      "width": 380,
+      "height": 208,
+      "top": 144.6875,
+      "right": 910,
+      "bottom": 352.6875,
+      "left": 530
+    },
+    "image": {
+      "x": 395,
+      "y": -65.3125,
+      "width": 650,
+      "height": 536.765625,
+      "top": -65.3125,
+      "right": 1045,
+      "bottom": 471.453125,
+      "left": 395
+    },
+    "list": {
+      "x": 420,
+      "y": 503.453125,
+      "width": 600,
+      "height": 500,
+      "top": 503.453125,
+      "right": 1020,
+      "bottom": 1003.453125,
+      "left": 420
+    },
+    "formGap": 150.765625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.98439565432915,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 150.765625
+    }
+  },
+  {
+    "slug": "minimalism-sky-blue",
+    "width": 320,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-bau-troi/demo",
+    "form": {
+      "x": 24,
+      "y": 85.5,
+      "width": 272,
+      "height": 154,
+      "top": 85.5,
+      "right": 296,
+      "bottom": 239.5,
+      "left": 24
+    },
+    "image": {
+      "x": -32,
+      "y": -57.5,
+      "width": 384,
+      "height": 380.265625,
+      "top": -57.5,
+      "right": 352,
+      "bottom": 322.765625,
+      "left": -32
+    },
+    "list": {
+      "x": 24,
+      "y": 354.765625,
+      "width": 272,
+      "height": 500,
+      "top": 354.765625,
+      "right": 296,
+      "bottom": 854.765625,
+      "left": 24
+    },
+    "formGap": 115.265625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.997944894249827,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 115.265625
+    }
+  },
+  {
+    "slug": "minimalism-powder-pink",
+    "width": 320,
+    "url": "http://localhost:3001/mau-thiep/minimalism-hong-phan/demo",
+    "form": {
+      "x": 24,
+      "y": 85.5,
+      "width": 272,
+      "height": 154,
+      "top": 85.5,
+      "right": 296,
+      "bottom": 239.5,
+      "left": 24
+    },
+    "image": {
+      "x": -32,
+      "y": -57.5,
+      "width": 384,
+      "height": 380.265625,
+      "top": -57.5,
+      "right": 352,
+      "bottom": 322.765625,
+      "left": -32
+    },
+    "list": {
+      "x": 24,
+      "y": 354.765625,
+      "width": 272,
+      "height": 500,
+      "top": 354.765625,
+      "right": 296,
+      "bottom": 854.765625,
+      "left": 24
+    },
+    "formGap": 115.265625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.997944894249827,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 115.265625
+    }
+  },
+  {
+    "slug": "minimalism-powder-pink",
+    "width": 390,
+    "url": "http://localhost:3001/mau-thiep/minimalism-hong-phan/demo",
+    "form": {
+      "x": 55,
+      "y": 79.984375,
+      "width": 280,
+      "height": 154,
+      "top": 79.984375,
+      "right": 335,
+      "bottom": 233.984375,
+      "left": 55
+    },
+    "image": {
+      "x": -39,
+      "y": -63.015625,
+      "width": 468,
+      "height": 391.46875,
+      "top": -63.015625,
+      "right": 429,
+      "bottom": 328.453125,
+      "left": -39
+    },
+    "list": {
+      "x": 24,
+      "y": 360.453125,
+      "width": 342,
+      "height": 500,
+      "top": 360.453125,
+      "right": 366,
+      "bottom": 860.453125,
+      "left": 24
+    },
+    "formGap": 126.46875,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.986264871116987,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 126.46875
+    }
+  },
+  {
+    "slug": "minimalism-sky-blue",
+    "width": 390,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-bau-troi/demo",
+    "form": {
+      "x": 55,
+      "y": 79.984375,
+      "width": 280,
+      "height": 154,
+      "top": 79.984375,
+      "right": 335,
+      "bottom": 233.984375,
+      "left": 55
+    },
+    "image": {
+      "x": -39,
+      "y": -63.015625,
+      "width": 468,
+      "height": 391.46875,
+      "top": -63.015625,
+      "right": 429,
+      "bottom": 328.453125,
+      "left": -39
+    },
+    "list": {
+      "x": 24,
+      "y": 360.453125,
+      "width": 342,
+      "height": 500,
+      "top": 360.453125,
+      "right": 366,
+      "bottom": 860.453125,
+      "left": 24
+    },
+    "formGap": 126.46875,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.986264871116987,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 126.46875
+    }
+  },
+  {
+    "slug": "minimalism-sky-blue",
+    "width": 439,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-bau-troi/demo",
+    "form": {
+      "x": 79.5,
+      "y": 75.515625,
+      "width": 280,
+      "height": 154,
+      "top": 75.515625,
+      "right": 359.5,
+      "bottom": 229.515625,
+      "left": 79.5
+    },
+    "image": {
+      "x": -43.8984375,
+      "y": -67.484375,
+      "width": 526.796875,
+      "height": 399.328125,
+      "top": -67.484375,
+      "right": 482.8984375,
+      "bottom": 331.84375,
+      "left": -43.8984375
+    },
+    "list": {
+      "x": 24,
+      "y": 363.84375,
+      "width": 391,
+      "height": 500,
+      "top": 363.84375,
+      "right": 415,
+      "bottom": 863.84375,
+      "left": 24
+    },
+    "formGap": 134.328125,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.995693572372772,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 134.328125
+    }
+  },
+  {
+    "slug": "minimalism-powder-pink",
+    "width": 439,
+    "url": "http://localhost:3001/mau-thiep/minimalism-hong-phan/demo",
+    "form": {
+      "x": 79.5,
+      "y": 75.515625,
+      "width": 280,
+      "height": 154,
+      "top": 75.515625,
+      "right": 359.5,
+      "bottom": 229.515625,
+      "left": 79.5
+    },
+    "image": {
+      "x": -43.8984375,
+      "y": -67.484375,
+      "width": 526.796875,
+      "height": 399.328125,
+      "top": -67.484375,
+      "right": 482.8984375,
+      "bottom": 331.84375,
+      "left": -43.8984375
+    },
+    "list": {
+      "x": 24,
+      "y": 363.84375,
+      "width": 391,
+      "height": 500,
+      "top": 363.84375,
+      "right": 415,
+      "bottom": 863.84375,
+      "left": 24
+    },
+    "formGap": 134.328125,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.995693572372772,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 134.328125
+    }
+  },
+  {
+    "slug": "minimalism-sky-blue",
+    "width": 480,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-bau-troi/demo",
+    "form": {
+      "x": 100,
+      "y": 73.03125,
+      "width": 280,
+      "height": 154,
+      "top": 73.03125,
+      "right": 380,
+      "bottom": 227.03125,
+      "left": 100
+    },
+    "image": {
+      "x": -48,
+      "y": -69.96875,
+      "width": 576,
+      "height": 405.890625,
+      "top": -69.96875,
+      "right": 528,
+      "bottom": 335.921875,
+      "left": -48
+    },
+    "list": {
+      "x": 24,
+      "y": 367.921875,
+      "width": 432,
+      "height": 500,
+      "top": 367.921875,
+      "right": 456,
+      "bottom": 867.921875,
+      "left": 24
+    },
+    "formGap": 140.890625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.98910484137474,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 140.890625
+    }
+  },
+  {
+    "slug": "minimalism-powder-pink",
+    "width": 480,
+    "url": "http://localhost:3001/mau-thiep/minimalism-hong-phan/demo",
+    "form": {
+      "x": 100,
+      "y": 73.03125,
+      "width": 280,
+      "height": 154,
+      "top": 73.03125,
+      "right": 380,
+      "bottom": 227.03125,
+      "left": 100
+    },
+    "image": {
+      "x": -48,
+      "y": -69.96875,
+      "width": 576,
+      "height": 405.890625,
+      "top": -69.96875,
+      "right": 528,
+      "bottom": 335.921875,
+      "left": -48
+    },
+    "list": {
+      "x": 24,
+      "y": 367.921875,
+      "width": 432,
+      "height": 500,
+      "top": 367.921875,
+      "right": 456,
+      "bottom": 867.921875,
+      "left": 24
+    },
+    "formGap": 140.890625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.98910484137474,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 140.890625
+    }
+  },
+  {
+    "slug": "minimalism-sky-blue",
+    "width": 1440,
+    "url": "http://localhost:3001/mau-thiep/minimalism-xanh-bau-troi/demo",
+    "form": {
+      "x": 530,
+      "y": 144.6875,
+      "width": 380,
+      "height": 208,
+      "top": 144.6875,
+      "right": 910,
+      "bottom": 352.6875,
+      "left": 530
+    },
+    "image": {
+      "x": 395,
+      "y": -65.3125,
+      "width": 650,
+      "height": 536.765625,
+      "top": -65.3125,
+      "right": 1045,
+      "bottom": 471.453125,
+      "left": 395
+    },
+    "list": {
+      "x": 420,
+      "y": 503.453125,
+      "width": 600,
+      "height": 500,
+      "top": 503.453125,
+      "right": 1020,
+      "bottom": 1003.453125,
+      "left": 420
+    },
+    "formGap": 150.765625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.98439565432915,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 150.765625
+    }
+  },
+  {
+    "slug": "minimalism-powder-pink",
+    "width": 1440,
+    "url": "http://localhost:3001/mau-thiep/minimalism-hong-phan/demo",
+    "form": {
+      "x": 530,
+      "y": 144.6875,
+      "width": 380,
+      "height": 208,
+      "top": 144.6875,
+      "right": 910,
+      "bottom": 352.6875,
+      "left": 530
+    },
+    "image": {
+      "x": 395,
+      "y": -65.3125,
+      "width": 650,
+      "height": 536.765625,
+      "top": -65.3125,
+      "right": 1045,
+      "bottom": 471.453125,
+      "left": 395
+    },
+    "list": {
+      "x": 420,
+      "y": 503.453125,
+      "width": 600,
+      "height": 500,
+      "top": 503.453125,
+      "right": 1020,
+      "bottom": 1003.453125,
+      "left": 420
+    },
+    "formGap": 150.765625,
+    "artworkGap": 32,
+    "overflow": false,
+    "wishes": 10,
+    "paperGap": 31.98439565432915,
+    "validation": {
+      "error": "Vui lòng nhập tên của bạn.",
+      "formGap": 150.765625
+    }
+  }
+]

@@ -18,7 +18,7 @@ type ArtTemplateManifestInput<TSlug extends string> = {
   color: string;
   highlights: [string, string, string];
   artwork: string;
-  openingEffect: ArtOpeningEffect;
+  openingEffect?: ArtOpeningEffect;
   outer: string;
   card: string;
   ink: string;
@@ -74,7 +74,7 @@ export function createArtTemplateManifest<const TSlug extends string>(
       decorations: {
         cardImages: [
           {
-            src: input.openingEffect.plateSrc,
+            src: input.openingEffect?.plateSrc ?? input.artwork,
             className: "h-full w-full inset-0 object-cover opacity-20",
             flyOnOpen: false,
           },
@@ -92,8 +92,12 @@ export function createArtTemplateManifest<const TSlug extends string>(
     i18n: input.i18n,
     assets: [
       input.artwork,
-      input.openingEffect.plateSrc,
-      ...input.openingEffect.layers.map((layer) => layer.src),
+      ...(input.openingEffect
+        ? [
+            input.openingEffect.plateSrc,
+            ...input.openingEffect.layers.map((layer) => layer.src),
+          ]
+        : []),
       input.music,
     ],
   });

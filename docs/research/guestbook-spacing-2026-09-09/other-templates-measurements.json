@@ -1,0 +1,763 @@
+{
+  "baseline": [
+    {
+      "slug": "minimalism-brown",
+      "width": 320,
+      "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+      "form": {
+        "top": 122,
+        "bottom": 328,
+        "height": 206
+      },
+      "section": {
+        "top": 0,
+        "bottom": 925,
+        "height": 925
+      },
+      "container": {
+        "top": 0,
+        "bottom": 925,
+        "height": 925
+      },
+      "list": {
+        "top": 393,
+        "bottom": 893,
+        "height": 500
+      },
+      "image": {
+        "top": 70,
+        "bottom": 305.265625,
+        "height": 235.265625
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-brown-320.png"
+    },
+    {
+      "slug": "minimalism-brown",
+      "width": 390,
+      "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+      "form": {
+        "top": 122.125,
+        "bottom": 328.125,
+        "height": 206
+      },
+      "section": {
+        "top": 0.125,
+        "bottom": 925.125,
+        "height": 925
+      },
+      "container": {
+        "top": 0.125,
+        "bottom": 925.125,
+        "height": 925
+      },
+      "list": {
+        "top": 393.125,
+        "bottom": 893.125,
+        "height": 500
+      },
+      "image": {
+        "top": 70.125,
+        "bottom": 356.859375,
+        "height": 286.734375
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-brown-390.png"
+    },
+    {
+      "slug": "minimalism-brown",
+      "width": 439,
+      "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+      "form": {
+        "top": 121.5625,
+        "bottom": 327.5625,
+        "height": 206
+      },
+      "section": {
+        "top": -0.4375,
+        "bottom": 924.5625,
+        "height": 925
+      },
+      "container": {
+        "top": -0.4375,
+        "bottom": 924.5625,
+        "height": 925
+      },
+      "list": {
+        "top": 392.5625,
+        "bottom": 892.5625,
+        "height": 500
+      },
+      "image": {
+        "top": 69.5625,
+        "bottom": 392.328125,
+        "height": 322.765625
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-brown-439.png"
+    },
+    {
+      "slug": "minimalism-brown",
+      "width": 1440,
+      "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+      "form": {
+        "top": 183.515625,
+        "bottom": 479.515625,
+        "height": 296
+      },
+      "section": {
+        "top": -0.484375,
+        "bottom": 1141.515625,
+        "height": 1142
+      },
+      "container": {
+        "top": -0.484375,
+        "bottom": 1141.515625,
+        "height": 1142
+      },
+      "list": {
+        "top": 609.515625,
+        "bottom": 1109.515625,
+        "height": 500
+      },
+      "image": {
+        "top": 84.515625,
+        "bottom": 562.40625,
+        "height": 477.890625
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-brown-1440.png"
+    },
+    {
+      "slug": "minimalism-green",
+      "width": 320,
+      "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+      "form": {
+        "top": 122.15625,
+        "bottom": 318.15625,
+        "height": 196
+      },
+      "section": {
+        "top": 0.15625,
+        "bottom": 905.15625,
+        "height": 905
+      },
+      "container": {
+        "top": 0.15625,
+        "bottom": 905.15625,
+        "height": 905
+      },
+      "list": {
+        "top": 373.15625,
+        "bottom": 873.15625,
+        "height": 500
+      },
+      "image": {
+        "top": 6.15625,
+        "bottom": 284.984375,
+        "height": 278.828125
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-green-320.png"
+    },
+    {
+      "slug": "minimalism-green",
+      "width": 390,
+      "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+      "form": {
+        "top": 121.59375,
+        "bottom": 317.59375,
+        "height": 196
+      },
+      "section": {
+        "top": -0.40625,
+        "bottom": 904.59375,
+        "height": 905
+      },
+      "container": {
+        "top": -0.40625,
+        "bottom": 904.59375,
+        "height": 905
+      },
+      "list": {
+        "top": 372.59375,
+        "bottom": 872.59375,
+        "height": 500
+      },
+      "image": {
+        "top": 5.59375,
+        "bottom": 345.421875,
+        "height": 339.828125
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-green-390.png"
+    },
+    {
+      "slug": "minimalism-green",
+      "width": 439,
+      "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+      "form": {
+        "top": 121.90625,
+        "bottom": 317.90625,
+        "height": 196
+      },
+      "section": {
+        "top": -0.09375,
+        "bottom": 904.90625,
+        "height": 905
+      },
+      "container": {
+        "top": -0.09375,
+        "bottom": 904.90625,
+        "height": 905
+      },
+      "list": {
+        "top": 372.90625,
+        "bottom": 872.90625,
+        "height": 500
+      },
+      "image": {
+        "top": 5.90625,
+        "bottom": 388.4375,
+        "height": 382.53125
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-green-439.png"
+    },
+    {
+      "slug": "minimalism-green",
+      "width": 1440,
+      "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+      "form": {
+        "top": 183.984375,
+        "bottom": 419.984375,
+        "height": 236
+      },
+      "section": {
+        "top": -0.015625,
+        "bottom": 1051.984375,
+        "height": 1052
+      },
+      "container": {
+        "top": -0.015625,
+        "bottom": 1051.984375,
+        "height": 1052
+      },
+      "list": {
+        "top": 519.984375,
+        "bottom": 1019.984375,
+        "height": 500
+      },
+      "image": {
+        "top": 5.984375,
+        "bottom": 487.046875,
+        "height": 481.0625
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-green-1440.png"
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 320,
+      "url": "http://localhost:3001/mau-thiep/minimalism-do/demo",
+      "form": {
+        "top": 54.234375,
+        "bottom": 228.734375,
+        "height": 174.5
+      },
+      "section": {
+        "top": 0.234375,
+        "bottom": 228.734375,
+        "height": 228.5
+      },
+      "container": {
+        "top": -2896.859375,
+        "bottom": 686.734375,
+        "height": 3583.59375
+      },
+      "list": null,
+      "image": null,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-red-320.png"
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 390,
+      "url": "http://localhost:3001/mau-thiep/minimalism-do/demo",
+      "form": {
+        "top": 54.15625,
+        "bottom": 228.65625,
+        "height": 174.5
+      },
+      "section": {
+        "top": 0.15625,
+        "bottom": 228.65625,
+        "height": 228.5
+      },
+      "container": {
+        "top": -2935.859375,
+        "bottom": 686.65625,
+        "height": 3622.515625
+      },
+      "list": null,
+      "image": null,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-red-390.png"
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 439,
+      "url": "http://localhost:3001/mau-thiep/minimalism-do/demo",
+      "form": {
+        "top": 54.15625,
+        "bottom": 228.65625,
+        "height": 174.5
+      },
+      "section": {
+        "top": 0.15625,
+        "bottom": 228.65625,
+        "height": 228.5
+      },
+      "container": {
+        "top": -2991.859375,
+        "bottom": 686.65625,
+        "height": 3678.515625
+      },
+      "list": null,
+      "image": null,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-red-439.png"
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 1440,
+      "url": "http://localhost:3001/mau-thiep/minimalism-do/demo",
+      "form": {
+        "top": 245.03125,
+        "bottom": 419.53125,
+        "height": 174.5
+      },
+      "section": {
+        "top": 182.03125,
+        "bottom": 419.53125,
+        "height": 237.5
+      },
+      "container": {
+        "top": -3285.921875,
+        "bottom": 883.53125,
+        "height": 4169.453125
+      },
+      "list": null,
+      "image": null,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-red-1440.png"
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 320,
+      "url": "http://localhost:3001/mau-thiep/elegant-tim-lavender/demo",
+      "form": {
+        "top": 89.5,
+        "bottom": 243.5,
+        "height": 154
+      },
+      "section": {
+        "top": -0.5,
+        "bottom": 807.5,
+        "height": 808
+      },
+      "container": {
+        "top": -0.5,
+        "bottom": 807.5,
+        "height": 808
+      },
+      "list": {
+        "top": 275.5,
+        "bottom": 775.5,
+        "height": 500
+      },
+      "image": null,
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-purple-320.png"
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 390,
+      "url": "http://localhost:3001/mau-thiep/elegant-tim-lavender/demo",
+      "form": {
+        "top": 89.984375,
+        "bottom": 243.984375,
+        "height": 154
+      },
+      "section": {
+        "top": -0.015625,
+        "bottom": 807.984375,
+        "height": 808
+      },
+      "container": {
+        "top": -0.015625,
+        "bottom": 807.984375,
+        "height": 808
+      },
+      "list": {
+        "top": 275.984375,
+        "bottom": 775.984375,
+        "height": 500
+      },
+      "image": null,
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-purple-390.png"
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 439,
+      "url": "http://localhost:3001/mau-thiep/elegant-tim-lavender/demo",
+      "form": {
+        "top": 89.515625,
+        "bottom": 243.515625,
+        "height": 154
+      },
+      "section": {
+        "top": -0.484375,
+        "bottom": 807.515625,
+        "height": 808
+      },
+      "container": {
+        "top": -0.484375,
+        "bottom": 807.515625,
+        "height": 808
+      },
+      "list": {
+        "top": 275.515625,
+        "bottom": 775.515625,
+        "height": 500
+      },
+      "image": null,
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-purple-439.png"
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 1440,
+      "url": "http://localhost:3001/mau-thiep/elegant-tim-lavender/demo",
+      "form": {
+        "top": 96.4375,
+        "bottom": 304.4375,
+        "height": 208
+      },
+      "section": {
+        "top": 0.4375,
+        "bottom": 868.4375,
+        "height": 868
+      },
+      "container": {
+        "top": 0.4375,
+        "bottom": 868.4375,
+        "height": 868
+      },
+      "list": {
+        "top": 336.4375,
+        "bottom": 836.4375,
+        "height": 500
+      },
+      "image": null,
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Tên của bạn\nLời chúc của bạn\nGỬI LỜI CHÚC",
+      "imageLoaded": null,
+      "screenshot": "/tmp/wish-audit-minimalism-purple-1440.png"
+    }
+  ],
+  "additional480": [
+    {
+      "slug": "minimalism-brown",
+      "width": 480,
+      "url": "http://localhost:3001/mau-thiep/botanic-kem/demo",
+      "form": {
+        "top": 122,
+        "bottom": 328,
+        "height": 206
+      },
+      "section": {
+        "top": 0,
+        "bottom": 925,
+        "height": 925
+      },
+      "container": {
+        "top": 0,
+        "bottom": 925,
+        "height": 925
+      },
+      "list": {
+        "top": 393,
+        "bottom": 893,
+        "height": 500
+      },
+      "image": {
+        "top": 70,
+        "bottom": 422.90625,
+        "height": 352.90625
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-brown-480.png"
+    },
+    {
+      "slug": "minimalism-green",
+      "width": 480,
+      "url": "http://localhost:3001/mau-thiep/minimal-xanh-sage/demo",
+      "form": {
+        "top": 122.34375,
+        "bottom": 318.34375,
+        "height": 196
+      },
+      "section": {
+        "top": 0.34375,
+        "bottom": 905.34375,
+        "height": 905
+      },
+      "container": {
+        "top": 0.34375,
+        "bottom": 905.34375,
+        "height": 905
+      },
+      "list": {
+        "top": 373.34375,
+        "bottom": 873.34375,
+        "height": 500
+      },
+      "image": {
+        "top": 6.34375,
+        "bottom": 424.59375,
+        "height": 418.25
+      },
+      "listCount": 10,
+      "overflow": false,
+      "visibleText": "Nhập tên*\nNhập lời chúc*\nGỬI LỜI CHÚC",
+      "imageLoaded": true,
+      "screenshot": "/tmp/wish-audit-minimalism-green-480.png"
+    }
+  ],
+  "fixtureAndValidation": [
+    {
+      "slug": "minimalism-red",
+      "width": 320,
+      "before": {
+        "formBottom": 228.734375,
+        "listTop": 260.734375,
+        "gap": 32,
+        "formHeight": 174.5,
+        "alert": null,
+        "synthetic": true,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 258.734375,
+        "listTop": 290.734375,
+        "gap": 32,
+        "formHeight": 204.5,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": true,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 390,
+      "before": {
+        "formBottom": 228.65625,
+        "listTop": 260.65625,
+        "gap": 32,
+        "formHeight": 174.5,
+        "alert": null,
+        "synthetic": true,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 258.65625,
+        "listTop": 290.65625,
+        "gap": 32,
+        "formHeight": 204.5,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": true,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 439,
+      "before": {
+        "formBottom": 228.65625,
+        "listTop": 260.65625,
+        "gap": 32,
+        "formHeight": 174.5,
+        "alert": null,
+        "synthetic": true,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 258.65625,
+        "listTop": 290.65625,
+        "gap": 32,
+        "formHeight": 204.5,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": true,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-red",
+      "width": 1440,
+      "before": {
+        "formBottom": 237.53125,
+        "listTop": 269.53125,
+        "gap": 32,
+        "formHeight": 174.5,
+        "alert": null,
+        "synthetic": true,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 267.53125,
+        "listTop": 299.53125,
+        "gap": 32,
+        "formHeight": 204.5,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": true,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 320,
+      "before": {
+        "formBottom": 234.5,
+        "listTop": 266.5,
+        "gap": 32,
+        "formHeight": 154,
+        "alert": null,
+        "synthetic": false,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 273.5,
+        "listTop": 305.5,
+        "gap": 32,
+        "formHeight": 184,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": false,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 390,
+      "before": {
+        "formBottom": 243.984375,
+        "listTop": 275.984375,
+        "gap": 32,
+        "formHeight": 154,
+        "alert": null,
+        "synthetic": false,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 273.984375,
+        "listTop": 305.984375,
+        "gap": 32,
+        "formHeight": 184,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": false,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 439,
+      "before": {
+        "formBottom": 250.515625,
+        "listTop": 282.515625,
+        "gap": 32,
+        "formHeight": 154,
+        "alert": null,
+        "synthetic": false,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 273.515625,
+        "listTop": 305.515625,
+        "gap": 32,
+        "formHeight": 184,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": false,
+        "overflow": false
+      }
+    },
+    {
+      "slug": "minimalism-purple",
+      "width": 1440,
+      "before": {
+        "formBottom": 304.4375,
+        "listTop": 336.4375,
+        "gap": 32,
+        "formHeight": 208,
+        "alert": null,
+        "synthetic": false,
+        "overflow": false
+      },
+      "validation": {
+        "formBottom": 334.4375,
+        "listTop": 366.4375,
+        "gap": 32,
+        "formHeight": 238,
+        "alert": "Vui lòng nhập tên của bạn.",
+        "synthetic": false,
+        "overflow": false
+      }
+    }
+  ],
+  "notes": "Red live demo has no wishes. Red populated-list tests use exact renderer markup temporarily injected into browser DOM only; no DB writes or successful form submission. Other list measurements use rendered demo wishes."
+}

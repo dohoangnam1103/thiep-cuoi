@@ -508,7 +508,7 @@ export function CoiTrauKhamTraiInvitation({
           <span className="my-3 block text-[0.38em] italic text-[#B85B52]">{t("and")}</span>
           <span className="block">{people[1].shortName}</span>
         </p>
-        <p className="mt-9 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#315A42]">
+        <p data-invitation-clearance="margin" className="mt-9 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#315A42]">
           {t("brandDomain")}
         </p>
       </footer>

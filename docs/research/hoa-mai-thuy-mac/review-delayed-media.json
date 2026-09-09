@@ -1,0 +1,42 @@
+[
+  {
+    "width": 1440,
+    "frameInfo": [
+      {
+        "src": "https://www.google.com/maps/embed/v1/place?q=Riverside+Palace%2C+360D+B%E1%BA%BFn+V%C3%A2n+%C4%90%E1%BB%93n%2C+Qu%E1%BA%ADn+4%2C+H%E1%BB%93+Ch%C3%AD+Minh",
+        "height": 360
+      }
+    ],
+    "giftImages": [
+      {
+        "loaded": true,
+        "width": 480
+      },
+      {
+        "loaded": true,
+        "width": 480
+      }
+    ],
+    "giftImagesLoaded": true
+  },
+  {
+    "width": 390,
+    "frameInfo": [
+      {
+        "src": "https://www.google.com/maps/embed/v1/place?q=Riverside+Palace%2C+360D+B%E1%BA%BFn+V%C3%A2n+%C4%90%E1%BB%93n%2C+Qu%E1%BA%ADn+4%2C+H%E1%BB%93+Ch%C3%AD+Minh",
+        "height": 280
+      }
+    ],
+    "giftImages": [
+      {
+        "loaded": true,
+        "width": 480
+      },
+      {
+        "loaded": true,
+        "width": 480
+      }
+    ],
+    "giftImagesLoaded": true
+  }
+]

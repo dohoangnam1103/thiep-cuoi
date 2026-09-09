@@ -32,7 +32,7 @@ if [[ "${1:-}" == --check || "${1:-}" == --setup ]]; then
 fi
 
 # Cold native dependency/image builds need more space than serving the live app.
-free_kb=$(ssh root@163.223.9.198 "df -Pk /srv/thiepmungonline | awk 'NR==2 {print \$4}'")
+free_kb=$(ssh -o BatchMode=yes -o ConnectTimeout=10 root@163.223.9.198 "df -Pk /srv/thiepmungonline | awk 'NR==2 {print \$4}'")
 if [[ "$free_kb" -lt 6291456 ]]; then
   echo 'Deploy stopped before build/rsync: at least 6 GiB free is required on VPS.' >&2
   echo 'Expand storage or review old artifacts first; do not delete live data/backups blindly.' >&2

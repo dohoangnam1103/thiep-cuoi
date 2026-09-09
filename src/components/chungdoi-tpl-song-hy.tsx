@@ -502,8 +502,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         </div>
       ), document.body) : null}
 
-      <div data-template-footer className="relative z-10 mx-auto max-w-4xl px-2 py-8 text-center sm:px-4">
-        <span className="flex flex-col items-center gap-1 whitespace-pre-line text-xl" style={{ color: palette.gray }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
+      <div data-template-footer className="relative z-10 mx-auto max-w-4xl px-6 py-8 text-center md:px-4">
+        <span className="flex flex-col items-center gap-1 whitespace-pre-line text-balance text-sm leading-relaxed md:text-xl md:leading-7" style={{ color: palette.gray }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
       </div>
       <footer className="flex w-full items-center justify-center py-1.5" style={{ backgroundColor: palette.cardBg }}>
         <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-xs opacity-50 transition-opacity hover:opacity-70" style={{ color: palette.gray }}>♡ thiepmungonline.com</a>

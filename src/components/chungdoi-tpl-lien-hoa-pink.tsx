@@ -524,7 +524,7 @@ export function LienHoaPinkInvitation({ content }: { content: ChungDoiDemoConten
 
         {/* FOOTER — framegold2 lật dọc làm khung chữ ký, nhánh sen đáy tràn ra
             ngoài đáy thiệp bằng margin âm. */}
-        <footer data-template-footer className="relative z-20 flex flex-col items-center overflow-hidden pt-4 text-center">
+        <footer data-template-footer data-invitation-clearance="lien-hoa" className="relative z-20 flex flex-col items-center overflow-hidden pt-4 text-center">
           <div className="flex w-full flex-col items-center px-6 md:px-10">
             <span className="relative z-20 mx-auto flex flex-col items-center gap-1 whitespace-pre-line text-sm md:max-w-[560px]" style={{ color: ACCENT }}>
               Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!
@@ -540,6 +540,7 @@ export function LienHoaPinkInvitation({ content }: { content: ChungDoiDemoConten
               <div className="absolute inset-0 z-10 flex items-center justify-center">
                 <a
                   href="https://thiepmungonline.com"
+                  data-invitation-clearance="skip"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs opacity-50 transition-opacity hover:opacity-70"

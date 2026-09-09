@@ -55,6 +55,7 @@ const artThemeDurations = {
   "thanh-duong-anh-sang": 1400,
   "cong-la-dua-mien-tay": 1380,
   "nguyet-bach": 1440,
+  "hoa-mai-thuy-mac": 1420,
 } as const;
 
 function createEffect(): ArtOpeningEffect {
@@ -284,4 +285,19 @@ test("all art themes register unique clean layered opening effects", () => {
       assert.equal(existsSync(path.join(process.cwd(), "public", source.slice(1))), true, source);
     }
   }
+});
+
+test("hoa mai watercolor opening uses the approved three-layer motion", () => {
+  const effect = artOpeningEffects["hoa-mai-thuy-mac"];
+
+  assert.equal(effect.durationMs, 1420);
+  assert.equal(effect.reducedMotion.durationMs, 180);
+  assert.deepEqual(
+    effect.layers.map((layer) => layer.id),
+    ["branch-left", "branch-right", "wax-seal"],
+  );
+  assert.deepEqual(
+    effect.layers.map((layer) => layer.transformOrigin),
+    ["100% 20%", "0% 20%", "50% 50%"],
+  );
 });

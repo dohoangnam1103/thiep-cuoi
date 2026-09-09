@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { verifyAdmin } from "@/lib/admin-dal";
+import { getProjectFundSummary } from "@/lib/admin-funds";
 import {
   buildDailySeries,
   DAILY_RANGE_OPTIONS,
@@ -34,6 +35,7 @@ export default async function AdminDashboardPage({
   await verifyAdmin();
 
   const t = await getTranslations("adminSupport");
+  const tFunds = await getTranslations("adminFunds");
   const { range: rangeParam } = await searchParams;
   const range = parseDailyRange(rangeParam);
 
@@ -50,7 +52,7 @@ export default async function AdminDashboardPage({
     demoCount,
     suggestionCount,
     paidCount,
-    revenue,
+    fundSummary,
     newUsers,
     newRealInvitations,
     settledPayments,
@@ -64,7 +66,7 @@ export default async function AdminDashboardPage({
     prisma.invitation.count({ where: { isDemo: true } }),
     prisma.templateSuggestion.count(),
     prisma.payment.count({ where: { status: "paid" } }),
-    prisma.payment.aggregate({ where: { status: "paid" }, _sum: { amount: true } }),
+    getProjectFundSummary(),
     // The series below fetch timestamps for the window and are bucketed
     // in `buildDailySeries`; SQLite cannot truncate a DateTime to a Vietnam day.
     prisma.user.findMany({
@@ -112,9 +114,9 @@ export default async function AdminDashboardPage({
     { label: "Gợi ý mẫu", value: formatCount(suggestionCount), href: "/admin/template-suggestions" },
     { label: "Đơn đã trả", value: formatCount(paidCount), href: "/admin/payments" },
     {
-      label: "Doanh thu",
-      value: formatVnd(revenue._sum.amount ?? 0),
-      href: "/admin/payments",
+      label: tFunds("remainingBalance"),
+      value: formatVnd(fundSummary.remainingBalance),
+      href: "/admin/funds",
       // A lifetime total runs to tens of millions, which overflows a sixth of
       // the grid at the size the other cards use.
       valueClass: "text-xl",

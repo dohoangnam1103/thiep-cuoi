@@ -1,14 +1,14 @@
-# Runner được lắp trên Mini PC từ artifact Next.js đã build sẵn native trên Mac.
+# Runner được lắp trên VPS từ artifact Next.js đã build sẵn native trên Mac.
 #
 # Vì sao tách riêng khỏi Dockerfile / Dockerfile.local-build:
-#   * Dockerfile          → compile Next ngay trên Mini PC (i5-9500T, RAM còn
+#   * Dockerfile          → compile Next ngay trên VPS (i5-9500T, RAM còn
 #                           ~2.6GB và đã swap 3GB) nên rất chậm.
 #   * Dockerfile.local-build → compile trên Mac rồi `docker save | ssh docker
 #                           load` cả image 1.84GB, dù mỗi deploy chỉ đổi ~83MB.
 #   * File này           → Mac chỉ rsync 105MB artifact sang
-#                           releases/current/.next-prebuilt/, Mini PC chỉ chạy
+#                           releases/current/.next-prebuilt/, VPS chỉ chạy
 #                           COPY. node_modules amd64 nằm trong layer cache của
-#                           Mini PC nên không bao giờ phải truyền qua mạng.
+#                           VPS nên không bao giờ phải truyền qua mạng.
 #
 # Không có bước biên dịch nào trong file này, và cũng không cần QEMU: build
 # chạy native amd64 ngay trên máy đích.
@@ -26,7 +26,7 @@ WORKDIR /app
 # tới dependency (scripts, keywords, description...), do deploy-fast.sh sinh ra
 # trên Mac. Nếu COPY package.json thật vào đây thì chỉ sửa một dòng `scripts`
 # cũng làm layer này vô hiệu, kéo theo npm ci + npm prune chạy lại ~200s trên
-# Mini PC dù dependency không đổi gì. Đo được đúng trường hợp đó ở deploy
+# VPS dù dependency không đổi gì. Đo được đúng trường hợp đó ở deploy
 # 20260820185043: 219s thay vì 16s.
 COPY package-lock.json .npmrc* ./
 COPY .next-prebuilt/package.deps.json ./package.json
@@ -41,9 +41,17 @@ RUN npm rebuild better-sqlite3
 # ============================================
 # Stage 2: runtime dependencies
 # ============================================
-FROM dependencies AS runtime-dependencies
+FROM node:${NODE_VERSION} AS runtime-dependencies
 
-RUN npm prune --omit=dev --ignore-scripts
+WORKDIR /app
+COPY package-lock.json .npmrc* ./
+COPY .next-prebuilt/package.deps.json ./package.json
+
+# Install only what the runner uses. Installing dev dependencies then pruning
+# them cost 72 seconds on the VPS; the migration target keeps its separate tree.
+RUN --mount=type=cache,id=thiepmungonline-npm,target=/root/.npm \
+  npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+RUN npm rebuild better-sqlite3 --no-audit --no-fund
 
 # ============================================
 # Stage 3: migrate (chạy prisma migrate deploy cạnh database production)
@@ -95,7 +103,7 @@ COPY --chown=node:node .next-prebuilt/server.js ./server.js
 
 # public/ (539MB) KHÔNG nằm trong image. Nó được bind-mount read-only từ
 # releases/current/public trên host, thư mục mà rsync đã cập nhật sẵn. Nhờ vậy
-# mỗi image version tiết kiệm 432MB đĩa (đĩa Mini PC đang dùng 93%) và thêm
+# mỗi image version tiết kiệm 432MB đĩa (đĩa VPS đang dùng 93%) và thêm
 # asset mới chỉ tốn một delta rsync. Tạo sẵn mountpoint để container vẫn chạy
 # được nếu volume chưa gắn.
 RUN mkdir -p ./public && chown node:node ./public

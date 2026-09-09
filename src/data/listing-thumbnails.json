@@ -1080,6 +1080,29 @@
       }
     ]
   },
+  "/chungdoi/images/template-previews/en/listing/hoa_mai_thuy_mac.webp": {
+    "width": 768,
+    "height": 16380,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_mai_thuy_mac-639c8c584181-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_mai_thuy_mac-639c8c584181-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_mai_thuy_mac-639c8c584181-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_mai_thuy_mac-639c8c584181-768.webp"
+      }
+    ]
+  },
   "/chungdoi/images/template-previews/en/listing/hoa_thu_do_ruou_vang.webp": {
     "width": 768,
     "height": 10597,
@@ -1192,6 +1215,29 @@
       {
         "width": 768,
         "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hoa_tinh_red-ee0733ae1df4-768.webp"
+      }
+    ]
+  },
+  "/chungdoi/images/template-previews/en/listing/hong_van_rose.webp": {
+    "width": 768,
+    "height": 12288,
+    "cropHeight": 1536,
+    "variants": [
+      {
+        "width": 320,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hong_van_rose-b0e7cdb49f0e-320.webp"
+      },
+      {
+        "width": 480,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hong_van_rose-b0e7cdb49f0e-480.webp"
+      },
+      {
+        "width": 640,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hong_van_rose-b0e7cdb49f0e-640.webp"
+      },
+      {
+        "width": 768,
+        "src": "/chungdoi/images/template-previews/en/listing-thumbnails/hong_van_rose-b0e7cdb49f0e-768.webp"
       }
     ]
   },

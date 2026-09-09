@@ -218,14 +218,17 @@ function CoupleNames({
   second,
   conjunction,
   className,
+  footerClearance,
 }: {
   first: string;
   second: string;
   conjunction: string;
   className?: string;
+  footerClearance?: boolean;
 }) {
   return (
     <span
+      data-invitation-clearance={footerClearance ? "margin" : undefined}
       className={cn(
         "flex flex-col items-center gap-0.5 leading-tight sm:flex-row sm:gap-0",
         className,
@@ -836,6 +839,7 @@ export function LongPhungGatefoldInvitationBody({
           {t("presenceHonor")}
         </p>
         <CoupleNames
+          footerClearance
           className="mt-7 font-art-uni text-4xl text-[#B58A3A] sm:text-5xl"
           conjunction={t("and")}
           first={people[0].shortName}

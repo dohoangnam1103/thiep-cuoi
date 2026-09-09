@@ -4,7 +4,11 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { resolveArtDisplayFontClass } from "@/lib/art-invitation-typography";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import {
+  invitationCeremonies,
+  invitationGiftAccounts,
+  orderedCouple,
+} from "@/lib/invitation-display";
 import {
   buildCalendar,
   formatDate,
@@ -164,7 +168,7 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
   const people = orderedCouple(content);
   const nameFont = "font-art-aghita";
   const fullNameFont = resolveArtDisplayFontClass(content.theme.fontFamily, F_GARAMOND);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -353,29 +357,51 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
                 </div>
               </div>
 
-              <div className={`${F_BASKERVILLE} relative flex flex-col items-center gap-4 text-center md:gap-5`}>
-                <div className="flex flex-col items-center gap-2" style={{ color: "rgba(255,255,255,0.7)" }}>
-                  <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">
-                    {couple.ceremonyHeader}
-                  </span>
-                  <p className="mb-2 text-[16px] font-normal uppercase md:text-[18px]">VÀO LÚC</p>
-                </div>
-                <div className="text-[20px] md:text-[30px]" style={{ color: "#ffffff" }}>{couple.ceremonyTime}</div>
-                {ceremony ? (
-                  <>
-                    <div className="flex items-center gap-6" style={{ color: "#ffffff" }}>
-                      <span className="text-right text-[12px] uppercase md:text-[16px]">{ceremony.weekday}</span>
-                      <span className="flex items-center justify-center text-[24px] leading-none" style={{ color: "rgba(255,255,255,0.5)" }}>|</span>
-                      <span className="text-[30px] md:text-[40px]">{ceremony.dayNumber}</span>
-                      <span className="flex items-center justify-center text-[24px] leading-none" style={{ color: "rgba(255,255,255,0.5)" }}>|</span>
-                      <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremony.monthNumber}</span>
+              <div
+                data-template-ceremonies
+                data-minimalism-green-ceremonies
+                className={`${F_BASKERVILLE} relative grid w-full gap-8 text-center md:gap-10`}
+              >
+                {ceremonies.map((ceremony, index) => {
+                  const ceremonyDate = formatDate(ceremony.date);
+                  return (
+                    <div
+                      key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
+                      data-template-ceremony-item
+                      className="relative flex flex-col items-center gap-4 md:gap-5"
+                    >
+                      {index > 0 ? (
+                        <span
+                          aria-hidden
+                          className="mb-2 h-px w-24"
+                          style={{ backgroundColor: "rgba(255,255,255,0.4)" }}
+                        />
+                      ) : null}
+                      <div className="flex flex-col items-center gap-2" style={{ color: "rgba(255,255,255,0.7)" }}>
+                        <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">
+                          {ceremony.title}
+                        </span>
+                        <p className="mb-2 text-[16px] font-normal uppercase md:text-[18px]">VÀO LÚC</p>
+                      </div>
+                      <div className="text-[20px] md:text-[30px]" style={{ color: "#ffffff" }}>{ceremony.time}</div>
+                      {ceremonyDate ? (
+                        <>
+                          <div className="flex items-center gap-6" style={{ color: "#ffffff" }}>
+                            <span className="text-right text-[12px] uppercase md:text-[16px]">{ceremonyDate.weekday}</span>
+                            <span className="flex items-center justify-center text-[24px] leading-none" style={{ color: "rgba(255,255,255,0.5)" }}>|</span>
+                            <span className="text-[30px] md:text-[40px]">{ceremonyDate.dayNumber}</span>
+                            <span className="flex items-center justify-center text-[24px] leading-none" style={{ color: "rgba(255,255,255,0.5)" }}>|</span>
+                            <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremonyDate.monthNumber}</span>
+                          </div>
+                          <div className="text-[18px] md:text-[24px]" style={{ color: "#ffffff" }}>{ceremonyDate.yearNumber}</div>
+                          <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
+                            {ceremonyDate.lunar}
+                          </div>
+                        </>
+                      ) : null}
                     </div>
-                    <div className="text-[18px] md:text-[24px]" style={{ color: "#ffffff" }}>{ceremony.yearNumber}</div>
-                    <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
-                      {ceremony.lunar}
-                    </div>
-                  </>
-                ) : null}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -648,39 +674,47 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
 
         {/* ── SỔ LƯU BÚT — nền là bức guestbook-background treo phía trên ─────── */}
         <div className="relative z-10">
-          <img
-            src={`${THEME}/guestbook-background.webp`}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="pointer-events-none absolute left-1/2 top-[6px] w-[96%] max-w-[530px] -translate-x-1/2 opacity-90"
-          />
           {/* Ô nhập của bản gốc cao hơn và bo 8px; ghi đè qua biến thể tuỳ ý
               thay vì sửa SharedWishForm để ~40 mẫu khác giữ nguyên giao diện. */}
           <section
+            data-minimalism-guestbook
             // Bản gốc bọc ô nhập trong `div.p-4` bên trong form max-w-[300px], nên
             // ô nhập rộng 268px chứ không phải 300px. Dồn phần đệm đó lên chính
             // form để khỏi phải sửa markup của SharedWishForm.
-            className="relative z-10 px-6 pb-8 pt-[68px] [&_button[type=submit]]:px-6 [&_button[type=submit]]:py-2 [&_button[type=submit]]:text-sm [&_form]:max-w-[300px] [&_form]:p-4 [&_input]:rounded-[8px] [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_textarea]:h-[50px] [&_textarea]:rounded-[8px] [&_textarea]:px-4 [&_textarea]:py-3 [&_textarea]:text-sm md:pt-[130px] md:[&_form]:max-w-[450px] md:[&_textarea]:h-[90px]"
+            className="relative z-10 pb-8 [&_button[type=submit]]:px-6 [&_button[type=submit]]:py-2 [&_button[type=submit]]:text-sm [&_form]:max-w-[300px] [&_form]:p-4 [&_input]:rounded-[8px] [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_textarea]:h-[50px] [&_textarea]:rounded-[8px] [&_textarea]:px-4 [&_textarea]:py-3 [&_textarea]:text-sm md:[&_form]:max-w-[450px] md:[&_textarea]:h-[90px]"
             style={{ color: INK }}
           >
-            <div className="text-center">
-              {/* Bản gốc đẩy heading xuống 25px để nó rơi vào giữa bức tranh nền. */}
-              <GreenHeading className="relative translate-y-[25px]">Sổ lưu bút</GreenHeading>
+            {/* Keep the existing form gap, with at least 24px below the artwork. */}
+            <div className="grid grid-cols-1 items-start">
+              <img
+                src={`${THEME}/guestbook-background.webp`}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                width={1939}
+                height={1760}
+                className="pointer-events-none col-start-1 row-start-1 mt-[6px] h-auto w-[96%] max-w-[530px] justify-self-center opacity-90"
+              />
+              <div className={`relative z-10 col-start-1 row-start-1 px-6 pt-[68px] md:pt-[130px] ${wishes.length > 0 ? "pb-[31px] md:pb-[76px]" : ""}`}>
+                <div className="text-center">
+                  {/* Bản gốc đẩy heading xuống 25px để nó rơi vào giữa bức tranh nền. */}
+                  <GreenHeading className="relative translate-y-[25px]">Sổ lưu bút</GreenHeading>
+                </div>
+                {/* Placeholder và nhãn nút lấy đúng chữ của bản gốc; thông báo lỗi vẫn
+                    dùng catalog dùng chung. */}
+                <SharedWishForm
+                  accent={INK}
+                  fieldBorderColor={INK}
+                  labels={{
+                    namePlaceholder: "Nhập tên*",
+                    textPlaceholder: "Nhập lời chúc*",
+                    submit: "GỬI LỜI CHÚC",
+                  }}
+                />
+              </div>
             </div>
-            {/* Placeholder và nhãn nút lấy đúng chữ của bản gốc; thông báo lỗi vẫn
-                dùng catalog dùng chung. */}
-            <SharedWishForm
-              accent={INK}
-              fieldBorderColor={INK}
-              labels={{
-                namePlaceholder: "Nhập tên*",
-                textPlaceholder: "Nhập lời chúc*",
-                submit: "GỬI LỜI CHÚC",
-              }}
-            />
             {wishes.length > 0 ? (
-              <div className="chungdoi-scroll touch-pan-y mx-auto mt-[55px] max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:mt-[100px] md:max-w-[600px]">
+              <div className="chungdoi-scroll touch-pan-y mx-auto mt-6 max-h-[500px] w-[calc(100%-3rem)] space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
                   <div
                     key={`${w.name}-${i}`}

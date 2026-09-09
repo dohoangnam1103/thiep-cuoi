@@ -12,6 +12,7 @@ test("public scopes exclude editor/admin text and keep their required namespaces
     assert.ok(JSON.stringify(messages).length < JSON.stringify(vi).length / 2);
   }
   assert.throws(() => selectMessages(vi, ["missing_namespace"]));
+  assert.ok(invitationMessageNamespaces.includes("hoaMaiThuyMac"));
 });
 
 test("localized branches have providers and the root retains error-boundary copy", () => {

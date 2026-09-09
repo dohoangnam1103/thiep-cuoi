@@ -62,7 +62,11 @@ blocks the repository's old deploy/setup scripts. Do not remove it casually.
   tunnel.env                     # existing production tunnel credential, private
   LIVE                           # permits production timer jobs
   data/                          # SQLite + editor/guest/blog media, UID 1000
-  releases/current/              # copied production source and public assets
+  releases/current -> candidate-ID/ # active source/public, switched with image
+  releases/candidate-ID/          # independent, immutable source for each attempt
+  .deploy-release-state/          # rollback pointers outside current source
+  .deploy-lock/                   # serializes deploy attempts
+  .assembled-image-cache/         # verified immutable image receipts (max 4)
   ops/                           # maintenance helpers and cutover checkpoints
   backups/                       # verified recurring backups, seven-day retention
   historical-backups-minipc/      # original backups, excluded from new retention
@@ -85,6 +89,9 @@ npm run deploy:setup               # read-only VPS provisioning/timer check
 bash scripts/deploy-vps.sh --check # same check
 npm run deploy:smoke               # existing prebuilt pipeline, VPS target
 npm run deploy                     # build on Mac, assemble/promote on VPS
+npm run deploy:prepare             # local preflight/gate/build only, no SSH
+npm run test:deploy                # deployment regression tests, no production calls
+npm run db:pull                    # verified production DB -> dev.db; stop local dev first
 ```
 
 The VPS entrypoint pins the target to the new host, uses image tag
@@ -94,23 +101,106 @@ the cutover image. No local uncommitted application changes were deployed as
 part of the migration. The new wrapper was syntax/preflight checked, not used
 to publish a different application build during this cutover.
 
-**Mandatory i18n gate:** `npm run deploy`, `npm run deploy:smoke`, and direct
-`bash scripts/deploy-fast.sh` run `npm run check:i18n` followed by
-`npm run test:i18n:e2e` before source sync, backup, migration or container changes.
-A failed test, missing browser/dependency, or occupied test-server port stops
-deployment. There is no skip flag. `--check` / `--setup` remain read-only
-provisioning checks and do not run this gate.
+**Frozen Mac source:** every invocation first copies source into a private,
+independent Mac build context. APFS clones keep dependency copying cheap and
+preserve CLI symlinks. A SQLite online backup captures committed WAL from the
+open local DB; source env files stay private. Editing the working tree in another
+task cannot change the code being tested or built. The context is removed after
+the command; verified caches remain under the original checkout.
 
-The browser gate builds current source against the isolated E2E database and
-requires a fresh test server (no reuse of an existing server). It automatically
-checks all registered templates, plus editor/admin/public routes. Install
-Chromium once with `npx playwright install chromium` if needed. Default test
-port is 3100; stop the process using it or set `E2E_PORT` to an unused port.
-The test DB is shared with the normal E2E suite; do not run both concurrently.
+**Local preflight and verified cache:** deploy, smoke and prepare check required
+files, Node/CLI links, Chromium, production origin, session configuration and
+local SQLite schema before expensive tests. On new application inputs,
+`check:i18n` and `test:i18n:e2e` must pass before any source sync, backup, migration
+or container change. The E2E server uses an isolated test DB and a fresh server;
+never point it at the downloaded customer database. Default E2E port is 3100.
 
-`SKIP_BUILD=1` is rejected: the E2E build has test configuration, so a fresh
-production build must follow a successful gate. Do not deploy the E2E `.next`
-artifact. If a gate fails, fix the reported issue and rerun deploy.
+Successful gate receipts live in `.deploy-cache/` for up to 24 hours. Production
+artifacts live there for up to seven days, with at most two builds retained.
+Reuse checks source/config/catalog/assets/dependency/runtime/environment inputs,
+plus a hash of a consistent local DB snapshot for production builds. Artifact
+bytes, modes and symlink targets must still match their saved manifest. Editing
+application code or relevant configuration invalidates the cache; failed gates
+and builds are never saved. Deployment orchestration changes alone can reuse a
+valid build. `SKIP_BUILD=1` is still rejected; cached production artifacts keep
+their original deployment ID, while each attempt has a unique release ID.
+The E2E `.next` output is never uploaded as a production artifact.
+
+**Retry and source safety:** a new attempt stages `releases/candidate-ID` using
+empty directories and checksum rsync with `--link-dest` to the prior baseline.
+Only identical content and permissions share an inode; permission changes stay
+isolated from current. A fully uploaded candidate is retained
+as the next transfer baseline, including after smoke or a failed remote step.
+Research docs, local reports and editor configuration are omitted. Never use `rsync --inplace` or overwrite
+candidate files in place; use temporary files plus rename. Current source and
+public assets stay unchanged during preparation and smoke. Real promotion
+switches the current pointer and recreates web with the matching candidate image.
+Failures through origin, public URL or scheduler verification restore both the
+previous source pointer and image. Cleanup retains current source and its
+immediate predecessor and at most one latest transfer candidate; only directories
+created by this pipeline are pruned.
+Backups use the unique attempt ID so retries
+do not overwrite earlier snapshots. Only one deployment can own `.deploy-lock`.
+If rollback or transport fails, inspect the source pointer, running image and
+lock owner before retrying; do not blindly remove a lock for a live attempt.
+
+Smoke checks follow the demo's same-origin canonical URL and require it to serve
+the expected deployment ID and self-canonical link. A label rename in the DB
+(such as `/mau-thiep/long-phung-v3-do/demo` becoming `/mau-thiep/en-do/demo`) must
+not be rejected just because the historical input URL differs. Prepare/build
+runs on the Mac. The VPS assembles cached Linux dependencies and the prebuilt
+artifact; it never runs Next compilation.
+
+**Assembled image cache:** the VPS hashes the actual uploaded artifact,
+dependency lock/npm configuration, prebuilt Dockerfile/effective ignore file,
+resolved immutable Node base digest and target platform. A cache hit must still
+resolve to the saved immutable image ID with matching label/platform. It retags
+that image for the attempt and skips Docker assembly. Missing, changed or expired
+images are assembled normally. Receipts expire after seven days, at most four
+are kept, and receipt cleanup does not delete images. Migrations and all smoke,
+health, canonical and rollback checks still run on cache hits.
+
+Registry lookups stop after 30 seconds; individual Docker image assembly steps
+receive a stop signal after 300 seconds and a forced stop after a further
+15 seconds (registry lookups have a five-second forced-stop grace period). SSH uses noninteractive authentication, a ten-second
+connection timeout and keepalives. Logs print cache hits, phase durations and
+actual rsync transfer bytes. If a bounded step fails, fix that cause and rerun;
+valid local artifacts and the uploaded transfer baseline remain reusable.
+
+**Refresh local data:** `npm run db:pull` defaults to the active VPS, requires
+LIVE/no RETIRED, takes a read-only online SQLite backup, and verifies SHA-256 and
+integrity before replacing root `dev.db`. It first backs up local data, including
+committed WAL, under `backups/prod-db/`. Stop local dev/DB clients before running;
+the command refuses to replace an open DB. Restart dev afterward. All snapshots
+and `.deploy-cache/` stay private, gitignored and excluded from deployment sync.
+Use `bash scripts/pull-prod-db.sh` without `--db-only` to also pull uploaded media.
+
+**Measured on this Mac, 2026-09-09:** `npm run deploy:prepare` took 191 seconds
+on a cache miss (143 seconds preflight + catalog/browser gate, 48 seconds
+production build/staging/cache save). An immediate second run on identical
+inputs took seven seconds with both verified cache hits and no build. All 131
+browser checks passed. `npm run test:deploy`, TypeScript and ESLint checks passed
+(ESLint retains existing warnings). These are local preparation measurements;
+a full production deployment with the new transaction path has not been timed.
+
+**VPS smoke measurements, 2026-09-09:** paired smoke runs on one frozen Mac
+snapshot passed in 457 seconds cold and 39 seconds warm (including the VPS
+wrapper; shared context preparation excluded). The warm run hit gate, build and
+assembled-image caches and transferred zero artifact file bytes. A final smoke
+with a fresh source snapshot, checksum/link-dest sync and direct runtime-only
+dependency installation passed: 20 seconds context preparation plus 448 seconds
+inside the pipeline, excluding a few seconds of wrapper checks. This final run
+had changed application inputs and missed caches. Runtime dependency installation
+was 30.4 seconds and native rebuild 5.1 seconds; image export/unpack still took
+108.8 seconds on the VPS, so cold deployment is not a 39-second operation.
+
+All deployment regression suites passed, including source/permission isolation,
+checksum changes, WAL snapshots, image-cache misses, rollback and retention.
+After final smoke, the production image, container start time and metadata hash
+for all 9,553 current-source entries matched the pre-smoke checkpoint; production
+remained healthy and the deployment lock was released. No production promotion
+was performed. Full promotion timing (including production backup/restart) is
+still separate from these isolated smoke measurements.
 
 **Capacity gate:** after the approved cleanup, approximately **8.2 GiB is free
 on the 24 GiB disk (65% used)**, up from 4 GiB immediately after migration.

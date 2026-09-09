@@ -6,7 +6,7 @@ export const invitationMessageNamespaces = [
   "invitationTemplate", "invitationControls", "gatefoldLab", "sleeveLab",
   "coiTrauLab", "banVeToAmTemplate", "doraemonDoorLab",
   "doraemonDoor", "detectiveConanCasebookLab", "detectiveConanCasebook",
-  "comicHero",
+  "comicHero", "hoaMaiThuyMac",
 ] as const;
 
 // Every EditorForm entry point also renders invitation previews.

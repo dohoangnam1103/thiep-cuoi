@@ -96,6 +96,10 @@ const envelopeVisuals = Object.fromEntries(
 
 const sourceGiftVisuals: Record<string, GiftVisual> = {
   ...envelopeVisuals,
+  "hoa-mai-thuy-mac": {
+    kind: "layered-image",
+    asset: "/chungdoi/images/envelope/hoa_mai_thuy_mac.webp",
+  },
   "hong-van-rose": {
     kind: "layered-image",
     asset: "/chungdoi/images/envelope/crystal_floral_red.webp",

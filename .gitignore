@@ -46,7 +46,7 @@ next-env.d.ts
 /public/uploads
 /data/
 
-# Production DB snapshots pulled from minipc (contain real user data — never commit)
+# Production DB snapshots pulled from production (contain real user data — never commit)
 /backups/
 
 # Vercel
@@ -109,3 +109,10 @@ docs/research/original-dom/
 
 # Nguyệt Bạch PNG masters: 34 MB duplicating the committed .webp delivery set.
 /public/chungdoi/templates/nguyet-bach/**/*.png
+
+# Verified local deployment receipts/artifacts (may contain private build configuration).
+/.deploy-cache/
+
+# Python deployment-test bytecode.
+__pycache__/
+*.pyc

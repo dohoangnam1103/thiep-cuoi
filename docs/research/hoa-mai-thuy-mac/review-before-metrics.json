@@ -1,0 +1,658 @@
+[
+  {
+    "width": 1440,
+    "height": 900,
+    "pageHeight": 13991,
+    "overflow": false,
+    "fontLora": true,
+    "fontCormorant": true,
+    "brokenImages": [],
+    "sections": [
+      {
+        "name": "hero",
+        "top": 0,
+        "height": 1387,
+        "headings": [
+          {
+            "text": "An Nhiên&Minh Khôi",
+            "size": "112px",
+            "lineHeight": "96.32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": -58,
+            "width": 1555
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-mountains-wide.webp?dpl=20260909132535",
+            "opacity": "0.7",
+            "x": -58,
+            "width": 1555
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/petals.webp?dpl=20260909132535",
+            "opacity": "0.42",
+            "x": 390,
+            "width": 660
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "families",
+        "top": 1387,
+        "height": 2730,
+        "headings": [
+          {
+            "text": "Hai nhà se duyên",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Ông Bà",
+            "size": "52px",
+            "lineHeight": "52px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Trần An Nhiên",
+            "size": "52px",
+            "lineHeight": "52px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Nguyễn Minh Khôi",
+            "size": "52px",
+            "lineHeight": "52px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Lễ Vu Quy tại tư gia Nhà Gái",
+            "size": "52px",
+            "lineHeight": "52px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Lễ Thành Hôn tại tư gia Nhà Trai",
+            "size": "52px",
+            "lineHeight": "52px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Ông Bà",
+            "size": "52px",
+            "lineHeight": "52px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-left.webp?dpl=20260909132535",
+            "opacity": "0.76",
+            "x": -403,
+            "width": 730
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-right.webp?dpl=20260909132535",
+            "opacity": "0.7",
+            "x": 1091,
+            "width": 680
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "story",
+        "top": 4117,
+        "height": 1615,
+        "headings": [
+          {
+            "text": "Từ hôm ấy, mùa xuân ở lại",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-cluster-round.webp?dpl=20260909132535",
+            "opacity": "0.68",
+            "x": 1179,
+            "width": 520
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-river-wide.webp?dpl=20260909132535",
+            "opacity": "0.72",
+            "x": -36,
+            "width": 1512
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "gallery",
+        "top": 5732,
+        "height": 1116,
+        "headings": [
+          {
+            "text": "Những ngày có nhau",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "date",
+        "top": 6848,
+        "height": 2290,
+        "headings": [
+          {
+            "text": "Hẹn nhau ngày hoa nở",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Lịch tháng 11",
+            "size": "48px",
+            "lineHeight": "48px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Nhịp điệu ngày vui",
+            "size": "48px",
+            "lineHeight": "48px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Sắc màu buổi tiệc",
+            "size": "48px",
+            "lineHeight": "48px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp?dpl=20260909132535",
+            "opacity": "0.44",
+            "x": -29,
+            "width": 1498
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "map",
+        "top": 9138,
+        "height": 1301,
+        "headings": [
+          {
+            "text": "Đường về ngày chung đôi",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-river-wide.webp?dpl=20260909132535",
+            "opacity": "0.8",
+            "x": -72,
+            "width": 1584
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "rsvp",
+        "top": 10439,
+        "height": 748,
+        "headings": [
+          {
+            "text": "Bạn sẽ đến chung vui chứ?",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/petals.webp?dpl=20260909132535",
+            "opacity": "0.3",
+            "x": 360,
+            "width": 720
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "wishes",
+        "top": 11186,
+        "height": 1159,
+        "headings": [
+          {
+            "text": "Gửi lại một lời thương",
+            "size": "78.4px",
+            "lineHeight": "67.424px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 560,
+            "width": 320
+          }
+        ]
+      },
+      {
+        "name": "gift",
+        "top": 12345,
+        "height": 925,
+        "headings": [
+          {
+            "text": "Phong bao mừng cưới",
+            "size": "78.4px",
+            "lineHeight": "78.4px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-cluster-round.webp?dpl=20260909132535",
+            "opacity": "0.62",
+            "x": 1108,
+            "width": 620
+          }
+        ]
+      },
+      {
+        "name": "footer",
+        "top": 13271,
+        "height": 720,
+        "headings": [],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": -58,
+            "width": 1555
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "pageHeight": 10631,
+    "overflow": false,
+    "fontLora": true,
+    "fontCormorant": true,
+    "brokenImages": [],
+    "sections": [
+      {
+        "name": "hero",
+        "top": 0,
+        "height": 822,
+        "headings": [
+          {
+            "text": "An Nhiên&Minh Khôi",
+            "size": "56px",
+            "lineHeight": "48.16px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": -292,
+            "width": 880
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-mountains-wide.webp?dpl=20260909132535",
+            "opacity": "0.7",
+            "x": -380,
+            "width": 1150
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/petals.webp?dpl=20260909132535",
+            "opacity": "0.42",
+            "x": 35,
+            "width": 320
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "families",
+        "top": 822,
+        "height": 2024,
+        "headings": [
+          {
+            "text": "Hai nhà se duyên",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Ông Bà",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Trần An Nhiên",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Nguyễn Minh Khôi",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Lễ Vu Quy tại tư gia Nhà Gái",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Lễ Thành Hôn tại tư gia Nhà Trai",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Ông Bà",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-left.webp?dpl=20260909132535",
+            "opacity": "0.76",
+            "x": -260,
+            "width": 600
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-right.webp?dpl=20260909132535",
+            "opacity": "0.7",
+            "x": 50,
+            "width": 600
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "story",
+        "top": 2847,
+        "height": 1159,
+        "headings": [
+          {
+            "text": "Từ hôm ấy, mùa xuân ở lại",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-cluster-round.webp?dpl=20260909132535",
+            "opacity": "0.68",
+            "x": 180,
+            "width": 360
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-river-wide.webp?dpl=20260909132535",
+            "opacity": "0.72",
+            "x": -365,
+            "width": 1120
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "gallery",
+        "top": 4005,
+        "height": 689,
+        "headings": [
+          {
+            "text": "Những ngày có nhau",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "date",
+        "top": 4695,
+        "height": 1753,
+        "headings": [
+          {
+            "text": "Hẹn nhau ngày hoa nở",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Lịch tháng 11",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Nhịp điệu ngày vui",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          },
+          {
+            "text": "Sắc màu buổi tiệc",
+            "size": "32px",
+            "lineHeight": "32px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp?dpl=20260909132535",
+            "opacity": "0.44",
+            "x": -305,
+            "width": 1000
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "map",
+        "top": 6447,
+        "height": 1069,
+        "headings": [
+          {
+            "text": "Đường về ngày chung đôi",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-river-wide.webp?dpl=20260909132535",
+            "opacity": "0.8",
+            "x": -405,
+            "width": 1200
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "rsvp",
+        "top": 7516,
+        "height": 629,
+        "headings": [
+          {
+            "text": "Bạn sẽ đến chung vui chứ?",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/petals.webp?dpl=20260909132535",
+            "opacity": "0.3",
+            "x": 23,
+            "width": 343
+          },
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "wishes",
+        "top": 8146,
+        "height": 932,
+        "headings": [
+          {
+            "text": "Gửi lại một lời thương",
+            "size": "43.2px",
+            "lineHeight": "37.152px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-divider.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": 59,
+            "width": 273
+          }
+        ]
+      },
+      {
+        "name": "gift",
+        "top": 9077,
+        "height": 833,
+        "headings": [
+          {
+            "text": "Phong bao mừng cưới",
+            "size": "43.2px",
+            "lineHeight": "43.2px",
+            "font": "\"Cormorant Garamond\", \"Times New Roman\", serif"
+          }
+        ],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-cluster-round.webp?dpl=20260909132535",
+            "opacity": "0.62",
+            "x": 233,
+            "width": 257
+          }
+        ]
+      },
+      {
+        "name": "footer",
+        "top": 9911,
+        "height": 720,
+        "headings": [],
+        "artwork": [
+          {
+            "src": "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp?dpl=20260909132535",
+            "opacity": "1",
+            "x": -295,
+            "width": 980
+          }
+        ]
+      }
+    ]
+  }
+]

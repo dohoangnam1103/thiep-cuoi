@@ -1350,6 +1350,7 @@ export function GiftEnvelope({
   openLabel = "Nhấn để mở",
   artworkVariant = "default",
   sparkleColor,
+  stacked = false,
   headingClassName,
 }: {
   templateSlug: string;
@@ -1369,6 +1370,8 @@ export function GiftEnvelope({
   artworkVariant?: "default" | "source";
   /** Màu đốm sáng của biến thể `"source"`; mặc định trắng như bản dùng chung. */
   sparkleColor?: string;
+  /** Xếp các tài khoản theo một cột, kể cả trên desktop. */
+  stacked?: boolean;
   /** Ghi đè class của heading khi mẫu có bộ heading riêng. */
   headingClassName?: string;
 }) {
@@ -1466,16 +1469,16 @@ export function GiftEnvelope({
       </button>
       {open ? createPortal((
         <div className="gift-modal-backdrop fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-3 sm:p-4" onClick={() => setOpen(false)}>
-          <div className="gift-modal-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl sm:max-w-xl" style={{ background: cardBg }} onClick={(e) => e.stopPropagation()}>
+          <div className={cn("gift-modal-panel max-h-[90vh] w-full overflow-y-auto rounded-2xl", stacked ? "max-w-sm" : "max-w-lg sm:max-w-xl")} style={{ background: cardBg }} onClick={(e) => e.stopPropagation()}>
             <div className="relative px-6 pb-4 pt-6 text-center" style={{ backgroundColor: dark }}>
               <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-white/80 hover:bg-white/20 hover:text-white">✕</button>
               <h2 className="text-[20px] font-bold uppercase tracking-wide text-white md:text-[24px]">{heading}</h2>
             </div>
             <div className="p-4 sm:p-6">
-              <div data-testid="gift-bank-list" className="flex flex-row flex-wrap items-start justify-center gap-x-16 gap-y-8 sm:gap-x-24">
+              <div data-testid="gift-bank-list" className={cn("flex items-start justify-center gap-y-8", stacked ? "flex-col flex-nowrap items-center" : "flex-row flex-wrap gap-x-16 sm:gap-x-24")}>
                 {cards.map(({ gift: q, qr }) => {
                   return (
-                    <div data-testid="gift-bank-card" key={q.label} className="flex w-[42%] max-w-40 flex-col items-center">
+                    <div data-testid="gift-bank-card" key={q.label} className={cn("flex max-w-40 flex-col items-center", stacked ? "w-full" : "w-[42%]")}>
                       <div className="flex aspect-square w-full items-center justify-center rounded-xl bg-white p-2 shadow-lg" style={{ border: `2px solid ${hexToRgba(accent, 0.2)}` }}>
                         <img alt={`QR - ${q.label}`} className="h-full w-full object-contain" src={qr} />
                       </div>

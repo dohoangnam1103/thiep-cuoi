@@ -230,7 +230,7 @@ export function UyenUongInvitation({ content }: { content: ChungDoiDemoContent }
         <p data-template-footer className="mx-auto mt-6 max-w-[440px] text-balance text-sm leading-7 text-[#614744]">{t("presenceHonor")}</p>
         <img src={ART} alt="" aria-hidden="true" width={1536} height={1024} loading="lazy" className="mx-auto mt-4 w-full max-w-[560px]" />
         <p className="font-art-qellia mt-4 text-2xl leading-relaxed">{people[0].shortName} {t("and")} {people[1].shortName}</p>
-        <Link href="/" className="mt-6 inline-block text-xs text-[#705653]">{t("brandDomain")}</Link>
+        <Link href="/" data-invitation-clearance="margin" className="mt-6 inline-block text-xs text-[#705653]">{t("brandDomain")}</Link>
       </footer>
     </article>
   );

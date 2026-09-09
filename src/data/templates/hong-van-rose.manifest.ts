@@ -1,12 +1,10 @@
 import { createArtTemplateManifest } from "./art-template-manifest";
-import { artOpeningEffects } from "./art-opening-effects";
 
 export const manifest = createArtTemplateManifest({
   slug: "hong-van-rose",
   viRouteSlug: "hong-van-hoa-hong",
   rendererExport: "HongVanRoseInvitation",
   heroImageCount: 1,
-  openingEffect: { ...artOpeningEffects["hoa-thu-do-ruou-vang"], id: "hong-van-rose-layered-opening" },
   name: "Hồng Vân",
   title: "Hồng Vân - Thiệp cưới hoa hồng đỏ | Thiệp Mừng Online",
   description: "Thiệp cưới đỏ nhung với hoa hồng đỏ, viền vàng champagne và bố cục dọc tinh tế.",

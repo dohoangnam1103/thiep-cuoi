@@ -16,6 +16,7 @@ import hoaThuDoRuouVangAssets from "../../../public/chungdoi/images/themes/_deco
 import hoaThuXanhLaAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-xanh-la/opening-assets.json";
 import hoaThuHongAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-hong/opening-assets.json";
 import hoaThuXanhDuongAssets from "../../../public/chungdoi/images/themes/_decor/hoa-thu-xanh-duong/opening-assets.json";
+import hoaMaiThuyMacAssets from "../../../public/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/opening-assets.json";
 import ivorySignatureAssets from "../../../public/chungdoi/images/themes/_decor/ivory-signature/opening-assets.json";
 import cinemaCreditAssets from "../../../public/chungdoi/images/themes/_decor/cinema-credit/opening-assets.json";
 import coastalMediterraneanAssets from "../../../public/chungdoi/images/themes/_decor/coastal-mediterranean/opening-assets.json";
@@ -182,6 +183,20 @@ const hoaThuMotions = {
 } as const;
 
 const effectInputs = {
+  "hoa-mai-thuy-mac": [hoaMaiThuyMacAssets, {
+    durationMs: 1420,
+    exits: {
+      "branch-left": [-82, -44, 2.8, -8, 8],
+      "branch-right": [84, -42, 2.8, 8, 8],
+      "wax-seal": [0, -28, 3.6, 12, 11],
+    },
+    peaks: { "wax-seal": { yPercent: -6, brightness: 1.32 } },
+    origins: {
+      "branch-left": "100% 20%",
+      "branch-right": "0% 20%",
+      "wax-seal": "50% 50%",
+    },
+  }],
   "dong-ho-folk": [dongHoFolkAssets, {
     durationMs: 1420,
     exits: { "left-chicken": [-88, -28, 3, -9, 8], "right-chicken": [88, -24, 3, 9, 8], "center-lotus": [0, 72, 2.5, 3, 7] },

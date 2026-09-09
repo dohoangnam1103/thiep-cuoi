@@ -704,7 +704,7 @@ export function NguyetAnhSleeveInvitationBody({
         <p className="mx-auto max-w-[48ch] text-sm leading-7 text-[#D7E4EA]/62">
           {t("presenceHonor")}
         </p>
-        <p className="mt-8 flex flex-col items-center font-art-helvetica text-4xl font-light leading-[0.98] tracking-[-0.05em] text-[#78C7D7] sm:flex-row sm:justify-center sm:text-5xl">
+        <p data-invitation-clearance="margin" className="mt-8 flex flex-col items-center font-art-helvetica text-4xl font-light leading-[0.98] tracking-[-0.05em] text-[#78C7D7] sm:flex-row sm:justify-center sm:text-5xl">
           <span>{people[0].shortName}</span>
           <span className="my-1 text-base font-normal italic tracking-normal text-[#D7E4EA]/58 sm:mx-3">
             {t("and")}

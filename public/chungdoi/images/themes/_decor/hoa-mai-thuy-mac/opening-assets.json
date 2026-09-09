@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1600,
+    "height": 1000
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/cover-plate.webp",
+  "layers": [
+    {
+      "id": "branch-left",
+      "src": "/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/cover-branch-left.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 554,
+        "height": 500
+      }
+    },
+    {
+      "id": "branch-right",
+      "src": "/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/cover-branch-right.webp",
+      "rect": {
+        "x": 1040,
+        "y": 422,
+        "width": 560,
+        "height": 578
+      }
+    },
+    {
+      "id": "wax-seal",
+      "src": "/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/cover-seal.webp",
+      "rect": {
+        "x": 686,
+        "y": 385,
+        "width": 228,
+        "height": 230
+      }
+    }
+  ]
+}

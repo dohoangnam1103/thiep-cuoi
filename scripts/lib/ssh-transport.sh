@@ -52,6 +52,8 @@ transport_init() {
   control_path="${TRANSPORT_CONTROL_DIR}/$(printf '%s' "$SSH_TARGET" | shasum | cut -c1-8).sock"
 
   SSH_OPTS_ARRAY=(
+    -o BatchMode=yes
+    -o ConnectTimeout=10
     -o ControlMaster=auto
     -o "ControlPath=${control_path}"
     -o ControlPersist=300

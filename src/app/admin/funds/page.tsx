@@ -116,15 +116,15 @@ export default async function AdminFundsPage({
           <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("description")}</p>
         </div>
         <RecordWithdrawalDialog
-          recordedBalance={summary.recordedBalance}
+          remainingBalance={summary.remainingBalance}
           today={vietnamDayKey(new Date())}
         />
       </header>
 
-      <section aria-label={t("summaryLabel")} className="grid gap-4 md:grid-cols-3">
+      <section aria-label={t("summaryLabel")} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <p className="text-sm font-medium text-muted-foreground">{t("totalRevenue")}</p>
-          <p className="mt-2 font-heading text-3xl font-semibold text-emerald-700">
+          <p className="mt-2 break-words font-heading text-3xl font-semibold text-emerald-700">
             {formatVnd(summary.totalRevenue)}
           </p>
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
@@ -137,7 +137,7 @@ export default async function AdminFundsPage({
 
         <article className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <p className="text-sm font-medium text-muted-foreground">{t("totalWithdrawn")}</p>
-          <p className="mt-2 font-heading text-3xl font-semibold text-rose-700">
+          <p className="mt-2 break-words font-heading text-3xl font-semibold text-rose-700">
             {formatVnd(summary.totalWithdrawn)}
           </p>
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
@@ -148,26 +148,34 @@ export default async function AdminFundsPage({
           </p>
         </article>
 
+        <article className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <p className="text-sm font-medium text-muted-foreground">{t("taxReserve")}</p>
+          <p className="mt-2 break-words font-heading text-3xl font-semibold text-amber-700">
+            {formatVnd(summary.taxReserve)}
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{t("taxReserveFormula")}</p>
+        </article>
+
         <article
           className={`rounded-2xl border p-5 shadow-sm ${
-            summary.recordedBalance < 0
+            summary.remainingBalance < 0
               ? "border-rose-500/30 bg-rose-500/10"
               : "border-primary/20 bg-primary/5"
           }`}
         >
-          <p className="text-sm font-medium text-muted-foreground">{t("recordedBalance")}</p>
+          <p className="text-sm font-medium text-muted-foreground">{t("remainingBalance")}</p>
           <p
-            className={`mt-2 font-heading text-3xl font-semibold ${
-              summary.recordedBalance < 0 ? "text-rose-700" : "text-primary"
+            className={`mt-2 break-words font-heading text-3xl font-semibold ${
+              summary.remainingBalance < 0 ? "text-rose-700" : "text-primary"
             }`}
           >
-            {formatVnd(summary.recordedBalance)}
+            {formatVnd(summary.remainingBalance)}
           </p>
           <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{t("balanceFormula")}</p>
         </article>
       </section>
 
-      {summary.recordedBalance < 0 ? (
+      {summary.remainingBalance < 0 ? (
         <div role="alert" className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-800">
           {t("negativeBalanceWarning")}
         </div>

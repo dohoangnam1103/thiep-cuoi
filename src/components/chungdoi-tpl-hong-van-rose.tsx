@@ -24,6 +24,7 @@ const config = {
     "/chungdoi/images/themes/hong-van-rose/rose-bouquet-cascade.webp",
     "/chungdoi/images/themes/hong-van-rose/rose-bouquet.webp",
   ],
+  timelineVariant: "vine",
   formSubmitTextColor: "#5b1019",
   heroClass: "bg-transparent",
   surfaceClass: styles.surface,

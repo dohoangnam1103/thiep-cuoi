@@ -49,3 +49,11 @@ GEMINI.md
 
 # .next-prebuilt là artifact Mac rsync sang, phải giữ lại.
 !.next-prebuilt
+
+# Local-only state must never enter the prebuilt Docker context.
+.env*
+backups
+.deploy-cache
+.superpowers
+__pycache__
+*.pyc

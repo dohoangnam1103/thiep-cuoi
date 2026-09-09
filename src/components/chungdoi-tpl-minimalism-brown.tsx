@@ -700,40 +700,48 @@ export function MinimalismBrownInvitation({ content }: { content: ChungDoiDemoCo
             src={`${THEME}/leaf-background.webp`}
             className="left-[-14%] top-[-8%] -z-0 w-[44%] rotate-[38deg] opacity-[0.1]"
           />
-          <img
-            src={`${THEME}/paper-note.webp`}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            className="pointer-events-none absolute left-1/2 top-[70px] w-full max-w-[650px] -translate-x-1/2 object-contain opacity-95 drop-shadow-[4px_4px_4px_rgba(0,0,0,0.25)] md:top-[85px]"
-          />
           {/* Ô nhập của bản gốc cao hơn và bo 8px; ghi đè qua biến thể tuỳ ý thay
               vì sửa SharedWishForm để hơn 40 mẫu khác giữ nguyên giao diện. Bản
               gốc bọc ô nhập trong `div.p-4` bên trong form max-w-[300px] nên ô
               nhập rộng 268px — dồn phần đệm đó lên chính form để khỏi sửa markup
               dùng chung. */}
           <section
-            className={`${F_TIMES} relative z-10 px-6 pb-8 pt-[68px] [&_button[type=submit]]:px-6 [&_button[type=submit]]:py-2 [&_button[type=submit]]:text-sm [&_button[type=submit]]:normal-case [&_form]:max-w-[300px] [&_form]:p-4 [&_input]:rounded-[8px] [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_textarea]:h-[60px] [&_textarea]:rounded-[8px] [&_textarea]:px-4 [&_textarea]:py-3 [&_textarea]:text-sm md:pt-[130px] md:[&_form]:max-w-[400px] md:[&_textarea]:h-[130px] lg:[&_textarea]:h-[150px]`}
+            data-minimalism-guestbook
+            className={`${F_TIMES} relative z-10 pb-8 [&_button[type=submit]]:px-6 [&_button[type=submit]]:py-2 [&_button[type=submit]]:text-sm [&_button[type=submit]]:normal-case [&_form]:max-w-[300px] [&_form]:p-4 [&_input]:rounded-[8px] [&_input]:px-4 [&_input]:py-3 [&_input]:text-sm [&_textarea]:h-[60px] [&_textarea]:rounded-[8px] [&_textarea]:px-4 [&_textarea]:py-3 [&_textarea]:text-sm md:[&_form]:max-w-[400px] md:[&_textarea]:h-[130px] lg:[&_textarea]:h-[150px]`}
             style={{ color: INK }}
           >
-            <div className="text-center">
-              {/* Bản gốc đẩy heading xuống 18px để nó rơi vào giữa tờ giấy nền. */}
-              <BrownHeading className="relative translate-y-[18px]">Sổ lưu bút</BrownHeading>
+            {/* Keep the existing form gap, with at least 24px below the artwork. */}
+            <div className="grid grid-cols-1 items-start">
+              <img
+                src={`${THEME}/paper-note.webp`}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                width={1405}
+                height={1033}
+                className="pointer-events-none col-start-1 row-start-1 mt-[70px] h-auto w-full max-w-[650px] justify-self-center object-contain opacity-95 drop-shadow-[4px_4px_4px_rgba(0,0,0,0.25)] md:mt-[85px]"
+              />
+              <div className={`relative z-10 col-start-1 row-start-1 px-6 pt-[68px] md:pt-[130px] ${wishes.length > 0 ? "pb-[41px] md:pb-[106px]" : ""}`}>
+                <div className="text-center">
+                  {/* Bản gốc đẩy heading xuống 18px để nó rơi vào giữa tờ giấy nền. */}
+                  <BrownHeading className="relative translate-y-[18px]">Sổ lưu bút</BrownHeading>
+                </div>
+                {/* Placeholder và nhãn nút lấy đúng chữ của bản gốc; thông báo lỗi vẫn
+                    dùng catalog dùng chung. */}
+                <SharedWishForm
+                  accent={INK}
+                  fieldBorderColor={INK}
+                  submitTextColor={ON_DARK}
+                  labels={{
+                    namePlaceholder: "Nhập tên*",
+                    textPlaceholder: "Nhập lời chúc*",
+                    submit: "GỬI LỜI CHÚC",
+                  }}
+                />
+              </div>
             </div>
-            {/* Placeholder và nhãn nút lấy đúng chữ của bản gốc; thông báo lỗi vẫn
-                dùng catalog dùng chung. */}
-            <SharedWishForm
-              accent={INK}
-              fieldBorderColor={INK}
-              submitTextColor={ON_DARK}
-              labels={{
-                namePlaceholder: "Nhập tên*",
-                textPlaceholder: "Nhập lời chúc*",
-                submit: "GỬI LỜI CHÚC",
-              }}
-            />
             {wishes.length > 0 ? (
-              <div className="chungdoi-scroll touch-pan-y mx-auto mt-[65px] max-h-[500px] w-full max-w-full space-y-3 overflow-y-auto pr-2 md:mt-[130px] md:max-w-[600px]">
+              <div className="chungdoi-scroll touch-pan-y mx-auto mt-6 max-h-[500px] w-[calc(100%-3rem)] space-y-3 overflow-y-auto pr-2 md:max-w-[600px]">
                 {wishes.map((w, i) => (
                   <div
                     key={`${w.name}-${i}`}

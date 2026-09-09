@@ -145,6 +145,7 @@ const NEW_ART_TEMPLATE_FONTS = {
 } as const satisfies Record<(typeof NEW_ART_TEMPLATE_SLUGS)[number], readonly [string, string]>;
 
 const ZODIAC_TEMPLATE_SLUG = "thap-nhi-chi-do";
+const HOA_MAI_WATERCOLOR_SLUG = "hoa-mai-thuy-mac";
 const ZODIAC_ARTWORK_IDS = [...ZODIAC_IDS, "phuong"] as const;
 const ZODIAC_ARTWORK_ASSETS = ZODIAC_ARTWORK_IDS.flatMap((id) => [
   zodiacArtworkPath(id),
@@ -173,6 +174,48 @@ async function loadZodiacTemplateManifest(): Promise<TemplateManifest> {
   assert.ok(loaded.manifest, `${ZODIAC_TEMPLATE_SLUG}: manifest export`);
   return loaded.manifest;
 }
+
+async function loadHoaMaiWatercolorManifest(): Promise<TemplateManifest> {
+  const manifestPath = path.join(
+    process.cwd(),
+    "src",
+    "data",
+    "templates",
+    `${HOA_MAI_WATERCOLOR_SLUG}.manifest.ts`,
+  );
+  assert.equal(existsSync(manifestPath), true, `${HOA_MAI_WATERCOLOR_SLUG}: manifest`);
+  const loaded = (await import(pathToFileURL(manifestPath).href)) as {
+    manifest?: TemplateManifest;
+  };
+  assert.ok(loaded.manifest, `${HOA_MAI_WATERCOLOR_SLUG}: manifest export`);
+  return loaded.manifest;
+}
+
+test("hoa mai watercolor manifest registers its bespoke renderer and complete asset system", async () => {
+  const manifest = await loadHoaMaiWatercolorManifest();
+
+  assert.equal(manifest.slug, HOA_MAI_WATERCOLOR_SLUG);
+  assert.equal(manifest.viRouteSlug, HOA_MAI_WATERCOLOR_SLUG);
+  assert.equal(manifest.rendererExport, "HoaMaiThuyMacInvitation");
+  assert.equal(manifest.ceremonyRendering, "inline-all");
+  assert.equal(manifest.heroImageCount, 1);
+  assert.equal(manifest.catalog.category, "Floral");
+  assert.equal(manifest.catalog.color, "Yellow");
+  assert.equal(manifest.demoContent.theme.fontFamily, "Cormorant Garamond");
+  assert.equal(manifest.assets.length, 16);
+  assert.equal(new Set(manifest.assets).size, manifest.assets.length);
+  for (const expected of [
+    "/chungdoi/images/themes/hoa-mai-thuy-mac/paper-tile.webp",
+    "/chungdoi/images/themes/hoa-mai-thuy-mac/mai-branch-canopy.webp",
+    "/chungdoi/images/themes/hoa-mai-thuy-mac/wash-river-wide.webp",
+    "/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/artwork.webp",
+    "/chungdoi/images/themes/_decor/hoa-mai-thuy-mac/cover-plate.webp",
+    "/chungdoi/images/envelope/hoa_mai_thuy_mac.webp",
+    "/chungdoi/music/sunflower.mp3",
+  ]) {
+    assert.ok(manifest.assets.includes(expected), expected);
+  }
+});
 
 test("thap-nhi-chi-do manifest preserves the Phoenix envelope with dynamic zodiac artwork", async () => {
   const manifest = await loadZodiacTemplateManifest();

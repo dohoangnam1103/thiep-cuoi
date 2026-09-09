@@ -48,7 +48,7 @@
     "check": "npm run lint && npm run typecheck && npm run typecheck:tests && npm run test:unit && npm run build:local",
     "check:i18n": "tsx --test src/i18n/*.test.ts src/lib/invitation-template-i18n.test.ts",
     "test:i18n:e2e": "playwright test --config=playwright.i18n.config.ts",
-    "test:unit": "tsx --test \"src/**/*.test.ts\"",
+    "test:unit": "tsx --test \"src/**/*.test.ts\" && bash tests/deploy-fast-safety.test.sh",
     "test:lightbox": "node scripts/verify-song-phung-lightbox.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -71,7 +71,10 @@
     "seed:demos:completed-missing": "tsx scripts/seed-demos.ts --missing --completed",
     "reminders:trial": "tsx scripts/send-trial-reminders.ts",
     "reconcile:payos": "tsx scripts/reconcile-payos.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "deploy:prepare": "DEPLOY_PREPARE_ONLY=1 bash scripts/deploy-fast.sh",
+    "db:pull": "bash scripts/pull-prod-db.sh --db-only",
+    "test:deploy": "tsx --test src/lib/deploy-i18n-gate.test.ts && node --test tests/deploy-inputs.test.mjs && python3 tests/deploy-cache.test.py && python3 tests/deploy-assembled-image-cache.test.py && bash tests/deploy-sync-source.test.sh && bash tests/deploy-fast-safety.test.sh && bash tests/deploy-release.test.sh && bash tests/deploy-transaction.test.sh && bash tests/pull-prod-db.test.sh"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

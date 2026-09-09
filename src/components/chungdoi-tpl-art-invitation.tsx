@@ -112,6 +112,7 @@ export type ArtInvitationConfig = {
   sectionArtwork?: string;
   sectionArtworkBouquet?: boolean;
   sectionArtworkVariants?: string[];
+  timelineVariant?: "cards" | "vine";
   formSubmitTextColor?: string;
   columnClass?: string;
 };
@@ -324,7 +325,7 @@ function SectionHeading({
   return (
     <>
       {config.sectionArtwork ? <SectionFlowers src={config.sectionArtwork} variants={config.sectionArtworkVariants} bouquet={config.sectionArtworkBouquet} /> : null}
-      <h2 className={cn("text-balance", config.displayFontClass, config.headingClass, config.inkClass, "text-[clamp(1.75rem,8cqw,2.5rem)]")}>
+      <h2 data-section-heading className={cn("text-balance", config.displayFontClass, config.headingClass, config.inkClass, "text-[clamp(1.75rem,8cqw,2.5rem)]")}>
         {children}
       </h2>
     </>
@@ -345,7 +346,7 @@ function EventCard({
   config: ArtInvitationConfig;
 }) {
   return (
-    <article className={cn("border p-7 sm:p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
+    <article data-event-card className={cn("border p-7 sm:p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
       <h3 className={cn("text-xs font-semibold uppercase tracking-[0.22em]", config.displayFontClass, config.accentTextClass)}>{label}</h3>
       <p className={cn("mt-6 whitespace-pre-line text-base leading-7", config.inkClass)}>{message}</p>
       {date ? (
@@ -420,8 +421,8 @@ export function ArtInvitation({
         {config.parallaxArtwork !== false ? <ParallaxArtwork config={config} /> : null}
         <ArtworkHero config={effectiveConfig} content={content} t={t} />
 
-        <div className="relative z-30 mx-auto w-full max-w-[760px] px-5 py-16 text-center sm:px-8 sm:py-20">
-        <section className={cn("space-y-9", config.sectionClass)}>
+        <div data-art-content className="relative z-30 mx-auto w-full max-w-[760px] px-5 py-16 text-center sm:px-8 sm:py-20">
+        <section data-art-section="intro" className={cn("space-y-9", config.sectionClass)}>
           <SectionHeading config={effectiveConfig}>{t("respectfulInvitation")}</SectionHeading>
           <div>
             <p className={cn("text-lg leading-8", config.inkClass)}>
@@ -440,7 +441,7 @@ export function ArtInvitation({
           </div>
         </section>
 
-        <section data-template-ceremonies data-art-ceremonies className="mt-20 space-y-5">
+        <section data-art-section="ceremonies" data-template-ceremonies data-art-ceremonies className="mt-20 space-y-5">
           {ceremonies.map((ceremony, index) => (
             <div
               key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`}
@@ -464,7 +465,7 @@ export function ArtInvitation({
           />
         </section>
 
-        <section className="mt-20 space-y-10">
+        <section data-art-section="calendar" className="mt-20 space-y-10">
           <div>
             <SectionHeading config={effectiveConfig}>{t("remaining")}</SectionHeading>
             <SharedCountdown
@@ -481,7 +482,7 @@ export function ArtInvitation({
             </a>
           </div>
           {calendar ? (
-            <div className={cn("border p-6 sm:p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
+            <div data-calendar-card className={cn("border p-6 sm:p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
               <h3 className={cn("text-lg font-semibold", effectiveConfig.displayFontClass, config.inkClass)}>{t("calendar", { month: calendar.month })}</h3>
               <div className="mt-6 grid grid-cols-7 gap-1 text-center">
                 {WEEKDAY_LABELS.map((label) => (
@@ -503,7 +504,7 @@ export function ArtInvitation({
           ) : null}
         </section>
 
-        <section className="mt-20">
+        <section data-art-section="album" className="mt-20">
           <SectionHeading config={effectiveConfig}>{t("album")}</SectionHeading>
           <div className="mt-8 flex justify-center">
             <AlbumGallery
@@ -516,20 +517,63 @@ export function ArtInvitation({
         </section>
 
         {schedule.length ? (
-          <section className="mt-20">
+          <section data-art-section="timeline" className="mt-20">
             <SectionHeading config={effectiveConfig}>{t("timeline")}</SectionHeading>
-            <div className={cn("mt-8 grid gap-px overflow-hidden border", config.borderClass, contentRadiusClass())}>
+            <div
+              data-timeline-list
+              data-timeline-variant={config.timelineVariant ?? "cards"}
+              className={cn("relative mt-8 grid gap-px overflow-hidden border", config.borderClass, contentRadiusClass())}
+            >
+              {config.timelineVariant === "vine" ? (
+                <>
+                  <svg
+                    data-timeline-vine
+                    aria-hidden="true"
+                    viewBox="0 0 80 480"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      pathLength="1"
+                      d="M40 0C22 52 58 79 40 120S58 199 40 240S58 319 40 360S57 436 40 480"
+                      fill="none"
+                      stroke={config.accentHex}
+                      strokeLinecap="round"
+                    />
+                    <path d="M38 105C25 91 15 94 13 106C22 116 30 118 38 105Z" fill={config.accentHex} />
+                    <path d="M42 225C55 210 66 214 67 226C58 236 50 238 42 225Z" fill={config.accentHex} />
+                    <path d="M38 344C25 330 15 333 14 346C22 356 30 357 38 344Z" fill={config.accentHex} />
+                  </svg>
+                  {config.sectionArtworkVariants?.[0] || config.sectionArtwork ? (
+                    <img
+                      data-timeline-flower="start"
+                      src={config.sectionArtworkVariants?.[0] ?? config.sectionArtwork}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                    />
+                  ) : null}
+                  {config.sectionArtworkVariants?.[1] || config.sectionArtwork ? (
+                    <img
+                      data-timeline-flower="end"
+                      src={config.sectionArtworkVariants?.[1] ?? config.sectionArtwork}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                    />
+                  ) : null}
+                </>
+              ) : null}
               {schedule.map((item) => (
-                <div key={`${item.time}-${item.label}`} className={cn("flex flex-col items-center gap-2 p-5 text-center", config.surfaceClass)}>
-                  <span className={cn("font-semibold tabular-nums", config.accentTextClass)}>{item.time}</span>
-                  <span className={config.inkClass}>{item.label}</span>
+                <div data-timeline-item key={`${item.time}-${item.label}`} className={cn("flex flex-col items-center gap-2 p-5 text-center", config.surfaceClass)}>
+                  <span data-timeline-time className={cn("font-semibold tabular-nums", config.accentTextClass)}>{item.time}</span>
+                  <span data-timeline-label className={config.inkClass}>{item.label}</span>
                 </div>
               ))}
             </div>
           </section>
         ) : null}
 
-        <section className="mt-20 space-y-8">
+        <section data-art-section="map" className="mt-20 space-y-8">
           <div>
             <SectionHeading config={effectiveConfig}>{t("map")}</SectionHeading>
             <p className={cn("mt-5 whitespace-pre-line text-sm leading-7", config.mutedClass)}>{venue.address}</p>
@@ -542,7 +586,7 @@ export function ArtInvitation({
         </section>
 
         {dressColors.length ? (
-          <section className={cn("mt-20 border p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
+          <section data-art-section="dress" className={cn("mt-20 border p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
             <DressCode
               colors={dressColors}
               heading={<SectionHeading config={effectiveConfig}>{t("dressCode")}</SectionHeading>}
@@ -552,15 +596,17 @@ export function ArtInvitation({
           </section>
         ) : null}
 
-        <SharedRsvpForm
-          accent={config.accentHex}
-          submitTextColor={config.formSubmitTextColor}
-          centered
-          className="mt-20"
-          heading={<SectionHeading config={effectiveConfig}>{t("rsvpHeading")}</SectionHeading>}
-        />
+        <div data-art-section="rsvp">
+          <SharedRsvpForm
+            accent={config.accentHex}
+            submitTextColor={config.formSubmitTextColor}
+            centered
+            className="mt-20"
+            heading={<SectionHeading config={effectiveConfig}>{t("rsvpHeading")}</SectionHeading>}
+          />
+        </div>
 
-        <section className="mt-20">
+        <section data-art-section="guestbook" className="mt-20">
           <SectionHeading config={effectiveConfig}>{t("guestbook")}</SectionHeading>
           <SharedWishForm accent={config.accentHex} submitTextColor={config.formSubmitTextColor} centered />
           <SharedWishList
@@ -570,7 +616,7 @@ export function ArtInvitation({
             showAllLabel={t("showAllWishes")}
             collapseLabel={t("collapseWishes")}
             renderWish={(wish) => (
-              <blockquote className={cn("border p-6", config.surfaceClass, config.borderClass, contentRadiusClass())}>
+              <blockquote data-wish-card className={cn("border p-6", config.surfaceClass, config.borderClass, contentRadiusClass())}>
                 <p className={cn("leading-7", config.inkClass)}>{wish.text}</p>
                 <footer className={cn("mt-4 text-xs", config.mutedClass)}>{wish.name} / {formatWishTime(wish.time)}</footer>
               </blockquote>
@@ -579,7 +625,7 @@ export function ArtInvitation({
         </section>
 
         {banks.length ? (
-          <section className="mt-20">
+          <section data-art-section="gift" className="mt-20">
             {config.giftLayout === "flip" ? (
               <>
                 <GiftEnvelope
@@ -608,11 +654,11 @@ export function ArtInvitation({
           </section>
         ) : null}
 
-        <footer className={cn("mt-24 border-t pt-10 text-center", config.borderClass)}>
+        <footer data-art-footer className={cn("mt-24 border-t pt-10 text-center", config.borderClass)}>
           {config.sectionArtwork ? <SectionFlowers src={config.sectionArtwork} variants={config.sectionArtworkVariants} bouquet={config.sectionArtworkBouquet} /> : null}
           <p className={cn("text-sm leading-7", config.mutedClass)}>{t("presenceHonor")}</p>
           {/* Mỗi tên một dòng riêng: màn hình hẹp không còn cắt tên ở vị trí bất kỳ. */}
-          <p className={cn("mt-4 flex flex-col items-center text-lg font-semibold leading-snug", config.inkClass)}>
+          <p data-invitation-clearance="margin" className={cn("mt-4 flex flex-col items-center text-lg font-semibold leading-snug", config.inkClass)}>
             <span className="block">{people[0].shortName}</span>
             <span className={cn("block text-base font-normal", config.mutedClass)}>{t("and")}</span>
             <span className="block">{people[1].shortName}</span>

@@ -167,6 +167,6 @@ export function ToHongInvitation({ content }: { content: ChungDoiDemoContent }) 
 
     {accounts.length ? <Section name="gifts"><Heading>{t("gift")}</Heading><p className={styles.sectionIntro}>{u("giftNote")}</p><div className={styles.gifts}>{accounts.map((account) => <ToHongGift key={`${account.bank}-${account.num}-${account.name}`} account={account} />)}</div></Section> : null}
 
-    <footer data-to-hong-section="footer" className={styles.footer}><ToHongThread /><ToHongKnot /><p className={styles.eyebrow}>{u("endNote")}</p><h2>{u("thanks")}</h2><p data-template-footer>{t("presenceHonor")}</p><p className={styles.footerNames}>{people[0].shortName} &amp; {people[1].shortName}</p><Link href="/">{t("brandDomain")}</Link></footer>
+    <footer data-to-hong-section="footer" className={styles.footer}><ToHongThread /><ToHongKnot /><p className={styles.eyebrow}>{u("endNote")}</p><h2>{u("thanks")}</h2><p data-template-footer>{t("presenceHonor")}</p><p className={styles.footerNames}>{people[0].shortName} &amp; {people[1].shortName}</p><Link href="/" data-invitation-clearance="margin">{t("brandDomain")}</Link></footer>
   </article>;
 }

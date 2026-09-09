@@ -58,3 +58,18 @@ Ngày: 2026-09-06. Route local: http://localhost:3000/mau-thiep/hong-van-hoa-hon
 ## Nhật ký lỗi để tái sử dụng
 
 Các lỗi đã gặp trong quá trình làm mẫu và cổng phòng lỗi cho mẫu tiếp theo được tổng hợp tại [`lessons-learned.md`](lessons-learned.md). Checklist chung áp dụng cho mọi template nằm trong [`docs/template-clone-quality.md`](../../template-clone-quality.md).
+
+## Nâng cấp bố cục editorial — 2026-09-07
+
+- Bỏ công thức card bo tròn lặp lại ở khối lễ cưới, lịch, lịch trình, trang phục và lời chúc. Các nội dung kể chuyện chuyển sang nền mở, khoảng thở lớn, ánh đỏ nhẹ và đường champagne thuôn mảnh; bản đồ và form vẫn giữ ranh giới chức năng.
+- Lịch trình dùng trục dây hoa cong riêng cho Hồng Vân: giờ ở bên trái, nội dung ở bên phải, nút hoa trên trục và hai cụm hồng dạt ra biên. Desktop/tablet giữ bố cục một cột; mobile dùng trục lệch trái và chừa vùng an toàn 60px bên phải cho các nút điều khiển nổi.
+- Nền cột được bổ sung chuyển sắc nhiều tâm và vân giấy rất nhẹ để giảm cảm giác một mảng đỏ phẳng. Tiêu đề có đường nhấn ngắn thay vì thêm khung mới.
+- Bằng chứng: `1440-editorial-ceremonies.png`, `1440-editorial-timeline.png`, `390-editorial-timeline.png`, `320-editorial-timeline.png`. Đã xem ở 1440, 768, 390 và 320px; `scrollWidth` bằng viewport ở cả bốn cỡ và không phát hiện text timeline chồng nhau. Ở 320px, nhãn dài “Chụp ảnh lưu niệm” tự xuống hai dòng trước vùng điều khiển nổi.
+- Tương tác kiểm tra lại: bìa mở được; auto-scroll dịch chuyển trang từ `scrollY=0` lên `121` sau 1,5 giây; phong bao mở modal có hai QR và ảnh chụp `390-editorial-gift-modal.png`. Không gửi form hay dữ liệu ra ngoài.
+- Lint: 0 lỗi (32 cảnh báo có sẵn trong repo). Typecheck: đạt.
+
+## Thu gọn lịch — 2026-09-07
+
+- Lịch giảm từ tối đa 560px xuống 430px ở desktop; khoảng đệm, tiêu đề, nhãn thứ và khoảng cách ô cũng được giảm theo. Mỗi ô ngày desktop còn 56px, giữ vùng chạm/đọc rõ.
+- Mobile không ép nhỏ quá mức: 390px dùng ô 46px, 320px dùng ô 36px. Không phát sinh tràn ngang.
+- Ảnh kiểm tra: `1440-editorial-calendar-compact.png`, `390-editorial-calendar-compact.png`, `320-editorial-calendar-compact.png`.

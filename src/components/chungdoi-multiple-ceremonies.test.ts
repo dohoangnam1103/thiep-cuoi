@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -29,6 +29,7 @@ const templatesWithInternalCeremonies = [
   ["chungdoi-tpl-dragon-phoenix.tsx", "data-dragon-phoenix-ceremonies"],
   ["chungdoi-tpl-dragon-phoenix-v3-red.tsx", "data-dragon-phoenix-v3-ceremonies"],
   ["chungdoi-tpl-minimalism-dark-red.tsx", "data-minimalism-dark-red-ceremonies"],
+  ["chungdoi-tpl-minimalism-green.tsx", "data-minimalism-green-ceremonies"],
   ["chungdoi-tpl-minimalism-brown.tsx", "data-minimalism-brown-ceremonies"],
   ["chungdoi-tpl-glass-garden-pink.tsx", "data-glass-garden-pink-ceremonies"],
   ["chungdoi-tpl-glass-garden-green.tsx", "data-glass-garden-green-ceremonies"],
@@ -68,6 +69,7 @@ test("the generic post-template ceremony card is controlled by the renderer regi
   );
 
   for (const slug of [
+    "minimalism-green",
     "minimalism-jade",
     "minimalism-sky-blue",
     "minimalism-powder-pink",
@@ -79,6 +81,31 @@ test("the generic post-template ceremony card is controlled by the renderer regi
       `${slug}: native alias mode`,
     );
   }
+});
+
+test("hoa mai watercolor owns every ceremony and is present in the generated renderer registry", () => {
+  const manifestPath = join(
+    process.cwd(),
+    "src/data/templates/hoa-mai-thuy-mac.manifest.ts",
+  );
+  assert.equal(existsSync(manifestPath), true, "hoa mai manifest exists");
+  const manifestSource = readFileSync(manifestPath, "utf8");
+  const rendererSource = component("chungdoi-tpl-hoa-mai-thuy-mac.tsx");
+
+  assert.match(manifestSource, /rendererExport:\s*"HoaMaiThuyMacInvitation"/);
+  assert.match(manifestSource, /ceremonyRendering:\s*"inline-all"/);
+  assert.match(rendererSource, /invitationCeremonies\(content\)/);
+  assert.match(rendererSource, /ceremonies\.map/);
+  assert.match(rendererSource, /data-template-ceremonies/);
+  assert.match(rendererSource, /data-template-ceremony-item/);
+  assert.match(
+    generatedRendererSource,
+    /import\("@\/components\/chungdoi-tpl-hoa-mai-thuy-mac"\)\.then\(\(module\) => module\.HoaMaiThuyMacInvitation\)/,
+  );
+  assert.match(
+    generatedRendererSource,
+    /"hoa-mai-thuy-mac": \{ component: TemplateRenderer\d+, ceremonyRendering: "inline-all" \}/,
+  );
 });
 
 test("every manifest declares an explicit ceremony rendering contract", () => {

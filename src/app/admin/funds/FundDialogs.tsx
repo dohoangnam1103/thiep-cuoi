@@ -36,10 +36,10 @@ const firstAllocation = (): AllocationDraft => ({
 });
 
 export function RecordWithdrawalDialog({
-  recordedBalance,
+  remainingBalance,
   today,
 }: {
-  recordedBalance: number;
+  remainingBalance: number;
   today: string;
 }) {
   const t = useTranslations("adminFunds");
@@ -70,7 +70,7 @@ export function RecordWithdrawalDialog({
         <RecordWithdrawalPanel
           key={requestKey}
           requestKey={requestKey}
-          recordedBalance={recordedBalance}
+          remainingBalance={remainingBalance}
           today={today}
           onClose={close}
         />
@@ -81,12 +81,12 @@ export function RecordWithdrawalDialog({
 
 function RecordWithdrawalPanel({
   requestKey,
-  recordedBalance,
+  remainingBalance,
   today,
   onClose,
 }: {
   requestKey: string;
-  recordedBalance: number;
+  remainingBalance: number;
   today: string;
   onClose: () => void;
 }) {
@@ -133,7 +133,7 @@ function RecordWithdrawalPanel({
   const allocated = allocations.reduce((sum, allocation) => sum + (Number(allocation.amount) || 0), 0);
   const remaining = amountValue - allocated;
   const allocationsMatch = amountValue > 0 && !amountTooLarge && remaining === 0;
-  const balanceAfter = recordedBalance - amountValue;
+  const balanceAfter = remainingBalance - amountValue;
 
   const updateAllocation = (
     id: number,
@@ -390,7 +390,7 @@ function RecordWithdrawalPanel({
 
           <div className={`rounded-xl border px-4 py-3 ${balanceAfter < 0 ? "border-rose-500/30 bg-rose-500/10" : "border-border bg-muted/30"}`}>
             <p className="text-sm text-muted-foreground">
-              {t("balanceBefore")}: <span className="font-semibold text-foreground">{formatVnd(recordedBalance)}</span>
+              {t("balanceBefore")}: <span className="font-semibold text-foreground">{formatVnd(remainingBalance)}</span>
             </p>
             <p className={`mt-1 text-base font-semibold ${balanceAfter < 0 ? "text-rose-700" : "text-foreground"}`}>
               {t("balanceAfter")}: {formatVnd(balanceAfter)}

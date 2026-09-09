@@ -29,7 +29,7 @@ function InvitationBrandLink() {
   const t = useTranslations("invitationTemplate");
 
   return (
-    <Link href="/" className="opacity-70 transition-opacity hover:opacity-90">
+    <Link href="/" data-invitation-clearance="margin" className="opacity-70 transition-opacity hover:opacity-90">
       {t("brandDomain")}
     </Link>
   );

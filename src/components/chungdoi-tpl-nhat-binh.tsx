@@ -154,7 +154,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
 
   return (
     <div className="flex w-full justify-center overflow-x-clip bg-white" style={{ color: BROWN }}>
-      <div ref={parallaxRef} className="relative w-full max-w-[480px] overflow-hidden pb-8 mx-auto md:max-w-[900px] md:border" style={{ backgroundColor: CREAM, borderColor: hexToRgba(RED, 0.18), fontFamily: '"HelveticaNeue", sans-serif' }}>
+      <div ref={parallaxRef} data-invitation-clearance="nhat-binh" className="relative w-full max-w-[480px] overflow-hidden pb-8 mx-auto md:max-w-[900px] md:border" style={{ backgroundColor: CREAM, borderColor: hexToRgba(RED, 0.18), fontFamily: '"HelveticaNeue", sans-serif' }}>
         {/* paper texture overlay */}
         <div
           className="pointer-events-none absolute inset-0 z-0"
@@ -452,8 +452,8 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
         <footer data-template-footer className="relative z-[2] mx-auto flex w-full max-w-[329px] flex-col items-center px-4 py-[10px] text-center md:max-w-2xl md:px-10 md:py-[15px] lg:py-[20px]">
           <span className="flex flex-col items-center gap-1 whitespace-pre-line text-[14px] leading-normal md:text-base lg:text-lg" style={{ color: BROWN, fontFamily: NB_HELV }}>Sự hiện diện của quý khách là niềm vinh hạnh của gia đình chúng tôi!</span>
         </footer>
-        <div className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center" style={{ color: BROWN, fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif' }}>
-          <a href="https://thiepmungonline.com" target="_blank" rel="noopener noreferrer" className="text-[14px] text-xs opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: BROWN }}>♡ thiepmungonline.com</a>
+        <div data-invitation-clearance="absolute-brand" className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center" style={{ color: BROWN, fontFamily: '"Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif' }}>
+          <a href="https://thiepmungonline.com" data-invitation-clearance="skip" target="_blank" rel="noopener noreferrer" className="text-[14px] text-xs opacity-70 transition-opacity hover:opacity-90 md:text-[15px]" style={{ color: BROWN }}>♡ thiepmungonline.com</a>
         </div>
       </div>
     </div>

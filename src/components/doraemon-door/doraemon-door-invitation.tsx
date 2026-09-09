@@ -755,7 +755,7 @@ export function DoraemonDoorInvitationBody({
               {people[1].shortName}
             </span>
           </p>
-          <p className="mt-7 text-sm font-semibold text-[#B94170]">
+          <p data-invitation-clearance="margin" className="mt-7 text-sm font-semibold text-[#B94170]">
             {doorT("finale")}
           </p>
         </div>

@@ -2372,3 +2372,32 @@ div.minimalism-brown-opening-fly > img {
     animation: slideshow-editorial-enter 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 }
+
+/* Hoa Mai Thủy Mặc: the concept uses a handmade horizontal paper invitation.
+ * Keep its cover quiet and let the supplied paper/branch artwork carry the frame. */
+.hoa-mai-cover-card {
+  aspect-ratio: 16 / 10 !important;
+  border-radius: 2px !important;
+  overflow: hidden;
+  box-shadow: 0 28px 52px -20px rgba(62,36,29,.52), 0 3px 0 rgba(255,249,236,.62) inset !important;
+}
+.hoa-mai-cover-card-content {
+  justify-content: center !important;
+  padding: 3.5rem 2.25rem 2rem !important;
+  color: #3e241d;
+}
+.hoa-mai-cover-card-content > div:first-child {
+  margin-bottom: .6rem !important;
+  font-size: clamp(2.4rem, 7vw, 4.5rem) !important;
+  line-height: .9 !important;
+  letter-spacing: .02em;
+}
+.hoa-mai-cover-card-content > div:first-child span:nth-child(2) {
+  color: #a95231 !important;
+  font-size: .34em !important;
+  margin-block: .25em !important;
+}
+.hoa-mai-cover-card-content > div:nth-child(2) { margin-bottom: .65rem !important; }
+.hoa-mai-cover-card-content > div:nth-child(2) span { background: #a95231 !important; }
+.hoa-mai-cover-card-content > p { font-family: "Cormorant Garamond", Georgia, serif !important; color: #3e241d !important; }
+.hoa-mai-cover-card-content button { border-radius: 999px !important; background: #a95231 !important; box-shadow: 0 9px 18px rgba(62,36,29,.22) !important; }

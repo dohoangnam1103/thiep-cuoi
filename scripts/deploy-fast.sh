@@ -1,57 +1,37 @@
 #!/usr/bin/env bash
-#
-# Deploy nhanh: build Next trên Mac, lắp image trên Mini PC.
-#
-# Khác biệt so với scripts/deploy-minipc.sh (vẫn giữ làm fallback):
-#
-#   1. Đi thẳng LAN tới Mini PC thay vì qua `cloudflared access ssh`.
-#      Đo được: ~21 MB/s so với <0.33 MB/s qua tunnel.
-#   2. Ghép mọi lệnh remote vào một SSH connection (ControlMaster) thay vì
-#      mở lại hơn 10 lần.
-#   3. Compile Next native trên Mac (~35s) thay vì trên Mini PC, nơi chỉ còn
-#      ~2.6GB RAM và đã swap 3GB.
-#   4. Chỉ rsync 105MB artifact rồi để Mini PC chạy COPY, thay vì
-#      `docker save | ssh docker load` cả image 1.84GB mỗi lần deploy dù chỉ
-#      ~83MB thực sự đổi.
-#   5. Chạy song song: build trên Mac ‖ rsync source ‖ backup trên Mini PC.
-#   6. public/ (539MB) bind-mount từ host thay vì nằm trong image.
-#   7. Backup uploads bằng hardlink snapshot thay vì gzip lại 78MB mỗi deploy,
-#      kèm dọn retention (data/backups từng phình lên 3.6GB).
-#
-# Giữ nguyên toàn bộ rào an toàn của script cũ: xác minh đúng host, backup
-# trước khi đổi gì, migration preflight fail-closed, rollback tag + tự rollback,
-# healthcheck, kiểm tra deployment ID / canonical / SQLite integrity, verify
-# URL public. Thêm mới: kiểm tra asset trong public/ để bắt lỗi mount hỏng.
-#
-# Biến môi trường ghi đè:
-#   REMOTE_LAN_IP        IP LAN Mini PC                     (192.168.0.57)
-#   REMOTE_LAN_USER      user SSH trên LAN                  (namdo)
-#   REMOTE_TUNNEL_ALIAS  alias fallback khi ở ngoài mạng    (minipc)
-#   REMOTE_APP_DIR       thư mục app                        (/home/namdo/apps/thiepmungonline)
-#   WEB_IMAGE            image compose dùng                 (thiepmungonline-web:latest)
-#   PUBLIC_URL           URL public                         (https://thiepmungonline.com)
-#   WEB_PORT             cổng LAN                           (3211)
-#   DEPLOYMENT_ID         mã version / cache-bust Next.js   (UTC timestamp)
-#   BACKUP_RETENTION     số bản backup giữ lại              (10)
-#   SKIP_BUILD=1         rejected: deploy must rebuild the source checked for i18n
-#   VERIFY_ASSET         đường dẫn asset public để kiểm tra (/chungdoi/icon-v2.png)
+# Build and verify Next on the Mac; assemble native dependencies/image on VPS.
+# Gate/build receipts reuse only identical inputs and verified artifacts.
+# Each attempt stages an independent source release; promote source + image
+# together, keeping rollback active through origin/public/scheduler checks.
+# Options: DEPLOY_PREPARE_ONLY=1 (local only), SMOKE_ONLY=1 (isolated VPS),
+# PUBLIC_URL, VERIFY_DEMO_PATH (follows canonical renamed through the DB).
 
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+export DEPLOY_CACHE_DIR="${DEPLOY_CACHE_DIR:-$PWD/.deploy-cache}"
+
+if [[ "${DEPLOY_LOCAL_BUILD_CONTEXT:-0}" != "1" ]]; then
+  bash scripts/run-in-local-build-context.sh bash scripts/deploy-fast.sh
+  exit $?
+fi
+
 # shellcheck source=scripts/lib/ssh-transport.sh
 source "scripts/lib/ssh-transport.sh"
 
-REMOTE_LAN_IP="${REMOTE_LAN_IP:-192.168.0.57}"
-REMOTE_LAN_USER="${REMOTE_LAN_USER:-namdo}"
-REMOTE_TUNNEL_ALIAS="${REMOTE_TUNNEL_ALIAS:-minipc}"
-REMOTE_APP_DIR="${REMOTE_APP_DIR:-/home/namdo/apps/thiepmungonline}"
-WEB_IMAGE="${WEB_IMAGE:-thiepmungonline-web:latest}"
+REMOTE_LAN_IP="${REMOTE_LAN_IP:-163.223.9.198}"
+REMOTE_LAN_USER="${REMOTE_LAN_USER:-root}"
+REMOTE_TUNNEL_ALIAS="${REMOTE_TUNNEL_ALIAS:-root@163.223.9.198}"
+REMOTE_APP_DIR="${REMOTE_APP_DIR:-/srv/thiepmungonline}"
+WEB_IMAGE="${WEB_IMAGE:-thiepmungonline-web:production}"
 PUBLIC_URL="${PUBLIC_URL:-https://thiepmungonline.com}"
 WEB_PORT="${WEB_PORT:-3211}"
 DEPLOYMENT_ID="${DEPLOYMENT_ID:-$(date -u +%Y%m%d%H%M%S)}"
+RELEASE_ID="$(date -u +%Y%m%d%H%M%S)-$$"
+CANDIDATE_DIR="$REMOTE_APP_DIR/releases/candidate-$RELEASE_ID"
 BACKUP_RETENTION="${BACKUP_RETENTION:-10}"
 SKIP_BUILD="${SKIP_BUILD:-0}"
+MANAGED_SCHEDULERS="${MANAGED_SCHEDULERS:-systemd}"
 # SMOKE_ONLY=1: dựng image mới rồi chạy thử trong container tạm ở cổng khác,
 # xác minh xong thì dừng. Không backup, không migrate, không đụng container
 # production. Dùng để kiểm tra pipeline trước khi deploy thật.
@@ -61,9 +41,9 @@ VERIFY_ASSET="${VERIFY_ASSET:-/chungdoi/icon-v2.png}"
 VERIFY_DEMO_PATH="${VERIFY_DEMO_PATH:-/mau-thiep/long-phung-v3-do/demo}"
 
 IMAGE_REPOSITORY="${WEB_IMAGE%:*}"
-VERSION_IMAGE="${IMAGE_REPOSITORY}:${DEPLOYMENT_ID}"
-MIGRATE_IMAGE="${IMAGE_REPOSITORY}:migrate-${DEPLOYMENT_ID}"
-ROLLBACK_IMAGE="${IMAGE_REPOSITORY}:rollback-${DEPLOYMENT_ID}"
+VERSION_IMAGE="${IMAGE_REPOSITORY}:${RELEASE_ID}"
+MIGRATE_IMAGE="${IMAGE_REPOSITORY}:migrate-${RELEASE_ID}"
+ROLLBACK_IMAGE="${IMAGE_REPOSITORY}:rollback-${RELEASE_ID}"
 
 export DEPLOY_LAN_USER="$REMOTE_LAN_USER"
 
@@ -78,7 +58,16 @@ log_step() {
 
 # Must finish before transport setup, source rsync, backups or remote mutations.
 # Keep this in the shared pipeline so direct deploy-fast and VPS smoke use it too.
-bash scripts/check-deploy-i18n.sh
+source scripts/prepare-deploy.sh
+prepare_deploy_gate
+log_step "local preflight + i18n gate"
+VERSION_IMAGE="${IMAGE_REPOSITORY}:${RELEASE_ID}"
+MIGRATE_IMAGE="${IMAGE_REPOSITORY}:migrate-${RELEASE_ID}"
+if [[ "${DEPLOY_PREPARE_ONLY:-0}" == 1 ]]; then
+  (build_next)
+  log_step "production artifact prepared on Mac"
+  exit 0
+fi
 
 echo "🚀 Deploy nhanh thiepmungonline → ${REMOTE_APP_DIR} (dpl=${DEPLOYMENT_ID})"
 
@@ -86,7 +75,39 @@ echo "🚀 Deploy nhanh thiepmungonline → ${REMOTE_APP_DIR} (dpl=${DEPLOYMENT_
 # 0. Chọn đường truyền + xác minh đúng máy production
 # ---------------------------------------------------------------------------
 transport_init "$REMOTE_LAN_IP" "$REMOTE_LAN_USER" "$REMOTE_TUNNEL_ALIAS"
-trap transport_close EXIT
+
+RELEASE_STAGED=0
+PROMOTION_STARTED=0
+DEPLOY_COMMITTED=0
+ARTIFACT_STAGE=""
+
+deploy_release() {
+  rsh_stdin "$1" "$REMOTE_APP_DIR" "$RELEASE_ID" < scripts/deploy-release.sh
+}
+
+cleanup_deploy() {
+  local status="$1"
+  if [[ "$PROMOTION_STARTED" == 1 && "$DEPLOY_COMMITTED" != 1 ]]; then
+    echo "↩️  Restoring previous source and image after failed promotion" >&2
+    if deploy_release restore && rsh_stdin "$REMOTE_APP_DIR" "$ROLLBACK_IMAGE" "$WEB_IMAGE" <<'REMOTE_ROLLBACK'
+set -euo pipefail
+cd "$1"
+docker image tag "$2" "$3"
+docker compose up -d --no-build --no-deps --force-recreate web
+REMOTE_ROLLBACK
+    then
+      echo 'rollback=ok'
+    else
+      echo '❌ Rollback incomplete. Deployment lock retained; inspect production before retry.' >&2
+      transport_close
+      return 1
+    fi
+  fi
+  if [[ "$RELEASE_STAGED" == 1 ]]; then deploy_release cleanup || true; fi
+  transport_close
+  return "$status"
+}
+trap 'cleanup_deploy $?' EXIT
 
 # Mở sẵn master connection để các job song song bên dưới không đua nhau tạo socket.
 rsh true
@@ -98,7 +119,7 @@ if [[ " ${REMOTE_IPS} " != *" ${REMOTE_LAN_IP} "* ]]; then
 fi
 
 if ! rsh "test -f ${REMOTE_APP_DIR}/docker-compose.yml && grep -q 'releases/current/public:/app/public' ${REMOTE_APP_DIR}/docker-compose.yml"; then
-  echo "❌ docker-compose.yml trên Mini PC chưa có bind-mount public/."
+  echo "❌ docker-compose.yml trên VPS chưa có bind-mount public/."
   echo "   Chạy một lần: ./scripts/setup-fast-deploy.sh"
   exit 1
 fi
@@ -112,9 +133,9 @@ echo "   transport=${TRANSPORT_KIND} target=${SSH_TARGET}"
 log_step "xác minh production host"
 
 # ---------------------------------------------------------------------------
-# 1. Song song: build trên Mac ‖ rsync source ‖ backup trên Mini PC
+# 1. Song song: build trên Mac ‖ rsync source ‖ backup trên VPS
 # ---------------------------------------------------------------------------
-echo "⚡ Chạy song song: build Next (Mac) ‖ rsync source ‖ backup (Mini PC)"
+echo "⚡ Chạy song song: build Next (Mac) ‖ rsync source ‖ backup (VPS)"
 
 RSYNC_RSH="$(rsync_rsh)"
 # mktemp của BSD (macOS) chỉ thay XXXXXX khi nó nằm ở CUỐI template. Nếu để
@@ -124,74 +145,19 @@ BUILD_LOG="$(mktemp "${TMPDIR:-/tmp}/thiepmungonline-build.XXXXXX")"
 RSYNC_LOG="$(mktemp "${TMPDIR:-/tmp}/thiepmungonline-rsync.XXXXXX")"
 BACKUP_LOG="$(mktemp "${TMPDIR:-/tmp}/thiepmungonline-backup.XXXXXX")"
 
-build_next() {
-  if [[ "$SKIP_BUILD" == "1" ]]; then
-    echo "build_skipped=1"
-    return 0
-  fi
-  npm run prisma:generate
-  NEXT_DEPLOYMENT_ID="$DEPLOYMENT_ID" \
-  NEXT_PUBLIC_SITE_URL="$PUBLIC_URL" \
-  NODE_ENV=production \
-    npm run build
+rsync_source() {
+  bash scripts/deploy-sync-source.sh "$PWD" "$SSH_TARGET" "$CANDIDATE_DIR" "$RSYNC_RSH" "$BASELINE_DIR"
 }
 
-rsync_source() {
-  # --delete giữ releases/current sạch. .next-prebuilt do rsync artifact tạo ở
-  # bước sau nên phải loại trừ, nếu không --delete sẽ xoá mất artifact.
-  rsync -a --delete \
-    --rsh "$RSYNC_RSH" \
-    --exclude '/.next-prebuilt/' \
-    --exclude '.git' \
-    --exclude 'node_modules' \
-    --exclude '.next' \
-    --exclude '.env' \
-    --exclude '.env.local' \
-    --exclude '.env.*.local' \
-    --exclude '.DS_Store' \
-    --exclude '/*.png' \
-    --exclude '/*.jpg' \
-    --exclude '/*.jpeg' \
-    --exclude '/*.db' \
-    --exclude '/*.db-journal' \
-    --exclude '/*.db-shm' \
-    --exclude '/*.db-wal' \
-    --exclude '/*.sqlite' \
-    --exclude '/*.sqlite-journal' \
-    --exclude '/*.sqlite-shm' \
-    --exclude '/*.sqlite-wal' \
-    --exclude '/data/' \
-    --exclude '/prisma/*.db' \
-    --exclude '/prisma/*.db-journal' \
-    --exclude '/prisma/*.db-shm' \
-    --exclude '/prisma/*.db-wal' \
-    --exclude '/prisma/*.sqlite' \
-    --exclude '/prisma/*.sqlite-journal' \
-    --exclude '/prisma/*.sqlite-shm' \
-    --exclude '/prisma/*.sqlite-wal' \
-    --exclude '/public/uploads/' \
-    --exclude '/temp/' \
-    --exclude '/tmp/' \
-    --exclude '/.claude/' \
-    --exclude '/.deploy-worktree/' \
-    --exclude '/.worktrees/' \
-    --exclude '.playwright-mcp' \
-    --exclude '.capture' \
-    --exclude '/.production-archives/' \
-    --exclude '/docs/research/.*-qa-*.png' \
-    --exclude '/.claude-flow' \
-    --exclude '/.codegraph' \
-    --exclude '/.kiro' \
-    --exclude '*.tsbuildinfo' \
-    --exclude '*.test.ts' \
-    --exclude '*.test.tsx' \
-    --exclude '/tests' \
-    --exclude '/docs/superpowers' \
-    ./ "${SSH_TARGET}:${REMOTE_APP_DIR}/releases/current/"
+run_timed() {
+  local label="$1"; shift
+  local started=$SECONDS
+  "$@"
+  echo "duration_${label}_seconds=$((SECONDS - started))"
 }
 
 backup_remote() {
-  rsh_stdin "$REMOTE_APP_DIR" "$DEPLOYMENT_ID" "$BACKUP_RETENTION" <<'REMOTE_BACKUP'
+  rsh_stdin "$REMOTE_APP_DIR" "$RELEASE_ID" "$BACKUP_RETENTION" <<'REMOTE_BACKUP'
 set -euo pipefail
 app_dir="$1"
 deployment_id="$2"
@@ -269,13 +235,16 @@ echo "backups_mb=$(du -sm data/backups | cut -f1)"
 REMOTE_BACKUP
 }
 
-build_next > "$BUILD_LOG" 2>&1 &
+deploy_release stage
+RELEASE_STAGED=1
+BASELINE_DIR=$(deploy_release baseline)
+run_timed build build_next > "$BUILD_LOG" 2>&1 &
 build_pid=$!
-rsync_source > "$RSYNC_LOG" 2>&1 &
+run_timed source_sync rsync_source > "$RSYNC_LOG" 2>&1 &
 rsync_pid=$!
 backup_pid=""
 if [[ "$SMOKE_ONLY" != "1" ]]; then
-  backup_remote > "$BACKUP_LOG" 2>&1 &
+  run_timed backup backup_remote > "$BACKUP_LOG" 2>&1 &
   backup_pid=$!
 fi
 
@@ -291,68 +260,29 @@ if [[ "$parallel_failed" == 1 ]]; then
   exit 1
 fi
 
+# Catch edits made while source sync/build ran, including cache-hit attempts.
+[[ "$GATE_KEY" == "$(python3 scripts/deploy-cache.py key gate "$PWD")" &&
+   "$BUILD_KEY" == "$(python3 scripts/deploy-cache.py key build "$PWD")" &&
+   "$DEPLOY_BUILD_DB_HASH" == "$(node scripts/check-deploy-inputs.mjs --db-hash)" ]] || {
+  echo 'Inputs changed during deployment preparation; production was not promoted.' >&2
+  exit 1
+}
+
 grep -E '^(database_backup|uploads_snapshot|guest_media_snapshot|slideshow_media_snapshot|backups_mb)=' "$BACKUP_LOG" | sed 's/^/   /' || true
+grep -E '^(duration_|Number of files|Total transferred file size|Total bytes sent|Total bytes received)' "$BUILD_LOG" "$RSYNC_LOG" "$BACKUP_LOG" | sed 's/^[^:]*:/   /' || true
 rm -f "$BUILD_LOG" "$RSYNC_LOG" "$BACKUP_LOG"
 log_step "build Next + rsync source + backup (song song)"
 
 # ---------------------------------------------------------------------------
-# 2. Rsync artifact đã build sang Mini PC
+# 2. Rsync artifact đã build sang VPS
 # ---------------------------------------------------------------------------
-if [[ ! -f .next/standalone/server.js ]]; then
-  echo "❌ Không tìm thấy .next/standalone/server.js. Next có bật output: 'standalone' không?"
-  exit 1
-fi
-
-echo "📦 Rsync artifact (~105MB, delta) → releases/current/.next-prebuilt/"
-ARTIFACT_STAGE="$(mktemp -d "${TMPDIR:-/tmp}/thiepmungonline-prebuilt.XXXXXX")"
-cleanup_artifact() {
-  rm -rf -- "$ARTIFACT_STAGE"
-  transport_close
-}
-trap cleanup_artifact EXIT
-
-mkdir -p "$ARTIFACT_STAGE/.next" "$ARTIFACT_STAGE/static"
-cp .next/standalone/server.js "$ARTIFACT_STAGE/server.js"
-
-# Sinh package.json "chỉ dependency" cho stage dependencies của Dockerfile.
-# Giữ đúng những field ảnh hưởng tới việc npm giải dependency, bỏ scripts /
-# description / keywords... Nhờ vậy sửa scripts hay đổi mô tả không còn làm
-# npm ci + npm prune chạy lại ~200s trên Mini PC.
-node -e '
-const fs = require("node:fs");
-const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-// name + version phải giữ để npm ci không báo lệch với package-lock.json.
-// overrides + engines ảnh hưởng trực tiếp tới cây dependency được cài.
-const fields = [
-  "name",
-  "version",
-  "private",
-  "engines",
-  "overrides",
-  "dependencies",
-  "devDependencies",
-  "optionalDependencies",
-  "peerDependencies",
-  "peerDependenciesMeta",
-  "bundleDependencies",
-  "packageManager",
-  "workspaces",
-];
-const trimmed = {};
-for (const field of fields) {
-  if (pkg[field] !== undefined) trimmed[field] = pkg[field];
-}
-fs.writeFileSync(process.argv[1], JSON.stringify(trimmed, null, 2) + "\n");
-' "$ARTIFACT_STAGE/package.deps.json"
-# Chỉ lấy .next của standalone + static. Bỏ .next/standalone/node_modules:
-# nó được trace trên macOS nên có thể chứa native addon Mach-O; Mini PC dựng
-# node_modules amd64 riêng trong layer cache của nó.
-rsync -a --delete .next/standalone/.next/ "$ARTIFACT_STAGE/.next/"
-rsync -a --delete .next/static/ "$ARTIFACT_STAGE/static/"
-
-rsync -a --delete \
+ARTIFACT_STAGE=$(python3 scripts/deploy-cache.py build-path "$DEPLOY_CACHE_DIR" "$BUILD_KEY")
+echo "📦 Rsync verified artifact → candidate release"
+rsync -a --checksum --delete --stats \
+  --link-dest="$BASELINE_DIR/.next-prebuilt" \
   --rsh "$RSYNC_RSH" \
-  "$ARTIFACT_STAGE/" "${SSH_TARGET}:${REMOTE_APP_DIR}/releases/current/.next-prebuilt/"
+  "$ARTIFACT_STAGE/" "${SSH_TARGET}:${CANDIDATE_DIR}/.next-prebuilt/"
+deploy_release cache
 log_step "rsync artifact"
 
 # ---------------------------------------------------------------------------
@@ -360,12 +290,12 @@ log_step "rsync artifact"
 # ---------------------------------------------------------------------------
 echo "🔎 Migration preflight (read-only)"
 set +e
-rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_PREFLIGHT'
+rsh_stdin "$REMOTE_APP_DIR" "$CANDIDATE_DIR" <<'REMOTE_PREFLIGHT'
 set -euo pipefail
 app_dir="$1"
 cd "$app_dir"
-python3 releases/current/scripts/migration-preflight.py \
-  releases/current/prisma/migrations \
+python3 "$2/scripts/migration-preflight.py" \
+  "$2/prisma/migrations" \
   data/prod.db
 REMOTE_PREFLIGHT
 preflight_status=$?
@@ -388,38 +318,58 @@ esac
 log_step "migration preflight"
 
 # ---------------------------------------------------------------------------
-# 4. Lắp image trên Mini PC (chỉ COPY, không compile) + migrate nếu cần
+# 4. Lắp image trên VPS (chỉ COPY, không compile) + migrate nếu cần
 # ---------------------------------------------------------------------------
-echo "🏗️  Lắp ${VERSION_IMAGE} trên Mini PC (native amd64, chỉ COPY)"
+echo "🏗️  Lắp ${VERSION_IMAGE} trên VPS (native amd64, chỉ COPY)"
 rsh_stdin \
   "$REMOTE_APP_DIR" "$VERSION_IMAGE" "$MIGRATE_IMAGE" \
-  "$([[ "$SMOKE_ONLY" == "1" ]] && echo 0 || echo "$NEEDS_MIGRATION")" <<'REMOTE_BUILD'
+  "$([[ "$SMOKE_ONLY" == "1" ]] && echo 0 || echo "$NEEDS_MIGRATION")" "$CANDIDATE_DIR" <<'REMOTE_BUILD'
 set -euo pipefail
 app_dir="$1"
 version_image="$2"
 migrate_image="$3"
 needs_migration="$4"
-cd "$app_dir/releases/current"
+cd "$5"
 
-# Không cần --platform: Mini PC vốn là amd64 nên build native, không QEMU.
-# node_modules nằm ở stage `dependencies`, chỉ rebuild khi package-lock đổi.
-#
-# --provenance=false là bắt buộc, không phải tuỳ chọn: mặc định BuildKit gắn
-# thêm attestation và bọc image trong một manifest list. Khi đó
-# `docker image inspect --format '{{.Id}}'` trả digest của manifest list, không
-# bao giờ khớp `{{.Image}}` của container, nên bước kiểm tra "chạy đúng image"
-# ở phần promote sẽ fail và rollback oan.
-docker build \
-  --provenance=false \
-  --file Dockerfile.prebuilt \
-  --target runner \
-  --tag "$version_image" \
-  .
-
+# Resolve the immutable base before choosing a cached assembled image. No Next
+# compilation runs here; native dependencies stay in existing Docker layers.
+platform=$(docker version --format '{{.Server.Os}}/{{.Server.Arch}}')
+node_version=$(python3 - <<'PY_NODE_VERSION'
+import re
+from pathlib import Path
+match = re.search(r"^ARG NODE_VERSION=([A-Za-z0-9_.:@/-]+)$", Path("Dockerfile.prebuilt").read_text(), re.M)
+if not match:
+    raise SystemExit("Dockerfile.prebuilt must declare one valid NODE_VERSION default")
+print(match.group(1))
+PY_NODE_VERSION
+)
+base_digest=$(timeout --kill-after=5s 30s docker buildx imagetools inspect "node:$node_version" --format '{{.Manifest.Digest}}')
+[[ "$base_digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo 'Invalid Node base digest'; exit 1; }
+pinned_node_version="${node_version%%@*}@$base_digest"
+assembly_key=$(python3 scripts/deploy-assembled-image-cache.py key .next-prebuilt "$PWD" "$base_digest" "$platform")
+assembly_cache="$app_dir/.assembled-image-cache"
+if image_id=$(python3 scripts/deploy-assembled-image-cache.py hit "$assembly_cache" "$assembly_key"); then
+  echo "assembly_cache=hit image=$image_id"
+  docker image tag "$image_id" "$version_image"
+else
+  echo 'assembly_cache=miss'
+  # --provenance=false keeps the image ID comparable with container .Image.
+  timeout --kill-after=15s 300s docker build \
+    --provenance=false \
+    --build-arg "NODE_VERSION=$pinned_node_version" \
+    --label "io.thiepmungonline.assembly-key=$assembly_key" \
+    --file Dockerfile.prebuilt \
+    --target runner \
+    --tag "$version_image" \
+    .
+  image_id=$(docker image inspect "$version_image" --format '{{.Id}}')
+  python3 scripts/deploy-assembled-image-cache.py save "$assembly_cache" "$assembly_key" "$image_id" "$platform"
+fi
 docker image inspect "$version_image" --format 'built_image={{.Id}} created={{.Created}}'
 
 if [ "$needs_migration" = 1 ]; then
-  docker build \
+  timeout --kill-after=15s 300s docker build \
+    --build-arg "NODE_VERSION=$pinned_node_version" \
     --provenance=false \
     --file Dockerfile.prebuilt \
     --target migrate \
@@ -446,7 +396,7 @@ log_step "lắp image + migrate database"
 if [[ "$SMOKE_ONLY" == "1" ]]; then
   echo "🩺 Smoke test ${VERSION_IMAGE} trong container tạm (cổng ${SMOKE_PORT}), không đụng production"
   rsh_stdin \
-    "$REMOTE_APP_DIR" "$VERSION_IMAGE" "$SMOKE_PORT" "$VERIFY_ASSET" "$VERIFY_DEMO_PATH" "$DEPLOYMENT_ID" <<'REMOTE_SMOKE'
+    "$REMOTE_APP_DIR" "$VERSION_IMAGE" "$SMOKE_PORT" "$VERIFY_ASSET" "$VERIFY_DEMO_PATH" "$DEPLOYMENT_ID" "$PUBLIC_URL" "$CANDIDATE_DIR" <<'REMOTE_SMOKE'
 set -euo pipefail
 app_dir="$1"
 image="$2"
@@ -454,6 +404,8 @@ port="$3"
 verify_asset="$4"
 demo_path="$5"
 deployment_id="$6"
+public_url="$7"
+candidate_dir="$8"
 cd "$app_dir"
 
 name="thiepmungonline-smoke-${deployment_id}"
@@ -475,12 +427,13 @@ docker run -d --name "$name" \
   -e PORT=3000 \
   -e HOSTNAME=0.0.0.0 \
   -v "$app_dir/data:/app/data:ro" \
-  -v "$app_dir/releases/current/public:/app/public:ro" \
+  -v "$candidate_dir/public:/app/public:ro" \
   "$image" >/dev/null
 
 ready=0
-for _ in $(seq 1 60); do
-  code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}/" || true)
+deadline=$((SECONDS + 60))
+while (( SECONDS < deadline )); do
+  code=$(curl --connect-timeout 3 --max-time 8 -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}/" || true)
   if [ "$code" = 200 ]; then ready=1; break; fi
   sleep 1
 done
@@ -491,15 +444,27 @@ if [ "$ready" != 1 ]; then
 fi
 echo "smoke_home=200"
 
-asset_code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}${verify_asset}" || true)
+asset_code=$(curl --connect-timeout 3 --max-time 8 -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${port}${verify_asset}" || true)
 echo "smoke_asset=${asset_code}"
 [ "$asset_code" = 200 ] || { echo "❌ Bind-mount public/ không phục vụ được ${verify_asset}."; exit 1; }
 
-html=$(curl -sS "http://127.0.0.1:${port}${demo_path}")
+html=$(curl --connect-timeout 3 --max-time 8 -sS "http://127.0.0.1:${port}${demo_path}")
 case "$html" in
   *"data-dpl-id=\"${deployment_id}\""*) echo "smoke_dpl_id=ok" ;;
   *) echo "❌ Deployment ID không có trong HTML."; exit 1 ;;
 esac
+canonical_path=$(printf '%s' "$html" | \
+  python3 "$candidate_dir/scripts/canonical-path-from-html.py" "$public_url")
+canonical_html=$(curl --connect-timeout 3 --max-time 8 -sS "http://127.0.0.1:${port}${canonical_path}")
+if [[ "$canonical_html" != *"data-dpl-id=\"${deployment_id}\""* ]]; then
+  echo "❌ Canonical của image ứng viên không thuộc deployment hiện tại."
+  exit 1
+fi
+if [[ "$canonical_html" != *"rel=\"canonical\" href=\"${public_url}${canonical_path}\""* ]]; then
+  echo "❌ Canonical của image ứng viên không tự trỏ về chính nó."
+  exit 1
+fi
+echo "smoke_canonical=${canonical_path}"
 echo "smoke=ok"
 REMOTE_SMOKE
   log_step "smoke test"
@@ -512,13 +477,13 @@ fi
 # 5. Seed danh sách nhạc nếu Track đang trống
 # ---------------------------------------------------------------------------
 echo "🎵 Seed danh sách nhạc nếu Track đang trống"
-rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_TRACK_SEED'
+rsh_stdin "$REMOTE_APP_DIR" "$CANDIDATE_DIR" <<'REMOTE_TRACK_SEED'
 set -euo pipefail
 app_dir="$1"
 cd "$app_dir"
-python3 releases/current/scripts/seed-tracks-if-empty.py \
+python3 "$2/scripts/seed-tracks-if-empty.py" \
   data/prod.db \
-  releases/current/prisma/tracks.json
+  "$2/prisma/tracks.json"
 REMOTE_TRACK_SEED
 log_step "seed danh sách nhạc"
 
@@ -526,6 +491,13 @@ log_step "seed danh sách nhạc"
 # 6. Promote + restart + verify (tự rollback nếu bất kỳ kiểm tra nào fail)
 # ---------------------------------------------------------------------------
 echo "🔄 Promote image và recreate riêng web"
+rsh_stdin "$ROLLBACK_IMAGE" <<'REMOTE_SAVE_IMAGE'
+set -euo pipefail
+old_image_id=$(docker inspect thiepmungonline-web --format '{{.Image}}')
+docker image tag "$old_image_id" "$1"
+REMOTE_SAVE_IMAGE
+PROMOTION_STARTED=1
+deploy_release activate
 rsh_stdin \
   "$REMOTE_APP_DIR" "$WEB_IMAGE" "$VERSION_IMAGE" "$ROLLBACK_IMAGE" \
   "$WEB_PORT" "$DEPLOYMENT_ID" "$PUBLIC_URL" "$VERIFY_ASSET" "$VERIFY_DEMO_PATH" <<'REMOTE_RESTART'
@@ -541,22 +513,15 @@ verify_asset="$8"
 demo_path="$9"
 cd "$app_dir"
 
-old_image_id=$(docker inspect thiepmungonline-web --format '{{.Image}}')
-docker image tag "$old_image_id" "$rollback_image"
 docker image tag "$version_image" "$web_image"
 
-rollback() {
-  echo "↩️  Rollback về $rollback_image"
-  docker image tag "$rollback_image" "$web_image"
-  docker compose up -d --no-build --no-deps --force-recreate web
-}
-trap 'rollback' ERR
 
 docker compose up -d --no-build --no-deps --force-recreate web
 
 ready=0
-for _ in $(seq 1 90); do
-  code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${web_port}/" || true)
+deadline=$((SECONDS + 90))
+while (( SECONDS < deadline )); do
+  code=$(curl --connect-timeout 3 --max-time 8 -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${web_port}/" || true)
   health=$(docker inspect thiepmungonline-web --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' 2>/dev/null || true)
   if [ "$code" = 200 ] && [ "$health" = healthy ]; then
     ready=1
@@ -580,19 +545,26 @@ fi
 
 # public/ giờ là bind-mount, không còn nằm trong image. Kiểm tra một asset thật
 # để bắt trường hợp mount thiếu hoặc sai đường dẫn trước khi giữ bản mới.
-asset_code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${web_port}${verify_asset}" || true)
+asset_code=$(curl --connect-timeout 3 --max-time 8 -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:${web_port}${verify_asset}" || true)
 if [ "$asset_code" != 200 ]; then
   echo "❌ Asset public ${verify_asset} trả HTTP ${asset_code}. Bind-mount public/ có vấn đề."
   false
 fi
 
-html=$(curl -sS "http://127.0.0.1:${web_port}${demo_path}")
+html=$(curl --connect-timeout 3 --max-time 8 -sS "http://127.0.0.1:${web_port}${demo_path}")
 if [[ "$html" != *"data-dpl-id=\"${deployment_id}\""* ]]; then
   echo "❌ Deployment ID chưa xuất hiện trong HTML production."
   false
 fi
-if [[ "$html" != *"rel=\"canonical\" href=\"${public_url}${demo_path}\""* ]]; then
-  echo "❌ Canonical production không đúng ${public_url}."
+canonical_path=$(printf '%s' "$html" | \
+  python3 releases/current/scripts/canonical-path-from-html.py "$public_url")
+canonical_html=$(curl --connect-timeout 3 --max-time 8 -sS "http://127.0.0.1:${web_port}${canonical_path}")
+if [[ "$canonical_html" != *"data-dpl-id=\"${deployment_id}\""* ]]; then
+  echo "❌ Canonical production không thuộc deployment hiện tại."
+  false
+fi
+if [[ "$canonical_html" != *"rel=\"canonical\" href=\"${public_url}${canonical_path}\""* ]]; then
+  echo "❌ Canonical production không tự trỏ về chính nó."
   false
 fi
 
@@ -609,8 +581,7 @@ if [ "$db_check" != ok ]; then
   false
 fi
 
-trap - ERR
-echo "running_image=$running_image health=$health asset=$asset_code database=$db_check"
+echo "running_image=$running_image health=$health asset=$asset_code canonical=$canonical_path database=$db_check"
 REMOTE_RESTART
 log_step "restart + healthcheck"
 
@@ -619,7 +590,7 @@ log_step "restart + healthcheck"
 # ---------------------------------------------------------------------------
 echo "🌐 Verify public URLs"
 for path in "/" "$VERIFY_DEMO_PATH"; do
-  code=$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 30 "${PUBLIC_URL}${path}" || true)
+  code=$(curl --connect-timeout 5 -L -sS -o /dev/null -w '%{http_code}' --max-time 30 "${PUBLIC_URL}${path}" || true)
   echo "   ${path} → HTTP ${code}"
   if [ "${code}" != 200 ]; then
     echo "❌ Public healthcheck thất bại tại ${path}."
@@ -631,6 +602,7 @@ log_step "verify public"
 # VPS uses timezone-explicit systemd timers. Never add duplicate legacy cron jobs.
 if [[ "${MANAGED_SCHEDULERS:-}" == systemd ]]; then
   rsh 'systemctl is-active --quiet thiepmungonline-payos-reconcile.timer thiepmungonline-trial-reminders.timer thiepmungonline-backup.timer'
+  DEPLOY_COMMITTED=1
   echo "✅ Deploy ${DEPLOYMENT_ID} complete; existing systemd schedules preserved."
   exit 0
 fi
@@ -714,4 +686,5 @@ echo "cron_installed=1"
 REMOTE_CRON
 log_step "cron đối soát payOS"
 
+DEPLOY_COMMITTED=1
 echo "✅ Deploy ${DEPLOYMENT_ID} hoàn tất trong ${SECONDS}s (transport=${TRANSPORT_KIND})."

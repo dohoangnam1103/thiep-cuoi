@@ -27,6 +27,8 @@ import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } f
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { fitEnvelopeWidth } from "@/components/chungdoi-envelope-constants";
 import { DEFAULT_COVER_3D_ENABLED } from "@/lib/cover-3d";
+import { cn } from "@/lib/utils";
+import footerClearanceStyles from "./invitation-footer-clearance.module.css";
 import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
 import { HeroTypographyScope } from "@/components/hero-typography-provider";
 import { PreparedInvitationDetail } from "@/components/prepared-invitation-detail";
@@ -137,7 +139,7 @@ const BASE_AUDITED_TEMPLATE_RENDERERS = {
   "hoa-tinh-red": templateRendererEntry(HoaTinhInvitation, "post-template"),
   "minimalism-red": templateRendererEntry(MinimalismRedInvitation, "inline-all"),
   "minimalism-dark-red": templateRendererEntry(MinimalismDarkRedInvitation, "inline-all"),
-  "minimalism-green": templateRendererEntry(MinimalismGreenInvitation, "post-template"),
+  "minimalism-green": templateRendererEntry(MinimalismGreenInvitation, "inline-all"),
   "minimalism-brown": templateRendererEntry(MinimalismBrownInvitation, "inline-all"),
   "minimalism-jade": templateRendererEntry(MinimalismJadeInvitation, "inline-all"),
   "minimalism-sky-blue": templateRendererEntry(MinimalismSkyBlueInvitation, "inline-all"),
@@ -869,6 +871,7 @@ function CoverCard({
   if (content.slug === "uyen-uong") return <UyenUongCover content={content} onOpen={onOpen} />;
   if (content.slug === "hong-van-rose") return <HongVanCover content={content} onOpen={onOpen} />;
   const hyUocCover = content.slug === "hy-uoc";
+  const hoaMaiCover = content.slug === "hoa-mai-thuy-mac";
   const date = formatDate(content.couple.date);
   const names = content.couple.brideFirst
     ? [content.couple.brideShortName, content.couple.groomShortName]
@@ -886,7 +889,7 @@ function CoverCard({
 
   return (
     <div
-      className={hyUocCover ? "relative rounded-[4px]" : "relative rounded-lg"}
+      className={hyUocCover ? "relative rounded-[4px]" : hoaMaiCover ? "relative hoa-mai-cover-card" : "relative rounded-lg"}
       style={{
         aspectRatio: naturalHeight ? undefined : hyUocCover ? "31 / 54" : "3 / 4.5",
         boxShadow: hyUocCover
@@ -967,7 +970,9 @@ function CoverCard({
           ? "relative z-10 px-6 pb-14 pt-28 text-center md:pb-8 md:pt-24"
           : hyUocCover
             ? "absolute inset-0 z-10 flex flex-col items-center justify-center px-8 py-7 text-center"
-            : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
+            : hoaMaiCover
+              ? "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center hoa-mai-cover-card-content"
+              : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
       >
         {hyUocCover ? (
           <img
@@ -1489,7 +1494,7 @@ function EnvelopeCover({
             openingEffect={openingEffect}
             renderOverflowDecor={renderOverflowDecor}
             envelopeAwayAnimation={envelopeAwayAnimation}
-            showSeal={!singlePanelCover}
+            showSeal={!singlePanelCover && content.slug !== "hoa-mai-thuy-mac"}
           />
         </div>
       ) : (
@@ -1514,7 +1519,7 @@ function EnvelopeCover({
             accentColor={toSolidColor(tokens.accent, "#8C1C13")}
             renderCard={(handleOpen) => (
               <div className="relative">
-                <Seal tokens={tokens} opening={opening} />
+                {content.slug !== "hoa-mai-thuy-mac" ? <Seal tokens={tokens} opening={opening} /> : null}
                 <CoverCard
                   content={content}
                   tokens={tokens}
@@ -2303,11 +2308,16 @@ export function ChungDoiDemo({
     <main
       id="top"
       data-capture-mode={captureMode ? "true" : undefined}
-      className={
+      className={cn(
         isPaginatedExperience
           ? "relative h-[100dvh] overflow-hidden bg-[#111820]"
-          : "relative min-h-screen bg-white"
-      }
+          : "relative min-h-screen bg-white",
+        // Reserve space within each template's background, including in demos.
+        opened && !captureMode && !isPaginatedExperience && [
+          footerClearanceStyles.root,
+          isPhysicalExperience && !previewMode && footerClearanceStyles.physical,
+        ],
+      )}
     >
       <h1 className="sr-only">{semanticHeading}</h1>
       {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
@@ -2395,7 +2405,7 @@ export function ChungDoiDemo({
           <AuditedTemplateRenderer content={content} />
         </div>
       ) : (
-        <div className="mx-auto max-w-[520px]" style={{ background: tokens.cardBg, minHeight: "100vh" }}>
+        <div data-template-renderer={content.slug} className="mx-auto max-w-[520px]" style={{ background: tokens.cardBg, minHeight: "100vh" }}>
           <InvitationBody content={content} tokens={tokens} />
         </div>
       )}

@@ -46,6 +46,12 @@ const PORTRAIT_HEIGHT = 1_333;
 const LANDSCAPE_WIDTH = 2_400;
 const LANDSCAPE_HEIGHT = 1_260;
 const MIN_PREVIEW_HEIGHT = 1_200;
+// WebP dimensions are limited to 16,383px. Keep a small safety margin for
+// exceptionally tall single-column invitations while retaining the full page.
+const MAX_WEBP_DIMENSION = 16_380;
+// Chromium can repeat pixels after this physical height in one full-page
+// screenshot. Tall pages are captured viewport by viewport and stitched.
+const MAX_BROWSER_SCREENSHOT_DIMENSION = 16_000;
 const PRODUCTION_TABLES = [
   "Invitation",
   "InvitationContent",
@@ -692,6 +698,47 @@ async function settleInvitation(page) {
   }
 }
 
+async function captureFullPage(page) {
+  const pageHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+  if (pageHeight * CAPTURE_DEVICE_SCALE_FACTOR <= MAX_BROWSER_SCREENSHOT_DIMENSION) {
+    return page.screenshot({ fullPage: true, animations: "disabled", type: "png" });
+  }
+
+  const maxScroll = Math.max(0, pageHeight - CAPTURE_HEIGHT);
+  const positions = [];
+  for (let top = 0; top < maxScroll; top += CAPTURE_HEIGHT) positions.push(top);
+  positions.push(maxScroll);
+
+  const tiles = [];
+  for (const requestedTop of [...new Set(positions)]) {
+    const actualTop = await page.evaluate(async (top) => {
+      window.scrollTo(0, top);
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      return Math.round(window.scrollY);
+    }, requestedTop);
+    await page.waitForTimeout(50);
+    const input = await page.screenshot({ animations: "disabled", type: "png" });
+    tiles.push({
+      input,
+      left: 0,
+      top: actualTop * CAPTURE_DEVICE_SCALE_FACTOR,
+    });
+  }
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  return sharp({
+    create: {
+      width: RAW_CAPTURE_WIDTH,
+      height: pageHeight * CAPTURE_DEVICE_SCALE_FACTOR,
+      channels: 3,
+      background: "#ffffff",
+    },
+  })
+    .composite(tiles)
+    .png()
+    .toBuffer();
+}
+
 async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCookie) {
   const context = await browser.newContext({
     viewport: { width: CAPTURE_WIDTH, height: CAPTURE_HEIGHT },
@@ -727,7 +774,7 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
       throw new Error(`JavaScript lỗi khi render:\n${[...new Set(pageErrors)].join("\n")}`);
     }
 
-    const png = await page.screenshot({ fullPage: true, animations: "disabled", type: "png" });
+    const png = await captureFullPage(page);
     const pngMetadata = await sharp(png).metadata();
     if (pngMetadata.width !== RAW_CAPTURE_WIDTH) {
       throw new Error(`Chiều rộng ảnh chụp không hợp lệ: ${pngMetadata.width}px`);
@@ -751,8 +798,16 @@ async function captureTemplate(browser, baseUrl, template, stagingDir, sessionCo
     ]);
     await writeFile(pngPath, png);
 
+    const naturalListingHeight = Math.round(
+      (pngMetadata.height * OUTPUT_WIDTH) / pngMetadata.width,
+    );
+    const listingHeight = Math.min(naturalListingHeight, MAX_WEBP_DIMENSION);
     await sharp(png)
-      .resize({ width: OUTPUT_WIDTH })
+      .resize({
+        width: OUTPUT_WIDTH,
+        height: listingHeight,
+        fit: naturalListingHeight > MAX_WEBP_DIMENSION ? "fill" : "inside",
+      })
       .webp({ quality: WEBP_QUALITY, effort: 6, smartSubsample: true })
       .toFile(listingPath);
     await sharp(png)

@@ -183,6 +183,7 @@ export async function recordProjectFundWithdrawal(
         return { ok: false, errorCode: "requestConflict" };
       }
       revalidatePath("/admin/funds");
+      revalidatePath("/admin");
       return { ok: true };
     }
     // Mã sao kê là định danh nghiệp vụ: mở form mới vẫn không thể trừ cùng một
@@ -194,6 +195,7 @@ export async function recordProjectFundWithdrawal(
   }
 
   revalidatePath("/admin/funds");
+  revalidatePath("/admin");
   return { ok: true };
 }
 
@@ -239,5 +241,6 @@ export async function voidProjectFundWithdrawal(
   }
 
   revalidatePath("/admin/funds");
+  revalidatePath("/admin");
   return { ok: true };
 }

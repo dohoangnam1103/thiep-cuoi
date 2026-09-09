@@ -1,0 +1,1153 @@
+.template {
+  position: relative;
+  width: 100%;
+  overflow: clip;
+  color: #4a3529;
+  background-color: #f3e9d7;
+  background-image: url("/chungdoi/images/themes/hoa-mai-thuy-mac/paper-tile.webp");
+  background-repeat: repeat;
+  background-size: 1024px 1024px;
+  font-family: "Lora", Georgia, "Times New Roman", serif;
+}
+
+.section {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: hidden;
+  padding-block: clamp(5rem, 12vw, 9rem);
+}
+
+.contentRail {
+  position: relative;
+  z-index: 2;
+  width: min(calc(100% - 32px), 760px);
+  margin-inline: auto;
+}
+
+.sectionHeading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: #7a8972;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  color: #4a3529;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(2.7rem, 8vw, 4.9rem);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+}
+
+.coupleTitle {
+  font-size: clamp(3.5rem, 12vw, 7rem);
+}
+
+.ampersand {
+  margin-block: 0.3em;
+  color: #c58c1d;
+  font-size: 0.42em;
+  font-style: italic;
+  line-height: 1;
+}
+
+.headingDivider {
+  width: min(70vw, 320px);
+  height: auto;
+  margin-top: 1.3rem;
+}
+
+.artwork {
+  position: absolute;
+  z-index: 0;
+  height: auto;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero {
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+  padding-block: clamp(9rem, 20vw, 14rem) clamp(8rem, 18vw, 13rem);
+}
+
+.foundationCanopy {
+  top: -3%;
+  left: 50%;
+  width: max(920px, 108vw);
+  transform: translateX(-50%);
+}
+
+.foundationMountains {
+  bottom: -1%;
+  left: 50%;
+  width: max(1100px, 108vw);
+  opacity: 0.7;
+  transform: translateX(-50%);
+}
+
+.floatingPetals {
+  top: 16%;
+  left: 50%;
+  width: min(660px, 82vw);
+  opacity: 0.42;
+  transform: translate3d(-50%, 0, 0);
+  animation: petalDrift 14s ease-in-out infinite alternate;
+}
+
+.heroEyebrow {
+  margin: 0 0 1.5rem;
+  color: #6f775f;
+  font-size: clamp(0.68rem, 1.8vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.heroFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 clamp(2.8rem, 8vw, 4.5rem);
+  overflow: hidden;
+  border: 1px solid rgba(116, 89, 58, 0.42);
+  border-radius: 45% 45% 1.25rem 1.25rem / 16% 16% 1.25rem 1.25rem;
+  background: rgba(255, 252, 243, 0.68);
+  box-shadow: 0 24px 60px rgba(83, 61, 40, 0.12);
+}
+
+.photo {
+  object-fit: cover;
+}
+
+.heroDate {
+  margin: 1.8rem 0 0;
+  color: #6b5a48;
+  font-size: clamp(0.85rem, 2.3vw, 1rem);
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.familySection {
+  min-height: 1500px;
+  padding-block: clamp(8rem, 16vw, 12rem);
+}
+
+.familyBranchLeft {
+  top: 4%;
+  left: min(-28vw, -120px);
+  width: min(730px, 72vw);
+  opacity: 0.76;
+}
+
+.familyBranchRight {
+  right: min(-23vw, -100px);
+  bottom: 2%;
+  width: min(680px, 67vw);
+  opacity: 0.7;
+}
+
+.familySequence {
+  display: flex;
+  width: min(100%, 600px);
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3rem, 8vw, 5rem);
+  margin: clamp(3.5rem, 9vw, 6rem) auto 0;
+}
+
+.familyCard,
+.ceremonyCard,
+.coupleAnnouncement {
+  position: relative;
+  width: 100%;
+  padding: clamp(2rem, 6vw, 3.25rem) clamp(1.25rem, 5vw, 3.5rem);
+  border: 1px solid rgba(128, 103, 71, 0.3);
+  border-radius: 48% 48% 1rem 1rem / 12% 12% 1rem 1rem;
+  background: rgba(255, 251, 241, 0.56);
+  box-shadow: 0 20px 55px rgba(83, 61, 40, 0.08);
+  text-align: center;
+}
+
+.familyCard h3,
+.ceremonyCard h3,
+.coupleAnnouncement h3 {
+  margin: 0.55rem 0;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(2rem, 7vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.familyCard p,
+.familyCard address {
+  margin: 0.3rem 0;
+  font-size: clamp(0.92rem, 2.4vw, 1.05rem);
+  line-height: 1.7;
+}
+
+.familyCard address {
+  margin-top: 1rem;
+  color: #6f775f;
+  font-style: normal;
+}
+
+.cardKicker,
+.personBirthOrder {
+  margin: 0;
+  color: #a16f16;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.openingMessage {
+  margin: 0 0 2.25rem;
+  color: #6a5846;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.smallAmpersand {
+  display: block;
+  margin: 0.8rem 0;
+  color: #c58c1d;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: 2rem;
+  font-style: italic;
+}
+
+.ceremonyStack {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ceremonyCard time {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+  color: #6f775f;
+  font-size: 0.92rem;
+  text-transform: capitalize;
+}
+
+.ceremonyCard time strong {
+  color: #a16f16;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.storySection {
+  min-height: 1100px;
+  padding-bottom: clamp(14rem, 26vw, 20rem);
+}
+
+.storyFrame {
+  position: relative;
+  width: min(100% - 32px, 520px);
+  aspect-ratio: 4 / 5;
+  margin: clamp(3rem, 8vw, 5rem) auto 0;
+  overflow: hidden;
+  border: 10px solid rgba(255, 251, 241, 0.74);
+  border-radius: 48% 48% 1rem 1rem / 13% 13% 1rem 1rem;
+  box-shadow: 0 24px 65px rgba(83, 61, 40, 0.13);
+}
+
+.storyQuote {
+  width: min(100% - 48px, 560px);
+  margin: 2.5rem auto 0;
+  color: #5f5244;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(1.45rem, 5vw, 2rem);
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.storyCluster {
+  top: 8%;
+  right: min(-18vw, -90px);
+  width: min(520px, 55vw);
+  opacity: 0.68;
+}
+
+.storyRiver {
+  bottom: 0;
+  left: 50%;
+  width: max(1120px, 105vw);
+  opacity: 0.72;
+  transform: translateX(-50%);
+}
+
+.gallerySection,
+.dateSection,
+.mapSection {
+  padding-block: clamp(7rem, 15vw, 11rem);
+}
+
+.carouselFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: clamp(3rem, 8vw, 5rem);
+  overflow: hidden;
+  border: 10px solid rgba(255, 251, 241, 0.74);
+  border-radius: 1.1rem;
+  box-shadow: 0 24px 65px rgba(83, 61, 40, 0.13);
+  cursor: zoom-in;
+}
+
+.carousel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.textButton,
+.primaryButton {
+  display: flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5rem auto 0;
+  border: 1px solid rgba(115, 81, 45, 0.42);
+  border-radius: 999px;
+  color: #6a491d;
+  background: rgba(255, 249, 235, 0.72);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding-inline: 1.5rem;
+  text-transform: uppercase;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.textButton:hover,
+.primaryButton:hover {
+  color: #fffaf0;
+  background: #a16f16;
+  transform: translateY(-1px);
+}
+
+.dateSection {
+  min-height: 1500px;
+}
+
+.dateBranch {
+  top: -2%;
+  left: 50%;
+  width: max(1000px, 104vw);
+  opacity: 0.44;
+  transform: translateX(-50%);
+}
+
+.informationFlow {
+  display: flex;
+  width: min(100%, 600px);
+  flex-direction: column;
+  gap: clamp(2rem, 6vw, 3.5rem);
+  margin: clamp(3rem, 8vw, 5rem) auto 0;
+}
+
+.calendarCard,
+.scheduleCard,
+.dressCard {
+  width: 100%;
+  padding: clamp(2rem, 6vw, 3.25rem) clamp(1.1rem, 5vw, 3.5rem);
+  border: 1px solid rgba(128, 103, 71, 0.3);
+  border-radius: 1rem;
+  background: rgba(255, 251, 241, 0.62);
+  box-shadow: 0 20px 55px rgba(83, 61, 40, 0.08);
+  text-align: center;
+}
+
+.calendarCard h3,
+.scheduleCard h3,
+.dressCard h3 {
+  margin: 0.6rem 0 0;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.calendarYear {
+  margin: 0.45rem 0 1.75rem;
+  color: #7a8972;
+  letter-spacing: 0.18em;
+}
+
+.calendarDays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.38rem;
+}
+
+.weekday,
+.calendarDay {
+  display: flex;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: clamp(0.68rem, 2.2vw, 0.86rem);
+}
+
+.weekday {
+  height: auto;
+  color: #9d7425;
+  font-weight: 600;
+}
+
+.calendarDay {
+  color: #55483b;
+}
+
+.calendarDayActive {
+  color: #fff9e9;
+  background: #c58c1d;
+  box-shadow: 0 5px 16px rgba(161, 111, 22, 0.25);
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 2.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scheduleList li {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  text-align: left;
+}
+
+.scheduleList time {
+  width: 76px;
+  flex: 0 0 auto;
+  color: #a16f16;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.scheduleDot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  margin-inline: 1rem;
+  border: 2px solid #fff8e8;
+  border-radius: 50%;
+  background: #c58c1d;
+  box-shadow: 0 0 0 1px rgba(161, 111, 22, 0.45);
+}
+
+.scheduleDot::after {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 1px;
+  height: 62px;
+  background: rgba(161, 111, 22, 0.3);
+  content: "";
+}
+
+.scheduleList li:last-child .scheduleDot::after {
+  display: none;
+}
+
+.scheduleList p {
+  margin: 0;
+  color: #5f5244;
+  line-height: 1.55;
+}
+
+.dressCard {
+  padding-block: 3rem;
+}
+
+.mapSection {
+  padding-bottom: clamp(15rem, 28vw, 22rem);
+}
+
+.venueAddress {
+  width: min(100% - 32px, 560px);
+  margin: 2.5rem auto;
+  color: #5f5244;
+  line-height: 1.75;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.mapFrame {
+  width: 100%;
+  overflow: hidden;
+  border: 10px solid rgba(255, 251, 241, 0.76);
+  border-radius: 1rem;
+  box-shadow: 0 24px 65px rgba(83, 61, 40, 0.13);
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: 280px;
+}
+
+.mapRiver {
+  bottom: 0;
+  left: 50%;
+  width: max(1200px, 110vw);
+  opacity: 0.8;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 641px) {
+  .map {
+    height: 360px;
+  }
+}
+
+.rsvpSection,
+.wishesSection,
+.giftSection {
+  padding-block: clamp(7rem, 15vw, 11rem);
+}
+
+.sectionIntro,
+.giftIntro {
+  width: min(100% - 48px, 560px);
+  margin: 2rem auto 0;
+  color: #5f5244;
+  line-height: 1.75;
+  text-align: center;
+}
+
+.formPaper {
+  width: min(100%, 620px);
+  margin: 2.5rem auto 0;
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+  border: 1px solid rgba(128, 103, 71, 0.3);
+  border-radius: 1rem;
+  background: rgba(255, 251, 241, 0.62);
+  box-shadow: 0 20px 55px rgba(83, 61, 40, 0.08);
+}
+
+.previewNotice {
+  margin: 0;
+  color: #6f775f;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.rsvpPetals {
+  top: 8%;
+  left: 50%;
+  width: min(720px, 88vw);
+  opacity: 0.3;
+  transform: translateX(-50%);
+}
+
+.wishesFlow {
+  display: flex;
+  width: min(100%, 620px);
+  flex-direction: column;
+  gap: 2rem;
+  margin: 3rem auto 0;
+}
+
+.wishList {
+  display: flex !important;
+  flex-direction: column;
+}
+
+.wishCard {
+  margin: 0;
+  padding: 1.5rem;
+  border-left: 3px solid rgba(197, 140, 29, 0.62);
+  border-radius: 0 1rem 1rem 0;
+  background: rgba(255, 251, 241, 0.58);
+  box-shadow: 0 14px 40px rgba(83, 61, 40, 0.07);
+}
+
+.wishCard > p {
+  margin: 0;
+  color: #55483b;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.wishCard footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1.1rem;
+  color: #7a8972;
+  font-size: 0.76rem;
+}
+
+.wishCard strong {
+  color: #a16f16;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.giftSection {
+  min-height: 820px;
+  text-align: center;
+}
+
+.giftHeading {
+  color: #4a3529;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(2.7rem, 8vw, 4.9rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.giftIntro {
+  margin-bottom: 1rem;
+}
+
+.giftCluster {
+  right: min(-20vw, -100px);
+  bottom: -5%;
+  width: min(620px, 66vw);
+  opacity: 0.62;
+}
+
+.footerSection {
+  display: flex;
+  min-height: 720px;
+  align-items: flex-end;
+  padding-block: 13rem 4rem;
+}
+
+.footerSection footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footerCanopy {
+  top: 0;
+  left: 50%;
+  width: max(980px, 108vw);
+  transform: translateX(-50%);
+}
+
+.footerMessage {
+  width: min(100% - 48px, 560px);
+  margin: 0;
+  color: #5f5244;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.footerNames {
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0 0;
+  color: #4a3529;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  line-height: 0.9;
+}
+
+.footerNames span {
+  margin-block: 0.35em;
+  color: #c58c1d;
+  font-size: 0.45em;
+  font-style: italic;
+}
+
+.brand {
+  margin: 2.5rem 0 0;
+  color: #7a8972;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+}
+
+@keyframes petalDrift {
+  from {
+    opacity: 0.28;
+    transform: translate3d(-52%, -1.5%, 0) rotate(-1deg);
+  }
+
+  to {
+    opacity: 0.48;
+    transform: translate3d(-48%, 1.5%, 0) rotate(1deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 820px;
+  }
+
+  .foundationCanopy {
+    top: 0;
+    left: 38%;
+    width: 880px;
+  }
+
+  .foundationMountains {
+    width: 1150px;
+  }
+
+  .familyBranchLeft {
+    left: -260px;
+    width: 600px;
+  }
+
+  .familyBranchRight {
+    right: -260px;
+    width: 600px;
+  }
+
+  .storyCluster {
+    right: -150px;
+    width: 360px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floatingPetals {
+    animation: none;
+  }
+}
+
+/* Hoa Mai Thuy Mac visual pass: a quieter paper composition with an editorial
+   rhythm. The renderer classes stay unchanged so all existing interactions and
+   data remain intact. */
+.template {
+  color: #3e241d;
+  background-size: 768px 768px;
+}
+
+.section {
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+
+.contentRail {
+  width: min(calc(100% - 48px), 760px);
+}
+
+.sectionTitle {
+  color: #3e241d;
+  line-height: 1.04;
+}
+
+.hero {
+  min-height: min(100svh, 980px);
+  padding-block: clamp(6rem, 12vw, 9rem) clamp(5rem, 10vw, 8rem);
+}
+
+.heroFrame {
+  aspect-ratio: 16 / 10;
+  margin-bottom: clamp(2.25rem, 5vw, 3.5rem);
+  border-radius: 0.3rem;
+  background: rgba(255, 252, 243, 0.48);
+  box-shadow: 0 18px 48px rgba(83, 61, 40, 0.12);
+}
+
+.familySection,
+.dateSection {
+  min-height: 0;
+}
+
+.familySection {
+  padding-block: clamp(5rem, 9vw, 7rem);
+}
+
+.familyBranchLeft,
+.familyBranchRight {
+  opacity: 0.52;
+}
+
+.familyBranchLeft {
+  width: min(620px, 56vw);
+}
+
+.familyBranchRight {
+  width: min(580px, 54vw);
+}
+
+.familySequence {
+  gap: clamp(1.75rem, 4vw, 3rem);
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+.familyCard,
+.ceremonyCard,
+.coupleAnnouncement {
+  padding: clamp(1.15rem, 3vw, 1.8rem) clamp(0.75rem, 4vw, 2.5rem);
+  border: 0;
+  border-top: 1px solid rgba(169, 82, 49, 0.28);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.coupleAnnouncement {
+  padding-block: clamp(1.75rem, 5vw, 2.75rem);
+  border-block: 1px solid rgba(169, 82, 49, 0.34);
+}
+
+.familyCard:last-child {
+  border-bottom: 1px solid rgba(169, 82, 49, 0.28);
+}
+
+.familyCard h3,
+.ceremonyCard h3,
+.coupleAnnouncement h3 {
+  line-height: 1.08;
+}
+
+.coupleAnnouncement h3 {
+  color: #3e241d;
+  font-size: clamp(2.25rem, 7vw, 3.7rem);
+}
+
+.familyCard p,
+.familyCard address {
+  line-height: 1.55;
+}
+
+.familyCard address {
+  margin-top: 0.75rem;
+}
+
+.coupleAnnouncement .openingMessage {
+  max-width: 38rem;
+  margin-inline: auto;
+}
+
+.ceremonyStack {
+  gap: 0;
+}
+
+.ceremonyCard {
+  border-top-color: rgba(169, 82, 49, 0.2);
+}
+
+.ceremonyCard time {
+  gap: 0.2rem;
+  margin-top: 0.8rem;
+}
+
+.ceremonyCard time strong {
+  color: #a95231;
+  font-size: 2rem;
+}
+
+.storySection {
+  min-height: 0;
+  padding-bottom: clamp(8rem, 16vw, 12rem);
+}
+
+.storyFrame,
+.carouselFrame {
+  border: 7px solid rgba(255, 251, 241, 0.68);
+  border-radius: 0.35rem;
+  box-shadow: 0 18px 50px rgba(83, 61, 40, 0.13);
+}
+
+.storyQuote {
+  line-height: 1.55;
+}
+
+.gallerySection,
+.dateSection,
+.mapSection,
+.rsvpSection,
+.wishesSection,
+.giftSection {
+  padding-block: clamp(5rem, 9vw, 7rem);
+}
+
+.dateBranch {
+  opacity: 0.28;
+}
+
+.informationFlow {
+  gap: clamp(1.5rem, 4vw, 2.25rem);
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+.calendarCard,
+.scheduleCard,
+.dressCard {
+  padding: clamp(1.25rem, 3vw, 2rem) 0;
+  border: 0;
+  border-top: 1px solid rgba(169, 82, 49, 0.28);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dressCard {
+  border-bottom: 1px solid rgba(169, 82, 49, 0.28);
+}
+
+.calendarCard h3,
+.scheduleCard h3,
+.dressCard h3 {
+  line-height: 1.08;
+}
+
+.calendarYear {
+  margin-bottom: 1rem;
+}
+
+.calendarDays {
+  gap: 0.16rem;
+}
+
+.weekday,
+.calendarDay {
+  height: clamp(28px, 4.5vw, 34px);
+  aspect-ratio: auto;
+  border-radius: 50%;
+}
+
+.calendarDayActive {
+  background: #a95231;
+  box-shadow: 0 3px 10px rgba(169, 82, 49, 0.22);
+}
+
+.scheduleList {
+  margin-top: 1.25rem;
+}
+
+.scheduleList li {
+  min-height: 46px;
+}
+
+.scheduleList time {
+  width: 68px;
+  font-size: 1.3rem;
+}
+
+.scheduleDot {
+  width: 8px;
+  height: 8px;
+  margin-inline: 0.8rem;
+  background: #a95231;
+}
+
+.scheduleDot::after {
+  top: 8px;
+  height: 38px;
+}
+
+.mapSection {
+  padding-bottom: clamp(9rem, 18vw, 14rem);
+}
+
+.mapFrame {
+  border: 7px solid rgba(255, 251, 241, 0.72);
+  border-radius: 0.35rem;
+  box-shadow: 0 18px 50px rgba(83, 61, 40, 0.13);
+}
+
+.formPaper {
+  margin-top: 2.25rem;
+  border: 0;
+  border-top: 1px solid rgba(169, 82, 49, 0.28);
+  border-radius: 0;
+  background: rgba(255, 251, 241, 0.3);
+  box-shadow: none;
+}
+
+.wishCard {
+  border-left: 2px solid rgba(169, 82, 49, 0.62);
+  border-radius: 0;
+  background: rgba(255, 251, 241, 0.32);
+  box-shadow: none;
+}
+
+.giftSection {
+  min-height: 0;
+  padding-bottom: clamp(8rem, 16vw, 12rem);
+}
+
+.giftHeading {
+  color: #3e241d;
+  line-height: 1.04;
+}
+
+.footerSection {
+  min-height: 560px;
+  padding-block: 9rem 3.5rem;
+}
+
+.footerCanopy {
+  opacity: 0.72;
+}
+
+.footerNames {
+  line-height: 1.02;
+}
+
+.brand {
+  margin-top: 2rem;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding-block: 3.75rem;
+  }
+
+  .contentRail {
+    width: min(calc(100% - 32px), 760px);
+  }
+
+  .hero {
+    min-height: 760px;
+    padding-block: 5.25rem 4.5rem;
+  }
+
+  .heroFrame {
+    aspect-ratio: 4 / 3;
+  }
+
+  .foundationCanopy {
+    top: -4%;
+    left: 18%;
+    width: 720px;
+    opacity: 0.62;
+  }
+
+  .foundationMountains {
+    bottom: -2%;
+    width: 980px;
+    opacity: 0.5;
+  }
+
+  .familyBranchLeft {
+    top: 7%;
+    left: -340px;
+    width: 480px;
+    opacity: 0.42;
+  }
+
+  .familyBranchRight {
+    right: -330px;
+    bottom: 1%;
+    width: 470px;
+    opacity: 0.38;
+  }
+
+  .storyCluster {
+    right: -190px;
+    width: 300px;
+    opacity: 0.45;
+  }
+
+  .dateBranch {
+    top: 0;
+    width: 760px;
+    opacity: 0.2;
+  }
+
+  .mapRiver {
+    width: 980px;
+    opacity: 0.55;
+  }
+
+  .footerSection {
+    min-height: 500px;
+    padding-block: 8rem 3rem;
+  }
+
+  .footerCanopy {
+    width: 780px;
+    opacity: 0.58;
+  }
+}
+
+/* Editorial pass: preserve the watercolor rail without turning every block into a UI card. */
+.sectionTitle { line-height: 1.02; letter-spacing: -0.02em; }
+.section { padding-block: clamp(4.25rem, 8vw, 6.5rem); }
+.familySection { min-height: 0; padding-block: clamp(5rem, 10vw, 8rem); }
+.familySequence { gap: clamp(1.75rem, 4vw, 3rem); margin-top: clamp(2.5rem, 5vw, 4rem); }
+.familyCard, .ceremonyCard, .coupleAnnouncement {
+  padding: clamp(1.35rem, 4vw, 2.25rem) clamp(1rem, 4vw, 2.5rem);
+  border: 0;
+  border-radius: 0;
+  background: rgba(255, 251, 241, 0.28);
+  box-shadow: none;
+}
+.familyCard h3, .ceremonyCard h3, .coupleAnnouncement h3 { font-size: clamp(1.7rem, 5vw, 2.65rem); line-height: 1.05; }
+.coupleAnnouncement { border-block: 1px solid rgba(169,82,49,.28); }
+.ceremonyCard { border-block: 1px solid rgba(169,82,49,.2); background: transparent; }
+.storySection { min-height: 0; padding-bottom: clamp(8rem, 14vw, 12rem); }
+.storyFrame { border-width: 6px; border-radius: 2px; box-shadow: 0 18px 42px rgba(83,61,40,.12); }
+.gallerySection, .dateSection, .mapSection, .rsvpSection, .wishesSection, .giftSection { padding-block: clamp(5rem, 9vw, 7rem); }
+.dateSection { min-height: 0; }
+.informationFlow { gap: clamp(1.25rem, 3vw, 2rem); margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+.calendarCard, .scheduleCard, .dressCard, .formPaper {
+  padding: clamp(1.35rem, 4vw, 2.25rem) clamp(1rem, 4vw, 2.5rem);
+  border: 1px solid rgba(128,103,71,.2);
+  border-radius: 2px;
+  background: rgba(255,251,241,.38);
+  box-shadow: none;
+}
+.calendarDays { gap: .16rem; }
+.weekday, .calendarDay { aspect-ratio: auto; min-height: 2rem; border-radius: 50%; }
+.calendarDayActive { background: transparent; color: #a95231; border: 2px solid #a95231; box-shadow: none; }
+.scheduleList { margin-top: 1.25rem; }
+.scheduleList li { min-height: 48px; }
+.scheduleDot { background: #a95231; }
+.scheduleDot::after { height: 40px; background: rgba(169,82,49,.25); }
+.mapSection { padding-bottom: clamp(8rem, 14vw, 12rem); }
+.mapFrame { border-width: 6px; border-radius: 2px; box-shadow: none; }
+.rsvpSection, .wishesSection { min-height: 0; }
+.wishesFlow { gap: 1.5rem; margin-top: 2rem; }
+.wishCard { border-left-color: #a95231; border-radius: 0; background: rgba(255,251,241,.36); box-shadow: none; }
+.giftSection { min-height: 0; }
+.footerSection { min-height: 0; padding-block: 8rem 3rem; }
+.footerCanopy { opacity: .72; }
+@media (max-width: 640px) {
+  .sectionTitle { font-size: clamp(2.2rem, 10vw, 3.4rem); }
+  .coupleTitle { font-size: clamp(3rem, 14vw, 5rem); }
+  .familyBranchLeft { left: -340px; width: 520px; opacity: .46; }
+  .familyBranchRight { right: -340px; width: 520px; opacity: .46; }
+  .storyCluster { right: -190px; width: 300px; opacity: .48; }
+  .dateBranch { top: -4%; width: 860px; opacity: .34; }
+  .rsvpPetals { opacity: .18; }
+}
