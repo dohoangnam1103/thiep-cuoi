@@ -448,7 +448,10 @@ asset_code=$(curl --connect-timeout 3 --max-time 8 -sS -o /dev/null -w '%{http_c
 echo "smoke_asset=${asset_code}"
 [ "$asset_code" = 200 ] || { echo "❌ Bind-mount public/ không phục vụ được ${verify_asset}."; exit 1; }
 
-html=$(curl --connect-timeout 3 --max-time 8 -sS "http://127.0.0.1:${port}${demo_path}")
+# The stable probe path may be an alias whose canonical slug was edited in the
+# production database. Follow that same-origin redirect before checking HTML.
+html=$(curl --connect-timeout 3 --max-time 8 -sS -L --max-redirs 5 \
+  "http://127.0.0.1:${port}${demo_path}")
 case "$html" in
   *"data-dpl-id=\"${deployment_id}\""*) echo "smoke_dpl_id=ok" ;;
   *) echo "❌ Deployment ID không có trong HTML."; exit 1 ;;
@@ -551,7 +554,8 @@ if [ "$asset_code" != 200 ]; then
   false
 fi
 
-html=$(curl --connect-timeout 3 --max-time 8 -sS "http://127.0.0.1:${web_port}${demo_path}")
+html=$(curl --connect-timeout 3 --max-time 8 -sS -L --max-redirs 5 \
+  "http://127.0.0.1:${web_port}${demo_path}")
 if [[ "$html" != *"data-dpl-id=\"${deployment_id}\""* ]]; then
   echo "❌ Deployment ID chưa xuất hiện trong HTML production."
   false

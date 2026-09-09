@@ -189,6 +189,8 @@ if "-w" in args:
     external = url.startswith("https://fixture.invalid")
     failed = external and os.environ["TEST_SCENARIO"] == "public-failure"
     print("503" if failed else "200", end="")
+elif "/mau-thiep/long-phung-v3-do/demo" in url and "-L" not in args:
+    print('<html>canonical redirect response</html>')
 else:
     print('<html data-dpl-id="fixture-build"><head><link rel="canonical" href="https://fixture.invalid/mau-thiep/en-do/demo"></head></html>')
 PY
