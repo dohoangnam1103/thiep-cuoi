@@ -18,7 +18,7 @@ import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getCachedPublicDemoContent } from "@/lib/public-demo-content";
-import { pageSeo, templateAlternates } from "@/lib/seo";
+import { pageSeo, templateDemoSeo } from "@/lib/seo";
 import { getTemplateLabelOverrides } from "@/lib/template-labels";
 import { resolvePublicTemplateRoute } from "@/lib/template-route-aliases";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
@@ -66,19 +66,12 @@ export async function publicDemoMetadata({
   }
 
   const copy = await localizedTemplateCopy(locale, template);
-  const alternates = templateAlternates(
-    template.slug,
-    locale,
-    resolvedRoute.canonicalSlug,
-  );
-  if (!alternates) {
-    return { title: { absolute: "Demo | Thiệp Mừng Online" } };
-  }
+  const demoSeo = templateDemoSeo(template.slug, locale, resolvedRoute.canonicalSlug);
 
   return pageSeo({
     title: copy.title,
     description: copy.description,
-    alternates,
+    ...demoSeo,
     locale,
     image: templatePreviewUrl(template.landscape),
     imageAlt: copy.imageAlt,

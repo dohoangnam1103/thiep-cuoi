@@ -68,6 +68,13 @@ const nextConfig: NextConfig = {
       "node_modules/sharp/**/*",
     ],
   },
+  // Runtime uploads, slideshow media and rollback snapshots live in mounted
+  // volumes in Docker.  Because their paths are derived from process.cwd(),
+  // NFT otherwise copies every local file into `.next/standalone` at build
+  // time (about 645 MB in this checkout).
+  outputFileTracingExcludes: {
+    "/*": ["./data/**/*", "./backups/**/*", "./temp/**/*"],
+  },
   async redirects() {
     return [
       ...canonicalHostRedirects(process.env.NEXT_PUBLIC_SITE_URL),

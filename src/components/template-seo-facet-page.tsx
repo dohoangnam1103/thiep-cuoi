@@ -130,9 +130,9 @@ export async function TemplateSeoFacetPage({
     const nameKey = `templates.${template.slug}.name`;
     const defaultName = listingT.has(nameKey) ? listingT(nameKey) : template.name;
     const name = templateNameOverrides[template.slug]?.trim() || defaultName;
-    const demoPath = getPathname({
+    const detailPath = getPathname({
       href: {
-        pathname: "/templates/[slug]/demo",
+        pathname: "/templates/[slug]",
         params: {
           slug: locale === "vi"
             ? templateRouteSlugFromMap(templateRouteOverrides, template.slug)
@@ -146,7 +146,7 @@ export async function TemplateSeoFacetPage({
       "@type": "ListItem",
       position: index + 1,
       name,
-      url: absoluteUrl(demoPath),
+      url: absoluteUrl(detailPath),
     };
   });
   const jsonLd = {

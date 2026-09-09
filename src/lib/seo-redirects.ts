@@ -14,7 +14,10 @@ type CanonicalRedirect = {
   >;
 };
 
-export function canonicalTemplatePath(pathname: string): string | null {
+export function canonicalTemplatePath(
+  pathname: string,
+  resolvedRoute?: { canonicalSlug: string } | null,
+): string | null {
   const facetMatch = pathname.match(
     /^\/(?:vi\/|(?:en|ko|ja|zh)\/)?templates\/(style|color)\/([^/]+)\/?$/,
   );
@@ -27,7 +30,7 @@ export function canonicalTemplatePath(pathname: string): string | null {
     return `/mau-thiep/${publicSegment}/${facet.slug}`;
   }
 
-  const vietnameseMatch = pathname.match(/^\/mau-thiep\/([^/]+)(?:\/demo)?\/?$/);
+  const vietnameseMatch = pathname.match(/^\/(?:vi\/)?mau-thiep\/([^/]+)(?:\/demo)?\/?$/);
   const internalVietnameseMatch = pathname.match(
     /^\/(?:vi\/)?templates\/([^/]+)(?:\/demo)?\/?$/,
   );
@@ -44,11 +47,12 @@ export function canonicalTemplatePath(pathname: string): string | null {
   if (!locale || !routeSlug) return null;
 
   const sourceSlug = getSourceTemplateSlug(routeSlug);
-  if (!sourceSlug) return null;
+  if (!sourceSlug && !resolvedRoute) return null;
 
-  const canonicalSlug = getVietnameseTemplateSlug(sourceSlug);
+  const canonicalSlug = resolvedRoute?.canonicalSlug ?? getVietnameseTemplateSlug(sourceSlug!);
   const basePath = "/mau-thiep";
-  const canonicalPath = `${basePath}/${canonicalSlug}/demo`;
+  const demoSuffix = /\/demo\/?$/.test(pathname) ? "/demo" : "";
+  const canonicalPath = `${basePath}/${canonicalSlug}${demoSuffix}`;
 
   return pathname === canonicalPath ? null : canonicalPath;
 }

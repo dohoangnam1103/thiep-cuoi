@@ -15,6 +15,7 @@ const props = {
   fallbackHeight: 7885,
   alt: "Song Hỷ Đỏ",
   slug: "song-hy-red",
+  href: "/mau-thiep/song-hy-do",
   onSelect: () => {},
 };
 
@@ -42,6 +43,11 @@ test("initial card HTML loads only a cropped responsive image and prioritizes th
   assert.match(html, /fetchPriority="high"/);
   assert.doesNotMatch(html, /template-listing-full/);
   assert.doesNotMatch(html, /_next\/image/);
+});
+
+test("listing image is a detail link for context-menu open-in-new-tab", () => {
+  const html = renderToStaticMarkup(createElement(TemplateListingImage, props));
+  assert.match(html, /<a href="\/mau-thiep\/song-hy-do"/);
 });
 
 test("mobile overrides use picture art direction, not a second eager image", () => {

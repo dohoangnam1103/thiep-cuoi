@@ -13,7 +13,7 @@ import { TemplatePreviewModal } from "@/components/template-preview-modal";
 import { TemplateSuggestionCta } from "@/components/template-suggestion-cta";
 import { TemplateListingImage } from "@/components/template-listing-image";
 import { HorizontalPillScroller } from "@/components/ui/horizontal-pill-scroller";
-import { Link } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import {
   completedTemplates,
   templateCategories,
@@ -346,6 +346,9 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
     },
   };
 
+  const detailHref = { ...demoHref, pathname: "/templates/[slug]" as const };
+  const detailUrl = getPathname({ href: detailHref, locale });
+
   return (
     <article className="group overflow-hidden rounded-2xl border border-border bg-card shadow transition hover:-translate-y-1 hover:shadow-lg">
       <TemplateListingImage
@@ -353,6 +356,7 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
           fallbackHeight={listingImageHeight(template.listing)}
           alt={name}
           slug={template.slug}
+          href={detailUrl}
           mobileThumbnailUrl={mobileThumbnailUrl}
           eager={index < 4}
           highPriority={index === 0}
@@ -360,13 +364,13 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
         />
       <div className="p-5">
         <h3 className={`${cardTitleClass} text-foreground`}>
-          <Link href={demoHref} className="transition hover:text-primary">
+          <Link href={detailHref} className="transition hover:text-primary">
             {name}
           </Link>
         </h3>
         <p className={`mt-2 ${bodySmallClass} text-muted-foreground`}>{category}</p>
         <p className={`mt-3 line-clamp-2 ${bodySmallClass} text-muted-foreground`}>{description}</p>
-        <div className="mt-5 grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-2">
+        <div className="mt-5 grid grid-cols-3 gap-2">
           <button
             onClick={onSelect}
             data-ga-event="preview_template"
@@ -376,6 +380,12 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
           >
             {t("preview")}
           </button>
+          <Link
+            href={detailHref}
+            className={`inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-border bg-secondary px-2 py-2.5 ${pillClass} text-foreground transition hover:bg-muted`}
+          >
+            {t("detail")}
+          </Link>
           <Link
             href={demoHref}
             data-ga-event="open_template_demo"

@@ -11,12 +11,14 @@ import {
   parseDailyRange,
   sumDailyValues,
 } from "@/lib/admin-daily-stats";
+import { buildHourlyGrowth, type HourlyGrowthSummary } from "@/lib/admin-hourly-stats";
 import { buildPaymentDelayDistribution, type PaymentDelayBucket } from "@/lib/admin-payment-delay";
 import { CUSTOMER_USER_WHERE, REAL_INVITATION_WHERE } from "@/lib/admin-invitation-filters";
 import { vietnamDayKey, vietnamStartOfDayOf } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
 import { AdminDailyChart } from "./AdminDailyChart";
 import { AdminGrowthChart } from "./AdminGrowthChart";
+import { AdminHourlyGrowthChart } from "./AdminHourlyGrowthChart";
 import { AdminPaymentDelayChart } from "./AdminPaymentDelayChart";
 
 function formatVnd(amount: number): string {
@@ -42,7 +44,9 @@ export default async function AdminDashboardPage({
   // One instant for the whole render, so the window and the "today" bucket
   // cannot straddle midnight between two queries.
   const now = new Date();
-  const windowStart = dailyWindowStart(range, now);
+  // The hourly card compares today with the same elapsed portion of prior days.
+  // Fetch one extra day so the baseline still contains `range` complete dates.
+  const windowStart = dailyWindowStart(range + 1, now);
   const todayStart = vietnamStartOfDayOf(now);
   const todayKey = vietnamDayKey(now);
 
@@ -155,6 +159,12 @@ export default async function AdminDashboardPage({
     range,
     now,
   );
+  const hourlyGrowth = buildHourlyGrowth(
+    newUsers.map((user) => ({ at: user.createdAt })),
+    newRealInvitations.map((invitation) => ({ at: invitation.createdAt })),
+    range,
+    now,
+  );
   const paymentDelaySeries = buildPaymentDelayDistribution(
     paidUserEvents.map((payment) => ({
       userId: payment.invitation.userId,
@@ -219,6 +229,30 @@ export default async function AdminDashboardPage({
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
+          <HourlyGrowthCard
+            data={hourlyGrowth.points}
+            summary={hourlyGrowth.summary}
+            title={t("overviewHourlyTitle")}
+            usersLabel={t("overviewNewUsers")}
+            invitationsLabel={t("overviewNewInvitations")}
+            averageLabel={t("overviewHourlyAverage", { days: range })}
+            averageUsersLabel={t("overviewHourlyAverageSeries", { label: t("overviewNewUsers") })}
+            averageInvitationsLabel={t("overviewHourlyAverageSeries", { label: t("overviewNewInvitations") })}
+            deltaLabel={(delta) =>
+              delta === null
+                ? t("overviewHourlyNoBaseline")
+                : t("overviewHourlyDelta", { value: formatSignedPercent(delta) })
+            }
+            caption={t("overviewHourlyCaption", { days: range })}
+            emptyLabel={t("overviewChartEmpty")}
+            isEmpty={
+              hourlyGrowth.summary.todayUsers === 0
+              && hourlyGrowth.summary.todayInvitations === 0
+              && hourlyGrowth.summary.averageUsers === 0
+              && hourlyGrowth.summary.averageInvitations === 0
+            }
+          />
+
           <ChartCard
             title={t("overviewGrowth")}
             total={t("overviewGrowthTotals", {
@@ -292,6 +326,104 @@ export default async function AdminDashboardPage({
           </ChartCard>
         </div>
       </section>
+    </div>
+  );
+}
+
+function formatAverage(value: number): string {
+  return new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+function formatSignedPercent(value: number): string {
+  const rounded = Math.round(value);
+  return `${rounded > 0 ? "+" : ""}${rounded}%`;
+}
+
+function HourlyGrowthCard({
+  data,
+  summary,
+  title,
+  usersLabel,
+  invitationsLabel,
+  averageLabel,
+  averageUsersLabel,
+  averageInvitationsLabel,
+  deltaLabel,
+  caption,
+  emptyLabel,
+  isEmpty,
+}: {
+  data: Parameters<typeof AdminHourlyGrowthChart>[0]["data"];
+  summary: HourlyGrowthSummary;
+  title: string;
+  usersLabel: string;
+  invitationsLabel: string;
+  averageLabel: string;
+  averageUsersLabel: string;
+  averageInvitationsLabel: string;
+  deltaLabel: (delta: number | null) => string;
+  caption: string;
+  emptyLabel: string;
+  isEmpty: boolean;
+}) {
+  const metrics = [
+    {
+      label: usersLabel,
+      today: summary.todayUsers,
+      average: summary.averageUsers,
+      delta: summary.userDeltaPct,
+      tone: "text-[oklch(0.62_0.13_220)]",
+    },
+    {
+      label: invitationsLabel,
+      today: summary.todayInvitations,
+      average: summary.averageInvitations,
+      delta: summary.invitationDeltaPct,
+      tone: "text-[var(--chart-1)]",
+    },
+  ];
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="text-sm font-medium text-foreground">{title}</p>
+        <p className="text-sm text-muted-foreground">{caption}</p>
+      </div>
+      {isEmpty ? (
+        <p className="flex h-56 items-center justify-center text-sm text-muted-foreground">
+          {emptyLabel}
+        </p>
+      ) : (
+        <>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {metrics.map((metric) => (
+              <div key={metric.label} className="rounded-xl border border-border/70 bg-background/60 px-4 py-3">
+                <p className={`text-sm font-medium ${metric.tone}`}>{metric.label}</p>
+                <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="text-2xl font-bold tabular-nums text-foreground">{formatCount(metric.today)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {averageLabel}: <strong className="font-semibold text-foreground">{formatAverage(metric.average)}</strong>
+                  </span>
+                  <span className={`text-xs font-semibold ${metric.delta === null ? "text-muted-foreground" : metric.delta >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                    {deltaLabel(metric.delta)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4">
+            <AdminHourlyGrowthChart
+              data={data}
+              usersLabel={usersLabel}
+              invitationsLabel={invitationsLabel}
+              averageUsersLabel={averageUsersLabel}
+              averageInvitationsLabel={averageInvitationsLabel}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

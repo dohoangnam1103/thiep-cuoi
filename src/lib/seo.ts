@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { templateSeoDetailStatus } from "@/data/template-seo-details";
 import type { TemplateSeoFacetKind } from "@/data/template-seo-facets";
 import { getPathname } from "@/i18n/navigation";
 import { indexableLocales, routing } from "@/i18n/routing";
@@ -71,6 +72,39 @@ export function templateAlternates(
   }), locale);
 }
 
+export function templateDetailAlternates(
+  routeSlug: string,
+  locale: AppLocale,
+): Alternates {
+  return buildAlternates(() => ({
+    pathname: "/templates/[slug]",
+    params: { slug: routeSlug },
+  }), locale);
+}
+
+export function templateDemoAlternates(
+  routeSlug: string,
+  locale: AppLocale,
+): Alternates {
+  return buildAlternates(() => ({
+    pathname: "/templates/[slug]/demo",
+    params: { slug: routeSlug },
+  }), locale);
+}
+
+/** Pending details redirect to demos, so they cannot be canonical targets yet. */
+export function templateDemoSeo(sourceSlug: string, locale: AppLocale, canonicalSlug: string): {
+  alternates: Alternates;
+  robots: Metadata["robots"];
+} {
+  return {
+    alternates: templateSeoDetailStatus(sourceSlug) === "enabled"
+      ? templateDetailAlternates(canonicalSlug, locale)
+      : templateDemoAlternates(canonicalSlug, locale),
+    robots: { index: false, follow: true },
+  };
+}
+
 export function templateFacetAlternates(
   kind: TemplateSeoFacetKind,
   slug: string,
@@ -106,6 +140,7 @@ export function pageSeo({
   type = "website",
   publishedTime,
   modifiedTime,
+  robots,
 }: {
   title: string;
   description: string;
@@ -125,6 +160,7 @@ export function pageSeo({
   publishedTime?: string;
   /** ISO 8601. Only read when `type` is `"article"`. */
   modifiedTime?: string;
+  robots?: Metadata["robots"];
 }): Metadata {
   const imageUrl = absoluteUrl(image);
   const socialImage = image === SITE_SOCIAL_IMAGE_PATH
@@ -160,6 +196,7 @@ export function pageSeo({
     title: { absolute: title },
     description,
     alternates,
+    ...(robots ? { robots } : {}),
     openGraph: type === "article"
       ? { ...openGraphBase, type: "article", publishedTime, modifiedTime }
       : { ...openGraphBase, type: "website" },

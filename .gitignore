@@ -101,6 +101,9 @@ docs/research/original-dom/
 # Worktree dùng cho deploy, không phải source
 .deploy-worktree/
 
+# Các checkout phụ dùng cho task/branch; không phải source của checkout chính.
+.worktrees/
+
 # Local production rollback/log archives contain operational data and are never source.
 .production-archives/
 

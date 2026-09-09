@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { routing } from "./i18n/routing";
 import { canonicalTemplatePath } from "./lib/seo-redirects";
+import { resolvePublicTemplateRoute } from "./lib/template-route-aliases";
 
 const handleI18nRouting = createMiddleware(routing);
 // Trang chỉ phục vụ tiếng Việt. Các tiền tố locale cũ vẫn được nhận rồi chuyển
@@ -19,7 +20,7 @@ const vietnamesePaths: Record<string, string> = {
   "/refund-policy": "/chinh-sach-hoan-tien",
 };
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // Legacy capture links must not force every ordinary demo view to render dynamically.
   if (request.nextUrl.searchParams.get("capture") === "1"
     && /^\/(?:vi\/)?(?:mau-thiep|templates)\/[^/]+\/demo\/?$/.test(request.nextUrl.pathname)) {
@@ -28,11 +29,15 @@ export default function proxy(request: NextRequest) {
     url.searchParams.delete("capture");
     return NextResponse.redirect(url, 307);
   }
-  const destination = canonicalTemplatePath(request.nextUrl.pathname);
+  const templateMatch = request.nextUrl.pathname.match(
+    /^\/(?:vi\/|en\/|ko\/|ja\/|zh\/)?(?:mau-thiep|templates)\/([^/]+)(?:\/demo)?\/?$/,
+  );
+  const resolvedRoute = templateMatch ? await resolvePublicTemplateRoute(templateMatch[1]) : null;
+  const destination = canonicalTemplatePath(request.nextUrl.pathname, resolvedRoute);
   if (destination) {
     const url = request.nextUrl.clone();
     url.pathname = destination;
-    return NextResponse.redirect(url, 308);
+    return NextResponse.redirect(url, 301);
   }
 
   if (foreignLocalePrefix.test(request.nextUrl.pathname)) {

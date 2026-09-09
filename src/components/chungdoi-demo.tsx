@@ -966,13 +966,13 @@ function CoverCard({
           opt-in natural height, text tham gia flow và quyết định chiều cao card. */}
       <div
         data-envelope-card-content
-        className={naturalHeight
-          ? "relative z-10 px-6 pb-14 pt-28 text-center md:pb-8 md:pt-24"
-          : hyUocCover
+        className={hoaMaiCover
+          ? "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center hoa-mai-cover-card-content"
+          : naturalHeight
+            ? "relative z-10 px-6 pb-14 pt-28 text-center md:pb-8 md:pt-24"
+            : hyUocCover
             ? "absolute inset-0 z-10 flex flex-col items-center justify-center px-8 py-7 text-center"
-            : hoaMaiCover
-              ? "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center hoa-mai-cover-card-content"
-              : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
+            : "absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center"}
       >
         {hyUocCover ? (
           <img

@@ -3,36 +3,17 @@ import test from "node:test";
 
 import { canonicalHostRedirects, canonicalTemplatePath } from "./seo-redirects";
 
-test("redirects template detail and alias URLs directly to the canonical demo", () => {
-  assert.equal(
-    canonicalTemplatePath("/mau-thiep/song-hy-red"),
-    "/mau-thiep/song-hy-do/demo",
-  );
-  assert.equal(
-    canonicalTemplatePath("/mau-thiep/song-hy-red/demo"),
-    "/mau-thiep/song-hy-do/demo",
-  );
-  assert.equal(
-    canonicalTemplatePath("/en/templates/song-hy-do/demo"),
-    "/mau-thiep/song-hy-do/demo",
-  );
-  assert.equal(
-    canonicalTemplatePath("/en/templates/song-hy-red/demo"),
-    "/mau-thiep/song-hy-do/demo",
-  );
-  assert.equal(
-    canonicalTemplatePath("/templates/song-hy-red/demo"),
-    "/mau-thiep/song-hy-do/demo",
-  );
-  assert.equal(
-    canonicalTemplatePath("/vi/templates/song-hy-red"),
-    "/mau-thiep/song-hy-do/demo",
-  );
-});
-
-test("leaves canonical demo URLs and unrelated paths unchanged", () => {
+test("canonical detail and demo aliases remain separate and terminate in one hop", () => {
+  for (const prefix of ["/mau-thiep", "/templates", "/vi/templates", "/en/templates", "/ko/templates", "/ja/templates", "/zh/templates"]) {
+    for (const suffix of ["", "/demo"]) {
+      const destination = `/mau-thiep/song-hy-do${suffix}`;
+      assert.equal(canonicalTemplatePath(`${prefix}/song-hy-red${suffix}`), destination);
+      assert.equal(canonicalTemplatePath(destination), null);
+    }
+  }
+  assert.equal(canonicalTemplatePath("/mau-thiep/song-hy-do"), null);
   assert.equal(canonicalTemplatePath("/mau-thiep/song-hy-do/demo"), null);
-  assert.equal(canonicalTemplatePath("/mau-thiep/khong-ton-tai/demo"), null);
+  assert.equal(canonicalTemplatePath("/mau-thiep/khong-ton-tai"), null);
   assert.equal(canonicalTemplatePath("/bang-gia"), null);
 });
 

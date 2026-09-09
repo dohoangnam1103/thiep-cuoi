@@ -5,6 +5,14 @@ export function templatePreviewUrl(source: string): string {
   return `${source}${separator}v=${templatePreviewVersion}`;
 }
 
+/** Full-page capture used by the SEO detail preview scroller. */
+export function templateFullPreviewUrl(source: string): string {
+  const pngSource = source
+    .replace(/\/landscape\//, "/png/")
+    .replace(/\.webp(?:\?.*)?$/, ".png");
+  return templatePreviewUrl(pngSource);
+}
+
 /**
  * Preview screenshots are full-page captures — up to 768x16339. Handing one to a
  * plain <img> makes the browser decode the whole thing (~48MB of RGBA bitmap)

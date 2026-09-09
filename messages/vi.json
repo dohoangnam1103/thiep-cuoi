@@ -1854,6 +1854,7 @@
     }
   },
   "listing": {
+    "detail": "Xem chi tiết",
     "metaTitle": "Mẫu thiệp cưới online | Thiệp Mừng Online",
     "metaDescription": "Kho mẫu thiệp cưới online của Thiệp Mừng Online: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
     "eyebrow": "Mẫu thiệp cưới",
@@ -2725,6 +2726,36 @@
     "noInvitations": "Người dùng chưa có thiệp nào.",
     "coupleFallback": "Thiệp {id}",
     "allInvitationsTitle": "Thiệp thật ({count})",
+    "upcomingWeddingsNav": "Ngày cưới sắp tới",
+    "upcomingWeddingsTitle": "Ngày cưới sắp tới ({count})",
+    "upcomingWeddingsDescription": "Theo dõi các đám cưới sắp diễn ra để chủ động tư vấn và gửi lời chúc đến các cặp đôi.",
+    "upcomingWeddingsTotal": "Tổng {count} thiệp",
+    "upcomingWeddingsEmpty": "Chưa có đám cưới sắp tới nào.",
+    "upcomingWeddingsNoResults": "Không tìm thấy đám cưới phù hợp.",
+    "upcomingWeddingsDate": "Ngày cưới",
+    "upcomingWeddingsCouple": "Cặp đôi",
+    "upcomingWeddingsOwner": "Chủ thiệp",
+    "upcomingWeddingsInvitationStatus": "Trạng thái thiệp",
+    "upcomingWeddingsPaymentStatus": "Thanh toán",
+    "upcomingWeddingsActions": "Thao tác",
+    "upcomingWeddingsDaysLeft": "Còn {count} ngày",
+    "upcomingWeddingsToday": "Hôm nay",
+    "upcomingWeddingsTomorrow": "Ngày mai",
+    "upcomingWeddingsPaid": "Đã thanh toán",
+    "upcomingWeddingsUnpaid": "Chưa thanh toán",
+    "upcomingWeddingsPublished": "Đã xuất bản",
+    "upcomingWeddingsDraft": "Bản nháp",
+    "upcomingWeddingsFilterAll": "Tất cả",
+    "upcomingWeddingsFilterPaid": "Đã thanh toán",
+    "upcomingWeddingsFilterUnpaid": "Chưa thanh toán",
+    "upcomingWeddingsRangeLabel": "Khoảng thời gian",
+    "upcomingWeddingsRangeOption": "{days} ngày tới",
+    "upcomingWeddingsSearchLabel": "Tìm theo tên hoặc email",
+    "upcomingWeddingsSearchPlaceholder": "Nguyễn Văn A, an@gmail.com",
+    "upcomingWeddingsViewInvitation": "Xem thiệp",
+    "upcomingWeddingsEditInvitation": "Chỉnh sửa",
+    "upcomingWeddingsNoDate": "Chưa nhập ngày cưới",
+    "upcomingWeddingsCeremonyLabel": "{title} · {time}",
     "invitationSearchLabel": "Tìm theo email, tên hoặc slug",
     "invitationSearchPlaceholder": "an@gmail.com, Thuỳ Linh, thiep-...",
     "noInvitationsFound": "Không tìm thấy thiệp phù hợp.",
@@ -2777,7 +2808,7 @@
     "confirmResetFree": "Thiệp sẽ mất quyền miễn phí và quay lại dùng thử hoặc hết hạn. Tiếp tục?",
     "paidPriceLocked": "Thiệp đã thanh toán nên không thể đổi giá.",
     "priceSaved": "Đã cập nhật giá thiệp.",
-    "overviewChartsTitle": "Biểu đồ theo ngày",
+    "overviewChartsTitle": "Biểu đồ hoạt động",
     "overviewRangeLabel": "Khoảng thời gian",
     "overviewRangeOption": "{days} ngày",
     "overviewRangeTotal": "Tổng {days} ngày",
@@ -2785,6 +2816,12 @@
     "overviewGrowthTotals": "{users} người · {invitations} thiệp",
     "overviewNewUsers": "Người dùng mới",
     "overviewNewInvitations": "Thiệp thật mới",
+    "overviewHourlyTitle": "Tăng trưởng hôm nay theo giờ",
+    "overviewHourlyCaption": "Cột: hôm nay · nét đứt: TB {days} ngày trước · giờ Việt Nam",
+    "overviewHourlyAverage": "TB cùng thời điểm {days} ngày trước",
+    "overviewHourlyAverageSeries": "TB {label}",
+    "overviewHourlyDelta": "{value} so với TB",
+    "overviewHourlyNoBaseline": "Chưa có dữ liệu nền",
     "overviewRevenue": "Doanh thu",
     "overviewRemindersSent": "Email nhắc nhở đã gửi",
     "overviewChartEmpty": "Chưa có dữ liệu trong khoảng này.",
@@ -3606,5 +3643,3428 @@
     "retry": "Thử lại",
     "home": "Về trang chủ",
     "digest": "Mã lỗi: {digest}"
+  },
+  "templateSeoDetails": {
+    "breadcrumbAriaLabel": "Đường dẫn điều hướng",
+    "preview": "Xem toàn bộ ảnh preview thiệp",
+    "previewHint": "Di chuột để xem toàn bộ thiết kế",
+    "templateEyebrow": "Mẫu thiệp cưới",
+    "aboutDesign": "Về thiết kế này",
+    "home": "Trang chủ",
+    "templates": "Mẫu thiệp cưới",
+    "demo": "Xem bản mẫu",
+    "create": "Tạo thiệp với mẫu này",
+    "highlights": "Điểm nổi bật của mẫu",
+    "suitableFor": "Mẫu thiệp phù hợp với ai?",
+    "features": "Nội dung và tính năng",
+    "steps": "Tạo thiệp trong ba bước",
+    "faq": "Câu hỏi thường gặp",
+    "relatedTemplates": "Mẫu thiệp bạn có thể thích",
+    "relatedBlog": "Bài viết liên quan",
+    "items": {
+      "song-hy-red": {
+        "metaTitle": "Mẫu thiệp cưới Song Hỷ Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Khám phá mẫu thiệp cưới Song Hỷ Đỏ với chữ hỷ, khung ảnh vòm và phong bì đỏ. Xem bản mẫu, tìm hiểu bố cục và tạo thiệp cưới online cho ngày vui của hai bạn.",
+        "heading": "Mẫu thiệp cưới Song Hỷ Đỏ",
+        "intro": "Song Hỷ Đỏ dành cho những lời mời mang tinh thần cưới hỏi truyền thống. Sắc đỏ và chữ song hỷ tạo điểm nhấn ngay từ phần đầu, trong khi khung ảnh vòm dành một khoảng riêng cho hình ảnh của cô dâu chú rể. Mẫu thiệp cưới này kết hợp biểu tượng quen thuộc với cách trình bày trên trang online, để hai bạn vừa giới thiệu ngày vui vừa gửi gắm sự trân trọng đến người nhận. Khi xem bản mẫu, hãy chú ý cả phần mở đầu, thông tin hai gia đình và lịch trình phía dưới để hình dung lời mời của mình trong toàn bộ bố cục.",
+        "highlights": [
+          "Chữ song hỷ đi cùng họa tiết tỏa tia màu đỏ tạo điểm nhìn rõ ràng ở phần đầu thiệp. Đây là chi tiết phù hợp khi hai bạn muốn giữ một biểu tượng cưới hỏi quen thuộc trong lời mời gửi đến gia đình.",
+          "Khung ảnh hình vòm làm mềm tổng thể có nhiều sắc đỏ. Khi chọn ảnh thay thế, nên ưu tiên khuôn hình có khoảng trống quanh gương mặt để phần cắt ảnh vẫn giữ được nét tự nhiên của hai bạn.",
+          "Phong bì đỏ với chi tiết chữ hỷ và dấu niêm phong tiếp nối ngôn ngữ của phần mở đầu. Sự lặp lại có chủ ý giúp ảnh cưới và các phần thông tin cùng thuộc về một thiết kế thống nhất."
+        ],
+        "suitableFor": [
+          "Các cặp đôi yêu sắc đỏ truyền thống và muốn lời mời có không khí trang trọng, gần gũi với cả người lớn trong gia đình lẫn bạn bè. Có thể cân nhắc mẫu này khi trang phục hoặc trang trí tiệc cũng sử dụng màu đỏ.",
+          "Gia đình cần trình bày rõ thông tin cha mẹ hai bên, nghi lễ và địa điểm đãi tiệc. Trước khi nhập nội dung, nên thống nhất cách xưng hô và thứ tự tên để lời mời thể hiện đúng mong muốn của hai nhà."
+        ],
+        "features": [
+          "Bản mẫu có các phần giới thiệu cô dâu chú rể, gia đình và địa điểm tổ chức. Bạn có thể chuẩn bị sẵn tên đầy đủ cùng địa chỉ chính xác, tránh viết tắt những thông tin khách cần dùng để tìm đường.",
+          "Lịch trình trong thiệp giúp trình bày các mốc của ngày vui. Khi soạn lời mời, hãy phân biệt giờ làm lễ, giờ đón khách và giờ khai tiệc, đặc biệt nếu nghi lễ và bữa tiệc diễn ra vào những thời điểm khác nhau.",
+          "Bộ ảnh cưới bổ sung câu chuyện bằng hình ảnh bên cạnh phần chữ. Nên chọn ảnh có ánh sáng và màu sắc tương đối nhất quán để sắc đỏ của mẫu trở thành phần nền tôn ảnh, thay vì khiến tổng thể thiếu cân đối."
+        ],
+        "steps": [
+          "Mở bản mẫu Song Hỷ Đỏ và xem từ phần mở đầu đến cuối trang. Đối chiếu khung ảnh, độ dài tên và cách trình bày gia đình với nội dung hai bạn dự định sử dụng.",
+          "Chọn tạo thiệp cưới online, nhập thông tin của hai bạn, hai gia đình và sự kiện. Thay ảnh minh họa bằng ảnh cưới riêng, rồi rà lại ngày giờ và địa chỉ với người phụ trách tổ chức.",
+          "Xem trước lời mời trên điện thoại và máy tính. Kiểm tra tên riêng, ảnh bị cắt và các mốc giờ trước khi xuất bản thiệp và gửi đường dẫn đến khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Song Hỷ Đỏ khác Tối Giản Đỏ ở điểm nào?",
+            "answer": "Song Hỷ Đỏ lấy chữ song hỷ, họa tiết tỏa tia và khung ảnh vòm làm dấu ấn chính. Tối Giản Đỏ sử dụng nền trắng cùng điểm nhấn đỏ theo hướng nhẹ và thoáng hơn. Nếu ưu tiên biểu tượng cưới hỏi truyền thống ngay từ phần đầu, bạn có thể bắt đầu bằng Song Hỷ Đỏ rồi so sánh hai bản mẫu với cùng bộ ảnh dự định dùng."
+          },
+          {
+            "question": "Cần chuẩn bị gì trước khi cá nhân hóa mẫu này?",
+            "answer": "Hãy chuẩn bị tên cô dâu chú rể, thông tin cha mẹ hai bên, ngày giờ nghi lễ, giờ đãi tiệc, địa chỉ và ảnh cưới. Nên nhờ một người trong gia đình đọc lại cách xưng hô. Thông tin đang xuất hiện trong bản mẫu chỉ để minh họa bố cục; hãy thay bằng dữ liệu của lễ cưới trước khi chia sẻ."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Hỷ Đỏ với chữ song hỷ, sắc đỏ truyền thống và khung ảnh hình vòm",
+        "relatedSlugs": [
+          "minimalism-red",
+          "minimalism-dark-red",
+          "hong-van-rose"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-red": {
+        "metaTitle": "Mẫu thiệp cưới Tối Giản Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Tối Giản Đỏ kết hợp nền trắng thoáng với điểm nhấn đỏ tinh tế. Xem bố cục, gợi ý chọn ảnh và tạo thiệp cưới online mang dấu ấn của riêng hai bạn.",
+        "heading": "Mẫu thiệp cưới Tối Giản Đỏ",
+        "intro": "Một nền trắng sáng và những điểm nhấn đỏ có thể đủ để tạo nên lời mời rõ ràng, chỉn chu. Tối Giản Đỏ hướng đến các cặp đôi thích vẻ hiện đại, muốn ảnh cưới và thông tin ngày vui có nhiều khoảng thở. Mẫu thiệp cưới này không cần một câu chuyện dài để tạo ấn tượng: tên hai bạn, một bộ ảnh phù hợp và lời mời chân thành sẽ quyết định cảm nhận của người đọc. Trước khi chọn mẫu, hãy xem cách các phần nội dung nối tiếp nhau và cân nhắc lượng thông tin thật sự cần gửi đến khách.",
+        "highlights": [
+          "Nền trắng tạo cảm giác sáng và thoáng cho trang thiệp. Đây là lựa chọn dễ cân nhắc khi ảnh cưới có nhiều chi tiết, bởi phần nền giản dị giúp mắt người xem tập trung vào hình ảnh và nội dung chính.",
+          "Sắc đỏ được sử dụng như màu nhấn trong tinh thần thiết kế tối giản. Hai bạn vẫn giữ được một màu quen thuộc của lễ cưới, đồng thời có tổng thể hiện đại để kết hợp cùng lời mời ngắn gọn.",
+          "Cách phối trắng và đỏ tạo định hướng màu rõ ràng khi chuẩn bị bộ ảnh. Thay vì đưa nhiều màu nổi vào cùng một trang, có thể chọn ảnh với trang phục trung tính hoặc điểm đỏ tương ứng để tổng thể hài hòa."
+        ],
+        "suitableFor": [
+          "Các cặp đôi thích lời mời nhẹ nhàng, ưu tiên sự rõ ràng của tên, thời gian và địa điểm. Mẫu phù hợp để cân nhắc khi hai bạn muốn người nhận nhanh chóng nắm được thông tin mà vẫn thấy dấu ấn riêng qua ảnh cưới.",
+          "Những bộ ảnh có nền sáng, trang phục trắng hoặc cách xử lý màu tự nhiên. Nếu ảnh của hai bạn có nhiều bối cảnh khác nhau, hãy xem trước cả bộ trong thiệp để chọn thứ tự tạo cảm giác liền mạch."
+        ],
+        "features": [
+          "Nội dung mẫu bao gồm thông tin cặp đôi và gia đình hai bên. Với phong cách tối giản, cách viết tên và địa chỉ nhất quán càng có ý nghĩa: hãy thống nhất dấu câu, cách xưng hô và những từ cần viết đầy đủ.",
+          "Phần sự kiện và lịch trình giúp sắp xếp những mốc khách cần biết. Bạn nên ghi rõ giờ dành cho khách đến dự, đồng thời kiểm tra ngày làm lễ nếu ngày này khác với ngày đãi tiệc trong lời mời.",
+          "Album ảnh giúp trang thiệp có thêm cảm xúc bên cạnh các phần thông báo. Một bộ ảnh được chọn kỹ thường dễ theo dõi hơn nhiều ảnh gần giống nhau; nên phối hợp ảnh chân dung, ảnh đôi và vài góc chụp có bối cảnh."
+        ],
+        "steps": [
+          "Xem bản mẫu Tối Giản Đỏ trên màn hình bạn thường dùng để đọc lời mời. Quan sát tương quan giữa nền trắng, chữ và ảnh, rồi chọn những ảnh cưới hợp với cảm giác sáng thoáng đó.",
+          "Bắt đầu tạo thiệp cưới online và điền tên, thông tin gia đình, sự kiện cùng địa điểm. Dùng lời mời tự nhiên, giữ câu đủ ngắn và thay toàn bộ nội dung minh họa liên quan đến lễ cưới.",
+          "Kiểm tra bản xem trước với bộ ảnh và thông tin thật. Đọc lại trên điện thoại, xác nhận ngày giờ với hai gia đình rồi xuất bản để gửi đường dẫn lời mời đến khách."
+        ],
+        "faq": [
+          {
+            "question": "Tối Giản Đỏ có giống Minimalism Đỏ Đô không?",
+            "answer": "Hai mẫu cùng có định hướng hiện đại nhưng tạo cảm giác khác nhau. Tối Giản Đỏ nhấn vào nền trắng và sắc đỏ tinh tế. Minimalism Đỏ Đô sử dụng đỏ trầm, nền kem cùng hình ảnh phong bì và các chi tiết hoa. Hãy so sánh bản mẫu nếu bạn đang cân nhắc giữa vẻ sáng thoáng và cảm giác trang trọng, ấm hơn."
+          },
+          {
+            "question": "Có cần viết nhiều nội dung để thiệp bớt trống không?",
+            "answer": "Không cần kéo dài lời mời chỉ để lấp khoảng trống. Với mẫu này, hãy ưu tiên thông tin chính xác và câu chữ dễ đọc. Tên hai bạn, lời mời, thông tin gia đình, thời gian và địa điểm là điểm khởi đầu tốt. Ảnh cưới có thể bổ sung cảm xúc mà không khiến phần chữ trở nên nặng nề."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Tối Giản Đỏ với nền trắng thoáng và các điểm nhấn màu đỏ",
+        "relatedSlugs": [
+          "minimalism-dark-red",
+          "song-hy-red",
+          "hong-van-rose"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-dark-red": {
+        "metaTitle": "Mẫu thiệp cưới Minimalism Đỏ Đô | Thiệp Mừng Online",
+        "metaDescription": "Khám phá mẫu thiệp cưới Minimalism Đỏ Đô với nền kem, phong bì đỏ trầm và chi tiết hoa. Xem bản mẫu, gợi ý phối ảnh và tạo thiệp cưới online cho ngày trọng đại.",
+        "heading": "Mẫu thiệp cưới Minimalism Đỏ Đô",
+        "intro": "Minimalism Đỏ Đô mang sắc đỏ trầm vào một lời mời có nền kem ấm, phong bì ôm ảnh cưới và những nhánh hoa làm điểm nhấn. Hình bóng kiến trúc mờ phía sau bổ sung chiều sâu mà vẫn dành chỗ cho tên hai bạn và thông tin lễ cưới. Đây là mẫu thiệp cưới đáng cân nhắc nếu bạn thích vẻ trang trọng nhưng muốn lời mời có sự mềm mại của ảnh và hoa. Sự phối hợp giữa mảng đỏ đô và chữ màu kem cũng tạo nhịp rõ ràng khi người nhận đi từ phần giới thiệu đến những nội dung phía dưới.",
+        "highlights": [
+          "Đỏ đô kết hợp nền kem tạo bảng màu ấm và có độ tương phản. Nếu ảnh cưới của hai bạn có ánh sáng dịu, trang phục trắng hoặc màu trầm, hãy thử đặt vào bản xem trước để đánh giá sự hòa hợp.",
+          "Phong bì đỏ đô giữ ảnh cặp đôi, đi cùng dấu sáp hình tim màu vàng trong thiết kế. Chi tiết này tạo cảm giác như một lời mời được gửi riêng, đồng thời đưa ảnh cưới vào vị trí đáng chú ý.",
+          "Hình bóng dinh thự mờ và những nhánh mẫu đơn màu trầm bổ sung nét trang trọng. Các mảng đỏ mang chữ màu kem tiếp nối bảng màu chung, giúp nhiều phần nội dung vẫn có sự liên hệ về hình thức."
+        ],
+        "suitableFor": [
+          "Các cặp đôi muốn dùng tông đỏ nhưng thích độ sâu của đỏ đô hơn sắc đỏ tươi. Có thể cân nhắc mẫu này cho bộ ảnh có ánh sáng ấm hoặc phong cách trang phục trang trọng, rồi điều chỉnh lựa chọn ảnh sau khi xem trước.",
+          "Lời mời cần thể hiện đầy đủ gia đình và các mốc của ngày cưới trong một tổng thể chỉn chu. Phần chữ nên được chuẩn bị cẩn thận để sự trang trọng đến từ cả cách trình bày lẫn nội dung hai nhà thống nhất."
+        ],
+        "features": [
+          "Bản mẫu có thông tin cặp đôi, hai gia đình và lời báo tin. Khi cá nhân hóa, hãy kiểm tra tên đầy đủ, thứ bậc trong gia đình nếu sử dụng và cách xưng hô để lời mời phù hợp với nghi lễ thực tế.",
+          "Dữ liệu sự kiện gồm giờ đón khách, giờ đãi tiệc và các mốc chương trình. Nên rà soát sự thống nhất giữa phần thông báo chính và lịch trình để người nhận không phải đoán thời điểm cần có mặt.",
+          "Ảnh mở đầu và album tạo hai cơ hội giới thiệu hình ảnh của cặp đôi. Bạn có thể chọn một ảnh chính dễ nhận diện, sau đó dùng album cho những khoảnh khắc đa dạng hơn nhưng vẫn giữ màu ảnh tương đối đồng đều."
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Đỏ Đô và quan sát phong bì, ảnh chính cùng các phần nền kem và đỏ trầm. Chuẩn bị bộ ảnh có màu sắc phù hợp trước khi bắt đầu thay nội dung.",
+          "Chọn tạo thiệp cưới online, nhập thông tin hai bạn và hai gia đình, sau đó bổ sung địa điểm cùng lịch trình. Đối chiếu giờ đón khách với giờ khai tiệc để mỗi phần hướng dẫn đều rõ ràng.",
+          "Xem lại thiệp trên điện thoại và máy tính, kiểm tra cách cắt ảnh trong phong bì cùng độ dài tên. Sau khi xác nhận thông tin sự kiện, xuất bản và gửi đường dẫn cho khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu này có phù hợp với ảnh cưới đen trắng không?",
+            "answer": "Ảnh đen trắng là một hướng phối đáng thử với nền kem và đỏ đô, đặc biệt khi bạn muốn tập trung vào biểu cảm của hai người. Đây là gợi ý lựa chọn ảnh, không phải yêu cầu của mẫu. Hãy xem ảnh chính trong phong bì và cả album trước khi quyết định, vì độ sáng và cách cắt từng ảnh sẽ ảnh hưởng đến kết quả."
+          },
+          {
+            "question": "Nên chọn Minimalism Đỏ Đô hay Hồng Vân?",
+            "answer": "Minimalism Đỏ Đô có dấu ấn phong bì, nền kem và hình bóng kiến trúc mờ. Hồng Vân nhấn mạnh hoa hồng đỏ cùng không khí đỏ nhung trong bố cục một cột. Nếu bạn yêu hình thức thư mời và tông trầm, hãy thử mẫu này trước; nếu muốn hoa hồng là điểm nhận diện rõ hơn, nên xem thêm Hồng Vân."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Đỏ Đô với phong bì đỏ trầm, nền kem và chi tiết hoa",
+        "relatedSlugs": [
+          "minimalism-red",
+          "hong-van-rose",
+          "song-hy-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "hoa-mai-thuy-mac": {
+        "metaTitle": "Mẫu thiệp cưới Hoa Mai Thủy Mặc | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoa Mai Thủy Mặc có nền giấy ấm, cành mai vàng và phong cảnh màu nước. Xem bố cục một cột, gợi ý nội dung và tạo thiệp cưới online cho hai bạn.",
+        "heading": "Mẫu thiệp cưới Hoa Mai Thủy Mặc",
+        "intro": "Hoa Mai Thủy Mặc gợi cảm giác một lời mời được đặt trên giấy thủ công, có cành mai vàng và phong cảnh màu nước dịu nhẹ. Bố cục một cột đưa người đọc đi theo chiều dọc, để mỗi phần thông tin có vị trí riêng trong tổng thể ấm áp. Mẫu thiệp cưới này phù hợp để cân nhắc khi hai bạn thích chất liệu giấy, họa tiết thiên nhiên và sự mềm mại của nét vẽ. Điểm hấp dẫn nằm ở cách nền giấy, hoa mai và cảnh sông núi cùng tạo không khí, vì vậy ảnh cưới và lời mời nên được chọn để hòa vào cảm giác đó.",
+        "highlights": [
+          "Nền giấy màu ấm có hình ảnh thớ giấy tự nhiên, mang chất thủ công vào thiệp online. Khi đọc bản mẫu, bạn có thể quan sát cách sắc kem và nâu tạo phần nền dịu cho thông tin ngày vui.",
+          "Cành mai vàng được kết hợp với phong cảnh thủy mặc, gồm những mảng núi và sông màu nước. Họa tiết thiên nhiên giúp mẫu có bản sắc riêng, đặc biệt nếu hai bạn muốn một lời mời gắn với cảm giác nhẹ nhàng, gần gũi.",
+          "Toàn bộ nội dung được sắp theo một cột thanh thoát. Cách tổ chức này tạo dòng đọc liên tục từ phần đầu đến các thông tin tiếp theo, phù hợp để xem xét khi phần lớn khách sẽ mở lời mời trên điện thoại."
+        ],
+        "suitableFor": [
+          "Các cặp đôi thích bảng màu vàng mai, kem giấy và nâu ấm. Có thể thử kết hợp ảnh cưới có ánh sáng tự nhiên, trang phục sáng hoặc bối cảnh cây xanh để giữ sự hài hòa với họa tiết màu nước.",
+          "Gia đình muốn lời mời có nét truyền thống mềm mại và cần giới thiệu thông tin nghi lễ rõ ràng. Bản mẫu có nội dung lễ vu quy và thành hôn; khi sử dụng, hãy thay các mốc theo đúng chương trình của hai nhà."
+        ],
+        "features": [
+          "Phần giới thiệu cặp đôi và gia đình đặt thông tin cá nhân vào cùng không gian họa tiết. Nên chuẩn bị cách ghi tên, thứ bậc và lời mời trước, để nội dung vừa chính xác vừa giữ giọng điệu thống nhất từ đầu đến cuối.",
+          "Mẫu có dữ liệu cho các nghi lễ bên cạnh thông tin tiệc cưới. Nếu hai nhà tổ chức ở những giờ hoặc địa điểm khác nhau, hãy nêu rõ từng sự kiện để người nhận hiểu lời mời đang hướng đến phần nào của ngày vui.",
+          "Ảnh chính và album giúp đưa hình ảnh riêng của hai bạn vào thiết kế giấy và màu nước. Nên tránh chọn toàn bộ ảnh có sắc quá gắt; hãy thử một nhóm ảnh cân bằng ánh sáng để nhận xét tổng thể trong bản xem trước."
+        ],
+        "steps": [
+          "Xem bản mẫu Hoa Mai Thủy Mặc theo chiều dọc, chú ý nền giấy, cành mai và các phần nghi lễ. Ghi lại những thông tin cần thay, nhất là thứ tự gia đình và lịch tổ chức.",
+          "Bắt đầu tạo thiệp cưới online bằng mẫu đã chọn. Thêm tên hai bạn, thông tin hai nhà, giờ làm lễ và giờ tiệc, rồi thay ảnh minh họa bằng bộ ảnh có màu sắc phù hợp.",
+          "Rà lại từng sự kiện trong bản xem trước trên điện thoại và máy tính. Nhờ gia đình kiểm tra tên, cách xưng hô và địa chỉ trước khi xuất bản thiệp để chia sẻ với khách."
+        ],
+        "faq": [
+          {
+            "question": "Hoa Mai Thủy Mặc chỉ phù hợp với đám cưới mùa xuân?",
+            "answer": "Bạn có thể chọn mẫu vì yêu hoa mai và chất liệu màu nước, không cần giới hạn ở một mùa trong năm. Điều nên cân nhắc là màu ảnh, không khí buổi lễ và sở thích của hai bạn. Nếu bảng màu vàng, kem và nâu ấm phù hợp với lời mời mong muốn, hãy dùng thông tin ngày cưới thực tế của mình để cá nhân hóa."
+          },
+          {
+            "question": "Nên viết lời mời theo phong cách nào?",
+            "answer": "Một lời mời ấm áp, rõ nghĩa sẽ hòa hợp với cảm giác giấy thủ công và nét vẽ mềm. Bạn có thể dùng giọng trang trọng cho phần gia đình, rồi thêm câu ngắn thể hiện niềm vui của hai người. Hãy ưu tiên lời lẽ tự nhiên và thông tin đầy đủ; không cần dùng nhiều câu văn cầu kỳ để phù hợp với họa tiết thủy mặc."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Mai Thủy Mặc trên nền giấy ấm với cành mai vàng và phong cảnh màu nước",
+        "relatedSlugs": [
+          "hong-van-rose",
+          "song-hy-red",
+          "minimalism-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "hong-van-rose": {
+        "metaTitle": "Mẫu thiệp cưới Hồng Vân hoa hồng đỏ | Thiệp Mừng Online",
+        "metaDescription": "Khám phá mẫu thiệp cưới Hồng Vân với hoa hồng đỏ, sắc đỏ nhung và viền vàng champagne. Xem thiết kế một cột, gợi ý phối ảnh và tạo thiệp cưới online của bạn.",
+        "heading": "Mẫu thiệp cưới Hồng Vân hoa hồng đỏ",
+        "intro": "Hồng Vân lấy hoa hồng đỏ làm điểm nhận diện, kết hợp sắc đỏ nhung với viền vàng champagne và phần nền sáng màu kem. Bố cục dọc một cột mang lại cảm giác tập trung: người nhận theo dõi lần lượt hình ảnh, lời mời và thông tin ngày cưới trong cùng một dòng đọc. Mẫu thiệp cưới này dành cho những cặp đôi muốn hoa xuất hiện rõ nét trong thiết kế, đồng thời yêu một bảng màu ấm và trang trọng. Trước khi chọn, hãy xem cả những phần nhiều chữ để hình dung cách tên gia đình và nội dung sự kiện của bạn hòa vào tổng thể.",
+        "highlights": [
+          "Hoa hồng đỏ là họa tiết chính, tạo dấu ấn lãng mạn cho lời mời. Khi chọn ảnh, bạn có thể thử các khung hình có trang phục trắng, màu trung tính hoặc một điểm đỏ nhỏ để giữ sự liên hệ với phần hoa.",
+          "Sắc đỏ nhung đi cùng viền vàng champagne tạo cảm giác ấm và trang trọng. Phần nền kem giúp nội dung có khoảng sáng riêng, trong khi màu đỏ tiếp tục kết nối các chi tiết trên toàn bộ trang.",
+          "Bố cục một cột được thiết kế cho cả màn hình ngang và dọc. Để đánh giá đúng mẫu, hãy xem phần đầu, ảnh và những đoạn thông tin dài ở cả hai kiểu màn hình thay vì chỉ dựa vào một ảnh giới thiệu."
+        ],
+        "suitableFor": [
+          "Các cặp đôi yêu hoa hồng và muốn lời mời có dấu ấn hoa rõ ràng. Có thể cân nhắc Hồng Vân khi trang trí hoặc bộ ảnh cưới cũng có sắc đỏ, nhưng việc phối màu nên dựa trên bản xem trước với ảnh thực tế.",
+          "Những lời mời cần sự trang trọng nhưng vẫn giàu cảm xúc. Bố cục dọc phù hợp để kể câu chuyện bằng nhịp xen kẽ giữa ảnh và thông tin, nhất là khi hai bạn muốn người nhận xem trọn trang theo thứ tự."
+        ],
+        "features": [
+          "Phần nội dung cặp đôi và gia đình cho phép lời mời mang dấu ấn của hai nhà. Hãy thống nhất tên đầy đủ, cách xưng hô và lời mời trước khi nhập, để sắc thái trang trọng của thiết kế được tiếp nối bằng câu chữ.",
+          "Thông tin sự kiện và lịch trình giúp khách nắm các mốc quan trọng. Khi chuẩn bị nội dung, nên phân biệt nghi lễ với bữa tiệc và ghi rõ địa chỉ tương ứng, đặc biệt nếu hai hoạt động không diễn ra cùng một nơi.",
+          "Ảnh chính cùng album bổ sung hình ảnh riêng bên cạnh họa tiết hoa. Bạn nên chọn ảnh chính dễ nhìn gương mặt, sau đó dùng album cho những khoảnh khắc khác nhau; kiểm tra cách cắt ảnh để bố cục vẫn giữ chủ thể rõ ràng."
+        ],
+        "steps": [
+          "Mở bản mẫu Hồng Vân và xem cách hoa hồng đỏ, viền vàng cùng nền kem xuất hiện giữa các phần. Chọn bộ ảnh dự kiến dùng, rồi cân nhắc sự hòa hợp của màu ảnh với thiết kế.",
+          "Chọn tạo thiệp cưới online và cá nhân hóa thông tin của hai bạn, gia đình cùng sự kiện. Thêm ảnh cưới riêng, dùng lời mời rõ nghĩa và rà lại thời gian, địa điểm của từng phần chương trình.",
+          "Xem trước trang thiệp trên điện thoại và máy tính. Đọc lại các tên riêng, xem những đoạn dài có dễ theo dõi và kiểm tra ảnh trước khi xuất bản để gửi đường dẫn cho người thân, bạn bè."
+        ],
+        "faq": [
+          {
+            "question": "Hồng Vân khác Song Hỷ Đỏ như thế nào?",
+            "answer": "Hồng Vân nhấn vào hoa hồng, sắc đỏ nhung và viền vàng champagne. Song Hỷ Đỏ lấy chữ song hỷ và khung ảnh vòm làm dấu ấn truyền thống. Cả hai đều có sắc đỏ nhưng kể câu chuyện bằng họa tiết khác nhau. Bạn nên chọn theo biểu tượng muốn người nhận nhớ đến, rồi so sánh bản mẫu với phong cách ảnh cưới của mình."
+          },
+          {
+            "question": "Ảnh cưới nhiều màu có dùng với mẫu này được không?",
+            "answer": "Bạn có thể thử, nhưng nên kiểm tra sự cân bằng giữa ảnh và hoa hồng đỏ. Một bộ ảnh có ánh sáng tương đối đồng đều sẽ giúp trang dễ theo dõi hơn. Nếu từng ảnh có màu rất khác nhau, hãy chọn lọc hoặc thay thứ tự trước khi quyết định. Bản xem trước với ảnh thật là cách phù hợp để đánh giá kết quả."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hồng Vân với hoa hồng đỏ, sắc đỏ nhung và viền vàng champagne trong bố cục dọc",
+        "relatedSlugs": [
+          "minimalism-dark-red",
+          "song-hy-red",
+          "hoa-mai-thuy-mac"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "song-hy-green": {
+        "metaTitle": "Song Hỷ Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Song Hỷ Xanh: Mẫu thiệp cưới Song Hỷ Xanh dành cho cặp đôi muốn giữ nét truyền thống chữ Hỷ nhưng chọn tông xanh lá đậm trang trọng thay cho...",
+        "heading": "Mẫu thiệp cưới Song Hỷ Xanh",
+        "intro": "Mẫu thiệp cưới Song Hỷ Xanh mang phong cách truyền thống với gam màu xanh lá. Mẫu thiệp cưới Song Hỷ Xanh dành cho cặp đôi muốn giữ nét truyền thống chữ Hỷ nhưng chọn tông xanh lá đậm trang trọng thay cho đỏ. Màu xanh rừng kết hợp cùng nền kem ấm tạo cảm giác dịu mắt, gần gũi thiên nhiên, phù hợp tiệc cưới hiện đại lẫn truyền thống. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Xanh lá đậm và chữ Hỷ làm điểm nhấn đầu thiệp",
+          "Khung ảnh cung + dòng chữ cong LOVE NEVER FAILS",
+          "Phong bì xanh với chữ Hỷ và con dấu 囍",
+          "Đầy đủ RSVP, album, bản đồ, QR mừng cưới"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Tiệc cưới ngoài trời",
+          "Tiệc cưới trang trọng",
+          "Lễ gia tiên"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Song Hỷ Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Song Hỷ Xanh khác gì so với Song Hỷ Đỏ?",
+            "answer": "Cấu trúc và bố cục giống hệt nhau — chỉ thay tông màu chủ đạo từ đỏ đô sang xanh lá đậm. Phong bì, thanh tiêu đề, chữ Hỷ và các nút bấm đều dùng màu xanh, nền kem ấm giữ nguyên."
+          },
+          {
+            "question": "Màu xanh lá đậm có phù hợp đám cưới truyền thống không?",
+            "answer": "Hoàn toàn phù hợp. Xanh lá đậm là màu may mắn, tượng trưng sức sống và bình yên — thường thấy trong trang phục áo dài cưới và hoa cưới. Kết hợp với chữ Hỷ, tông xanh vẫn giữ được sự trang trọng."
+          },
+          {
+            "question": "Phong bì Song Hỷ Xanh trông như thế nào?",
+            "answer": "Phong bì nền xanh đậm gradient, thẻ mời xanh lá bên trong, hai chữ Hỷ mờ ở góc và con dấu 囍 khi mở. Bố cục y hệt phiên bản đỏ, chỉ đổi palette màu xanh."
+          },
+          {
+            "question": "Mẫu Song Hỷ Xanh phù hợp với đám cưới nào?",
+            "answer": "Phù hợp tiệc cưới ngoài trời, vườn cưới, hoặc đám cưới muốn tone nhẹ hơn đỏ nhưng vẫn truyền thống. Cũng phù hợp cặp đôi thích màu tự nhiên, gần gũi thiên nhiên."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Hỷ Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "double-dragon-red",
+          "double-phoenix-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "double-dragon-red": {
+        "metaTitle": "Song Long Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Song Long Đỏ: Mẫu thiệp cưới Song Long Đỏ mang đậm phong cách truyền thống Việt Nam với họa tiết rồng đôi tượng trưng cho sự thịnh vượng và...",
+        "heading": "Mẫu thiệp cưới Song Long Đỏ",
+        "intro": "Mẫu thiệp cưới Song Long Đỏ mang phong cách truyền thống với gam màu đỏ. Mẫu thiệp cưới Song Long Đỏ mang đậm phong cách truyền thống Việt Nam với họa tiết rồng đôi tượng trưng cho sự thịnh vượng và hạnh phúc viên mãn. Tông màu đỏ chủ đạo — màu sắc may mắn trong văn hóa Á Đông — tạo nên vẻ trang trọng và ấm áp cho ngày trọng đại. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Họa tiết rồng đôi truyền thống",
+          "Tông đỏ may mắn, sang trọng",
+          "Hoa văn cổ điển kết hợp hiện đại",
+          "Hiệu ứng mở phong bì"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Lễ vu quy",
+          "Tiệc cưới trang trọng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Song Long Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Họa tiết rồng đôi trên mẫu Song Long Đỏ có ý nghĩa gì?",
+            "answer": "Rồng đôi (song long) tượng trưng cho sự thịnh vượng, quyền lực và hạnh phúc viên mãn trong văn hóa Á Đông. Đây là motif truyền thống phổ biến trong đám cưới Việt Nam, mang ý nghĩa chúc phúc cho đôi uyên ương."
+          },
+          {
+            "question": "Mẫu Song Long Đỏ phù hợp với phong cách đám cưới nào?",
+            "answer": "Song Long Đỏ phù hợp nhất cho đám cưới truyền thống, lễ vu quy, và tiệc cưới trang trọng. Tông đỏ là màu may mắn trong văn hóa Việt Nam, tạo không khí ấm áp và sang trọng."
+          },
+          {
+            "question": "Tông đỏ trên mẫu Song Long Đỏ có quá chói không?",
+            "answer": "Không. Tông đỏ trên Song Long Đỏ được chọn lọc kỹ — đỏ đậm sang trọng, không chói mắt. Kết hợp với họa tiết rồng vàng gold tạo sự cân bằng hài hòa, trang trọng mà vẫn dễ chịu khi xem."
+          },
+          {
+            "question": "Hiệu ứng phong bì trên Song Long Đỏ trông như thế nào?",
+            "answer": "Khi khách mời mở link, Song Long Đỏ hiển thị phong bì đỏ truyền thống. Nhấn mở phong bì sẽ thấy thiệp mời bên trong — tạo trải nghiệm giống nhận thiệp cưới thật, rất phù hợp với phong cách truyền thống."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Long Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-phoenix-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "double-phoenix-red": {
+        "metaTitle": "Song Phụng Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Song Phụng Đỏ: Mẫu thiệp cưới Song Phụng Đỏ nổi bật với họa tiết đôi phụng hoàng — biểu tượng của sự hòa hợp và hạnh phúc trong văn hóa...",
+        "heading": "Mẫu thiệp cưới Song Phụng Đỏ",
+        "intro": "Mẫu thiệp cưới Song Phụng Đỏ mang phong cách truyền thống với gam màu đỏ. Mẫu thiệp cưới Song Phụng Đỏ nổi bật với họa tiết đôi phụng hoàng — biểu tượng của sự hòa hợp và hạnh phúc trong văn hóa phương Đông. Phụng hoàng tượng trưng cho phẩm hạnh và vẻ đẹp cao quý, mang ý nghĩa chúc phúc cho đôi uyên ương. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Họa tiết đôi phụng hoàng độc đáo",
+          "Tông đỏ truyền thống thanh lịch",
+          "Biểu tượng hòa hợp và hạnh phúc",
+          "Hiệu ứng mở phong bì"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Lễ vu quy",
+          "Tiệc cưới sang trọng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Song Phụng Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Đôi phụng hoàng trên mẫu Song Phụng Đỏ tượng trưng cho điều gì?",
+            "answer": "Phụng hoàng tượng trưng cho phẩm hạnh, vẻ đẹp cao quý và sự hòa hợp. Đôi phụng trên thiệp Song Phụng Đỏ mang ý nghĩa chúc phúc cho cô dâu — khác với rồng đôi (song long) tượng trưng cho sức mạnh."
+          },
+          {
+            "question": "Song Phụng Đỏ khác gì so với Song Long Đỏ?",
+            "answer": "Song Phụng Đỏ dùng họa tiết đôi phụng hoàng thanh lịch, mang vẻ đẹp mềm mại và nữ tính hơn. Song Long Đỏ dùng họa tiết rồng đôi mạnh mẽ, trang trọng hơn. Cả hai đều mang phong cách truyền thống Việt Nam."
+          },
+          {
+            "question": "Song Phụng Đỏ có phù hợp cho đám cưới miền nào?",
+            "answer": "Song Phụng Đỏ phù hợp cho đám cưới mọi miền. Họa tiết phụng hoàng là biểu tượng phổ biến trong văn hóa Việt Nam, đặc biệt được yêu thích ở đám cưới miền Nam với phong cách thanh lịch, trang nhã."
+          },
+          {
+            "question": "Hoa văn trên Song Phụng Đỏ có nhiều chi tiết không?",
+            "answer": "Song Phụng Đỏ có mức độ chi tiết vừa phải — đôi phụng hoàng thanh lịch với đường nét mềm mại, không quá rối. Phong cách thanh nhã hơn so với dòng Long Phụng có nhiều hoa văn hơn."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Phụng Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "elegant-leaf-green": {
+        "metaTitle": "Thanh Diệp Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Thanh Diệp Xanh: Mẫu thiệp cưới Thanh Diệp Xanh mang phong cách thanh lịch, hiện đại với tông xanh lá tươi mát. Tên \"Thanh Diệp\" — chiếc lá...",
+        "heading": "Mẫu thiệp cưới Thanh Diệp Xanh",
+        "intro": "Mẫu thiệp cưới Thanh Diệp Xanh mang phong cách hoa lá với gam màu xanh lá. Mẫu thiệp cưới Thanh Diệp Xanh mang phong cách thanh lịch, hiện đại với tông xanh lá tươi mát. Tên \"Thanh Diệp\" — chiếc lá xanh thanh — gợi lên vẻ đẹp giản dị nhưng tinh tế, như tình yêu chân thành không cần phô trương. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Phong cách minimalist hiện đại",
+          "Tông xanh lá thanh lịch",
+          "Bố cục thoáng đãng, dễ đọc",
+          "Hiệu ứng mở phong bì"
+        ],
+        "suitableFor": [
+          "Đám cưới hiện đại",
+          "Tiệc cưới minimalist",
+          "Đám cưới thanh lịch"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Thanh Diệp Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Phong cách minimalist trên Thanh Diệp Xanh trông như thế nào?",
+            "answer": "Thanh Diệp Xanh sử dụng bố cục thoáng đãng, typography rõ ràng, họa tiết lá xanh nhẹ nhàng và nhiều khoảng trắng. Phong cách tối giản giúp thiệp trông thanh lịch, dễ đọc — đúng xu hướng cưới đương đại."
+          },
+          {
+            "question": "Mẫu Thanh Diệp Xanh phù hợp cho đám cưới nào?",
+            "answer": "Thanh Diệp Xanh phù hợp cho đám cưới hiện đại, tiệc cưới minimalist, hoặc bất kỳ ai yêu thích sự thanh lịch, giản dị. Tên \"Thanh Diệp\" (chiếc lá xanh thanh) gợi lên vẻ đẹp chân thành."
+          },
+          {
+            "question": "Thanh Diệp Xanh có quá đơn giản cho đám cưới trang trọng không?",
+            "answer": "Không. Phong cách minimalist của Thanh Diệp Xanh là sự tinh tế có chủ đích — ít chi tiết nhưng mỗi yếu tố đều được cân nhắc. Nhiều đám cưới hiện đại ưa chuộng sự thanh lịch này hơn hoa văn phức tạp."
+          },
+          {
+            "question": "Thanh Diệp Xanh khác gì so với Vườn Xuân Xanh?",
+            "answer": "Cả hai dùng tông xanh nhưng phong cách khác nhau. Thanh Diệp Xanh tối giản, minimalist với ít họa tiết. Vườn Xuân Xanh phong phú hơn với nhiều họa tiết hoa lá thiên nhiên. Chọn theo sở thích phong cách."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Thanh Diệp Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "double-dragon-green",
+          "boho-floral-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "dragon-phoenix-red": {
+        "metaTitle": "Long Phụng Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Long Phụng Đỏ: Mẫu thiệp cưới Long Phụng Đỏ là tuyệt phẩm cổ điển với họa tiết rồng phượng — biểu tượng tối thượng của hôn nhân trong văn hóa...",
+        "heading": "Mẫu thiệp cưới Long Phụng Đỏ",
+        "intro": "Mẫu thiệp cưới Long Phụng Đỏ mang phong cách truyền thống với gam màu đỏ. Mẫu thiệp cưới Long Phụng Đỏ là tuyệt phẩm cổ điển với họa tiết rồng phượng — biểu tượng tối thượng của hôn nhân trong văn hóa Việt Nam. Rồng đại diện cho chú rể (dương), phượng đại diện cho cô dâu (âm), cùng nhau tạo nên sự hài hòa âm dương viên mãn. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Họa tiết rồng phượng chi tiết",
+          "Hỗ trợ thông tin lễ vu quy riêng",
+          "Thứ bậc gia đình đầy đủ",
+          "Hiệu ứng mở phong bì"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Lễ vu quy và tiệc cưới",
+          "Đám cưới theo phong tục Việt Nam"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Long Phụng Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Họa tiết rồng phượng trên mẫu Long Phụng Đỏ tượng trưng cho điều gì?",
+            "answer": "Rồng đại diện cho chú rể (dương), phượng đại diện cho cô dâu (âm). Cặp rồng phượng trên Long Phụng Đỏ tượng trưng cho sự hài hòa âm dương, hôn nhân viên mãn — biểu tượng tối thượng trong đám cưới Việt Nam."
+          },
+          {
+            "question": "Mẫu Long Phụng Đỏ có hỗ trợ thông tin lễ vu quy riêng không?",
+            "answer": "Có. Long Phụng Đỏ có phần lễ vu quy và tiệc cưới riêng biệt, thứ bậc gia đình đầy đủ — phù hợp với phong tục đám cưới truyền thống có cả nhà trai và nhà gái."
+          },
+          {
+            "question": "Long Phụng Đỏ phù hợp cho đám cưới nào nhất?",
+            "answer": "Long Phụng Đỏ phù hợp nhất cho đám cưới truyền thống Việt Nam với đầy đủ nghi thức vu quy và tiệc cưới. Tông đỏ trang trọng, họa tiết rồng phượng cổ điển tạo không khí thiêng liêng."
+          },
+          {
+            "question": "Hoa văn rồng phượng trên Long Phụng Đỏ có chi tiết hơn Song Long Đỏ không?",
+            "answer": "Có. Long Phụng Đỏ dùng cả rồng và phượng với hoa văn chi tiết, bố cục phong phú hơn. Song Long Đỏ chỉ có rồng đôi, đường nét gọn hơn. Long Phụng Đỏ phù hợp nếu bạn thích nhiều chi tiết truyền thống."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Long Phụng Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "dragon-phoenix-v3-red": {
+        "metaTitle": "Long Phụng V3 Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Long Phụng V3 Đỏ: Mẫu thiệp cưới Long Phụng V3 Đỏ là phiên bản cao cấp nhất của dòng Long Phụng, được thiết kế lại hoàn toàn với nền đỏ thẫm...",
+        "heading": "Mẫu thiệp cưới Long Phụng V3 Đỏ",
+        "intro": "Mẫu thiệp cưới Long Phụng V3 Đỏ mang phong cách truyền thống với gam màu đỏ. Mẫu thiệp cưới Long Phụng V3 Đỏ là phiên bản cao cấp nhất của dòng Long Phụng, được thiết kế lại hoàn toàn với nền đỏ thẫm sâu đặc trưng, kết hợp chi tiết vàng đồng tinh tế tạo nên tổng thể sang trọng và ấn tượng. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Khung ảnh vòm họa tiết rồng phượng độc đáo",
+          "Nền đỏ thẫm sâu, chi tiết vàng đồng tinh tế",
+          "Lịch trình ngày cưới với chim én trang trí",
+          "Lịch mini trong khung trang trí"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống sang trọng",
+          "Tiệc cưới trang trọng",
+          "Lễ vu quy cổ điển"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Long Phụng V3 Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Long Phụng V3 Đỏ khác gì so với Long Phụng Đỏ gốc?",
+            "answer": "V3 là phiên bản thiết kế lại hoàn toàn với nền đỏ thẫm sâu hơn, khung ảnh vòm họa tiết rồng phượng, lịch trình với chim én trang trí, và sổ lưu bút nền bán trong suốt tinh tế."
+          },
+          {
+            "question": "Khung ảnh vòm trên Long Phụng V3 hoạt động như thế nào?",
+            "answer": "Ảnh cưới của bạn được hiển thị bên trong khung vòm với họa tiết rồng phượng viền quanh. Khung được vẽ vector nên sắc nét trên mọi màn hình. Bạn có thể upload ảnh và xem trước ngay trong trình chỉnh sửa."
+          },
+          {
+            "question": "Long Phụng V3 có phong bì không?",
+            "answer": "Có, Long Phụng V3 Đỏ có hiệu ứng mở phong bì đồng bộ với tông đỏ thẫm, tạo trải nghiệm liền mạch từ khi khách mời mở thiệp."
+          },
+          {
+            "question": "Lịch trình ngày cưới trên V3 có gì đặc biệt?",
+            "answer": "Phần lịch trình V3 có họa tiết chim én trang trí hai bên timeline, tạo chiều sâu và sự tinh tế. Ngoài ra còn có lịch mini hiển thị trong khung trang trí vàng đồng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Long Phụng V3 Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "dragon-phoenix-v2-red": {
+        "metaTitle": "Long Phụng V2 Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Long Phụng V2 Đỏ: Mẫu thiệp cưới Long Phụng V2 Đỏ là phiên bản cải tiến của dòng Long Phụng kinh điển. Họa tiết rồng phượng được thiết kế lại...",
+        "heading": "Mẫu thiệp cưới Long Phụng V2 Đỏ",
+        "intro": "Mẫu thiệp cưới Long Phụng V2 Đỏ mang phong cách truyền thống với gam màu đỏ. Mẫu thiệp cưới Long Phụng V2 Đỏ là phiên bản cải tiến của dòng Long Phụng kinh điển. Họa tiết rồng phượng được thiết kế lại tinh tế hơn, với đường nét mảnh mai và bố cục hiện đại hơn trong khi vẫn giữ nguyên tinh thần truyền thống. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Phiên bản cải tiến của Long Phụng",
+          "Họa tiết rồng phượng tinh tế hơn",
+          "Bố cục và typography hiện đại",
+          "Hiệu ứng mở phong bì"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống hiện đại",
+          "Lễ vu quy",
+          "Tiệc cưới trang trọng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Long Phụng V2 Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Long Phụng V2 Đỏ khác gì so với Long Phụng Đỏ gốc?",
+            "answer": "Long Phụng V2 là phiên bản cải tiến với họa tiết rồng phượng tinh tế hơn, đường nét mảnh mai, typography rõ ràng và bố cục thoáng hơn. Giữ nguyên tinh thần truyền thống nhưng trải nghiệm xem mượt mà hơn."
+          },
+          {
+            "question": "Nên chọn Long Phụng V2 hay Long Phụng gốc?",
+            "answer": "Nếu bạn thích phong cách hiện đại hơn với bố cục thoáng, chọn V2. Nếu thích họa tiết rồng phượng đậm nét, chi tiết hơn, chọn Long Phụng gốc. Cả hai đều có đầy đủ tính năng giống nhau."
+          },
+          {
+            "question": "Họa tiết rồng phượng trên V2 được cải tiến như thế nào?",
+            "answer": "Long Phụng V2 giữ motif rồng phượng nhưng với đường nét mảnh mai, tinh tế hơn. Hoa văn bớt dày đặc, tạo sự thoáng đãng. Tổng thể cảm giác hiện đại hơn phiên bản gốc mà vẫn giữ tinh thần truyền thống."
+          },
+          {
+            "question": "Long Phụng V2 Đỏ có nhiều phiên bản màu không?",
+            "answer": "Hiện tại Long Phụng V2 chỉ có phiên bản Đỏ. Nếu bạn muốn tông khác với phong cách rồng phượng, có thể chọn Long Phụng gốc với 4 màu: Đỏ, Xanh, Lam, và Huyền (đen)."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Long Phụng V2 Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "double-dragon-green": {
+        "metaTitle": "Song Long Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Song Long Xanh: Mẫu thiệp cưới Song Long Xanh là phiên bản thanh lịch của dòng Song Long với tông xanh lá tự nhiên. Họa tiết rồng đôi truyền...",
+        "heading": "Mẫu thiệp cưới Song Long Xanh",
+        "intro": "Mẫu thiệp cưới Song Long Xanh mang phong cách truyền thống với gam màu xanh lá. Mẫu thiệp cưới Song Long Xanh là phiên bản thanh lịch của dòng Song Long với tông xanh lá tự nhiên. Họa tiết rồng đôi truyền thống được kết hợp với gam màu xanh mát dịu, tạo cảm giác tươi mới và gần gũi với thiên nhiên. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Họa tiết rồng đôi truyền thống",
+          "Tông xanh lá tự nhiên, tươi mát",
+          "Phong cách thanh lịch hiện đại",
+          "Hiệu ứng mở phong bì"
+        ],
+        "suitableFor": [
+          "Đám cưới thiên nhiên",
+          "Tiệc cưới ngoài trời",
+          "Đám cưới phong cách xanh"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Song Long Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Tông xanh lá trên mẫu Song Long Xanh có ý nghĩa gì?",
+            "answer": "Xanh lá tượng trưng cho sự sinh sôi, phát triển và hy vọng — ý nghĩa rất đẹp cho khởi đầu cuộc sống mới. Song Long Xanh kết hợp nét truyền thống của rồng đôi với gam màu xanh mát dịu."
+          },
+          {
+            "question": "Mẫu Song Long Xanh có phù hợp cho đám cưới ngoài trời không?",
+            "answer": "Rất phù hợp! Tông xanh lá tự nhiên của Song Long Xanh hòa quyện tuyệt vời với không gian ngoài trời, sân vườn. Đây là lựa chọn lý tưởng khi bạn muốn nét truyền thống mà vẫn tươi mới."
+          },
+          {
+            "question": "Họa tiết rồng đôi trên Song Long Xanh có khác Song Long Đỏ không?",
+            "answer": "Họa tiết rồng đôi giống nhau về đường nét, nhưng phối màu khác. Song Long Xanh dùng tông xanh lá mát dịu, rồng được thể hiện với sắc xanh ngọc — tạo cảm giác thanh thoát hơn so với tông đỏ mạnh mẽ."
+          },
+          {
+            "question": "Song Long Xanh có phù hợp cho đám cưới mùa hè không?",
+            "answer": "Rất phù hợp! Tông xanh lá mát mẻ của Song Long Xanh tạo cảm giác tươi mới, dễ chịu — lý tưởng cho đám cưới mùa hè. Phong cách vừa truyền thống vừa tươi trẻ."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Long Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "boho-floral-green": {
+        "metaTitle": "Hoa Mộc Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoa Mộc Xanh: Mẫu thiệp cưới Hoa Mộc Xanh mang vẻ đẹp boho thanh nhã với những bông hoa watercolor tinh tế trên nền kem trắng ấm áp. Tông...",
+        "heading": "Mẫu thiệp cưới Hoa Mộc Xanh",
+        "intro": "Mẫu thiệp cưới Hoa Mộc Xanh mang phong cách hoa lá với gam màu xanh lá. Mẫu thiệp cưới Hoa Mộc Xanh mang vẻ đẹp boho thanh nhã với những bông hoa watercolor tinh tế trên nền kem trắng ấm áp. Tông xanh lá chủ đạo tạo cảm giác tươi mát, gần gũi thiên nhiên — hoàn hảo cho cặp đôi yêu phong cách rustic tự nhiên. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Hoa watercolor boho thanh nhã",
+          "Tông xanh lá tươi mát, tự nhiên",
+          "Phong cách rustic gần gũi thiên nhiên",
+          "Hiệu ứng parallax cuộn trang"
+        ],
+        "suitableFor": [
+          "Đám cưới boho",
+          "Tiệc cưới ngoài trời",
+          "Đám cưới vườn",
+          "Đám cưới eco"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoa Mộc Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Hoa Mộc Xanh khác gì so với Hoa Mộc Hồng?",
+            "answer": "Hoa Mộc Xanh dùng tông xanh lá thanh nhã, tạo cảm giác tươi mát gần gũi thiên nhiên. Hoa Mộc Hồng dùng tông hồng ấm lãng mạn với bố cục ảnh nghiêng đan xen đặc biệt. Cả hai đều có họa tiết hoa watercolor boho nhưng màu sắc và cảm xúc khác nhau."
+          },
+          {
+            "question": "Thiệp Hoa Mộc Xanh phù hợp với đám cưới phong cách gì?",
+            "answer": "Thiệp phù hợp nhất với đám cưới boho rustic, tiệc cưới vườn ngoài trời, hoặc đám cưới eco với chủ đề xanh tự nhiên. Tông xanh lá và hoa watercolor tạo bầu không khí thanh mát, gần gũi."
+          },
+          {
+            "question": "Hiệu ứng parallax trên Hoa Mộc Xanh hoạt động như thế nào?",
+            "answer": "Khi cuộn trang, họa tiết hoa xanh di chuyển với tốc độ khác nhau so với nội dung chính, tạo chiều sâu và cảm giác sống động. Hiệu ứng này làm cho thiệp trông sinh động hơn nhiều so với thiệp tĩnh thông thường."
+          },
+          {
+            "question": "Tông xanh trên Hoa Mộc Xanh là màu gì?",
+            "answer": "Hoa Mộc Xanh dùng tông xanh lá thanh nhã trên nền kem trắng ấm (#FFFAF7), tạo sự tương phản dịu dàng. Màu xanh được chọn để gợi liên tưởng đến thiên nhiên tươi mát, phù hợp phong cách boho xanh."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Mộc Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "boho-floral-pink": {
+        "metaTitle": "Hoa Mộc Hồng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoa Mộc Hồng: Mẫu thiệp cưới Hoa Mộc Hồng mang vẻ đẹp boho lãng mạn với những bông hoa watercolor tinh tế trên nền kem trắng ấm áp. Tông hồng...",
+        "heading": "Mẫu thiệp cưới Hoa Mộc Hồng",
+        "intro": "Mẫu thiệp cưới Hoa Mộc Hồng mang phong cách hoa lá với gam màu hồng. Mẫu thiệp cưới Hoa Mộc Hồng mang vẻ đẹp boho lãng mạn với những bông hoa watercolor tinh tế trên nền kem trắng ấm áp. Tông hồng chủ đạo (#9D6D63) mang lại cảm giác nồng nàn, dịu dàng — hoàn hảo cho cặp đôi yêu phong cách tự nhiên và lãng mạn. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Hoa watercolor boho lãng mạn",
+          "Tông hồng ấm áp, dịu dàng",
+          "Hai khung ảnh nghiêng đan xen sáng tạo",
+          "Hiệu ứng parallax cuộn trang"
+        ],
+        "suitableFor": [
+          "Đám cưới boho",
+          "Tiệc cưới ngoài trời",
+          "Đám cưới vườn",
+          "Đám cưới tự nhiên"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoa Mộc Hồng để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hoa Mộc Hồng khác gì so với Hoa Mộc Xanh?",
+            "answer": "Hoa Mộc Hồng dùng tông hồng ấm (#9D6D63) với hai màu viền ảnh khác nhau cho dâu (hồng pastel) và rể (tím xám), tạo cảm giác lãng mạn. Bố cục tên ngắn đặt góc trên phải, ảnh nghiêng đan xen bên dưới. Hoa Mộc Xanh dùng tông xanh lá thanh nhã với thanh trang trí ngang."
+          },
+          {
+            "question": "Thiệp Hoa Mộc Hồng phù hợp với đám cưới phong cách gì?",
+            "answer": "Thiệp phù hợp nhất với đám cưới boho rustic, tiệc cưới vườn ngoài trời, hoặc đám cưới với chủ đề tự nhiên lãng mạn. Tông hồng ấm và hoa watercolor tinh tế tạo bầu không khí dịu dàng, tình tứ."
+          },
+          {
+            "question": "Có thể đặt ảnh dâu rể lên thiệp không?",
+            "answer": "Có! Thiệp có 2 khung ảnh được thiết kế đặc biệt — một nghiêng phải cho ảnh người thứ nhất, một nghiêng trái cho người thứ hai — tạo bố cục đan xen đẹp mắt. Bạn có thể upload ảnh dọc tỷ lệ 2:3."
+          },
+          {
+            "question": "Màu sắc thiệp Hoa Mộc Hồng là gì?",
+            "answer": "Màu chủ đạo là hồng trầm ấm #9D6D63 (dusty rose) trên nền kem trắng #FFFAF7. Viền ảnh cô dâu là hồng pastel #F5C6C9, viền ảnh chú rể là tím xám nhạt #BAB4C7 — tạo sự khác biệt tinh tế nhưng hài hòa."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Mộc Hồng – thiệp cưới online",
+        "relatedSlugs": [
+          "elegant-leaf-green",
+          "boho-floral-green",
+          "crystal-floral-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "jasmine-white": {
+        "metaTitle": "Mai Lan Trắng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Mai Lan Trắng: Mẫu thiệp cưới Mai Lan Trắng mang vẻ đẹp tối giản thanh lịch với nền kem trắng ấm áp (#FFFAF7) và sắc xanh olive trầm...",
+        "heading": "Mẫu thiệp cưới Mai Lan Trắng",
+        "intro": "Mẫu thiệp cưới Mai Lan Trắng mang phong cách thanh lịch với gam màu hài hòa. Mẫu thiệp cưới Mai Lan Trắng mang vẻ đẹp tối giản thanh lịch với nền kem trắng ấm áp (#FFFAF7) và sắc xanh olive trầm (#404A1D). Khung hoa mai lan tinh tế được đặt nổi bật ở đầu thiệp, bao quanh tên dâu rể, tạo điểm nhấn nhẹ nhàng mà sang trọng. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Khung hoa mai lan tinh tế ở phần header",
+          "Nền kem trắng ấm áp, nhã nhặn",
+          "Màu xanh olive trang nhã, khác biệt",
+          "Phong cách tối giản hiện đại"
+        ],
+        "suitableFor": [
+          "Đám cưới hiện đại",
+          "Tiệc cưới ngoài trời",
+          "Cưới phong cách tối giản",
+          "Garden wedding"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Mai Lan Trắng để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Mai Lan Trắng phù hợp cho phong cách đám cưới nào?",
+            "answer": "Mẫu này phù hợp nhất với đám cưới phong cách tối giản, garden wedding, hoặc tiệc cưới ngoài trời. Màu nền kem trắng và xanh olive tạo cảm giác tự nhiên, thanh lịch — không quá rực rỡ nhưng vẫn có điểm nhấn riêng."
+          },
+          {
+            "question": "Khung hoa trên thiệp là hoa gì?",
+            "answer": "Khung hoa mai lan (jasmine) — loài hoa tượng trưng cho vẻ đẹp thuần khiết, sự thanh cao và tình yêu chân thành. Khung hoa được đặt ở phần đầu thiệp, bao quanh tên dâu rể."
+          },
+          {
+            "question": "Màu chủ đạo của mẫu Mai Lan Trắng là gì?",
+            "answer": "Thiệp dùng hai màu chính: nền kem trắng ấm (#FFFAF7) và xanh olive đậm (#404A1D). Kết hợp này tạo vẻ thanh lịch, tự nhiên — khác với các mẫu đỏ hoặc hồng thông thường."
+          },
+          {
+            "question": "Mẫu Mai Lan có thể tùy chỉnh màu sắc không?",
+            "answer": "Hiện tại màu sắc được thiết kế cố định theo concept Mai Lan Trắng. Bạn có thể tùy chỉnh toàn bộ nội dung: tên dâu rể, thông tin gia đình, địa điểm, ảnh cưới, và lời chúc."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Mai Lan Trắng – thiệp cưới online",
+        "relatedSlugs": [
+          "silk-flora-brown",
+          "song-hy-red",
+          "song-hy-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "silk-flora-brown": {
+        "metaTitle": "Hoa Lụa Nâu | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoa Lụa Nâu: Mẫu thiệp cưới Hoa Lụa Nâu theo đuổi tinh thần tối giản hiện đại với tông màu ấm và bố cục thoáng. Nội dung được đặt làm trung...",
+        "heading": "Mẫu thiệp cưới Hoa Lụa Nâu",
+        "intro": "Mẫu thiệp cưới Hoa Lụa Nâu mang phong cách thanh lịch với gam màu nâu. Mẫu thiệp cưới Hoa Lụa Nâu theo đuổi tinh thần tối giản hiện đại với tông màu ấm và bố cục thoáng. Nội dung được đặt làm trung tâm để người xem tập trung vào thông tin quan trọng, đồng thời vẫn giữ cảm giác mềm mại, trang nhã. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Phong cách tối giản tông ấm, dễ đọc và dễ tùy biến nội dung",
+          "Typography là trọng tâm, cân bằng giữa mềm mại và trang trọng",
+          "Bố cục rõ ràng cho cả lễ cưới, tiệc cưới, bản đồ và RSVP",
+          "Phong bì và hiệu ứng mở thiệp đồng bộ với tinh thần thiết kế"
+        ],
+        "suitableFor": [
+          "Đám cưới hiện đại",
+          "Tiệc cưới ngoài trời",
+          "Garden wedding",
+          "Tone ấm – rustic nhẹ"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoa Lụa Nâu để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hoa Lụa Nâu khác Mai Lan Trắng chỗ nào?",
+            "answer": "Cả hai đều tối giản, nhưng Hoa Lụa Nâu tập trung vào cảm giác ấm áp và chiều sâu chữ nghĩa, trong khi Mai Lan Trắng thiên về vẻ sáng, nhẹ và có khung hoa nổi bật ở phần đầu thiệp."
+          },
+          {
+            "question": "Màu chủ đạo của Hoa Lụa Nâu?",
+            "answer": "Mẫu sử dụng bảng màu ấm, dịu mắt để giữ cảm giác tinh tế và gần gũi. Bạn có thể tùy chỉnh toàn bộ nội dung như tên, địa điểm, ảnh và lời mời trong bố cục có sẵn."
+          },
+          {
+            "question": "Hoa Lụa Nâu phù hợp đám cưới kiểu gì?",
+            "answer": "Phù hợp tiệc tông ấm, rustic nhẹ, outdoor hoặc đám cưới tối giản hiện đại — vừa thanh lịch vừa gần gũi."
+          },
+          {
+            "question": "Có hình hoa hay clip trang trí trên thiệp không?",
+            "answer": "Không — mẫu tập trung nền và chữ; phần ảnh là album ảnh bạn tự tải trong trình chỉnh sửa."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Lụa Nâu – thiệp cưới online",
+        "relatedSlugs": [
+          "jasmine-white",
+          "minimalism-brown",
+          "boho-floral-brown"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "chateau-blue": {
+        "metaTitle": "Lâu Đài Lam | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Lâu Đài Lam: Mẫu thiệp cưới Lâu Đài Lam là phiên bản nguyên bản của dòng Lâu Đài, mang phong cách hoàng gia châu Âu cổ điển. Biệt thự lớn vẽ...",
+        "heading": "Mẫu thiệp cưới Lâu Đài Lam",
+        "intro": "Mẫu thiệp cưới Lâu Đài Lam mang phong cách hoàng gia với gam màu xanh dương. Mẫu thiệp cưới Lâu Đài Lam là phiên bản nguyên bản của dòng Lâu Đài, mang phong cách hoàng gia châu Âu cổ điển. Biệt thự lớn vẽ tay làm tâm điểm hero, kết hợp với bàn tiệc trang trọng, đôi chim và cây bách Ý — gợi nhớ không khí lễ cưới sang trọng tại lâu đài Pháp hoặc Ý. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Biệt thự châu Âu vẽ tay làm tâm điểm hero",
+          "Tông xanh lam sâu trên nền trắng kem, cổ điển sang trọng",
+          "Bàn tiệc trang trọng và đôi chim trang trí ấm áp",
+          "Lịch cưới với khung trang trí riêng dòng Lâu Đài"
+        ],
+        "suitableFor": [
+          "Đám cưới trang trọng",
+          "Tiệc cưới phong cách hoàng gia",
+          "Lễ cưới resort châu Âu",
+          "Đám cưới destination cổ điển"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Lâu Đài Lam để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Lâu Đài Lam khác gì so với Lâu Đài Xanh?",
+            "answer": "Lâu Đài Lam dùng tông xanh lam cổ điển với biệt thự, bàn tiệc và cây bách Ý — cảm giác hoàng gia, trang nghiêm. Lâu Đài Xanh dùng tông xanh lá rừng với cây cối, vòi phun và hoa dại — cảm giác vườn châu Âu lãng mạn. Chọn lam nếu thích phong cách cổ điển đẳng cấp, chọn xanh nếu thích đám cưới ngoài trời gần gũi thiên nhiên."
+          },
+          {
+            "question": "Lâu Đài Lam có phù hợp cho đám cưới trong nhà không?",
+            "answer": "Rất phù hợp. Tông xanh lam sâu và họa tiết biệt thự cổ điển hợp với không gian sảnh tiệc sang trọng, khách sạn 5 sao hoặc lâu đài/dinh thự. Phù hợp với phong cách trang trọng, không nhất thiết phải ngoài trời."
+          },
+          {
+            "question": "Lịch trình ngày cưới trong Lâu Đài Lam có gì đặc biệt?",
+            "answer": "Hai bên cột thời gian được trang trí bằng nhẫn cưới (phía trên) và cây nến (phía dưới) — gợi nét nghi lễ cưới truyền thống châu Âu. Bố cục sạch sẽ, dễ đọc trên cả mobile và desktop."
+          },
+          {
+            "question": "Sổ lưu bút trong Lâu Đài Lam có nền trắng như các mẫu khác không?",
+            "answer": "Không. Sổ lưu bút dùng nền trong suốt để lời chúc của khách hoà vào trang trí biệt thự và cây bách phía sau, tạo cảm giác liền mạch với chủ đề hoàng gia."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Lâu Đài Lam – thiệp cưới online",
+        "relatedSlugs": [
+          "brocade-flower-red",
+          "crystal-floral-blue",
+          "chateau-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "brocade-flower-red": {
+        "metaTitle": "Gấm Hoa Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Gấm Hoa Đỏ: Mẫu thiệp cưới Gấm Hoa Đỏ mang đậm tinh thần cổ điển sang trọng với hoa văn gấm (brocade) lặp xuyên suốt trang thiệp. Cụm hoa...",
+        "heading": "Mẫu thiệp cưới Gấm Hoa Đỏ",
+        "intro": "Mẫu thiệp cưới Gấm Hoa Đỏ mang phong cách hoàng gia với gam màu đỏ. Mẫu thiệp cưới Gấm Hoa Đỏ mang đậm tinh thần cổ điển sang trọng với hoa văn gấm (brocade) lặp xuyên suốt trang thiệp. Cụm hoa hồng đỏ ở hai góc trên, hoa văn gấm trung tâm phía sau tên cô dâu chú rể và dải hoa lớn ở chân trang tạo nên tổng thể vừa cổ điển vừa rực rỡ. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Hoa văn gấm brocade lặp xuyên suốt trang thiệp",
+          "Cụm hoa hồng đỏ trang trí hai góc trên",
+          "Tông đỏ nâu trầm trên nền kem ấm, điểm xanh ô liu",
+          "Lịch cưới trong khung hoa trang trí riêng"
+        ],
+        "suitableFor": [
+          "Đám cưới cổ điển sang trọng",
+          "Lễ vu quy, thành hôn",
+          "Tiệc cưới phong cách cổ điển",
+          "Tiệc cưới buổi tối"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Gấm Hoa Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Gấm Hoa Đỏ phù hợp với kiểu đám cưới nào?",
+            "answer": "Mẫu này rất hợp với đám cưới cổ điển sang trọng, lễ vu quy, thành hôn hay tiệc cưới buổi tối. Hoa văn gấm và tông đỏ nâu trầm gợi không khí cưới hỏi cổ điển, trang nghiêm và rực rỡ, phù hợp cả buổi lễ ấm cúng lẫn nhà hàng tiệc cưới lớn."
+          },
+          {
+            "question": "Bảng màu của Gấm Hoa Đỏ gồm những màu gì?",
+            "answer": "Đỏ nâu trầm cho tên cô dâu chú rể và tiêu đề mục, xanh ô liu cho nội dung, gia đình và ngày tháng, tất cả đặt trên nền kem ấm. Sự kết hợp này vừa cổ điển vừa dễ đọc, tránh cảm giác chói mắt thường gặp ở thiệp đỏ."
+          },
+          {
+            "question": "Tôi có thể thay tên và nội dung trong mẫu không?",
+            "answer": "Có. Toàn bộ tên cô dâu chú rể, thông tin gia đình, ngày giờ lễ và tiệc, địa điểm, lịch trình, lời chúc đều chỉnh sửa trực tiếp trong trình soạn thảo. Thiệp hỗ trợ ba ngôn ngữ: tiếng Việt, tiếng Anh và tiếng Trung phồn thể."
+          },
+          {
+            "question": "Album ảnh trong Gấm Hoa Đỏ hiển thị thế nào?",
+            "answer": "Album ảnh đặt trên nền hoa văn gấm, có tiêu đề riêng và bố cục lưới ảnh gọn gàng. Bạn tải ảnh lên trong trình soạn thảo; khi chưa có ảnh, phần album sẽ tạm ẩn để thiệp luôn gọn gàng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Gấm Hoa Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "double-dragon-red",
+          "double-phoenix-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "crystal-floral-blue": {
+        "metaTitle": "Hoa Thủy Tinh Lam | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoa Thủy Tinh Lam: Mẫu thiệp cưới Hoa Thuỷ Tinh - Lam mang phong cách hoa pha lê châu Âu thanh lịch, dành cho cặp đôi yêu vẻ đẹp trong trẻo,...",
+        "heading": "Mẫu thiệp cưới Hoa Thủy Tinh Lam",
+        "intro": "Mẫu thiệp cưới Hoa Thủy Tinh Lam mang phong cách hoa lá với gam màu xanh dương. Mẫu thiệp cưới Hoa Thuỷ Tinh - Lam mang phong cách hoa pha lê châu Âu thanh lịch, dành cho cặp đôi yêu vẻ đẹp trong trẻo, nhẹ nhàng và lãng mạn. Phần hero là khung hoa màu xanh sứ tinh xảo ôm trọn tên cô dâu chú rể, gợi cảm giác hoa kết tinh từ pha lê. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Khung hoa pha lê xanh sứ ôm trọn tên cô dâu chú rể",
+          "Dải hoa mềm mại đầu và cuối thiệp, thanh thoát",
+          "Cụm hoa pha lê rải rác với hiệu ứng cuộn tinh tế",
+          "Tông xanh sứ phối nền kem ấm, thanh lịch và trong trẻo"
+        ],
+        "suitableFor": [
+          "Đám cưới nhẹ nhàng",
+          "Tiệc cưới ngoài trời",
+          "Lễ cưới phong cách châu Âu",
+          "Đám cưới thanh lịch, lãng mạn"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoa Thủy Tinh Lam để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hoa Thuỷ Tinh - Lam phù hợp với phong cách đám cưới nào?",
+            "answer": "Hoa Thuỷ Tinh - Lam hợp nhất với đám cưới nhẹ nhàng, thanh lịch theo phong cách châu Âu: tiệc cưới ngoài trời, trong vườn hoặc sảnh tiệc trang nhã. Khung hoa pha lê xanh sứ mang lại không khí trong trẻo, lãng mạn."
+          },
+          {
+            "question": "Tên dài có bị tràn ra ngoài khung trong Hoa Thuỷ Tinh - Lam không?",
+            "answer": "Không. Tên ngắn của cô dâu chú rể trong khung được tự động co cỡ chữ để luôn nằm gọn trên một dòng và chừa khoảng cách an toàn với viền hoa, dù tên ngắn hay dài."
+          },
+          {
+            "question": "Hoa Thuỷ Tinh - Lam có hỗ trợ nhiều ngôn ngữ không?",
+            "answer": "Có. Mẫu hỗ trợ tiếng Việt, tiếng Anh và tiếng Trung phồn thể. Bạn có thể bật một hoặc nhiều ngôn ngữ; mọi nội dung như lời mời, thông tin lễ tiệc và lời chúc đều hiển thị theo ngôn ngữ đã chọn."
+          },
+          {
+            "question": "Lịch cưới trong Hoa Thuỷ Tinh - Lam có gì đặc biệt?",
+            "answer": "Lịch cưới được đặt trong một khung hoa riêng của dòng Hoa Thuỷ Tinh, ngày cưới được tô sáng nổi bật. Bố cục sạch, dễ đọc trên cả điện thoại và máy tính."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Thủy Tinh Lam – thiệp cưới online",
+        "relatedSlugs": [
+          "elegant-leaf-green",
+          "boho-floral-green",
+          "boho-floral-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "chateau-green": {
+        "metaTitle": "Lâu Đài Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Lâu Đài Xanh: Mẫu thiệp cưới Lâu Đài Xanh là phiên bản vườn của dòng Lâu Đài, lấy cảm hứng từ những đám cưới điền viên châu Âu giữa rừng cây...",
+        "heading": "Mẫu thiệp cưới Lâu Đài Xanh",
+        "intro": "Mẫu thiệp cưới Lâu Đài Xanh mang phong cách hoàng gia với gam màu xanh lá. Mẫu thiệp cưới Lâu Đài Xanh là phiên bản vườn của dòng Lâu Đài, lấy cảm hứng từ những đám cưới điền viên châu Âu giữa rừng cây và hoa dại. Biệt thự cổ điển vẽ tay watercolor làm tâm điểm, bao quanh là cây cối, vòi phun nước và hàng rào gỗ trang nhã. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Biệt thự châu Âu watercolor làm tâm điểm hero",
+          "Tông xanh lá rừng trên nền trắng kem, tươi mát thanh lịch",
+          "Cây cối, hoa lá và vòi phun nước bao quanh từng phần",
+          "Lịch cưới với khung trang trí riêng cho dòng Lâu Đài"
+        ],
+        "suitableFor": [
+          "Đám cưới ngoài trời",
+          "Tiệc cưới vườn châu Âu",
+          "Đám cưới destination thanh lịch",
+          "Lễ cưới resort thiên nhiên"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Lâu Đài Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Lâu Đài Xanh khác gì so với Lâu Đài Lam?",
+            "answer": "Lâu Đài Xanh dùng tông xanh lá rừng kết hợp watercolor cây cối, vòi phun và hoa dại, tạo cảm giác vườn châu Âu lãng mạn. Lâu Đài Lam dùng tông xanh lam cổ điển, nhẹ nhàng hơn và ít chi tiết thiên nhiên. Chọn xanh lá nếu bạn thích đám cưới ngoài trời, chọn xanh lam nếu thích phong cách hoàng gia thanh tao."
+          },
+          {
+            "question": "Lâu Đài Xanh có phù hợp cho đám cưới ngoài trời không?",
+            "answer": "Rất phù hợp. Toàn bộ thiết kế lấy cảm hứng từ vườn châu Âu với cây cối, hoa lá và vòi phun nước — gợi đúng không khí lễ cưới ngoài trời, resort hay destination. Tông xanh lá nhẹ nhàng cũng dễ phối với hoa và décor thật tại tiệc."
+          },
+          {
+            "question": "Lịch cưới trong Lâu Đài Xanh có gì đặc biệt?",
+            "answer": "Lịch mini được bọc trong khung trang trí riêng — viền vàng đồng nhẹ với hoa lá nhỏ, đồng bộ với phong cách watercolor của thiệp. Ngày cưới được đánh dấu bằng màu xanh lá rừng cùng tông chủ đạo, dễ nhìn trên cả mobile và desktop."
+          },
+          {
+            "question": "Sổ lưu bút trong Lâu Đài Xanh có nền trắng như các mẫu khác không?",
+            "answer": "Khác. Sổ lưu bút dùng nền trong suốt, để hoa lá và cây cối phía sau hiện xuyên qua — tạo cảm giác lời chúc của khách hoà vào trang trí của thiệp. Phù hợp với phong cách vườn nhẹ nhàng, không bị \"ô trắng\" cứng nhắc cắt ngang."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Lâu Đài Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "baroque-gold": {
+        "metaTitle": "Hoàng Gia Vàng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoàng Gia Vàng: Mẫu thiệp cưới Baroque - Gold lấy cảm hứng từ nghệ thuật trang trí Baroque châu Âu thế kỷ 17-18, dành cho cặp đôi yêu vẻ đẹp...",
+        "heading": "Mẫu thiệp cưới Hoàng Gia Vàng",
+        "intro": "Mẫu thiệp cưới Hoàng Gia Vàng mang phong cách hoàng gia với gam màu vàng. Mẫu thiệp cưới Baroque - Gold lấy cảm hứng từ nghệ thuật trang trí Baroque châu Âu thế kỷ 17-18, dành cho cặp đôi yêu vẻ đẹp cổ điển, xa hoa và lãng mạn. Phần hero là khung hoa văn mạ vàng cầu kỳ ôm trọn tên cô dâu chú rể, phía trên là dòng WELCOME TO OUR WEDDING thanh thoát. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Khung hoa văn mạ vàng ôm trọn tên cô dâu chú rể",
+          "Hai cột trụ La Mã mạ vàng hai bên, phong cách cung điện",
+          "Nền damask kem và cụm hoa trắng điểm vàng sang trọng",
+          "Tông vàng đồng phối xanh ô-liu cổ điển, ấm áp"
+        ],
+        "suitableFor": [
+          "Đám cưới trang trọng",
+          "Tiệc cưới khách sạn 5 sao",
+          "Lễ cưới phong cách hoàng gia",
+          "Đám cưới cổ điển châu Âu"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoàng Gia Vàng để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Baroque - Gold phù hợp với phong cách đám cưới nào?",
+            "answer": "Baroque - Gold hợp nhất với đám cưới trang trọng, cổ điển, kiểu hoàng gia châu Âu: tiệc tại khách sạn 5 sao, sảnh cưới sang trọng hoặc dinh thự. Khung vàng hoa văn và cột trụ La Mã mang lại không khí quý phái, đẳng cấp."
+          },
+          {
+            "question": "Tên dài có bị tràn ra ngoài khung trong Baroque - Gold không?",
+            "answer": "Không. Tên ngắn của cô dâu chú rể trong khung được tự động co cỡ chữ để luôn nằm gọn trên một dòng và chừa khoảng cách an toàn với viền vàng, dù tên ngắn hay dài."
+          },
+          {
+            "question": "Baroque - Gold có hỗ trợ nhiều ngôn ngữ không?",
+            "answer": "Có. Mẫu hỗ trợ tiếng Việt, tiếng Anh và tiếng Trung phồn thể. Bạn có thể bật một hoặc nhiều ngôn ngữ; mọi nội dung như lời mời, thông tin lễ tiệc và lời chúc đều hiển thị theo ngôn ngữ đã chọn."
+          },
+          {
+            "question": "Lịch cưới trong Baroque - Gold có gì đặc biệt?",
+            "answer": "Lịch cưới được đặt trong một khung vàng hoa văn bốn góc riêng của dòng Baroque, ngày cưới được tô sáng nổi bật. Bố cục sạch, dễ đọc trên cả điện thoại và máy tính."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoàng Gia Vàng – thiệp cưới online",
+        "relatedSlugs": [
+          "chateau-blue",
+          "brocade-flower-red",
+          "chateau-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "qasr-green": {
+        "metaTitle": "Thành Cung Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Thành Cung Xanh: Mẫu thiệp cưới Thanh Cung Xanh lấy cảm hứng từ cung điện mái vòm phương Đông (Qasr trong tiếng Ả Rập Ai Cập nghĩa là cung...",
+        "heading": "Mẫu thiệp cưới Thành Cung Xanh",
+        "intro": "Mẫu thiệp cưới Thành Cung Xanh mang phong cách hoàng gia với gam màu xanh lá. Mẫu thiệp cưới Thanh Cung Xanh lấy cảm hứng từ cung điện mái vòm phương Đông (Qasr trong tiếng Ả Rập Ai Cập nghĩa là cung điện, lâu đài), dành cho cặp đôi yêu vẻ đẹp thanh lịch của một đám cưới vườn cung đình. Phần hero là hình minh họa cung điện mái vòm cùng cặp đôi trong trang phục xanh rêu, đặt trên nền kem ấm (#fbf8f3). Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Cung điện mái vòm cùng cặp đôi trang phục xanh rêu làm tâm điểm",
+          "Tông xanh rêu phối hoa hồng trắng và lá khuynh diệp, thanh lịch",
+          "Các đường kẻ vàng ánh kim phân chia từng phần tinh tế",
+          "Lịch cưới khung riêng, ngày cưới đánh dấu bằng trái tim"
+        ],
+        "suitableFor": [
+          "Đám cưới vườn cung đình",
+          "Tiệc cưới song ngữ Trung Đông",
+          "Lễ cưới phong cách châu Âu tinh tế",
+          "Đám cưới thanh lịch sang trọng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Thành Cung Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Thanh Cung Xanh khác gì so với Lâu Đài Xanh?",
+            "answer": "Thanh Cung Xanh dùng hình cung điện mái vòm phương Đông cùng cặp đôi trang phục xanh rêu, hoa hồng trắng và lá khuynh diệp, mang cảm giác vườn cung đình thanh lịch. Lâu Đài Xanh dùng biệt thự châu Âu watercolor với cây cối và vòi phun nước, gợi không khí vườn rừng lãng mạn. Cả hai đều tông xanh nhưng tinh thần khác nhau."
+          },
+          {
+            "question": "Tên Thanh Cung có nghĩa là gì?",
+            "answer": "Qasr trong tiếng Ả Rập Ai Cập nghĩa là cung điện hoặc lâu đài. Thiết kế lấy cảm hứng từ kiến trúc cung điện mái vòm, nên tên Việt là Thanh Cung (cung điện xanh), phản ánh đúng hình ảnh chủ đạo và tông xanh rêu của mẫu thiệp."
+          },
+          {
+            "question": "Thanh Cung Xanh có hỗ trợ tiếng Ả Rập không?",
+            "answer": "Có. Đây là một trong số ít mẫu thiệp hỗ trợ tiếng Ả Rập với bố cục đảo chiều RTL hoàn chỉnh: không chỉ chữ mà cả lưới bố cục, lịch trình và các trang trí đều được phản chiếu đúng hướng phải sang trái. Mẫu cũng hỗ trợ tiếng Việt, tiếng Anh và tiếng Trung phồn thể."
+          },
+          {
+            "question": "Lịch trình ngày cưới trong Thanh Cung Xanh có gì đặc biệt?",
+            "answer": "Hai bên dòng thời gian được điểm các huy hiệu biểu tượng tròn: mâm cỗ, bánh cưới và nhẫn cưới, gợi đúng các mốc trong ngày trọng đại. Đường kẻ thời gian luôn nằm chính giữa, dễ đọc trên cả điện thoại và máy tính."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Thành Cung Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "qasr-gold": {
+        "metaTitle": "Thành Cung Vàng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Thành Cung Vàng: Mẫu thiệp cưới Thanh Cung Vàng lấy cảm hứng từ cung điện mái vòm giữa ốc đảo sa mạc (Qasr trong tiếng Ả Rập nghĩa là cung...",
+        "heading": "Mẫu thiệp cưới Thành Cung Vàng",
+        "intro": "Mẫu thiệp cưới Thành Cung Vàng mang phong cách hoàng gia với gam màu vàng. Mẫu thiệp cưới Thanh Cung Vàng lấy cảm hứng từ cung điện mái vòm giữa ốc đảo sa mạc (Qasr trong tiếng Ả Rập nghĩa là cung điện, lâu đài), dành cho cặp đôi yêu vẻ đẹp ấm áp, sang trọng của một đám cưới vùng vịnh. Phần hero là hình minh họa cung điện mái vòm vàng cùng cặp đôi trong trang phục vùng vịnh, đứng bên hồ nước ốc đảo và hàng cọ chà là, đặt trên nền kem cát ấm (#F9F1E6). Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Cung điện mái vòm vàng giữa ốc đảo cùng cặp đôi vùng vịnh làm tâm điểm",
+          "Tông vàng cát phối hoa trắng và hàng cọ chà là, ấm áp sang trọng",
+          "Các đường kẻ vàng ánh kim phân chia từng phần tinh tế",
+          "Lịch cưới khung riêng, ngày cưới đánh dấu bằng trái tim"
+        ],
+        "suitableFor": [
+          "Đám cưới phong cách vùng vịnh",
+          "Tiệc cưới song ngữ Trung Đông",
+          "Lễ cưới sa mạc ấm áp",
+          "Đám cưới sang trọng cổ điển"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Thành Cung Vàng để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Thanh Cung Vàng khác gì so với Thanh Cung Xanh?",
+            "answer": "Hai mẫu cùng bố cục cung điện mái vòm nhưng khác tông và bối cảnh. Thanh Cung Vàng dùng tông vàng cát ấm, cung điện vàng giữa ốc đảo sa mạc với hàng cọ chà là, gợi không khí vùng vịnh sang trọng. Thanh Cung Xanh dùng tông xanh rêu mát với hoa hồng trắng và lá khuynh diệp, gợi vườn cung đình thanh lịch."
+          },
+          {
+            "question": "Tên Thanh Cung Vàng có nghĩa là gì?",
+            "answer": "Qasr trong tiếng Ả Rập nghĩa là cung điện hoặc lâu đài. Thiết kế lấy cảm hứng từ kiến trúc cung điện mái vòm giữa ốc đảo, nên tên Việt là Thanh Cung, biến thể Vàng phản ánh tông vàng cát ấm áp và bối cảnh sa mạc của mẫu thiệp."
+          },
+          {
+            "question": "Thanh Cung Vàng có hỗ trợ tiếng Ả Rập không?",
+            "answer": "Có. Thanh Cung Vàng hỗ trợ tiếng Ả Rập với bố cục đảo chiều RTL hoàn chỉnh: không chỉ chữ mà cả lưới bố cục, lịch trình và các trang trí đều được phản chiếu đúng hướng phải sang trái. Mẫu cũng hỗ trợ tiếng Việt, tiếng Anh và tiếng Trung phồn thể."
+          },
+          {
+            "question": "Lịch trình ngày cưới trong Thanh Cung Vàng có gì đặc biệt?",
+            "answer": "Bên cạnh dòng thời gian được điểm các huy hiệu biểu tượng tròn: chén mừng, nhẫn cưới và đèn lồng, gợi đúng các mốc trong ngày trọng đại theo phong cách vùng vịnh. Đường kẻ thời gian luôn nằm chính giữa, dễ đọc trên cả điện thoại và máy tính."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Thành Cung Vàng – thiệp cưới online",
+        "relatedSlugs": [
+          "chateau-blue",
+          "brocade-flower-red",
+          "chateau-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "glass-garden-green": {
+        "metaTitle": "Vườn Kính Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Vườn Kính Xanh: Mẫu thiệp cưới Vườn Kính Xanh lấy cảm hứng từ một khu vườn mùa xuân ngập hoa, dành cho cặp đôi yêu vẻ trong trẻo, lãng mạn và...",
+        "heading": "Mẫu thiệp cưới Vườn Kính Xanh",
+        "intro": "Mẫu thiệp cưới Vườn Kính Xanh mang phong cách hoa lá với gam màu xanh lá. Mẫu thiệp cưới Vườn Kính Xanh lấy cảm hứng từ một khu vườn mùa xuân ngập hoa, dành cho cặp đôi yêu vẻ trong trẻo, lãng mạn và nhẹ nhàng. Toàn bộ thiệp phủ một nền hoa watercolor mềm mại (hoa hồng và hoa trắng trên nền xanh lá), tạo cảm giác như đang đứng giữa một khu vườn. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Nền hoa watercolor mềm mại phủ kín toàn bộ thiệp",
+          "Tên cô dâu chú rể trong khung kính bầu dục trong suốt",
+          "Tấm kính lớn ôm trọn nội dung, chữ rõ mà nền hoa vẫn lấp ló",
+          "Tông xanh khu vườn tươi mát, thanh lịch trên hoa trắng"
+        ],
+        "suitableFor": [
+          "Đám cưới sân vườn",
+          "Tiệc cưới ngoài trời mùa xuân",
+          "Lễ cưới phong cách hoa lá",
+          "Đám cưới lãng mạn nhẹ nhàng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Vườn Kính Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Vườn Kính Xanh khác gì so với Thanh Cung Xanh?",
+            "answer": "Vườn Kính Xanh dùng nền hoa watercolor phủ kín cùng tấm kính trong suốt ôm nội dung, gợi cảm giác một khu vườn mùa xuân nhẹ nhàng. Thanh Cung Xanh lấy hình cung điện mái vòm cùng cặp đôi và các đường kẻ vàng, mang vẻ vườn cung đình. Cả hai đều tông xanh nhưng Vườn Kính thiên về hoa lá tự nhiên, còn Thanh Cung thiên về kiến trúc cung điện."
+          },
+          {
+            "question": "Tên Vườn Kính có nghĩa là gì?",
+            "answer": "Vườn Kính ghép từ khu vườn và tấm kính: thiết kế phủ nền hoa như một khu vườn, còn nội dung được đặt sau một tấm kính trong suốt bo góc. Tên gọi phản ánh đúng hai yếu tố chủ đạo của mẫu thiệp."
+          },
+          {
+            "question": "Vườn Kính Xanh có những phần nội dung nào?",
+            "answer": "Thiệp có đầy đủ: phong bì hiệu ứng mở, thông tin hai gia đình, lễ cưới và tiệc cưới, lịch cưới mini có trái tim đánh dấu ngày, album ảnh, bản đồ Google Maps, xác nhận tham dự (RSVP), lịch trình ngày cưới, sổ lưu bút và hộp quà mừng cưới."
+          },
+          {
+            "question": "Chữ trên nền hoa của Vườn Kính Xanh có dễ đọc không?",
+            "answer": "Có. Toàn bộ nội dung nằm trong một tấm kính trắng mờ, làm dịu nền hoa phía sau để chữ xanh khu vườn luôn rõ ràng, dễ đọc trên cả điện thoại và máy tính, trong khi nền hoa vẫn lấp ló tạo chiều sâu."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Vườn Kính Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "glass-garden-pink": {
+        "metaTitle": "Vườn Kính Hồng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Vườn Kính Hồng: Mẫu thiệp cưới Vườn Kính Hồng lấy cảm hứng từ một khu vườn hồng phấn ngập nắng, dành cho cặp đôi yêu vẻ trong trẻo, lãng mạn...",
+        "heading": "Mẫu thiệp cưới Vườn Kính Hồng",
+        "intro": "Mẫu thiệp cưới Vườn Kính Hồng mang phong cách hoa lá với gam màu hồng. Mẫu thiệp cưới Vườn Kính Hồng lấy cảm hứng từ một khu vườn hồng phấn ngập nắng, dành cho cặp đôi yêu vẻ trong trẻo, lãng mạn và nhẹ nhàng. Toàn bộ thiệp phủ một nền watercolor hồng phấn mềm mại với những chiếc lá hồng trong suốt viền ánh vàng, tạo cảm giác như đang đứng giữa một khu vườn. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Nền watercolor hồng phấn mềm mại phủ kín toàn bộ thiệp",
+          "Tên cô dâu chú rể trong khung kính bầu dục trong suốt",
+          "Tấm kính lớn ôm trọn nội dung, chữ rõ mà nền hoa vẫn lấp ló",
+          "Lá hồng trong suốt viền ánh vàng, dịu dàng và thanh lịch"
+        ],
+        "suitableFor": [
+          "Đám cưới sân vườn",
+          "Tiệc cưới ngoài trời mùa xuân",
+          "Lễ cưới phong cách hoa lá",
+          "Đám cưới lãng mạn nhẹ nhàng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Vườn Kính Hồng để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Vườn Kính Hồng khác gì so với Vườn Kính Xanh?",
+            "answer": "Vườn Kính Hồng và Vườn Kính Xanh là cùng một thiết kế, chỉ khác màu: cả hai đều dùng nền hoa watercolor phủ kín cùng tấm kính trong suốt ôm nội dung. Vườn Kính Hồng mang tông hồng phấn ấm áp với lá hồng viền ánh vàng, còn Vườn Kính Xanh mang tông xanh khu vườn trên nền hoa trắng. Bạn chọn theo màu yêu thích hoặc theo tông màu đám cưới."
+          },
+          {
+            "question": "Tên Vườn Kính có nghĩa là gì?",
+            "answer": "Vườn Kính ghép từ khu vườn và tấm kính: thiết kế phủ nền hoa như một khu vườn, còn nội dung được đặt sau một tấm kính trong suốt bo góc. Tên gọi phản ánh đúng hai yếu tố chủ đạo của mẫu thiệp."
+          },
+          {
+            "question": "Vườn Kính Hồng có những phần nội dung nào?",
+            "answer": "Thiệp có đầy đủ: phong bì hiệu ứng mở, thông tin hai gia đình, lễ cưới và tiệc cưới, lịch cưới mini có trái tim đánh dấu ngày, album ảnh, bản đồ Google Maps, xác nhận tham dự (RSVP), lịch trình ngày cưới, sổ lưu bút và hộp quà mừng cưới."
+          },
+          {
+            "question": "Chữ trên nền hoa của Vườn Kính Hồng có dễ đọc không?",
+            "answer": "Có. Toàn bộ nội dung nằm trong một tấm kính trắng mờ, làm dịu nền hoa phía sau để chữ luôn rõ ràng, dễ đọc trên cả điện thoại và máy tính, trong khi nền hồng phấn vẫn lấp ló tạo chiều sâu."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Vườn Kính Hồng – thiệp cưới online",
+        "relatedSlugs": [
+          "elegant-leaf-green",
+          "boho-floral-green",
+          "boho-floral-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "lien-hoa-pink": {
+        "metaTitle": "Liên Hoa Hồng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Liên Hoa Hồng: Mẫu thiệp cưới Liên Hoa - Hồng dành cho cặp đôi yêu vẻ đẹp thanh khiết, dịu dàng và đậm nét truyền thống Á Đông. Hoa sen từ...",
+        "heading": "Mẫu thiệp cưới Liên Hoa Hồng",
+        "intro": "Mẫu thiệp cưới Liên Hoa Hồng mang phong cách hoa lá với gam màu hồng. Mẫu thiệp cưới Liên Hoa - Hồng dành cho cặp đôi yêu vẻ đẹp thanh khiết, dịu dàng và đậm nét truyền thống Á Đông. Hoa sen từ lâu là biểu tượng của sự tinh khôi, trong sáng và bền chặt, rất hợp để mở đầu cho một đám cưới ấm áp. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Những đóa sen hồng vẽ màu nước tinh tế khắp thiệp",
+          "Khung mạ vàng ôm tên cô dâu chú rể viết tay Beau Rivage",
+          "Tông hồng phấn phối hồng blush trên nền trắng ngà",
+          "Lịch cưới trong khung vàng hoa sen riêng của mẫu"
+        ],
+        "suitableFor": [
+          "Đám cưới nhẹ nhàng, lãng mạn",
+          "Tiệc cưới sân vườn",
+          "Lễ cưới truyền thống",
+          "Đám cưới tông hồng hoa sen"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Liên Hoa Hồng để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Liên Hoa - Hồng phù hợp với phong cách đám cưới nào?",
+            "answer": "Liên Hoa - Hồng hợp nhất với đám cưới nhẹ nhàng, lãng mạn và mang nét truyền thống Á Đông: tiệc sân vườn, lễ cưới tại gia hoặc nhà hàng tông hồng. Hoa sen và khung vàng mang lại vẻ thanh khiết, dịu dàng và ấm áp."
+          },
+          {
+            "question": "Tên dài có bị tràn ra ngoài khung trong Liên Hoa - Hồng không?",
+            "answer": "Không. Tên viết tay của cô dâu chú rể trong khung được tự động co cỡ chữ để luôn nằm gọn trên một dòng và chừa khoảng cách an toàn với viền vàng, dù tên ngắn hay dài."
+          },
+          {
+            "question": "Liên Hoa - Hồng có hỗ trợ nhiều ngôn ngữ không?",
+            "answer": "Có. Mẫu hỗ trợ tiếng Việt, tiếng Anh và tiếng Trung phồn thể. Bạn có thể bật một hoặc nhiều ngôn ngữ; mọi nội dung như lời mời, thông tin lễ tiệc và lời chúc đều hiển thị theo ngôn ngữ đã chọn."
+          },
+          {
+            "question": "Ý nghĩa hoa sen trong thiệp cưới Liên Hoa - Hồng là gì?",
+            "answer": "Hoa sen tượng trưng cho sự tinh khôi, trong sáng và bền chặt. Dùng hoa sen làm hoạ tiết chủ đạo, mẫu gửi gắm lời chúc cho một tình yêu thuần khiết và một cuộc hôn nhân dài lâu."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Liên Hoa Hồng – thiệp cưới online",
+        "relatedSlugs": [
+          "elegant-leaf-green",
+          "boho-floral-green",
+          "boho-floral-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-green": {
+        "metaTitle": "Minimalism Xanh | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Minimalism Xanh: Mẫu thiệp cưới Minimalism Xanh là phiên bản xanh lá của dòng Minimalism, mang tinh thần \"ít hơn là nhiều hơn\" phối cùng sắc...",
+        "heading": "Mẫu thiệp cưới Minimalism Xanh",
+        "intro": "Mẫu thiệp cưới Minimalism Xanh mang phong cách hiện đại với gam màu xanh lá. Mẫu thiệp cưới Minimalism Xanh là phiên bản xanh lá của dòng Minimalism, mang tinh thần \"ít hơn là nhiều hơn\" phối cùng sắc xanh thảo mộc dịu mắt. Nền giấy trắng với texture nhẹ tạo cảm giác mộc mạc, sạch sẽ và gần gũi thiên nhiên. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Phong cách tối giản với sắc xanh lá thảo mộc",
+          "Nền giấy trắng texture nhẹ, mộc mạc sạch sẽ",
+          "Hai khung ảnh cưới nghiêng kiểu polaroid ở hero",
+          "Hoạ tiết lá bạch đàn xuyên suốt các phần"
+        ],
+        "suitableFor": [
+          "Đám cưới hiện đại tối giản",
+          "Tiệc cưới sân vườn",
+          "Đám cưới thanh lịch gần gũi thiên nhiên",
+          "Lễ cưới phong cách botanical"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Xanh để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Minimalism Xanh khác gì so với Minimalism Đỏ?",
+            "answer": "Minimalism Xanh dùng nền giấy trắng với sắc xanh lá thảo mộc và hoạ tiết lá bạch đàn, cảm giác gần gũi thiên nhiên và dịu mắt. Minimalism Đỏ dùng đỏ làm điểm nhấn, hiện đại và tương phản mạnh hơn. Chọn Xanh nếu bạn thích không khí sân vườn nhẹ nhàng, chọn Đỏ nếu thích nét truyền thống hiện đại."
+          },
+          {
+            "question": "Minimalism Xanh có hoạ tiết gì đặc trưng?",
+            "answer": "Điểm đặc trưng của Minimalism Xanh là những nhánh lá bạch đàn watercolor nhạt làm nền cho từng phần, hai khung ảnh nghiêng kiểu polaroid ở hero, và các khung vòm, khung viền xanh mềm mại bao quanh thông tin lễ cưới, tiệc cưới, lịch trình."
+          },
+          {
+            "question": "Minimalism Xanh phù hợp cho đám cưới nào?",
+            "answer": "Minimalism Xanh phù hợp cho đám cưới hiện đại tối giản, tiệc cưới sân vườn, hoặc cặp đôi yêu phong cách botanical gần gũi thiên nhiên. Sắc xanh lá thảo mộc dễ phối với hoa và décor thật tại tiệc ngoài trời."
+          },
+          {
+            "question": "Lịch cưới trong Minimalism Xanh hiển thị thế nào?",
+            "answer": "Lịch mini trong Minimalism Xanh nằm trên một panel xanh thảo mộc, với ngày cưới được đánh dấu bằng biểu tượng trái tim. Kèm theo là đồng hồ đếm ngược tới ngày trọng đại, giờ đón khách và giờ khai tiệc, hiển thị rõ ràng trên cả mobile và desktop."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Xanh – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-brown": {
+        "metaTitle": "Minimalism Nâu | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Minimalism Nâu: Mẫu thiệp cưới Minimalism Nâu là phiên bản tông đất ấm áp của dòng Minimalism, mang tinh thần \"ít hơn là nhiều hơn\" phối cùng...",
+        "heading": "Mẫu thiệp cưới Minimalism Nâu",
+        "intro": "Mẫu thiệp cưới Minimalism Nâu mang phong cách hiện đại với gam màu nâu. Mẫu thiệp cưới Minimalism Nâu là phiên bản tông đất ấm áp của dòng Minimalism, mang tinh thần \"ít hơn là nhiều hơn\" phối cùng sắc nâu trầm và nền kem trắng dịu mắt. Texture giấy nhẹ tạo cảm giác mộc mạc, sang trọng và gần gũi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Phong cách tối giản với sắc nâu trầm ấm áp",
+          "Nền kem trắng texture giấy nhẹ, mộc mạc sang trọng",
+          "Khung ảnh polaroid với băng washi và con dấu sáp",
+          "Hoạ tiết hoa khô ánh vàng và lá xanh mềm mại"
+        ],
+        "suitableFor": [
+          "Đám cưới hiện đại tối giản",
+          "Tiệc cưới tông đất ấm áp",
+          "Đám cưới rustic thanh lịch",
+          "Lễ cưới phong cách vintage nhẹ nhàng"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Nâu để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Minimalism Nâu khác gì so với Minimalism Xanh?",
+            "answer": "Minimalism Nâu dùng nền kem trắng với sắc nâu đất trầm ấm và hoa khô ánh vàng, cảm giác ấm cúng và mộc mạc. Minimalism Xanh dùng tông xanh lá thảo mộc và lá bạch đàn, cảm giác mát mẻ gần gũi thiên nhiên. Chọn Nâu nếu bạn thích không khí ấm áp vintage, chọn Xanh nếu thích nét botanical dịu mát."
+          },
+          {
+            "question": "Minimalism Nâu có hoạ tiết gì đặc trưng?",
+            "answer": "Điểm đặc trưng của Minimalism Nâu là khung ảnh polaroid nghiêng có băng dán washi và con dấu sáp ở hero, những nhánh hoa khô ánh vàng cùng lá xanh mềm điểm xuyết, và các khung thẻ màu kem bao quanh thông tin lễ cưới, tiệc cưới, lịch trình."
+          },
+          {
+            "question": "Minimalism Nâu phù hợp cho đám cưới nào?",
+            "answer": "Minimalism Nâu phù hợp cho đám cưới hiện đại tối giản, tiệc cưới tông đất ấm áp, hoặc cặp đôi yêu phong cách rustic vintage nhẹ nhàng. Sắc nâu kem dễ phối với hoa khô và décor mộc mạc tại tiệc trong nhà lẫn ngoài trời."
+          },
+          {
+            "question": "Lịch cưới trong Minimalism Nâu hiển thị thế nào?",
+            "answer": "Lịch mini trong Minimalism Nâu nằm trên một panel nâu trầm, với ngày cưới được đánh dấu bằng biểu tượng trái tim. Kèm theo là đồng hồ đếm ngược tới ngày trọng đại, giờ đón khách và giờ khai tiệc, hiển thị rõ ràng trên cả mobile và desktop."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Nâu – thiệp cưới online",
+        "relatedSlugs": [
+          "silk-flora-brown",
+          "minimalism-dark-red",
+          "minimalism-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-purple": {
+        "metaTitle": "Minimalism Tím | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Minimalism Tím: Mẫu thiệp cưới Minimalism Tím là phiên bản tím lavender của dòng Minimalism, kết hợp tinh thần tối giản với sắc tím dịu dàng...",
+        "heading": "Mẫu thiệp cưới Minimalism Tím",
+        "intro": "Mẫu thiệp cưới Minimalism Tím mang phong cách hiện đại với gam màu tím. Mẫu thiệp cưới Minimalism Tím là phiên bản tím lavender của dòng Minimalism, kết hợp tinh thần tối giản với sắc tím dịu dàng trên nền giấy trắng có vân. Đây là lựa chọn cho cặp đôi yêu sự nhẹ nhàng, lãng mạn mà vẫn muốn một tấm thiệp gọn gàng, hiện đại. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Phong cách tối giản với sắc tím lavender dịu dàng",
+          "Phong bì tím lồng ảnh cưới, khép bằng con dấu sáp hình trái tim mạ vàng",
+          "Nền giấy trắng có vân với hình bóng dinh thự cổ mờ nhạt",
+          "Hoạ tiết hoa hồng tím và nhánh oải hương vẽ màu nước"
+        ],
+        "suitableFor": [
+          "Đám cưới ngoài vườn",
+          "Tiệc cưới mùa xuân",
+          "Đám cưới tông tím nữ tính",
+          "Đám cưới tối giản hiện đại"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Tím để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Minimalism Tím khác gì so với Minimalism Nâu?",
+            "answer": "Minimalism Tím dùng sắc tím lavender với hoa hồng tím vẽ màu nước, con dấu sáp hình trái tim mạ vàng và các panel tím trầm, cho cảm giác dịu dàng và lãng mạn. Minimalism Nâu dùng tông nâu đất ấm áp, cảm giác mộc mạc gần gũi hơn. Chọn Tím nếu bạn thích sự nữ tính, nhẹ nhàng."
+          },
+          {
+            "question": "Minimalism Tím có hoạ tiết gì đặc trưng?",
+            "answer": "Điểm đặc trưng là phần hero dạng phong bì tím lồng ảnh cưới, khép bằng con dấu sáp hình trái tim mạ vàng, những nhánh hoa hồng tím và oải hương vẽ màu nước điểm xuyết ở các góc panel, cùng hình bóng dinh thự cổ mờ nhạt làm nền."
+          },
+          {
+            "question": "Minimalism Tím phù hợp cho đám cưới nào?",
+            "answer": "Minimalism Tím phù hợp cho đám cưới ngoài vườn, tiệc cưới mùa xuân, hoặc cặp đôi muốn một tấm thiệp tông tím nữ tính nhưng vẫn tối giản. Sắc tím lavender dễ phối với décor hoa tươi, nến và không gian tiệc sáng."
+          },
+          {
+            "question": "Lịch trình ngày cưới trong Minimalism Tím hiển thị thế nào?",
+            "answer": "Lịch trình ngày cưới của Minimalism Tím nằm trên panel tím, với các mốc giờ được minh hoạ bằng huy hiệu bánh cưới, nốt nhạc và nhà thờ. Bên cạnh là lịch cưới mini đánh dấu ngày trọng đại và đồng hồ đếm ngược, hiển thị rõ trên cả mobile và desktop."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Tím – thiệp cưới online",
+        "relatedSlugs": [
+          "minimalism-dark-red",
+          "minimalism-green",
+          "minimalism-brown"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "sunflower": {
+        "metaTitle": "Hoa Hướng Dương | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoa Hướng Dương: Mẫu thiệp cưới Hoa Hướng Dương mang cả một khoảng nắng vào tấm thiệp: những bông hoa hướng dương vẽ tay bằng màu nước nở rộ...",
+        "heading": "Mẫu thiệp cưới Hoa Hướng Dương",
+        "intro": "Mẫu thiệp cưới Hoa Hướng Dương mang phong cách hoa lá với gam màu vàng. Mẫu thiệp cưới Hoa Hướng Dương mang cả một khoảng nắng vào tấm thiệp: những bông hoa hướng dương vẽ tay bằng màu nước nở rộ trên nền kem ấm, viền quanh từng phần nội dung như vừa hái ngoài đồng về. Mẫu này không dùng khung viền hay panel; mọi dòng chữ đặt thẳng trên nền giấy, để các nhánh hoa tràn nhẹ từ mép thiệp làm khung tự nhiên. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Hoa hướng dương vẽ màu nước tràn từ mép thiệp làm khung tự nhiên",
+          "Không dùng khung viền hay panel, chữ đặt thẳng trên nền giấy kem ấm",
+          "Tên cô dâu chú rể tông hổ phách nối nhau bằng chữ thư pháp mềm mại",
+          "Khối ngày cưới với con số lớn tông hổ phách nổi bật"
+        ],
+        "suitableFor": [
+          "Đám cưới ngoài trời",
+          "Tiệc cưới mùa hè",
+          "Đám cưới phong cách vườn tươi sáng",
+          "Lễ cưới tông vàng ấm áp"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoa Hướng Dương để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hoa Hướng Dương phù hợp với đám cưới nào?",
+            "answer": "Hoa Hướng Dương hợp với đám cưới ngoài trời, tiệc cưới mùa hè, đám cưới phong cách vườn, hay bất cứ cặp đôi nào muốn một tấm thiệp tươi sáng và ấm áp. Sắc vàng nắng dễ phối với hoa tươi vàng, cam và décor mộc mạc tông gỗ, cỏ khô."
+          },
+          {
+            "question": "Nền hoa của Hoa Hướng Dương có làm rối chữ không?",
+            "answer": "Không. Dù không dùng panel, các nhánh hoa hướng dương chỉ tràn ở phần lề và góc thiệp, còn chữ luôn nằm trên nền kem phẳng ở giữa. Nhờ vậy nội dung vẫn dễ đọc trên cả điện thoại lẫn máy tính."
+          },
+          {
+            "question": "Mẫu này có hộp quà mừng cưới và mã QR không?",
+            "answer": "Có. Hoa Hướng Dương có phần hộp quà mừng cưới in hình hướng dương đồng bộ, hiển thị mã QR chuyển khoản của cô dâu và chú rể để khách mừng cưới nhanh chóng, gọn gàng ngay trên thiệp."
+          },
+          {
+            "question": "Hoa Hướng Dương có hỗ trợ nhiều ngôn ngữ không?",
+            "answer": "Có. Hoa Hướng Dương hỗ trợ tiếng Việt, tiếng Anh, tiếng Trung phồn thể và nhiều ngôn ngữ khác. Bạn có thể bật một hoặc nhiều ngôn ngữ cùng lúc; lời mời, thông tin lễ cưới và lời chúc của khách đều hiển thị theo ngôn ngữ đã chọn."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Hướng Dương – thiệp cưới online",
+        "relatedSlugs": [
+          "elegant-leaf-green",
+          "boho-floral-green",
+          "boho-floral-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "royal-red": {
+        "metaTitle": "Hoàng Kim Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hoàng Kim Đỏ: Mẫu thiệp cưới Hoàng Kim Đỏ mang phong cách hoàng gia sang trọng với nền đỏ thẫm và điểm nhấn vàng kim nổi bật. Tổng thể tạo...",
+        "heading": "Mẫu thiệp cưới Hoàng Kim Đỏ",
+        "intro": "Mẫu thiệp cưới Hoàng Kim Đỏ mang phong cách hoàng gia với gam màu đỏ. Mẫu thiệp cưới Hoàng Kim Đỏ mang phong cách hoàng gia sang trọng với nền đỏ thẫm và điểm nhấn vàng kim nổi bật. Tổng thể tạo cảm giác quyền uy, ấm áp và ấn tượng ngay từ ánh nhìn đầu tiên. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và thông tin sự kiện để tạo lời mời phù hợp với ngày vui của mình.",
+        "highlights": [
+          "Nền đỏ thẫm sang trọng, quyền uy",
+          "Điểm nhấn vàng kim lộng lẫy",
+          "Khung hoa vàng kim ở header",
+          "Phong cách hoàng gia đẳng cấp"
+        ],
+        "suitableFor": [
+          "Đám cưới sang trọng",
+          "Tiệc cưới hoàng gia",
+          "Đám cưới trang trọng",
+          "Đám cưới truyền thống"
+        ],
+        "features": [
+          "Tùy chỉnh nội dung",
+          "Ảnh không giới hạn",
+          "Google Maps",
+          "Đa ngôn ngữ",
+          "Ghi tên khách mời",
+          "Chia sẻ qua link",
+          "Xác nhận tham dự",
+          "Nhận lời chúc"
+        ],
+        "steps": [
+          "Mở bản mẫu Hoàng Kim Đỏ để xem toàn bộ bố cục và chi tiết trang trí.",
+          "Chọn tạo thiệp, thay tên, ảnh cưới và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hoàng Kim Đỏ phù hợp cho đám cưới phong cách nào?",
+            "answer": "Hoàng Kim Đỏ phù hợp nhất cho đám cưới sang trọng, tiệc cưới hoàng gia, hoặc cặp đôi muốn thiệp cưới đẳng cấp và ấn tượng. Sự kết hợp đỏ thẫm và vàng kim tạo không gian trang trọng, quyền uy."
+          },
+          {
+            "question": "Màu sắc chủ đạo của thiệp Hoàng Kim Đỏ là gì?",
+            "answer": "Thiệp dùng nền đỏ thẫm (#3E0001) kết hợp với điểm nhấn vàng kim (#E1BC7C). Đây là bảng màu cổ điển của phong cách hoàng gia — đỏ tượng trưng cho may mắn và hạnh phúc, vàng kim tượng trưng cho sự thịnh vượng."
+          },
+          {
+            "question": "Hoàng Kim Đỏ khác gì so với Song Long Đỏ?",
+            "answer": "Hoàng Kim Đỏ dùng nền đỏ thẫm với điểm nhấn vàng kim, phong cách hiện đại sang trọng. Song Long Đỏ có họa tiết rồng đôi truyền thống trên nền đỏ tươi hơn. Hoàng Kim hướng đến vẻ đẹp hoàng gia đương đại, Song Long hướng đến nét cổ điển truyền thống."
+          },
+          {
+            "question": "Nền đỏ thẫm có làm thiệp khó đọc không?",
+            "answer": "Không. Chữ vàng kim (#E1BC7C) trên nền đỏ thẫm (#3E0001) có độ tương phản cao, dễ đọc trên mọi màn hình. Phối màu này được thiết kế cẩn thận để vừa sang trọng vừa dễ đọc."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoàng Kim Đỏ – thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "double-dragon-red",
+          "double-phoenix-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "nhat-binh-red": {
+        "metaTitle": "Thiệp cưới Nhật Bình Đỏ | Cổ điển Việt",
+        "metaDescription": "Thiệp cưới Nhật Bình Đỏ với giấy kem, chữ nâu, đỏ son và họa tiết mây hoa gợi nét cổ phục Việt. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Nhật Bình Đỏ - Cổ điển Việt",
+        "intro": "Nhật Bình Đỏ dùng nền kem ấm, chữ nâu và điểm đỏ son lấy cảm hứng từ áo Nhật Bình. Họa tiết mây, hoa và đèn tạo cảm giác hoài niệm nhưng vẫn rõ ràng trên màn hình.",
+        "highlights": [
+          "Nền giấy kem với chữ nâu và điểm đỏ son",
+          "Họa tiết mây, hoa, đèn tạo chiều sâu nhẹ",
+          "Phong bì nâu đồng bộ với thẻ mời và dấu Hỷ"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Lễ gia tiên",
+          "Tiệc theo chủ đề cổ phục"
+        ],
+        "features": [
+          "Chỉnh tên, ngày giờ và nội dung sự kiện",
+          "Thêm ảnh cưới vào các khu vực album",
+          "Xem trước bố cục trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở bản mẫu Nhật Bình Đỏ để xem bố cục.",
+          "Thay tên, thông tin ngày cưới và ảnh của bạn.",
+          "Xem trước trên điện thoại rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Nhật Bình Đỏ phù hợp với đám cưới nào?",
+            "answer": "Mẫu hợp với lễ gia tiên, đám cưới truyền thống và tiệc có cảm hứng di sản Việt."
+          },
+          {
+            "question": "Tông kem có làm thiệp kém trang trọng không?",
+            "answer": "Không. Nền kem, chữ nâu và điểm đỏ son tạo vẻ ấm, thanh lịch thay cho một nền đỏ toàn trang."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Nhật Bình Đỏ phong cách cổ điển Việt",
+        "relatedSlugs": [
+          "co-ba-red",
+          "double-dragon-red",
+          "porcelain-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "hoa-tinh-red": {
+        "metaTitle": "Thiệp cưới Hoạ Tình Đỏ | Comic lãng mạn",
+        "metaDescription": "Thiệp cưới Hoạ Tình Đỏ kết hợp nét vẽ tay, hoa tim đỏ, chữ handwritten và khung ảnh lệch góc trẻ trung. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai ",
+        "heading": "Mẫu thiệp cưới Hoạ Tình Đỏ - Comic lãng mạn",
+        "intro": "Hoạ Tình Đỏ mang tinh thần comic nghệ thuật với nét vẽ tay, hoa tim và chữ handwritten. Hai khung ảnh nghiêng tạo cảm giác như một album được ghim thủ công.",
+        "highlights": [
+          "Khung ảnh dâu rể lệch góc tự nhiên",
+          "Chữ handwritten kết hợp minh họa chibi",
+          "Lịch cưới trình bày như trang sổ tay"
+        ],
+        "suitableFor": [
+          "Đám cưới trẻ trung",
+          "Cặp đôi yêu minh họa",
+          "Tiệc ngoài trời hoặc ngày kỷ niệm"
+        ],
+        "features": [
+          "Chỉnh tên, lịch trình và lời mời",
+          "Thêm ảnh cưới vào album",
+          "Xem trước giao diện trước khi xuất bản"
+        ],
+        "steps": [
+          "Xem mẫu Hoạ Tình Đỏ để cảm nhận cách sắp chữ.",
+          "Thay thông tin đôi bạn và tải ảnh cưới.",
+          "Kiểm tra bản xem trước rồi chia sẻ đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Hoạ Tình Đỏ dùng phong cách minh họa nào?",
+            "answer": "Mẫu kết hợp nét vẽ tay, hoa tim, chữ handwritten và hình dâu rể chibi để tạo cảm giác riêng tư, vui tươi."
+          },
+          {
+            "question": "Khung ảnh trong mẫu được bố trí ra sao?",
+            "answer": "Hai khung ảnh nghiêng về hai phía, giúp phần mở đầu có nhịp chuyển động thay vì một bố cục đối xứng cứng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoạ Tình Đỏ phong cách comic nghệ thuật",
+        "relatedSlugs": [
+          "chibi-red",
+          "spring-garden-red",
+          "minimalism-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "co-ba-red": {
+        "metaTitle": "Thiệp cưới Cô Ba Đỏ | Cổ điển Việt",
+        "metaDescription": "Thiệp cưới Cô Ba Đỏ dùng giấy cũ, chữ nâu, điểm xanh lam và minh họa Chợ Bến Thành đậm dấu ấn Việt. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Cô Ba Đỏ - Cổ điển Việt",
+        "intro": "Cô Ba Đỏ gợi không khí Sài Gòn xưa bằng nền giấy cũ, chữ nâu ấm, điểm xanh lam và hình Chợ Bến Thành. Minh họa cặp dâu rể tạo dấu ấn riêng cho phần mở đầu.",
+        "highlights": [
+          "Minh họa Chợ Bến Thành và cặp dâu rể",
+          "Nền giấy cũ với chữ nâu và điểm xanh",
+          "Phong bì nâu cùng ngôn ngữ với thẻ mời"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Lễ gia tiên",
+          "Tiệc theo chủ đề di sản"
+        ],
+        "features": [
+          "Chỉnh nội dung lời mời và lịch cưới",
+          "Thêm ảnh vào phần album",
+          "Xem trước trên điện thoại và máy tính"
+        ],
+        "steps": [
+          "Mở bản mẫu Cô Ba Đỏ để xem phần minh họa.",
+          "Điền tên, sự kiện và ảnh cưới của bạn.",
+          "Xem trước rồi xuất bản link gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Cô Ba Đỏ khác Nhật Bình Đỏ ở đâu?",
+            "answer": "Cô Ba Đỏ nhấn vào hình ảnh Sài Gòn và giấy cũ, còn Nhật Bình Đỏ tập trung vào cảm hứng áo Nhật Bình cùng họa tiết mây hoa."
+          },
+          {
+            "question": "Mẫu có hợp tiệc chủ đề di sản không?",
+            "answer": "Có. Hình Chợ Bến Thành, bảng màu giấy cũ và minh họa dâu rể phù hợp tiệc muốn giữ nét Việt rõ ràng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Cô Ba Đỏ phong cách cổ điển Việt",
+        "relatedSlugs": [
+          "nhat-binh-red",
+          "hoa-tinh-red",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "royal-blue": {
+        "metaTitle": "Thiệp cưới Hoàng Kim Lam | Hoàng gia",
+        "metaDescription": "Thiệp cưới Hoàng Kim Lam phối nền xanh lam thẫm với khung và điểm nhấn vàng kim cho một bố cục hoàng gia. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của ha",
+        "heading": "Mẫu thiệp cưới Hoàng Kim Lam - Sang trọng hoàng gia",
+        "intro": "Hoàng Kim Lam chọn nền xanh lam thẫm và vàng kim để tạo cảm giác huyền bí, lịch lãm. Khung hoa vàng ở phần đầu thiệp giữ tổng thể trang trọng mà vẫn có chiều sâu.",
+        "highlights": [
+          "Nền xanh lam thẫm tạo chiều sâu thị giác",
+          "Khung hoa và chi tiết vàng kim nổi bật",
+          "Bố cục hoàng gia dành cho tiệc trang trọng"
+        ],
+        "suitableFor": [
+          "Đám cưới sang trọng",
+          "Tiệc phong cách hoàng gia",
+          "Lễ cưới truyền thống trang trọng"
+        ],
+        "features": [
+          "Chỉnh thông tin cặp đôi và sự kiện",
+          "Thêm ảnh vào album cưới",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Xem Hoàng Kim Lam để kiểm tra bảng màu.",
+          "Thay tên, lịch trình và ảnh của bạn.",
+          "Kiểm tra bản xem trước rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Hoàng Kim Lam hợp không gian cưới nào?",
+            "answer": "Mẫu phù hợp sảnh tiệc, tiệc tối và những lễ cưới cần cảm giác trang trọng, cổ điển."
+          },
+          {
+            "question": "Hai màu chính của mẫu là gì?",
+            "answer": "Nền xanh lam thẫm đi cùng vàng kim, tạo tương phản rõ giữa phần chữ, khung hoa và nền thiệp."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoàng Kim Lam nền xanh vàng kim",
+        "relatedSlugs": [
+          "royal-green",
+          "royal-v2-green",
+          "dragon-phoenix-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "royal-green": {
+        "metaTitle": "Thiệp cưới Hoàng Kim Xanh | Hoàng gia",
+        "metaDescription": "Thiệp cưới Hoàng Kim Xanh kết hợp xanh lục thẫm và vàng kim, giữ vẻ hoàng gia nhưng gần gũi hơn với thiên nhiên. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin",
+        "heading": "Mẫu thiệp cưới Hoàng Kim Xanh - Hoàng gia gần thiên nhiên",
+        "intro": "Hoàng Kim Xanh dùng nền xanh lục thẫm cùng vàng kim để cân bằng vẻ sang trọng với cảm giác gần gũi thiên nhiên. Khung hoa vàng tạo điểm nhìn rõ ở phần mở đầu.",
+        "highlights": [
+          "Nền xanh lục thẫm thanh lịch",
+          "Khung và chi tiết vàng kim nổi bật",
+          "Tinh thần hoàng gia mềm hơn nhờ bảng màu xanh"
+        ],
+        "suitableFor": [
+          "Tiệc cưới sang trọng",
+          "Đám cưới sân vườn",
+          "Lễ cưới chủ đề thiên nhiên"
+        ],
+        "features": [
+          "Chỉnh tên và thông tin ngày cưới",
+          "Thêm album ảnh cá nhân",
+          "Xem trước bố cục trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Hoàng Kim Xanh để xem nền và khung.",
+          "Điền thông tin cặp đôi, sự kiện và ảnh.",
+          "Xem trước trên các thiết bị rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Hoàng Kim Xanh khác Hoàng Kim Lam thế nào?",
+            "answer": "Hoàng Kim Xanh dùng nền xanh lục nên gợi cảm giác tự nhiên hơn; Hoàng Kim Lam nghiêng về sắc xanh đêm huyền bí."
+          },
+          {
+            "question": "Mẫu có hợp tiệc sân vườn không?",
+            "answer": "Có. Nền xanh lục thẫm và điểm vàng phù hợp không gian nhiều cây xanh nhưng vẫn giữ vẻ trang trọng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoàng Kim Xanh nền xanh lục vàng kim",
+        "relatedSlugs": [
+          "royal-blue",
+          "royal-v2-green",
+          "spring-garden-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "spring-garden-green": {
+        "metaTitle": "Thiệp cưới Vườn Xuân Xanh | Hoa lá",
+        "metaDescription": "Thiệp cưới Vườn Xuân Xanh dùng lá vẽ tay và sắc xanh tươi để tạo cảm giác thanh bình cho tiệc sân vườn. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai ",
+        "heading": "Mẫu thiệp cưới Vườn Xuân Xanh - Thiên nhiên tươi mát",
+        "intro": "Vườn Xuân Xanh kết hợp lá vẽ tay với sắc xanh tươi, gợi một khu vườn yên bình và khởi đầu mới. Thiết kế nhẹ nhàng phù hợp không gian ngoài trời.",
+        "highlights": [
+          "Lá cây vẽ tay tạo cảm giác tự nhiên",
+          "Xanh tươi làm tổng thể dịu mắt",
+          "Hiệu ứng mở phong bì tăng tính tương tác"
+        ],
+        "suitableFor": [
+          "Tiệc cưới sân vườn",
+          "Đám cưới ngoài trời",
+          "Lễ cưới theo phong cách eco"
+        ],
+        "features": [
+          "Chỉnh nội dung và lịch trình",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản thiệp"
+        ],
+        "steps": [
+          "Xem bản mẫu để kiểm tra các mảng lá.",
+          "Thay tên, sự kiện và ảnh cá nhân.",
+          "Kiểm tra hiển thị rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Vườn Xuân Xanh có hợp tiệc sân vườn không?",
+            "answer": "Có. Sắc xanh và lá vẽ tay hòa với không gian cây cối, sân vườn và tiệc ngoài trời."
+          },
+          {
+            "question": "Mẫu khác Thanh Diệp Xanh ở đâu?",
+            "answer": "Vườn Xuân Xanh có hoa lá phong phú và cảm giác ấm áp hơn; Thanh Diệp Xanh thiên về bố cục tối giản, thoáng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Vườn Xuân Xanh họa tiết lá vẽ tay",
+        "relatedSlugs": [
+          "spring-garden-red",
+          "spring-garden-blue",
+          "boho-floral-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "chibi-red": {
+        "metaTitle": "Thiệp cưới Chibi Đỏ | Minh họa dễ thương",
+        "metaDescription": "Thiệp cưới Chibi Đỏ dùng hình cặp đôi chibi và sắc đỏ truyền thống để tạo một lời mời vui nhộn, cá tính. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai",
+        "heading": "Mẫu thiệp cưới Chibi Đỏ - Minh họa dễ thương",
+        "intro": "Chibi Đỏ đưa hình cặp đôi minh họa vào nền đỏ quen thuộc, tạo lựa chọn vui nhộn cho đôi uyên ương trẻ. Mẫu cân bằng nét đáng yêu với bố cục thông tin rõ ràng.",
+        "highlights": [
+          "Hình cặp đôi chibi ngộ nghĩnh",
+          "Sắc đỏ truyền thống nhưng cách thể hiện trẻ",
+          "Hiệu ứng mở phong bì tạo bất ngờ"
+        ],
+        "suitableFor": [
+          "Đám cưới trẻ trung",
+          "Tiệc cưới vui nhộn",
+          "Cặp đôi thích thiết kế khác biệt"
+        ],
+        "features": [
+          "Chỉnh tên và thông tin sự kiện",
+          "Thêm ảnh thật vào album",
+          "Xem trước trên điện thoại"
+        ],
+        "steps": [
+          "Mở Chibi Đỏ để xem cách minh họa.",
+          "Điền thông tin và tải ảnh cưới.",
+          "Xem trước rồi xuất bản link gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Chibi Đỏ có phù hợp tiệc trang trọng không?",
+            "answer": "Mẫu hợp hơn với tiệc trẻ trung; sắc đỏ giữ sự ấm áp còn hình chibi tạo dấu ấn vui vẻ."
+          },
+          {
+            "question": "Hình chibi có được thay bằng ảnh của tôi không?",
+            "answer": "Hình minh họa là phần artwork của mẫu. Bạn vẫn có thể thêm ảnh cưới thật vào các khu vực album."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Chibi Đỏ minh họa cặp đôi",
+        "relatedSlugs": [
+          "hoa-tinh-red",
+          "minimalism-red",
+          "spring-garden-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "boho-floral-brown": {
+        "metaTitle": "Thiệp cưới Hoa Mộc Nâu | Boho rustic",
+        "metaDescription": "Thiệp cưới Hoa Mộc Nâu phối hoa màu nước, nền kem và tông nâu earthy cho một phong cách boho rustic ấm áp. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của h",
+        "heading": "Mẫu thiệp cưới Hoa Mộc Nâu - Boho rustic",
+        "intro": "Hoa Mộc Nâu dùng hoa watercolor trên nền kem và tông nâu earthy, gợi không khí vintage mộc mạc. Bố cục mềm phù hợp những buổi tiệc gần thiên nhiên.",
+        "highlights": [
+          "Hoa watercolor trên nền kem nhẹ",
+          "Nâu earthy tạo cảm giác ấm và mộc",
+          "Hiệu ứng parallax làm trang thiệp có chiều sâu"
+        ],
+        "suitableFor": [
+          "Đám cưới boho rustic",
+          "Tiệc vintage",
+          "Đám cưới ngoài trời hoặc mùa thu"
+        ],
+        "features": [
+          "Chỉnh nội dung và ngày cưới",
+          "Thêm album ảnh cá nhân",
+          "Xem trước rồi xuất bản thiệp"
+        ],
+        "steps": [
+          "Xem Hoa Mộc Nâu để cảm nhận bảng màu.",
+          "Thay thông tin cặp đôi và ảnh.",
+          "Kiểm tra bản xem trước rồi chia sẻ đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Hoa Mộc Nâu khác hai bản Hoa Mộc khác thế nào?",
+            "answer": "Ba mẫu giữ phong cách hoa watercolor nhưng Hoa Mộc Nâu ấm và vintage hơn; bản hồng mềm mại, bản xanh tươi mát hơn."
+          },
+          {
+            "question": "Tông nâu phù hợp concept nào?",
+            "answer": "Tông nâu earthy hợp boho rustic, tiệc sân vườn, không gian gỗ và đám cưới mùa thu."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Mộc Nâu phong cách boho rustic",
+        "relatedSlugs": [
+          "boho-floral-green",
+          "boho-floral-pink",
+          "hoa-kho-orange"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "spring-garden-red": {
+        "metaTitle": "Thiệp cưới Vườn Xuân Đỏ | Hoa lá",
+        "metaDescription": "Thiệp cưới Vườn Xuân Đỏ mang hoa lá tươi, sắc đỏ ấm và cảm giác khu vườn mùa xuân vào lời mời online. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạ",
+        "heading": "Mẫu thiệp cưới Vườn Xuân Đỏ - Thiên nhiên ấm áp",
+        "intro": "Vườn Xuân Đỏ lấy cảm hứng từ khu vườn mùa xuân với hoa lá mềm mại trên nền đỏ ấm. Mẫu giữ vẻ lãng mạn, gần thiên nhiên và dễ nhận biết ngay từ phần mở đầu.",
+        "highlights": [
+          "Hoa lá tạo không khí khu vườn",
+          "Đỏ ấm giúp lời mời nổi bật",
+          "Hiệu ứng mở phong bì giàu cảm xúc"
+        ],
+        "suitableFor": [
+          "Tiệc cưới sân vườn",
+          "Đám cưới mùa xuân",
+          "Lễ cưới theo chủ đề thiên nhiên"
+        ],
+        "features": [
+          "Chỉnh thông tin cặp đôi và sự kiện",
+          "Thêm ảnh vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Vườn Xuân Đỏ để xem bố cục hoa lá.",
+          "Thay tên, lịch trình và ảnh của bạn.",
+          "Xem trước rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Vườn Xuân Đỏ khác Song Long Đỏ thế nào?",
+            "answer": "Vườn Xuân Đỏ mềm mại với hoa lá và cảm giác thiên nhiên; Song Long Đỏ nhấn vào họa tiết rồng đôi truyền thống."
+          },
+          {
+            "question": "Mẫu có chỉ hợp đám cưới mùa xuân không?",
+            "answer": "Không. Hoa lá và đỏ ấm dùng được quanh năm, dù đặc biệt hợp concept mùa xuân và sân vườn."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Vườn Xuân Đỏ họa tiết hoa lá",
+        "relatedSlugs": [
+          "spring-garden-green",
+          "spring-garden-blue",
+          "boho-floral-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "dragon-phoenix-green": {
+        "metaTitle": "Thiệp cưới Long Phụng Xanh | Cổ điển",
+        "metaDescription": "Thiệp cưới Long Phụng Xanh giữ họa tiết rồng phượng truyền thống trên nền xanh thanh lịch, mới mẻ. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Long Phụng Xanh - Cổ điển thanh lịch",
+        "intro": "Long Phụng Xanh giữ motif rồng phượng quen thuộc nhưng chuyển sang nền xanh trang nhã. Cách phối này phù hợp cặp đôi muốn nét truyền thống mà không dùng đỏ làm màu chính.",
+        "highlights": [
+          "Họa tiết rồng phượng cổ điển",
+          "Nền xanh tạo cảm giác thanh lịch",
+          "Bố cục hỗ trợ phần lễ và tiệc"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Tiệc cưới thanh lịch",
+          "Lễ vu quy"
+        ],
+        "features": [
+          "Chỉnh tên, lịch trình và địa điểm",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Xem Long Phụng Xanh để kiểm tra motif.",
+          "Điền nội dung sự kiện và tải ảnh.",
+          "Kiểm tra bản xem trước rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Long Phụng Xanh khác Long Phụng Đỏ ở đâu?",
+            "answer": "Hai mẫu cùng ngôn ngữ rồng phượng; Long Phụng Xanh dùng sắc xanh thanh lịch thay cho nền đỏ truyền thống."
+          },
+          {
+            "question": "Mẫu có phù hợp lễ vu quy không?",
+            "answer": "Có. Bố cục của mẫu dành chỗ cho thông tin lễ và tiệc, phù hợp lời mời có nhiều phần nghi lễ."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Long Phụng Xanh họa tiết rồng phượng",
+        "relatedSlugs": [
+          "dragon-phoenix-blue",
+          "dragon-phoenix-black",
+          "double-phoenix-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "spring-garden-blue": {
+        "metaTitle": "Thiệp cưới Vườn Xuân Lam | Hoa lá",
+        "metaDescription": "Thiệp cưới Vườn Xuân Lam kết hợp hoa lá thiên nhiên với sắc xanh lam dịu, thanh lịch và nhẹ nhàng. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Vườn Xuân Lam - Thanh lịch dịu mát",
+        "intro": "Vườn Xuân Lam đưa hoa lá thiên nhiên vào gam xanh lam dịu mát. Tổng thể giống một khu vườn yên bình, phù hợp cặp đôi chuộng vẻ thanh lịch và tiết chế.",
+        "highlights": [
+          "Hoa lá tạo cảm giác khu vườn nhẹ nhàng",
+          "Xanh lam dịu và dễ đọc",
+          "Hiệu ứng phong bì làm phần mở đầu sinh động"
+        ],
+        "suitableFor": [
+          "Đám cưới thanh lịch",
+          "Tiệc nhẹ nhàng",
+          "Lễ cưới tinh tế trong nhà hoặc ngoài trời"
+        ],
+        "features": [
+          "Chỉnh tên và lịch trình",
+          "Thêm ảnh cưới vào album",
+          "Xem trước trên nhiều thiết bị"
+        ],
+        "steps": [
+          "Mở Vườn Xuân Lam để xem sắc lam.",
+          "Thay nội dung, ngày giờ và ảnh.",
+          "Xem trước rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Vườn Xuân Lam phù hợp với ai?",
+            "answer": "Mẫu hợp cặp đôi thích hoa lá nhẹ, màu xanh dịu và một lời mời có cảm giác yên bình."
+          },
+          {
+            "question": "Phong bì của mẫu có cùng bảng màu không?",
+            "answer": "Có. Phong bì dùng sắc lam và họa tiết hoa lá để nối liền trải nghiệm mở thiệp với phần nội dung."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Vườn Xuân Lam hoa lá xanh lam",
+        "relatedSlugs": [
+          "spring-garden-green",
+          "spring-garden-red",
+          "cherry-blossom-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "cherry-blossom-pink": {
+        "metaTitle": "Thiệp cưới Anh Đào Hồng | Lãng mạn",
+        "metaDescription": "Thiệp cưới Anh Đào Hồng dùng cánh hoa anh đào và bảng hồng pastel để tạo không khí lãng mạn, trong trẻo. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai",
+        "heading": "Mẫu thiệp cưới Anh Đào Hồng - Lãng mạn hoa anh đào",
+        "intro": "Anh Đào Hồng dùng sắc hồng pastel và cánh hoa bay để tạo một phần mở đầu thơ mộng. Motif sakura mang đến vẻ trong trẻo, phù hợp những đám cưới nhẹ nhàng.",
+        "highlights": [
+          "Cánh hoa anh đào chuyển động quanh thiệp",
+          "Hồng pastel tạo cảm giác dịu dàng",
+          "Bố cục có chỗ cho thông tin lễ vu quy"
+        ],
+        "suitableFor": [
+          "Đám cưới lãng mạn",
+          "Tiệc cưới mùa xuân",
+          "Concept lấy cảm hứng Nhật Bản"
+        ],
+        "features": [
+          "Chỉnh tên và nội dung sự kiện",
+          "Thêm album ảnh cưới",
+          "Xem trước rồi xuất bản link"
+        ],
+        "steps": [
+          "Xem Anh Đào Hồng để cảm nhận chuyển động.",
+          "Thay thông tin cặp đôi và ảnh.",
+          "Kiểm tra hiển thị rồi xuất bản."
+        ],
+        "faq": [
+          {
+            "question": "Hoa anh đào trên mẫu gợi ý nghĩa gì?",
+            "answer": "Cánh hoa anh đào gợi vẻ đẹp trong trẻo và cảm giác lãng mạn, phù hợp lời mời cưới mềm mại."
+          },
+          {
+            "question": "Anh Đào Hồng chỉ hợp đám cưới mùa xuân không?",
+            "answer": "Không. Hồng pastel và hoa anh đào dùng được quanh năm, cho cả tiệc trong nhà lẫn ngoài trời."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Anh Đào Hồng hoa anh đào pastel",
+        "relatedSlugs": [
+          "spring-garden-blue",
+          "boho-floral-pink",
+          "minimalism-powder-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "double-phoenix-green": {
+        "metaTitle": "Thiệp cưới Song Phụng Xanh | Thanh nhã",
+        "metaDescription": "Thiệp cưới Song Phụng Xanh giữ biểu tượng đôi phụng hoàng trên nền xanh lá mát, thanh nhã và gần thiên nhiên. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin củ",
+        "heading": "Mẫu thiệp cưới Song Phụng Xanh - Thanh nhã",
+        "intro": "Song Phụng Xanh đưa biểu tượng đôi phụng hoàng vào nền xanh lá mát dịu. Mẫu giữ ý nghĩa hòa hợp của motif truyền thống nhưng tạo cảm giác tươi mới hơn.",
+        "highlights": [
+          "Đôi phụng hoàng làm điểm nhấn chính",
+          "Xanh lá mát dịu và tự nhiên",
+          "Hiệu ứng mở phong bì tạo nhịp tương tác"
+        ],
+        "suitableFor": [
+          "Đám cưới ngoài trời",
+          "Lễ cưới truyền thống thanh lịch",
+          "Tiệc theo chủ đề thiên nhiên"
+        ],
+        "features": [
+          "Chỉnh tên, lịch trình và lời mời",
+          "Thêm ảnh cưới vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Song Phụng Xanh để xem motif.",
+          "Thay thông tin và ảnh của bạn.",
+          "Kiểm tra bản xem trước rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Song Phụng Xanh khác Song Phụng Đỏ thế nào?",
+            "answer": "Họa tiết đôi phụng hoàng được giữ lại, còn bảng màu chuyển từ đỏ truyền thống sang xanh lá thanh nhã."
+          },
+          {
+            "question": "Song Phụng Xanh là xanh lá hay xanh dương?",
+            "answer": "Mẫu dùng xanh lá mát dịu. Nếu muốn sắc lam, bạn có thể xem các mẫu Song Long Lam hoặc Long Phụng Lam."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Phụng Xanh đôi phụng hoàng",
+        "relatedSlugs": [
+          "double-phoenix-red",
+          "dragon-phoenix-green",
+          "spring-garden-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "double-dragon-blue": {
+        "metaTitle": "Thiệp cưới Song Long Lam | Dịu dàng",
+        "metaDescription": "Thiệp cưới Song Long Lam kết hợp họa tiết rồng đôi với sắc xanh dương nhẹ, cân bằng truyền thống và lãng mạn. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin củ",
+        "heading": "Mẫu thiệp cưới Song Long Lam - Dịu dàng",
+        "intro": "Song Long Lam giữ họa tiết rồng đôi nhưng chuyển sang xanh dương nhẹ. Bảng màu gợi bầu trời và biển, giúp motif truyền thống trở nên mềm mại, lãng mạn hơn.",
+        "highlights": [
+          "Rồng đôi giữ nét truyền thống",
+          "Xanh dương nhẹ tạo cảm giác dịu",
+          "Bố cục cân bằng cổ điển và hiện đại"
+        ],
+        "suitableFor": [
+          "Đám cưới lãng mạn",
+          "Tiệc ven biển",
+          "Đám cưới ngoài trời nhẹ nhàng"
+        ],
+        "features": [
+          "Chỉnh tên và thông tin lễ cưới",
+          "Thêm ảnh vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Xem Song Long Lam để kiểm tra sắc xanh.",
+          "Điền nội dung cặp đôi và tải ảnh.",
+          "Xem trước rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Song Long Lam có hợp tiệc ven biển không?",
+            "answer": "Có. Sắc xanh gợi bầu trời và biển, phù hợp tiệc ngoài trời hoặc concept ven biển."
+          },
+          {
+            "question": "Xanh lam thay đổi cảm giác của họa tiết rồng thế nào?",
+            "answer": "Nền xanh làm motif rồng đôi bớt nặng, tạo một phiên bản dịu và lãng mạn hơn nền đỏ."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Song Long Lam họa tiết rồng đôi",
+        "relatedSlugs": [
+          "double-dragon-red",
+          "dragon-phoenix-blue",
+          "royal-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "dragon-phoenix-blue": {
+        "metaTitle": "Thiệp cưới Long Phụng Lam | Sang trọng",
+        "metaDescription": "Thiệp cưới Long Phụng Lam phối rồng phượng cổ điển với nền lam và chi tiết vàng, tạo vẻ quý phái. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Long Phụng Lam - Cổ điển sang trọng",
+        "intro": "Long Phụng Lam làm mới họa tiết rồng phượng bằng nền xanh lam sang trọng và điểm vàng. Mẫu giữ vẻ quý phái của truyền thống nhưng có cảm giác hiện đại hơn.",
+        "highlights": [
+          "Rồng phượng cổ điển làm điểm nhấn",
+          "Nền lam và vàng tạo tương phản quý phái",
+          "Bố cục hỗ trợ thông tin lễ vu quy"
+        ],
+        "suitableFor": [
+          "Đám cưới sang trọng",
+          "Tiệc phong cách quý phái",
+          "Lễ vu quy truyền thống"
+        ],
+        "features": [
+          "Chỉnh thông tin cặp đôi và sự kiện",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Mở Long Phụng Lam để xem phối màu.",
+          "Thay tên, lịch trình và ảnh cá nhân.",
+          "Kiểm tra bản xem trước rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Long Phụng Lam có phong cách sang trọng ra sao?",
+            "answer": "Nền lam sâu làm rồng phượng vàng nổi bật, tạo cảm giác trang trọng mà vẫn gọn gàng."
+          },
+          {
+            "question": "Mẫu có phù hợp lễ vu quy không?",
+            "answer": "Có. Mẫu dành chỗ cho thông tin nghi lễ, phù hợp lời mời truyền thống có nhiều mốc sự kiện."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Long Phụng Lam rồng phượng vàng",
+        "relatedSlugs": [
+          "dragon-phoenix-green",
+          "dragon-phoenix-black",
+          "double-dragon-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "dragon-phoenix-black": {
+        "metaTitle": "Thiệp cưới Long Phụng Huyền | Đen vàng",
+        "metaDescription": "Thiệp cưới Long Phụng Huyền dùng nền đen và rồng phượng vàng để tạo một lời mời cá tính, sang trọng. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn",
+        "heading": "Mẫu thiệp cưới Long Phụng Huyền - Đen vàng",
+        "intro": "Long Phụng Huyền chọn nền đen làm phông cho họa tiết rồng phượng vàng. Tương phản mạnh tạo vẻ huyền bí, quý phái và phù hợp đôi bạn muốn một thiết kế khác biệt.",
+        "highlights": [
+          "Nền đen tạo cảm giác sâu và cá tính",
+          "Rồng phượng vàng nổi bật trên nền tối",
+          "Phong cách sang trọng dành cho tiệc đặc biệt"
+        ],
+        "suitableFor": [
+          "Đám cưới sang trọng",
+          "Tiệc tối có phong cách riêng",
+          "Cặp đôi thích thiết kế khác biệt"
+        ],
+        "features": [
+          "Chỉnh tên và lịch trình cưới",
+          "Thêm ảnh vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Xem Long Phụng Huyền để kiểm tra tương phản.",
+          "Thay nội dung và ảnh cưới của bạn.",
+          "Xem trước rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Thiệp cưới nền đen có phù hợp không?",
+            "answer": "Có, nếu bạn muốn một phong cách cá tính. Rồng phượng vàng giúp nền đen giữ vẻ sang trọng và dễ nhận diện."
+          },
+          {
+            "question": "Mẫu có quá tối khi xem trên điện thoại không?",
+            "answer": "Các mảng chữ và họa tiết vàng tạo tương phản với nền đen; hãy xem trước trên điện thoại để kiểm tra nội dung của bạn."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Long Phụng Huyền nền đen rồng phượng vàng",
+        "relatedSlugs": [
+          "dragon-phoenix-blue",
+          "dragon-phoenix-green",
+          "royal-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "crystal-floral-red": {
+        "metaTitle": "Thiệp cưới Hoa Thuỷ Tinh Đỏ | Châu Âu",
+        "metaDescription": "Thiệp cưới Hoa Thuỷ Tinh Đỏ dùng khung hoa đỏ ánh vàng và nền kem cho phong cách châu Âu ấm áp. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Hoa Thuỷ Tinh Đỏ - Khung hoa pha lê",
+        "intro": "Hoa Thuỷ Tinh Đỏ đặt tên đôi bạn trong khung hoa đỏ ánh vàng, trên nền kem ấm. Các dải hoa mềm và cụm hoa rải nhẹ tạo vẻ rực rỡ nhưng thanh thoát.",
+        "highlights": [
+          "Khung hoa đỏ ánh vàng ôm phần tên",
+          "Dải hoa mềm chạy ở đầu và cuối thiệp",
+          "Nền kem cân bằng bảng màu đỏ ấm"
+        ],
+        "suitableFor": [
+          "Đám cưới phong cách châu Âu",
+          "Tiệc sân vườn",
+          "Lễ cưới sang trọng, lãng mạn"
+        ],
+        "features": [
+          "Chỉnh tên và thông tin sự kiện",
+          "Thêm ảnh cưới vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Hoa Thuỷ Tinh Đỏ để xem khung hoa.",
+          "Điền nội dung và tải ảnh của bạn.",
+          "Xem trước rồi xuất bản link gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Hoa Thuỷ Tinh Đỏ hợp phong cách đám cưới nào?",
+            "answer": "Mẫu hợp tiệc sân vườn, sảnh trang nhã và các concept châu Âu cần vẻ ấm áp, lãng mạn."
+          },
+          {
+            "question": "Tên dài có vừa trong khung hoa không?",
+            "answer": "Khung tên có cơ chế co chữ để giữ nội dung trong vùng an toàn; bạn nên xem trước sau khi điền tên thật."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Thuỷ Tinh Đỏ khung hoa ánh vàng",
+        "relatedSlugs": [
+          "crystal-floral-blue",
+          "spring-garden-red",
+          "boho-floral-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "hoa-kho-orange": {
+        "metaTitle": "Thiệp cưới Hoa Khô Cam | Boho màu nước",
+        "metaDescription": "Thiệp cưới Hoa Khô Cam dùng cúc, hồng kem, cỏ lau màu nước và nền giấy ấm cho concept boho mộc. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Hoa Khô Cam - Boho màu nước",
+        "intro": "Hoa Khô Cam kết hợp cúc, hồng kem và cỏ lau màu nước trên nền giấy vân ấm. Ba khung thẻ kem viền xanh ô liu tạo cảm giác như một bộ thiệp được ép khô.",
+        "highlights": [
+          "Hoa khô màu nước tràn từ mép giấy",
+          "Khung thẻ kem viền xanh ô liu",
+          "Lịch cưới đánh dấu bằng trái tim"
+        ],
+        "suitableFor": [
+          "Đám cưới ngoài trời",
+          "Tiệc mùa thu",
+          "Concept boho mộc hoặc cam đất"
+        ],
+        "features": [
+          "Chỉnh chữ, ngày giờ và địa điểm",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Xem Hoa Khô Cam để kiểm tra các khung thẻ.",
+          "Thay nội dung và ảnh cá nhân.",
+          "Kiểm tra bản xem trước rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Hoa Khô Cam hợp với đám cưới nào?",
+            "answer": "Mẫu hợp sân vườn, tiệc mùa thu và concept boho dùng cam đất, vàng nhạt hoặc xanh lá."
+          },
+          {
+            "question": "Có đổi được hoa và bảng màu không?",
+            "answer": "Bạn chỉnh được chữ, ngày, địa điểm và ảnh; hoa cùng bảng màu cam đất là phần artwork cố định của mẫu."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoa Khô Cam phong cách boho màu nước",
+        "relatedSlugs": [
+          "boho-floral-brown",
+          "spring-garden-red",
+          "cherry-blossom-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "mahal-gold": {
+        "metaTitle": "Thiệp cưới Mahal Vàng | Cung điện Ấn Độ",
+        "metaDescription": "Thiệp cưới Mahal Vàng lấy cảm hứng cung điện Rajasthan với vòm vàng, hồ nước, Ganesha và hoa giấy đỏ hồng. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của h",
+        "heading": "Mẫu thiệp cưới Mahal Vàng - Cung điện Ấn Độ",
+        "intro": "Mahal Vàng gợi các cung điện Rajasthan bằng vòm vàng nhiều thùy, mặt hồ, lan can chạm thủng và hoa giấy đỏ hồng. Biểu tượng Ganesha cùng chuông đồng làm phần mở đầu có nét lễ hội riêng.",
+        "highlights": [
+          "Cung điện và mặt hồ gợi không khí Rajasthan",
+          "Vòm vàng có Ganesha và chuông đồng",
+          "Hoa giấy đỏ hồng chạy dọc hai mép thiệp"
+        ],
+        "suitableFor": [
+          "Đám cưới phong cách Ấn Độ",
+          "Tiệc song ngữ Nam Á",
+          "Lễ cưới nhiều màu và hơi hướng hoàng gia"
+        ],
+        "features": [
+          "Chỉnh tên và lịch trình sự kiện",
+          "Thêm ảnh vào album cưới",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Mahal Vàng để xem cảnh cung điện.",
+          "Điền thông tin cặp đôi và ảnh.",
+          "Xem trước rồi xuất bản đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Mahal Vàng lấy cảm hứng từ đâu?",
+            "answer": "Thiết kế gợi cung điện sa thạch vùng Rajasthan, với mặt hồ, vòm kiến trúc, voi lễ hội và chi tiết Ganesha."
+          },
+          {
+            "question": "Mahal khác các mẫu cung điện vàng thế nào?",
+            "answer": "Mahal nghiêng về cảnh quan Ấn Độ và hoa giấy đỏ hồng; các mẫu cung điện khác có thể mang bối cảnh ốc đảo hoặc kiến trúc khác."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Mahal Vàng phong cách cung điện Ấn Độ",
+        "relatedSlugs": [
+          "royal-v2-green",
+          "royal-green",
+          "porcelain-brown"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-dark-blue": {
+        "metaTitle": "Thiệp cưới Minimalism Lam Đậm | Navy",
+        "metaDescription": "Thiệp cưới Minimalism Lam Đậm dùng nền ngà, xanh navy, hai ảnh polaroid và hoa xanh cho vẻ tối giản sâu. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai",
+        "heading": "Mẫu thiệp cưới Minimalism Lam Đậm - Tông navy",
+        "intro": "Minimalism Lam Đậm giữ bố cục tối giản trên nền giấy ngà nhưng chuyển sang navy trầm. Phong bì mở bằng hai ảnh polaroid nghiêng và dấu sáp trái tim mạ vàng.",
+        "highlights": [
+          "Navy trầm tạo vẻ kín đáo, sang trọng",
+          "Hai ảnh polaroid nghiêng trong phong bì",
+          "Hoa cẩm tú cầu và lưu ly xanh vẽ màu nước"
+        ],
+        "suitableFor": [
+          "Tiệc cưới buổi tối",
+          "Nhà hàng sang trọng",
+          "Đám cưới tối giản tông navy"
+        ],
+        "features": [
+          "Chỉnh tên, sự kiện và nội dung",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Xem Minimalism Lam Đậm để kiểm tra phần phong bì.",
+          "Tải hai ảnh và điền thông tin cưới.",
+          "Xem trước trên điện thoại rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Minimalism Lam Đậm khác Minimalism Đỏ Đậm thế nào?",
+            "answer": "Lam Đậm dùng navy và hai ảnh polaroid nghiêng; Đỏ Đậm dùng đỏ rượu vang và một ảnh trong phong bì."
+          },
+          {
+            "question": "Phần đầu thiệp cần mấy ảnh?",
+            "answer": "Bố cục được thiết kế cho hai ảnh, một cho mỗi người; hãy xem trước sau khi tải ảnh để kiểm tra cách cắt."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Lam Đậm tông navy",
+        "relatedSlugs": [
+          "minimalism-dark-red",
+          "minimalism-red",
+          "porcelain-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "porcelain-blue": {
+        "metaTitle": "Thiệp cưới Bạch Sứ Lam | Hoa văn cổ điển",
+        "metaDescription": "Thiệp cưới Bạch Sứ Lam lấy cảm hứng gốm sứ hoa lam với hoa văn xanh, thẻ kem và viền navy dễ đọc. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Bạch Sứ Lam - Hoa văn trắng lam",
+        "intro": "Bạch Sứ Lam phủ hoa mẫu đơn, hoa mai và cành lá màu xanh lên nền trắng lam như một món gốm cổ. Các thẻ kem viền navy giữ phần chữ tách bạch khỏi hoa văn.",
+        "highlights": [
+          "Hoa văn trắng lam phủ liền mạch nền thiệp",
+          "Thẻ kem viền navy giúp chữ dễ đọc",
+          "Khung cổ điển bao quanh tên đôi bạn"
+        ],
+        "suitableFor": [
+          "Đám cưới cổ điển thanh lịch",
+          "Tiệc trong nhà trang trọng",
+          "Concept trắng lam hoặc châu Âu"
+        ],
+        "features": [
+          "Chỉnh nội dung và lịch cưới",
+          "Thêm ảnh vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Bạch Sứ Lam để xem lớp hoa văn.",
+          "Thay tên, sự kiện và ảnh.",
+          "Kiểm tra bản xem trước rồi xuất bản link."
+        ],
+        "faq": [
+          {
+            "question": "Hoa văn nền có làm khó đọc chữ không?",
+            "answer": "Không. Nội dung nằm trên các thẻ kem đặc, còn hoa văn chủ yếu xuất hiện ở phần lề và khoảng giữa thẻ."
+          },
+          {
+            "question": "Bạch Sứ Lam khác Hoa Thuỷ Tinh Lam thế nào?",
+            "answer": "Bạch Sứ Lam phủ hoa văn kín và dày hơn; Hoa Thuỷ Tinh Lam dùng khung hoa trên nền kem thoáng."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Bạch Sứ Lam hoa văn trắng lam",
+        "relatedSlugs": [
+          "porcelain-brown",
+          "porcelain-red",
+          "porcelain-v2-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "porcelain-brown": {
+        "metaTitle": "Thiệp cưới Bạch Sứ Nâu | Vàng đồng",
+        "metaDescription": "Thiệp cưới Bạch Sứ Nâu dùng hoa văn vàng đồng, thẻ kem và khung vòm cho vẻ cổ điển ấm áp. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Bạch Sứ Nâu - Hoa văn vàng đồng",
+        "intro": "Bạch Sứ Nâu chuyển cảm hứng toile và men sứ cổ sang nét vàng đồng trên nền ngà. Khung vòm cong và các thẻ kem giúp mẫu cổ điển nhưng dịu mắt.",
+        "highlights": [
+          "Hoa văn vàng đồng phủ nền liền mạch",
+          "Khung vòm cong ôm phần tên",
+          "Thẻ kem viền vàng giữ chữ rõ ràng"
+        ],
+        "suitableFor": [
+          "Đám cưới cổ điển sang trọng",
+          "Tiệc tông vàng kem",
+          "Lễ cưới vintage"
+        ],
+        "features": [
+          "Chỉnh tên và thông tin sự kiện",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Xem Bạch Sứ Nâu để kiểm tra sắc vàng.",
+          "Thay nội dung cặp đôi và ảnh.",
+          "Xem trước rồi chia sẻ đường dẫn."
+        ],
+        "faq": [
+          {
+            "question": "Bạch Sứ Nâu khác Bạch Sứ Lam và Đỏ thế nào?",
+            "answer": "Bạch Sứ Nâu dùng vàng đồng trầm và khung vòm cong, trong khi Lam và Đỏ có khung oval hoặc chạm khắc cùng bảng màu khác."
+          },
+          {
+            "question": "Hoa văn có che phần chữ không?",
+            "answer": "Nội dung nằm trên thẻ kem riêng, nên hoa văn nền chỉ làm nền trang trí và không nằm sau chữ chính."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Bạch Sứ Nâu hoa văn vàng đồng",
+        "relatedSlugs": [
+          "porcelain-blue",
+          "porcelain-red",
+          "minimalism-dark-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "porcelain-red": {
+        "metaTitle": "Thiệp cưới Bạch Sứ Đỏ | Trắng đỏ",
+        "metaDescription": "Thiệp cưới Bạch Sứ Đỏ phối hoa văn đỏ trên nền kem, khung cổ điển và thẻ nội dung rõ ràng. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Bạch Sứ Đỏ - Hoa văn trắng đỏ",
+        "intro": "Bạch Sứ Đỏ lấy nét gốm sứ và toile cổ điển, vẽ hoa mẫu đơn, hồng và cành lá bằng sắc đỏ trên nền ngà. Thẻ kem viền đỏ giữ tổng thể ấm và dễ đọc.",
+        "highlights": [
+          "Hoa văn đỏ mảnh phủ đều nền kem",
+          "Khung cổ điển với viền đôi đỏ",
+          "Lịch cưới nền đỏ trầm có điểm trái tim"
+        ],
+        "suitableFor": [
+          "Đám cưới truyền thống",
+          "Tiệc tông trắng đỏ",
+          "Lễ cưới cổ điển ấm áp"
+        ],
+        "features": [
+          "Chỉnh thông tin cặp đôi và ngày cưới",
+          "Thêm ảnh vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Bạch Sứ Đỏ để xem họa tiết.",
+          "Thay tên, lịch trình và ảnh cưới.",
+          "Kiểm tra bản xem trước rồi xuất bản."
+        ],
+        "faq": [
+          {
+            "question": "Bạch Sứ Đỏ khác Bạch Sứ Lam ở đâu?",
+            "answer": "Hai mẫu giữ bố cục cổ điển, nhưng Bạch Sứ Đỏ dùng hoa văn đỏ ấm còn Bạch Sứ Lam dùng xanh navy."
+          },
+          {
+            "question": "Hoa văn nền có làm rối chữ không?",
+            "answer": "Không. Chữ nằm trên các thẻ kem đặc viền đỏ, tách khỏi hoa văn trang trí ở nền."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Bạch Sứ Đỏ hoa văn trắng đỏ",
+        "relatedSlugs": [
+          "porcelain-blue",
+          "porcelain-brown",
+          "porcelain-v2-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "porcelain-v2-green": {
+        "metaTitle": "Thiệp cưới Bạch Sứ V2 Xanh | Hoa trắng",
+        "metaDescription": "Thiệp cưới Bạch Sứ V2 Xanh dùng hoa trắng trên nền lá ô liu, thẻ kem bo góc và viền xanh rêu. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Bạch Sứ V2 Xanh - Hoa trắng nền lá",
+        "intro": "Bạch Sứ V2 Xanh phủ hoa trắng và dây leo ô liu lên nền xanh lá như hoa văn in trên lụa. Thẻ kem bo góc, viền xanh rêu và điểm vàng tạo lớp nội dung nhẹ nhàng.",
+        "highlights": [
+          "Hoa trắng vẽ tay trên nền lá ô liu",
+          "Thẻ kem bo góc có viền xanh rêu",
+          "Khung vàng điểm cụm hoa ở hai đầu"
+        ],
+        "suitableFor": [
+          "Đám cưới ngoài vườn",
+          "Tiệc mùa xuân",
+          "Lễ cưới cổ điển theo chủ đề hoa"
+        ],
+        "features": [
+          "Chỉnh tên và các mốc sự kiện",
+          "Thêm ảnh cưới vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Xem Bạch Sứ V2 Xanh để kiểm tra nền hoa.",
+          "Thay nội dung và ảnh của bạn.",
+          "Xem trước trên điện thoại rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Bạch Sứ V2 Xanh khác bản Hồng và Đỏ thế nào?",
+            "answer": "Ba bản giữ chung bố cục thẻ kem, còn Xanh dùng hoa trắng, lá ô liu và viền xanh rêu thay cho hoa hồng hoặc hoa đỏ."
+          },
+          {
+            "question": "Nền hoa dày có ảnh hưởng khả năng đọc không?",
+            "answer": "Nội dung nằm trên thẻ kem riêng, vì vậy nền hoa chỉ tạo không khí ở xung quanh phần chữ."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Bạch Sứ V2 Xanh hoa trắng nền lá ô liu",
+        "relatedSlugs": [
+          "porcelain-v2-red",
+          "royal-v2-green",
+          "porcelain-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "porcelain-v2-red": {
+        "metaTitle": "Thiệp cưới Bạch Sứ II Đỏ | Hoa vẽ tay",
+        "metaDescription": "Thiệp cưới Bạch Sứ II Đỏ dùng hoa đỏ thẫm, lá xanh xám, dây leo vàng và thẻ kem bo góc. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của hai bạn.",
+        "heading": "Mẫu thiệp cưới Bạch Sứ II Đỏ - Hoa đỏ vẽ tay",
+        "intro": "Bạch Sứ II Đỏ là thế hệ mới của dòng Bạch Sứ, với hoa đỏ thẫm, lá xanh xám và dây leo vàng trên nền kem. Thẻ bo góc và bóng nhẹ làm tổng thể mềm hơn.",
+        "highlights": [
+          "Hoa đỏ vẽ tay phủ đều nền thiệp",
+          "Thẻ kem bo góc có viền đỏ",
+          "Khung vàng điểm hoa ở đầu và chân"
+        ],
+        "suitableFor": [
+          "Đám cưới tông đỏ",
+          "Tiệc nhà hàng",
+          "Lễ cưới cổ điển ấm áp"
+        ],
+        "features": [
+          "Chỉnh nội dung và lịch cưới",
+          "Thêm ảnh vào album",
+          "Xem trước trước khi xuất bản"
+        ],
+        "steps": [
+          "Mở Bạch Sứ II Đỏ để xem lớp hoa.",
+          "Thay tên, sự kiện và ảnh cưới.",
+          "Kiểm tra bản xem trước rồi xuất bản."
+        ],
+        "faq": [
+          {
+            "question": "Bạch Sứ II Đỏ khác bản thế hệ đầu thế nào?",
+            "answer": "Bản II dùng tranh hoa nhiều màu với lá xanh xám và dây leo vàng; thẻ nội dung bo góc và có bóng nhẹ hơn."
+          },
+          {
+            "question": "Bản II Đỏ khác Bạch Sứ II Hồng ra sao?",
+            "answer": "Bản Đỏ dùng hoa đỏ thẫm và viền đỏ, tạo cảm giác ấm và trang trọng hơn bảng hồng phấn."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Bạch Sứ II Đỏ hoa đỏ vẽ tay",
+        "relatedSlugs": [
+          "porcelain-v2-green",
+          "porcelain-red",
+          "royal-v2-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "royal-v2-green": {
+        "metaTitle": "Thiệp cưới Hoàng Kim II Xanh | Hoa hồng",
+        "metaDescription": "Thiệp cưới Hoàng Kim II Xanh phối nền lục thẫm, khung vàng kim và hoa hồng trắng cho vẻ hoàng gia mềm mại. Xem bản mẫu và bắt đầu tạo thiệp theo thông tin của h",
+        "heading": "Mẫu thiệp cưới Hoàng Kim II Xanh - Hoa hồng trắng",
+        "intro": "Hoàng Kim II Xanh giữ nền lục thẫm và khung vàng kim của dòng Hoàng Kim, thêm các chùm hoa hồng trắng để tổng thể sang trọng nhưng lãng mạn hơn.",
+        "highlights": [
+          "Nền xanh lục thẫm tạo chiều sâu",
+          "Khung vàng kim tinh xảo",
+          "Hoa hồng trắng làm mềm phong cách hoàng gia"
+        ],
+        "suitableFor": [
+          "Đám cưới hoàng gia",
+          "Tiệc trong nhà sang trọng",
+          "Lễ cưới trang trọng, lãng mạn"
+        ],
+        "features": [
+          "Chỉnh tên và lịch trình sự kiện",
+          "Thêm ảnh vào album",
+          "Xem trước rồi xuất bản"
+        ],
+        "steps": [
+          "Xem Hoàng Kim II Xanh để kiểm tra khung.",
+          "Thay thông tin và ảnh cưới.",
+          "Xem trước trên các thiết bị rồi chia sẻ link."
+        ],
+        "faq": [
+          {
+            "question": "Hoàng Kim II Xanh khác bản Hoàng Kim Xanh đầu tiên thế nào?",
+            "answer": "Bản II giữ nền lục và khung vàng nhưng dùng hoa hồng trắng thay cho hoa vàng, đồng thời thêm các biểu tượng vàng trong lịch trình."
+          },
+          {
+            "question": "Hoa hồng trắng có làm mẫu bớt trang trọng không?",
+            "answer": "Không. Hoa trắng làm bảng màu mềm hơn trong khi nền lục và khung vàng vẫn giữ cảm giác hoàng gia."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hoàng Kim II Xanh hoa hồng trắng",
+        "relatedSlugs": [
+          "royal-green",
+          "royal-blue",
+          "mahal-gold"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-jade": {
+        "metaTitle": "Minimalism Xanh Ngọc | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Minimalism Xanh Ngọc: Thiết kế tối giản dùng nền trắng kem, sắc xanh ngọc dịu, phong bì lồng ảnh và hoa mẫu đơn xanh sương. Xem bản mẫu và bắt đầ",
+        "heading": "Mẫu thiệp cưới Minimalism Xanh Ngọc",
+        "intro": "Thiết kế tối giản dùng nền trắng kem, sắc xanh ngọc dịu, phong bì lồng ảnh và hoa mẫu đơn xanh sương. Mẫu thuộc nhóm hiện đại, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Bảng màu xanh ngọc và trắng kem tạo cảm giác nhẹ nhàng.",
+          "Phong bì pastel có khung ảnh và dấu sáp hình tim.",
+          "Hoa mẫu đơn xanh sương cùng lá màu champagne làm điểm nhấn."
+        ],
+        "suitableFor": [
+          "Cặp đôi yêu phong cách tối giản",
+          "Tiệc cưới dùng bảng màu xanh ngọc"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Xanh Ngọc để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Minimalism Xanh Ngọc phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi yêu phong cách tối giản và những đám cưới muốn giữ hiện đại trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Xanh Ngọc – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-sky-blue": {
+        "metaTitle": "Minimalism Xanh Bầu Trời | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Minimalism Xanh Bầu Trời: Thiết kế tối giản với nền trắng mây, phong bì xanh trời, hoa mẫu đơn xanh xám và khoảng thở rộng cho thông tin ngày cướ",
+        "heading": "Mẫu thiệp cưới Minimalism Xanh Bầu Trời",
+        "intro": "Thiết kế tối giản với nền trắng mây, phong bì xanh trời, hoa mẫu đơn xanh xám và khoảng thở rộng cho thông tin ngày cưới. Mẫu thuộc nhóm hiện đại, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Xanh bầu trời và trắng mây giữ tổng thể sáng.",
+          "Phong bì xanh nhạt dành một khoảng riêng cho ảnh cưới.",
+          "Hoa mẫu đơn và lá bạc tạo nét mềm mại cho bố cục."
+        ],
+        "suitableFor": [
+          "Cặp đôi thích gam xanh nhẹ",
+          "Tiệc cưới hiện đại, thanh thoát"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Xanh Bầu Trời để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Minimalism Xanh Bầu Trời phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi thích gam xanh nhẹ và những đám cưới muốn giữ hiện đại trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Xanh Bầu Trời – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "chateau-blue",
+          "crystal-floral-blue",
+          "minimalism-dark-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "minimalism-powder-pink": {
+        "metaTitle": "Minimalism Hồng Phấn | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Minimalism Hồng Phấn: Thiết kế tối giản kết hợp nền trắng kem, sắc hồng phấn, phong bì hồng sương và cụm hoa dusty rose dịu dàng. Xem bản mẫu và ",
+        "heading": "Mẫu thiệp cưới Minimalism Hồng Phấn",
+        "intro": "Thiết kế tối giản kết hợp nền trắng kem, sắc hồng phấn, phong bì hồng sương và cụm hoa dusty rose dịu dàng. Mẫu thuộc nhóm hiện đại, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Hồng phấn và trắng kem tạo nền ấm áp.",
+          "Phong bì hồng sương có khung ảnh cưới.",
+          "Hoa dusty rose cùng lá champagne giữ nét lãng mạn."
+        ],
+        "suitableFor": [
+          "Cặp đôi thích vẻ lãng mạn tối giản",
+          "Tiệc cưới dùng gam hồng phấn"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Minimalism Hồng Phấn để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Minimalism Hồng Phấn phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi thích vẻ lãng mạn tối giản và những đám cưới muốn giữ hiện đại trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Minimalism Hồng Phấn – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "boho-floral-pink",
+          "glass-garden-pink",
+          "lien-hoa-pink"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "maroon-love": {
+        "metaTitle": "Tình Yêu Đỏ Đô | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Tình Yêu Đỏ Đô: Mẫu thiệp nền đỏ đô đậm, chữ serif màu kem và điểm nhấn hồng, tạo cảm giác ấm áp, lãng mạn và sang trọng. Xem bản mẫu và bắt đầu ",
+        "heading": "Mẫu thiệp cưới Tình Yêu Đỏ Đô",
+        "intro": "Mẫu thiệp nền đỏ đô đậm, chữ serif màu kem và điểm nhấn hồng, tạo cảm giác ấm áp, lãng mạn và sang trọng. Mẫu thuộc nhóm hiện đại, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Nền đỏ đô làm nổi bật phần tên và ngày vui.",
+          "Chữ serif màu kem tạo tương phản dễ đọc.",
+          "Điểm nhấn hồng giúp tổng thể bớt nặng màu."
+        ],
+        "suitableFor": [
+          "Cặp đôi yêu sắc đỏ trầm",
+          "Tiệc cưới mang cảm giác sang trọng"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Tình Yêu Đỏ Đô để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Tình Yêu Đỏ Đô phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi yêu sắc đỏ trầm và những đám cưới muốn giữ hiện đại trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Tình Yêu Đỏ Đô – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "double-dragon-red",
+          "double-phoenix-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "ban-ve-to-am": {
+        "metaTitle": "Vườn Kính Ngày Thương | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Vườn Kính Ngày Thương: Thiết kế nhà kính ngập ánh sáng với vòm trắng, lá xanh sage, hoa ivory và các lớp giấy champagne dịu dàng. Xem bản mẫu và ",
+        "heading": "Mẫu thiệp cưới Vườn Kính Ngày Thương",
+        "intro": "Thiết kế nhà kính ngập ánh sáng với vòm trắng, lá xanh sage, hoa ivory và các lớp giấy champagne dịu dàng. Mẫu thuộc nhóm hoa lá, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Bìa ivory với khung vòm botanical và dấu niêm phong.",
+          "Lá sage, hoa ivory và ánh sáng tạo nền trong trẻo.",
+          "Bố cục dành chỗ cho lời ngỏ, lịch trình, album, bản đồ và lưu bút."
+        ],
+        "suitableFor": [
+          "Cặp đôi yêu chủ đề botanical",
+          "Tiệc cưới ngoài trời hoặc sân vườn"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Vườn Kính Ngày Thương để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Vườn Kính Ngày Thương phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi yêu chủ đề botanical và những đám cưới muốn giữ hoa lá trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Vườn Kính Ngày Thương – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "hai-yen-thanh-thu": {
+        "metaTitle": "Hải Yến Thanh Thư | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hải Yến Thanh Thư: Thiết kế giấy màu kem với vịnh màu nước xanh lam và đôi chim yến lướt qua nền mực loang. Xem bản mẫu và bắt đầu tạo thiệp cưới",
+        "heading": "Mẫu thiệp cưới Hải Yến Thanh Thư",
+        "intro": "Thiết kế giấy màu kem với vịnh màu nước xanh lam và đôi chim yến lướt qua nền mực loang. Mẫu thuộc nhóm đám cưới điểm đến, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Đôi chim yến tạo hình ảnh gắn kết.",
+          "Vệt màu nước xanh lam gợi không khí ven biển.",
+          "Nền giấy kem giữ cảm giác thủ công, ấm áp."
+        ],
+        "suitableFor": [
+          "Cặp đôi tổ chức cưới ở biển",
+          "Tiệc cưới thích chất liệu màu nước"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Hải Yến Thanh Thư để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hải Yến Thanh Thư phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi tổ chức cưới ở biển và những đám cưới muốn giữ đám cưới điểm đến trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hải Yến Thanh Thư – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "chateau-blue",
+          "crystal-floral-blue",
+          "minimalism-sky-blue"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "coi-trau-kham-trai": {
+        "metaTitle": "Cơi Trầu Khảm Trai | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Cơi Trầu Khảm Trai: Thiết kế Việt đương đại mở như cơi trầu sơn mài, điểm khảm trai, lá trầu và hoa cau thanh nhã. Xem bản mẫu và bắt đầu tạo thi",
+        "heading": "Mẫu thiệp cưới Cơi Trầu Khảm Trai",
+        "intro": "Thiết kế Việt đương đại mở như cơi trầu sơn mài, điểm khảm trai, lá trầu và hoa cau thanh nhã. Mẫu thuộc nhóm di sản Việt, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Cơi trầu tương tác với nắp sơn mài mở theo từng lớp.",
+          "Khảm trai, lá trầu và hoa cau tạo bảng màu mận, xanh, ngà.",
+          "Bố cục dành riêng cho hai gia đình, lịch cưới, album và mừng cưới."
+        ],
+        "suitableFor": [
+          "Gia đình muốn giữ nét văn hóa Việt",
+          "Tiệc cưới theo tinh thần truyền thống đương đại"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Cơi Trầu Khảm Trai để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Cơi Trầu Khảm Trai phù hợp với ai?",
+            "answer": "Mẫu phù hợp với gia đình muốn giữ nét văn hóa việt và những đám cưới muốn giữ di sản Việt trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Cơi Trầu Khảm Trai – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "minimalism-purple",
+          "cong-la-dua-mien-tay",
+          "song-hy-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "cong-la-dua-mien-tay": {
+        "metaTitle": "Cổng Lá Dừa Miền Tây | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Cổng Lá Dừa Miền Tây: Thiết kế lấy cảm hứng từ cổng lá dừa đan và sắc xanh miệt vườn, gợi không khí thân tình của một lễ cưới miền Tây. Xem bản m",
+        "heading": "Mẫu thiệp cưới Cổng Lá Dừa Miền Tây",
+        "intro": "Thiết kế lấy cảm hứng từ cổng lá dừa đan và sắc xanh miệt vườn, gợi không khí thân tình của một lễ cưới miền Tây. Mẫu thuộc nhóm di sản Việt, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Vòm lá dừa đan tạo khung mở đầu giàu bản sắc.",
+          "Chi tiết cau chín thêm sắc ấm cho nền xanh.",
+          "Bảng màu sân vườn giúp lời mời gần gũi và tự nhiên."
+        ],
+        "suitableFor": [
+          "Cặp đôi tổ chức cưới tại quê nhà",
+          "Tiệc cưới mang cảm hứng miền Tây"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Cổng Lá Dừa Miền Tây để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Cổng Lá Dừa Miền Tây phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi tổ chức cưới tại quê nhà và những đám cưới muốn giữ di sản Việt trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Cổng Lá Dừa Miền Tây – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-green",
+          "elegant-leaf-green",
+          "double-dragon-green"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "hy-uoc": {
+        "metaTitle": "Hỷ Ước Đỏ | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Hỷ Ước Đỏ: Thiết kế đỏ son trên giấy ngà, chữ Hỷ nét vàng và bìa liền một mặt trượt lên khi mở. Xem bản mẫu và bắt đầu tạo thiệp cưới online.",
+        "heading": "Mẫu thiệp cưới Hỷ Ước Đỏ",
+        "intro": "Thiết kế đỏ son trên giấy ngà, chữ Hỷ nét vàng và bìa liền một mặt trượt lên khi mở. Mẫu thuộc nhóm truyền thống, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Bìa đỏ tạo chuyển động trượt khi mở thiệp.",
+          "Chữ Hỷ và hoa mẫu đơn dùng nét vàng nổi bật.",
+          "Phong bao mừng cưới đồng bộ với phần thiệp."
+        ],
+        "suitableFor": [
+          "Cặp đôi yêu nghi lễ truyền thống",
+          "Gia đình muốn lời mời đỏ son trang trọng"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Hỷ Ước Đỏ để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Hỷ Ước Đỏ phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi yêu nghi lễ truyền thống và những đám cưới muốn giữ truyền thống trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Hỷ Ước Đỏ – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "nguyet-bach": {
+        "metaTitle": "Nguyệt Bạch Ivory | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Nguyệt Bạch Ivory: Thiết kế tối giản trên giấy ngà với monogram dập chìm và đường viền champagne mảnh, tạo cảm giác yên tĩnh và tinh tế. Xem bản ",
+        "heading": "Mẫu thiệp cưới Nguyệt Bạch Ivory",
+        "intro": "Thiết kế tối giản trên giấy ngà với monogram dập chìm và đường viền champagne mảnh, tạo cảm giác yên tĩnh và tinh tế. Mẫu thuộc nhóm tối giản, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Monogram dập chìm tạo điểm nhấn kín đáo.",
+          "Giấy cotton ivory làm nền cho nội dung.",
+          "Viền champagne mảnh giữ vẻ thanh lịch."
+        ],
+        "suitableFor": [
+          "Cặp đôi thích phong cách quiet luxury",
+          "Tiệc cưới tối giản, trang nhã"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Nguyệt Bạch Ivory để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Nguyệt Bạch Ivory phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi thích phong cách quiet luxury và những đám cưới muốn giữ tối giản trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Nguyệt Bạch Ivory – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "to-hong": {
+        "metaTitle": "Tơ Hồng | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Tơ Hồng: Thiết kế đỏ rượu và giấy ngà nhiều lớp, kể câu chuyện se duyên qua sợi tơ dẫn từ phần mở đầu đến ngày thành đôi. Xem bản mẫu và bắt đầu ",
+        "heading": "Mẫu thiệp cưới Tơ Hồng",
+        "intro": "Thiết kế đỏ rượu và giấy ngà nhiều lớp, kể câu chuyện se duyên qua sợi tơ dẫn từ phần mở đầu đến ngày thành đôi. Mẫu thuộc nhóm truyền thống, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Nút thắt mở ra cấu trúc giấy nhiều lớp.",
+          "Sợi tơ dẫn nhịp đọc qua từng khoảnh khắc.",
+          "Phong bao đồng điệu với chủ đề tơ hồng."
+        ],
+        "suitableFor": [
+          "Cặp đôi yêu câu chuyện se duyên",
+          "Tiệc cưới theo sắc đỏ rượu và ngà"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Tơ Hồng để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Tơ Hồng phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi yêu câu chuyện se duyên và những đám cưới muốn giữ truyền thống trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Tơ Hồng – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      },
+      "uyen-uong": {
+        "metaTitle": "Uyên Ương | Thiệp Mừng Online",
+        "metaDescription": "Mẫu thiệp cưới Uyên Ương: Thiết kế giấy ngà với đôi uyên ương nét đỏ bên hồ sen, gửi gắm lời chúc hòa hợp và gắn bó. Xem bản mẫu và bắt đầu tạo thiệp cưới onlin",
+        "heading": "Mẫu thiệp cưới Uyên Ương",
+        "intro": "Thiết kế giấy ngà với đôi uyên ương nét đỏ bên hồ sen, gửi gắm lời chúc hòa hợp và gắn bó. Mẫu thuộc nhóm truyền thống, phù hợp với cặp đôi muốn lời mời có chủ đề rõ ràng và thông tin ngày vui dễ theo dõi. Bạn có thể xem toàn bộ bố cục, thay tên, ảnh cưới và lịch trình trước khi xuất bản thiệp của mình.",
+        "highlights": [
+          "Đôi uyên ương bên hồ sen làm chủ đề chính.",
+          "Nét đỏ nổi bật trên nền giấy ngà.",
+          "Phong bao mừng cưới được thiết kế đồng bộ."
+        ],
+        "suitableFor": [
+          "Cặp đôi yêu biểu tượng uyên ương",
+          "Gia đình cần lời mời truyền thống, ấm áp"
+        ],
+        "features": [
+          "Phần mở đầu giới thiệu câu chuyện và tên của hai bạn.",
+          "Khu vực thông tin sự kiện giúp trình bày ngày, giờ và địa điểm rõ ràng.",
+          "Bố cục hình ảnh làm nổi bật album cưới bên cạnh lời mời.",
+          "Các phần nội dung có thể được thay bằng thông tin thật của gia đình."
+        ],
+        "steps": [
+          "Mở bản mẫu Uyên Ương để xem toàn bộ bố cục.",
+          "Chọn tạo thiệp, thay tên, ảnh và thông tin sự kiện của hai bạn.",
+          "Xem trước trên điện thoại và máy tính rồi xuất bản đường dẫn gửi khách mời."
+        ],
+        "faq": [
+          {
+            "question": "Mẫu Uyên Ương phù hợp với ai?",
+            "answer": "Mẫu phù hợp với cặp đôi yêu biểu tượng uyên ương và những đám cưới muốn giữ truyền thống trong cách trình bày lời mời."
+          },
+          {
+            "question": "Tôi có thể thay nội dung và ảnh trong mẫu không?",
+            "answer": "Có. Sau khi chọn tạo thiệp, bạn có thể thay nội dung minh họa bằng tên, ảnh và thông tin sự kiện của mình rồi xem trước trước khi xuất bản."
+          }
+        ],
+        "imageAlt": "Mẫu thiệp cưới Uyên Ương – mẫu thiệp cưới online",
+        "relatedSlugs": [
+          "song-hy-red",
+          "song-hy-green",
+          "double-dragon-red"
+        ],
+        "relatedBlogSlugs": []
+      }
+    }
   }
 }

@@ -21,6 +21,7 @@ export function TemplateListingImage({
   fallbackHeight,
   alt,
   slug,
+  href,
   mobileThumbnailUrl,
   eager = false,
   highPriority = false,
@@ -30,6 +31,7 @@ export function TemplateListingImage({
   fallbackHeight: number;
   alt: string;
   slug: string;
+  href: string;
   mobileThumbnailUrl?: string;
   eager?: boolean;
   highPriority?: boolean;
@@ -67,9 +69,19 @@ export function TemplateListingImage({
     {eager && !highPriority ? (
       <link rel="preload" as="image" imageSrcSet={srcSet} imageSizes={sizes} media="(min-width: 640px)" />
     ) : null}
-    <button
-      type="button"
-      onClick={onSelect}
+    <a
+      href={href}
+      onClick={(event) => {
+        if (
+          event.button !== 0
+          || event.metaKey
+          || event.ctrlKey
+          || event.shiftKey
+          || event.altKey
+        ) return;
+        event.preventDefault();
+        onSelect();
+      }}
       data-ga-event="preview_template"
       data-ga-param-template-id={slug}
       data-ga-param-source="listing_card"
@@ -115,7 +127,7 @@ export function TemplateListingImage({
           className={`absolute inset-x-0 top-0 hidden h-auto w-full max-w-none transition-transform duration-[10000ms] ease-in-out data-[active=true]:translate-y-[min(0px,calc(460px_-_100%))] motion-reduce:transition-none sm:block ${loaded ? "visible" : "invisible"}`}
         />
       ) : null}
-    </button>
+    </a>
     </>
   );
 }

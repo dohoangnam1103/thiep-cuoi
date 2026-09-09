@@ -2383,12 +2383,12 @@ div.minimalism-brown-opening-fly > img {
 }
 .hoa-mai-cover-card-content {
   justify-content: center !important;
-  padding: 3.5rem 2.25rem 2rem !important;
+  padding: 1rem 2.25rem !important;
   color: #3e241d;
 }
 .hoa-mai-cover-card-content > div:first-child {
   margin-bottom: .6rem !important;
-  font-size: clamp(2.4rem, 7vw, 4.5rem) !important;
+  font-size: clamp(1.9rem, 7vw, 4.5rem) !important;
   line-height: .9 !important;
   letter-spacing: .02em;
 }
@@ -2397,7 +2397,17 @@ div.minimalism-brown-opening-fly > img {
   font-size: .34em !important;
   margin-block: .25em !important;
 }
-.hoa-mai-cover-card-content > div:nth-child(2) { margin-bottom: .65rem !important; }
+.hoa-mai-cover-card-content > div:nth-child(2) { display: none !important; }
 .hoa-mai-cover-card-content > div:nth-child(2) span { background: #a95231 !important; }
-.hoa-mai-cover-card-content > p { font-family: "Cormorant Garamond", Georgia, serif !important; color: #3e241d !important; }
+.hoa-mai-cover-card-content > p {
+  margin: .2rem 0 0 !important;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  color: #3e241d !important;
+  font-size: 1rem !important;
+}
+/* The horizontal Hoa Mai cover has no room for the generic recipient block.
+ * Keep that personalization in the invitation body and let the cover read as
+ * a quiet paper announcement with names, date, and one clear action. */
+.hoa-mai-cover-card-content > div:last-of-type { display: none !important; }
+.hoa-mai-cover-card-content > span { margin-top: .7rem !important; }
 .hoa-mai-cover-card-content button { border-radius: 999px !important; background: #a95231 !important; box-shadow: 0 9px 18px rgba(62,36,29,.22) !important; }

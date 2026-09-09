@@ -37,7 +37,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     getTranslations("adminSupport"),
     getTranslations("adminFunds"),
   ]);
-  const navItems = [...NAV, { href: "/admin/email-logs", label: t("emailLogsNav") }];
+  const navItems = [
+    ...NAV.slice(0, 3),
+    { href: "/admin/upcoming-weddings", label: t("upcomingWeddingsNav") },
+    ...NAV.slice(3),
+    { href: "/admin/email-logs", label: t("emailLogsNav") },
+  ];
   const superAdminNav = [
     { href: "/admin/funds", label: tFunds("nav") },
     { href: "/admin/admins", label: "Admin" },

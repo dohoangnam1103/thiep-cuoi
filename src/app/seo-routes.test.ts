@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { completedTemplates, getVietnameseTemplateSlug } from "@/data/chungdoi";
+import { getVietnameseTemplateSlug } from "@/data/chungdoi";
 import { templateSeoFacets } from "@/data/template-seo-facets";
 import { SITE_URL } from "@/lib/site-url";
 import { buildSitemapEntries } from "@/lib/sitemap-entries";
 
+import { templateSeoDetailEnabledSlugs } from "@/data/template-seo-details";
 import robots from "./robots";
 
 // Fixtures rather than the real query: `src/app/sitemap.ts` imports
@@ -28,9 +29,8 @@ const staticUrls = [
   `${SITE_URL}/dieu-khoan-su-dung`,
   `${SITE_URL}/chinh-sach-hoan-tien`,
 ];
-const demoUrls = completedTemplates.map(
-  (template) =>
-    `${SITE_URL}/mau-thiep/${getVietnameseTemplateSlug(template.slug)}/demo`,
+const detailUrls = templateSeoDetailEnabledSlugs.map(
+  (slug) => `${SITE_URL}/mau-thiep/${getVietnameseTemplateSlug(slug)}`,
 );
 const facetUrls = templateSeoFacets.map((facet) =>
   facet.kind === "style"
@@ -48,11 +48,11 @@ test("sitemap contains every canonical indexable Vietnamese page exactly once", 
   assert.ok(entries.every((entry) => entry.priority === undefined));
   assert.ok(entries.every((entry) => entry.alternates === undefined));
   assert.equal(new Set(urls).size, urls.length);
-  assert.ok(urls.every((url) => !url.includes("?")));
+  assert.ok(urls.every((url) => !url.includes("?") && !url.endsWith("/demo")));
   assert.deepEqual(urls, [
     ...staticUrls,
     ...facetUrls,
-    ...demoUrls,
+    ...detailUrls,
     `${SITE_URL}/blog`,
     `${SITE_URL}/blog/thu-moi-cuoi-online`,
     `${SITE_URL}/blog/chon-mau-thiep-cuoi`,
@@ -90,7 +90,7 @@ test("sitemap omits blog URLs entirely when no post is published", () => {
   const urls = buildSitemapEntries([]).map((entry) => entry.url);
 
   assert.ok(urls.every((url) => !url.includes("/blog")));
-  assert.deepEqual(urls, [...staticUrls, ...facetUrls, ...demoUrls]);
+  assert.deepEqual(urls, [...staticUrls, ...facetUrls, ...detailUrls]);
 });
 
 test("robots allows noindex pages to be crawled and blocks only APIs", () => {

@@ -8,6 +8,8 @@ import {
   pageSeo,
   staticAlternates,
   templateAlternates,
+  templateDetailAlternates,
+  templateDemoSeo,
   templateFacetAlternates,
 } from "./seo";
 
@@ -100,4 +102,17 @@ test("adds localized template demo Open Graph URL, locale, and image details", (
     alt: "Ảnh xem trước mẫu thiệp cưới Song Hỷ Đỏ",
     type: "image/webp",
   });
+});
+
+
+test("pilot details self-canonicalize and demos are noindex with a detail canonical", () => {
+  const detail = templateDetailAlternates("song-hy-do", "vi");
+  assert.equal(detail.canonical, "/mau-thiep/song-hy-do");
+  assert.equal(detail.languages["x-default"], detail.canonical);
+  const demo = templateDemoSeo("song-hy-red", "vi", "song-hy-do");
+  assert.equal(demo.alternates.canonical, detail.canonical);
+  assert.deepEqual(demo.robots, { index: false, follow: true });
+  const pending = templateDemoSeo("song-hy-green", "vi", "song-hy-xanh");
+  assert.equal(pending.alternates.canonical, "/mau-thiep/song-hy-xanh");
+  assert.deepEqual(pending.robots, { index: false, follow: true });
 });

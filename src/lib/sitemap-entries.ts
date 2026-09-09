@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
-import { completedTemplates, getVietnameseTemplateSlug } from "@/data/chungdoi";
+import { getVietnameseTemplateSlug } from "@/data/chungdoi";
 import {
   templateSeoFacets,
   type TemplateSeoFacet,
 } from "@/data/template-seo-facets";
+import { templateSeoDetailEnabledSlugs } from "@/data/template-seo-details";
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site-url";
@@ -53,6 +54,7 @@ function facetHref(facet: TemplateSeoFacet): Href {
 export function buildSitemapEntries(
   posts: readonly BlogSitemapPost[],
   templateRouteSlugs: Readonly<Record<string, string>> = {},
+  enabledSlugs: readonly string[] = templateSeoDetailEnabledSlugs,
 ): MetadataRoute.Sitemap {
   const staticRoutes: Href[] = [
     "/",
@@ -65,13 +67,11 @@ export function buildSitemapEntries(
     "/terms-of-service",
     "/refund-policy",
   ];
-  const templateDemoRoutes: Href[] = completedTemplates.map((template) => ({
-    pathname: "/templates/[slug]/demo" as const,
-    params: {
-      slug: templateRouteSlugs[template.slug]
-        ?? getVietnameseTemplateSlug(template.slug),
-    },
-  }));
+  const templateDetailRoutes: Href[] = enabledSlugs
+    .map((slug) => ({
+      pathname: "/templates/[slug]" as const,
+      params: { slug: templateRouteSlugs[slug] ?? getVietnameseTemplateSlug(slug) },
+    }));
   const facetRoutes = templateSeoFacets.map(facetHref);
 
   const blogEntries = posts.length > 0
@@ -96,7 +96,7 @@ export function buildSitemapEntries(
     : [];
 
   const entries = [
-    ...[...staticRoutes, ...facetRoutes, ...templateDemoRoutes].map((href) =>
+    ...[...staticRoutes, ...facetRoutes, ...templateDetailRoutes].map((href) =>
       entry(href),
     ),
     ...blogEntries,
