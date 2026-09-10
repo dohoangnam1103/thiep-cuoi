@@ -370,7 +370,7 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
         </h3>
         <p className={`mt-2 ${bodySmallClass} text-muted-foreground`}>{category}</p>
         <p className={`mt-3 line-clamp-2 ${bodySmallClass} text-muted-foreground`}>{description}</p>
-        <div className="mt-5 grid grid-cols-3 gap-2">
+        <div className="mt-5 grid grid-cols-2 gap-2">
           <button
             onClick={onSelect}
             data-ga-event="preview_template"
@@ -380,12 +380,6 @@ function TemplateCard({ template, index, onSelect }: { template: ChungDoiTemplat
           >
             {t("preview")}
           </button>
-          <Link
-            href={detailHref}
-            className={`inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-full border border-border bg-secondary px-2 py-2.5 ${pillClass} text-foreground transition hover:bg-muted`}
-          >
-            {t("detail")}
-          </Link>
           <Link
             href={demoHref}
             data-ga-event="open_template_demo"
