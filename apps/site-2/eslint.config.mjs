@@ -9,6 +9,7 @@ export default defineConfig([
     "node_modules/**",
     "src/generated/**",
     ".e2e/**",
+    "tailwind-sources/**",
     "next-env.d.ts",
   ]),
 ]);

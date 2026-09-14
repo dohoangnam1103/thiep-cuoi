@@ -28,6 +28,7 @@ const eslintConfig = defineConfig([
     "apps/**/.next/**",
     "apps/**/.e2e/**",
     "apps/**/src/generated/**",
+    "apps/**/tailwind-sources/**",
     "packages/**/.next/**",
     // Scratch dirs: not source, but their warnings bloat every lint run.
     "tmp/**",

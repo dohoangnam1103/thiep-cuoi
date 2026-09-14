@@ -23,6 +23,11 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=dependencies /app/apps/site-2/package.json ./apps/site-2/package.json
 COPY packages ./packages
 COPY apps/site-2 ./apps/site-2
+# Tailwind only scans the app tree reliably in every environment; explicit
+# @source entries cover local dev, while this mirror guarantees production
+# builds see every utility used by shared packages. Scanned for candidates
+# only — never imported, routed, or typechecked (outside src/).
+RUN rm -rf ./apps/site-2/tailwind-sources && mkdir -p ./apps/site-2/tailwind-sources && cp -r ./packages/invitation-core/src ./apps/site-2/tailwind-sources/invitation-core && cp -r ./packages/invitation-data/src ./apps/site-2/tailwind-sources/invitation-data
 # Full cloned catalog assets (themes, gallery, previews, fonts, music),
 # synced from master public/chungdoi into ./master-public before build.
 COPY master-public/chungdoi ./apps/site-2/public/chungdoi
