@@ -20,6 +20,7 @@ test("site 2 rejects an unknown template URL", async ({ page }) => {
 test("site 2 renders a former master-only template demo", async ({ page }) => {
   const response = await page.goto("/mau-thiep/song-hy-red/demo");
   expect(response?.status()).toBe(200);
+  await page.locator('[data-open-btn="true"]').click();
   await expect(page.locator("[data-template-footer]").first()).toBeVisible();
 });
 
@@ -50,6 +51,7 @@ test("site 2 creates, edits, publishes and publicly renders an invitation", asyn
   await expect(publicLink).toBeVisible();
   await publicLink.click();
   await expect(page).toHaveURL(/\/thiep\//);
+  await page.locator('[data-open-btn="true"]').click();
   await expect(page.getByText("Nguyễn Mai Lan").first()).toBeVisible();
   await expect(page.getByText("Trần Đức Minh").first()).toBeVisible();
 });

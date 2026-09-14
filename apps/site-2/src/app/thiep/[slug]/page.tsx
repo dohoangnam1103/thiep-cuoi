@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getPublishedBySlug } from "../../../lib/dal";
+import { getTemplateMeta } from "../../../lib/catalog";
 import SignatureDemoView from "../../mau-thiep/[slug]/demo/demo-view";
 
 export default async function Site2PublicInvitation({
@@ -13,5 +14,9 @@ export default async function Site2PublicInvitation({
   if (!content) {
     notFound();
   }
-  return <SignatureDemoView slug={content.slug} content={content} />;
+  const template = getTemplateMeta(content.slug);
+  if (!template) {
+    notFound();
+  }
+  return <SignatureDemoView template={template} content={content} />;
 }

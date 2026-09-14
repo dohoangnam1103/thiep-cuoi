@@ -21,8 +21,8 @@ for (const m of demo.matchAll(
 }
 // "slug": templateRendererEntry(X,
 const entries = [];
-for (const m of demo.matchAll(/"([a-z0-9-]+)": templateRendererEntry\((\w+),/g)) {
-  entries.push({ slug: m[1], constName: m[2] });
+for (const m of demo.matchAll(/"([a-z0-9-]+)": templateRendererEntry\((\w+),\s*"([^"]+)"\)/g)) {
+  entries.push({ slug: m[1], constName: m[2], ceremony: m[3] });
 }
 // generated file pieces
 const genMods = new Map();
@@ -31,8 +31,8 @@ for (const m of generated.matchAll(
 )) {
   genMods.set(m[1], { file: m[2], export: m[3] });
 }
-for (const m of generated.matchAll(/"([a-z0-9-]+)": \{ component: (TemplateRenderer\d+),/g)) {
-  entries.push({ slug: m[1], gen: m[2] });
+for (const m of generated.matchAll(/"([a-z0-9-]+)": \{ component: (TemplateRenderer\d+), ceremonyRendering: "([^"]+)" \},?/g)) {
+  entries.push({ slug: m[1], gen: m[2], ceremony: m[3] });
 }
 
 const SKIP = new Set(["jasmine-white", "silk-flora-brown"]);
@@ -59,6 +59,10 @@ lines.push(`export type { InvitationRenderContent } from "../signature/types";`)
 lines.push(``);
 
 const slugs = ["jasmine-white", "silk-flora-brown"];
+const ceremonies = {
+  "jasmine-white": "inline-all",
+  "silk-flora-brown": "inline-all",
+};
 for (const e of entries) {
   if (SKIP.has(e.slug) || RETIRED.has(e.slug) || seen.has(e.slug)) continue;
   let mod;
@@ -74,6 +78,7 @@ for (const e of entries) {
   }
   seen.add(e.slug);
   slugs.push(e.slug);
+  if (e.ceremony) ceremonies[e.slug] = e.ceremony;
   const varName = `Template_${e.slug.replace(/-/g, "_")}`;
   lines.push(
     `const ${varName} = dynamic(() => import("./${mod.file}").then((m) => m.${mod.export}));`,
@@ -89,6 +94,7 @@ for (const [slug, file, exp] of specials) {
   if (RETIRED.has(slug) || seen.has(slug)) continue;
   seen.add(slug);
   slugs.push(slug);
+  ceremonies[slug] = "inline-all";
   const varName = `Template_${slug.replace(/-/g, "_")}`;
   lines.push(`const ${varName} = dynamic(() => import("${file}").then((m) => m.${exp}));`);
 }
@@ -114,6 +120,12 @@ lines.push(``);
 lines.push(`export function getTemplateRenderer(slug: string) {`);
 lines.push(`  return getSignatureRenderer(slug) ?? RENDERERS[slug];`);
 lines.push(`}`);
+lines.push(``);
+lines.push(`export const TEMPLATE_CEREMONY_RENDERING: Record<string, "inline-all" | "post-template"> = {`);
+for (const [slug, mode] of Object.entries(ceremonies)) {
+  lines.push(`  "${slug}": "${mode}",`);
+}
+lines.push(`};`);
 lines.push(``);
 
 writeFileSync(

@@ -1,4 +1,12 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Shared renderer sources live outside this app (monorepo packages):
+   Tailwind only scans this app by default, so register the packages
+   explicitly or utilities used solely by shared components go missing. */
+@source "../../../../packages/invitation-core/src";
+@source "../../../../packages/invitation-data/src";
 
 :root {
   --site2-cream: #faf7f0;
@@ -11,82 +19,138 @@ body {
   color: var(--site2-ink);
 }
 
-/* Template font utilities shared with master (copied from src/app/globals.css).
-   next/font CSS vars are intentionally absent here: each rule falls back to the
-   self-hosted family and system serif/sans. */
+/* Full shared invitation styling ported from master src/app/globals.css
+   (keyframes, template utilities, envelope/cover effects). Master-only
+   admin/editor rules below are inert on site-2 but kept for exact parity. */
+@source not "../generated/prisma";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Tailwind v4 bỏ default cursor:pointer cho button — khôi phục cho mọi phần tử bấm được. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+summary,
+label[for] {
+  cursor: pointer;
+}
+
+/*
+ * iOS Safari tự phóng viewport khi focus form control nhỏ hơn 16px. Editor có
+ * nhiều field text-sm, nên sau khi gõ trang trông như bị rộng ra và có thể pan
+ * ngang. Giữ cỡ chữ desktop hiện tại, nhưng dùng 16px cho mọi control mobile
+ * trong editor (kể cả input nội bộ của react-select).
+ */
+@media (max-width: 639px), (hover: none) and (pointer: coarse) {
+  .editor-page input:not([type="hidden"]),
+  .editor-page textarea,
+  .editor-page select {
+    /* react-select đặt font shorthand inline cho input nội bộ. */
+    font-size: 1rem !important;
+  }
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 @font-face {
   font-family: "UNI Chu truyen thong";
   src: url("/chungdoi/fonts/UNI_Chu_truyen_thong.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "Pattaya";
   src: url("/chungdoi/fonts/Pattaya-Regular.woff") format("woff");
   font-display: swap;
 }
+
 @font-face {
   font-family: "Viaoda Libre";
   src: url("/chungdoi/fonts/ViaodaLibre-Regular.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "EB Garamond";
   src: url("/chungdoi/fonts/EBGaramond-Variable.ttf") format("truetype-variations");
   font-weight: 400 800;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Cormorant Garamond";
   src: url("/chungdoi/fonts/CormorantGaramond-Variable.ttf") format("truetype-variations");
   font-weight: 300 700;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Uchen";
   src: url("/chungdoi/fonts/Uchen-Regular.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "HelveticaNeue";
   src: url("/chungdoi/fonts/HelveticaNeueRoman.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "HelveticaNeue";
   src: url("/chungdoi/fonts/HelveticaNeueLight.otf") format("opentype");
   font-weight: 300;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Fz Aghita";
   src: url("/chungdoi/fonts/FzAghita.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "Fz Qellia";
   src: url("/chungdoi/fonts/Fz_Qellia_Fix.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "SVN-HC Pacifico";
   src: url("/chungdoi/fonts/SVN-HC-Pacifico.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "SVN-HC Built Titling";
   src: url("/chungdoi/fonts/SVN-HC-Built-Titling.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "SVN-HC Marvin Visions";
   src: url("/chungdoi/fonts/SVN-HC-Marvin-Visions.otf") format("opentype");
   font-display: swap;
 }
+
+/* Thẻ Nhật Bình dùng font này cho dấu "&" giữa hai tên. Trước đây thiếu file nên
+   dấu & rơi về cursive mặc định, khác hẳn bản gốc. */
 @font-face {
   font-family: "SVN-HC Carosello";
   src: url("/chungdoi/fonts/SVN-HC-Carosello.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "SVN-HC Haydon Brush";
   src:
@@ -95,45 +159,79 @@ body {
     url("/chungdoi/fonts/SVN-HC-Haydon-Brush.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "1FTV VIP Signora";
   src: url("/chungdoi/fonts/1FTV-VIP-Signora-Regular.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "DFVN New Eddy";
   src: url("/chungdoi/fonts/DFVN-NewEddy-Regular.otf") format("opentype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "Alex Brush";
   src: url("/chungdoi/fonts/AlexBrush-Regular.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "The Nautigal";
   src: url("/chungdoi/fonts/TheNautigal-Regular.ttf") format("truetype");
   font-display: swap;
 }
+
 @font-face {
   font-family: "Lora";
   src: url("/chungdoi/fonts/Lora-Regular.ttf") format("truetype");
   font-display: swap;
 }
+
+/* Thư pháp mảnh của mẫu Liên Hoa Hồng, tải từ bản gốc (OFL, Google Fonts). */
 @font-face {
   font-family: "Beau Rivage";
   src: url("/chungdoi/fonts/BeauRivage-Regular.ttf") format("truetype");
   font-display: swap;
 }
+/* Chữ "&" giữa hai tên đầy đủ của mẫu Minimalism Nâu (OFL, Google Fonts). */
 @font-face {
   font-family: "Ms Madi";
   src: url("/chungdoi/fonts/MsMadi-Regular.ttf") format("truetype");
   font-display: swap;
 }
-@font-face { font-family: "Carattere"; src: url("/chungdoi/fonts/Carattere-Regular.ttf") format("truetype"); font-display: swap; }
-@font-face { font-family: "Whisper"; src: url("/chungdoi/fonts/Whisper-Regular.ttf") format("truetype"); font-display: swap; }
+
+/* ── Hệ 2 font cho thiệp ─────────────────────────────────────────────────────
+ * Mỗi thiệp chỉ được dùng đúng 2 family: 1 display (.font-art-*) cho tên cô
+ * dâu chú rể + heading, và 1 body (.font-body-*) cho toàn bộ text còn lại.
+ * Body chỉ có 2 lựa chọn để chắc chắn phủ dấu tiếng Việt và luôn hợp tông với
+ * display: serif (Lora) đi với display thư pháp/serif, sans (Be Vietnam Pro)
+ * đi với display brush/grotesque. Xem src/lib/invitation-fonts.ts.
+ * ────────────────────────────────────────────────────────────────────────── */
 .font-body-serif { font-family: var(--font-lora), "Lora", Georgia, "Times New Roman", serif; }
 .font-body-sans { font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; }
+
+/* ── Font mặc định của app shell ─────────────────────────────────────────────
+ * Open Sans cho trang marketing (Home, Mẫu thiệp, Bảng giá, Blog, Hướng dẫn,
+ * Công cụ, Chính sách) + Dashboard. CHỈ khai `font-family`; weight, cỡ chữ,
+ * italic, letter-spacing giữ nguyên như trước.
+ *
+ * Cố tình KHÔNG sửa `body`, `--font-sans` hay `--font-heading`: `[locale]/layout.tsx`
+ * bọc cả `/mau-thiep/[slug]/demo` và `lab/*`, và `ChungDoiDemo` thừa hưởng font
+ * từ `body` — đổi ở đó là mọi thiệp đổi font theo. Vì vậy class này được áp ở
+ * root của từng trang shell, không áp ở layout.
+ *
+ * Khối để NGOÀI mọi `@layer` nên thắng `.font-heading` ở `@layer base` mà không
+ * cần `!important`. Text tự khai font trên chính element (`.font-pattaya` của
+ * "đẹp nhất", `.font-art-*`, `.font-couple-*`) không bị ảnh hưởng.
+ * ────────────────────────────────────────────────────────────────────────── */
+.font-app-sans,
+.font-app-sans .font-heading {
+  font-family: var(--font-open-sans), "Open Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
 .font-art-uni { font-family: "UNI Chu truyen thong", "Fz Qellia", serif; }
 .font-art-haydon { font-family: "SVN-HC Haydon Brush", "Pattaya", cursive; }
 .font-art-new-eddy { font-family: "DFVN New Eddy", "Fz Qellia", serif; }
@@ -144,13 +242,29 @@ body {
 .font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
 .font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
 .font-art-beau-rivage { font-family: "Beau Rivage", "The Nautigal", cursive; }
+
+/* ── Mẫu Minimalism Xanh / Minimalism Nâu — font stack đúng như bản gốc ──────
+ * Bản gốc chungdoi.com khai 5-6 stack cho hai mẫu này, KHÔNG theo hệ 2 font ở
+ * trên. User yêu cầu clone khớp 100% cả font-family lẫn font-size nên giữ
+ * nguyên, đặt thành class để renderer không phải khai `fontFamily` inline. Chỉ
+ * `minimalism-green` và `minimalism-brown` dùng, không ảnh hưởng mẫu khác.
+ * Baskerville / Times New Roman là font hệ thống, cố ý không self-host.
+ * ────────────────────────────────────────────────────────────────────────── */
 .font-mg-cormorant { font-family: "Cormorant Garamond", "Times New Roman", serif; }
 .font-mg-nautigal { font-family: "The Nautigal", cursive; }
 .font-mg-times { font-family: "Times New Roman", serif; }
 .font-mg-baskerville { font-family: Baskerville, "Times New Roman", serif; }
 .font-mg-garamond { font-family: "EB Garamond", serif; }
+/* Vài chỗ bản gốc KHÔNG khai font nên rơi về stack sans mặc định của Tailwind
+   (lớp phủ "+N" ở album, đốm sáng ✦ và dòng "Nhấn để mở" của hộp quà). Không
+   dùng `font-sans` của repo vì biến đó trỏ Be Vietnam Pro, khác bản gốc. */
 .font-mg-sans { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+/* Chỉ mẫu Minimalism Nâu dùng, cho đúng một ký tự "&" giữa hai tên đầy đủ. */
 .font-mg-msmadi { font-family: "Ms Madi", cursive; }
+
+/* Font tên cô dâu chú rể, trích từ thẻ gốc trên chungdoi.com. Bảng đối chiếu từng
+   thiệp nằm ở docs/research/couple-name-fonts.json. Biến next/font đứng trước bản
+   self-host vì bản Google có subset vietnamese nên chắc chắn đủ dấu. */
 .font-couple-garamond { font-family: var(--font-eb-garamond), "EB Garamond", Garamond, serif; }
 .font-couple-uni { font-family: "UNI Chu truyen thong", "Times New Roman", serif; }
 .font-couple-playfair { font-family: var(--font-playfair-display), "Playfair Display", "Times New Roman", serif; }
@@ -161,3 +275,2160 @@ body {
 .font-art-pacifico { font-family: "SVN-HC Pacifico", "Pattaya", cursive; }
 .font-art-helvetica { font-family: HelveticaNeue, Arial, sans-serif; }
 .font-art-marvin { font-family: "SVN-HC Marvin Visions", HelveticaNeue, sans-serif; }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-heading: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(0.984 0.008 25);
+  --foreground: oklch(0.33 0.06 25);
+  --card: oklch(0.995 0.004 25);
+  --card-foreground: oklch(0.33 0.06 25);
+  --popover: oklch(0.995 0.004 25);
+  --popover-foreground: oklch(0.33 0.06 25);
+  --primary: oklch(0.55 0.208 27);
+  --primary-foreground: oklch(0.99 0.01 25);
+  --secondary: oklch(0.945 0.022 20);
+  --secondary-foreground: oklch(0.42 0.11 25);
+  --muted: oklch(0.955 0.016 20);
+  --muted-foreground: oklch(0.53 0.05 25);
+  --accent: oklch(0.80 0.11 75);
+  --accent-foreground: oklch(0.33 0.06 40);
+  --destructive: oklch(0.50 0.19 18);
+  --border: oklch(0.33 0.06 25 / 14%);
+  --input: oklch(0.33 0.06 25 / 18%);
+  --ring: oklch(0.55 0.208 27);
+  --chart-1: oklch(0.55 0.208 27);
+  --chart-2: oklch(0.80 0.11 75);
+  --chart-3: oklch(0.64 0.15 30);
+  --chart-4: oklch(0.72 0.13 45);
+  --chart-5: oklch(0.45 0.16 22);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.995 0.004 25);
+  --sidebar-foreground: oklch(0.33 0.06 25);
+  --sidebar-primary: oklch(0.55 0.208 27);
+  --sidebar-primary-foreground: oklch(0.99 0.01 25);
+  --sidebar-accent: oklch(0.955 0.016 20);
+  --sidebar-accent-foreground: oklch(0.33 0.06 25);
+  --sidebar-border: oklch(0.33 0.06 25 / 14%);
+  --sidebar-ring: oklch(0.55 0.208 27);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+  }
+}
+
+/*
+ * Chart (recharts): bỏ khung focus khi click, giữ ring khi Tab.
+ *
+ * accessibilityLayer của recharts đánh dấu các <g> bên trong SVG là focusable
+ * (`tabindex="-1"`), nên click vào một cột làm trình duyệt vẽ focus ring mặc
+ * định thành một cái khung bao quanh vùng vẽ — và rule `*` ngay trên đã nhuộm
+ * outline-color thành `--ring` nên nó trông như border đỏ. Đo được: sau click,
+ * activeElement là `<g class="recharts-zIndex-layer_300" tabindex="-1">` với
+ * `outline: auto 5px` và `:focus-visible` không khớp, tức là ring vô nghĩa với
+ * chuột. `[&_.recharts-layer]:outline-hidden` của shadcn không chặn được vì
+ * recharts 3.8 đặt các nhóm này ở class `recharts-zIndex-layer_*`.
+ *
+ * Chỉ tắt ring cho phần tử BÊN TRONG svg, không tắt cho chính
+ * `<svg class="recharts-surface">` — đó là nơi Tab thật sự dừng
+ * (`tabindex="0" role="application"`). Đổi lại phải tự vẽ ring cho surface:
+ * ChartContainer của shadcn đặt `outline-hidden` lên nó nên focus bằng bàn phím
+ * trước đó không hiện gì cả.
+ *
+ * Viết ngoài @layer để thắng utilities layer của Tailwind, vì thứ tự layer quyết
+ * định trước specificity.
+ */
+[data-slot="chart"] svg :focus {
+  outline: none;
+}
+
+[data-slot="chart"] .recharts-surface:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+@layer utilities {
+  .chungdoi-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    touch-action: pan-y;
+  }
+  .chungdoi-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .chungdoi-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .chungdoi-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+  .chungdoi-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Dải điều hướng ngang của admin dưới breakpoint lg. Có 13 mục nên nó luôn
+     tràn trên điện thoại, và thanh scroll ngang nằm dưới hàng pill trông như
+     giao diện bị lỗi. Ẩn thanh scroll đi, rồi thay tín hiệu "còn cuộn được"
+     bằng vệt mờ ở đúng phía còn nội dung — hai data attribute do JS bật/tắt
+     theo scrollLeft.
+
+     Fade 0px nghĩa là gradient chuyển từ transparent sang đen trong khoảng
+     rộng 0, tức không có vệt mờ nào — nên trạng thái mặc định (không tràn)
+     nhìn y như khi chưa có mask. */
+  .admin-nav-strip {
+    --admin-nav-fade-start: 0px;
+    --admin-nav-fade-end: 0px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--admin-nav-fade-start),
+      #000 calc(100% - var(--admin-nav-fade-end)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--admin-nav-fade-start),
+      #000 calc(100% - var(--admin-nav-fade-end)),
+      transparent 100%
+    );
+  }
+
+  .admin-nav-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav-strip[data-overflow-start="true"] {
+    --admin-nav-fade-start: 24px;
+  }
+
+  .admin-nav-strip[data-overflow-end="true"] {
+    --admin-nav-fade-end: 24px;
+  }
+
+  /* Bảng quản trị: xem `src/components/admin-table-scroller.tsx` để biết vì sao
+     thanh cuộn thật của bảng bị ẩn và thay bằng một thanh ghim ở đáy màn hình.
+
+     Chỉ ẩn khi `data-proxy="on"` — cờ do component bật sau khi gắn. Trước lúc
+     đó (HTML từ server, hoặc JS lỗi) bảng vẫn giữ thanh cuộn gốc. */
+  .admin-table-viewport {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .admin-table-viewport[data-proxy="on"] {
+    scrollbar-width: none;
+  }
+
+  .admin-table-viewport[data-proxy="on"]::-webkit-scrollbar {
+    height: 0;
+    display: none;
+  }
+
+  /* macOS ẩn thanh cuộn overlay khi đứng yên, nên để mặc định thì thanh ghim
+     này vô hình đúng lúc cần nhìn thấy nhất. Khai báo `::-webkit-scrollbar`
+     buộc WebKit/Blink chuyển sang thanh luôn hiện. */
+  .admin-table-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent)
+      transparent;
+  }
+
+  .admin-table-scrollbar::-webkit-scrollbar {
+    height: 12px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .admin-table-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /* Viền trong suốt + `background-clip: content-box` là cách thu nút kéo lại
+     cho mảnh mà vẫn giữ nguyên vùng bấm 12px. */
+  .admin-table-scrollbar::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+  }
+
+  .admin-table-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in oklab, var(--muted-foreground) 85%, transparent);
+  }
+
+  /* Cột ghim. Kéo ngang mà cột danh tính trôi đi thì đọc được ô bên phải cũng
+     không biết nó thuộc dòng nào, nên cột đầu và cột thao tác đứng yên.
+
+     Chỉ từ 48rem trở lên: trên điện thoại, hai cột ghim chiếm gần hết chiều
+     ngang và phần cuộn được còn lại chỉ vài chục pixel — tệ hơn là không ghim. */
+  @media (min-width: 48rem) {
+    /* Nền phải đục: `sticky` không cắt nội dung phía dưới, nó chỉ nằm trên. */
+    .admin-col-pin-start,
+    .admin-col-pin-end {
+      position: sticky;
+      z-index: 1;
+      background-color: var(--background);
+    }
+
+    .admin-col-pin-start {
+      left: 0;
+    }
+
+    .admin-col-pin-end {
+      right: 0;
+    }
+
+    /* `thead` tô `bg-muted/40`, tức nửa trong suốt. Ô ghim cần chính màu đã hoà
+       lên nền, chứ lấy `var(--muted)` trần là header sẽ lệch tông hai bên. */
+    .admin-table-viewport thead .admin-col-pin-start,
+    .admin-table-viewport thead .admin-col-pin-end {
+      z-index: 2;
+      background-color: color-mix(in oklab, var(--muted) 40%, var(--background));
+    }
+
+    /* Nền đục của ô ghim phủ mất đường kẻ dưới của hàng, nên vẽ lại bằng shadow
+       bên trong ô. */
+    .admin-table-viewport tbody tr:not(:last-child) .admin-col-pin-start,
+    .admin-table-viewport tbody tr:not(:last-child) .admin-col-pin-end {
+      box-shadow: inset 0 -1px 0 var(--border);
+    }
+
+    /* Vệt đổ chỉ hiện ở phía còn nội dung bị che, để lúc bảng vừa khung thì cột
+       ghim nhìn y như cột thường. */
+    .admin-table-viewport[data-overflow-start="true"] .admin-col-pin-start::after,
+    .admin-table-viewport[data-overflow-end="true"] .admin-col-pin-end::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 12px;
+      pointer-events: none;
+    }
+
+    .admin-table-viewport[data-overflow-start="true"] .admin-col-pin-start::after {
+      left: 100%;
+      background: linear-gradient(
+        to right,
+        color-mix(in oklab, var(--foreground) 12%, transparent),
+        transparent
+      );
+    }
+
+    .admin-table-viewport[data-overflow-end="true"] .admin-col-pin-end::after {
+      right: 100%;
+      background: linear-gradient(
+        to left,
+        color-mix(in oklab, var(--foreground) 12%, transparent),
+        transparent
+      );
+    }
+  }
+
+  .font-pattaya {
+    font-family: "Pattaya", cursive;
+  }
+
+  .font-wedding {
+    font-family: "Fz Aghita", "Pattaya", cursive;
+  }
+
+  .font-qellia {
+    font-family: "Fz Qellia", "Times New Roman", serif;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-enter {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: hero-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--hero-delay, 0ms);
+}
+
+@keyframes hero-enter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-left.is-visible,
+.reveal-right.is-visible,
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform-origin: 0 0;
+  transform: scaleX(var(--scroll-progress, 0));
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  z-index: 100;
+  pointer-events: none;
+}
+
+.hero-preview-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-preview-slide.is-active {
+  opacity: 1;
+}
+
+.stack-fan-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stack-fan-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 230px;
+  height: 345px;
+  margin-left: -115px;
+  margin-top: -172px;
+  transform-origin: bottom center;
+  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1), opacity 620ms ease;
+  will-change: transform, opacity;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.stack-fan-card img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.coverflow-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.coverflow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--foreground) 22%, transparent);
+  transition: width 300ms ease, background 300ms ease;
+  cursor: pointer;
+}
+
+.coverflow-dot.is-active {
+  width: 26px;
+  background: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-fan-stage {
+    perspective: none;
+  }
+  .stack-fan-card {
+    transition: none;
+  }
+}
+
+.petal-field {
+  z-index: 30;
+}
+
+.petal {
+  position: absolute;
+  top: -8%;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 214, 220, 0.95), rgba(214, 69, 80, 0.75));
+  border-radius: 100% 0 100% 0;
+  opacity: 0;
+  animation: petal-fall linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes petal-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  10% {
+    opacity: 0.55;
+  }
+  90% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(115vh) translateX(60px) rotate(420deg);
+  }
+}
+
+.shiny-text {
+  background: linear-gradient(
+    100deg,
+    var(--primary) 0%,
+    var(--primary) 35%,
+    var(--accent) 50%,
+    var(--primary) 65%,
+    var(--primary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shiny-sheen 5s linear infinite;
+  display: inline-block;
+  padding-block: 0.12em;
+}
+
+@keyframes shiny-sheen {
+  to {
+    background-position: -200% center;
+  }
+}
+
+/* `background-position` là thuộc tính Chromium KHÔNG chạy được trên compositor,
+   nên mỗi frame của vệt sáng này là một lượt recalc style + repaint toàn document
+   trên main thread. Animation CSS lại vẫn tick khi phần tử đã cuộn khỏi màn hình,
+   nên cái giá đó phải trả suốt thời gian tab mở, đổi lấy đúng con số 0.
+
+   Đo trên PRODUCTION (thiepmungonline.com) ở scrollY=2200 (hero đã khuất), trang
+   đứng yên, cửa sổ 6000ms, CPU throttle x4: chỉ tạm dừng riêng phần tử này kéo
+   main thread từ 3457ms xuống 2032ms (-41%) và style recalc từ 679 xuống 324
+   (-52%). `ScriptDuration` gần như không đổi (254ms -> 259ms), xác nhận đây là chi
+   phí style/paint thuần, không phải JS.
+
+   Đừng đo con số này ở local `next dev`: trang chủ ở dev KHÔNG hydrate (không có
+   React fiber, embla không khởi tạo, useRevealOnScroll không chạy), nên mọi số
+   liên quan tới JS đo ở đó đều vô nghĩa và sẽ phóng đại tỉ lệ của animation.
+
+   `HeroShinyTitle` bật cờ khi hero ra khỏi viewport. Không ai nhìn thấy phần bị
+   dừng, nên không có thay đổi thị giác nào. Dừng chứ không phải `animation: none`
+   để lúc quay lại vệt sáng chạy tiếp từ đúng vị trí cũ, không nhảy. */
+.shiny-text[data-sheen-paused="true"] {
+  animation-play-state: paused;
+}
+
+.template-carousel-viewport {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  touch-action: auto;
+}
+
+.template-carousel-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.animate-float {
+  animation: float 6.5s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(1.5deg);
+  }
+}
+
+.demo-ambient-symbol {
+  animation-name: demo-ambient-rise;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  opacity: 0;
+  text-shadow: 0 10px 28px rgb(0 0 0 / 28%);
+}
+
+.demo-envelope-card::before {
+  content: "";
+  position: absolute;
+  inset: -60% -80%;
+  z-index: 2;
+  background: linear-gradient(120deg, transparent 38%, rgb(255 255 255 / 22%) 50%, transparent 62%);
+  animation: demo-shimmer 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.demo-open-button {
+  animation: demo-button-glow 2.2s ease-in-out infinite;
+}
+
+.demo-fade-up {
+  animation: demo-fade-up 820ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.demo-slow-pan {
+  animation: demo-slow-pan 18s ease-in-out infinite alternate;
+}
+
+.demo-spin-slow {
+  animation: demo-spin 6s linear infinite;
+}
+
+@keyframes demo-ambient-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+  }
+  16% {
+    opacity: 0.88;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--sway), -112vh, 0) rotate(24deg) scale(1.16);
+  }
+}
+
+@keyframes demo-ambient-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+  }
+  16% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--sway), 112vh, 0) rotate(200deg) scale(1.1);
+  }
+}
+
+.demo-ambient-fall {
+  animation-name: demo-ambient-fall;
+}
+
+.invitation-parallax-motif {
+  overflow: hidden;
+  border-radius: 48%;
+  will-change: transform;
+}
+
+@keyframes invitation-parallax-drift {
+  from { transform: translate3d(0, -12px, 0) rotate(-1.5deg) scale(1.02); }
+  to { transform: translate3d(0, 18px, 0) rotate(1.5deg) scale(1.06); }
+}
+
+.invitation-hero-artwork {
+  opacity: 0.32;
+}
+
+@supports ((mask-image: linear-gradient(#000, #000)) or (-webkit-mask-image: linear-gradient(#000, #000))) {
+  .invitation-hero-artwork {
+    opacity: 1;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      transparent 88%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      transparent 88%,
+      transparent 100%
+    );
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+}
+
+@keyframes invitation-hero-parallax {
+  from { transform: translate3d(0, -3%, 0) scale(1.04); }
+  to { transform: translate3d(0, 7%, 0) scale(1.14); }
+}
+
+@keyframes invitation-photo-reveal {
+  from { opacity: 0.82; transform: translate3d(0, 28px, 0) scale(0.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.invitation-parallax-left,
+.invitation-parallax-right,
+.invitation-parallax-center {
+  animation: invitation-parallax-drift 9s ease-in-out infinite alternate;
+}
+
+.invitation-parallax-right {
+  animation-delay: -3s;
+  animation-duration: 11s;
+}
+
+.invitation-parallax-center {
+  animation-delay: -6s;
+  animation-duration: 13s;
+}
+
+@supports (animation-timeline: view()) {
+
+  .invitation-hero-parallax {
+    animation: invitation-hero-parallax linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% exit 100%;
+  }
+
+  .invitation-photo-reveal {
+    animation: invitation-photo-reveal linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 38%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation-parallax-motif,
+  .invitation-hero-parallax,
+  .invitation-photo-reveal {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Vệt sáng quét ngang nút CTA.
+ *
+ * `::after` rộng 100% nút, KHÔNG rộng bằng vệt sáng: `translateX(%)` trong
+ * `transform` neo theo bề rộng của chính phần tử được transform. Bản cũ đặt
+ * `width: 2.5rem` nên `translateX(320%)` chỉ đi được 320% × 40px = 128px, cộng
+ * bề rộng vệt ra 168px CỨNG bất kể nút rộng bao nhiêu — nút 253px chỉ được quét
+ * 66%. Cho phần tử rộng 100% rồi vẽ vệt bằng `background-size` thì vệt vẫn hẹp
+ * cố định 2.5rem, còn `100%` lúc này đúng bằng bề rộng nút.
+ *
+ * Hai mốc đều chừa 1rem lề: `skewX` làm vệt lệch ngang tới ±(cao/2)·tan12° ≈ 6px
+ * ở mép trên/dưới, không chừa thì còn sót một sợi trắng ở mép nút suốt 40% chu
+ * kỳ mà animation đang giữ ở 100%. */
+@keyframes demo-shine {
+  0% {
+    transform: translateX(-3.5rem) skewX(-12deg);
+  }
+  60%,
+  100% {
+    transform: translateX(calc(100% + 1rem)) skewX(-12deg);
+  }
+}
+
+.demo-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 45%), transparent);
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%;
+  animation: demo-shine 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Tia sáng lặp vô hạn, nên bỏ hẳn khi người dùng yêu cầu giảm chuyển động.
+   Dùng display: none chứ không phải content: none — giá trị mặc định của
+   content trên ::after cũng tính ra none, nên minifier coi là dư và xoá rule,
+   khiến override mất tác dụng. */
+@media (prefers-reduced-motion: reduce) {
+  .demo-shine::after {
+    display: none;
+  }
+}
+
+@keyframes demo-seal-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+@keyframes demo-seal-break {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(1.15) rotate(5deg);
+    opacity: 0.9;
+    filter: brightness(1.3);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.05) rotate(-3deg);
+    opacity: 0.5;
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0) rotate(15deg);
+    opacity: 0;
+    filter: brightness(2);
+  }
+}
+
+@keyframes demo-seal-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes demo-particle-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3) rotate(var(--rot-start, 15deg));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.6) rotate(var(--rot-end, 180deg));
+  }
+}
+
+@keyframes demo-envelope-away {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  15% {
+    transform: translateY(10px) rotate(0.5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(-2deg);
+    opacity: 0;
+  }
+}
+
+@keyframes demo-art-envelope-away {
+  0%,
+  48% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(-5vh) rotate(-0.6deg);
+    opacity: 0.94;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(-2deg);
+    opacity: 0;
+  }
+}
+
+/* Bìa liền một mặt (xem chungdoi-cover-variant-policy.ts): cả tấm bìa trượt
+ * thẳng lên trong một nhịp, không nghiêng và không nhún trước như
+ * `demo-envelope-away` — mẫu này không có con dấu để "bật" ra nên mọi cử động
+ * phụ chỉ làm mất cảm giác một tờ giấy liền. Giữ opacity 1 tới 82% để tấm bìa
+ * còn thấy rõ đúng lúc nó rời khung. */
+@keyframes demo-single-panel-cover-away {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-112vh);
+    opacity: 0;
+  }
+}
+
+@keyframes demo-cover-out {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes demo-art-cover-out {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── Bản sao "bay ra" của decor bìa: ép đo theo chiều CAO ────────────────────
+ * Lớp bay (OpeningFlyDecor + nhánh fly-out trong CoverCard) bọc ảnh trong một
+ * `div` mang `cardImages[].className` rồi cho ảnh `w-full`. Cách đó chỉ đúng khi
+ * className chốt chiều RỘNG (`w-[38%]`, `w-40`…): div có bề rộng xác định nên
+ * `w-full` giải được. Theme nào chốt chiều CAO (`h-36 w-auto`, `h-[65%] w-auto`)
+ * thì bề rộng của div là shrink-to-fit quanh chính ảnh → vòng lặp, ảnh phình lên
+ * gấp 1.6-5 lần ảnh tĩnh và cú zoom trông rất thô.
+ *
+ * Thêm `envelope-fly-fit-height` vào className của theme đó là hết. Test
+ * `src/data/opening-fly-decor.test.ts` chặn cứng: mọi entry `flyOnOpen` phải có
+ * bề rộng tường minh HOẶC mang class này.
+ *
+ * `--demo-fly-start-opacity: 1` để bản sao bắt đầu ở ĐÚNG opacity của ảnh tĩnh:
+ * wrapper đã mang `opacity-*` của theme rồi, ảnh chỉ cần mờ dần 1 → 0. Theme nào
+ * bản gốc làm khác thì ghi đè riêng như Hoa Thủy Tinh Đỏ / Minimalism Nâu dưới đây.
+ * ────────────────────────────────────────────────────────────────────────── */
+.envelope-fly-fit-height > img {
+  --demo-fly-start-opacity: 1;
+  width: auto !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+
+/* Hoa Thủy Tinh Đỏ: `opacity` quan trọng hơn inline hidden để ảnh tĩnh vẫn neo
+   trên bìa khi bản sao mờ phóng ra ngoài. */
+.crystal-floral-opening-fly {
+  opacity: 1 !important;
+}
+
+/* Minimalism Nâu: bản gốc để wrapper opacity 1 và cho chính ảnh bay chạy
+   0.7 → 0.5 → 0. Chỉ nhắm `div` vì class này CŨNG nằm trên thẻ `img` của lớp
+   decor TĨNH, mà ảnh tĩnh phải giữ `opacity-70` như bản gốc. */
+div.minimalism-brown-opening-fly {
+  opacity: 1 !important;
+}
+
+.crystal-floral-opening-fly > img,
+div.minimalism-brown-opening-fly > img {
+  --demo-fly-start-opacity: 0.7;
+}
+
+@keyframes demo-dragon-fly {
+  0% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: var(--demo-fly-start-opacity, 0.9);
+  }
+  40% {
+    transform: scale(1.6);
+    filter: blur(2px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(3);
+    filter: blur(10px);
+    opacity: 0;
+  }
+}
+
+.zodiac-mask-artwork {
+  display: block;
+  pointer-events: none;
+  background-color: var(--zodiac-art-color, #d4a24a);
+  -webkit-mask-image: var(--zodiac-mask-image);
+  mask-image: var(--zodiac-mask-image);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zodiac-opening-fly {
+    animation: none !important;
+    filter: none !important;
+    opacity: 0 !important;
+    transform: none !important;
+  }
+
+  .zodiac-invitation [data-parallax] {
+    transform: none !important;
+    will-change: auto !important;
+  }
+}
+
+@keyframes demo-shimmer {
+  0%,
+  45% {
+    transform: translateX(-20%) rotate(8deg);
+    opacity: 0;
+  }
+  62% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(35%) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+@keyframes demo-button-glow {
+  0%,
+  100% {
+    box-shadow: 0 18px 42px rgb(0 0 0 / 28%);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 18px 54px rgb(255 226 143 / 34%);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes demo-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes demo-slow-pan {
+  from {
+    transform: scale(1.05) translate3d(-1.5%, -1%, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(1.5%, 1%, 0);
+  }
+}
+
+@keyframes demo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nhat-binh-hint-text {
+  animation: nhat-binh-hint-pulse 2s ease-in-out infinite;
+}
+
+.nhat-binh-envelope-wrapper {
+  transition: transform 0.3s ease;
+}
+
+.nhat-binh-envelope-wrapper:hover {
+  transform: scale(1.08);
+}
+
+.nhat-binh-envelope-body {
+  animation: nhat-binh-envelope-shake 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.nhat-binh-envelope-front {
+  animation: nhat-binh-glow-pulse 1.5s ease-in-out infinite;
+}
+
+.nhat-binh-coin-1 {
+  animation: nhat-binh-coin-float-1 3s ease-in-out infinite;
+}
+
+.nhat-binh-coin-2 {
+  animation: nhat-binh-coin-float-2 3.7s ease-in-out infinite;
+}
+
+.nhat-binh-coin-3 {
+  animation: nhat-binh-coin-float-3 2.8s ease-in-out infinite;
+}
+
+.nhat-binh-coin-4 {
+  animation: nhat-binh-coin-float-4 3.3s ease-in-out infinite;
+}
+
+.nhat-binh-coin-5 {
+  animation: nhat-binh-coin-float-5 4s ease-in-out infinite;
+}
+
+.nhat-binh-envelope-wrapper:hover .nhat-binh-coin-1 {
+  animation: nhat-binh-coin-fly-up-1 0.8s ease-out infinite;
+}
+
+.nhat-binh-envelope-wrapper:hover .nhat-binh-coin-2 {
+  animation: nhat-binh-coin-fly-up-2 0.8s ease-out 0.15s infinite;
+}
+
+.nhat-binh-envelope-wrapper:hover .nhat-binh-coin-3 {
+  animation: nhat-binh-coin-fly-up-3 0.8s ease-out 0.3s infinite;
+}
+
+.nhat-binh-envelope-wrapper:hover .nhat-binh-coin-4 {
+  animation: nhat-binh-coin-fly-up-4 0.8s ease-out 0.45s infinite;
+}
+
+.nhat-binh-envelope-wrapper:hover .nhat-binh-coin-5 {
+  animation: nhat-binh-coin-fly-up-5 0.8s ease-out 0.6s infinite;
+}
+
+.nhat-binh-sparkle {
+  animation: nhat-binh-sparkle 2s ease-in-out infinite;
+}
+
+.nhat-binh-sparkle-2 {
+  animation-delay: 0.7s;
+}
+
+.nhat-binh-sparkle-3 {
+  animation-delay: 1.4s;
+}
+
+@keyframes nhat-binh-envelope-shake {
+  0%,
+  20%,
+  80%,
+  100% {
+    transform: rotate(0deg);
+  }
+  4%,
+  12%,
+  84%,
+  92% {
+    transform: rotate(-2.5deg);
+  }
+  8%,
+  16%,
+  88%,
+  96% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@keyframes nhat-binh-coin-float-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(8px, -12px) rotate(180deg);
+  }
+}
+
+@keyframes nhat-binh-coin-float-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-10px, -8px) rotate(-120deg);
+  }
+}
+
+@keyframes nhat-binh-coin-float-3 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(5px, -15px) rotate(90deg);
+  }
+}
+
+@keyframes nhat-binh-coin-float-4 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-8px, -10px) rotate(-90deg);
+  }
+}
+
+@keyframes nhat-binh-coin-float-5 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(12px, -6px) rotate(150deg);
+  }
+}
+
+@keyframes nhat-binh-coin-fly-up-1 {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-120px) rotate(360deg);
+  }
+}
+
+@keyframes nhat-binh-coin-fly-up-2 {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100px) rotate(-300deg);
+  }
+}
+
+@keyframes nhat-binh-coin-fly-up-3 {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-130px) rotate(400deg);
+  }
+}
+
+@keyframes nhat-binh-coin-fly-up-4 {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-110px) rotate(-350deg);
+  }
+}
+
+@keyframes nhat-binh-coin-fly-up-5 {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-90px) rotate(320deg);
+  }
+}
+
+@keyframes nhat-binh-sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes nhat-binh-glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px 5px rgb(251 191 36 / 30%),
+      0 0 40px 10px rgb(251 191 36 / 20%);
+  }
+  50% {
+    box-shadow:
+      0 0 30px 10px rgb(251 191 36 / 50%),
+      0 0 60px 20px rgb(251 191 36 / 30%);
+  }
+}
+
+@keyframes nhat-binh-hint-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.igb-bob {
+  animation: igb-gift-bob 2.4s ease-in-out infinite;
+}
+
+.igb-box {
+  transition: transform 0.3s;
+  transform-origin: 50% 100%;
+}
+
+.group:hover .igb-box,
+.group:focus-visible .igb-box {
+  animation: igbBoxPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.igb-hint {
+  animation: igbHintPulse 2s ease-in-out infinite;
+}
+
+/* ── Phong bì hộp quà bản source-matched (SourceLayeredGiftArtwork) ──────────
+ * Sao đúng tên keyframe, thời lượng và độ trễ từ chungdoi.com. Tách khỏi bộ
+ * `.igb-*` ở trên vì bản mặc định đang dùng cho ~37 mẫu khác.
+ * `ienv-card` dịch ngang -15% ngay trong keyframe nên đừng canh giữa bằng
+ * transform ở chỗ khác — sẽ chồng lệch.
+ * ────────────────────────────────────────────────────────────────────────── */
+.ienv-shadow {
+  animation: ienvShadowPulse 3s ease-in-out infinite;
+}
+
+.ienv-card {
+  transition: transform 0.35s;
+  transform-origin: 50% 92%;
+  animation: ienvFloatMain 3s ease-in-out infinite;
+}
+
+.ienv-back {
+  transition: rotate 0.3s;
+  animation: ienvFloat 5.2s ease-in-out 0.5s infinite;
+}
+
+.group:hover .ienv-card,
+.group:focus-visible .ienv-card {
+  animation:
+    ienvFloatMain 3s ease-in-out infinite,
+    ienvGrow 0.35s ease forwards,
+    ienvWave 1.1s ease-in-out 0.35s infinite;
+}
+
+.group:hover .ienv-back,
+.group:focus-visible .ienv-back {
+  animation:
+    ienvFloat 5.2s ease-in-out 0.5s infinite,
+    ienvBackWave 2.2s ease-in-out infinite;
+}
+
+.ienv-hint {
+  animation: ienvHintPulse 2s ease-in-out infinite;
+}
+
+.ienv-sparkle,
+.ienv-sparkle-2,
+.ienv-sparkle-3,
+.ienv-sparkle-4 {
+  animation: ienvSparkleAnim 2s ease-in-out infinite;
+}
+
+.ienv-sparkle-2 {
+  animation-delay: 0.6s;
+}
+
+.ienv-sparkle-3 {
+  animation-delay: 1.2s;
+}
+
+.ienv-sparkle-4 {
+  animation-delay: 1.7s;
+}
+
+@keyframes ienvFloat {
+  0%,
+  100% {
+    translate: 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes ienvFloatMain {
+  0%,
+  100% {
+    translate: -15%;
+  }
+  50% {
+    translate: -15% -7px;
+  }
+}
+
+@keyframes ienvShadowPulse {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.28;
+  }
+  50% {
+    transform: scaleX(0.9);
+    opacity: 0.16;
+  }
+}
+
+@keyframes ienvSparkleAnim {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes ienvHintPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes ienvGrow {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ienvWave {
+  0% {
+    transform: scale(1.12) rotate(0deg);
+  }
+  20% {
+    transform: scale(1.12) rotate(-6deg);
+  }
+  40% {
+    transform: scale(1.12) rotate(4.5deg);
+  }
+  60% {
+    transform: scale(1.12) rotate(-3deg);
+  }
+  80% {
+    transform: scale(1.12) rotate(1.5deg);
+  }
+  100% {
+    transform: scale(1.12) rotate(0deg);
+  }
+}
+
+@keyframes ienvBackWave {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  20% {
+    rotate: -1deg;
+  }
+  40% {
+    rotate: 2deg;
+  }
+  60% {
+    rotate: -2.5deg;
+  }
+  80% {
+    rotate: 1.5deg;
+  }
+}
+
+/* ── Hai ảnh nghiêng trong cụm phong bì ở hero mẫu Minimalism Xanh ───────────
+ * Keyframe gộp luôn `translate(-50%)` nên nó vừa canh giữa theo `left` vừa lo
+ * phần bồng bềnh; đừng thêm `-translate-x-1/2` ở markup.
+ * ────────────────────────────────────────────────────────────────────────── */
+.mg-float-g {
+  will-change: transform;
+  animation: mgFloatG 4s ease-in-out infinite;
+}
+
+.mg-float-b {
+  will-change: transform;
+  animation: mgFloatB 4.6s ease-in-out infinite;
+}
+
+@keyframes mgFloatG {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(9.59deg);
+  }
+  50% {
+    transform: translate(-50%, -8px) rotate(9.59deg);
+  }
+}
+
+@keyframes mgFloatB {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(-12.55deg);
+  }
+  50% {
+    transform: translate(-50%, -8px) rotate(-12.55deg);
+  }
+}
+
+/* ── Nhánh hoa / lá bồng bềnh của mẫu Minimalism Nâu ─────────────────────────
+ * Bản gốc chèn keyframe này bằng một thẻ <style> ngay trong thiệp và đặt
+ * `animation` inline với 6 cặp thời lượng/độ trễ khác nhau. Ở đây chỉ khai
+ * keyframe, renderer vẫn đặt thời lượng inline để giữ đúng 6 pha lệch nhau.
+ * Xoay/lật nằm ở thẻ <img> con nên keyframe chỉ lo phần trôi dọc.
+ * ────────────────────────────────────────────────────────────────────────── */
+@keyframes mbFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Two-sided gift card used by GiftFlipCard. */
+.gift-flip-scene {
+  perspective: 1200px;
+}
+
+.gift-flip-card {
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gift-flip-card[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+
+.gift-flip-card:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 4px;
+}
+
+.gift-flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.gift-flip-face-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-flip-card,
+  .gift-flip-card[data-flipped="true"] {
+    transform: none;
+    transition: none;
+  }
+
+  .gift-flip-face {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition: opacity 180ms ease;
+  }
+
+  .gift-flip-face-back {
+    transform: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gift-flip-card[data-flipped="true"] .gift-flip-face {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gift-flip-card[data-flipped="true"] .gift-flip-face-back {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.group:hover .igb-decor-1, .group:focus-visible .igb-decor-1 { animation: igbDecorFlyUp1 1.6s ease-in-out infinite; }
+.group:hover .igb-decor-2, .group:focus-visible .igb-decor-2 { animation: igbDecorFlyUp2 1.8s ease-in-out 0.15s infinite; }
+.group:hover .igb-decor-3, .group:focus-visible .igb-decor-3 { animation: igbDecorFlyUp3 1.4s ease-in-out 0.3s infinite; }
+.group:hover .igb-decor-4, .group:focus-visible .igb-decor-4 { animation: igbDecorFlyUp4 1.7s ease-in-out 0.45s infinite; }
+.group:hover .igb-decor-5, .group:focus-visible .igb-decor-5 { animation: igbDecorFlyUp5 1.9s ease-in-out 0.1s infinite; }
+.group:hover .igb-decor-6, .group:focus-visible .igb-decor-6 { animation: igbDecorFlyUp6 1.3s ease-in-out 0.35s infinite; }
+.group:hover .igb-decor-7, .group:focus-visible .igb-decor-7 { animation: igbDecorFlyUp7 1.7s ease-in-out 0.2s infinite; }
+
+/* ── Hộp quà bản source-matched (SourceGiftboxArtwork) ───────────────────────
+ * Bản gốc chungdoi.com thêm vệt bóng đáy, 4 đốm sáng ✦ và một chùm giấy vụn
+ * bay lên khi hover. Bộ `.igb-*` ở trên đang dùng cho 4 mẫu giftbox khác nên
+ * ba nhóm này tách riêng và chỉ bật khi renderer chọn biến thể "source".
+ * ────────────────────────────────────────────────────────────────────────── */
+.igb-shadow { animation: igbShadowPulse 3s ease-in-out infinite; }
+.igb-sparkle { animation: igbSparkleAnim 2s ease-in-out infinite; }
+.igb-sparkle-2 { animation: igbSparkleAnim 2s ease-in-out 0.6s infinite; }
+.igb-sparkle-3 { animation: igbSparkleAnim 2s ease-in-out 1.2s infinite; }
+.igb-sparkle-4 { animation: igbSparkleAnim 2s ease-in-out 1.7s infinite; }
+
+.igb-confetti { opacity: 0; }
+.group:hover .igb-c1, .group:focus-visible .igb-c1 { animation: igbConfettiFly1 1s ease-out 0.05s infinite; }
+.group:hover .igb-c2, .group:focus-visible .igb-c2 { animation: igbConfettiFly2 1.1s ease-out 0.12s infinite; }
+.group:hover .igb-c3, .group:focus-visible .igb-c3 { animation: igbConfettiFly3 0.95s ease-out 0.2s infinite; }
+.group:hover .igb-c4, .group:focus-visible .igb-c4 { animation: igbConfettiFly4 1.15s ease-out 0.3s infinite; }
+.group:hover .igb-c5, .group:focus-visible .igb-c5 { animation: igbConfettiFly5 1.05s ease-out 0.35s infinite; }
+.group:hover .igb-c6, .group:focus-visible .igb-c6 { animation: igbConfettiFly6 1.2s ease-out 0.4s infinite; }
+.group:hover .igb-c7, .group:focus-visible .igb-c7 { animation: igbConfettiFly7 0.9s ease-out 0.5s infinite; }
+.group:hover .igb-c8, .group:focus-visible .igb-c8 { animation: igbConfettiFly8 1.1s ease-out 0.55s infinite; }
+
+@keyframes igbShadowPulse {
+  0%, 100% { transform: scaleX(1); opacity: 0.3; }
+  50% { transform: scaleX(0.9); opacity: 0.18; }
+}
+
+@keyframes igbSparkleAnim {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes igbConfettiFly1 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-55px, -130px) rotate(540deg); opacity: 0; }
+}
+@keyframes igbConfettiFly2 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(46px, -150px) rotate(-460deg); opacity: 0; }
+}
+@keyframes igbConfettiFly3 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-12px, -160px) rotate(620deg); opacity: 0; }
+}
+@keyframes igbConfettiFly4 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(28px, -115px) rotate(-340deg); opacity: 0; }
+}
+@keyframes igbConfettiFly5 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-34px, -105px) rotate(320deg); opacity: 0; }
+}
+@keyframes igbConfettiFly6 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(58px, -88px) rotate(-240deg); opacity: 0; }
+}
+@keyframes igbConfettiFly7 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(8px, -170px) rotate(420deg); opacity: 0; }
+}
+@keyframes igbConfettiFly8 {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-46px, -78px) rotate(-200deg); opacity: 0; }
+}
+
+@keyframes igb-gift-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes igbHintPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+@keyframes igbBoxPop {
+  0% { transform: translateY(0) scale(1) rotate(0deg); }
+  45% { transform: translateY(-14px) scale(1.08) rotate(-3deg); }
+  100% { transform: translateY(-8px) scale(1.05) rotate(0deg); }
+}
+
+@keyframes igbDecorFlyUp1 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: -6px -28px; opacity: 1; }
+  80% { translate: -14px -55px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes igbDecorFlyUp2 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: 6px -30px; opacity: 1; }
+  80% { translate: 14px -60px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes igbDecorFlyUp3 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: -4px -32px; opacity: 1; }
+  80% { translate: -10px -65px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes igbDecorFlyUp4 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: 5px -35px; opacity: 1; }
+  80% { translate: 12px -70px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes igbDecorFlyUp5 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: -3px -40px; opacity: 1; }
+  80% { translate: -8px -80px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes igbDecorFlyUp6 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: 4px -38px; opacity: 1; }
+  80% { translate: 10px -75px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+@keyframes igbDecorFlyUp7 {
+  0% { translate: 0 0; opacity: 1; }
+  55% { translate: 6px -36px; opacity: 1; }
+  80% { translate: 14px -72px; opacity: 0; }
+  81% { translate: 0 0; opacity: 0; }
+  100% { translate: 0 0; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .demo-fade-up {
+    animation: none;
+  }
+
+  .petal {
+    display: none;
+  }
+
+  .shiny-text {
+    animation: none;
+  }
+}
+/* Tight alpha layers share one canvas coordinate system with the 3D card. */
+.opening-effect-artwork {
+  overflow: visible;
+}
+
+.opening-effect-artwork [data-opening-layer] {
+  transform-box: fill-box;
+  will-change: transform, opacity, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening-effect-artwork [data-opening-layer] {
+    filter: none !important;
+  }
+}
+
+.blog-editor-content {
+  min-height: 12rem;
+  padding: 1.25rem;
+  outline: none;
+  color: var(--foreground);
+  line-height: 1.75;
+}
+
+.blog-editor-content > * + *,
+.blog-article-content > * + * {
+  margin-top: 1.25rem;
+}
+
+.blog-editor-content h1,
+.blog-article-content h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.blog-editor-content h2,
+.blog-article-content h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.blog-editor-content h3,
+.blog-article-content h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.blog-editor-content ul,
+.blog-article-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.blog-editor-content ol,
+.blog-article-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+
+.blog-editor-content li + li,
+.blog-article-content li + li {
+  margin-top: 0.4rem;
+}
+
+.blog-editor-content blockquote,
+.blog-article-content blockquote {
+  border-left: 4px solid var(--primary);
+  padding: 0.35rem 0 0.35rem 1.25rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.blog-editor-content a,
+.blog-article-content a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.blog-editor-content hr,
+.blog-article-content hr {
+  margin-block: 2rem;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.blog-editor-content img,
+.blog-article-content img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border-radius: 1rem;
+}
+
+.blog-editor-content iframe,
+.blog-editor-content video,
+.blog-article-content iframe,
+.blog-article-content video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+  border: 0;
+  border-radius: 1rem;
+  background: #000;
+}
+
+.blog-editor-content p.is-editor-empty:first-child::before {
+  content: "Bắt đầu viết nội dung…";
+  float: left;
+  height: 0;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.blog-article-content {
+  color: var(--foreground);
+  font-size: 1.0625rem;
+  line-height: 1.9;
+}
+
+/* Blog typography is shared by the TipTap canvas and sanitized public HTML. */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Comic Hero Assemble template
+   A print-comic surface built entirely from gradients and clip-paths so the
+   template ships without any bitmap decor. `currentColor` drives every ink
+   pattern, letting a single wrapper switch the whole panel palette.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.comic-halftone {
+  background-image: radial-gradient(currentColor 1.3px, transparent 1.4px);
+  background-size: 7px 7px;
+}
+
+.comic-halftone-lg {
+  background-image: radial-gradient(currentColor 2.4px, transparent 2.5px);
+  background-size: 13px 13px;
+}
+
+/* Newsprint tint: two offset dot grids read as aged pulp at low opacity. */
+.comic-newsprint {
+  background-image:
+    radial-gradient(currentColor 0.9px, transparent 1px),
+    radial-gradient(currentColor 0.9px, transparent 1px);
+  background-size: 9px 9px, 9px 9px;
+  background-position: 0 0, 4.5px 4.5px;
+}
+
+.comic-speedlines {
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    currentColor 0deg 1.5deg,
+    transparent 1.5deg 8deg
+  );
+}
+
+.comic-motionlines {
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 2px,
+    transparent 2px 9px
+  );
+}
+
+/* Ragged 14-point badge used for the issue stamp and section markers. */
+.comic-badge-shape {
+  clip-path: polygon(
+    50.0% 0.0%, 57.6% 16.9%, 69.5% 9.5%, 71.2% 23.4%, 87.5% 20.1%, 80.6% 35.2%,
+    91.9% 40.4%, 84.0% 50.0%, 95.8% 60.5%, 80.6% 64.8%, 86.0% 78.7%, 71.2% 76.6%,
+    71.3% 94.1%, 57.6% 83.1%, 50.0% 100.0%, 42.4% 83.1%, 30.5% 90.5%, 28.8% 76.6%,
+    12.5% 79.9%, 19.4% 64.8%, 8.1% 59.6%, 16.0% 50.0%, 4.2% 39.5%, 19.4% 35.2%,
+    14.0% 21.3%, 28.8% 23.4%, 28.7% 5.9%, 42.4% 16.9%
+  );
+}
+
+/* Sharper 11-point explosion for the sound-effect callouts. */
+.comic-burst-shape {
+  clip-path: polygon(
+    50.0% 0.0%, 57.6% 24.1%, 73.8% 13.0%, 70.4% 32.3%, 92.8% 30.5%, 76.7% 46.2%,
+    91.6% 56.0%, 74.6% 61.2%, 86.3% 81.4%, 64.6% 72.7%, 64.1% 98.0%, 50.0% 77.0%,
+    37.6% 92.2%, 35.4% 72.7%, 14.5% 80.8%, 25.4% 61.2%, 8.4% 56.0%, 23.3% 46.2%,
+    6.3% 30.1%, 29.6% 32.3%, 23.0% 7.9%, 42.4% 24.1%
+  );
+}
+
+/* Caption box: the clipped bottom-right corner of a torn comic caption. */
+.comic-caption-shape {
+  clip-path: polygon(0 0, 100% 0, 100% 68%, calc(100% - 14px) 100%, 0 100%);
+}
+
+/* Speech balloon tail, drawn as a triangle so the balloon stays a plain box. */
+.comic-bubble-tail {
+  clip-path: polygon(0 0, 100% 0, 12% 100%);
+}
+
+.comic-ink-stroke {
+  -webkit-text-stroke: 2px #12141f;
+  paint-order: stroke fill;
+}
+
+.comic-ink-stroke-lg {
+  -webkit-text-stroke: 3px #12141f;
+  paint-order: stroke fill;
+}
+
+@keyframes comic-panel-pop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale(0.94) rotate(-1.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes comic-burst-throb {
+  0%,
+  100% {
+    transform: rotate(-6deg) scale(1);
+  }
+  50% {
+    transform: rotate(-6deg) scale(1.07);
+  }
+}
+
+@keyframes comic-speedline-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.comic-burst-throb {
+  animation: comic-burst-throb 2.6s ease-in-out infinite;
+}
+
+.comic-speedline-spin {
+  animation: comic-speedline-spin 64s linear infinite;
+}
+
+/* Scroll-driven panel entrance. Without view() support panels simply render
+   in place, so the invitation is never blank. */
+@supports (animation-timeline: view()) {
+  .comic-panel-pop {
+    animation: comic-panel-pop linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% entry 46%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comic-panel-pop,
+  .comic-burst-throb,
+  .comic-speedline-spin {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Admin defaults are scoped to explicitly marked detail-hero names only. */
+[data-hero-font="Fz Aghita"] [data-invitation-short-name], [data-hero-font="Fz Aghita"] [data-invitation-short-name] *, [data-font-sample="Fz Aghita"] { font-family: "Fz Aghita", serif !important; }
+[data-hero-font="Fz Qellia"] [data-invitation-short-name], [data-hero-font="Fz Qellia"] [data-invitation-short-name] *, [data-font-sample="Fz Qellia"] { font-family: "Fz Qellia", serif !important; }
+[data-hero-font="Pattaya"] [data-invitation-short-name], [data-hero-font="Pattaya"] [data-invitation-short-name] *, [data-font-sample="Pattaya"] { font-family: "Pattaya", serif !important; }
+[data-hero-font="SVN-HC Pacifico"] [data-invitation-short-name], [data-hero-font="SVN-HC Pacifico"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Pacifico"] { font-family: "SVN-HC Pacifico", serif !important; }
+[data-hero-font="SVN-HC Haydon Brush"] [data-invitation-short-name], [data-hero-font="SVN-HC Haydon Brush"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Haydon Brush"] { font-family: "SVN-HC Haydon Brush", serif !important; }
+[data-hero-font="SVN-HC Marvin Visions"] [data-invitation-short-name], [data-hero-font="SVN-HC Marvin Visions"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Marvin Visions"] { font-family: "SVN-HC Marvin Visions", serif !important; }
+[data-hero-font="SVN-HC Built Titling"] [data-invitation-short-name], [data-hero-font="SVN-HC Built Titling"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Built Titling"] { font-family: "SVN-HC Built Titling", serif !important; }
+[data-hero-font="HelveticaNeue"] [data-invitation-short-name], [data-hero-font="HelveticaNeue"] [data-invitation-short-name] *, [data-font-sample="HelveticaNeue"] { font-family: "HelveticaNeue", serif !important; }
+[data-hero-font="The Nautigal"] [data-invitation-short-name], [data-hero-font="The Nautigal"] [data-invitation-short-name] *, [data-font-sample="The Nautigal"] { font-family: "The Nautigal", serif !important; }
+[data-hero-font="Beau Rivage"] [data-invitation-short-name], [data-hero-font="Beau Rivage"] [data-invitation-short-name] *, [data-font-sample="Beau Rivage"] { font-family: "Beau Rivage", serif !important; }
+[data-hero-font="Alex Brush"] [data-invitation-short-name], [data-hero-font="Alex Brush"] [data-invitation-short-name] *, [data-font-sample="Alex Brush"] { font-family: "Alex Brush", serif !important; }
+[data-hero-font="Lora"] [data-invitation-short-name], [data-hero-font="Lora"] [data-invitation-short-name] *, [data-font-sample="Lora"] { font-family: "Lora", serif !important; }
+[data-hero-font="Times New Roman"] [data-invitation-short-name], [data-hero-font="Times New Roman"] [data-invitation-short-name] *, [data-font-sample="Times New Roman"] { font-family: "Times New Roman", serif !important; }
+[data-hero-font="Carattere"] [data-invitation-short-name], [data-hero-font="Carattere"] [data-invitation-short-name] *, [data-font-sample="Carattere"] { font-family: "Carattere", serif !important; }
+[data-hero-font="Whisper"] [data-invitation-short-name], [data-hero-font="Whisper"] [data-invitation-short-name] *, [data-font-sample="Whisper"] { font-family: "Whisper", serif !important; }
+[data-hero-font="Ms Madi"] [data-invitation-short-name], [data-hero-font="Ms Madi"] [data-invitation-short-name] *, [data-font-sample="Ms Madi"] { font-family: "Ms Madi", serif !important; }
+[data-hero-bold="true"] [data-invitation-short-name], [data-hero-bold="true"] [data-invitation-short-name] * { font-weight: 700 !important; }
+[data-hero-bold="false"] [data-invitation-short-name], [data-hero-bold="false"] [data-invitation-short-name] * { font-weight: 400 !important; }
+[data-hero-italic="true"] [data-invitation-short-name], [data-hero-italic="true"] [data-invitation-short-name] * { font-style: italic !important; }
+[data-hero-italic="false"] [data-invitation-short-name], [data-hero-italic="false"] [data-invitation-short-name] * { font-style: normal !important; }
+@font-face { font-family: "Carattere"; src: url("/chungdoi/fonts/Carattere-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Whisper"; src: url("/chungdoi/fonts/Whisper-Regular.ttf") format("truetype"); font-display: swap; }
+[data-hero-font="UNI Chu truyen thong"] [data-invitation-short-name], [data-hero-font="UNI Chu truyen thong"] [data-invitation-short-name] *, [data-font-sample="UNI Chu truyen thong"] { font-family: "UNI Chu truyen thong", serif !important; }
+[data-hero-font="Viaoda Libre"] [data-invitation-short-name], [data-hero-font="Viaoda Libre"] [data-invitation-short-name] *, [data-font-sample="Viaoda Libre"] { font-family: "Viaoda Libre", serif !important; }
+[data-hero-font="EB Garamond"] [data-invitation-short-name], [data-hero-font="EB Garamond"] [data-invitation-short-name] *, [data-font-sample="EB Garamond"] { font-family: "EB Garamond", serif !important; }
+[data-hero-font="Cormorant Garamond"] [data-invitation-short-name], [data-hero-font="Cormorant Garamond"] [data-invitation-short-name] *, [data-font-sample="Cormorant Garamond"] { font-family: "Cormorant Garamond", serif !important; }
+[data-hero-font="Uchen"] [data-invitation-short-name], [data-hero-font="Uchen"] [data-invitation-short-name] *, [data-font-sample="Uchen"] { font-family: "Uchen", serif !important; }
+[data-hero-font="SVN-HC Carosello"] [data-invitation-short-name], [data-hero-font="SVN-HC Carosello"] [data-invitation-short-name] *, [data-font-sample="SVN-HC Carosello"] { font-family: "SVN-HC Carosello", serif !important; }
+[data-hero-font="1FTV VIP Signora"] [data-invitation-short-name], [data-hero-font="1FTV VIP Signora"] [data-invitation-short-name] *, [data-font-sample="1FTV VIP Signora"] { font-family: "1FTV VIP Signora", serif !important; }
+[data-hero-font="DFVN New Eddy"] [data-invitation-short-name], [data-hero-font="DFVN New Eddy"] [data-invitation-short-name] *, [data-font-sample="DFVN New Eddy"] { font-family: "DFVN New Eddy", serif !important; }
+@keyframes slideshow-drift {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.09) translate3d(-0.6%, -0.4%, 0);
+  }
+}
+
+@keyframes slideshow-editorial-enter {
+  from {
+    opacity: 0.35;
+    transform: scale(1.08) translate3d(2%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .slideshow-moving-image {
+    animation: slideshow-drift 8s ease-out both;
+  }
+
+  .slideshow-editorial-image {
+    animation: slideshow-editorial-enter 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+/* Hoa Mai Thủy Mặc: the concept uses a handmade horizontal paper invitation.
+ * Keep its cover quiet and let the supplied paper/branch artwork carry the frame. */
+.hoa-mai-cover-card {
+  aspect-ratio: 16 / 10 !important;
+  border-radius: 2px !important;
+  overflow: hidden;
+  box-shadow: 0 28px 52px -20px rgba(62,36,29,.52), 0 3px 0 rgba(255,249,236,.62) inset !important;
+}
+.hoa-mai-cover-card-content {
+  justify-content: center !important;
+  padding: 1rem 2.25rem !important;
+  color: #3e241d;
+}
+.hoa-mai-cover-card-content > div:first-child {
+  margin-bottom: .6rem !important;
+  font-size: clamp(1.9rem, 7vw, 4.5rem) !important;
+  line-height: .9 !important;
+  letter-spacing: .02em;
+}
+.hoa-mai-cover-card-content > div:first-child span:nth-child(2) {
+  color: #a95231 !important;
+  font-size: .34em !important;
+  margin-block: .25em !important;
+}
+.hoa-mai-cover-card-content > div:nth-child(2) { display: none !important; }
+.hoa-mai-cover-card-content > div:nth-child(2) span { background: #a95231 !important; }
+.hoa-mai-cover-card-content > p {
+  margin: .2rem 0 0 !important;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  color: #3e241d !important;
+  font-size: 1rem !important;
+}
+/* The horizontal Hoa Mai cover has no room for the generic recipient block.
+ * Keep that personalization in the invitation body and let the cover read as
+ * a quiet paper announcement with names, date, and one clear action. */
+.hoa-mai-cover-card-content > div:last-of-type { display: none !important; }
+.hoa-mai-cover-card-content > span { margin-top: .7rem !important; }
+.hoa-mai-cover-card-content button { border-radius: 999px !important; background: #a95231 !important; box-shadow: 0 9px 18px rgba(62,36,29,.22) !important; }

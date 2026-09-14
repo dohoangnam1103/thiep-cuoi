@@ -1,0 +1,49 @@
+@media (width < 48rem) {
+  .root {
+    --invitation-footer-clearance: calc(8rem + env(safe-area-inset-bottom));
+  }
+
+  .root.physical {
+    --invitation-footer-clearance: calc(12rem + env(safe-area-inset-bottom));
+  }
+
+  /* Legacy templates can append more ceremonies after their footer. Reserve
+     the space once, in that final section's background. */
+  .root:has([data-additional-ceremonies]) [data-template-renderer] {
+    --invitation-footer-clearance: 0px;
+  }
+
+  .root [data-additional-ceremonies] {
+    padding-bottom: calc(3rem + var(--invitation-footer-clearance));
+  }
+
+  /* Keep the extra scroll space inside the template's own background layers.
+     Inline links need a box for their bottom margin to extend the parent. */
+  .root :is(
+    a[href="https://thiepmungonline.com"]:not([data-invitation-clearance="skip"]),
+    a[data-invitation-clearance="margin"]
+  ) {
+    display: inline-block;
+  }
+
+  .root :is(
+    a[href="https://thiepmungonline.com"]:not([data-invitation-clearance="skip"]),
+    [data-invitation-clearance="margin"]
+  ) {
+    margin-bottom: var(--invitation-footer-clearance);
+  }
+
+  /* These two brands sit over artwork with absolute positioning, so extend
+     their themed containers instead of adding margin to the links. */
+  .root [data-invitation-clearance="nhat-binh"] {
+    padding-bottom: calc(2rem + var(--invitation-footer-clearance));
+  }
+
+  .root [data-invitation-clearance="absolute-brand"] {
+    bottom: calc(0.5rem + var(--invitation-footer-clearance));
+  }
+
+  .root [data-invitation-clearance="lien-hoa"] {
+    padding-bottom: var(--invitation-footer-clearance);
+  }
+}

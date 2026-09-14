@@ -1,40 +1,52 @@
 "use client";
 
 import { NextIntlClientProvider } from "next-intl";
-import {
-  getTemplateRenderer,
-  type InvitationRenderContent,
-} from "@chungdoi/invitation-core/templates";
+import { ChungDoiDemo } from "@chungdoi/invitation-core/demo-shell";
+import type { ChungDoiTemplate } from "@chungdoi/invitation-data/catalog";
+import type { ChungDoiDemoContent } from "@chungdoi/invitation-data/demo-content";
 
 import vi from "@messages/vi.json";
 
-const { invitationTemplate, banVeToAmTemplate, comicHero, hoaMaiThuyMac } = vi;
+const {
+  invitationTemplate,
+  invitationControls,
+  banVeToAmTemplate,
+  comicHero,
+  hoaMaiThuyMac,
+  gatefoldLab,
+  sleeveLab,
+  coiTrauLab,
+  doraemonDoor,
+  doraemonDoorLab,
+  detectiveConanCasebookLab,
+} = vi;
 
 export default function SignatureDemoView({
-  slug,
+  template,
   content,
 }: {
-  slug: string;
-  content: InvitationRenderContent;
+  template: ChungDoiTemplate;
+  content: ChungDoiDemoContent;
 }) {
-  // Registry lookup over a module-level map: identity is stable per slug,
-  // so this is not a render-time component creation.
-  const Renderer = getTemplateRenderer(slug);
-  if (!Renderer) return null;
   return (
     <NextIntlClientProvider
       locale="vi"
       timeZone="Asia/Ho_Chi_Minh"
       messages={{
         invitationTemplate,
+        invitationControls,
         banVeToAmTemplate,
         comicHero,
         hoaMaiThuyMac,
+        gatefoldLab,
+        sleeveLab,
+        coiTrauLab,
+        doraemonDoor,
+        doraemonDoorLab,
+        detectiveConanCasebookLab,
       }}
     >
-      {/* Registry lookup above is stable per slug (module-level map). */}
-      {/* eslint-disable-next-line react-hooks/static-components */}
-      <Renderer content={content} />
+      <ChungDoiDemo template={template} content={content} />
     </NextIntlClientProvider>
   );
 }

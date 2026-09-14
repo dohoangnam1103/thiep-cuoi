@@ -45,9 +45,14 @@ export async function getVisibleCatalogTemplates(): Promise<ChungDoiTemplate[]> 
   return catalog.filter((template) => !hidden.has(template.slug));
 }
 
+export function getTemplateMeta(slug: string): ChungDoiTemplate | null {
+  return (
+    getCatalogTemplates().find((template) => template.slug === slug) ?? null
+  );
+}
+
 /** Accept a source slug or a Vietnamese route alias, return the source slug. */
-export function resolveCatalogSlug(input: string): string | null {
-  if (isTemplateAvailable("site-2", input)) return input;
+export function resolveCatalogSlug(input: string): string | null {  if (isTemplateAvailable("site-2", input)) return input;
   const source = getSourceTemplateSlug(input);
   if (source && isTemplateAvailable("site-2", source)) return source;
   return null;

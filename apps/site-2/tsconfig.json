@@ -46,6 +46,9 @@
       ],
       "@chungdoi/invitation-core/signature": [
         "../../packages/invitation-core/src/signature/index.ts"
+      ],
+      "@chungdoi/invitation-core/demo-shell": [
+        "../../packages/invitation-core/src/demo-shell/chungdoi-demo.tsx"
       ]
     }
   },

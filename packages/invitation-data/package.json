@@ -10,6 +10,8 @@
     "./catalog": "./src/chungdoi.ts",
     "./demo-content": "./src/chungdoi-demo-content.ts",
     "./generated": "./src/templates/generated-data.ts",
+    "./theme-config": "./src/chungdoi-theme-config.ts",
+    "./opening-effect": "./src/templates/opening-effect.ts",
     "./route-slugs": "./src/template-route-slugs.ts",
     "./comic-hero-assemble-pilot": "./src/comic-hero-assemble-pilot.ts",
     "./doraemon-door-pilot": "./src/doraemon-door-pilot.ts",
