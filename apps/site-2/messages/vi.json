@@ -1,0 +1,68 @@
+{
+  "site": {
+    "name": "Thiệp Signature",
+    "tagline": "Thiệp cưới tối giản cho ngày trọng đại",
+    "navHome": "Trang chủ",
+    "navTemplates": "Mẫu thiệp",
+    "navPricing": "Bảng giá",
+    "navLogin": "Đăng nhập",
+    "footer": "Thiệp Signature — hai mẫu tuyển chọn, tối giản và trang nhã."
+  },
+  "home": {
+    "heroEyebrow": "Bộ sưu tập Signature",
+    "heroTitle": "Thiệp cưới tối giản, trang nhã",
+    "heroSubtitle": "Hai mẫu thiệp được tuyển chọn kỹ — Mai Lan Trắng và Hoa Lụa Nâu — với đầy đủ lịch, sổ lưu bút và hộp quà mừng.",
+    "browseCta": "Xem mẫu thiệp",
+    "pricingCta": "Xem bảng giá",
+    "collectionTitle": "Hai mẫu Signature",
+    "collectionSubtitle": "Mỗi mẫu có bản demo đầy đủ để xem trước khi tạo thiệp."
+  },
+  "templates": {
+    "title": "Mẫu thiệp Signature",
+    "subtitle": "Danh mục MVP chỉ gồm hai mẫu thuộc nhóm Signature.",
+    "demoCta": "Xem demo",
+    "cards": {
+      "jasmine-white": {
+        "name": "Mai Lan Trắng",
+        "description": "Nền kem ấm, điểm nhấn xanh ô-liu đậm — tối giản và tinh tế."
+      },
+      "silk-flora-brown": {
+        "name": "Hoa Lụa Nâu",
+        "description": "Tông nâu ấm tối giản, bố cục rõ ràng, nhịp điệu hình ảnh êm."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Bảng giá",
+    "subtitle": "Một gói duy nhất cho hai mẫu Signature trong giai đoạn MVP.",
+    "planName": "Signature",
+    "planPrice": "Liên hệ",
+    "planCta": "Tạo thiệp ngay",
+    "features": [
+      "Cả hai mẫu Signature",
+      "Lịch cưới và bản đồ tiệc",
+      "Sổ lưu bút và hộp quà mừng",
+      "Trang thiệp riêng công khai"
+    ]
+  },
+  "demo": {
+    "backToListing": "Về danh sách mẫu",
+    "notFoundTitle": "Không tìm thấy mẫu thiệp",
+    "notFoundBody": "Mẫu này chưa có trong bộ sưu tập Signature."
+  },
+  "invitationTemplate": {
+    "lightboxLabel": "Trình xem album cưới",
+    "lightboxClose": "Đóng album",
+    "lightboxPrevious": "Ảnh trước",
+    "lightboxNext": "Ảnh sau",
+    "lightboxPhotoAlt": "Ảnh cưới {index}",
+    "lightboxThumbnailAlt": "Ảnh thu nhỏ {index}",
+    "wishName": "Tên của bạn",
+    "wishNameRequired": "Vui lòng nhập tên của bạn.",
+    "wishText": "Lời chúc của bạn",
+    "wishTextRequired": "Vui lòng nhập lời chúc của bạn.",
+    "wishSuccess": "Cảm ơn lời chúc của bạn!",
+    "wishSubmit": "Gửi lời chúc",
+    "wishPending": "Đang gửi..."
+  }
+}
