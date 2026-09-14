@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
     "@chungdoi/invitation-data",
     "@chungdoi/invitation-core",
   ],
+  images: {
+    qualities: [75, 84, 88, 90, 92],
+    localPatterns: [
+      {
+        pathname: "/**",
+        search: "",
+      },
+      {
+        pathname: "/chungdoi/images/template-previews/**",
+      },
+    ],
+    minimumCacheTTL: 2592000,
+  },
   turbopack: {
     // Monorepo: hoisted workspace node_modules live at the repo root, one
     // level above this app. Widen Turbopack's filesystem root so module
