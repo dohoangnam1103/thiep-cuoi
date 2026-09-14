@@ -1,0 +1,12 @@
+[Unit]
+Description=Back up ChungDoi Site-2 every six hours (offset from master)
+
+[Timer]
+# Master runs at :41; site-2 runs at :11 so the two SQLite backups and media
+# walks never contend on the shared VPS disk.
+OnCalendar=*-*-* 00/6:11:00 Asia/Ho_Chi_Minh
+Persistent=true
+Unit=chungdoi-site2-backup.service
+
+[Install]
+WantedBy=timers.target

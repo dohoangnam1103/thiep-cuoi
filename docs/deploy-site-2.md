@@ -1,0 +1,141 @@
+# Site-2 operations — Signature MVP (thiệp Signature, 2 mẫu)
+
+Site-2 runs the same invitation engine as master with an independent homepage,
+pricing, listing, auth, dashboard, editor and public pages, but only the two
+`Signature` templates (`jasmine-white`, `silk-flora-brown`). Everything else —
+database, media, secrets, image, container, ports, backups, timers — is
+isolated per the plan `docs/superpowers/plans/2026-09-14-two-site-signature-mvp.md`.
+
+No credential VALUES are recorded here. Real values live in the app `.env` on
+the target host only.
+
+## Live deployment (2026-09-14) — minipc
+
+| Item | Value |
+|---|---|
+| Production domain (baked into image) | `https://thiep.hoangnam.cloud` |
+| Host | minipc `192.168.0.57` (VPS 163.223.9.198 untouched — read-only clone source) |
+| App root (no sudo on minipc, hence home dir instead of `/srv`) | `/home/namdo/apps/chungdoi-site2` |
+| Container / image | `chungdoi-site2-web` / `chungdoi-site2-web:production` |
+| Loopback | `127.0.0.1:3221`, health `/api/health` → `{"app":"site-2","origin":"https://thiep.hoangnam.cloud"}` |
+| Data | cloned master 2026-09-14, scrubbed (see below), 488 users / 599 invitations |
+| Backup | user cron `11 */6 * * *` → `backups/<ts>/` (verified + restore-drilled) |
+| LIVE marker | `/home/namdo/apps/chungdoi-site2/LIVE` |
+
+Clone+scrub record: 36 tables copied; zeroed `Payment*`, `Voucher`,
+`EmailRun/EmailDelivery/EmailDeliveryAttempt`, `AdminAuditLog/Admin`,
+`Slideshow*`, `ProjectFund*` (3 append-only `prevent_delete` triggers dropped
+in the CLONE only), `TemplateSuggestion`, `AppConfig`. Kept users, invitations
++ content, ceremonies, schedule, gallery (2100), wishes (212), guests, RSVPs,
+media (2730 files, count-verified). Post-scrub `quick_check` ok, 0 FK
+violations, site-2 Prisma client verified against the clone.
+
+Existing minipc containers (`images-db`, `ds2api`, …) and the retired
+`/home/namdo/apps/thiepmungonline` were not touched.
+
+## Remaining user action: DNS + tunnel for thiep.hoangnam.cloud
+
+`thiep.hoangnam.cloud` does not resolve yet (NXDOMAIN). On a machine with
+Cloudflare access for `hoangnam.cloud`:
+
+```bash
+cloudflared tunnel route dns <tunnel-name-or-id> thiep.hoangnam.cloud
+```
+
+On minipc, extend the tunnel ingress with:
+
+```yaml
+- hostname: thiep.hoangnam.cloud
+  service: http://127.0.0.1:3221
+```
+
+then `curl -s https://thiep.hoangnam.cloud/api/health` must return the site-2
+origin above, and `/mau-thiep` must list exactly the 2 Signature cards.
+
+## Isolation map
+
+```text
+master:  /srv/thiepmungonline  image thiepmungonline-web:production
+         container thiepmungonline-web   loopback 127.0.0.1:3211
+         cookie `session`                DB /srv/thiepmungonline/data/prod.db
+site-2:  /srv/chungdoi-site2   image chungdoi-site2-web:production
+         container chungdoi-site2-web    loopback 127.0.0.1:3221
+         cookie `site2_session`          DB /srv/chungdoi-site2/data/prod.db
+```
+
+Each image is built with its own `NEXT_PUBLIC_SITE_URL`; the site-2 build
+rejects the master hostname. Rollback of one app never touches the other.
+
+## Decision record (REQUIRED before any remote mutation)
+
+| Decision | Value / status |
+|---|---|
+| Real site-2 domain + staging hostname | TBD — passed via `NEXT_PUBLIC_SITE_URL` at build time, never hardcoded |
+| Users/accounts | Default: start EMPTY (new DB + migrate). Clone only if explicitly approved |
+| Invitations/media | Default: seed only the two Signature demos. Clone only if explicitly approved |
+| Payments / trial reminders / production email | DISABLED for site-2 (no timers, no credentials) until separately approved |
+| VPS resource budget | Site-2 capped at 1.0 CPU / 768 MiB / 192 pids; preflight refuses deploy under 512 MiB free RAM or 6 GiB free disk |
+
+Safe MVP default when no explicit data-clone decision exists: empty user DB +
+two Signature demo/template seeds. Never clone payment, reminder, email
+delivery or session records.
+
+## Provision (staging)
+
+```bash
+# 1. Read-only capacity + collision checks (no mutation)
+ssh root@163.223.9.198 "df -h /srv; free -m; docker ps --format '{{.Names}} {{.Ports}}'"
+# expect: no /srv/chungdoi-site2/LIVE, port 3221 free, container name unused
+
+# 2. Provision directories + private env (container runtime UID)
+ssh root@163.223.9.198 "set -e
+  mkdir -p /srv/chungdoi-site2/{data/media/uploads,releases,backups,ops}
+  chown -R 1000:1000 /srv/chungdoi-site2/data
+  chmod 600 /srv/chungdoi-site2/.env"
+
+# 3. Install backup unit only (no payment/reminder timers for site-2)
+scp infra/systemd/site-2/* root@163.223.9.198:/etc/systemd/system/
+scp scripts/vps/backup-site2.py root@163.223.9.198:/srv/chungdoi-site2/ops/
+ssh root@163.223.9.198 "systemctl daemon-reload
+  && systemctl enable --now chungdoi-site2-backup.timer"
+
+# 4. Build with the REAL site-2 origin, then deploy
+NEXT_PUBLIC_SITE_URL=https://<site-2-domain> npm run deploy:site-2
+```
+
+Seed (default): `prisma migrate deploy` equivalent for a fresh DB is
+`DATABASE_URL=file:/app/data/prod.db prisma db push` inside a one-off
+container, then create the two Signature demo rows. Clone path (only when
+approved): SQLite online backup + `quick_check` + row-count manifest + media
+checksums, scrubbing payment/reminder/email/session tables before first start.
+
+## Verify (staging + production)
+
+- `curl http://127.0.0.1:3221/api/health` → `{"app":"site-2","status":"ok"}`
+- `/mau-thiep` shows exactly 2 cards; `/mau-thiep/song-hy-red/demo` → 404
+- Register → create → edit → publish → public `/thiep/<slug>` renders names
+- Uploads land under `/srv/chungdoi-site2/data/media` only
+- `docker stats`: site-2 within 1.0 CPU / 768 MiB; master healthy throughout
+- `systemctl start chungdoi-site2-backup.service`, verify snapshot integrity +
+  media manifest, copy off-host, restore-drill into a temp dir
+
+## DNS/TLS cutover
+
+Route only the approved hostname to site-2 (own Cloudflare tunnel/route, own
+TLS). Verify `www` redirect policy, host-only `site2_session` cookie,
+Google Maps referrer restriction and analytics ID. Keep master route untouched.
+
+## Rollback (site-2 only)
+
+Record before every deploy: previous image ID, release pointer, DB/media
+checksums. Roll back with:
+
+```bash
+ssh root@163.223.9.198 "cd /srv/chungdoi-site2
+  docker compose -p chungdoi-site2-web -f compose.yaml down
+  # restore DB/media snapshot, retag previous image, up again
+  rm -f LIVE && <restore> && docker compose -p chungdoi-site2-web -f compose.yaml up -d"
+```
+
+Never point site-2 at master data, and never recreate the master container
+during a site-2 rollback.

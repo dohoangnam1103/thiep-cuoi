@@ -10,3 +10,12 @@ body {
   background: var(--site2-cream);
   color: var(--site2-ink);
 }
+
+/* Shared Signature renderer fonts (self-hosted, same files as master). */
+@font-face {
+  font-family: "The Nautigal";
+  src: url("/chungdoi/fonts/TheNautigal-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+.font-couple-garamond { font-family: "EB Garamond", Garamond, serif; }

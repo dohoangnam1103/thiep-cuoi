@@ -82,6 +82,24 @@ Web has 3 CPUs / 1.5 GiB memory limit; tunnel has 0.5 CPU / 192 MiB limit.
 The VPS has 4 vCPUs and approximately 3 GiB RAM. Do not reboot it as a routine
 verification step while customers are using it.
 
+## Shared capacity with site-2 (Signature MVP)
+
+Site-2 (`/srv/chungdoi-site2`, loopback 3221, container `chungdoi-site2-web`)
+is capped at 1.0 CPU / 768 MiB / 192 pids with bounded JSON logs. Budget math
+against the 4 vCPU / ~3 GiB host:
+
+- CPU limits: 3 (master web) + 1.0 (site-2) + 0.5 (tunnel) = 4.5 — overcommitted
+  on paper, but CPU limits are compressible: under contention each container is
+  throttled, not killed. Acceptable for the MVP; watch `docker stats` throttling.
+- RAM limits: 1.5 GiB + 768 MiB + 192 MiB ≈ 2.5 GiB of ~3 GiB, leaving ~0.5 GiB
+  for the OS, Docker and backup walks. This is the binding constraint:
+  `deploy-app.sh` refuses a site-2 deploy under 512 MiB free RAM or 6 GiB free
+  disk, and the site-2 backup timer is offset to :11 so it never overlaps the
+  master backup at :41.
+- Failure domain stays shared (one VPS). A host outage takes both apps; per-app
+  rollback, data and timers remain independent. Full procedure, decision record
+  and rollback live in `docs/deploy-site-2.md`.
+
 ## Deploy
 
 ```bash
