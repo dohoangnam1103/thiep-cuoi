@@ -45,6 +45,7 @@ import {
 } from "../signature/lightbox-zoom";
 import { InvitationMap, MapDirectionsButton } from "../signature/tpl-shared";
 import { OpeningEffectArtwork } from "./chungdoi-opening-effect";
+import { DEMO_SHELL_KEYFRAMES, DEMO_SHELL_LAYER_CSS } from "./keyframes";
 import { ZodiacMaskArtwork } from "../templates/zodiac-mask-artwork";
 import { LongPhungGatefoldLab } from "./chungdoi-long-phung-gatefold-lab";
 import { NguyetAnhSleeveLab } from "./chungdoi-nguyet-anh-sleeve-lab";
@@ -2198,6 +2199,10 @@ export function ChungDoiDemo({
         ],
       )}
     >
+      {/* Opening keyframes live here (not only in global CSS): they are
+          referenced solely from inline styles, which route CSS splitting
+          cannot see and therefore drops. See keyframes.ts. */}
+      <style>{`${DEMO_SHELL_KEYFRAMES}\n${DEMO_SHELL_LAYER_CSS}`}</style>
       <h1 className="sr-only">{semanticHeading}</h1>
       {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
 
