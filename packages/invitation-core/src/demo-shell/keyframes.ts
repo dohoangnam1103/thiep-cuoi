@@ -773,10 +773,10 @@ export const DEMO_SHELL_LAYER_CSS = `
     --admin-nav-fade-end: 24px;
   }
 
-  /* Bảng quản trị: xem `src/components/admin-table-scroller.tsx` để biết vì sao
+  /* Bảng quản trị: xem \`src/components/admin-table-scroller.tsx\` để biết vì sao
      thanh cuộn thật của bảng bị ẩn và thay bằng một thanh ghim ở đáy màn hình.
 
-     Chỉ ẩn khi `data-proxy="on"` — cờ do component bật sau khi gắn. Trước lúc
+     Chỉ ẩn khi \`data-proxy="on"\` — cờ do component bật sau khi gắn. Trước lúc
      đó (HTML từ server, hoặc JS lỗi) bảng vẫn giữ thanh cuộn gốc. */
   .admin-table-viewport {
     -webkit-overflow-scrolling: touch;
@@ -793,7 +793,7 @@ export const DEMO_SHELL_LAYER_CSS = `
   }
 
   /* macOS ẩn thanh cuộn overlay khi đứng yên, nên để mặc định thì thanh ghim
-     này vô hình đúng lúc cần nhìn thấy nhất. Khai báo `::-webkit-scrollbar`
+     này vô hình đúng lúc cần nhìn thấy nhất. Khai báo \`::-webkit-scrollbar\`
      buộc WebKit/Blink chuyển sang thanh luôn hiện. */
   .admin-table-scrollbar {
     scrollbar-width: thin;
@@ -811,7 +811,7 @@ export const DEMO_SHELL_LAYER_CSS = `
     background-color: transparent;
   }
 
-  /* Viền trong suốt + `background-clip: content-box` là cách thu nút kéo lại
+  /* Viền trong suốt + \`background-clip: content-box\` là cách thu nút kéo lại
      cho mảnh mà vẫn giữ nguyên vùng bấm 12px. */
   .admin-table-scrollbar::-webkit-scrollbar-thumb {
     border: 3px solid transparent;
@@ -830,7 +830,7 @@ export const DEMO_SHELL_LAYER_CSS = `
      Chỉ từ 48rem trở lên: trên điện thoại, hai cột ghim chiếm gần hết chiều
      ngang và phần cuộn được còn lại chỉ vài chục pixel — tệ hơn là không ghim. */
   @media (min-width: 48rem) {
-    /* Nền phải đục: `sticky` không cắt nội dung phía dưới, nó chỉ nằm trên. */
+    /* Nền phải đục: \`sticky\` không cắt nội dung phía dưới, nó chỉ nằm trên. */
     .admin-col-pin-start,
     .admin-col-pin-end {
       position: sticky;
@@ -846,8 +846,8 @@ export const DEMO_SHELL_LAYER_CSS = `
       right: 0;
     }
 
-    /* `thead` tô `bg-muted/40`, tức nửa trong suốt. Ô ghim cần chính màu đã hoà
-       lên nền, chứ lấy `var(--muted)` trần là header sẽ lệch tông hai bên. */
+    /* \`thead\` tô \`bg-muted/40\`, tức nửa trong suốt. Ô ghim cần chính màu đã hoà
+       lên nền, chứ lấy \`var(--muted)\` trần là header sẽ lệch tông hai bên. */
     .admin-table-viewport thead .admin-col-pin-start,
     .admin-table-viewport thead .admin-col-pin-end {
       z-index: 2;
