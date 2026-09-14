@@ -67,6 +67,7 @@
     "templates:prepare-opening-assets": "tsx scripts/prepare-opening-assets.ts",
     "templates:validate-opening-assets": "tsx scripts/validate-opening-effect-assets.ts",
     "deploy": "bash scripts/deploy-vps.sh",
+    "deploy:site-2": "bash scripts/deploy/deploy-app.sh site-2",
     "deploy:smoke": "SMOKE_ONLY=1 bash scripts/deploy-vps.sh",
     "deploy:setup": "bash scripts/deploy-vps.sh --setup",
     "deploy:legacy": "./scripts/deploy-minipc.sh",

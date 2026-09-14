@@ -205,7 +205,6 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
               >
                 {/* draggable=false: ảnh kéo được theo mặc định, trên desktop cú
                     kéo native sẽ cắt ngang chuỗi pointer và vuốt bằng chuột hỏng */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={src} alt={`Ảnh cưới ${index + 1}`} draggable={false} className="h-full w-full object-cover" />
               </button>
             );
