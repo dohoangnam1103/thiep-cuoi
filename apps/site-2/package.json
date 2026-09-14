@@ -8,7 +8,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:unit": "tsx --test \"src/**/*.test.ts\"",
-    "build": "next build"
+    "build": "next build",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@chungdoi/invitation-core": "0.1.0",

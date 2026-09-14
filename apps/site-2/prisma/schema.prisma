@@ -1,0 +1,708 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  email               String?              @unique
+  passwordHash        String?
+  createdAt           DateTime             @default(now())
+  invitations         Invitation[]
+  slideshowProjects   SlideshowProject[]
+  templateSuggestions TemplateSuggestion[]
+  adminAuditLogs      AdminAuditLog[]      @relation("AuditTargetUser")
+  emailDeliveries     EmailDelivery[]
+}
+
+/// Sản phẩm slideshow độc lập. Không dùng chung lifecycle, trial hay billing
+/// với Invitation để tránh thay đổi hành vi production của thiệp mời.
+model SlideshowProject {
+  id                 String   @id @default(cuid())
+  userId             String
+  shareToken         String   @unique
+  creationKey        String?  @unique
+  title              String   @default("Slideshow cưới")
+  templateId         String
+  templateVersion    Int      @default(1)
+  sourceJson         String
+  sceneOverridesJson String   @default("{}")
+  musicUrl           String?
+  revision           Int      @default(0)
+  assetCount         Int      @default(0)
+  assetBytes         Int      @default(0)
+  trialStartedAt     DateTime @default(now())
+  paid               Boolean  @default(false)
+  complimentary      Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets   SlideshowAsset[]
+  payments SlideshowPayment[]
+
+  @@index([userId, updatedAt])
+  @@index([trialStartedAt])
+}
+
+model SlideshowAsset {
+  id           String   @id @default(cuid())
+  projectId    String
+  storageKey   String   @unique
+  originalName String
+  mimeType     String
+  kind         String
+  size         Int
+  createdAt    DateTime @default(now())
+
+  project SlideshowProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+}
+
+model SlideshowPayment {
+  id                      String    @id @default(cuid())
+  projectId               String
+  activeKey               String?   @unique
+  code                    String    @unique
+  amount                  Int
+  status                  String    @default("pending")
+  provider                String    @default("casso")
+  providerOrderCode       String?   @unique
+  providerPaymentLinkId   String?   @unique
+  providerCheckoutUrl     String?
+  providerQrCode          String?
+  providerBankBin         String?
+  providerBankAccount     String?
+  providerBankAccountName String?
+  reviewReason            String?
+  receivedAmount          Int?
+  providerRef             String?
+  reviewDetectedAt        DateTime?
+  createdAt               DateTime  @default(now())
+  paidAt                  DateTime?
+
+  project SlideshowProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+  @@index([provider, status])
+}
+
+model Admin {
+  id                  String                      @id @default(cuid())
+  email               String                      @unique
+  passwordHash        String
+  isSuperAdmin        Boolean                     @default(false)
+  createdAt           DateTime                    @default(now())
+  auditLogs           AdminAuditLog[]
+  fundWithdrawals     ProjectFundWithdrawal[]     @relation("ProjectFundWithdrawalCreator")
+  fundWithdrawalVoids ProjectFundWithdrawalVoid[] @relation("ProjectFundWithdrawalVoider")
+}
+
+model Invitation {
+  id                    String    @id @default(cuid())
+  userId                String
+  slug                  String?   @unique
+  templateId            String
+  status                String    @default("draft")
+  paid                  Boolean   @default(false)
+  isDemo                Boolean   @default(false)
+  adminPriceOverride    Int?
+  complimentary         Boolean   @default(false)
+  complimentaryAt       DateTime?
+  guestManagerToken     String?   @unique
+  publishedAt           DateTime?
+  /// Mốc đã gửi email nhắc "còn 24h cuối dùng thử".
+  reminderSentAt        DateTime?
+  /// Mốc đã gửi email nhắc bù sau khi thiệp hết hạn và bị tạm ẩn.
+  ///
+  /// Cột riêng chứ không dùng lại `reminderSentAt`: hai mốc là hai lần gửi khác
+  /// nhau về nội dung và thời điểm, và thiệp nào lọt mốc thứ nhất (publish rồi
+  /// hết hạn trước khi cron kịp chạy một lượt) vẫn phải nhận được mốc thứ hai.
+  expiredReminderSentAt DateTime?
+  /// Số lần thiệp được mở, đếm cả chủ thiệp. Chỉ hiển thị trong trang quản trị.
+  /// Cập nhật bằng SQL thô để không đụng vào `updatedAt` — xem `src/lib/invitation-views.ts`.
+  viewCount             Int       @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content         InvitationContent?
+  ceremonies      CeremonyItem[]
+  schedule        ScheduleItem[]
+  gallery         GalleryPhoto[]
+  wishes          Wish[]
+  guestMedia      GuestMedia[]
+  rsvps           Rsvp[]
+  guests          Guest[]
+  rsvpQuestions   RsvpQuestion[]
+  payments        Payment[]
+  adminAuditLogs  AdminAuditLog[]    @relation("AuditInvitation")
+  emailDeliveries EmailDelivery[]
+
+  @@index([userId])
+  @@index([isDemo])
+}
+
+model AdminAuditLog {
+  id              String   @id @default(cuid())
+  adminId         String?
+  adminEmail      String
+  targetUserId    String?
+  targetUserEmail String?
+  invitationId    String?
+  action          String
+  details         String?
+  createdAt       DateTime @default(now())
+
+  admin      Admin?      @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  targetUser User?       @relation("AuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  invitation Invitation? @relation("AuditInvitation", fields: [invitationId], references: [id], onDelete: SetNull)
+
+  @@index([targetUserId, createdAt])
+  @@index([invitationId, createdAt])
+  @@index([adminId, createdAt])
+}
+
+/// Một lần tiền đã được rút khỏi tài khoản dự án ở bên ngoài hệ thống.
+/// Bản ghi đã tạo là bất biến: nếu nhập sai thì tạo `ProjectFundWithdrawalVoid`
+/// để lịch sử và người thực hiện vẫn truy xuất được.
+model ProjectFundWithdrawal {
+  id                  String   @id @default(cuid())
+  requestKey          String   @unique
+  payloadHash         String
+  amount              Int
+  withdrawnAt         DateTime
+  purpose             String
+  bankReference       String   @unique
+  note                String?
+  createdByAdminId    String?
+  createdByAdminEmail String
+  createdAt           DateTime @default(now())
+
+  createdBy   Admin?                     @relation("ProjectFundWithdrawalCreator", fields: [createdByAdminId], references: [id], onDelete: SetNull)
+  allocations ProjectFundAllocation[]
+  void        ProjectFundWithdrawalVoid?
+
+  @@index([withdrawnAt, createdAt])
+  @@index([createdByAdminId, createdAt])
+}
+
+/// Cách một lần rút tiền được chia cho từng người hoặc từng nơi nhận.
+/// Tổng các dòng luôn phải bằng `ProjectFundWithdrawal.amount`.
+model ProjectFundAllocation {
+  id           String @id @default(cuid())
+  withdrawalId String
+  recipient    String
+  amount       Int
+  note         String?
+  sortOrder    Int    @default(0)
+
+  withdrawal ProjectFundWithdrawal @relation(fields: [withdrawalId], references: [id], onDelete: Cascade)
+
+  @@index([withdrawalId, sortOrder])
+}
+
+/// Dấu hủy append-only cho một lần rút bị nhập sai. Không xóa bản ghi gốc.
+model ProjectFundWithdrawalVoid {
+  id                  String   @id @default(cuid())
+  withdrawalId        String   @unique
+  reason              String
+  createdByAdminId    String?
+  createdByAdminEmail String
+  createdAt           DateTime @default(now())
+
+  withdrawal ProjectFundWithdrawal @relation(fields: [withdrawalId], references: [id], onDelete: Restrict)
+  createdBy  Admin?                 @relation("ProjectFundWithdrawalVoider", fields: [createdByAdminId], references: [id], onDelete: SetNull)
+
+  @@index([createdByAdminId, createdAt])
+}
+
+/// Một lượt gửi email do cron, admin hoặc hệ thống khởi tạo.
+///
+/// `EmailRun` trả lời câu hỏi vận hành theo mốc thời gian, ví dụ: "lượt 09:00
+/// đã quét bao nhiêu thiệp và gửi thành công cho ai?". Các số đếm là snapshot
+/// lúc run kết thúc; danh sách chi tiết nằm ở `EmailDeliveryAttempt`.
+model EmailRun {
+  id           String    @id @default(cuid())
+  source       String
+  trigger      String
+  status       String    @default("running")
+  errorMessage String?
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  scannedCount Int       @default(0)
+  sentCount    Int       @default(0)
+  failedCount  Int       @default(0)
+  skippedCount Int       @default(0)
+
+  attempts EmailDeliveryAttempt[]
+
+  @@index([source, startedAt])
+  @@index([startedAt])
+}
+
+/// Một email logic cần được gửi. Hàng này giữ recipient và ngữ cảnh dưới dạng
+/// snapshot, nên lịch sử vẫn đúng cả khi user đổi email hoặc thiệp bị xoá.
+///
+/// `dedupeKey` khoá từng thư logic ở cấp ứng dụng và đồng thời được gửi cho
+/// Resend như idempotency key. Nhiều `EmailDeliveryAttempt` có thể thuộc cùng
+/// delivery khi provider lỗi và cron thử lại.
+model EmailDelivery {
+  id                String    @id @default(cuid())
+  dedupeKey         String    @unique
+  type              String
+  recipientEmail    String
+  recipientName     String?
+  subject           String
+  /// HTML bất biến của request đầu tiên. Mọi retry phải dùng đúng payload này:
+  /// Resend trả 409 nếu cùng idempotency key nhưng payload thay đổi.
+  html              String
+  userId            String?
+  invitationId      String?
+  status            String    @default("pending")
+  provider          String    @default("resend")
+  providerMessageId String?
+  lastError         String?
+  attemptCount      Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  sentAt            DateTime?
+  /// Lần đầu người nhận bấm nút thanh toán trong thư. Đây là cột mà phễu
+  /// `/admin/email-logs` đọc: nó bất biến sau lần bấm đầu nên tỉ lệ chuyển đổi
+  /// không bị dịch mỗi lần khách mở lại thư cũ.
+  firstClickedAt    DateTime?
+  lastClickedAt     DateTime?
+  /// Tổng số lần bấm, không lọc trùng. Chỉ để nhận ra thư được mở lại nhiều lần;
+  /// đừng dùng làm mẫu số cho bất kỳ tỉ lệ nào.
+  clickCount        Int       @default(0)
+
+  user       User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  invitation Invitation?            @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+  attempts   EmailDeliveryAttempt[]
+
+  @@index([type, createdAt])
+  @@index([status, createdAt])
+  @@index([recipientEmail, createdAt])
+  @@index([userId, createdAt])
+  @@index([invitationId, createdAt])
+}
+
+/// Một lần xử lý `EmailDelivery`. Thường là một lần gọi provider; status `blocked`
+/// ghi lại việc hệ thống chủ động không gọi vì đã quá cửa sổ retry an toàn.
+/// Append-only để mọi lượt cron trong ngày đều giữ nguyên lịch sử.
+model EmailDeliveryAttempt {
+  id                String   @id @default(cuid())
+  deliveryId        String
+  runId             String?
+  status            String
+  providerMessageId String?
+  errorMessage      String?
+  attemptedAt       DateTime @default(now())
+
+  delivery EmailDelivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  run      EmailRun?     @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  @@index([runId, attemptedAt])
+  @@index([deliveryId, attemptedAt])
+  @@index([status, attemptedAt])
+}
+
+model Payment {
+  id                      String    @id @default(cuid())
+  invitationId            String
+  code                    String    @unique
+  amount                  Int
+  voucherCode             String?
+  status                  String    @default("pending")
+  provider                String    @default("casso")
+  providerOrderCode       String?   @unique
+  providerPaymentLinkId   String?   @unique
+  providerCheckoutUrl     String?
+  providerQrCode          String?
+  providerBankBin         String?
+  providerBankAccount     String?
+  providerBankAccountName String?
+  createdAt               DateTime  @default(now())
+  paidAt                  DateTime?
+
+  invitation      Invitation              @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  reconciliations PaymentReconciliation[]
+
+  @@index([invitationId])
+  @@index([provider, status])
+}
+
+/// Một lần tiền đã về nhưng hệ thống không tự kích hoạt được thiệp.
+///
+/// Trước đây các ca này chỉ đi ra `console.warn` trong container, tức là không
+/// ai đọc — trong khi đó chính xác là những ca khách đã trả tiền mà thiệp vẫn
+/// đóng. Bảng này là chỗ để chúng hiện lên `/admin/payments`.
+///
+/// Append-only: mỗi lần webhook hoặc cron phát hiện lại thì ghi thêm một dòng,
+/// không sửa dòng cũ. Lịch sử phát hiện có giá trị khi truy lại sự cố, và việc
+/// không có `resolvedAt` là cố ý — đơn được xử lý xong sẽ tự mang
+/// `status = "paid"`, nhãn trên trang quản trị đọc theo đó.
+model PaymentReconciliation {
+  id             String   @id @default(cuid())
+  paymentId      String
+  /// Xem `ReconciliationReason` trong `src/lib/payment-settlement.ts`.
+  reason         String
+  /// Đường vào đã phát hiện: webhook, cron đối soát, hay poll từ trang thanh toán.
+  source         String
+  expectedAmount Int
+  receivedAmount Int
+  /// `Payment.status` tại thời điểm phát hiện, giữ lại vì nó thay đổi về sau.
+  localStatus    String
+  /// Mã tham chiếu giao dịch của nhà cung cấp, để đối chiếu với sao kê bank.
+  providerRef    String?
+  detectedAt     DateTime @default(now())
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId, detectedAt])
+  @@index([detectedAt])
+}
+
+model Voucher {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  amountOff Int
+  active    Boolean   @default(true)
+  maxUses   Int?
+  usedCount Int       @default(0)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+/// Admin-editable display name for a template. Absent row = use the built-in name.
+model TemplateLabel {
+  slug      String   @id
+  name      String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+/// Public template-demo routes. `canonical = true` marks the current URL;
+/// historical aliases use NULL so SQLite's compound unique index permits many.
+model TemplateRouteAlias {
+  routeSlug    String   @id
+  templateSlug String
+  canonical    Boolean?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([templateSlug, canonical])
+  @@index([templateSlug])
+}
+
+/// An optional, admin-provided thumbnail that is shown only on small screens.
+/// An absent row deliberately keeps the built-in long listing image everywhere.
+model TemplateMobileThumbnail {
+  slug      String   @id
+  imageUrl  String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+/// Admin-defined ordering shared by the demo manager and public template list.
+/// An absent row falls back to the built-in order in `completedTemplates`.
+model TemplateDisplayOrder {
+  slug      String   @id
+  sortOrder Int
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// Admin visibility override for public template listings.
+/// An absent row deliberately means visible.
+model TemplateVisibility {
+  slug      String   @id
+  isVisible Boolean  @default(true)
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model AppConfig {
+  id                  String   @id @default("default")
+  productPrice        Int      @default(150000)
+  repeatCustomerPrice Int      @default(99000)
+  aiBaseUrl           String?
+  aiApiKeyEncrypted   String?
+  aiModel             String?
+  // Bìa thiệp 3D. Mặc định false vì bìa 3D chặn màn hình tới khi tải xong chunk
+  // three.js rồi chụp DOM thành texture — đo được ~4,9s ở Fast 4G, so với ~1,5s
+  // của bìa 2D. Bật lại được ở /admin/settings.
+  cover3dEnabled      Boolean  @default(false)
+  updatedAt           DateTime @updatedAt
+}
+
+model BlogPost {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  excerpt      String
+  category     String?
+  contentHtml  String
+  thumbnailUrl String?
+  status       String    @default("draft")
+  publishedAt  DateTime?
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+
+  @@index([status, deletedAt, publishedAt])
+  @@index([deletedAt, updatedAt])
+}
+
+model TemplateSuggestion {
+  id                  String   @id @default(cuid())
+  userId              String
+  contactEmail        String
+  description         String
+  referenceImageUrl   String?
+  notifyWhenAvailable Boolean  @default(true)
+  status              String   @default("pending")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model InvitationContent {
+  id           String @id @default(cuid())
+  invitationId String @unique
+
+  // theme
+  primaryColor String  @default("#c8102e")
+  fontFamily   String?
+  assetFolder  String?
+  music        String?
+
+  // couple
+  brideFullName   String  @default("")
+  groomFullName   String  @default("")
+  brideShortName  String  @default("")
+  groomShortName  String  @default("")
+  brideBirthOrder String  @default("")
+  groomBirthOrder String  @default("")
+  brideZodiac     String  @default("")
+  groomZodiac     String  @default("")
+  brideFirst      Boolean @default(true)
+  date            String  @default("")
+  time            String  @default("")
+  ceremonyDate    String  @default("")
+  ceremonyTime    String  @default("")
+  ceremonyHeader  String  @default("")
+  ceremonyType    String  @default("thanh-hon")
+  openingMessage  String  @default("")
+
+  // opening photo (only used by templates with a dedicated hero-photo area)
+  heroImage     String  @default("")
+  heroImage2    String  @default("")
+  showHeroImage Boolean @default(true)
+
+  // dress code: CSV of hex colors, e.g. "#b53131,#f8ecdb,#c9a227"
+  dressCodeColors String @default("")
+
+  // album layout: "grid" | "mosaic" | "coverflow"
+  albumLayout String @default("grid")
+
+  // families
+  brideFather      String @default("")
+  brideMother      String @default("")
+  brideAddress     String @default("")
+  groomFather      String @default("")
+  groomMother      String @default("")
+  groomAddress     String @default("")
+  brideParentTitle String @default("")
+  groomParentTitle String @default("")
+
+  // venue
+  address     String @default("")
+  mapAddress  String @default("")
+  banquetTime String @default("")
+
+  // bank
+  brideBankName      String @default("")
+  brideAccountNumber String @default("")
+  brideAccountName   String @default("")
+  groomBankName      String @default("")
+  groomAccountNumber String @default("")
+  groomAccountName   String @default("")
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+}
+
+model ScheduleItem {
+  id           String @id @default(cuid())
+  invitationId String
+  time         String
+  label        String
+  sortOrder    Int    @default(0)
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model CeremonyItem {
+  id           String @id @default(cuid())
+  invitationId String
+  title        String
+  date         String
+  time         String
+  sortOrder    Int    @default(0)
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model GalleryPhoto {
+  id           String @id @default(cuid())
+  invitationId String
+  url          String
+  sortOrder    Int    @default(0)
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model Wish {
+  id           String   @id @default(cuid())
+  invitationId String
+  name         String
+  text         String
+  createdAt    DateTime @default(now())
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId])
+}
+
+model GuestMedia {
+  id              String   @id @default(cuid())
+  invitationId    String
+  contributorName String
+  storageKey      String   @unique
+  originalName    String
+  mimeType        String
+  kind            String
+  size            Int
+  createdAt       DateTime @default(now())
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@index([invitationId, createdAt])
+}
+
+model Rsvp {
+  id           String   @id @default(cuid())
+  invitationId String
+  guestId      String?
+  name         String
+  attending    Boolean  @default(true)
+  guests       Int      @default(1)
+  side         String?
+  message      String?
+  shuttle      Boolean  @default(false)
+  dietary      String?
+  songRequest  String?
+  createdAt    DateTime @default(now())
+
+  invitation Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  guest      Guest?       @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  answers    RsvpAnswer[]
+
+  @@index([invitationId])
+  @@index([guestId])
+}
+
+model RsvpQuestion {
+  id           String   @id @default(cuid())
+  invitationId String
+  label        String
+  type         String   @default("text")
+  required     Boolean  @default(false)
+  options      String?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  invitation Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  answers    RsvpAnswer[]
+
+  @@index([invitationId])
+}
+
+model RsvpAnswer {
+  id         String @id @default(cuid())
+  rsvpId     String
+  questionId String
+  value      String
+
+  rsvp     Rsvp         @relation(fields: [rsvpId], references: [id], onDelete: Cascade)
+  question RsvpQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([rsvpId, questionId])
+  @@index([questionId])
+}
+
+model Track {
+  id           String    @id
+  title        String
+  artist       String
+  duration     Int
+  url          String
+  tags         String    @default("")
+  status       String    @default("ready")
+  youtubeUrl   String?
+  submittedBy  String?
+  errorMessage String?
+  market       String    @default("all")
+  reviewedAt   DateTime?
+  addedAt      DateTime  @default(now())
+
+  @@index([market])
+  @@index([status])
+}
+
+model Guest {
+  id           String   @id @default(cuid())
+  invitationId String
+  token        String   @unique
+  name         String
+  side         String?
+  role         String?
+  groupName    String?
+  tableName    String?
+  phone        String?
+  email        String?
+  greeting     String?
+  maxGuests    Int      @default(1)
+  giftAmount   Int?
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  invitation Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  rsvps      Rsvp[]
+
+  @@index([invitationId])
+}
+
+// Admin default: applies only to the two short names in the detail hero.
+model TemplateHeroTypography {
+  slug       String   @id
+  fontFamily String   @default("")
+  bold       Boolean?
+  italic     Boolean?
+  updatedAt  DateTime @updatedAt
+}
