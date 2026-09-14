@@ -1,0 +1,11 @@
+{
+  "name": "@chungdoi/invitation-data",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/signature-registry.ts",
+  "types": "./src/signature-registry.ts",
+  "dependencies": {
+    "@chungdoi/site-config": "0.1.0"
+  }
+}
