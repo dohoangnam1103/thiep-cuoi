@@ -35,22 +35,19 @@ Existing minipc containers (`images-db`, `ds2api`, …) and the retired
 
 ## Remaining user action: DNS + tunnel for thiep.hoangnam.cloud
 
-`thiep.hoangnam.cloud` does not resolve yet (NXDOMAIN). On a machine with
-Cloudflare access for `hoangnam.cloud`:
+DONE 2026-09-14 (temporary path through the existing blog tunnel):
 
-```bash
-cloudflared tunnel route dns <tunnel-name-or-id> thiep.hoangnam.cloud
-```
+- `cloudflared tunnel route dns f858f81e-37f2-4357-a14e-222076061e23 thiep.hoangnam.cloud`
+  created the Cloudflare CNAME.
+- Ingress `thiep.hoangnam.cloud → http://127.0.0.1:3221` appended to
+  `/home/namdo/.cloudflared/blog-config.yml` on minipc (backup:
+  `blog-config.yml.bak-site2-20260914`), blog tunnel restarted.
+- Verified: `https://thiep.hoangnam.cloud/api/health` → site-2 origin,
+  `/mau-thiep` lists exactly the 2 Signature cards, demo + cloned public
+  invitations render (HTTP 200).
 
-On minipc, extend the tunnel ingress with:
-
-```yaml
-- hostname: thiep.hoangnam.cloud
-  service: http://127.0.0.1:3221
-```
-
-then `curl -s https://thiep.hoangnam.cloud/api/health` must return the site-2
-origin above, and `/mau-thiep` must list exactly the 2 Signature cards.
+TODO for the final setup: move `thiep.hoangnam.cloud` to a dedicated tunnel
+(or keep it on the blog tunnel deliberately) and remove this note.
 
 ## Isolation map
 
