@@ -82,7 +82,7 @@ export function TemplateCardImage({
       ) : null}
       <a
         href={href}
-        className="relative block h-[var(--frame-h)] w-full overflow-hidden bg-[#eee5d5] text-left [--frame-h:320px] sm:[--frame-h:460px]"
+        className="relative block h-[var(--frame-h)] w-full overflow-hidden bg-[#eee5d5] text-left [--frame-h:280px] sm:[--frame-h:360px]"
         onPointerEnter={(event) => {
           if (event.pointerType === "mouse") activate();
         }}
