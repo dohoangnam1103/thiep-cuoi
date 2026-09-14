@@ -38,6 +38,8 @@ next-env.d.ts
 # Prisma
 /src/generated/prisma
 /apps/site-2/src/generated/prisma
+/apps/site-2/.e2e/
+/apps/site-2/.next/
 /apps/site-2/dev-site2.db
 /apps/site-2/dev-site2.db-journal
 /prisma/*.db

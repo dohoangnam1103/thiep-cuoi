@@ -25,6 +25,7 @@ export default function SignatureDemoView({
   return (
     <NextIntlClientProvider
       locale="vi"
+      timeZone="Asia/Ho_Chi_Minh"
       messages={{ invitationTemplate: vi.invitationTemplate }}
     >
       <Renderer content={content} />

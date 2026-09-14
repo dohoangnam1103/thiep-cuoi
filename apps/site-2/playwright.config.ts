@@ -1,0 +1,40 @@
+import { defineConfig, devices } from "@playwright/test";
+import path from "node:path";
+
+const PORT = Number(process.env.SITE2_E2E_PORT ?? 3222);
+const BASE_URL = `http://127.0.0.1:${PORT}`;
+const APP_DIR = import.meta.dirname;
+const TEST_DB_URL = `file:${path.join(APP_DIR, ".e2e", "test.db")}`;
+
+export default defineConfig({
+  // Only the site-2 MVP spec; it needs the site-2 server (port 3222) and the
+  // isolated temp SQLite DB below — never master dev.db or production data.
+  testDir: "../../tests/e2e",
+  testMatch: /site-2-mvp\.spec\.ts/,
+  outputDir: "./.e2e/artifacts",
+  fullyParallel: false,
+  workers: 1,
+  reporter: [["list"]],
+  timeout: 60_000,
+  expect: { timeout: 10_000 },
+  use: {
+    baseURL: BASE_URL,
+    locale: "vi-VN",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+  },
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  webServer: {
+    command: `rm -f .e2e/test.db && DATABASE_URL="${TEST_DB_URL}" npx prisma db push && next build && next start -p ${PORT}`,
+    url: BASE_URL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 300_000,
+    cwd: APP_DIR,
+    env: {
+      DATABASE_URL: TEST_DB_URL,
+      SESSION_SECRET: "site2-e2e-secret-do-not-use-in-prod",
+      NEXT_PUBLIC_SITE_URL: BASE_URL,
+      NODE_ENV: "test",
+    },
+  },
+});
