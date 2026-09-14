@@ -10,7 +10,7 @@ export default async function Site2TemplateListing() {
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-16">
       <h1 className="text-center text-3xl font-bold">{vi.templates.title}</h1>
       <p className="mt-2 text-center opacity-70">{vi.templates.subtitle}</p>
-      <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {templates.map((template, index) => (
           <li
             key={template.slug}

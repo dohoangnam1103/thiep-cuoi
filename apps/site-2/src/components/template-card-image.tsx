@@ -7,7 +7,7 @@ import thumbnails from "../data/listing-thumbnails.json";
 import { listingImageHeight, templatePreviewUrl } from "../lib/template-preview";
 
 const sizes =
-  "(min-width: 1280px) 284px, (min-width: 1024px) calc((100vw - 118px) / 3), (min-width: 640px) calc((100vw - 76px) / 2), calc(100vw - 34px)";
+  "(min-width: 1280px) calc((100vw - 118px) / 5), (min-width: 1024px) calc((100vw - 118px) / 4), (min-width: 768px) calc((100vw - 76px) / 3), (min-width: 640px) calc((100vw - 76px) / 2), calc((100vw - 34px) / 2)";
 
 type Thumbnail = {
   width: number;
@@ -82,7 +82,7 @@ export function TemplateCardImage({
       ) : null}
       <a
         href={href}
-        className="relative block h-[460px] w-full overflow-hidden bg-[#eee5d5] text-left"
+        className="relative block h-[var(--frame-h)] w-full overflow-hidden bg-[#eee5d5] text-left [--frame-h:320px] sm:[--frame-h:460px]"
         onPointerEnter={(event) => {
           if (event.pointerType === "mouse") activate();
         }}
@@ -120,7 +120,7 @@ export function TemplateCardImage({
             onLoad={() => setLoaded(true)}
             data-testid={`template-listing-full-${slug}`}
             data-active={active && loaded ? "true" : "false"}
-            className={`absolute inset-x-0 top-0 hidden h-auto w-full max-w-none transition-transform duration-[10000ms] ease-in-out data-[active=true]:translate-y-[min(0px,calc(460px_-_100%))] motion-reduce:transition-none sm:block ${loaded ? "visible" : "invisible"}`}
+            className={`absolute inset-x-0 top-0 hidden h-auto w-full max-w-none transition-transform duration-[10000ms] ease-in-out data-[active=true]:translate-y-[min(0px,calc(var(--frame-h)-100%))] motion-reduce:transition-none sm:block ${loaded ? "visible" : "invisible"}`}
           />
         ) : null}
       </a>
