@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getDemoSeed, getTemplateMeta, resolveCatalogSlug } from "../../../../lib/catalog";
+import { getDemoContent, getTemplateMeta, resolveCatalogSlug } from "../../../../lib/catalog";
 import vi from "@messages/vi.json";
 import SignatureDemoView from "./demo-view";
 
@@ -19,6 +19,7 @@ export default async function SignatureDemoPage({
   if (!template) {
     notFound();
   }
+  const content = await getDemoContent(slug);
   return (
     <div>
       <div className="mx-auto max-w-4xl px-4 pt-6">
@@ -26,7 +27,7 @@ export default async function SignatureDemoPage({
           {vi.demo.backToListing}
         </Link>
       </div>
-      <SignatureDemoView template={template} content={getDemoSeed(slug)} />
+      <SignatureDemoView template={template} content={content} />
     </div>
   );
 }

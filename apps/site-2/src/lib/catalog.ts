@@ -113,6 +113,34 @@ const FALLBACK_DEMO: ChungDoiDemoContent = {
   music: null,
 };
 
+import { toDemoContent } from "@chungdoi/invitation-core/demo-shell/to-demo-content";
+
+/**
+ * Demo content mirrors master: prefer the curated DB demo invitation
+ * (`isDemo`), fall back to the static seed. Same data, same opening
+ * choreography on both sites.
+ */
+export async function getDemoContent(
+  slug: string,
+): Promise<ChungDoiDemoContent> {
+  try {
+    const invitation = await prisma.invitation.findFirst({
+      where: { isDemo: true, templateId: slug },
+      include: {
+        content: true,
+        ceremonies: true,
+        schedule: true,
+        gallery: true,
+        wishes: true,
+      },
+    });
+    if (invitation) return toDemoContent(invitation);
+  } catch {
+    // Runtime database unavailable (e.g. build prerender) → static fallback.
+  }
+  return getDemoSeed(slug);
+}
+
 export function getDemoSeed(slug: string): ChungDoiDemoContent {
   const seed = (chungdoiDemoContent as Record<string, ChungDoiDemoContent>)[
     slug
