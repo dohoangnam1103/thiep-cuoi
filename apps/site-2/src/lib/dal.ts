@@ -45,6 +45,8 @@ export async function getOwnedInvitation(id: string, userId: string) {
       content: true,
       ceremonies: { orderBy: { sortOrder: "asc" } },
       schedule: { orderBy: { sortOrder: "asc" } },
+      gallery: { orderBy: { sortOrder: "asc" } },
+      wishes: { orderBy: { createdAt: "asc" } },
     },
   });
 }
@@ -135,6 +137,74 @@ export async function getPublishedBySlug(
   if (!invitation || !isTemplateAvailable(SITE2_ID, invitation.templateId)) {
     return null;
   }
+  return toRenderContent(invitation);
+}
+
+/** Render content for the owner's editor preview (draft or published). */
+export async function getOwnedRenderContent(
+  id: string,
+  userId: string,
+): Promise<InvitationRenderContent | null> {
+  const invitation = await getOwnedInvitation(id, userId);
+  if (!invitation || !isTemplateAvailable(SITE2_ID, invitation.templateId)) {
+    return null;
+  }
+  return toRenderContent(invitation);
+}
+
+type LoadedInvitation = {
+  id: string;
+  templateId: string;
+  content: {
+    primaryColor: string;
+    fontFamily: string | null;
+    assetFolder: string | null;
+    music: string | null;
+    dressCodeColors: string;
+    brideFullName: string;
+    groomFullName: string;
+    brideShortName: string;
+    groomShortName: string;
+    brideBirthOrder: string;
+    groomBirthOrder: string;
+    brideFirst: boolean;
+    date: string;
+    time: string;
+    ceremonyDate: string;
+    ceremonyTime: string;
+    ceremonyHeader: string;
+    ceremonyType: string;
+    openingMessage: string;
+    brideFather: string;
+    brideMother: string;
+    brideAddress: string;
+    groomFather: string;
+    groomMother: string;
+    groomAddress: string;
+    brideParentTitle: string;
+    groomParentTitle: string;
+    address: string;
+    mapAddress: string;
+    banquetTime: string;
+    heroImage: string;
+    heroImage2: string;
+    showHeroImage: boolean;
+    brideBankName: string;
+    brideAccountNumber: string;
+    brideAccountName: string;
+    groomBankName: string;
+    groomAccountNumber: string;
+    groomAccountName: string;
+  } | null;
+  ceremonies: { title: string; date: string; time: string }[];
+  schedule: { time: string; label: string }[];
+  gallery: { url: string }[];
+  wishes: { name: string; text: string; createdAt: Date }[];
+};
+
+function toRenderContent(
+  invitation: LoadedInvitation,
+): InvitationRenderContent {
   const c = invitation.content;
   return {
     slug: invitation.templateId,

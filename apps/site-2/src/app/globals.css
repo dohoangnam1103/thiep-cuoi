@@ -8,17 +8,6 @@
 @source "../../../../packages/invitation-core/src";
 @source "../../../../packages/invitation-data/src";
 
-:root {
-  --site2-cream: #faf7f0;
-  --site2-ink: #4a3f30;
-  --site2-accent: #9a6a42;
-}
-
-body {
-  background: var(--site2-cream);
-  color: var(--site2-ink);
-}
-
 /* Full shared invitation styling ported from master src/app/globals.css
    (keyframes, template utilities, envelope/cover effects). Master-only
    admin/editor rules below are inert on site-2 but kept for exact parity. */
@@ -2432,3 +2421,25 @@ div.minimalism-brown-opening-fly > img {
 .hoa-mai-cover-card-content > div:last-of-type { display: none !important; }
 .hoa-mai-cover-card-content > span { margin-top: .7rem !important; }
 .hoa-mai-cover-card-content button { border-radius: 999px !important; background: #a95231 !important; box-shadow: 0 9px 18px rgba(62,36,29,.22) !important; }
+
+/* Site-2 porcelain system. Palette locked: paper + ink + one cobalt accent.
+   Applied AFTER the ported master CSS below so app chrome always wins. */
+:root {
+  --paper: #fbfbfa;
+  --ink: #191d23;
+  --muted: #5b6470;
+  --line: #e7e7e0;
+  --accent: #2547f4;
+  --accent-ink: #ffffff;
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --radius-input: 12px;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-site), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+}
+

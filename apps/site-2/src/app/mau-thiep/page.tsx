@@ -1,45 +1,31 @@
-import Link from "next/link";
-
 import { getVisibleCatalogTemplates } from "../../lib/catalog";
-import { TemplateCardImage } from "../../components/template-card-image";
+import { TemplateListingClient } from "../../components/template-listing-client";
 import vi from "@messages/vi.json";
 
 export default async function Site2TemplateListing() {
   const templates = await getVisibleCatalogTemplates();
+  const categories = [...new Set(templates.map((item) => item.category))];
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-16 pt-16">
-      <h1 className="text-center text-3xl font-bold">{vi.templates.title}</h1>
-      <p className="mt-2 text-center opacity-70">{vi.templates.subtitle}</p>
-      <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {templates.map((template, index) => (
-          <li
-            key={template.slug}
-            data-testid="template-card"
-            className="overflow-hidden rounded-2xl border border-[#e5dcc8] bg-white/60"
-          >
-            <TemplateCardImage
-              source={template.listing}
-              portrait={template.portrait}
-              alt={template.name}
-              slug={template.slug}
-              href={`/mau-thiep/${template.slug}/demo`}
-              eager={index < 4}
-            />
-            <div className="p-6">
-              <h2 className="text-xl font-bold">{template.name}</h2>
-              <p className="mt-2 line-clamp-2 text-sm leading-relaxed opacity-80">
-                {template.description}
-              </p>
-              <Link
-                href={`/mau-thiep/${template.slug}/demo`}
-                className="mt-4 inline-block text-sm font-semibold underline"
-              >
-                {vi.templates.demoCta}
-              </Link>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 md:pt-14">
+      <h1 className="max-w-[18ch] text-3xl font-extrabold tracking-tight md:text-5xl">
+        {vi.templates.title}
+      </h1>
+      <p className="mt-3 max-w-[60ch] text-[15px] leading-relaxed text-[var(--muted)]">
+        {vi.templates.subtitle}
+      </p>
+      <div className="mt-8">
+        <TemplateListingClient
+          items={templates.map((item) => ({
+            slug: item.slug,
+            name: item.name,
+            description: item.description,
+            category: item.category,
+            listing: item.listing,
+            portrait: item.portrait,
+          }))}
+          categories={categories}
+        />
+      </div>
     </div>
   );
 }

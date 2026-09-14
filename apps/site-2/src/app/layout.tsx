@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Be_Vietnam_Pro } from "next/font/google";
 
 import vi from "@messages/vi.json";
+import { SiteFooter } from "../components/site-footer";
+import { SiteNav } from "../components/site-nav";
 import "./globals.css";
+
+const siteFont = Be_Vietnam_Pro({
+  subsets: ["vietnamese", "latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-site",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: vi.site.name,
@@ -15,27 +24,11 @@ export default function Site2Layout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi">
+    <html lang="vi" className={siteFont.variable}>
       <body className="min-h-screen antialiased">
-        <header className="border-b border-[#e5dcc8]">
-          <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-            <Link href="/" className="text-lg font-bold tracking-wide">
-              {vi.site.name}
-            </Link>
-            <div className="flex items-center gap-4 text-sm">
-              <Link href="/">{vi.site.navHome}</Link>
-              <Link href="/mau-thiep">{vi.site.navTemplates}</Link>
-              <Link href="/bang-gia">{vi.site.navPricing}</Link>
-              <Link href="/dang-nhap">{vi.site.navLogin}</Link>
-            </div>
-          </nav>
-        </header>
+        <SiteNav />
         <main>{children}</main>
-        <footer className="mt-16 border-t border-[#e5dcc8]">
-          <p className="mx-auto max-w-4xl px-4 py-6 text-center text-sm opacity-70">
-            {vi.site.footer}
-          </p>
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );
