@@ -138,6 +138,16 @@ export async function getPublishedBySlug(
   const c = invitation.content;
   return {
     slug: invitation.templateId,
+    invitationId: invitation.id,
+    theme: {
+      primaryColor: c?.primaryColor ?? "#c8102e",
+      userFontFamily: null,
+      fontFamily: c?.fontFamily ?? null,
+      assetFolder: c?.assetFolder ?? null,
+      assets: [],
+    },
+    music: c?.music ?? null,
+    dressCodeColors: c?.dressCodeColors ?? "",
     couple: {
       brideFullName: c?.brideFullName ?? "",
       groomFullName: c?.groomFullName ?? "",

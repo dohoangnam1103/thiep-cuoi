@@ -13,8 +13,5 @@ export default async function Site2PublicInvitation({
   if (!content) {
     notFound();
   }
-  if (content.slug !== "jasmine-white" && content.slug !== "silk-flora-brown") {
-    notFound();
-  }
   return <SignatureDemoView slug={content.slug} content={content} />;
 }

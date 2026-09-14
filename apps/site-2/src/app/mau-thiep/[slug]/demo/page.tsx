@@ -1,25 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isTemplateAvailable } from "@chungdoi/invitation-data";
-import { SIGNATURE_TEMPLATE_SLUGS } from "@chungdoi/invitation-data";
 
-import { getSignatureDemo } from "../../../../data/signature-demos";
+import { getDemoSeed, resolveCatalogSlug } from "../../../../lib/catalog";
 import vi from "@messages/vi.json";
 import SignatureDemoView from "./demo-view";
-
-type SignatureSlug = (typeof SIGNATURE_TEMPLATE_SLUGS)[number];
 
 export default async function SignatureDemoPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  if (!isTemplateAvailable("site-2", slug)) {
-    notFound();
-  }
-  const content = getSignatureDemo(slug);
-  if (!content) {
+  const { slug: raw } = await params;
+  const slug = resolveCatalogSlug(raw);
+  if (!slug) {
     notFound();
   }
   return (
@@ -29,7 +22,7 @@ export default async function SignatureDemoPage({
           {vi.demo.backToListing}
         </Link>
       </div>
-      <SignatureDemoView slug={slug as SignatureSlug} content={content} />
+      <SignatureDemoView slug={slug} content={getDemoSeed(slug)} />
     </div>
   );
 }

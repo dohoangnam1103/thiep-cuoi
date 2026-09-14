@@ -23,6 +23,9 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=dependencies /app/apps/site-2/package.json ./apps/site-2/package.json
 COPY packages ./packages
 COPY apps/site-2 ./apps/site-2
+# Full cloned catalog assets (themes, gallery, previews, fonts, music),
+# synced from master public/chungdoi into ./master-public before build.
+COPY master-public/chungdoi ./apps/site-2/public/chungdoi
 ENV NODE_ENV=production
 ENV DATABASE_URL="file:/app/data/prod.db"
 ENV SESSION_SECRET="build-time-placeholder"

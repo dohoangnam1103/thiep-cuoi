@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/hang-trong-folk/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-peacock",
+      "src": "/chungdoi/images/themes/_decor/hang-trong-folk/opening-left-peacock.webp",
+      "rect": {
+        "x": 0,
+        "y": 164,
+        "width": 616,
+        "height": 1238
+      }
+    },
+    {
+      "id": "right-peacock",
+      "src": "/chungdoi/images/themes/_decor/hang-trong-folk/opening-right-peacock.webp",
+      "rect": {
+        "x": 711,
+        "y": 693,
+        "width": 411,
+        "height": 709
+      }
+    },
+    {
+      "id": "peonies",
+      "src": "/chungdoi/images/themes/_decor/hang-trong-folk/opening-peonies.webp",
+      "rect": {
+        "x": 0,
+        "y": 659,
+        "width": 1122,
+        "height": 743
+      }
+    }
+  ]
+}

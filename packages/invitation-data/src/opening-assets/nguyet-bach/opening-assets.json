@@ -1,0 +1,49 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/nguyet-bach/opening-plate.webp",
+  "layers": [
+    {
+      "id": "lunar-halo",
+      "src": "/chungdoi/images/themes/_decor/nguyet-bach/opening-lunar-halo.webp",
+      "rect": {
+        "x": 112,
+        "y": 310,
+        "width": 814,
+        "height": 937
+      }
+    },
+    {
+      "id": "ivory-envelope",
+      "src": "/chungdoi/images/themes/_decor/nguyet-bach/opening-ivory-envelope.webp",
+      "rect": {
+        "x": 234,
+        "y": 448,
+        "width": 553,
+        "height": 853
+      }
+    },
+    {
+      "id": "emboss-monogram",
+      "src": "/chungdoi/images/themes/_decor/nguyet-bach/opening-emboss-monogram.webp",
+      "rect": {
+        "x": 405,
+        "y": 697,
+        "width": 214,
+        "height": 181
+      }
+    },
+    {
+      "id": "pearl-glints",
+      "src": "/chungdoi/images/themes/_decor/nguyet-bach/opening-pearl-glints.webp",
+      "rect": {
+        "x": 89,
+        "y": 53,
+        "width": 881,
+        "height": 1483
+      }
+    }
+  ]
+}

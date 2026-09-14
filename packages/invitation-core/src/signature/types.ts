@@ -8,6 +8,14 @@ import type { AlbumLayout } from "./album-layout";
  */
 export type InvitationRenderContent = {
   slug: string;
+  invitationId: string;
+  theme: {
+    primaryColor: string;
+    userFontFamily?: string | null;
+    fontFamily: string | null;
+    assetFolder: string | null;
+    assets: string[];
+  };
   couple: {
     brideFullName: string;
     groomFullName: string;
@@ -38,6 +46,7 @@ export type InvitationRenderContent = {
     address: string;
     mapAddress: string;
     banquetTime: string;
+    welcomeTime?: string;
   };
   ceremonies?: { title: string; date: string; time: string }[];
   schedule: { time: string; label: string }[];
@@ -45,7 +54,13 @@ export type InvitationRenderContent = {
   heroImage?: string;
   heroImage2?: string;
   showHeroImage?: boolean;
+  portraits?: {
+    bride: string;
+    groom: string;
+  };
+  dressCodeColors?: string;
   albumLayout?: AlbumLayout;
+  music: string | null;
   wishes: { name: string; time: string; text: string }[];
   bank: {
     brideBankName: string;

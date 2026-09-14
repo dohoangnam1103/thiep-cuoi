@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/ao-dai-hue/opening-plate.webp",
+  "layers": [
+    {
+      "id": "blue-silk",
+      "src": "/chungdoi/images/themes/_decor/ao-dai-hue/opening-blue-silk.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 426,
+        "height": 1402
+      }
+    },
+    {
+      "id": "coral-silk",
+      "src": "/chungdoi/images/themes/_decor/ao-dai-hue/opening-coral-silk.webp",
+      "rect": {
+        "x": 736,
+        "y": 0,
+        "width": 386,
+        "height": 1402
+      }
+    },
+    {
+      "id": "embroidery",
+      "src": "/chungdoi/images/themes/_decor/ao-dai-hue/opening-embroidery.webp",
+      "rect": {
+        "x": 0,
+        "y": 38,
+        "width": 1122,
+        "height": 1364
+      }
+    }
+  ]
+}

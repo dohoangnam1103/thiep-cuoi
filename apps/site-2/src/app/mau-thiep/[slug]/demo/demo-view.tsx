@@ -2,32 +2,38 @@
 
 import { NextIntlClientProvider } from "next-intl";
 import {
-  JasmineWhiteInvitation,
-  SilkFloraBrownInvitation,
-} from "@chungdoi/invitation-core/signature";
-import type { InvitationRenderContent } from "@chungdoi/invitation-core/signature";
+  getTemplateRenderer,
+  type InvitationRenderContent,
+} from "@chungdoi/invitation-core/templates";
 
 import vi from "@messages/vi.json";
 
-const SIGNATURE_VIEWS = {
-  "jasmine-white": JasmineWhiteInvitation,
-  "silk-flora-brown": SilkFloraBrownInvitation,
-} as const;
+const { invitationTemplate, banVeToAmTemplate, comicHero, hoaMaiThuyMac } = vi;
 
 export default function SignatureDemoView({
   slug,
   content,
 }: {
-  slug: keyof typeof SIGNATURE_VIEWS;
+  slug: string;
   content: InvitationRenderContent;
 }) {
-  const Renderer = SIGNATURE_VIEWS[slug];
+  // Registry lookup over a module-level map: identity is stable per slug,
+  // so this is not a render-time component creation.
+  const Renderer = getTemplateRenderer(slug);
+  if (!Renderer) return null;
   return (
     <NextIntlClientProvider
       locale="vi"
       timeZone="Asia/Ho_Chi_Minh"
-      messages={{ invitationTemplate: vi.invitationTemplate }}
+      messages={{
+        invitationTemplate,
+        banVeToAmTemplate,
+        comicHero,
+        hoaMaiThuyMac,
+      }}
     >
+      {/* Registry lookup above is stable per slug (module-level map). */}
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <Renderer content={content} />
     </NextIntlClientProvider>
   );

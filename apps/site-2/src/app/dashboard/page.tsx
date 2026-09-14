@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SIGNATURE_TEMPLATE_SLUGS } from "@chungdoi/invitation-data";
 
 import { listUserInvitations } from "../../lib/dal";
+import { getVisibleCatalogTemplates } from "../../lib/catalog";
 import { getSite2Session } from "../../lib/session";
 import { site2Logout } from "../auth-actions";
 import vi from "@messages/vi.json";
@@ -13,7 +13,10 @@ export default async function Site2Dashboard() {
   if (!session) {
     redirect("/dang-nhap");
   }
-  const invitations = await listUserInvitations(session.userId);
+  const [invitations, templates] = await Promise.all([
+    listUserInvitations(session.userId),
+    getVisibleCatalogTemplates(),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl px-4 pb-16 pt-12">
@@ -32,11 +35,11 @@ export default async function Site2Dashboard() {
           <select
             name="templateSlug"
             aria-label={vi.dashboard.createTitle}
-            className="rounded-lg border border-[#e5dcc8] bg-white px-3 py-2 text-sm"
+            className="max-w-xs rounded-lg border border-[#e5dcc8] bg-white px-3 py-2 text-sm"
           >
-            {SIGNATURE_TEMPLATE_SLUGS.map((slug) => (
-              <option key={slug} value={slug}>
-                {vi.templates.cards[slug as keyof typeof vi.templates.cards].name}
+            {templates.map((template) => (
+              <option key={template.slug} value={template.slug}>
+                {template.name}
               </option>
             ))}
           </select>

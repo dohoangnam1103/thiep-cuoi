@@ -1,0 +1,49 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/hoa-thu-hong/opening-plate.webp",
+  "layers": [
+    {
+      "id": "arch-frame",
+      "src": "/chungdoi/images/themes/_decor/hoa-thu-hong/opening-arch-frame.webp",
+      "rect": {
+        "x": 247,
+        "y": 143,
+        "width": 530,
+        "height": 418
+      }
+    },
+    {
+      "id": "crown-blooms",
+      "src": "/chungdoi/images/themes/_decor/hoa-thu-hong/opening-crown-blooms.webp",
+      "rect": {
+        "x": 342,
+        "y": 39,
+        "width": 343,
+        "height": 213
+      }
+    },
+    {
+      "id": "side-garland",
+      "src": "/chungdoi/images/themes/_decor/hoa-thu-hong/opening-side-garland.webp",
+      "rect": {
+        "x": 153,
+        "y": 260,
+        "width": 718,
+        "height": 216
+      }
+    },
+    {
+      "id": "petal-fall",
+      "src": "/chungdoi/images/themes/_decor/hoa-thu-hong/opening-petal-fall.webp",
+      "rect": {
+        "x": 122,
+        "y": 96,
+        "width": 780,
+        "height": 451
+      }
+    }
+  ]
+}

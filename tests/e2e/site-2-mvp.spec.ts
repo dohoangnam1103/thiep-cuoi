@@ -1,19 +1,26 @@
 import { test, expect } from "@playwright/test";
 
-// Site-2 MVP acceptance (runs against the isolated site-2 server, never master).
-// Covered: Signature-only listing, master-only URL rejection, and the full
-// authenticated create → edit → publish → public view flow.
+// Site-2 full-catalog acceptance (runs against the isolated site-2 server,
+// never master). Covered: full listing, unknown-URL rejection, a generated
+// template demo, and the full authenticated create → edit → publish flow.
 
-test("site 2 lists only Signature templates", async ({ page }) => {
+test("site 2 lists the full cloned catalog", async ({ page }) => {
   await page.goto("/mau-thiep");
-  await expect(page.getByTestId("template-card")).toHaveCount(2);
+  const cards = page.getByTestId("template-card");
+  await expect.poll(async () => cards.count()).toBeGreaterThan(100);
   await expect(page.getByText("Mai Lan Trắng")).toBeVisible();
   await expect(page.getByText("Hoa Lụa Nâu")).toBeVisible();
 });
 
-test("site 2 rejects a master-only template URL", async ({ page }) => {
-  const response = await page.goto("/mau-thiep/song-hy-red/demo");
+test("site 2 rejects an unknown template URL", async ({ page }) => {
+  const response = await page.goto("/mau-thiep/no-such-template/demo");
   expect(response?.status()).toBe(404);
+});
+
+test("site 2 renders a former master-only template demo", async ({ page }) => {
+  const response = await page.goto("/mau-thiep/song-hy-red/demo");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("[data-template-footer]").first()).toBeVisible();
 });
 
 test("site 2 creates, edits, publishes and publicly renders an invitation", async ({

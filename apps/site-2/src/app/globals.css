@@ -11,11 +11,153 @@ body {
   color: var(--site2-ink);
 }
 
-/* Shared Signature renderer fonts (self-hosted, same files as master). */
+/* Template font utilities shared with master (copied from src/app/globals.css).
+   next/font CSS vars are intentionally absent here: each rule falls back to the
+   self-hosted family and system serif/sans. */
+@font-face {
+  font-family: "UNI Chu truyen thong";
+  src: url("/chungdoi/fonts/UNI_Chu_truyen_thong.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pattaya";
+  src: url("/chungdoi/fonts/Pattaya-Regular.woff") format("woff");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Viaoda Libre";
+  src: url("/chungdoi/fonts/ViaodaLibre-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "EB Garamond";
+  src: url("/chungdoi/fonts/EBGaramond-Variable.ttf") format("truetype-variations");
+  font-weight: 400 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/chungdoi/fonts/CormorantGaramond-Variable.ttf") format("truetype-variations");
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Uchen";
+  src: url("/chungdoi/fonts/Uchen-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/chungdoi/fonts/HelveticaNeueRoman.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "HelveticaNeue";
+  src: url("/chungdoi/fonts/HelveticaNeueLight.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fz Aghita";
+  src: url("/chungdoi/fonts/FzAghita.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fz Qellia";
+  src: url("/chungdoi/fonts/Fz_Qellia_Fix.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "SVN-HC Pacifico";
+  src: url("/chungdoi/fonts/SVN-HC-Pacifico.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "SVN-HC Built Titling";
+  src: url("/chungdoi/fonts/SVN-HC-Built-Titling.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "SVN-HC Marvin Visions";
+  src: url("/chungdoi/fonts/SVN-HC-Marvin-Visions.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "SVN-HC Carosello";
+  src: url("/chungdoi/fonts/SVN-HC-Carosello.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "SVN-HC Haydon Brush";
+  src:
+    url("/chungdoi/fonts/SVN-HC-Haydon-Brush.woff2") format("woff2"),
+    url("/chungdoi/fonts/SVN-HC-Haydon-Brush.woff") format("woff"),
+    url("/chungdoi/fonts/SVN-HC-Haydon-Brush.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "1FTV VIP Signora";
+  src: url("/chungdoi/fonts/1FTV-VIP-Signora-Regular.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "DFVN New Eddy";
+  src: url("/chungdoi/fonts/DFVN-NewEddy-Regular.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Alex Brush";
+  src: url("/chungdoi/fonts/AlexBrush-Regular.ttf") format("truetype");
+  font-display: swap;
+}
 @font-face {
   font-family: "The Nautigal";
   src: url("/chungdoi/fonts/TheNautigal-Regular.ttf") format("truetype");
   font-display: swap;
 }
-
-.font-couple-garamond { font-family: "EB Garamond", Garamond, serif; }
+@font-face {
+  font-family: "Lora";
+  src: url("/chungdoi/fonts/Lora-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Beau Rivage";
+  src: url("/chungdoi/fonts/BeauRivage-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ms Madi";
+  src: url("/chungdoi/fonts/MsMadi-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face { font-family: "Carattere"; src: url("/chungdoi/fonts/Carattere-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Whisper"; src: url("/chungdoi/fonts/Whisper-Regular.ttf") format("truetype"); font-display: swap; }
+.font-body-serif { font-family: var(--font-lora), "Lora", Georgia, "Times New Roman", serif; }
+.font-body-sans { font-family: var(--font-be-vietnam-pro), "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif; }
+.font-art-uni { font-family: "UNI Chu truyen thong", "Fz Qellia", serif; }
+.font-art-haydon { font-family: "SVN-HC Haydon Brush", "Pattaya", cursive; }
+.font-art-new-eddy { font-family: "DFVN New Eddy", "Fz Qellia", serif; }
+.font-art-qellia { font-family: "Fz Qellia", "Times New Roman", serif; }
+.font-art-pattaya { font-family: "Pattaya", cursive; }
+.font-art-signora { font-family: "1FTV VIP Signora", "Fz Aghita", cursive; }
+.font-art-lora { font-family: var(--font-lora), "Lora", Georgia, serif; }
+.font-art-aghita { font-family: "Fz Aghita", "Pattaya", cursive; }
+.font-art-nautigal { font-family: "The Nautigal", "Alex Brush", cursive; }
+.font-art-beau-rivage { font-family: "Beau Rivage", "The Nautigal", cursive; }
+.font-mg-cormorant { font-family: "Cormorant Garamond", "Times New Roman", serif; }
+.font-mg-nautigal { font-family: "The Nautigal", cursive; }
+.font-mg-times { font-family: "Times New Roman", serif; }
+.font-mg-baskerville { font-family: Baskerville, "Times New Roman", serif; }
+.font-mg-garamond { font-family: "EB Garamond", serif; }
+.font-mg-sans { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
+.font-mg-msmadi { font-family: "Ms Madi", cursive; }
+.font-couple-garamond { font-family: var(--font-eb-garamond), "EB Garamond", Garamond, serif; }
+.font-couple-uni { font-family: "UNI Chu truyen thong", "Times New Roman", serif; }
+.font-couple-playfair { font-family: var(--font-playfair-display), "Playfair Display", "Times New Roman", serif; }
+.font-couple-patrick { font-family: var(--font-patrick-hand), "Patrick Hand", cursive; }
+.font-couple-viaoda { font-family: "Viaoda Libre", var(--font-eb-garamond), "EB Garamond", cursive; }
+.font-art-built { font-family: "SVN-HC Built Titling", HelveticaNeue, sans-serif; }
+.font-art-alex { font-family: "Alex Brush", "Fz Aghita", cursive; }
+.font-art-pacifico { font-family: "SVN-HC Pacifico", "Pattaya", cursive; }
+.font-art-helvetica { font-family: HelveticaNeue, Arial, sans-serif; }
+.font-art-marvin { font-family: "SVN-HC Marvin Visions", HelveticaNeue, sans-serif; }

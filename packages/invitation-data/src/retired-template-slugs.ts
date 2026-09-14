@@ -1,0 +1,81 @@
+// Route slug của các mẫu thiệp đã rút khỏi catalog.
+//
+// Vì sao phải hardcode: URL công khai dùng slug tiếng Việt (viRouteSlug), và
+// 24 trong số này khác slug nguồn — zen-sand ở /mau-thiep/tinh-sa,
+// arch-sage ở /mau-thiep/vom-xanh-thao-moc. Bản đồ đó sống trong manifest của
+// từng mẫu, nên khi xoá mẫu đi thì không còn cách nào suy ra URL cũ nữa.
+// Danh sách này được chụp lại trước khi xoá để 301 không bị mất mắt nào.
+//
+// Cả hai dạng slug đều có mặt: URL cũ có thể dùng slug nguồn hoặc slug tiếng
+// Việt, và cả hai từng nằm trong sitemap.
+export const retiredTemplateRouteSlugs = [
+  "ao-dai-hue",
+  "ao-dai-hue-tim",
+  "arch-sage",
+  "art-deco-gatsby",
+  "aurora-glass-dark",
+  "ban-do-tinh-tuc",
+  "bat-trang-blue",
+  "bo-bien-dia-trung-hai",
+  "botanical-lavender",
+  "celestial-map",
+  "chim-lac-ivory",
+  "chim-lac-ngoc-nga",
+  "chrome-thien-nien-ky",
+  "cinema-credit",
+  "coastal-mediterranean",
+  "comic-hero-assemble",
+  "cuc-quang-kinh-toi",
+  "dau-an-ngoc-nga",
+  "detective-conan-casebook",
+  "dong-ho-dan-gian",
+  "dong-ho-folk",
+  "doraemon-door",
+  "editorial-noir",
+  "gatsby-nghe-thuat",
+  "gom-bat-trang-lam",
+  "hac-ban-tin",
+  "hang-trong-folk",
+  "hang-trong-phu-quy",
+  "hoa-thu-do-ruou-vang",
+  "hoa-thu-hong",
+  "hoa-thu-xanh-duong",
+  "hoa-thu-xanh-la",
+  "ivory-signature",
+  "long-phung-deco",
+  "long-phung-gatefold",
+  "long-phung-hinh-hoc",
+  "nguyet-anh-sleeve",
+  "phong-thu-be",
+  "phong-thu-do-pastel",
+  "phong-thu-hong-pastel",
+  "phong-thu-lam-pastel",
+  "phong-thu-luc-pastel",
+  "rap-hy-sai-gon",
+  "riso-duotone",
+  "riso-hai-mau",
+  "sen-monoline",
+  "sen-muc-mot-net",
+  "sieu-anh-hung-comic",
+  "son-mai-lacquer",
+  "son-mai-vang-son",
+  "swiss-brutalist",
+  "thao-moc-oai-huong",
+  "tho-cam-highland",
+  "tho-cam-vung-cao",
+  "thuy-si-to-bao",
+  "ticket-terracotta",
+  "tinh-sa",
+  "trong-dong-dong-son",
+  "truc-chi-minimal",
+  "truc-chi-toa-sang",
+  "tua-phim-tinh-yeu",
+  "ve-hen-dat-nung",
+  "vom-xanh-thao-moc",
+  "y2k-chrome",
+  "zen-sand",
+] as const;
+
+// Một nhóm regex thay cho 130 entry rời, để Next không phải so khớp tuần tự
+// từng route trên mọi request.
+export const retiredTemplateSlugPattern = retiredTemplateRouteSlugs.join("|");

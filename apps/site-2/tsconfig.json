@@ -35,8 +35,14 @@
       "@chungdoi/invitation-data": [
         "../../packages/invitation-data/src/signature-registry.ts"
       ],
+      "@chungdoi/invitation-data/*": [
+        "../../packages/invitation-data/src/*"
+      ],
       "@chungdoi/invitation-core": [
         "../../packages/invitation-core/src/resolve-template.ts"
+      ],
+      "@chungdoi/invitation-core/*": [
+        "../../packages/invitation-core/src/*"
       ],
       "@chungdoi/invitation-core/signature": [
         "../../packages/invitation-core/src/signature/index.ts"

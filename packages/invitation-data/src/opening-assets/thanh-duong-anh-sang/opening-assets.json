@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-plate.webp",
+  "layers": [
+    {
+      "id": "rose-glow",
+      "src": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-rose-glow.webp",
+      "rect": {
+        "x": 326,
+        "y": 43,
+        "width": 380,
+        "height": 328
+      }
+    },
+    {
+      "id": "dove-pair",
+      "src": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-dove-pair.webp",
+      "rect": {
+        "x": 288,
+        "y": 275,
+        "width": 448,
+        "height": 57
+      }
+    },
+    {
+      "id": "light-shaft",
+      "src": "/chungdoi/images/themes/_decor/thanh-duong-anh-sang/opening-light-shaft.webp",
+      "rect": {
+        "x": 384,
+        "y": 298,
+        "width": 290,
+        "height": 270
+      }
+    }
+  ]
+}

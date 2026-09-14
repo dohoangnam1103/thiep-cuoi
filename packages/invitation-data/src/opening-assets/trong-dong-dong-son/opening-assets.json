@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-plate.webp",
+  "layers": [
+    {
+      "id": "spiral-bands",
+      "src": "/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-spiral-bands.webp",
+      "rect": {
+        "x": 319,
+        "y": 143,
+        "width": 386,
+        "height": 386
+      }
+    },
+    {
+      "id": "sun-star",
+      "src": "/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-sun-star.webp",
+      "rect": {
+        "x": 429,
+        "y": 253,
+        "width": 166,
+        "height": 166
+      }
+    },
+    {
+      "id": "lac-birds",
+      "src": "/chungdoi/images/themes/_decor/trong-dong-dong-son/opening-lac-birds.webp",
+      "rect": {
+        "x": 330,
+        "y": 154,
+        "width": 364,
+        "height": 364
+      }
+    }
+  ]
+}

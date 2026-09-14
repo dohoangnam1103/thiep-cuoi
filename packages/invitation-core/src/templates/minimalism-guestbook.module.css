@@ -1,0 +1,41 @@
+.paperFrame {
+  position: relative;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.paperArtwork {
+  --paper-width: min(120cqw, 650px);
+
+  position: absolute;
+  inset: -15px auto 0 50%;
+  width: var(--paper-width);
+  transform: translateX(-50%);
+  pointer-events: none;
+  border-style: solid;
+  border-color: transparent;
+  /* The four paper palettes use byte-identical 1513 × 1378 artwork.
+     Full-width top/bottom bands preserve the corners and entire bouquet;
+     only the empty middle stretches, without vertical slice seams. */
+  border-image-source: url("/chungdoi/images/themes/minimalism-dark-red/papernote-background.webp");
+  border-image-slice: 300 0 500 0 fill;
+  border-top-width: calc(var(--paper-width) * 300 / 1513);
+  border-right-width: 0;
+  border-bottom-width: calc(var(--paper-width) * 500 / 1513);
+  border-left-width: 0;
+  opacity: 0.95;
+  filter: drop-shadow(4px 4px 4px rgb(0 0 0 / 25%));
+}
+
+.paperContent {
+  /* The sheet ends 202 source pixels above the artwork canvas bottom.
+     Reserve that transparent/flower tail plus 32px below the submit button. */
+  padding-bottom: calc(32px + min(120cqw, 650px) * 202 / 1513);
+}
+
+@media (min-width: 768px) {
+  .paperArtwork {
+    top: -30px;
+  }
+}

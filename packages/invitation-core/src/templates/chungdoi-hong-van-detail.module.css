@@ -1,0 +1,609 @@
+.page {
+  color: #fff4df;
+  background-color: #fffaf2;
+  min-height: 100%;
+}
+
+.column {
+  color: #fff4df;
+  background-color: #5c0812;
+  background-image:
+    radial-gradient(ellipse 110% 760px at 50% -4%, rgb(184 48 57 / 88%) 0%, transparent 72%),
+    radial-gradient(circle at 10% 38%, rgb(139 28 39 / 34%) 0%, transparent 28%),
+    radial-gradient(circle at 92% 68%, rgb(115 16 29 / 42%) 0%, transparent 32%),
+    repeating-linear-gradient(122deg, rgb(255 244 223 / 1.4%) 0 1px, transparent 1px 10px);
+  box-shadow: 0 0 0 1px rgb(126 24 35 / 18%), 0 18px 60px rgb(54 10 13 / 18%);
+  min-height: 100dvh;
+}
+
+.page form :is(input:not([type="hidden"]), textarea, select) {
+  border-radius: 12px;
+  background-color: #fff7eb;
+  color: #5b1019;
+}
+
+.surface {
+  background-color: rgb(101 17 27 / 95%);
+}
+
+.page [data-portrait-frame] {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 3 / 4;
+  margin-inline: auto;
+}
+
+.page [data-portrait-frame-artwork] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 2;
+  /* The artwork canvas matches the portrait frame ratio. Keep it at its
+     native scale so the inner opening hugs the uploaded photo instead of
+     leaving a wide burgundy moat around it. */
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.page [data-portrait-frame] [data-hero-portrait] {
+  z-index: 1;
+  box-shadow: 0 8px 28px rgb(33 0 5 / 35%);
+}
+
+/* Each arrangement belongs to its heading, so optional/long sections cannot
+   leave a repeating rail or cut a bouquet at a section boundary. */
+.page [data-section-bouquet] {
+  height: 170px;
+  margin-bottom: 12px;
+  isolation: isolate;
+}
+
+@media (min-width: 640px) {
+  .page [data-section-bouquet] {
+    width: calc(100% + 180px);
+    margin-left: -90px;
+  }
+
+}
+
+.page [data-section-bouquet] img {
+  width: 300px;
+  height: 300px;
+  max-width: none;
+  left: 8px;
+  bottom: -82px;
+  opacity: 0.92;
+  z-index: 2;
+  filter: drop-shadow(0 12px 16px rgb(24 0 4 / 25%));
+}
+
+.page [data-section-bouquet] :global(.bouquet-variant) {
+  display: none;
+}
+
+.page section:nth-of-type(3n + 1) [data-section-bouquet] :global(.bouquet-variant-0),
+.page section:nth-of-type(3n + 2) [data-section-bouquet] :global(.bouquet-variant-1),
+.page section:nth-of-type(3n) [data-section-bouquet] :global(.bouquet-variant-2) {
+  display: block;
+}
+
+.page footer [data-section-bouquet] :global(.bouquet-variant-0) {
+  display: block;
+}
+
+.page footer [data-section-bouquet] :global(.bouquet-variant-1) {
+  display: none;
+}
+
+.page section:nth-of-type(even) [data-section-bouquet] img {
+  left: auto;
+  right: 8px;
+  transform: scaleX(-1);
+}
+
+.page section:nth-of-type(3n) [data-section-bouquet] img {
+  width: 280px;
+  height: 280px;
+  bottom: -64px;
+}
+
+.page footer > [data-section-bouquet] {
+  height: 320px;
+}
+
+/* These sections use their own composition or need a quiet reading zone. */
+.page [data-art-section="timeline"] [data-section-bouquet],
+.page [data-art-section="map"] [data-section-bouquet],
+.page [data-art-section="dress"] [data-section-bouquet],
+.page [data-art-section="guestbook"] [data-section-bouquet] {
+  display: none;
+}
+
+.page footer > [data-section-bouquet] img {
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  bottom: 0;
+  transform: translateX(-50%);
+}
+
+.page [data-artwork-hero] :global(.hero-bouquet) {
+  position: absolute;
+  z-index: 5;
+  width: 245px;
+  height: 245px;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.96;
+  filter: drop-shadow(0 12px 12px rgb(68 5 12 / 24%));
+}
+
+.page [data-artwork-hero] :global(.hero-bouquet-a) { left: -12px; top: 24px; }
+.page [data-artwork-hero] :global(.hero-bouquet-b) { right: -18px; top: 18px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-c) { right: -30px; top: 220px; width: 220px; height: 220px; }
+.page [data-artwork-hero] :global(.hero-bouquet-d) { left: -35px; top: 390px; width: 220px; height: 220px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-e) { right: -22px; top: 440px; width: 235px; height: 235px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-f) { left: -18px; bottom: 10px; width: 230px; height: 230px; }
+.page [data-artwork-hero] :global(.hero-bouquet-g) { left: -24px; top: 210px; width: 185px; height: 185px; transform: scaleX(-1); }
+.page [data-artwork-hero] :global(.hero-bouquet-h) { right: -24px; top: 370px; width: 185px; height: 185px; }
+.page [data-artwork-hero] :global(.hero-bouquet-i) { left: 50%; top: -112px; width: 285px; height: 285px; transform: translateX(-50%); }
+
+.page [data-artwork-hero-content] {
+  padding-top: 190px;
+  padding-bottom: 190px;
+}
+
+/* Hồng Vân uses open editorial sections instead of repeating the same rounded
+   panel for every piece of content. Gold rules and rose clusters provide the
+   rhythm while the burgundy field remains continuous. */
+.page [data-art-content] {
+  padding-inline: clamp(20px, 5cqw, 40px);
+}
+
+.page [data-section-heading] {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 16px;
+  letter-spacing: -0.025em;
+  text-shadow: 0 8px 28px rgb(38 0 5 / 18%);
+}
+
+.page [data-section-heading]::after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: clamp(54px, 11cqw, 88px);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgb(237 199 126 / 84%), transparent);
+  transform: translateX(-50%);
+}
+
+.page [data-art-section="ceremonies"] {
+  max-width: 620px;
+  margin-inline: auto;
+  padding-block: 8px;
+}
+
+.page [data-art-section="ceremonies"] > * {
+  margin-top: 0;
+}
+
+.page [data-event-card] {
+  position: relative;
+  padding: 44px 24px;
+  overflow: visible;
+  background: radial-gradient(ellipse at center, rgb(139 28 39 / 34%) 0%, transparent 72%);
+  border: 0;
+  border-radius: 0;
+}
+
+.page [data-event-card]::after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: min(132px, 32%);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgb(237 199 126 / 62%), transparent);
+  transform: translateX(-50%);
+}
+
+.page [data-art-section="ceremonies"] > :last-child [data-event-card]::after,
+.page [data-art-section="ceremonies"] > [data-event-card]:last-child::after {
+  display: none;
+}
+
+.page [data-event-card] > p:nth-of-type(2) {
+  font-family: "Fz Qellia", "Times New Roman", serif;
+  font-size: clamp(2rem, 7cqw, 3.25rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.page [data-event-card] > p:nth-of-type(3) {
+  margin-top: 12px;
+  letter-spacing: 0.08em;
+}
+
+/* Keep the countdown close to the reception. Its edge bouquet decorates the
+   heading without reserving a full extra row between these related sections. */
+.page [data-art-section="calendar"] {
+  margin-top: 32px;
+}
+
+.page [data-art-section="calendar"] [data-section-bouquet] {
+  height: 0;
+  margin-bottom: 0;
+}
+
+.page section[data-art-section="calendar"] [data-section-bouquet] img {
+  top: -32px;
+  bottom: auto;
+  width: clamp(110px, 18cqw, 170px);
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.page [data-calendar-card] {
+  width: min(100%, 430px);
+  max-width: 430px;
+  margin-inline: auto;
+  padding: 22px 14px 24px;
+  background: linear-gradient(90deg, transparent, rgb(128 20 33 / 42%) 18%, rgb(128 20 33 / 42%) 82%, transparent);
+  border: 0;
+  border-block: 1px solid rgb(237 199 126 / 22%);
+  border-radius: 0;
+}
+
+.page [data-calendar-card] > h3 {
+  font-size: 1rem;
+}
+
+.page [data-calendar-card] > div {
+  margin-top: 16px;
+  gap: 2px;
+}
+
+.page [data-calendar-card] > div > span {
+  font-size: 0.72rem;
+}
+
+.page [data-calendar-card] > div > span:nth-child(-n + 7) {
+  padding-block: 5px;
+  font-size: 0.58rem;
+}
+
+.page [data-art-section="timeline"] {
+  position: relative;
+  isolation: isolate;
+  padding-block: 8px 22px;
+}
+
+.page [data-timeline-list][data-timeline-variant="vine"] {
+  position: relative;
+  display: grid;
+  max-width: 600px;
+  margin: 42px auto 0;
+  padding-block: 24px;
+  overflow: visible;
+  isolation: isolate;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.page [data-timeline-vine] {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  bottom: 18px;
+  left: 50%;
+  width: 70px;
+  height: calc(100% - 36px);
+  overflow: visible;
+  opacity: 0.5;
+  transform: translateX(-50%);
+}
+
+.page [data-timeline-vine] > path:first-child {
+  stroke-width: 1.5;
+}
+
+.page [data-timeline-vine] > path:not(:first-child) {
+  opacity: 0.45;
+}
+
+.page [data-timeline-item] {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+  align-items: center;
+  min-height: 108px;
+  padding: 20px 0;
+  text-align: initial;
+  background: transparent;
+}
+
+.page [data-timeline-item]::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  content: "";
+  background: #76101b;
+  border: 1px solid rgb(237 199 126 / 92%);
+  border-radius: 50% 50% 50% 12%;
+  box-shadow: 0 0 0 6px rgb(92 8 18 / 82%), 0 0 20px rgb(237 199 126 / 18%);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.page [data-timeline-time] {
+  grid-column: 1;
+  justify-self: end;
+  padding-right: 20px;
+  font-size: clamp(1.05rem, 3cqw, 1.25rem);
+  letter-spacing: 0.08em;
+}
+
+.page [data-timeline-label] {
+  grid-column: 3;
+  justify-self: start;
+  padding-left: 20px;
+  font-size: clamp(1rem, 3cqw, 1.15rem);
+  line-height: 1.45;
+}
+
+.page [data-timeline-flower] {
+  position: absolute;
+  z-index: 1;
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.62;
+  filter: drop-shadow(0 14px 18px rgb(29 0 4 / 30%));
+}
+
+.page [data-timeline-flower="start"] {
+  top: -42px;
+  left: -122px;
+  transform: rotate(-10deg);
+}
+
+.page [data-timeline-flower="end"] {
+  right: -126px;
+  bottom: -48px;
+  transform: rotate(10deg) scaleX(-1);
+}
+
+.page [data-art-section="dress"] {
+  position: relative;
+  padding: 42px 0;
+  background: radial-gradient(ellipse at center, rgb(139 28 39 / 32%) 0%, transparent 72%);
+  border: 0;
+  border-radius: 0;
+}
+
+.page [data-art-section="dress"]::before,
+.page [data-art-section="dress"]::after {
+  position: absolute;
+  left: 50%;
+  width: min(360px, 64%);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgb(237 199 126 / 45%), transparent);
+  transform: translateX(-50%);
+}
+
+.page [data-art-section="dress"]::before {
+  top: 0;
+}
+
+.page [data-art-section="dress"]::after {
+  bottom: 0;
+}
+
+.page [data-wish-card] {
+  max-width: 600px;
+  margin-inline: auto;
+  padding: 14px 0 14px 24px;
+  text-align: left;
+  background: linear-gradient(90deg, rgb(129 21 34 / 34%), transparent 72%);
+  border: 0;
+  border-left: 1px solid rgb(237 199 126 / 52%);
+  border-radius: 0;
+}
+
+.page [data-art-footer] {
+  position: relative;
+  padding-top: 42px;
+  border: 0;
+}
+
+.page [data-art-footer]::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(420px, 72%);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgb(237 199 126 / 48%), transparent);
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page [data-timeline-flower="start"] {
+    animation: hongVanRoseFloatStart 12s ease-in-out infinite;
+  }
+
+  .page [data-timeline-flower="end"] {
+    animation: hongVanRoseFloatEnd 14s ease-in-out infinite;
+  }
+}
+
+@keyframes hongVanRoseFloatStart {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-10deg);
+  }
+
+  50% {
+    transform: translate3d(5px, -7px, 0) rotate(-7deg);
+  }
+}
+
+@keyframes hongVanRoseFloatEnd {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(10deg) scaleX(-1);
+  }
+
+  50% {
+    transform: translate3d(-5px, 7px, 0) rotate(7deg) scaleX(-1);
+  }
+}
+
+@media (max-width: 639px) {
+  .column {
+    box-shadow: none;
+  }
+
+  .page [data-section-bouquet] {
+    height: 155px;
+    margin-bottom: 18px;
+  }
+
+  .page [data-section-bouquet] img,
+  .page section:nth-of-type(3n) [data-section-bouquet] img {
+    width: 180px;
+    height: 180px;
+    left: 0;
+    bottom: 0;
+  }
+
+  .page section:nth-of-type(even) [data-section-bouquet] img {
+    left: auto;
+    right: 0;
+  }
+
+  .page footer > [data-section-bouquet] {
+    height: 230px;
+  }
+
+  .page footer > [data-section-bouquet] img {
+    left: 50%;
+    width: 230px;
+    height: 230px;
+  }
+
+  .page [data-portrait-frame-artwork] {
+    transform: scale(1);
+  }
+
+  .page [data-artwork-hero] :global(.hero-bouquet) { width: 170px; height: 170px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-a) { left: -28px; top: 10px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-b) { right: -34px; top: 12px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-c),
+  .page [data-artwork-hero] :global(.hero-bouquet-d),
+  .page [data-artwork-hero] :global(.hero-bouquet-e),
+  .page [data-artwork-hero] :global(.hero-bouquet-g),
+  .page [data-artwork-hero] :global(.hero-bouquet-h) { display: none; }
+  .page [data-artwork-hero] :global(.hero-bouquet-f) { left: auto; right: -30px; bottom: 10px; }
+  .page [data-artwork-hero] :global(.hero-bouquet-i) { display: none; }
+
+  .page [data-artwork-hero-content] {
+    padding-top: 185px;
+    padding-bottom: 190px;
+  }
+
+  .page [data-event-card] {
+    padding: 36px 14px;
+  }
+
+  .page section[data-art-section="calendar"] [data-section-bouquet] img {
+    top: -28px;
+    left: -16px;
+    width: 86px;
+    height: 86px;
+  }
+
+  .page [data-calendar-card] {
+    padding-inline: 8px;
+  }
+
+  .page [data-timeline-list][data-timeline-variant="vine"] {
+    max-width: 340px;
+    margin-top: 32px;
+    padding-block: 12px;
+  }
+
+  .page [data-timeline-vine] {
+    top: 16px;
+    bottom: 16px;
+    left: 76px;
+    width: 48px;
+    height: calc(100% - 32px);
+  }
+
+  .page [data-timeline-item] {
+    grid-template-columns: 58px 36px minmax(0, 1fr);
+    min-height: 98px;
+    padding-block: 18px;
+    padding-right: 60px;
+  }
+
+  .page [data-timeline-item]::after {
+    left: 76px;
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 0 5px rgb(92 8 18 / 84%), 0 0 16px rgb(237 199 126 / 16%);
+  }
+
+  .page [data-timeline-time] {
+    padding-right: 8px;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+  }
+
+  .page [data-timeline-label] {
+    width: 100%;
+    padding-left: 10px;
+    font-size: 1rem;
+    text-wrap: balance;
+  }
+
+  .page [data-timeline-flower] {
+    width: 128px;
+    height: 128px;
+    opacity: 0.42;
+  }
+
+  .page [data-timeline-flower="start"] {
+    top: -24px;
+    left: -96px;
+  }
+
+  .page [data-timeline-flower="end"] {
+    right: -96px;
+    bottom: -28px;
+  }
+
+  .page [data-art-section="dress"] {
+    padding-inline: 4px;
+  }
+
+  .page [data-wish-card] {
+    padding-left: 18px;
+  }
+}

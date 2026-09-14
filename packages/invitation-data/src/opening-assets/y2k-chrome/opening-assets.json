@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/y2k-chrome/opening-plate.webp",
+  "layers": [
+    {
+      "id": "left-chrome",
+      "src": "/chungdoi/images/themes/_decor/y2k-chrome/opening-left-chrome.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 563,
+        "height": 1402
+      }
+    },
+    {
+      "id": "right-chrome",
+      "src": "/chungdoi/images/themes/_decor/y2k-chrome/opening-right-chrome.webp",
+      "rect": {
+        "x": 559,
+        "y": 0,
+        "width": 563,
+        "height": 1402
+      }
+    },
+    {
+      "id": "highlights",
+      "src": "/chungdoi/images/themes/_decor/y2k-chrome/opening-highlights.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1122,
+        "height": 1402
+      }
+    }
+  ]
+}

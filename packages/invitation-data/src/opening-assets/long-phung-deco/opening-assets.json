@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/long-phung-deco/opening-plate.webp",
+  "layers": [
+    {
+      "id": "dragon",
+      "src": "/chungdoi/images/themes/_decor/long-phung-deco/opening-dragon.webp",
+      "rect": {
+        "x": 112,
+        "y": 83,
+        "width": 496,
+        "height": 1264
+      }
+    },
+    {
+      "id": "phoenix",
+      "src": "/chungdoi/images/themes/_decor/long-phung-deco/opening-phoenix.webp",
+      "rect": {
+        "x": 531,
+        "y": 43,
+        "width": 479,
+        "height": 1102
+      }
+    },
+    {
+      "id": "foil-sun-frame",
+      "src": "/chungdoi/images/themes/_decor/long-phung-deco/opening-foil-sun-frame.webp",
+      "rect": {
+        "x": 47,
+        "y": 64,
+        "width": 1019,
+        "height": 1290
+      }
+    }
+  ]
+}

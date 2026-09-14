@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/riso-duotone/opening-plate.webp",
+  "layers": [
+    {
+      "id": "coral-ink",
+      "src": "/chungdoi/images/themes/_decor/riso-duotone/opening-coral-ink.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1099,
+        "height": 1402
+      }
+    },
+    {
+      "id": "teal-ink",
+      "src": "/chungdoi/images/themes/_decor/riso-duotone/opening-teal-ink.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1122,
+        "height": 1402
+      }
+    },
+    {
+      "id": "black-ink",
+      "src": "/chungdoi/images/themes/_decor/riso-duotone/opening-black-ink.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1122,
+        "height": 1402
+      }
+    }
+  ]
+}

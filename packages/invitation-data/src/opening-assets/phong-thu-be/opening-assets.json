@@ -1,0 +1,49 @@
+{
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/phong-thu-be/opening-plate.webp",
+  "layers": [
+    {
+      "id": "envelope-body",
+      "src": "/chungdoi/images/themes/_decor/phong-thu-be/opening-envelope-body.webp",
+      "rect": {
+        "x": 268,
+        "y": 192,
+        "width": 488,
+        "height": 296
+      }
+    },
+    {
+      "id": "envelope-flap",
+      "src": "/chungdoi/images/themes/_decor/phong-thu-be/opening-envelope-flap.webp",
+      "rect": {
+        "x": 267,
+        "y": 192,
+        "width": 490,
+        "height": 184
+      }
+    },
+    {
+      "id": "wax-seal",
+      "src": "/chungdoi/images/themes/_decor/phong-thu-be/opening-wax-seal.webp",
+      "rect": {
+        "x": 121,
+        "y": 145,
+        "width": 765,
+        "height": 383
+      }
+    },
+    {
+      "id": "petal-drift",
+      "src": "/chungdoi/images/themes/_decor/phong-thu-be/opening-petal-drift.webp",
+      "rect": {
+        "x": 118,
+        "y": 106,
+        "width": 794,
+        "height": 459
+      }
+    }
+  ]
+}

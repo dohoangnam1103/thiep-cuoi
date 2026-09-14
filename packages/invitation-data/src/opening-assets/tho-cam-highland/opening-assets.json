@@ -1,0 +1,39 @@
+{
+  "canvas": {
+    "width": 1122,
+    "height": 1402
+  },
+  "plateSrc": "/chungdoi/images/themes/_decor/tho-cam-highland/opening-plate.webp",
+  "layers": [
+    {
+      "id": "upper-left-embroidery",
+      "src": "/chungdoi/images/themes/_decor/tho-cam-highland/opening-upper-left-embroidery.webp",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 720,
+        "height": 985
+      }
+    },
+    {
+      "id": "lower-right-embroidery",
+      "src": "/chungdoi/images/themes/_decor/tho-cam-highland/opening-lower-right-embroidery.webp",
+      "rect": {
+        "x": 289,
+        "y": 491,
+        "width": 833,
+        "height": 911
+      }
+    },
+    {
+      "id": "stitches",
+      "src": "/chungdoi/images/themes/_decor/tho-cam-highland/opening-stitches.webp",
+      "rect": {
+        "x": 11,
+        "y": 11,
+        "width": 1111,
+        "height": 1357
+      }
+    }
+  ]
+}
