@@ -5,6 +5,10 @@
   "type": "module",
   "main": "./src/resolve-template.ts",
   "types": "./src/resolve-template.ts",
+  "exports": {
+    ".": "./src/resolve-template.ts",
+    "./signature": "./src/signature/index.ts"
+  },
   "dependencies": {
     "@chungdoi/site-config": "0.1.0"
   }
