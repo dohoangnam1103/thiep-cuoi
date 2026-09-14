@@ -24,6 +24,11 @@ const eslintConfig = defineConfig([
     "public/proto/**",
     "test-results/**",
     "tests/e2e/.report/**",
+    // Second-app and package build artifacts (their sources stay linted).
+    "apps/**/.next/**",
+    "apps/**/.e2e/**",
+    "apps/**/src/generated/**",
+    "packages/**/.next/**",
     // Scratch dirs: not source, but their warnings bloat every lint run.
     "tmp/**",
     "temp/**",
@@ -33,7 +38,10 @@ const eslintConfig = defineConfig([
     // Invitation templates position raw <img> deliberately (art layouts,
     // user-uploaded photos, canvas compositing). 259 unfixable warnings here
     // were drowning out real lint output — scope the rule off instead.
-    files: ["src/components/chungdoi-tpl-*.tsx"],
+    files: [
+      "src/components/chungdoi-tpl-*.tsx",
+      "packages/invitation-core/src/signature/*.tsx",
+    ],
     rules: {
       "@next/next/no-img-element": "off",
     },

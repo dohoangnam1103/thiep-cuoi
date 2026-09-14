@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { getSite2BuildInfo } from "../../../lib/build-info";
+
 export async function GET() {
-  return NextResponse.json({ app: "site-2", status: "ok" });
+  const info = getSite2BuildInfo();
+  return NextResponse.json({ app: info.appId, status: "ok", origin: info.origin });
 }

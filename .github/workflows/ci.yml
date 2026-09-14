@@ -45,3 +45,44 @@ jobs:
         env:
           NEXT_PUBLIC_SITE_URL: https://thiepmungonline.com
         run: npm run build
+
+  site-2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: App boundary gates
+        run: npm run test:boundaries
+
+      - name: Site-2 lint
+        run: npm --workspace apps/site-2 run lint
+
+      - name: Site-2 type check
+        run: npm --workspace apps/site-2 run typecheck
+
+      - name: Site-2 unit tests
+        run: npm --workspace apps/site-2 run test:unit
+
+      - name: Site-2 Prisma client
+        env:
+          DATABASE_URL: file:./dev-site2.db
+        run: npm --workspace apps/site-2 run prisma:generate
+
+      - name: Site-2 build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://site2.example
+          DATABASE_URL: file:./dev-site2.db
+          SESSION_SECRET: ci-placeholder-secret
+        run: npm --workspace apps/site-2 run build

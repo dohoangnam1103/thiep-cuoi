@@ -81,6 +81,20 @@ export function publicOrigin(environment) {
   return url.origin;
 }
 
+/**
+ * Two-site guard: master and site-2 production origins must be distinct HTTPS
+ * origins. Values are validated the same way as the master deploy preflight;
+ * only the hostnames are compared here, never any credential.
+ */
+export function assertDistinctSiteOrigins(masterValue, site2Value) {
+  const master = publicOrigin({ NEXT_PUBLIC_SITE_URL: masterValue });
+  const site2 = publicOrigin({ NEXT_PUBLIC_SITE_URL: site2Value });
+  if (new URL(master).hostname === new URL(site2).hostname) {
+    throw new Error("Master and site-2 must not share a production hostname.");
+  }
+  return { master, site2 };
+}
+
 export function checkDeployInputs({
   root = process.cwd(),
   environment,
