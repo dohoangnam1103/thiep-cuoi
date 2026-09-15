@@ -63,7 +63,7 @@ export function InvitationProjectCard({
         >
           {vi.dashboard.openEditor}
         </Link>
-        {invitation.slug ? (
+        {invitation.status === "published" && invitation.slug ? (
           <Link
             href={`/thiep/${invitation.slug}`}
             className="rounded-full border border-[var(--s2-line)] px-6 py-2.5 text-[14px] font-semibold text-[var(--s2-ink)] transition-colors hover:border-[var(--s2-accent)]"
@@ -71,6 +71,12 @@ export function InvitationProjectCard({
             {vi.dashboard.viewPublic}
           </Link>
         ) : null}
+        <Link
+          href={`/dashboard/${invitation.id}/khach-moi`}
+          className="text-[14px] font-semibold text-[var(--s2-muted)] transition-colors hover:text-[var(--s2-ink)]"
+        >
+          {vi.guests.manageCta}
+        </Link>
       </div>
     </article>
   );

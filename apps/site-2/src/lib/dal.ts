@@ -1,9 +1,15 @@
+import { randomUUID } from "node:crypto";
+
 import { isTemplateAvailable } from "@chungdoi/invitation-data";
 import type { InvitationRenderContent } from "@chungdoi/invitation-core/signature";
 
 import { prisma } from "./prisma";
 
 export const SITE2_ID = "site-2" as const;
+
+function randomSuffix(): string {
+  return randomUUID().slice(0, 8).toLowerCase();
+}
 
 function assertSignatureTemplate(templateSlug: string): void {
   if (!isTemplateAvailable(SITE2_ID, templateSlug)) {
@@ -13,15 +19,35 @@ function assertSignatureTemplate(templateSlug: string): void {
 
 export async function createInvitation(userId: string, templateSlug: string) {
   assertSignatureTemplate(templateSlug);
-  return prisma.invitation.create({
-    data: {
-      userId,
-      templateId: templateSlug,
-      status: "draft",
-      content: { create: {} },
-    },
-    select: { id: true, templateId: true, status: true },
-  });
+  /* The public slug is minted at creation so personal guest links stay stable
+   * from the first invite. The page itself 404s until publish. On a slug
+   * collision the insert retries with a fresh suffix. */
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await prisma.invitation.create({
+        data: {
+          userId,
+          templateId: templateSlug,
+          status: "draft",
+          slug: `${templateSlug}-${randomSuffix()}`,
+          content: { create: {} },
+        },
+        select: { id: true, templateId: true, status: true },
+      });
+    } catch (error) {
+      if (
+        attempt < 2 &&
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: string }).code === "P2002"
+      ) {
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error("Could not mint an invitation slug");
 }
 
 export type DashboardInvitationStatus = "draft" | "published" | "unknown";
