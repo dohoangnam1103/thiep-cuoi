@@ -43,6 +43,37 @@ violations, site-2 Prisma client verified against the clone.
 Existing minipc containers (`images-db`, `ds2api`, …) and the retired
 `/home/namdo/apps/thiepmungonline` were not touched.
 
+## Minipc environment reference (verified 2026-09-15, Cobalt deploy)
+
+| Item | Value |
+|---|---|
+| minipc (prod site-2) | `192.168.0.57`, SSH alias `minipc` → `ssh.hoangnam.cloud` + cloudflared, user `namdo`, x86_64, Docker 29.5 |
+| minipc2 (**máy khác**, đừng nhầm) | `192.168.0.77`, SSH alias `minipc2` |
+| VPS | `163.223.9.198`, không route được từ máy dev (SSH timeout) |
+| App root | `/home/namdo/apps/chungdoi-site2` (compose.yaml, .env 600, data/, backups/, ops/, LIVE) |
+| Container / compose project | `chungdoi-site2-web`, quản lý bằng `docker compose -p chungdoi-site2-web -f compose.yaml` (flag `-p` bắt buộc vì container gốc tạo bằng tên đó) |
+| Image tags | `:production` (live), `:YYYYMMDD-tên` (release), `:pre-cobalt` (rollback, image `a4e59b8d4a0e`) |
+| Loopback / health | `127.0.0.1:3221`, `/api/health` → origin site-2 |
+| DB | `data/prod.db` (~4MB, SQLite, user `namdo`, không sudo). Đọc bằng `docker exec chungdoi-site2-web node` + better-sqlite3 (không có sqlite3 CLI). Backup online bằng API `.backup()` rồi `mv` vào `backups/`. Không restart DB. |
+| Media | `data/media` ~350MB / ~2730 files |
+| Backup timer | cron user chạy `ops/backup-site2.py`, snapshot `backups/<ts>/` |
+| Tunnel | blog tunnel, ingress `thiep.hoangnam.cloud → http://127.0.0.1:3221` |
+| Site-1 trên minipc | không có master container nào chạy, chỉ còn image cũ + source retired — không đụng tới |
+
+Gotcha đã gặp và cách tránh:
+- Docker context `minipc` trên máy dev từng trỏ nhầm `ssh://192.168.0.77`
+  (tức minipc2). Đã sửa 2026-09-15 về `ssh://minipc`. Kiểm tra bằng
+  `docker context inspect minipc` trước khi build.
+- Buildx không `--load` sẽ build xong rồi vứt image im lặng. Build image
+  release bằng `docker build` classic trỏ đúng daemon.
+- Luôn build với env đầy đủ (`NEXT_PUBLIC_SITE_URL` https thật + SITE2_*);
+  build thiếu env cho image 500 toàn trang.
+- Context build tinh gọn: package files + `packages/` + `apps/site-2/` (bỏ
+  `.next/.e2e/dev-site2.db`) + `master-public/chungdoi` (~1.1GB). Không
+  migrate khi schema không đổi (verify bằng `git diff` prisma trước).
+- Không commit thay đổi DB prod bằng test data: smoke xong xóa user test,
+  đối chiếu counts về baseline.
+
 ## Remaining user action: DNS + tunnel for thiep.hoangnam.cloud
 
 DONE 2026-09-14 (temporary path through the existing blog tunnel):
