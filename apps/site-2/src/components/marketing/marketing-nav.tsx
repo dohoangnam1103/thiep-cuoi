@@ -10,7 +10,7 @@ const links = [
   { href: "/bang-gia", label: vi.site.navPricing },
 ];
 
-/* Marketing top navigation. Styling stays on the pre-Cobalt theme until the
+/* Marketing top navigation. Styling stays on the pre-Blush theme until the
  * Task 4 homepage redesign; this move only changes shell ownership. */
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
