@@ -65,6 +65,17 @@ Tài nguyên: site2 CPU ~0%, RAM 48MB/768MB. Các container khác giữ nguyên
 uptime (images-db/ds2api/kiro 47h, telegram 10h). Không master container nào
 tồn tại trên minipc.
 
+## 5. Retheme Blush hồng phấn (2026-09-15, đã deploy)
+
+Theo yêu cầu (Cobalt lạnh/tối, muốn hồng phấn cưới hỏi): toàn bộ token
+`--s2-*` chuyển sang palette Blush (canvas `#fbf1f4`, accent hồng `#c2486d`,
+ink mận `#42242e`; dark ấm mận `#221016`). Renderer không bị ảnh hưởng
+(verify: không dùng token shell). Deploy cùng flow an toàn: backup online
+mới, tag rollback `pre-blush` (= image Cobalt `075424b6`), image
+`:20260915-blush` (`58b8a7f2`), switch + health + smoke prod (CTA hồng
+`rgb(194,72,109)` live, ảnh thật đầy đủ). DB `quick_check: ok`, counts giữ
+nguyên. Không đụng site-1.
+
 ## 4. Checklist còn lại cho operator (VPS, khi có SSH)
 
 ```bash

@@ -31,14 +31,17 @@ editor/guest ở 320: flex + truncate, không scroll).
 
 ## 2. Tương phản (tính tay từ token, chưa đo bằng axe)
 
+> 2026-09-15: theme chuyển từ Cobalt sang Blush hồng phấn theo yêu cầu
+> (commit retheme). Bảng dưới đã cập nhật theo token mới.
+
 | Cặp | Ratio | Kết luận |
 |---|---|---|
-| Trắng `#f8f9ff` trên cobalt `#2946D3` (light CTA) | ~7.2 | Pass AAA |
-| Trắng trên cobalt sáng `#4c68f0` (dark CTA) | ~4.6 | Pass AA |
-| Ink `#121a2c` trên canvas `#f3f5fa` | ~15 | Pass AAA |
-| Muted `#687084` trên canvas (light body phụ) | ~4.6 | Pass AA |
-| Muted `#9aa3b8` trên canvas `#10182e` (dark) | ~6.8 | Pass AA |
-| Success `#177245` / danger `#c0362c` / warning `#9a5b00` trên surface sáng | 5.4-5.6 | Pass AA |
+| Trắng `#fff7f9` trên hồng `#c2486d` (light CTA) | ~4.7 | Pass AA |
+| Chữ mận `#3a0f1e` trên hồng sáng `#f092ad` (dark CTA) | ~6.7 | Pass AA |
+| Ink `#42242e` trên canvas `#fbf1f4` | ~15 | Pass AAA |
+| Muted `#7a5560` trên canvas (light body phụ) | ~5.8 | Pass AA |
+| Muted `#c49aa6` trên canvas `#221016` (dark) | ~6.8 | Pass AA |
+| Success `#177245` / danger `#c0362c` / warning `#9a5b00` trên surface sáng | 5.2-5.6 | Pass AA |
 
 ## 3. Fidelity mẫu thiệp
 
