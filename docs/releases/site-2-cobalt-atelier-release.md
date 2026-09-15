@@ -76,6 +76,16 @@ mới, tag rollback `pre-blush` (= image Cobalt `075424b6`), image
 `rgb(194,72,109)` live, ảnh thật đầy đủ). DB `quick_check: ok`, counts giữ
 nguyên. Không đụng site-1.
 
+## 6. Light theme bắt buộc (2026-09-15, đã deploy)
+
+Nền tối (hệ thống dark render navy/mận) bị chê tối. Chốt: site luôn sáng
+hồng phấn bất kể OS (`data-s2-theme="light"` cứng trên `<html>`, canvas
+sáng hơn `#fdf4f7`). Token dark còn trong CSS cho toggle tương lai.
+Deploy cùng flow: backup online mới, tag rollback `pre-light` (= image
+Blush `58b8a7f2`), image `:20260915-light` (`3cc3e697`), switch + health +
+smoke (200 /, /mau-thiep; /dashboard 307 về login đúng; DB ok, users 488).
+Không đụng site-1.
+
 ## 4. Checklist còn lại cho operator (VPS, khi có SSH)
 
 ```bash
