@@ -12,7 +12,7 @@ export default async function WorkspaceLayout({
 }) {
   const session = await getSite2Session();
   if (!session) {
-    redirect("/dang-nhap");
+    redirect("/dang-nhap?next=/dashboard");
   }
   const user = await prisma.user.findUnique({
     where: { id: session.userId },

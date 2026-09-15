@@ -12,6 +12,14 @@ import vi from "@messages/vi.json";
 
 export type Site2AuthState = { error?: string } | undefined;
 
+/* Intended destination after auth. Only same-origin paths survive, so a
+ * crafted ?next= can never bounce visitors to an external site. */
+function safeNext(formData: FormData): string {
+  const raw = formData.get("next");
+  if (typeof raw !== "string") return "/dashboard";
+  return raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
+}
+
 function parseCredentials(formData: FormData) {
   const email = String(formData.get("email") ?? "")
     .trim()
@@ -50,7 +58,7 @@ export async function site2Signup(
         data: { email: parsed.email, passwordHash },
       });
   await createSite2Session(user.id);
-  redirect("/dashboard");
+  redirect(safeNext(formData));
 }
 
 export async function site2Login(
@@ -71,7 +79,7 @@ export async function site2Login(
     return { error: vi.auth.badCredentials };
   }
   await createSite2Session(user.id);
-  redirect("/dashboard");
+  redirect(safeNext(formData));
 }
 
 export async function site2Logout(): Promise<void> {

@@ -11,7 +11,7 @@ import { createDashboardInvitation } from "./actions";
 export default async function Site2Dashboard() {
   const session = await getSite2Session();
   if (!session) {
-    redirect("/dang-nhap");
+    redirect("/dang-nhap?next=/dashboard");
   }
   const [invitations, templates] = await Promise.all([
     listUserInvitations(session.userId),

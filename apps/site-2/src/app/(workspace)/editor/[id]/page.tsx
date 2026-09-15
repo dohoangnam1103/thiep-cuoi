@@ -13,10 +13,10 @@ export default async function Site2EditorPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await getSite2Session();
-  if (!session) {
-    redirect("/dang-nhap");
-  }
   const { id } = await params;
+  if (!session) {
+    redirect(`/dang-nhap?next=/editor/${id}`);
+  }
   const invitation = await getOwnedInvitation(id, session.userId);
   if (!invitation) {
     notFound();

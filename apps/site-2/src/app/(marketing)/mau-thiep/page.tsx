@@ -6,11 +6,11 @@ export default async function Site2TemplateListing() {
   const templates = await getVisibleCatalogTemplates();
   const categories = [...new Set(templates.map((item) => item.category))];
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 md:pt-14">
-      <h1 className="max-w-[18ch] text-3xl font-extrabold tracking-tight md:text-5xl">
+    <div className="s2-marketing-container pb-20 pt-10 md:pt-14">
+      <h1 className="max-w-[18ch] text-3xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-5xl">
         {vi.templates.title}
       </h1>
-      <p className="mt-3 max-w-[60ch] text-[15px] leading-relaxed text-[var(--muted)]">
+      <p className="mt-3 max-w-[60ch] text-[15px] leading-relaxed text-[var(--s2-muted)]">
         {vi.templates.subtitle}
       </p>
       <div className="mt-8">

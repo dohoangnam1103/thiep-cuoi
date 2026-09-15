@@ -61,7 +61,11 @@
     "categoryLabel": "Lọc theo phong cách",
     "allCategories": "Tất cả",
     "resultCount": "{count} mẫu thiệp",
-    "emptyResult": "Không tìm thấy mẫu nào. Thử từ khóa khác."
+    "emptyResult": "Không tìm thấy mẫu nào. Thử từ khóa khác.",
+    "clearFilters": "Xóa bộ lọc",
+    "filterButton": "Bộ lọc",
+    "filterTitle": "Lọc mẫu thiệp",
+    "filterClose": "Đóng bộ lọc"
   },
   "pricing": {
     "title": "Một gói duy nhất, dùng tất cả",
@@ -71,7 +75,7 @@
     "planPeriod": "trọn đời thiệp",
     "planCta": "Tạo thiệp ngay",
     "features": [
-      "Toàn bộ 110+ mẫu thiệp",
+      "Toàn bộ {count} mẫu thiệp",
       "Lịch cưới và bản đồ tiệc",
       "Sổ lưu bút và hộp quà mừng",
       "Trang thiệp riêng công khai"
@@ -110,6 +114,7 @@
     "password": "Mật khẩu",
     "loginCta": "Đăng nhập",
     "registerCta": "Đăng ký",
+    "pendingCta": "Đang xử lý…",
     "toRegister": "Chưa có tài khoản? Đăng ký",
     "toLogin": "Đã có tài khoản? Đăng nhập",
     "invalidEmail": "Email không hợp lệ",
