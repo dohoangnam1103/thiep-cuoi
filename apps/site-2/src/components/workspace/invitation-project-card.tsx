@@ -77,6 +77,12 @@ export function InvitationProjectCard({
         >
           {vi.guests.manageCta}
         </Link>
+        <Link
+          href={`/dashboard/${invitation.id}/rsvp`}
+          className="text-[14px] font-semibold text-[var(--s2-muted)] transition-colors hover:text-[var(--s2-ink)]"
+        >
+          {vi.dashboard.rsvpCta}
+        </Link>
       </div>
     </article>
   );
