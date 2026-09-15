@@ -38,6 +38,30 @@ export function MarketingShell({ children }: { children: ReactNode }) {
             >
               {vi.site.navLogin}
             </Link>
+            <Link
+              href="/huong-dan"
+              className="text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+            >
+              {vi.site.navHelp}
+            </Link>
+            <Link
+              href="/chinh-sach-bao-mat"
+              className="text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+            >
+              {vi.site.footerPrivacy}
+            </Link>
+            <Link
+              href="/dieu-khoan-su-dung"
+              className="text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+            >
+              {vi.site.footerTerms}
+            </Link>
+            <Link
+              href="/chinh-sach-hoan-tien"
+              className="text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+            >
+              {vi.site.footerRefund}
+            </Link>
           </div>
         </div>
       </footer>

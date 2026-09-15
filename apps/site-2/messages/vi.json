@@ -9,7 +9,11 @@
     "footer": "Nền tảng thiệp cưới online: hơn 100 mẫu thiệp, xem demo đầy đủ, tạo và chia sẻ thiệp của riêng bạn.",
     "navCreate": "Tạo thiệp",
     "navOpen": "Mở menu",
-    "navClose": "Đóng menu"
+    "navClose": "Đóng menu",
+    "navHelp": "Hướng dẫn",
+    "footerPrivacy": "Chính sách bảo mật",
+    "footerTerms": "Điều khoản sử dụng",
+    "footerRefund": "Chính sách hoàn tiền"
   },
   "home": {
     "badge": "mẫu thiệp cưới",
@@ -139,6 +143,154 @@
   },
   "workspace": {
     "navLabel": "Điều hướng quản lý thiệp"
+  },
+  "help": {
+    "title": "Hướng dẫn sử dụng",
+    "subtitle": "Tìm theo việc bạn muốn làm: bắt đầu, chỉnh thiệp hay thanh toán.",
+    "searchLabel": "Tìm bài hướng dẫn",
+    "searchPlaceholder": "Thử gõ xuất bản, demo, tài khoản…",
+    "allCategories": "Tất cả",
+    "emptyResult": "Không tìm thấy bài nào. Thử từ khóa khác.",
+    "categories": {
+      "bat-dau": "Bắt đầu",
+      "chinh-thiep": "Chỉnh thiệp",
+      "khach-moi": "Khách mời",
+      "thanh-toan": "Thanh toán"
+    },
+    "articles": [
+      {
+        "slug": "tao-thiep-dau-tien",
+        "title": "Tạo thiệp đầu tiên",
+        "summary": "Từ chọn mẫu đến chia sẻ link trong vài phút.",
+        "category": "bat-dau",
+        "steps": [
+          "Mở trang Mẫu thiệp và bấm vào một mẫu để xem demo toàn màn hình.",
+          "Bấm Dùng mẫu này rồi đăng ký tài khoản bằng email.",
+          "Điền tên, ngày giờ và địa điểm trong editor, rồi bấm Lưu.",
+          "Bấm Xuất bản để nhận link thiệp riêng và gửi cho khách mời."
+        ]
+      },
+      {
+        "slug": "xem-demo-mau-thiep",
+        "title": "Xem demo mẫu thiệp",
+        "summary": "Mở và xem toàn bộ nội dung mẫu trước khi quyết định.",
+        "category": "bat-dau",
+        "steps": [
+          "Mở trang Mẫu thiệp.",
+          "Bấm vào tên hoặc ảnh của mẫu để mở bản demo.",
+          "Bấm mở thiệp để xem toàn bộ nội dung từ bìa đến cuối thiệp."
+        ]
+      },
+      {
+        "slug": "xuat-ban-thiep",
+        "title": "Xuất bản thiệp của bạn",
+        "summary": "Lưu nháp, xuất bản và lấy link công khai.",
+        "category": "chinh-thiep",
+        "steps": [
+          "Mở thiệp trong dashboard rồi bấm Mở editor.",
+          "Điền thông tin rồi bấm Lưu, bản nháp được giữ lại.",
+          "Bấm Xuất bản khi đã ưng ý, trang công khai nhận link dạng /thiep/.",
+          "Gửi link cho khách, sửa và xuất bản lại bất kỳ lúc nào."
+        ]
+      },
+      {
+        "slug": "thanh-toan-goi",
+        "title": "Thanh toán gói Signature",
+        "summary": "Gói hiện tại và cách kích hoạt.",
+        "category": "thanh-toan",
+        "steps": [
+          "Mở trang Bảng giá để xem quyền lợi gói.",
+          "Hiện tại bạn tạo và xuất bản thiệp ngay sau khi đăng ký, chưa cần thanh toán trực tuyến.",
+          "Khi gói trả phí áp dụng, trang Bảng giá sẽ cập nhật giá và cách trả."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "updated": "Cập nhật tháng 9/2026",
+    "privacy": {
+      "title": "Chính sách bảo mật",
+      "intro": "Trang này giải thích dữ liệu Thiệp Cưới Online thu thập trên thiep.hoangnam.cloud và cách dữ liệu được dùng.",
+      "sections": [
+        {
+          "heading": "Dữ liệu thu thập",
+          "paragraphs": [
+            "Tài khoản: địa chỉ email và mật khẩu đã băm. Mật khẩu gốc không bao giờ được lưu.",
+            "Nội dung thiệp: tên, ngày giờ, địa điểm, ảnh và lời chúc bạn nhập trong editor.",
+            "Phiên đăng nhập: một cookie tên site2_session có thời hạn 7 ngày để giữ bạn đăng nhập."
+          ]
+        },
+        {
+          "heading": "Cách dữ liệu được dùng",
+          "paragraphs": [
+            "Dữ liệu chỉ dùng để tạo, xuất bản và hiển thị thiệp của bạn.",
+            "Trang này không gắn công cụ đo lường của bên thứ ba."
+          ]
+        },
+        {
+          "heading": "Lưu trữ và bảo vệ",
+          "paragraphs": [
+            "Dữ liệu nằm trong cơ sở dữ liệu riêng của Thiệp Cưới Online, tách khỏi mọi dịch vụ khác.",
+            "Bạn có thể sửa nội dung thiệp bất kỳ lúc nào trong editor và đăng xuất khỏi dashboard."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Điều khoản sử dụng",
+      "intro": "Khi tạo tài khoản và dùng Thiệp Cưới Online trên thiep.hoangnam.cloud, bạn đồng ý các điều khoản dưới đây.",
+      "sections": [
+        {
+          "heading": "Dịch vụ",
+          "paragraphs": [
+            "Thiệp Cưới Online cho phép bạn tự tạo, chỉnh sửa và chia sẻ thiệp cưới online qua một link riêng."
+          ]
+        },
+        {
+          "heading": "Tài khoản",
+          "paragraphs": [
+            "Bạn tự giữ bí mật mật khẩu và chịu trách nhiệm cho mọi hoạt động trên tài khoản của mình."
+          ]
+        },
+        {
+          "heading": "Sử dụng đúng cách",
+          "paragraphs": [
+            "Không đăng nội dung vi phạm pháp luật hoặc xâm phạm quyền của người khác trên thiệp của bạn."
+          ]
+        },
+        {
+          "heading": "Gói và thanh toán",
+          "paragraphs": [
+            "Quyền lợi gói hiện tại nằm ở trang Bảng giá. Khi gói trả phí áp dụng, giá và cách trả sẽ ghi rõ tại đó trước khi bạn trả."
+          ]
+        }
+      ]
+    },
+    "refund": {
+      "title": "Chính sách hoàn tiền",
+      "intro": "Trang này nói rõ khi nào tiền được hoàn trên Thiệp Cưới Online.",
+      "sections": [
+        {
+          "heading": "Hiện trạng",
+          "paragraphs": [
+            "Hiện tại trang này chưa thu phí trực tuyến, nên không có khoản nào cần hoàn.",
+            "Mọi nội dung demo đều xem miễn phí và không cần tài khoản."
+          ]
+        },
+        {
+          "heading": "Khi gói trả phí áp dụng",
+          "paragraphs": [
+            "Điều kiện hoàn tiền sẽ ghi kèm theo từng gói tại trang Bảng giá trước khi bạn trả."
+          ]
+        }
+      ]
+    }
+  },
+  "states": {
+    "loading": "Đang tải nội dung…",
+    "errorTitle": "Đã xảy ra lỗi.",
+    "errorBody": "Vui lòng thử lại, dữ liệu của bạn vẫn được giữ.",
+    "retry": "Thử lại"
   },
   "editor": {
     "title": "Chỉnh sửa thiệp",
