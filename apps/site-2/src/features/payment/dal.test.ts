@@ -151,7 +151,7 @@ test("valid sandbox event pays once and unlocks the invitation", async () => {
 });
 
 test("rogue non site-2 rows and strangers stay untouched", async () => {
-  const { user, invitation } = await seedInvitation(
+  const { invitation } = await seedInvitation(
     `pay4-${Date.now()}@example.com`,
   );
   const other = await seedInvitation(`pay5-${Date.now()}@example.com`);

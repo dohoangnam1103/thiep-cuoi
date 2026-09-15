@@ -7,11 +7,11 @@ import { ProductStory } from "../../components/marketing/product-story";
 
 export default async function Site2Home() {
   const visible = await getVisibleCatalogTemplates();
-  const curated = visible.slice(0, 5);
+  const curated = visible.slice(0, 7);
   return (
     <div className="s2-marketing-container pb-20">
       <HomeHero templates={curated.slice(0, 2)} totalCount={visible.length} />
-      <CuratedTemplates templates={curated} />
+      <CuratedTemplates templates={curated.slice(2)} />
       <ProductStory />
       <CreateSteps />
       <FinalCta />

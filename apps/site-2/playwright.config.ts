@@ -23,7 +23,41 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      testMatch: /site-2-(mvp|shells|marketing|support|workspace|guests-rsvp|payment)\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "visual-desktop",
+      testMatch: /site-2-visual\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: "visual-mobile",
+      testMatch: /site-2-visual\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: "visual-dark",
+      testMatch: /site-2-visual\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 },
+        colorScheme: "dark",
+      },
+    },
+    {
+      name: "visual-reduced",
+      testMatch: /site-2-visual\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 900 },
+        reducedMotion: "reduce",
+      },
+    },
+  ],
   webServer: {
     command: `rm -f .e2e/test.db && DATABASE_URL="${TEST_DB_URL}" npx prisma db push && next build && next start -p ${PORT}`,
     url: BASE_URL,

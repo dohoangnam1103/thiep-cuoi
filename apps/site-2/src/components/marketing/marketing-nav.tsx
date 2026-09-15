@@ -15,7 +15,7 @@ const links = [
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-[var(--s2-line)] bg-[var(--s2-canvas)]/90 backdrop-blur">
       <nav
         aria-label={vi.site.navHome}
         data-testid="marketing-nav"
@@ -23,7 +23,7 @@ export function MarketingNav() {
       >
         <Link
           href="/"
-          className="text-[17px] font-extrabold tracking-tight text-[var(--ink)]"
+          className="text-[17px] font-extrabold tracking-tight text-[var(--s2-ink)]"
         >
           {vi.site.name}
         </Link>
@@ -32,27 +32,27 @@ export function MarketingNav() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+              className="text-[var(--s2-muted)] transition-colors hover:text-[var(--s2-ink)]"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/dang-nhap"
-            className="text-[var(--muted)] transition-colors hover:text-[var(--ink)]"
+            className="text-[var(--s2-muted)] transition-colors hover:text-[var(--s2-ink)]"
           >
             {vi.site.navLogin}
           </Link>
           <Link
             href="/mau-thiep"
-            className="rounded-[var(--radius-pill)] bg-[var(--accent)] px-5 py-2 text-[14px] font-semibold text-[var(--accent-ink)] transition-transform active:scale-[0.98]"
+            className="rounded-full bg-[var(--s2-accent)] px-5 py-2 text-[14px] font-semibold text-[var(--s2-accent-ink)] transition-transform active:scale-[0.98]"
           >
             {vi.site.navCreate}
           </Link>
         </div>
         <button
           type="button"
-          className="flex size-10 items-center justify-center rounded-[var(--radius-input)] text-[var(--ink)] md:hidden"
+          className="flex size-10 items-center justify-center rounded-[var(--s2-input-radius)] text-[var(--s2-ink)] md:hidden"
           aria-expanded={open}
           aria-label={open ? vi.site.navClose : vi.site.navOpen}
           onClick={() => setOpen((value) => !value)}
@@ -68,14 +68,14 @@ export function MarketingNav() {
         </button>
       </nav>
       {open ? (
-        <div className="border-t border-[var(--line)] px-4 py-3 md:hidden">
+        <div className="border-t border-[var(--s2-line)] px-4 py-3 md:hidden">
           {[...links, { href: "/dang-nhap", label: vi.site.navLogin }].map(
             (link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="block rounded-[var(--radius-input)] px-2 py-2.5 text-[15px] font-medium"
+                className="block rounded-[var(--s2-input-radius)] px-2 py-2.5 text-[15px] font-medium"
               >
                 {link.label}
               </Link>
@@ -84,7 +84,7 @@ export function MarketingNav() {
           <Link
             href="/mau-thiep"
             onClick={() => setOpen(false)}
-            className="mt-2 block rounded-[var(--radius-pill)] bg-[var(--accent)] px-5 py-2.5 text-center text-[15px] font-semibold text-[var(--accent-ink)]"
+            className="mt-2 block rounded-full bg-[var(--s2-accent)] px-5 py-2.5 text-center text-[15px] font-semibold text-[var(--s2-accent-ink)]"
           >
             {vi.site.navCreate}
           </Link>

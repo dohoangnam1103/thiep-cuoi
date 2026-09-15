@@ -58,7 +58,7 @@
   },
   "templates": {
     "title": "Mẫu thiệp cưới",
-    "subtitle": "Toàn bộ mẫu thiệp đang có — chọn mẫu để xem demo.",
+    "subtitle": "Toàn bộ mẫu thiệp đang có, chọn mẫu để xem demo.",
     "demoCta": "Xem demo",
     "searchLabel": "Tìm mẫu thiệp",
     "searchPlaceholder": "Tìm theo tên hoặc mô tả…",
@@ -84,7 +84,7 @@
       "Sổ lưu bút và hộp quà mừng",
       "Trang thiệp riêng công khai"
     ],
-    "guarantee": "Xem demo đầy đủ mọi mẫu trước khi quyết định — không cần tài khoản.",
+    "guarantee": "Xem demo đầy đủ mọi mẫu trước khi quyết định, không cần tài khoản.",
     "faqTitle": "Câu hỏi thường gặp",
     "faq": [
       {

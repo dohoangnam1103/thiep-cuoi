@@ -46,7 +46,8 @@ export function CuratedTemplates({
                   alt={template.name}
                   width={768}
                   height={listingImageHeight(template.listing)}
-                  loading={index === 0 ? "eager" : "lazy"}
+                  loading="lazy"
+                  fetchPriority="low"
                   decoding="async"
                   sizes="(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw"
                   className={`w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03] ${index === 0 ? "aspect-[16/10]" : "aspect-[4/3]"}`}

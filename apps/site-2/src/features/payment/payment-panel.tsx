@@ -42,16 +42,23 @@ export function PaymentPanel({
   initial: { state: PaymentViewState; code: string; amount: number };
 }) {
   const router = useRouter();
-  const [view, setView] = useState(initial);
+  const [patch, setPatch] = useState<{
+    basis: string;
+    state: PaymentViewState;
+    code: string;
+  } | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const attemptsRef = useRef(0);
 
   /* Server truth wins after navigations and refreshes; client transitions
-   * (polling, just-created orders) patch the same state below. */
-  useEffect(() => {
-    setView(initial);
-  }, [initial.code, initial.state]);
+   * (just-created orders, polling hits) patch it until the server catches
+   * up, keyed by the basis they were made against. No sync effect needed. */
+  const basis = `${initial.code}:${initial.state}`;
+  const view =
+    patch && patch.basis === basis
+      ? { state: patch.state, code: patch.code, amount: initial.amount }
+      : { state: initial.state, code: initial.code, amount: initial.amount };
 
   useEffect(() => {
     if (view.state !== "pending" || !view.code) return;
@@ -78,7 +85,7 @@ export function PaymentPanel({
           ["paid", "expired", "failed"].includes(data.state)
         ) {
           clearInterval(timer);
-          setView((current) => ({ ...current, state: data.state as PaymentViewState }));
+          setPatch({ basis, state: data.state as PaymentViewState, code: view.code });
           router.refresh();
         }
       } catch {
@@ -94,11 +101,7 @@ export function PaymentPanel({
     const result = await ensureSite2OrderAction(invitationId);
     setPending(false);
     if (result.ok) {
-      setView((current) => ({
-        ...current,
-        state: "pending",
-        code: result.data.code,
-      }));
+      setPatch({ basis, state: "pending", code: result.data.code });
       router.refresh();
       return;
     }

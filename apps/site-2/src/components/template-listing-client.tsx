@@ -15,6 +15,12 @@ export type ListingItem = {
   portrait: string;
 };
 
+/* Shared catalog descriptions predate the no-em-dash rule, so site-2
+ * normalizes dashes at presentation time. Site-1 rendering is untouched. */
+function displayDescription(description: string): string {
+  return description.replace(/ ?[—–] ?/g, ", ");
+}
+
 export function TemplateListingClient({
   items,
   categories,
@@ -196,7 +202,7 @@ export function TemplateListingClient({
                   {template.category}
                 </p>
                 <p className="mt-2 line-clamp-2 hidden text-[13px] leading-relaxed text-[var(--s2-muted)] sm:block">
-                  {template.description}
+                  {displayDescription(template.description)}
                 </p>
               </div>
             </li>
