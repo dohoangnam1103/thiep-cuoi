@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 
-import { getCatalogTemplates } from "../../lib/catalog";
-import { getSite2Session } from "../../lib/session";
-import { templatePreviewUrl } from "../../lib/template-preview";
+import { getCatalogTemplates } from "../../../lib/catalog";
+import { getSite2Session } from "../../../lib/session";
+import { templatePreviewUrl } from "../../../lib/template-preview";
 import Site2AuthForm from "./auth-form";
 
 export default async function Site2LoginPage({

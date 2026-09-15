@@ -1,9 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro } from "next/font/google";
 
 import vi from "@messages/vi.json";
-import { SiteFooter } from "../components/site-footer";
-import { SiteNav } from "../components/site-nav";
 import "./globals.css";
 
 const siteFont = Be_Vietnam_Pro({
@@ -16,6 +14,9 @@ const siteFont = Be_Vietnam_Pro({
 export const metadata: Metadata = {
   title: vi.site.name,
   description: vi.site.tagline,
+};
+
+export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f3f5fa" },
     { media: "(prefers-color-scheme: dark)", color: "#10182e" },
@@ -29,11 +30,7 @@ export default function Site2Layout({
 }) {
   return (
     <html lang="vi" className={siteFont.variable}>
-      <body className="min-h-screen antialiased">
-        <SiteNav />
-        <main>{children}</main>
-        <SiteFooter />
-      </body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

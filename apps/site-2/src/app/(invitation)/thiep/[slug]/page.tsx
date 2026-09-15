@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 
-import { getPublishedBySlug } from "../../../lib/dal";
-import { getTemplateMeta } from "../../../lib/catalog";
-import SignatureDemoView from "../../mau-thiep/[slug]/demo/demo-view";
+import { getPublishedBySlug } from "../../../../lib/dal";
+import { getTemplateMeta } from "../../../../lib/catalog";
+import SignatureDemoView from "../../../(marketing)/mau-thiep/[slug]/demo/demo-view";
 
 export default async function Site2PublicInvitation({
   params,

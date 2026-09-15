@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache";
 import {
   publishInvitation,
   updateInvitationContent,
-} from "../../lib/dal";
-import { getSite2Session } from "../../lib/session";
+} from "../../../lib/dal";
+import { getSite2Session } from "../../../lib/session";
 import vi from "@messages/vi.json";
 
 export type EditorState = { message?: string; error?: string } | undefined;

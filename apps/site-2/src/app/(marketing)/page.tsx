@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { getCatalogTemplates } from "../lib/catalog";
-import { templatePreviewUrl } from "../lib/template-preview";
+import { getCatalogTemplates } from "../../lib/catalog";
+import { templatePreviewUrl } from "../../lib/template-preview";
 import vi from "@messages/vi.json";
 
 export default async function Site2Home() {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { PricingFaq } from "../../components/pricing-faq";
+import { PricingFaq } from "../../../components/pricing-faq";
 import vi from "@messages/vi.json";
 
 export default function Site2Pricing() {

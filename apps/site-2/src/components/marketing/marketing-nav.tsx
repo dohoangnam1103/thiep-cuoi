@@ -10,12 +10,15 @@ const links = [
   { href: "/bang-gia", label: vi.site.navPricing },
 ];
 
-export function SiteNav() {
+/* Marketing top navigation. Styling stays on the pre-Cobalt theme until the
+ * Task 4 homepage redesign; this move only changes shell ownership. */
+export function MarketingNav() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
       <nav
         aria-label={vi.site.navHome}
+        data-testid="marketing-nav"
         className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"
       >
         <Link

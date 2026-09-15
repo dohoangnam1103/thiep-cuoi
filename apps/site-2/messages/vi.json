@@ -121,6 +121,9 @@
     "statTotal": "Tổng số thiệp",
     "statPublished": "Đã xuất bản"
   },
+  "workspace": {
+    "navLabel": "Điều hướng quản lý thiệp"
+  },
   "editor": {
     "title": "Chỉnh sửa thiệp",
     "backToDashboard": "Về dashboard",

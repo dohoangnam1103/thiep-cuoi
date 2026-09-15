@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { listUserInvitations } from "../../lib/dal";
-import { getVisibleCatalogTemplates } from "../../lib/catalog";
-import { getSite2Session } from "../../lib/session";
-import { site2Logout } from "../auth-actions";
+import { listUserInvitations } from "../../../lib/dal";
+import { getVisibleCatalogTemplates } from "../../../lib/catalog";
+import { getSite2Session } from "../../../lib/session";
+import { site2Logout } from "../../auth-actions";
 import vi from "@messages/vi.json";
 import { createDashboardInvitation } from "./actions";
 

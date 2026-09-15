@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { getOwnedInvitation, getOwnedRenderContent } from "../../../lib/dal";
-import { getSite2Session } from "../../../lib/session";
+import { getOwnedInvitation, getOwnedRenderContent } from "../../../../lib/dal";
+import { getSite2Session } from "../../../../lib/session";
 import vi from "@messages/vi.json";
 import Site2EditorForm from "./editor-form";
 import { EditorPreview } from "./editor-preview";

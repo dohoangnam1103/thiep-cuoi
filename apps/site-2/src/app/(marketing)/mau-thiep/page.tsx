@@ -1,5 +1,5 @@
-import { getVisibleCatalogTemplates } from "../../lib/catalog";
-import { TemplateListingClient } from "../../components/template-listing-client";
+import { getVisibleCatalogTemplates } from "../../../lib/catalog";
+import { TemplateListingClient } from "../../../components/template-listing-client";
 import vi from "@messages/vi.json";
 
 export default async function Site2TemplateListing() {

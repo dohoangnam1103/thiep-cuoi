@@ -2,8 +2,8 @@
 
 import { redirect } from "next/navigation";
 
-import { createInvitation } from "../../lib/dal";
-import { getSite2Session } from "../../lib/session";
+import { createInvitation } from "../../../lib/dal";
+import { getSite2Session } from "../../../lib/session";
 
 export async function createDashboardInvitation(
   formData: FormData,

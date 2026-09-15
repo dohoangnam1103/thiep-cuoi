@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 
-import { site2Login, site2Signup } from "../auth-actions";
+import { site2Login, site2Signup } from "../../auth-actions";
 import vi from "@messages/vi.json";
 
 export default function Site2AuthForm({

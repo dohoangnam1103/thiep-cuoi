@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getDemoContent, getTemplateMeta, resolveCatalogSlug } from "../../../../lib/catalog";
+import { getDemoContent, getTemplateMeta, resolveCatalogSlug } from "../../../../../lib/catalog";
 import vi from "@messages/vi.json";
 import SignatureDemoView from "./demo-view";
 
