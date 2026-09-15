@@ -83,6 +83,12 @@ export function InvitationProjectCard({
         >
           {vi.dashboard.rsvpCta}
         </Link>
+        <Link
+          href={`/dashboard/${invitation.id}/thanh-toan`}
+          className="text-[14px] font-semibold text-[var(--s2-muted)] transition-colors hover:text-[var(--s2-ink)]"
+        >
+          {vi.payment.manageCta}
+        </Link>
       </div>
     </article>
   );
