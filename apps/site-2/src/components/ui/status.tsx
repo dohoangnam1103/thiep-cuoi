@@ -5,7 +5,8 @@ type S2StatusKind =
   | "pending"
   | "paid"
   | "expired"
-  | "failed";
+  | "failed"
+  | "unknown";
 
 type S2StatusProps = {
   kind: S2StatusKind;
@@ -23,6 +24,7 @@ const KIND_CLASSES: Record<S2StatusKind, string> = {
     "border border-[var(--s2-warning)] text-[var(--s2-warning)]",
   failed: "border border-[var(--s2-danger)] text-[var(--s2-danger)]",
   draft: "border border-[var(--s2-line)] text-[var(--s2-muted)]",
+  unknown: "border border-[var(--s2-line)] text-[var(--s2-muted)]",
   unpaid: "border border-[var(--s2-line)] text-[var(--s2-muted)]",
   expired: "border border-[var(--s2-line)] text-[var(--s2-muted)]",
 };

@@ -130,13 +130,17 @@
   },
   "dashboard": {
     "title": "Thiệp của tôi",
-    "empty": "Bạn chưa có thiệp nào. Hãy tạo thiệp đầu tiên từ hai mẫu Signature.",
+    "empty": "Bạn chưa có thiệp nào. Chọn một mẫu để tạo thiệp đầu tiên.",
     "createTitle": "Tạo thiệp mới",
     "createCta": "Tạo thiệp",
     "openEditor": "Mở editor",
     "viewPublic": "Xem trang công khai",
     "statusDraft": "Nháp",
     "statusPublished": "Đã xuất bản",
+    "statusUnknown": "Không xác định",
+    "updatedAt": "Cập nhật",
+    "recentHeading": "Mới cập nhật",
+    "allHeading": "Tất cả thiệp",
     "logout": "Đăng xuất",
     "statTotal": "Tổng số thiệp",
     "statPublished": "Đã xuất bản"

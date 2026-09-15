@@ -24,6 +24,60 @@ export async function createInvitation(userId: string, templateSlug: string) {
   });
 }
 
+export type DashboardInvitationStatus = "draft" | "published" | "unknown";
+
+export type DashboardInvitation = {
+  id: string;
+  slug: string | null;
+  templateId: string;
+  status: DashboardInvitationStatus;
+  updatedAt: Date;
+  coupleLabel: string;
+};
+
+/* Database statuses are free-form strings, so the dashboard only ever sees
+ * the typed union above. Anything unfamiliar becomes "unknown", never a lie. */
+export function normalizeDashboardStatus(
+  status: string,
+): DashboardInvitationStatus {
+  if (status === "published") return "published";
+  if (status === "draft") return "draft";
+  return "unknown";
+}
+
+/* Project-first projection for the dashboard: most recently touched first,
+ * with just the fields one card needs. */
+export async function listDashboardInvitations(
+  userId: string,
+): Promise<DashboardInvitation[]> {
+  const rows = await prisma.invitation.findMany({
+    where: { userId },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      slug: true,
+      templateId: true,
+      status: true,
+      updatedAt: true,
+      content: {
+        select: { brideFullName: true, groomFullName: true },
+      },
+    },
+  });
+  return rows.map((row) => {
+    const bride = row.content?.brideFullName.trim() ?? "";
+    const groom = row.content?.groomFullName.trim() ?? "";
+    return {
+      id: row.id,
+      slug: row.slug,
+      templateId: row.templateId,
+      status: normalizeDashboardStatus(row.status),
+      updatedAt: row.updatedAt,
+      coupleLabel: [bride, groom].filter(Boolean).join(" & "),
+    };
+  });
+}
+
 export async function listUserInvitations(userId: string) {
   return prisma.invitation.findMany({
     where: { userId },

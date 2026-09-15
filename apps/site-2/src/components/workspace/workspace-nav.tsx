@@ -84,6 +84,14 @@ export function WorkspaceNav({ user }: { user: WorkspaceUser }) {
                 {link.label}
               </Link>
             ))}
+            <form action={site2Logout} className="mt-2 border-t border-[var(--s2-line)] pt-2">
+              <button
+                type="submit"
+                className="block w-full rounded-[var(--s2-input-radius)] px-2 py-2.5 text-left text-[15px] font-semibold text-[var(--s2-muted)]"
+              >
+                {vi.dashboard.logout}
+              </button>
+            </form>
           </div>
         ) : null}
       </div>
