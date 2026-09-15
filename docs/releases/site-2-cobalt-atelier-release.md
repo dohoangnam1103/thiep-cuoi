@@ -1,10 +1,10 @@
 # Site 2 Cobalt Atelier Release Record
 
-Trạng thái: **sẵn sàng deploy, chưa deploy**. Mọi gate local xanh. Deploy
-production và smoke/rollback chỉ chạy được từ máy có SSH tới VPS
-(`root@163.223.9.198` cấm BatchMode từ máy dev này: SSH timeout ngày
-2026-09-15, không route). Không có thay đổi nào được đẩy lên production
-trong đợt này, và site 1 không bị chạm tới dưới mọi hình thức.
+Trạng thái: **ĐÃ DEPLOY lên minipc 2026-09-15 ~06:50 UTC, healthy**.
+Deploy qua SSH alias `minipc` (192.168.0.57, cùng LAN). VPS 163.223.9.198
+không route được từ máy dev nên mọi smoke prod dưới đây là minipc +
+https public. Site 1 không bị chạm: không có master container nào chạy
+trên minipc trước/sau deploy, lệnh deploy gốc chưa bao giờ chạy.
 
 ## 1. Nội dung release
 
@@ -30,7 +30,42 @@ trong đợt này, và site 1 không bị chạm tới dưới mọi hình thứ
 - Build với `NEXT_PUBLIC_SITE_URL=https://thiep.hoangnam.cloud`: PASS, không
   hostname master nào trong trang prerender.
 
-## 3. Checklist cho operator (có SSH)
+## 3. Thực tế deploy minipc (2026-09-15, SSH alias `minipc`)
+
+Checkpoint trước deploy (chỉ đọc + backup online, không restart DB):
+- Image cũ: `sha256:a4e59b8d4a0e`, container start 2026-09-14T09:16:09Z.
+- DB `quick_check: ok`, sha256 `65963341…acca3b`, users 488, invitations
+  599 (381 draft + 218 published), guests 165, rsvps 81, payments 0.
+- Backup online: `backups/pre-cobalt-20260915.db` (fb6ac453…).
+- Media: 350MB, 2730 files. Không migrate (không đổi schema).
+
+Build: context tinh gọn 1.1GB (code + master-public), build trên minipc
+native amd64 (driver buildx local hỏng; context docker `minipc` trỏ nhầm
+sang 192.168.0.77 nên build bằng `DOCKER_HOST=ssh://minipc` trỏ đúng .57).
+Image mới `chungdoi-site2-web:20260915-cobalt` (`075424b6f81f`, 2.81GB),
+bake origin `https://thiep.hoangnam.cloud`. Tag rollback `pre-cobalt`
+giữ image cũ.
+
+Switch: retag `:production` + `docker compose -p chungdoi-site2-web up -d`
+(lưu ý `-p` vì container gốc tạo bằng project name đó). Container mới
+healthy, `/api/health` origin đúng.
+
+Smoke prod (https public + lifecycle có dọn dẹp):
+- 7 routes công khai 200, homepage Cobalt mới live.
+- register → tạo → autosave → publish → link công khai → RSVP → overview
+  (Tham dự 1) → login → guest/payment pages: PASS. Payment hiện đúng trạng
+  thái vô hiệu (target chưa có env payment).
+- Dọn test data: users/invitations/rsvps về đúng baseline 488/599/81.
+
+Rollback exercise: retag `:production` về `a4e59b8d4a0e` → recreate →
+healthy, homepage cũ hiện lại → re-promote `075424b6f81f` → recreate →
+healthy, Cobalt live. DB `quick_check: ok` sau mọi bước.
+
+Tài nguyên: site2 CPU ~0%, RAM 48MB/768MB. Các container khác giữ nguyên
+uptime (images-db/ds2api/kiro 47h, telegram 10h). Không master container nào
+tồn tại trên minipc.
+
+## 4. Checklist còn lại cho operator (VPS, khi có SSH)
 
 ```bash
 # 0. Ghi checkpoint trước deploy (site 1 chỉ đọc)
