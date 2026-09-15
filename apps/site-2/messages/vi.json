@@ -13,14 +13,10 @@
   },
   "home": {
     "badge": "mẫu thiệp cưới",
-    "heroTitle": "Thiệp cưới online, đẹp ngay từ đầu",
-    "heroSubtitle": "Chọn mẫu, điền thông tin, chia sẻ link cho khách mời. Xem demo đầy đủ trước khi quyết định.",
+    "heroTitle": "Một lời mời đáng nhớ.",
+    "heroSubtitle": "Chọn mẫu, điền thông tin rồi chia sẻ link cho khách mời. Xem demo đầy đủ trước khi quyết định.",
     "browseCta": "Xem mẫu thiệp",
-    "pricingCta": "Bảng giá",
-    "statsTemplates": "mẫu thiệp",
-    "statsSteps": "bước là xong",
-    "statsDemo": "xem demo miễn phí",
-    "marqueeLabel": "Phong cách",
+    "heroSecondaryCta": "Tạo thiệp ngay",
     "featuredTitle": "Mẫu nổi bật",
     "featuredCta": "Xem tất cả",
     "stepsTitle": "Làm thiệp trong 3 bước",
@@ -39,7 +35,22 @@
       }
     ],
     "finalTitle": "Ngày vui xứng đáng một tấm thiệp đẹp",
-    "finalCta": "Bắt đầu miễn phí"
+    "finalCta": "Bắt đầu miễn phí",
+    "valueTitle": "Mọi thứ gói trong một link thiệp",
+    "value": [
+      {
+        "title": "Editor trực quan",
+        "body": "Điền tên, ngày giờ, địa điểm rồi xem trước ngay khi gõ, không cần biết thiết kế."
+      },
+      {
+        "title": "Một link cho mọi kênh",
+        "body": "Xuất bản để nhận link thiệp riêng, gửi khách qua tin nhắn hay mạng xã hội."
+      },
+      {
+        "title": "Khách mời và RSVP",
+        "body": "Mỗi khách một link riêng, phản hồi của họ tự gom về một chỗ."
+      }
+    ]
   },
   "templates": {
     "title": "Mẫu thiệp cưới",
