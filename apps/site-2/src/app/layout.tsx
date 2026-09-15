@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf1f4" },
+    { media: "(prefers-color-scheme: light)", color: "#fdf4f7" },
     { media: "(prefers-color-scheme: dark)", color: "#221016" },
   ],
 };
@@ -29,7 +29,7 @@ export default function Site2Layout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={siteFont.variable}>
+    <html lang="vi" className={siteFont.variable} data-s2-theme="light">
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   );

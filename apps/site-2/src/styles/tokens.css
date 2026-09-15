@@ -4,7 +4,7 @@
  * invitation renderer markup: every token is prefixed `--s2-`. */
 
 :root {
-  --s2-canvas: #fbf1f4;
+  --s2-canvas: #fdf4f7;
   --s2-surface: #fffdfd;
   --s2-ink: #42242e;
   --s2-muted: #7a5560;
