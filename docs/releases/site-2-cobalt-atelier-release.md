@@ -1,7 +1,7 @@
 # Site 2 Cobalt Atelier Release Record
 
 Trạng thái: **ĐÃ DEPLOY lên minipc 2026-09-15 ~06:50 UTC, healthy**.
-Deploy qua SSH alias `minipc` (192.168.0.57, cùng LAN). VPS 163.223.9.198
+Deploy qua SSH alias `minipc` (192.168.0.57, cùng LAN). VPS 163.61.110.34
 không route được từ máy dev nên mọi smoke prod dưới đây là minipc +
 https public. Site 1 không bị chạm: không có master container nào chạy
 trên minipc trước/sau deploy, lệnh deploy gốc chưa bao giờ chạy.
@@ -69,7 +69,7 @@ tồn tại trên minipc.
 
 ```bash
 # 0. Ghi checkpoint trước deploy (site 1 chỉ đọc)
-ssh root@163.223.9.198 "docker inspect chungdoi-site2-web --format '{{.Image}} {{.State.StartedAt}}'; \
+ssh root@163.61.110.34 "docker inspect chungdoi-site2-web --format '{{.Image}} {{.State.StartedAt}}'; \
   docker inspect <site-1-container> --format '{{.Image}} {{.State.StartedAt}}'"
 # 1. Deploy site-2 (KHÔNG chạy npm run deploy gốc)
 NEXT_PUBLIC_SITE_URL=https://thiep.hoangnam.cloud npm run deploy:site-2

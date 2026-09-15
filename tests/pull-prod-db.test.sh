@@ -25,7 +25,7 @@ from pathlib import Path
 args = sys.argv[1:]
 while args and args[0] == "-o":
     args = args[2:]
-assert args[0] == "root@163.223.9.198", args[0]
+assert args[0] == "root@163.61.110.34", args[0]
 command = args[1].replace("/srv/thiepmungonline", os.environ["FIXTURE_REMOTE"])
 with open(os.environ["FIXTURE_SSH_LOG"], "a") as log:
     log.write(command + "\\n")

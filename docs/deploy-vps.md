@@ -1,7 +1,8 @@
 # Production VPS — thiepmungonline.com
 
-Production moved from minipc to **163.223.9.198** on **2026-08-31**.
-Use SSH key authentication: `ssh root@163.223.9.198`. Do not put passwords in
+Production moved from minipc to **163.61.110.34** on **2026-08-31**, then to
+**163.61.110.34** on **2026-09-15** (old VPS retired).
+Use SSH key authentication: `ssh root@163.61.110.34`. Do not put passwords in
 source, docs, shell history, or deployment commands.
 
 ## Verified cutover
@@ -257,12 +258,12 @@ archived and verified at `/Users/namdo/Documents/thiepmung-deploy-20260903-admin
 before cache cleanup; the active image and production data were preserved.
 
 ```bash
-ssh root@163.223.9.198 'docker ps; df -h /'
-ssh root@163.223.9.198 'curl -fsS http://127.0.0.1:20246/ready'
-ssh root@163.223.9.198 'systemctl list-timers --all | grep thiepmungonline'
-ssh root@163.223.9.198 'journalctl -u thiepmungonline-payos-reconcile.service -n 30'
-ssh root@163.223.9.198 'journalctl -u thiepmungonline-trial-reminders.service -n 30'
-ssh root@163.223.9.198 'systemctl start thiepmungonline-backup.service'
+ssh root@163.61.110.34 'docker ps; df -h /'
+ssh root@163.61.110.34 'curl -fsS http://127.0.0.1:20246/ready'
+ssh root@163.61.110.34 'systemctl list-timers --all | grep thiepmungonline'
+ssh root@163.61.110.34 'journalctl -u thiepmungonline-payos-reconcile.service -n 30'
+ssh root@163.61.110.34 'journalctl -u thiepmungonline-trial-reminders.service -n 30'
+ssh root@163.61.110.34 'systemctl start thiepmungonline-backup.service'
 ```
 
 ## Backups and rollback

@@ -10,10 +10,10 @@ case "${1:-}" in
 esac
 [[ $# -le 1 ]] || { echo "Usage: $0 [--db-only]" >&2; exit 2; }
 
-HOST=${PROD_SSH_HOST:-root@163.223.9.198}
+HOST=${PROD_SSH_HOST:-root@163.61.110.34}
 case "$HOST" in
   *minipc*|*MINIPC*|-*|*[!a-zA-Z0-9_.@:-]*)
-    echo "Refusing retired/invalid host. Use the active VPS: root@163.223.9.198." >&2
+    echo "Refusing retired/invalid host. Use the active VPS: root@163.61.110.34." >&2
     exit 1
     ;;
 esac

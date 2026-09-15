@@ -41,7 +41,7 @@ npm run screenshots:templates
 
 Mặc định lệnh trên thực hiện trọn quy trình:
 
-1. Kết nối production qua SSH `root@163.223.9.198` (VPS hiện tại; không dùng minipc).
+1. Kết nối production qua SSH `root@163.61.110.34` (VPS hiện tại; không dùng minipc).
 2. Export riêng các thiệp `isDemo=true` và năm bảng nội dung liên quan, không tải toàn bộ DB người dùng.
 3. Tạo SQLite backup của local trong `temp/demo-sync-backups/`.
 4. Tải đúng các file `/uploads/...` mà demo production đang dùng.

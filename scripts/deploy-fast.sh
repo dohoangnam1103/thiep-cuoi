@@ -19,9 +19,9 @@ fi
 # shellcheck source=scripts/lib/ssh-transport.sh
 source "scripts/lib/ssh-transport.sh"
 
-REMOTE_LAN_IP="${REMOTE_LAN_IP:-163.223.9.198}"
+REMOTE_LAN_IP="${REMOTE_LAN_IP:-163.61.110.34}"
 REMOTE_LAN_USER="${REMOTE_LAN_USER:-root}"
-REMOTE_TUNNEL_ALIAS="${REMOTE_TUNNEL_ALIAS:-root@163.223.9.198}"
+REMOTE_TUNNEL_ALIAS="${REMOTE_TUNNEL_ALIAS:-root@163.61.110.34}"
 REMOTE_APP_DIR="${REMOTE_APP_DIR:-/srv/thiepmungonline}"
 WEB_IMAGE="${WEB_IMAGE:-thiepmungonline-web:production}"
 PUBLIC_URL="${PUBLIC_URL:-https://thiepmungonline.com}"
@@ -333,7 +333,8 @@ cd "$5"
 
 # Resolve the immutable base before choosing a cached assembled image. No Next
 # compilation runs here; native dependencies stay in existing Docker layers.
-platform=$(docker version --format '{{.Server.Os}}/{{.Server.Arch}}')
+# Debian 11 docker 20.10.5 does not support `docker version --format`, fallback to linux/amd64.
+platform=$(docker version --format '{{.Server.Os}}/{{.Server.Arch}}' 2>/dev/null || echo "linux/amd64")
 node_version=$(python3 - <<'PY_NODE_VERSION'
 import re
 from pathlib import Path
@@ -343,7 +344,15 @@ if not match:
 print(match.group(1))
 PY_NODE_VERSION
 )
-base_digest=$(timeout --kill-after=5s 30s docker buildx imagetools inspect "node:$node_version" --format '{{.Manifest.Digest}}')
+base_digest=$(timeout --kill-after=5s 30s docker buildx imagetools inspect "node:$node_version" --format '{{.Manifest.Digest}}' 2>/dev/null | tr -d '[:space:]' | grep -E '^sha256:[a-f0-9]{64}$' || true)
+if ! [[ "$base_digest" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+  base_digest=$(timeout --kill-after=5s 30s docker buildx imagetools inspect "node:$node_version" --raw 2>/dev/null | python3 -c "import json,sys; data=json.load(sys.stdin); print(data.get('digest','') or data.get('manifest',{}).get('digest','') or '')" 2>/dev/null | tr -d '[:space:]' | grep -E '^sha256:[a-f0-9]{64}$' || true)
+fi
+if ! [[ "$base_digest" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+  # Fallback for old Docker without buildx imagetools template: use local pulled image RepoDigest.
+  docker pull "node:$node_version" >/dev/null 2>&1 || true
+  base_digest=$(docker image inspect "node:$node_version" --format '{{index .RepoDigests 0}}' 2>/dev/null | cut -d@ -f2 | tr -d '[:space:]' | grep -E '^sha256:[a-f0-9]{64}$' || true)
+fi
 [[ "$base_digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo 'Invalid Node base digest'; exit 1; }
 pinned_node_version="${node_version%%@*}@$base_digest"
 assembly_key=$(python3 scripts/deploy-assembled-image-cache.py key .next-prebuilt "$PWD" "$base_digest" "$platform")
@@ -353,9 +362,15 @@ if image_id=$(python3 scripts/deploy-assembled-image-cache.py hit "$assembly_cac
   docker image tag "$image_id" "$version_image"
 else
   echo 'assembly_cache=miss'
-  # --provenance=false keeps the image ID comparable with container .Image.
+  # --provenance=false keeps the image ID comparable with container .Image (ignored on Docker 20.10).
+  if docker build --help 2>&1 | grep -q -- --provenance; then
+    provenance_arg="--provenance=false"
+  else
+    provenance_arg=""
+  fi
+  # shellcheck disable=SC2086
   timeout --kill-after=15s 300s docker build \
-    --provenance=false \
+    $provenance_arg \
     --build-arg "NODE_VERSION=$pinned_node_version" \
     --label "io.thiepmungonline.assembly-key=$assembly_key" \
     --file Dockerfile.prebuilt \
@@ -368,9 +383,15 @@ fi
 docker image inspect "$version_image" --format 'built_image={{.Id}} created={{.Created}}'
 
 if [ "$needs_migration" = 1 ]; then
+  if docker build --help 2>&1 | grep -q -- --provenance; then
+    provenance_arg="--provenance=false"
+  else
+    provenance_arg=""
+  fi
+  # shellcheck disable=SC2086
   timeout --kill-after=15s 300s docker build \
+    $provenance_arg \
     --build-arg "NODE_VERSION=$pinned_node_version" \
-    --provenance=false \
     --file Dockerfile.prebuilt \
     --target migrate \
     --tag "$migrate_image" \
@@ -494,11 +515,18 @@ log_step "seed danh sách nhạc"
 # 6. Promote + restart + verify (tự rollback nếu bất kỳ kiểm tra nào fail)
 # ---------------------------------------------------------------------------
 echo "🔄 Promote image và recreate riêng web"
-rsh_stdin "$ROLLBACK_IMAGE" <<'REMOTE_SAVE_IMAGE'
+# First deploy on a fresh host has no existing web container; skip rollback save in that case.
+if rsh "docker inspect thiepmungonline-web >/dev/null 2>&1"; then
+  rsh_stdin "$ROLLBACK_IMAGE" <<'REMOTE_SAVE_IMAGE'
 set -euo pipefail
 old_image_id=$(docker inspect thiepmungonline-web --format '{{.Image}}')
 docker image tag "$old_image_id" "$1"
 REMOTE_SAVE_IMAGE
+else
+  echo "   No existing web container: skipping rollback image save (first deploy)"
+  # Create a dummy rollback tag so later rollback logic has a placeholder (will be overwritten on next deploy)
+  rsh "docker image tag \"$VERSION_IMAGE\" \"$ROLLBACK_IMAGE\" 2>/dev/null || true"
+fi
 PROMOTION_STARTED=1
 deploy_release activate
 rsh_stdin \

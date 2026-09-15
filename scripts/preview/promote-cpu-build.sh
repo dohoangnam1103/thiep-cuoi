@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run only on 163.223.9.198, after uploading the standalone CPU-cache artifact.
+# Run only on 163.61.110.34, after uploading the standalone CPU-cache artifact.
 set -euo pipefail
 root=/srv/thiepmungonline-preview
 release="$root/releases/cpu-cache-20260830"

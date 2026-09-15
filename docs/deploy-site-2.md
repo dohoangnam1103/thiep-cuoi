@@ -24,7 +24,7 @@ support bases copied into `packages/invitation-core/src/{templates,support}/`
 | Item | Value |
 |---|---|
 | Production domain (baked into image) | `https://thiep.hoangnam.cloud` |
-| Host | minipc `192.168.0.57` (VPS 163.223.9.198 untouched — read-only clone source) |
+| Host | minipc `192.168.0.57` (VPS 163.61.110.34 untouched — read-only clone source) |
 | App root (no sudo on minipc, hence home dir instead of `/srv`) | `/home/namdo/apps/chungdoi-site2` |
 | Container / image | `chungdoi-site2-web` / `chungdoi-site2-web:production` |
 | Loopback | `127.0.0.1:3221`, health `/api/health` → `{"app":"site-2","origin":"https://thiep.hoangnam.cloud"}` |
@@ -49,7 +49,7 @@ Existing minipc containers (`images-db`, `ds2api`, …) and the retired
 |---|---|
 | minipc (prod site-2) | `192.168.0.57`, SSH alias `minipc` → `ssh.hoangnam.cloud` + cloudflared, user `namdo`, x86_64, Docker 29.5 |
 | minipc2 (**máy khác**, đừng nhầm) | `192.168.0.77`, SSH alias `minipc2` |
-| VPS | `163.223.9.198`, không route được từ máy dev (SSH timeout) |
+| VPS (site-1 prod, từ 2026-09-15; VPS cũ `163.223.9.198` đã nghỉ) | `163.61.110.34`, không đụng tới khi deploy site-2 |
 | App root | `/home/namdo/apps/chungdoi-site2` (compose.yaml, .env 600, data/, backups/, ops/, LIVE) |
 | Container / compose project | `chungdoi-site2-web`, quản lý bằng `docker compose -p chungdoi-site2-web -f compose.yaml` (flag `-p` bắt buộc vì container gốc tạo bằng tên đó) |
 | Image tags | `:production` (live), `:YYYYMMDD-tên` (release), `:pre-cobalt` (rollback, image `a4e59b8d4a0e`) |
@@ -122,19 +122,19 @@ delivery or session records.
 
 ```bash
 # 1. Read-only capacity + collision checks (no mutation)
-ssh root@163.223.9.198 "df -h /srv; free -m; docker ps --format '{{.Names}} {{.Ports}}'"
+ssh root@163.61.110.34 "df -h /srv; free -m; docker ps --format '{{.Names}} {{.Ports}}'"
 # expect: no /srv/chungdoi-site2/LIVE, port 3221 free, container name unused
 
 # 2. Provision directories + private env (container runtime UID)
-ssh root@163.223.9.198 "set -e
+ssh root@163.61.110.34 "set -e
   mkdir -p /srv/chungdoi-site2/{data/media/uploads,releases,backups,ops}
   chown -R 1000:1000 /srv/chungdoi-site2/data
   chmod 600 /srv/chungdoi-site2/.env"
 
 # 3. Install backup unit only (no payment/reminder timers for site-2)
-scp infra/systemd/site-2/* root@163.223.9.198:/etc/systemd/system/
-scp scripts/vps/backup-site2.py root@163.223.9.198:/srv/chungdoi-site2/ops/
-ssh root@163.223.9.198 "systemctl daemon-reload
+scp infra/systemd/site-2/* root@163.61.110.34:/etc/systemd/system/
+scp scripts/vps/backup-site2.py root@163.61.110.34:/srv/chungdoi-site2/ops/
+ssh root@163.61.110.34 "systemctl daemon-reload
   && systemctl enable --now chungdoi-site2-backup.timer"
 
 # 4. Build with the REAL site-2 origin, then deploy
@@ -169,7 +169,7 @@ Record before every deploy: previous image ID, release pointer, DB/media
 checksums. Roll back with:
 
 ```bash
-ssh root@163.223.9.198 "cd /srv/chungdoi-site2
+ssh root@163.61.110.34 "cd /srv/chungdoi-site2
   docker compose -p chungdoi-site2-web -f compose.yaml down
   # restore DB/media snapshot, retag previous image, up again
   rm -f LIVE && <restore> && docker compose -p chungdoi-site2-web -f compose.yaml up -d"

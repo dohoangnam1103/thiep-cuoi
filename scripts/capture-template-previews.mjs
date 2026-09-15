@@ -93,7 +93,7 @@ Environment:
   CAPTURE_CONCURRENCY          Số mẫu chụp đồng thời, 1–4, mặc định 1
   CAPTURE_VERBOSE=1            Hiện log của Next.js server
   CAPTURE_AUDIT_DIR            Lưu ảnh từng bản đồ và báo cáo kiểm tra
-  CAPTURE_PRODUCTION_HOST      SSH host production, mặc định root@163.223.9.198
+  CAPTURE_PRODUCTION_HOST      SSH host production, mặc định root@163.61.110.34
   CAPTURE_PRODUCTION_APP_DIR   App production, mặc định /srv/thiepmungonline
   CAPTURE_SKIP_PRODUCTION_SYNC=1 Bỏ qua đồng bộ production
   CHROME_PATH                  Đường dẫn Chrome/Chromium tùy chỉnh`);
@@ -238,7 +238,7 @@ function localDatabasePath() {
 }
 
 function productionConnectionConfig() {
-  const host = process.env.CAPTURE_PRODUCTION_HOST ?? "root@163.223.9.198";
+  const host = process.env.CAPTURE_PRODUCTION_HOST ?? "root@163.61.110.34";
   const appDir =
     process.env.CAPTURE_PRODUCTION_APP_DIR ?? "/srv/thiepmungonline";
   if (!/^[a-zA-Z0-9._@-]+$/.test(host)) {

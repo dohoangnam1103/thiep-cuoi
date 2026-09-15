@@ -8,6 +8,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # Chungdoi — Wedding Invitation App
 
+## Wedding Invitation Agent Rules
+
+For any task that creates, clones, redesigns, or materially changes the UI, assets, sections, or presentation flow of a wedding invitation template, the agent MUST read [docs/wedding-invitation-agent-rules.md](docs/wedding-invitation-agent-rules.md) before planning, inspecting, or editing that task. Do not read this document for unrelated work. The rules in that document apply in addition to this file.
+
 ## What This Is
 A web app for creating and sharing digital wedding invitations (thiệp cưới). Users pick a template, customize couple/family/event details in an editor, and publish a shareable invitation page. Supports multiple languages and multiple visual themes.
 
@@ -19,7 +23,7 @@ A web app for creating and sharing digital wedding invitations (thiệp cưới)
 - **Database:** Prisma 7 + SQLite (better-sqlite3 adapter)
 - **Auth:** session-based (`jose` JWT, `bcryptjs` password hashing)
 - **i18n:** next-intl — Vietnamese only (`messages/vi.json`). en/ko/ja/zh were removed; `src/i18n/routing.ts` serves `vi` with no URL prefix and every other prefix 404s. Copy still goes through the catalog, so do not hardcode strings.
-- **Deployment:** VPS `163.223.9.198` / Docker (see `docs/deploy-vps.md`). Minipc is retired; do not restart its stale production DB.
+- **Deployment:** site-1 prod VPS `163.61.110.34`, site-2 prod minipc / Docker (see `docs/deploy-vps.md`, `docs/deploy-site-2.md`). The old VPS `163.223.9.198` is retired. No master container runs on minipc; never start one there.
 
 ## Commands
 - `npm run dev` — Start dev server
