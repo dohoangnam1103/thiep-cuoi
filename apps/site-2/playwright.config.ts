@@ -7,10 +7,10 @@ const APP_DIR = import.meta.dirname;
 const TEST_DB_URL = `file:${path.join(APP_DIR, ".e2e", "test.db")}`;
 
 export default defineConfig({
-  // Only the site-2 MVP spec; it needs the site-2 server (port 3222) and the
+  // Site-2 specs only; each needs the site-2 server (port 3222) and the
   // isolated temp SQLite DB below — never master dev.db or production data.
   testDir: "../../tests/e2e",
-  testMatch: /site-2-mvp\.spec\.ts/,
+  testMatch: /site-2-.*\.spec\.ts/,
   outputDir: "./.e2e/artifacts",
   fullyParallel: false,
   workers: 1,
