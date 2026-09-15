@@ -16,6 +16,10 @@ const siteFont = Be_Vietnam_Pro({
 export const metadata: Metadata = {
   title: vi.site.name,
   description: vi.site.tagline,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3f5fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#10182e" },
+  ],
 };
 
 export default function Site2Layout({

@@ -1,0 +1,40 @@
+/* Cobalt Atelier product workspace. Only authenticated workspace routes use
+ * these classes, starting with the Task 3 WorkspaceShell. */
+
+.s2-workspace {
+  background-color: var(--s2-canvas);
+  color: var(--s2-ink);
+  min-height: 100dvh;
+}
+
+.s2-workspace-card {
+  background-color: var(--s2-surface);
+  border: 1px solid var(--s2-line);
+  border-radius: var(--s2-card-radius);
+}
+
+/* Loading skeleton with shimmer.Geometry matches the page it stands in for;
+ * PageState renders the blocks, callers size them. */
+.s2-skeleton {
+  border-radius: var(--s2-input-radius);
+  background: linear-gradient(
+    100deg,
+    var(--s2-line) 40%,
+    var(--s2-surface) 50%,
+    var(--s2-line) 60%
+  );
+  background-size: 200% 100%;
+  animation: s2-shimmer 1.4s linear infinite;
+}
+
+@keyframes s2-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s2-skeleton {
+    animation: none;
+  }
+}

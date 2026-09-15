@@ -7,7 +7,7 @@
     "dev": "next dev -p 3200",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test:unit": "tsx --test \"src/**/*.test.ts\"",
+    "test:unit": "tsx --test \"src/**/*.test.{ts,tsx}\"",
     "test:boundary": "tsx --test ../../tests/site-2-source-boundary.test.mjs",
     "test:e2e": "playwright test --config playwright.config.ts",
     "build": "next build",

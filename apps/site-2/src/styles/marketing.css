@@ -1,0 +1,25 @@
+/* Cobalt Atelier marketing shell. Only marketing routes use these classes,
+ * starting with the Task 3 MarketingShell. Invitation routes are untouched. */
+
+.s2-marketing {
+  background-color: var(--s2-canvas);
+  color: var(--s2-ink);
+}
+
+.s2-marketing-container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .s2-marketing-container {
+    padding-inline: 1.5rem;
+  }
+
+  /* Marketing CTAs stay on one line on desktop. */
+  .s2-marketing-cta {
+    white-space: nowrap;
+  }
+}
