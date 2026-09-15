@@ -61,3 +61,58 @@ test("dashboard surfaces draft and published projects with actions", async ({
   await publicLink.click();
   await expect(page).toHaveURL(/\/thiep\//);
 });
+
+test("editor autosaves, validates publish and previews in isolation", async ({
+  page,
+}) => {
+  await page.goto("/dang-nhap?mode=register");
+  await page.getByLabel("Email").fill(`site2-edit-${Date.now()}@example.com`);
+  await page.getByLabel("Mật khẩu").fill("matkhau123");
+  await page.getByRole("button", { name: "Đăng ký" }).click();
+  await expect(page).toHaveURL(/\/dashboard/);
+
+  await page.getByLabel("Tạo thiệp mới").selectOption("jasmine-white");
+  await page.getByRole("button", { name: "Tạo thiệp" }).click();
+  await expect(page).toHaveURL(/\/editor\//);
+
+  await expect(
+    page.getByRole("link", { name: "Cô dâu & chú rể" }),
+  ).toBeVisible();
+  await expect(page.getByTestId("editor-preview")).toBeVisible();
+
+  await page.getByLabel("Tên cô dâu").fill("Nguyễn Mai Lan");
+  await page.getByLabel("Tên chú rể").fill("Trần Đức Minh");
+  await expect(page.getByText("Đã lưu thay đổi.")).toBeVisible({
+    timeout: 15000,
+  });
+
+  await page.getByLabel("Tên cô dâu").fill("");
+  await page.getByLabel("Tên chú rể").fill("");
+  await page.getByRole("button", { name: "Xuất bản" }).click();
+  await expect(page.getByText("Trường này bắt buộc khi xuất bản.").first()).toBeVisible();
+
+  await page.getByLabel("Tên cô dâu").fill("Nguyễn Mai Lan");
+  await page.getByLabel("Tên chú rể").fill("Trần Đức Minh");
+  await page.getByRole("button", { name: "Xuất bản" }).click();
+  await expect(page.getByText("Đã xuất bản.")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText("/thiep/")).toBeVisible();
+});
+
+test("editor preview opens as a sheet on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/dang-nhap?mode=register");
+  await page.getByLabel("Email").fill(`site2-sheet-${Date.now()}@example.com`);
+  await page.getByLabel("Mật khẩu").fill("matkhau123");
+  await page.getByRole("button", { name: "Đăng ký" }).click();
+  await expect(page).toHaveURL(/\/dashboard/);
+
+  await page.getByLabel("Tạo thiệp mới").selectOption("jasmine-white");
+  await page.getByRole("button", { name: "Tạo thiệp" }).click();
+  await expect(page).toHaveURL(/\/editor\//);
+
+  await page.getByRole("button", { name: "Xem trước" }).click();
+  const sheet = page.getByRole("dialog", { name: "Xem trước" });
+  await expect(sheet.getByTestId("editor-preview")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
+});

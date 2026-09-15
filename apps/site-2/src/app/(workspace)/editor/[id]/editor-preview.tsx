@@ -17,7 +17,10 @@ export function EditorPreview({
   const Renderer = getTemplateRenderer(slug);
   if (!Renderer) return null;
   return (
-    <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--line)]">
+    <div
+      data-testid="editor-preview"
+      className="s2-preview-isolation overflow-hidden rounded-2xl border border-[var(--s2-line)]"
+    >
       <NextIntlClientProvider
         locale="vi"
         timeZone="Asia/Ho_Chi_Minh"

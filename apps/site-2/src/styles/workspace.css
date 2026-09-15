@@ -38,3 +38,13 @@
     animation: none;
   }
 }
+
+/* Invitation preview isolation. The workspace shell only leaks `color` into
+ * the renderer through inheritance, so the preview root pins it back to the
+ * same porcelain ink the public invitation page inherits from the global
+ * body rule. `isolation: isolate` keeps template overlay effects inside the
+ * frame. Nothing here restyles the template itself. */
+.s2-preview-isolation {
+  isolation: isolate;
+  color: var(--ink);
+}

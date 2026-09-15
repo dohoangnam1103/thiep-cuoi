@@ -1,3 +1,5 @@
+import type { ChangeEvent } from "react";
+
 type S2FieldProps = {
   id: string;
   name: string;
@@ -9,7 +11,13 @@ type S2FieldProps = {
   disabled?: boolean;
   placeholder?: string;
   defaultValue?: string;
+  value?: string;
+  onChange?: (
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
+  ) => void;
   autoComplete?: string;
+  multiline?: boolean;
+  rows?: number;
 };
 
 /* Labeled form field. The visible label is always rendered above the input,
@@ -26,7 +34,11 @@ export function S2Field({
   disabled,
   placeholder,
   defaultValue,
+  value,
+  onChange,
   autoComplete,
+  multiline = false,
+  rows = 2,
 }: S2FieldProps) {
   const errorId = `${id}-error`;
   const hintId = `${id}-hint`;
@@ -34,6 +46,8 @@ export function S2Field({
     [error ? errorId : null, hint ? hintId : null]
       .filter(Boolean)
       .join(" ") || undefined;
+  const controlClass =
+    "w-full rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-2.5 text-base text-[var(--s2-ink)] outline-none placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] disabled:opacity-60 aria-[invalid=true]:border-[var(--s2-danger)]";
   return (
     <div>
       <label
@@ -42,19 +56,39 @@ export function S2Field({
       >
         {label}
       </label>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        required={required}
-        disabled={disabled}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        autoComplete={autoComplete}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy}
-        className="w-full rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-2.5 text-base text-[var(--s2-ink)] outline-none placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] disabled:opacity-60 aria-[invalid=true]:border-[var(--s2-danger)]"
-      />
+      {multiline ? (
+        <textarea
+          id={id}
+          name={name}
+          rows={rows}
+          required={required}
+          disabled={disabled}
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          value={value}
+          onChange={onChange}
+          autoComplete={autoComplete}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
+          className={`${controlClass} resize-y`}
+        />
+      ) : (
+        <input
+          id={id}
+          name={name}
+          type={type}
+          required={required}
+          disabled={disabled}
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          value={value}
+          onChange={onChange}
+          autoComplete={autoComplete}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
+          className={controlClass}
+        />
+      )}
       {hint && !error ? (
         <p id={hintId} className="mt-1.5 text-[13px] text-[var(--s2-muted)]">
           {hint}
