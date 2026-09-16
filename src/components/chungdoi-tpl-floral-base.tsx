@@ -12,6 +12,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import {
   invitationGiftAccounts,
+  invitationGiftAccountLabel,
   invitationOpeningMessage,
   invitationCeremonies,
   orderByBrideFirst,
@@ -80,8 +81,8 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
   const brideCol = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const orderedPeople = orderByBrideFirst(
-    { fullName: couple.brideFullName, birthOrder: couple.brideBirthOrder || "Út Nữ" },
-    { fullName: couple.groomFullName, birthOrder: couple.groomBirthOrder || "Trưởng Nam" },
+    { fullName: couple.brideFullName, birthOrder: couple.brideBirthOrder },
+    { fullName: couple.groomFullName, birthOrder: couple.groomBirthOrder },
     couple.brideFirst,
   );
   const orderedShortNames = orderByBrideFirst(
@@ -90,7 +91,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
     couple.brideFirst,
   );
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

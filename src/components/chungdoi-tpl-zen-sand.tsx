@@ -25,6 +25,7 @@ import {
 import { EnsoCircle, HairRule } from "@/components/chungdoi-tpl-ornaments";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
@@ -60,7 +61,7 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 
 import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
@@ -181,7 +181,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
   const { lightbox, setLightbox } = useLightbox(gallery.length);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banks = invitationGiftAccounts(content).map((account) => ({
-    title: `${account.birthOrder} - ${account.name}`,
+    title: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

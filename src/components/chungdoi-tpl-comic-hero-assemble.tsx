@@ -23,6 +23,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { comicHeroAssemblePalette } from "@/data/comic-hero-assemble-pilot";
 import {
   invitationCouple,
+  invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationHeroImage,
   orderByBrideFirst,
@@ -241,7 +242,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
   );
 
   const banks: GiftBank[] = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} — ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name, " — "),
     bank: account.bank,
     num: account.num,
     name: account.name,

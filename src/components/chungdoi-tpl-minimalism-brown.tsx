@@ -475,7 +475,7 @@ export function MinimalismBrownInvitation({ content }: { content: ChungDoiDemoCo
 
         {/* ── THÔNG TIN TIỆC CƯỚI ─────────────────────────────────────────────
             Giờ tiệc, cặp "Đón khách / Khai tiệc", lịch tháng nền nâu và RSVP. */}
-        <section className="relative z-10 mx-auto mb-4 w-[88%] max-w-[420px] md:max-w-[560px]">
+        <section className={`relative z-10 mx-auto ${gallery.length === 0 ? "mt-4 " : ""}mb-4 w-[88%] max-w-[420px] md:max-w-[560px]`}>
           <FloatingSprig
             src={`${THEME}/leaf-background.webp`}
             wrapperClassName="right-[-16%] top-[15%] z-20 w-[28%]"

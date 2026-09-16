@@ -19,7 +19,7 @@ import {
   FamilyColumn,
   SharedWishForm,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, invitationOpeningMessage, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonyMessage, invitationGiftAccountLabel, invitationGiftAccounts, invitationOpeningMessage, orderedCouple } from "@/lib/invitation-display";
 
 const BAROQUE_BASE = "/chungdoi/images/themes/_decor/baroque-gold";
 const GOLD = "#b8912f";
@@ -75,7 +75,7 @@ export function BaroqueGoldInvitation({ content }: { content: ChungDoiDemoConten
   const brideCol = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

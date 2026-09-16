@@ -135,14 +135,14 @@ export function invitationCouple(
       side: "bride",
       fullName: couple.brideFullName,
       shortName: couple.brideShortName || couple.brideFullName,
-      birthOrder: couple.brideBirthOrder || "Út Nữ",
+      birthOrder: couple.brideBirthOrder ?? "",
       heroPhoto: heroPhotos.bride,
     },
     groom: {
       side: "groom",
       fullName: couple.groomFullName,
       shortName: couple.groomShortName || couple.groomFullName,
-      birthOrder: couple.groomBirthOrder || "Trưởng Nam",
+      birthOrder: couple.groomBirthOrder ?? "",
       heroPhoto: heroPhotos.groom,
     },
   };
@@ -179,11 +179,22 @@ export type InvitationGiftAccount = {
   num: string;
   /** Account holder as entered, trimmed. */
   name: string;
-  /** Birth-order caption for this side, already defaulted. */
+  /** Birth-order caption for this side, as entered by the couple. */
   birthOrder: string;
   fullName: string;
   shortName: string;
 };
+
+/** Format an account caption without inventing or leaving a separator for a blank rank. */
+export function invitationGiftAccountLabel(
+  birthOrder: string | null | undefined,
+  accountName: string,
+  separator = " - ",
+): string {
+  const rank = birthOrder?.trim() ?? "";
+  const name = accountName.trim();
+  return rank ? `${rank}${separator}${name}` : name;
+}
 
 /**
  * Transfer accounts that can actually produce a VietQR, in display order.

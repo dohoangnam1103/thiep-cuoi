@@ -28,6 +28,7 @@ import {
 import { ArchOutline, LeafSprig } from "@/components/chungdoi-tpl-ornaments";
 import {
   invitationCeremonyMessage,
+  invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
@@ -78,7 +79,7 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
   const hero = invitationHeroImage(content);
 
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} — ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name, " — "),
     bank: account.bank,
     num: account.num,
     name: account.name,

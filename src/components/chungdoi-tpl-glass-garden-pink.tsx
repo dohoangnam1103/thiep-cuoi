@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -89,7 +89,7 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
   );
 
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

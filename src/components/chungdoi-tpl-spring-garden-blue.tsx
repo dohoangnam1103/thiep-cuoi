@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   hexToRgba,
   formatDate,
@@ -87,7 +87,7 @@ function WishesList({ wishes }: { wishes: ChungDoiDemoContent["wishes"] }) {
 function GiftSection({ content }: { content: ChungDoiDemoContent }) {
   const { couple } = content;
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

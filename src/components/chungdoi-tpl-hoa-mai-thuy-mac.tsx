@@ -24,6 +24,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   invitationCeremonies,
+  invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
@@ -142,7 +143,7 @@ export function HoaMaiThuyMacInvitation({
     }));
   const banks = invitationGiftAccounts(content).map((account) => ({
     bank: account.bank,
-    label: `${account.birthOrder} ${account.shortName}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.shortName, " "),
     name: account.name,
     num: account.num,
   }));

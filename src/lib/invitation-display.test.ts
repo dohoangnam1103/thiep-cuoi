@@ -8,6 +8,7 @@ import {
   invitationCeremonies,
   invitationCeremonyMessage,
   invitationCouple,
+  invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationHeroPhotos,
   invitationHeroImage,
@@ -203,6 +204,13 @@ test("invitationCouple keeps each side addressable for side-specific artwork", (
   assert.equal(groom.heroPhoto, "/groom.webp");
 });
 
+test("invitationCouple leaves empty birth-order captions empty", () => {
+  const { bride, groom } = invitationCouple(displayContent());
+
+  assert.equal(bride.birthOrder, "");
+  assert.equal(groom.birthOrder, "");
+});
+
 test("invitationCouple can fall back to the album per side", () => {
   const content = heroContent({
     heroImage2: "/groom.webp",
@@ -298,8 +306,10 @@ function giftContent(bank: Partial<ChungDoiDemoContent["bank"]>, brideFirst = tr
       brideFirst,
       brideFullName: "Lê Vân Khánh",
       brideShortName: "Vân Khánh",
+      brideBirthOrder: "Út Nữ",
       groomFullName: "Trần Hải Đăng",
       groomShortName: "Hải Đăng",
+      groomBirthOrder: "Trưởng Nam",
     },
     bank: { ...base.bank, ...bank },
   };
@@ -400,4 +410,18 @@ test("invitationGiftAccounts carries the captions templates build labels from", 
   assert.equal(account.fullName, "Lê Vân Khánh");
   assert.equal(account.shortName, "Vân Khánh");
   assert.equal(account.name, "Le Van Khanh");
+});
+
+test("invitationGiftAccountLabel returns only the account name for an empty rank", () => {
+  assert.equal(invitationGiftAccountLabel(null, "Nguyễn Văn A"), "Nguyễn Văn A");
+  assert.equal(invitationGiftAccountLabel("", "Nguyễn Văn A"), "Nguyễn Văn A");
+});
+
+test("invitationGiftAccountLabel treats whitespace-only ranks as empty", () => {
+  assert.equal(invitationGiftAccountLabel("   ", "Nguyễn Văn A", " — "), "Nguyễn Văn A");
+});
+
+test("invitationGiftAccountLabel preserves populated rank and separator", () => {
+  assert.equal(invitationGiftAccountLabel("Út Nữ", "Nguyễn Văn A"), "Út Nữ - Nguyễn Văn A");
+  assert.equal(invitationGiftAccountLabel("Trưởng Nam", "Nguyễn Văn A", " — "), "Trưởng Nam — Nguyễn Văn A");
 });

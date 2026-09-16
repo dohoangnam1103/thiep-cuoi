@@ -15,7 +15,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 
 const GREEN_BASE = "/chungdoi/images/themes/_decor/chateau-green";
 const GREEN = "#1f4034";
@@ -45,7 +45,7 @@ export function ChateauGreenInvitation({ content }: { content: ChungDoiDemoConte
   const brideCol = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || "Ông Bà"} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
 
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

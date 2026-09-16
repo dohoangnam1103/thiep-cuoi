@@ -27,8 +27,6 @@ interface DdPalette {
   linen: string;
   gray: string;
   lunar: string;
-  groomLabel: string;
-  brideLabel: string;
   giftHeading: string;
   giftMode: "envelope" | "qr";
   avatars: { groom: string; bride: string };
@@ -39,8 +37,6 @@ const DD_RED_PALETTE: DdPalette = {
   linen: "#ECDFD6",
   gray: "#464646",
   lunar: "Tức ngày 14/12 năm Ất Tỵ",
-  groomLabel: "Trưởng Nam",
-  brideLabel: "Út Nữ",
   giftHeading: "Phong Bao Mừng Cưới",
   giftMode: "envelope",
   avatars: {
@@ -54,8 +50,6 @@ const DD_BLUE_PALETTE: DdPalette = {
   linen: "#E8ECD6",
   gray: "#464646",
   lunar: "Tức ngày 12/09 năm Ất Tỵ",
-  groomLabel: "Út Nam",
-  brideLabel: "Thứ Nữ",
   giftHeading: "Phong Bao Mừng Cưới",
   giftMode: "envelope",
   avatars: {
@@ -123,8 +117,8 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   }));
   const { bride, groom } = invitationCouple(content);
   const avatarCards = orderByBrideFirst(
-    { src: DD_AVATARS.bride, person: bride, label: couple.brideBirthOrder || palette.brideLabel },
-    { src: DD_AVATARS.groom, person: groom, label: couple.groomBirthOrder || palette.groomLabel },
+    { src: DD_AVATARS.bride, person: bride, label: bride.birthOrder },
+    { src: DD_AVATARS.groom, person: groom, label: groom.birthOrder },
     couple.brideFirst,
   ).map((card) => ({
     ...card,

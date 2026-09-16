@@ -19,7 +19,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 
 import styles from "./chungdoi-tpl-porcelain-family.module.css";
 
@@ -368,7 +368,7 @@ export function PorcelainFamilyInvitation({
     .map((color) => color.trim())
     .filter((color) => /^#[\da-f]{6}$/i.test(color));
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,

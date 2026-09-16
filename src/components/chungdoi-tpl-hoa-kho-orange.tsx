@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { AlbumGallery, buildCalendar, FamilyColumn, FitText, formatDate, formatWishTime, GiftEnvelope, googleCalendarUrl, InvitationMap, MapDirectionsButton, SharedCountdown, SharedWishForm, WEEKDAY_LABELS } from "@/components/chungdoi-tpl-shared";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import styles from "./hoa-kho-orange.module.css";
 
 const ROOT = "/chungdoi/images/themes/hoa-kho-orange";
@@ -40,7 +40,7 @@ export function HoaKhoOrangeInvitation({ content }: { content: ChungDoiDemoConte
   const [banquetHour, banquetMinute] = time.split(":").map(Number);
   const welcomeTime = venue.welcomeTime || `${String((banquetHour + 23) % 24).padStart(2, "0")}:${String(banquetMinute).padStart(2, "0")}`;
   const mapQuery = venue.mapAddress || venue.address;
-  const banks = invitationGiftAccounts(content).map(account => ({ label: `${account.birthOrder} - ${account.name}`, bank: account.bank, num: account.num, name: account.name }));
+  const banks = invitationGiftAccounts(content).map(account => ({ label: invitationGiftAccountLabel(account.birthOrder, account.name), bank: account.bank, num: account.num, name: account.name }));
   const groom = <FamilyColumn sideBySideOnMobile title={families.groomParentTitle || t("parents")} a={families.groomFather} b={families.groomMother} addr={families.groomAddress} />;
   const bride = <FamilyColumn sideBySideOnMobile title={families.brideParentTitle || t("parents")} a={families.brideFather} b={families.brideMother} addr={families.brideAddress} />;
   const colors = (content.dressCodeColors || "").split(",").map(color => color.trim()).filter(color => /^#[\da-f]{6}$/i.test(color));

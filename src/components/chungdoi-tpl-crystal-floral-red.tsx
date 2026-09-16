@@ -19,7 +19,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 
 const ASSET_ROOT = "/chungdoi/images/themes/crystal-floral-red";
 const RED = "#9c1f2c";
@@ -89,7 +89,7 @@ export function CrystalFloralRedInvitation({
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
   const banks = invitationGiftAccounts(content).map((account) => ({
-    label: `${account.birthOrder} - ${account.name}`,
+    label: invitationGiftAccountLabel(account.birthOrder, account.name),
     bank: account.bank,
     num: account.num,
     name: account.name,
