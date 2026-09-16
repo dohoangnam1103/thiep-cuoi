@@ -31,7 +31,7 @@ export function EditorPreviewSheet({ children }: { children: ReactNode }) {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="rounded-full border border-[var(--s2-line)] bg-[var(--s2-surface)] px-5 py-2 text-[14px] font-semibold text-[var(--s2-ink)]"
+        className="s2-glass rounded-full px-5 py-2 text-[14px] font-semibold text-[var(--s2-ink)]"
       >
         {vi.editor.previewCta}
       </button>
@@ -42,7 +42,7 @@ export function EditorPreviewSheet({ children }: { children: ReactNode }) {
           aria-label={vi.editor.previewCta}
           className="fixed inset-0 z-50 flex flex-col bg-[var(--s2-canvas)]"
         >
-          <div className="flex items-center justify-between border-b border-[var(--s2-line)] px-4 py-3">
+          <div className="s2-glass-nav flex items-center justify-between px-4 py-3">
             <p className="text-[15px] font-bold text-[var(--s2-ink)]">
               {vi.editor.previewTitle}
             </p>

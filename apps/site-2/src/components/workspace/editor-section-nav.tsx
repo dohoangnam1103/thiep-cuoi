@@ -40,7 +40,7 @@ export function EditorSectionNav() {
         aria-label={vi.editor.sectionsNavLabel}
         className="sticky top-24 hidden self-start xl:block"
       >
-        <ul className="flex flex-col gap-1 border-l border-[var(--s2-line)] pl-4">
+        <ul className="s2-glass flex flex-col gap-1 pl-4">
           {SECTIONS.map((section) => {
             const selected = active === section;
             return (
@@ -65,7 +65,7 @@ export function EditorSectionNav() {
           })}
         </ul>
       </nav>
-      <div className="sticky top-14 z-20 -mx-4 border-b border-[var(--s2-line)] bg-[var(--s2-canvas)]/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6 xl:hidden">
+      <div className="s2-glass-nav sticky top-14 z-20 -mx-4 px-4 py-2 sm:-mx-6 sm:px-6 xl:hidden">
         <label className="block">
           <span className="sr-only">{vi.editor.sectionsNavLabel}</span>
           <select

@@ -36,7 +36,7 @@ export function InvitationProjectCard({
   return (
     <article
       data-testid="invitation-card"
-      className={`s2-workspace-card overflow-hidden ${featured ? "" : ""}`}
+      className="s2-glass s2-sheen overflow-hidden"
     >
       <div className={`flex gap-5 p-5 sm:p-6 ${featured ? "sm:gap-7 sm:p-8" : ""}`}>
         {coverUrl ? (

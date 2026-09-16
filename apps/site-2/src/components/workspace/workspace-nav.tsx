@@ -42,7 +42,7 @@ export function WorkspaceNav({ user }: { user: WorkspaceUser }) {
       aria-label={vi.workspace.navLabel}
       className="md:sticky md:top-0 md:flex md:h-dvh md:w-60 md:shrink-0 md:flex-col"
     >
-      <div className="sticky top-0 z-30 border-b border-[var(--s2-line)] bg-[var(--s2-canvas)] md:hidden">
+      <div className="s2-glass-nav sticky top-0 z-30 md:hidden">
         <div className="flex h-14 items-center justify-between px-4">
           <Link
             href="/dashboard"
@@ -90,7 +90,7 @@ export function WorkspaceNav({ user }: { user: WorkspaceUser }) {
         ) : null}
       </div>
 
-      <div className="hidden border-r border-[var(--s2-line)] bg-[var(--s2-surface)] p-5 md:flex md:flex-1 md:flex-col">
+      <div className="s2-glass hidden border-r border-[var(--s2-glass-border)] p-5 md:flex md:flex-1 md:flex-col">
         <Link
           href="/dashboard"
             className="s2-display text-[22px] font-semibold tracking-tight text-[var(--s2-ink)]"
