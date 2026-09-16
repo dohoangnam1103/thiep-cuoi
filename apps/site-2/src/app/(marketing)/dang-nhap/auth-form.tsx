@@ -24,7 +24,7 @@ export default function Site2AuthForm({
 
   return (
     <div className="s2-marketing-container grid gap-0 py-10 md:py-14 lg:grid-cols-2 lg:gap-12">
-      <div className="s2-hero-enter mx-auto w-full max-w-sm lg:mx-0 lg:max-w-md lg:py-8">
+      <div className="s2-glass s2-hero-enter mx-auto w-full max-w-sm p-6 lg:mx-0 lg:max-w-md lg:p-8 lg:py-8">
         <h1 className="s2-display text-4xl font-semibold tracking-tight text-[var(--s2-ink)] md:text-5xl">
           {isRegister ? vi.auth.registerTitle : vi.auth.loginTitle}
         </h1>
@@ -97,7 +97,7 @@ export default function Site2AuthForm({
       {sideImage ? (
         <aside
           aria-hidden="true"
-          className="s2-hero-enter-late relative hidden min-h-[560px] overflow-hidden rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] lg:block"
+          className="s2-hero-enter-late s2-glass relative hidden min-h-[560px] overflow-hidden lg:block"
         >
           <Image
             src={sideImage}

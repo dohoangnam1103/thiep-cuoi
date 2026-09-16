@@ -23,7 +23,7 @@ export function LegalLayout({
           aria-label={title}
           className="hidden lg:block lg:self-start lg:sticky lg:top-24"
         >
-          <ul className="flex flex-col gap-2 border-l border-[var(--s2-line)] pl-4">
+          <ul className="s2-glass flex flex-col gap-2 pl-4">
             {sections.map((section, index) => (
               <li key={section.heading}>
                 <a

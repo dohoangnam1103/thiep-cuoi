@@ -4,7 +4,7 @@ import vi from "@messages/vi.json";
 
 export default function Site2NotFound() {
   return (
-    <div className="mx-auto max-w-xl px-4 py-24 text-center sm:py-32">
+    <div className="s2-glass mx-auto max-w-xl px-6 py-24 text-center sm:py-32">
       <p className="text-[15px] font-extrabold tabular-nums text-[var(--s2-accent)]">
         404
       </p>

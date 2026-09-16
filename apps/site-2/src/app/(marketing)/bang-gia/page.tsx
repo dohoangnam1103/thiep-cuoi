@@ -30,7 +30,7 @@ export default async function Site2Pricing() {
       </Reveal>
 
       <div className="mt-10 grid items-start gap-6 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
-        <Reveal className="h-fit rounded-[var(--s2-card-radius)] bg-[var(--s2-accent)] p-8 text-[var(--s2-accent-ink)] md:p-10">
+        <Reveal className="s2-glass-strong s2-champagne-glow h-fit p-8 text-[var(--s2-ink)] md:p-10">
           <p className="text-[12px] font-bold tracking-[0.14em] uppercase opacity-75">
             {pricing.planName}
           </p>
@@ -40,7 +40,7 @@ export default async function Site2Pricing() {
           <p className="mt-2 text-[14px] opacity-75">{pricing.periodLabel}</p>
           <Link
             href={pricing.ctaHref}
-            className="mt-8 flex items-center justify-center gap-2 rounded-full bg-[var(--s2-accent-ink)] px-6 py-3 text-center text-[15px] font-semibold text-[var(--s2-accent)] transition-transform duration-300 hover:-translate-y-px active:translate-y-0 active:scale-[0.98]"
+            className="mt-8 flex items-center justify-center gap-2 rounded-full bg-[var(--s2-accent)] px-6 py-3 text-center text-[15px] font-semibold text-[var(--s2-accent-ink)] transition-transform duration-300 hover:-translate-y-px active:translate-y-0 active:scale-[0.98]"
           >
             {vi.pricing.planCta}
             <ArrowRight size={17} aria-hidden />

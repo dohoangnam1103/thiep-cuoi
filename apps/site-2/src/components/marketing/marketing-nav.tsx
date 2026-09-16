@@ -17,7 +17,7 @@ const links = [
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--s2-line)] bg-[var(--s2-canvas)]/85 backdrop-blur-md">
+    <header className="s2-glass-nav sticky top-0 z-30">
       <nav
         aria-label={vi.site.navHome}
         data-testid="marketing-nav"
@@ -64,7 +64,7 @@ export function MarketingNav() {
       </nav>
       {open ? (
         <div className="px-4 pb-4 md:hidden">
-          <div className="s2-shadow-lift rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] p-3">
+          <div className="s2-glass-strong p-3">
             {[...links, { href: "/dang-nhap", label: vi.site.navLogin }].map(
               (link) => (
                 <Link

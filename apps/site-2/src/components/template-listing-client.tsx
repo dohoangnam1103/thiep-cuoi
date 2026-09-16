@@ -79,7 +79,7 @@ export function TemplateListingClient({
 
   return (
     <div>
-      <div className="sticky top-16 z-30 -mx-4 border-b border-[var(--s2-line)] bg-[var(--s2-canvas)]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="s2-glass-nav sticky top-16 z-30 -mx-4 px-4 py-3 sm:-mx-6 sm:px-6">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 md:flex-row md:items-center">
           <label className="relative block flex-1">
             <span className="sr-only">{vi.templates.searchLabel}</span>
@@ -172,7 +172,7 @@ export function TemplateListingClient({
             <li
               key={template.slug}
               data-testid="template-card"
-              className="s2-reveal-soft group overflow-hidden rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] transition-all duration-300 hover:border-[color-mix(in_oklab,var(--s2-accent)_35%,var(--s2-line))] hover:shadow-[0_18px_36px_-22px_rgb(31_42_35/0.28)]"
+              className="s2-glass s2-sheen s2-reveal-soft group overflow-hidden transition-all duration-300 hover:border-[color-mix(in_oklab,var(--s2-accent)_35%,var(--s2-line))]"
             >
               <TemplateCardImage
                 source={template.listing}
@@ -218,8 +218,8 @@ function FilterPill({
       aria-pressed={active}
       className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-all duration-200 active:scale-[0.98] ${
         active
-          ? "bg-[var(--s2-accent)] text-[var(--s2-accent-ink)] shadow-[0_10px_20px_-12px_rgb(31_42_35/0.5)]"
-          : "border border-[var(--s2-line)] bg-[var(--s2-surface)] text-[var(--s2-muted)] hover:border-[var(--s2-accent)] hover:text-[var(--s2-ink)]"
+          ? "bg-[var(--s2-accent)] text-[var(--s2-accent-ink)] shadow-[0_10px_20px_-12px_rgb(194_72_109/0.5)]"
+          : "s2-glass text-[var(--s2-muted)] hover:border-[var(--s2-accent)] hover:text-[var(--s2-ink)]"
       }`}
     >
       {label}
