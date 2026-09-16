@@ -24,8 +24,8 @@ export default function Site2AuthForm({
 
   return (
     <div className="s2-marketing-container grid gap-0 py-10 md:py-14 lg:grid-cols-2 lg:gap-12">
-      <div className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-md lg:py-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-4xl">
+      <div className="s2-hero-enter mx-auto w-full max-w-sm lg:mx-0 lg:max-w-md lg:py-8">
+        <h1 className="s2-display text-4xl font-semibold tracking-tight text-[var(--s2-ink)] md:text-5xl">
           {isRegister ? vi.auth.registerTitle : vi.auth.loginTitle}
         </h1>
         <form action={formAction} className="mt-8 flex flex-col gap-5">
@@ -44,7 +44,7 @@ export default function Site2AuthForm({
               required
               autoComplete="email"
               placeholder="ban@example.com"
-              className="rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-3 text-base outline-none placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)]"
+              className="rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-3 text-base outline-none transition-colors duration-200 placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] focus:ring-2 focus:ring-[var(--s2-accent-soft)]"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -61,7 +61,7 @@ export default function Site2AuthForm({
               required
               minLength={6}
               autoComplete={isRegister ? "new-password" : "current-password"}
-              className="rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-3 text-base outline-none placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)]"
+              className="rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-3 text-base outline-none transition-colors duration-200 placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] focus:ring-2 focus:ring-[var(--s2-accent-soft)]"
             />
           </div>
           {state?.error ? (
@@ -72,7 +72,7 @@ export default function Site2AuthForm({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-[var(--s2-accent)] px-6 py-3 text-[15px] font-semibold text-[var(--s2-accent-ink)] transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-full bg-[var(--s2-accent)] px-6 py-3 text-[15px] font-semibold text-[var(--s2-accent-ink)] transition-all duration-300 hover:bg-[color-mix(in_oklab,var(--s2-accent)_88%,#0e1a12)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100"
           >
             {pending
               ? vi.auth.pendingCta
@@ -97,7 +97,7 @@ export default function Site2AuthForm({
       {sideImage ? (
         <aside
           aria-hidden="true"
-          className="relative hidden min-h-[560px] overflow-hidden rounded-2xl lg:block"
+          className="s2-hero-enter-late relative hidden min-h-[560px] overflow-hidden rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] lg:block"
         >
           <Image
             src={sideImage}
@@ -113,7 +113,7 @@ export default function Site2AuthForm({
             className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
           />
           <div className="absolute inset-x-0 bottom-0 p-8">
-            <p className="text-2xl font-extrabold tracking-tight text-white">
+            <p className="s2-display text-3xl font-semibold tracking-tight text-white">
               {vi.auth.sideTitle}
             </p>
             <p className="mt-2 max-w-[40ch] text-[15px] leading-relaxed text-white/85">

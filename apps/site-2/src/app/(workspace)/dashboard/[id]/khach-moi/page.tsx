@@ -34,7 +34,7 @@ export default async function Site2GuestManager({
       >
         ← {vi.editor.backToDashboard}
       </Link>
-      <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-4xl">
+      <h1 className="s2-display mt-3 text-3xl font-semibold tracking-tight text-[var(--s2-ink)] md:text-5xl">
         {vi.guests.title}
       </h1>
       <p className="mt-2 text-[15px] text-[var(--s2-muted)]">

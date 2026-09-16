@@ -1,19 +1,22 @@
 {
   "site": {
     "name": "Thiệp Signature",
-    "tagline": "Thiệp cưới online hiện đại — chọn mẫu, điền thông tin, chia sẻ trong vài phút",
+    "tagline": "Thiệp cưới online với hơn 100 mẫu được chọn lọc. Chọn mẫu, điền thông tin, gửi khách trong vài phút.",
     "navHome": "Trang chủ",
     "navTemplates": "Mẫu thiệp",
     "navPricing": "Bảng giá",
     "navLogin": "Đăng nhập",
-    "footer": "Nền tảng thiệp cưới online: hơn 100 mẫu thiệp, xem demo đầy đủ, tạo và chia sẻ thiệp của riêng bạn.",
+    "footer": "Bộ sưu tập thiệp cưới online được chọn lọc kỹ: mở demo đầy đủ từng mẫu, tạo thiệp của riêng bạn và gửi khách bằng một link duy nhất.",
     "navCreate": "Tạo thiệp",
     "navOpen": "Mở menu",
     "navClose": "Đóng menu",
     "navHelp": "Hướng dẫn",
     "footerPrivacy": "Chính sách bảo mật",
     "footerTerms": "Điều khoản sử dụng",
-    "footerRefund": "Chính sách hoàn tiền"
+    "footerRefund": "Chính sách hoàn tiền",
+    "footerExplore": "Khám phá",
+    "footerLegal": "Trợ giúp và pháp lý",
+    "footerCopyright": "© 2026 Thiệp Signature"
   },
   "home": {
     "badge": "mẫu thiệp cưới",
@@ -21,6 +24,9 @@
     "heroSubtitle": "Chọn mẫu, điền thông tin rồi chia sẻ link cho khách mời. Xem demo đầy đủ trước khi quyết định.",
     "browseCta": "Xem mẫu thiệp",
     "heroSecondaryCta": "Tạo thiệp ngay",
+    "heroEditorialAlt": "Thiệp cưới ivory đặt trên bàn cùng hoa trắng và lá xanh",
+    "heroCoverAlt": "Bìa mẫu thiệp {name}",
+    "marqueeLabel": "Các phong cách thiệp đang có",
     "featuredTitle": "Mẫu nổi bật",
     "featuredCta": "Xem tất cả",
     "stepsTitle": "Làm thiệp trong 3 bước",
@@ -75,7 +81,7 @@
     "title": "Một gói duy nhất, dùng tất cả",
     "subtitle": "Không giới hạn mẫu, không phí ẩn. Trả một lần cho ngày trọng đại của bạn.",
     "planName": "Thiệp cưới Signature",
-    "planPrice": "Liên hệ",
+    "planPrice": "99.000 ₫",
     "planPeriod": "trọn đời thiệp",
     "planCta": "Tạo thiệp ngay",
     "features": [
@@ -230,17 +236,17 @@
           "Gửi link cho khách, sửa và xuất bản lại bất kỳ lúc nào."
         ]
       },
-      {
-        "slug": "thanh-toan-goi",
-        "title": "Thanh toán gói Signature",
-        "summary": "Gói hiện tại và cách kích hoạt.",
-        "category": "thanh-toan",
-        "steps": [
-          "Mở trang Bảng giá để xem quyền lợi gói.",
-          "Hiện tại bạn tạo và xuất bản thiệp ngay sau khi đăng ký, chưa cần thanh toán trực tuyến.",
-          "Khi gói trả phí áp dụng, trang Bảng giá sẽ cập nhật giá và cách trả."
-        ]
-      }
+        {
+          "slug": "thanh-toan-goi",
+          "title": "Thanh toán gói Signature",
+          "summary": "Gói hiện tại và cách kích hoạt.",
+          "category": "thanh-toan",
+          "steps": [
+            "Mở trang Bảng giá để xem quyền lợi gói.",
+            "Tạo thiệp rồi mở trang Thanh toán trong dashboard để lấy mã QR.",
+            "Quét mã để trả 99.000 ₫ cho một thiệp, thiệp được kích hoạt ngay sau khi tiền đến."
+          ]
+        }
     ]
   },
   "legal": {
@@ -298,7 +304,8 @@
         {
           "heading": "Gói và thanh toán",
           "paragraphs": [
-            "Quyền lợi gói hiện tại nằm ở trang Bảng giá. Khi gói trả phí áp dụng, giá và cách trả sẽ ghi rõ tại đó trước khi bạn trả."
+            "Gói Thiệp cưới Signature trả một lần 99.000 ₫ cho mỗi thiệp, quyền lợi đầy đủ nằm ở trang Bảng giá.",
+            "Bạn quét mã QR để trả, thiệp được kích hoạt ngay sau khi tiền đến."
           ]
         }
       ]
@@ -310,14 +317,15 @@
         {
           "heading": "Hiện trạng",
           "paragraphs": [
-            "Hiện tại trang này chưa thu phí trực tuyến, nên không có khoản nào cần hoàn.",
+            "Gói Thiệp cưới Signature trả một lần 99.000 ₫ cho mỗi thiệp.",
             "Mọi nội dung demo đều xem miễn phí và không cần tài khoản."
           ]
         },
         {
-          "heading": "Khi gói trả phí áp dụng",
+          "heading": "Khi được hoàn tiền",
           "paragraphs": [
-            "Điều kiện hoàn tiền sẽ ghi kèm theo từng gói tại trang Bảng giá trước khi bạn trả."
+            "Trả trùng hai lần cho cùng một thiệp, lần trả sau được hoàn toàn bộ.",
+            "Tiền về sai nội dung khiến đơn không khớp thiệp nào, bạn giữ lại biên lai để được hoàn sau khi đối soát."
           ]
         }
       ]

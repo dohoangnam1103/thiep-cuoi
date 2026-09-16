@@ -20,10 +20,14 @@ export function PricingFaq({
               aria-expanded={open}
               className="flex w-full items-center justify-between gap-4 rounded-[var(--s2-input-radius)] text-left text-[var(--s2-ink)]"
             >
-              <span className="text-[16px] font-bold">{item.q}</span>
+              <span className="text-[16px] font-semibold">{item.q}</span>
               <span
                 aria-hidden
-                className={`flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--s2-line)] text-lg leading-none transition-transform ${open ? "rotate-45" : ""}`}
+                className={`flex size-8 shrink-0 items-center justify-center rounded-full border text-lg leading-none transition-all duration-300 ${
+                  open
+                    ? "rotate-45 border-[var(--s2-accent)] bg-[var(--s2-accent)] text-[var(--s2-accent-ink)]"
+                    : "border-[var(--s2-line)] text-[var(--s2-muted)]"
+                }`}
               >
                 +
               </span>

@@ -37,7 +37,7 @@ export function LegalLayout({
           </ul>
         </nav>
         <article className="max-w-[68ch]">
-          <h1 className="max-w-[18ch] text-3xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-5xl">
+          <h1 className="s2-display max-w-[18ch] text-4xl font-semibold leading-[1.08] tracking-tight text-[var(--s2-ink)] md:text-6xl">
             {title}
           </h1>
           <p className="mt-3 text-[13px] font-medium text-[var(--s2-muted)]">
@@ -50,7 +50,7 @@ export function LegalLayout({
             <section key={section.heading} className="mt-10">
               <h2
                 id={`muc-${index + 1}`}
-                className="scroll-mt-24 text-xl font-extrabold tracking-tight text-[var(--s2-ink)]"
+                className="scroll-mt-24 text-xl font-semibold tracking-tight text-[var(--s2-ink)]"
               >
                 {section.heading}
               </h2>

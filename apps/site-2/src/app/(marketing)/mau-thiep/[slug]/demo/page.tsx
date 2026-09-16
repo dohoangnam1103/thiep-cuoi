@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getDemoContent, getTemplateMeta, resolveCatalogSlug } from "../../../../../lib/catalog";
+import { getDemoContent, getTemplateMeta, resolveCatalogSlug, toListingItem } from "../../../../../lib/catalog";
 import vi from "@messages/vi.json";
 import SignatureDemoView from "./demo-view";
 
@@ -20,6 +20,7 @@ export default async function SignatureDemoPage({
     notFound();
   }
   const content = await getDemoContent(slug);
+  const listing = toListingItem(template);
   return (
     <div>
       <div className="sticky top-16 z-40 border-b border-[var(--s2-line)] bg-[var(--s2-canvas)]/95 backdrop-blur">
@@ -30,12 +31,12 @@ export default async function SignatureDemoPage({
           >
             ← {vi.demo.backToListing}
           </Link>
-          <p className="hidden truncate text-[14px] font-bold sm:block">
-            {template.name}
+          <p className="s2-display hidden truncate text-[17px] font-semibold text-[var(--s2-ink)] sm:block">
+            {listing.name}
           </p>
           <Link
             href="/dang-nhap?mode=register"
-            className="shrink-0 rounded-full bg-[var(--s2-accent)] px-5 py-2 text-[14px] font-semibold text-[var(--s2-accent-ink)] transition-transform active:scale-[0.98]"
+            className="shrink-0 rounded-full bg-[var(--s2-accent)] px-5 py-2 text-[14px] font-semibold text-[var(--s2-accent-ink)] transition-all duration-300 hover:bg-[color-mix(in_oklab,var(--s2-accent)_88%,#0e1a12)] active:scale-[0.98]"
           >
             {vi.demo.useCta}
           </Link>

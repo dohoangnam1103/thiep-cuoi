@@ -1,31 +1,40 @@
+import { LayoutTemplate, PenLine, Send } from "lucide-react";
+
+import { RevealGroup, RevealItem } from "../motion/reveal";
 import vi from "@messages/vi.json";
 
-/* Three creation steps as numbered rows, distinct from the value section
- * above through the numeral column and three-column desktop grid. */
+const STEP_ICONS = [LayoutTemplate, PenLine, Send] as const;
+
+/* Three creation steps on a progress track: one line, one icon per step,
+ * copy from the catalog. No numerals, the track itself shows the order. */
 export function CreateSteps() {
   return (
     <section className="py-16 md:py-24">
-      <h2 className="max-w-[16ch] text-2xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-4xl">
+      <h2 className="s2-display max-w-[16ch] text-3xl font-semibold tracking-tight text-[var(--s2-ink)] md:text-5xl">
         {vi.home.stepsTitle}
       </h2>
-      <ol className="mt-8 divide-y divide-[var(--s2-line)] border-y border-[var(--s2-line)]">
-        {vi.home.steps.map((step, index) => (
-          <li
-            key={step.title}
-            className="grid gap-2 py-6 md:grid-cols-[80px_1fr_2fr] md:items-baseline"
-          >
-            <span className="text-[15px] font-extrabold tabular-nums text-[var(--s2-accent)]">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h3 className="text-lg font-bold text-[var(--s2-ink)]">
-              {step.title}
-            </h3>
-            <p className="max-w-[52ch] text-[15px] leading-relaxed text-[var(--s2-muted)]">
-              {step.body}
-            </p>
-          </li>
-        ))}
-      </ol>
+      <RevealGroup className="mt-10 grid gap-8 md:grid-cols-3 md:gap-6">
+        {vi.home.steps.map((step, index) => {
+          const Icon = STEP_ICONS[index] ?? PenLine;
+          return (
+            <RevealItem key={step.title} className="relative">
+              <div
+                aria-hidden
+                className="absolute top-6 right-0 left-14 hidden h-px bg-[var(--s2-line)] md:block"
+              />
+              <span className="relative flex size-12 items-center justify-center rounded-full border border-[var(--s2-line)] bg-[var(--s2-surface)] text-[var(--s2-accent)]">
+                <Icon size={20} aria-hidden />
+              </span>
+              <h3 className="mt-5 text-lg font-semibold text-[var(--s2-ink)]">
+                {step.title}
+              </h3>
+              <p className="mt-2 max-w-[38ch] text-[15px] leading-relaxed text-[var(--s2-muted)]">
+                {step.body}
+              </p>
+            </RevealItem>
+          );
+        })}
+      </RevealGroup>
     </section>
   );
 }

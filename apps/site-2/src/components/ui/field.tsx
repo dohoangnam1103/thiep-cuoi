@@ -47,7 +47,7 @@ export function S2Field({
       .filter(Boolean)
       .join(" ") || undefined;
   const controlClass =
-    "w-full rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-2.5 text-base text-[var(--s2-ink)] outline-none placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] disabled:opacity-60 aria-[invalid=true]:border-[var(--s2-danger)]";
+    "w-full rounded-[var(--s2-input-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] px-4 py-2.5 text-base text-[var(--s2-ink)] outline-none transition-colors duration-200 placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] focus:ring-2 focus:ring-[var(--s2-accent-soft)] disabled:opacity-60 aria-[invalid=true]:border-[var(--s2-danger)]";
   return (
     <div>
       <label

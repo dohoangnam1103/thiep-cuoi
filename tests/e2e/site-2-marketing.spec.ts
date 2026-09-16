@@ -70,12 +70,11 @@ test("catalog card navigates straight to the template demo", async ({
   await expect(page.locator('[data-open-btn="true"]')).toBeVisible();
 });
 
-test("pricing shows contact sales with no invented price", async ({
+test("pricing shows the fixed plan price from config", async ({
   page,
 }) => {
   await page.goto("/bang-gia");
-  await expect(page.getByText("Liên hệ")).toBeVisible();
-  await expect(page.locator("main")).not.toContainText("₫");
+  await expect(page.getByText("99.000 ₫")).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Tạo thiệp ngay" }),
   ).toHaveAttribute("href", "/dang-nhap?mode=register");

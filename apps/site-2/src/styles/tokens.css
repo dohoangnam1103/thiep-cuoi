@@ -1,36 +1,40 @@
-/* Blush Atelier semantic tokens for site 2: light pink pastel wedding mood.
- * Single rose accent. Success, warning and danger tokens exist only for
- * genuine semantic states (status badges, form errors). Nothing here targets
- * invitation renderer markup: every token is prefixed `--s2-`. */
+/* Garden Atelier semantic tokens for site 2: ivory paper with a single deep
+ * sage accent. Success, warning and danger tokens exist only for genuine
+ * semantic states (status badges, form errors). Nothing here targets
+ * invitation renderer markup: every token is prefixed `--s2-`. The legacy
+ * `--paper/--ink/...` block at the bottom keeps its porcelain values because
+ * renderer styles in app/globals.css still consume some of those names. */
 
 :root {
-  --s2-canvas: #fdf4f7;
-  --s2-surface: #fffdfd;
-  --s2-ink: #42242e;
-  --s2-muted: #7a5560;
-  --s2-line: #f0d9e0;
-  --s2-accent: #c2486d;
-  --s2-accent-ink: #fff7f9;
-  --s2-success: #177245;
-  --s2-warning: #9a5b00;
-  --s2-danger: #c0362c;
-  --s2-card-radius: 1rem;
-  --s2-input-radius: 0.625rem;
+  --s2-canvas: #f7f7f2;
+  --s2-surface: #fffefa;
+  --s2-ink: #1f2a23;
+  --s2-muted: #5f6d61;
+  --s2-line: #e3e7dd;
+  --s2-accent: #3a5744;
+  --s2-accent-ink: #f6f8f2;
+  --s2-accent-soft: #e9eee4;
+  --s2-success: #1a7a4a;
+  --s2-warning: #9a6b00;
+  --s2-danger: #b03a2e;
+  --s2-card-radius: 1.25rem;
+  --s2-input-radius: 0.75rem;
   --s2-layer-nav: 30;
   --s2-layer-drawer: 40;
   --s2-layer-dialog: 50;
 }
 
-/* Explicit dark theme, set on <html> by the workspace shell toggle. Warm
- * deep plum so dark mode stays in the wedding mood. */
+/* Explicit dark theme, set on <html> by the workspace shell toggle. Deep
+ * forest so dark mode stays in the garden mood. */
 :root[data-s2-theme="dark"] {
-  --s2-canvas: #221016;
-  --s2-surface: #2e1a21;
-  --s2-ink: #fbe9ef;
-  --s2-muted: #c49aa6;
-  --s2-line: #4a2e38;
-  --s2-accent: #f092ad;
-  --s2-accent-ink: #3a0f1e;
+  --s2-canvas: #121a15;
+  --s2-surface: #1a231d;
+  --s2-ink: #edf2ea;
+  --s2-muted: #a3b1a4;
+  --s2-line: #2b3a2f;
+  --s2-accent: #93c09b;
+  --s2-accent-ink: #0e1a12;
+  --s2-accent-soft: #22301f;
   --s2-success: #7fd6a0;
   --s2-warning: #f2c14e;
   --s2-danger: #f08a7f;
@@ -39,13 +43,14 @@
 /* System preference fallback. An explicit data-s2-theme="light" always wins. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-s2-theme="light"]) {
-    --s2-canvas: #221016;
-    --s2-surface: #2e1a21;
-    --s2-ink: #fbe9ef;
-    --s2-muted: #c49aa6;
-    --s2-line: #4a2e38;
-    --s2-accent: #f092ad;
-    --s2-accent-ink: #3a0f1e;
+    --s2-canvas: #121a15;
+    --s2-surface: #1a231d;
+    --s2-ink: #edf2ea;
+    --s2-muted: #a3b1a4;
+    --s2-line: #2b3a2f;
+    --s2-accent: #93c09b;
+    --s2-accent-ink: #0e1a12;
+    --s2-accent-soft: #22301f;
     --s2-success: #7fd6a0;
     --s2-warning: #f2c14e;
     --s2-danger: #f08a7f;
@@ -53,8 +58,9 @@
 }
 
 /* Legacy porcelain shell variables. Relocated from the tail of
- * app/globals.css so invitation styles keep a single home there. Values
- * follow the blush mood; the renderer never consumes these names. */
+ * app/globals.css so invitation styles keep a single home there. Values are
+ * untouched: renderer styles in globals.css still consume --muted/--accent,
+ * and the invitation preview isolation pins its ink via --ink. */
 :root {
   --paper: #fffdfd;
   --ink: #42242e;

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import vi from "@messages/vi.json";
@@ -45,7 +46,7 @@ export function WorkspaceNav({ user }: { user: WorkspaceUser }) {
         <div className="flex h-14 items-center justify-between px-4">
           <Link
             href="/dashboard"
-            className="text-[16px] font-extrabold tracking-tight text-[var(--s2-ink)]"
+            className="s2-display text-[20px] font-semibold tracking-tight text-[var(--s2-ink)]"
           >
             {vi.site.name}
           </Link>
@@ -58,14 +59,7 @@ export function WorkspaceNav({ user }: { user: WorkspaceUser }) {
             onClick={() => setOpen((value) => !value)}
             className="flex min-h-11 min-w-11 items-center justify-center rounded-[var(--s2-input-radius)] text-[var(--s2-ink)]"
           >
-            <span aria-hidden className="relative block h-3 w-5">
-              <span
-                className={`absolute left-0 top-0 h-0.5 w-full bg-current transition-transform ${open ? "translate-y-[5px] rotate-45" : ""}`}
-              />
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 w-full bg-current transition-transform ${open ? "-translate-y-[5px] -rotate-45" : ""}`}
-              />
-            </span>
+            {open ? <X size={22} aria-hidden /> : <Menu size={22} aria-hidden />}
           </button>
         </div>
         {open ? (
@@ -99,7 +93,7 @@ export function WorkspaceNav({ user }: { user: WorkspaceUser }) {
       <div className="hidden border-r border-[var(--s2-line)] bg-[var(--s2-surface)] p-5 md:flex md:flex-1 md:flex-col">
         <Link
           href="/dashboard"
-          className="text-[17px] font-extrabold tracking-tight text-[var(--s2-ink)]"
+            className="s2-display text-[22px] font-semibold tracking-tight text-[var(--s2-ink)]"
         >
           {vi.site.name}
         </Link>

@@ -52,11 +52,11 @@ export function GuestDialog({
       ref={ref}
       aria-labelledby="guest-dialog-title"
       onClose={() => onClose(false)}
-      className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-[var(--s2-line)] bg-[var(--s2-surface)] p-6 text-[var(--s2-ink)] backdrop:bg-black/40"
+      className="w-[calc(100%-2rem)] max-w-md rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] p-6 text-[var(--s2-ink)] backdrop:bg-black/40"
     >
       <h2
         id="guest-dialog-title"
-        className="text-lg font-extrabold text-[var(--s2-ink)]"
+        className="text-lg font-semibold text-[var(--s2-ink)]"
       >
         {guest ? vi.guests.editTitle : vi.guests.createTitle}
       </h2>

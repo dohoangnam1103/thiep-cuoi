@@ -14,7 +14,7 @@ export function RsvpList({ responses }: { responses: readonly RsvpListItem[] }) 
   if (responses.length === 0) return null;
   return (
     <>
-      <div className="mt-8 hidden overflow-x-auto rounded-2xl border border-[var(--s2-line)] sm:block">
+      <div className="mt-8 hidden overflow-x-auto rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] sm:block">
         <table className="w-full text-left text-[14px]">
           <thead>
             <tr className="border-b border-[var(--s2-line)] text-[13px] text-[var(--s2-muted)]">
@@ -68,7 +68,7 @@ export function RsvpList({ responses }: { responses: readonly RsvpListItem[] }) 
           <li
             key={response.id}
             data-testid="rsvp-row"
-            className="rounded-2xl border border-[var(--s2-line)] bg-[var(--s2-surface)] p-4"
+            className="rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] p-4"
           >
             <div className="flex items-baseline justify-between gap-2">
               <p className="font-bold text-[var(--s2-ink)]">

@@ -12,6 +12,7 @@ import {
 import { isTemplateAvailable } from "@chungdoi/invitation-data";
 
 import { prisma } from "./prisma";
+import listingThumbnails from "../data/listing-thumbnails.json";
 
 export type { ChungDoiTemplate };
 
@@ -48,6 +49,80 @@ export async function getVisibleCatalogTemplates(): Promise<ChungDoiTemplate[]> 
 export function getTemplateMeta(slug: string): ChungDoiTemplate | null {
   return (
     getCatalogTemplates().find((template) => template.slug === slug) ?? null
+  );
+}
+
+/* Vietnamese labels for the shared catalog categories. Categories come from
+ * shared invitation-data (English); presentation on site 2 is Vietnamese.
+ * Unknown values fall back to the raw category. */
+const CATEGORY_VI: Record<string, string> = {
+  Traditional: "Truyền thống",
+  Floral: "Hoa văn",
+  Modern: "Hiện đại",
+  Royal: "Cung đình",
+  Signature: "Signature",
+  Botanical: "Thảo mộc",
+  "Vietnamese Heritage": "Di sản Việt",
+  Destination: "Điểm đến",
+  Minimal: "Tối giản",
+  Playful: "Vui nhộn",
+};
+
+export function categoryLabel(category: string): string {
+  return CATEGORY_VI[category] ?? category;
+}
+
+type TemplateListingI18n = {
+  i18n?: { vi?: { name?: string; description?: string } };
+};
+
+/* Generated manifests ship Vietnamese listing copy in i18n.vi; the shared
+ * ChungDoiTemplate type does not expose it, so read it defensively. */
+function listingViMeta(
+  template: ChungDoiTemplate,
+): { name?: string; description?: string } {
+  return (template as TemplateListingI18n).i18n?.vi ?? {};
+}
+
+export type Site2ListingItem = {
+  slug: string;
+  name: string;
+  descriptionVi: string | null;
+  category: string;
+  categoryVi: string;
+  listing: string;
+  portrait: string;
+};
+
+/** Listing card data with Vietnamese name, description and category label. */
+export function toListingItem(template: ChungDoiTemplate): Site2ListingItem {
+  const vi = listingViMeta(template);
+  return {
+    slug: template.slug,
+    name: sanitizeListingText(vi.name ?? template.name),
+    descriptionVi: vi.description ?? null,
+    category: template.category,
+    categoryVi: categoryLabel(template.category),
+    listing: template.listing,
+    portrait: template.portrait,
+  };
+}
+
+/* The shared catalog predates the Vietnamese presentation layer: a stray
+ * 囍 seal character still ships in some source strings. Presentation on
+ * site 2 strips it so the character never leaks into Vietnamese copy.
+ * Site-1 rendering is untouched. */
+export function sanitizeListingText(value: string): string {
+  return value.replace(/囍/g, "").replace(/\s{2,}/g, " ").trim();
+}
+
+/* The prepared listing thumbnails only cover sources with real local
+ * artwork. Homepage surfaces (hero cover, curated mosaic) prefer those so a
+ * missing preview file never renders a broken frame. */
+export function hasListingThumbnail(listing: string): boolean {
+  return Object.hasOwn(
+    listingThumbnails as Record<string, unknown>,
+    listing,
   );
 }
 

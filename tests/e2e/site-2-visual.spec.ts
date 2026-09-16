@@ -51,7 +51,7 @@ test("catalog keeps its header compact and grid legible", async ({
 
 test("pricing leads with the plan and one CTA", async ({ page }, testInfo) => {
   await page.goto("/bang-gia");
-  await expect(page.getByText("Liên hệ")).toBeVisible();
+  await expect(page.getByText("99.000 ₫")).toBeVisible();
   await expect(page.getByRole("link", { name: "Tạo thiệp ngay" })).toHaveCount(1);
   await shoot(page, testInfo, "pricing");
 });

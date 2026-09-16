@@ -119,7 +119,7 @@ export function GuestList({
       </div>
 
       {guests.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-[var(--s2-line)] bg-[var(--s2-surface)] p-8 text-center">
+        <div className="mt-8 rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] p-8 text-center">
           <p className="text-[15px] font-semibold text-[var(--s2-ink)]">
             {vi.guests.empty}
           </p>
@@ -129,7 +129,7 @@ export function GuestList({
         </div>
       ) : (
         <>
-          <div className="mt-6 hidden overflow-x-auto rounded-2xl border border-[var(--s2-line)] sm:block">
+          <div className="mt-6 hidden overflow-x-auto rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] sm:block">
             <table className="w-full text-left text-[14px]">
               <thead>
                 <tr className="border-b border-[var(--s2-line)] text-[13px] text-[var(--s2-muted)]">
@@ -300,7 +300,7 @@ function GuestCard(props: {
   return (
     <li
       data-testid="guest-row"
-      className="rounded-2xl border border-[var(--s2-line)] bg-[var(--s2-surface)] p-4"
+      className="rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] p-4"
     >
       <div className="flex items-baseline justify-between gap-2">
         <p className="font-bold text-[var(--s2-ink)]">{guest.name}</p>

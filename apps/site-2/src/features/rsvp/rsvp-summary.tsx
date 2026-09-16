@@ -36,7 +36,7 @@ export function RsvpSummary({ summary }: { summary: RsvpSummary }) {
             {stat.label}
           </dt>
           <dd
-            className={`order-1 text-3xl font-extrabold tabular-nums md:text-4xl ${stat.tone}`}
+            className={`order-1 text-3xl font-semibold tabular-nums md:text-4xl ${stat.tone}`}
           >
             {stat.value}
           </dd>

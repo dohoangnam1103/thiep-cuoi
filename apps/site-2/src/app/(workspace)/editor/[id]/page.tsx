@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { getOwnedInvitation, getOwnedRenderContent } from "../../../../lib/dal";
 import { getSite2Session } from "../../../../lib/session";
-import { getTemplateMeta } from "../../../../lib/catalog";
+import { getTemplateMeta, toListingItem } from "../../../../lib/catalog";
 import { EditorPreviewSheet } from "../../../../components/workspace/editor-preview-sheet";
 import { EditorSectionNav } from "../../../../components/workspace/editor-section-nav";
 import vi from "@messages/vi.json";
@@ -24,8 +24,10 @@ export default async function Site2EditorPage({
   if (!invitation) {
     notFound();
   }
-  const templateName =
-    getTemplateMeta(invitation.templateId)?.name ?? invitation.templateId;
+  const templateMeta = getTemplateMeta(invitation.templateId);
+  const templateName = templateMeta
+    ? toListingItem(templateMeta).name
+    : invitation.templateId;
   const content = invitation.content;
   const initial = {
     brideFullName: content?.brideFullName ?? "",
@@ -60,8 +62,8 @@ export default async function Site2EditorPage({
       >
         ← {vi.editor.backToDashboard}
       </Link>
-      <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-4xl">
-        {vi.editor.title} — {templateName}
+      <h1 className="s2-display mt-3 text-3xl font-semibold tracking-tight text-[var(--s2-ink)] md:text-5xl">
+        {vi.editor.title}: {templateName}
       </h1>
       <div className="mt-8 grid items-start gap-8 xl:grid-cols-[220px_minmax(0,1fr)_380px]">
         <EditorSectionNav />

@@ -113,7 +113,7 @@ export function PaymentPanel({
   return (
     <div className="s2-workspace-card p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-extrabold text-[var(--s2-ink)]">
+        <h2 className="text-lg font-semibold text-[var(--s2-ink)]">
           {vi.payment.planLabel}
         </h2>
         <S2Status kind={STATUS_KIND[view.state]} label={STATUS_LABEL[view.state]} />
@@ -121,7 +121,7 @@ export function PaymentPanel({
       <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-[14px]">
         <div className="flex items-baseline gap-2">
           <dt className="text-[var(--s2-muted)]">{vi.payment.amountLabel}</dt>
-          <dd className="text-xl font-extrabold tabular-nums text-[var(--s2-ink)]">
+          <dd className="text-xl font-semibold tabular-nums text-[var(--s2-ink)]">
             {amountFormatter.format(view.amount)} ₫
           </dd>
         </div>

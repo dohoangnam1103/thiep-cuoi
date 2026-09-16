@@ -4,29 +4,21 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { TemplateCardImage } from "./template-card-image";
+import type { Site2ListingItem } from "../lib/catalog";
 import vi from "@messages/vi.json";
 
-export type ListingItem = {
-  slug: string;
-  name: string;
-  description: string;
-  category: string;
-  listing: string;
-  portrait: string;
-};
+export type ListingCategory = { value: string; label: string };
 
-/* Shared catalog descriptions predate the no-em-dash rule, so site-2
- * normalizes dashes at presentation time. Site-1 rendering is untouched. */
-function displayDescription(description: string): string {
-  return description.replace(/ ?[—–] ?/g, ", ");
-}
-
+/* Catalog listing: sticky search + category rail, uniform cards with the
+ * master hover-scroll preview. Card copy is Vietnamese only (name, category
+ * label); the shared English catalog descriptions are never rendered, they
+ * only feed search alongside the Vietnamese generated copy. */
 export function TemplateListingClient({
   items,
   categories,
 }: {
-  items: ListingItem[];
-  categories: string[];
+  items: Site2ListingItem[];
+  categories: ListingCategory[];
 }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
@@ -38,7 +30,8 @@ export function TemplateListingClient({
     if (!needle) return true;
     return (
       item.name.toLowerCase().includes(needle) ||
-      item.description.toLowerCase().includes(needle)
+      item.categoryVi.toLowerCase().includes(needle) ||
+      (item.descriptionVi?.toLowerCase().includes(needle) ?? false)
     );
   });
   const hasActiveFilters = query.trim() !== "" || category !== "";
@@ -73,12 +66,12 @@ export function TemplateListingClient({
       />
       {categories.map((entry) => (
         <FilterPill
-          key={entry}
-          active={category === entry}
+          key={entry.value}
+          active={category === entry.value}
           onClick={() =>
-            setCategory((current) => (current === entry ? "" : entry))
+            setCategory((current) => (current === entry.value ? "" : entry.value))
           }
-          label={entry}
+          label={entry.label}
         />
       ))}
     </div>
@@ -95,7 +88,7 @@ export function TemplateListingClient({
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={vi.templates.searchPlaceholder}
-              className="w-full rounded-full border border-[var(--s2-line)] bg-[var(--s2-surface)] px-5 py-2.5 text-base outline-none placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)]"
+              className="w-full rounded-full border border-[var(--s2-line)] bg-[var(--s2-surface)] px-5 py-2.5 text-base outline-none transition-colors duration-200 placeholder:text-[var(--s2-muted)] focus:border-[var(--s2-accent)] focus:ring-2 focus:ring-[var(--s2-accent-soft)]"
             />
           </label>
           <div className="hidden min-w-0 flex-1 md:block">{pills}</div>
@@ -130,7 +123,7 @@ export function TemplateListingClient({
             aria-modal="true"
             aria-label={vi.templates.filterTitle}
             data-testid="catalog-filter-panel"
-            className="absolute inset-x-0 bottom-0 max-h-[80dvh] overflow-y-auto rounded-t-2xl bg-[var(--s2-surface)] p-5 pb-8"
+            className="absolute inset-x-0 bottom-0 max-h-[80dvh] overflow-y-auto rounded-t-[var(--s2-card-radius)] bg-[var(--s2-surface)] p-5 pb-8"
           >
             <div className="flex items-center justify-between">
               <p className="text-[16px] font-bold text-[var(--s2-ink)]">
@@ -159,7 +152,7 @@ export function TemplateListingClient({
         {vi.templates.resultCount.replace("{count}", String(filtered.length))}
       </p>
       {filtered.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-[var(--s2-line)] bg-[var(--s2-surface)] p-8 text-center">
+        <div className="mt-8 rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] p-8 text-center">
           <p className="text-[15px] text-[var(--s2-muted)]">
             {vi.templates.emptyResult}
           </p>
@@ -175,11 +168,11 @@ export function TemplateListingClient({
         </div>
       ) : (
         <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((template, index) => (
+          {filtered.map((template) => (
             <li
               key={template.slug}
               data-testid="template-card"
-              className="overflow-hidden rounded-2xl border border-[var(--s2-line)] bg-[var(--s2-surface)]"
+              className="s2-reveal-soft group overflow-hidden rounded-[var(--s2-card-radius)] border border-[var(--s2-line)] bg-[var(--s2-surface)] transition-all duration-300 hover:border-[color-mix(in_oklab,var(--s2-accent)_35%,var(--s2-line))] hover:shadow-[0_18px_36px_-22px_rgb(31_42_35/0.28)]"
             >
               <TemplateCardImage
                 source={template.listing}
@@ -187,22 +180,18 @@ export function TemplateListingClient({
                 alt={template.name}
                 slug={template.slug}
                 href={`/mau-thiep/${template.slug}/demo`}
-                eager={index < 5}
               />
               <div className="p-4 sm:p-5">
-                <h2 className="text-[16px] font-bold leading-snug text-[var(--s2-ink)] sm:text-[17px]">
+                <h2 className="text-[16px] font-semibold leading-snug text-[var(--s2-ink)] sm:text-[17px]">
                   <Link
                     href={`/mau-thiep/${template.slug}/demo`}
-                    className="transition-colors hover:text-[var(--s2-accent)]"
+                    className="transition-colors group-hover:text-[var(--s2-accent)]"
                   >
                     {template.name}
                   </Link>
                 </h2>
-                <p className="mt-1 text-[13px] text-[var(--s2-muted)]">
-                  {template.category}
-                </p>
-                <p className="mt-2 line-clamp-2 hidden text-[13px] leading-relaxed text-[var(--s2-muted)] sm:block">
-                  {displayDescription(template.description)}
+                <p className="mt-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--s2-muted)]">
+                  {template.categoryVi}
                 </p>
               </div>
             </li>
@@ -227,9 +216,9 @@ function FilterPill({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-transform active:scale-[0.98] ${
+      className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-all duration-200 active:scale-[0.98] ${
         active
-          ? "bg-[var(--s2-accent)] text-[var(--s2-accent-ink)]"
+          ? "bg-[var(--s2-accent)] text-[var(--s2-accent-ink)] shadow-[0_10px_20px_-12px_rgb(31_42_35/0.5)]"
           : "border border-[var(--s2-line)] bg-[var(--s2-surface)] text-[var(--s2-muted)] hover:border-[var(--s2-accent)] hover:text-[var(--s2-ink)]"
       }`}
     >

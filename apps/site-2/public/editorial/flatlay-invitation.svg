@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef0e6"/>
+      <stop offset="0.55" stop-color="#f6f4ec"/>
+      <stop offset="1" stop-color="#efe9dc"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset="1" stop-color="#f3efe3"/>
+    </linearGradient>
+    <linearGradient id="sage" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#47624f"/>
+      <stop offset="1" stop-color="#2f4436"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.24  0 0 0 0 0.28  0 0 0 0 0.24  0 0 0 0.05 0"/>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#1f2a23" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="900" height="1200" fill="url(#sky)"/>
+  <g opacity="0.5">
+    <ellipse cx="120" cy="180" rx="150" ry="90" fill="#dde4d2"/>
+    <ellipse cx="790" cy="1050" rx="170" ry="100" fill="#e2dccb"/>
+  </g>
+  <g filter="url(#soft)">
+    <rect x="235" y="150" width="430" height="600" rx="10" fill="url(#paper)" transform="rotate(-4 450 450)"/>
+    <rect x="255" y="170" width="430" height="600" rx="10" fill="none" stroke="#3a5744" stroke-width="2" transform="rotate(-4 450 450)"/>
+    <g transform="rotate(-4 450 450)">
+      <text x="470" y="330" text-anchor="middle" font-family="Georgia, serif" font-size="44" letter-spacing="8" fill="#3a5744">H &amp; N</text>
+      <line x1="370" y1="365" x2="570" y2="365" stroke="#b9c4ae" stroke-width="2"/>
+      <text x="470" y="420" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="34" fill="#5f6d61">Trân trọng kính mời</text>
+      <text x="470" y="520" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#1f2a23">Chủ Nhật · 12 . 10 . 2026</text>
+      <text x="470" y="575" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#5f6d61">Trung tm Hi ngh Garden Palace</text>
+      <g fill="none" stroke="#7d8f7d" stroke-width="2">
+        <path d="M400 640 q70 -26 140 0"/>
+        <circle cx="470" cy="632" r="5" fill="#7d8f7d" stroke="none"/>
+      </g>
+    </g>
+  </g>
+  <g>
+    <rect x="120" y="760" width="300" height="220" rx="8" fill="url(#sage)" transform="rotate(6 270 870)"/>
+    <text x="270" y="872" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#f6f8f2" transform="rotate(6 270 870)">Save the date</text>
+    <text x="270" y="908" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#cdd8c9" transform="rotate(6 270 870)">12 . 10 . 2026</text>
+  </g>
+  <g stroke-linecap="round">
+    <path d="M700 120 C 660 320, 740 520, 690 720" fill="none" stroke="#4c6653" stroke-width="7"/>
+    <g fill="#8fa48f">
+      <ellipse cx="682" cy="230" rx="46" ry="20" transform="rotate(-38 682 230)"/>
+      <ellipse cx="716" cy="330" rx="46" ry="20" transform="rotate(28 716 330)"/>
+      <ellipse cx="684" cy="430" rx="46" ry="20" transform="rotate(-30 684 430)"/>
+      <ellipse cx="712" cy="530" rx="46" ry="20" transform="rotate(26 712 530)"/>
+      <ellipse cx="688" cy="630" rx="42" ry="18" transform="rotate(-28 688 630)"/>
+    </g>
+    <g>
+      <circle cx="180" cy="980" r="34" fill="#fdfcf7" stroke="#cfd6c2" stroke-width="2"/>
+      <circle cx="250" cy="1010" r="26" fill="#f4f1e6" stroke="#cfd6c2" stroke-width="2"/>
+      <circle cx="150" cy="1040" r="22" fill="#fdfcf7" stroke="#cfd6c2" stroke-width="2"/>
+      <circle cx="215" cy="1005" r="7" fill="#c9a24b"/>
+      <circle cx="180" cy="980" r="8" fill="#c9a24b"/>
+    </g>
+    <path d="M120 1120 C 300 1090, 620 1110, 800 1080" fill="none" stroke="#b9c4ae" stroke-width="3"/>
+  </g>
+  <rect width="900" height="1200" fill="#000" opacity="0" filter="url(#grain)"/>
+</svg>

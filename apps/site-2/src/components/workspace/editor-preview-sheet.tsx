@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import vi from "@messages/vi.json";
@@ -52,11 +53,9 @@ export function EditorPreviewSheet({ children }: { children: ReactNode }) {
                 setOpen(false);
                 triggerRef.current?.focus({ preventScroll: true });
               }}
-              className="flex min-h-11 min-w-11 items-center justify-center rounded-[var(--s2-input-radius)] text-[var(--s2-ink)]"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-[var(--s2-input-radius)] text-[var(--s2-ink)] transition-colors hover:bg-[var(--s2-accent-soft)]"
             >
-              <span aria-hidden className="text-xl leading-none">
-                ×
-              </span>
+              <X size={20} aria-hidden />
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-4">{children}</div>

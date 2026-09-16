@@ -8,7 +8,7 @@ export default function Site2NotFound() {
       <p className="text-[15px] font-extrabold tabular-nums text-[var(--s2-accent)]">
         404
       </p>
-      <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-[var(--s2-ink)] md:text-4xl">
+      <h1 className="s2-display mt-3 text-4xl font-semibold tracking-tight text-[var(--s2-ink)] md:text-5xl">
         {vi.demo.notFoundTitle}
       </h1>
       <p className="mx-auto mt-3 max-w-[46ch] text-[15px] leading-relaxed text-[var(--s2-muted)]">
@@ -16,7 +16,7 @@ export default function Site2NotFound() {
       </p>
       <Link
         href="/mau-thiep"
-        className="mt-8 inline-block rounded-full bg-[var(--s2-accent)] px-7 py-3 text-[15px] font-semibold text-[var(--s2-accent-ink)] transition-transform active:scale-[0.98]"
+        className="mt-8 inline-block rounded-full bg-[var(--s2-accent)] px-7 py-3 text-[15px] font-semibold text-[var(--s2-accent-ink)] transition-all duration-300 hover:bg-[color-mix(in_oklab,var(--s2-accent)_88%,#0e1a12)] active:scale-[0.98]"
       >
         {vi.demo.backToListing}
       </Link>
