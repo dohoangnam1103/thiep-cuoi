@@ -7,6 +7,8 @@ export const SITE2_EDITABLE_ROOTS = [
   "docs/research/site-2-",
   "docs/superpowers/plans/2026-09-14-site-2-",
   "docs/superpowers/specs/2026-09-14-site-2-",
+  "docs/superpowers/plans/2026-09-16-site-2-",
+  "docs/superpowers/specs/2026-09-16-site-2-",
   "infra/compose/site-2.yaml",
   "infra/systemd/site-2/",
 ] as const;
