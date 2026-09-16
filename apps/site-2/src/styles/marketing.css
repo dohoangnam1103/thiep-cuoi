@@ -210,3 +210,124 @@
 .s2-link-underline:hover {
   background-size: 100% 1px;
 }
+
+/* ─── Liquid Glass material system ─────────────────────────────────────── */
+
+/* Default glass: translucent backdrop with highlight border and soft shadow.
+ * Falls back to near-opaque surface when backdrop-filter is unsupported so
+ * text always stays readable. */
+.s2-glass {
+  background: var(--s2-glass-bg);
+  border: 1px solid var(--s2-glass-border);
+  box-shadow: var(--s2-glass-highlight), var(--s2-glass-shadow);
+  border-radius: var(--s2-card-radius);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .s2-glass {
+    backdrop-filter: blur(var(--s2-glass-blur)) saturate(var(--s2-glass-saturate));
+    -webkit-backdrop-filter: blur(var(--s2-glass-blur)) saturate(var(--s2-glass-saturate));
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .s2-glass {
+    background: var(--s2-surface);
+  }
+}
+
+/* Strong glass: more opaque for dialogs, nav bars, overlays. */
+.s2-glass-strong {
+  background: var(--s2-glass-bg-strong);
+  border: 1px solid var(--s2-glass-border);
+  box-shadow: var(--s2-glass-highlight), var(--s2-glass-shadow);
+  border-radius: var(--s2-card-radius);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .s2-glass-strong {
+    backdrop-filter: blur(var(--s2-glass-blur)) saturate(var(--s2-glass-saturate));
+    -webkit-backdrop-filter: blur(var(--s2-glass-blur)) saturate(var(--s2-glass-saturate));
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .s2-glass-strong {
+    background: var(--s2-surface);
+  }
+}
+
+/* Nav glass: lighter treatment for sticky navigation. No border-radius so
+ * it spans full width cleanly. */
+.s2-glass-nav {
+  background: var(--s2-glass-bg);
+  border-bottom: 1px solid var(--s2-glass-border);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .s2-glass-nav {
+    backdrop-filter: blur(12px) saturate(var(--s2-glass-saturate));
+    -webkit-backdrop-filter: blur(12px) saturate(var(--s2-glass-saturate));
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .s2-glass-nav {
+    background: var(--s2-surface);
+  }
+}
+
+/* Sheen: a light streak that slides across the element on hover. Pure
+ * transform animation — no background-position repaints. */
+.s2-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.s2-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgb(255 255 255 / 18%) 45%,
+    rgb(255 255 255 / 18%) 55%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .s2-sheen:hover::after {
+    animation: s2-sheen-slide 0.7s ease-out forwards;
+  }
+}
+
+@keyframes s2-sheen-slide {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* Champagne glow: ambient warm light behind hero or CTA sections. */
+.s2-champagne-glow {
+  position: relative;
+}
+
+.s2-champagne-glow::before {
+  content: "";
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in oklab, var(--s2-champagne) 35%, transparent),
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
