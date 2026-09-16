@@ -1,5 +1,5 @@
-/* Garden Atelier product workspace. Only authenticated workspace routes use
- * these classes, starting with the WorkspaceShell. */
+/* Blush Liquid Glass product workspace. Only authenticated workspace routes
+ * use these classes, starting with the WorkspaceShell. */
 
 .s2-workspace {
   background-color: var(--s2-canvas);

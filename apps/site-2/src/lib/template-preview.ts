@@ -53,3 +53,16 @@ export function listingImageHeight(src: string): number {
     listingImageHeights[filename as keyof typeof listingImageHeights] ?? 768
   );
 }
+
+/** Next.js Image Optimization API URL for template previews. Resizes the
+ *  original (often 6000–9500px tall) down to `width` pixels wide so gallery
+ *  cards never serve full-resolution artwork. Quality defaults to 84 which
+ *  matches one of the configured qualities in next.config.ts. */
+export function templatePreviewOptimizedUrl(
+  source: string,
+  width: number,
+  quality = 84,
+): string {
+  const encoded = encodeURIComponent(templatePreviewUrl(source));
+  return `/_next/image?url=${encoded}&w=${width}&q=${quality}`;
+}
