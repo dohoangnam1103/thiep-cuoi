@@ -120,3 +120,46 @@ test("auth page offers no third party login", async ({ page }) => {
   await page.goto("/dang-nhap");
   await expect(page.getByRole("button", { name: /google/i })).toHaveCount(0);
 });
+
+// Liquid Glass UI rebuild acceptance tests
+
+test("home page renders all liquid glass sections", async ({ page }) => {
+  await page.goto("/");
+  // Hero with champagne glow
+  await expect(page.locator(".s2-champagne-glow").first()).toBeVisible();
+  // Live preview section
+  await expect(page.getByRole("heading", { name: "Một tấm thiệp sống" })).toBeVisible();
+  // Gallery section
+  await expect(page.getByRole("heading", { name: "Khám phá bộ sưu tập" })).toBeVisible();
+  // Steps section
+  await expect(page.getByRole("heading", { name: "Làm thiệp trong 3 bước" })).toBeVisible();
+  // Story section
+  await expect(page.getByRole("heading", { name: "Mỗi tấm thiệp là một câu chuyện" })).toBeVisible();
+  // Finale CTA
+  await expect(page.getByRole("heading", { name: "Ngày vui xứng đáng một tấm thiệp đẹp" })).toBeVisible();
+});
+
+test("home gallery uses optimized image URLs", async ({ page }) => {
+  await page.goto("/");
+  const galleryImages = page.locator("[data-home-gallery] img");
+  await expect.poll(() => galleryImages.count()).toBeGreaterThan(0);
+  const firstSrc = await galleryImages.first().getAttribute("src");
+  expect(firstSrc).toContain("/_next/image");
+  expect(firstSrc).not.toMatch(/\.webp$/);
+});
+
+test("glass utility classes are present on key elements", async ({ page }) => {
+  await page.goto("/");
+  // Nav should have glass treatment
+  await expect(page.locator(".s2-glass-nav").first()).toBeVisible();
+  // At least one glass card on the page
+  await expect(page.locator(".s2-glass").first()).toBeVisible();
+});
+
+test("live preview updates on typing", async ({ page }) => {
+  await page.goto("/");
+  const brideInput = page.getByLabel("Tên cô dâu");
+  await brideInput.fill("Test Bride");
+  // Preview card should show the typed name
+  await expect(page.getByText("Test Bride")).toBeVisible();
+});
