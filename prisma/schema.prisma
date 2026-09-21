@@ -706,3 +706,24 @@ model TemplateHeroTypography {
   italic     Boolean?
   updatedAt  DateTime @updatedAt
 }
+
+/// Marketing-editable copy + metadata for a template's public SEO landing page
+/// (`/{mau-thiep,templates}/[slug]`). Absent row deliberately falls back to the
+/// `templateSeoDetails.items.<slug>` catalog entry, then to the generated
+/// fallback, so the page keeps rendering if the row is deleted.
+///
+/// `slug` is the source template slug (`song-hy-red`), never the public route
+/// alias (`song-hy-do`): the alias is itself admin-editable and is resolved
+/// through `TemplateRouteAlias`, so keying overrides on it would orphan the
+/// content after a rename.
+///
+/// `content` holds a JSON `TemplateSeoDetailContent`; the shape is fifteen
+/// fields including five string arrays and an array of Q/A objects, so columns
+/// would be nullable noise around a value that is only ever read whole.
+model TemplateSeoOverride {
+  slug      String   @id
+  content   String
+  robots    String   @default("index,follow")
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+}

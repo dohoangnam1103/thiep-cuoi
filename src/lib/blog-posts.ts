@@ -77,6 +77,27 @@ export async function getPublishedBlogPost(slug: string) {
   });
 }
 
+/** Non-null shape of a published post lookup, shared by both accessors. */
+export type PublishedBlogPost = NonNullable<Awaited<ReturnType<typeof getPublishedBlogPost>>>;
+
+/**
+ * Batched form of {@link getPublishedBlogPost} for pages that resolve several
+ * editorial references at once, so N references stay one query instead of N.
+ * A slug-keyed map lets the caller keep its own ordering rather than relying on
+ * the query's.
+ */
+export async function getPublishedBlogPostsBySlugs(
+  slugs: readonly string[],
+): Promise<Map<string, PublishedBlogPost>> {
+  const unique = [...new Set(slugs)].filter(Boolean);
+  if (unique.length === 0) return new Map();
+
+  const posts = await prisma.blogPost.findMany({
+    where: { ...publicWhere, slug: { in: unique } },
+  });
+  return new Map(posts.map((post) => [post.slug, post]));
+}
+
 export async function getRelatedBlogPosts(post: {
   id: string;
   category: string | null;

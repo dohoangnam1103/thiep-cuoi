@@ -230,12 +230,20 @@ function SortableDemoRow({
         {item.usageCount.toLocaleString("vi-VN")}
       </td>
       <td className="px-4 py-3">
-        <Link
-          href={`/admin/demos/${item.id}`}
-          className="text-sm text-primary hover:underline"
-        >
-          {t("edit")}
-        </Link>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <Link
+            href={`/admin/demos/${item.id}`}
+            className="text-sm text-primary hover:underline"
+          >
+            {t("edit")}
+          </Link>
+          <Link
+            href={`/admin/demos/${item.id}/seo`}
+            className="text-sm text-primary hover:underline"
+          >
+            {t("seoLink")}
+          </Link>
+        </div>
       </td>
       <td className="px-4 py-3">
         <TemplateVisibilitySwitch

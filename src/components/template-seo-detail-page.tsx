@@ -9,12 +9,23 @@ import { completedTemplates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { resolveTemplateSeoDetailContent, templateSeoDetailKey, templateSeoDetailStatus } from "@/data/template-seo-details";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { getPublishedBlogPost } from "@/lib/blog-posts";
+import { getPublishedBlogPostsBySlugs } from "@/lib/blog-posts";
 import { pageSeo, templateDetailAlternates } from "@/lib/seo";
 import { getPublicTemplateRouteOverrides, templateRouteSlugFromMap } from "@/lib/template-route-aliases";
+import { getPublicTemplateSeoOverrides, overrideContent } from "@/lib/template-seo-overrides";
 import { templateFullPreviewUrl, templatePreviewUrl } from "@/lib/template-preview-url";
 
-async function getDetailCopy(locale: Locale, template: ChungDoiTemplate) {
+/** Admin-authored override, the locale catalog, then the generated fallback. */
+export async function getDetailCopy(locale: Locale, template: ChungDoiTemplate) {
+  const overrides = await getPublicTemplateSeoOverrides();
+  const stored = overrides[template.slug];
+  if (stored) {
+    // Validated on write and re-validated on read, so the fail-fast catalog
+    // assertion is deliberately skipped here: bad marketing input must degrade
+    // to the built-in copy rather than 500 the landing page.
+    return overrideContent(stored);
+  }
+
   const t = await getTranslations({ locale, namespace: "templateSeoDetails" });
   let copy: unknown;
   try {
@@ -28,13 +39,32 @@ async function getDetailCopy(locale: Locale, template: ChungDoiTemplate) {
   return resolveTemplateSeoDetailContent(template, copy);
 }
 
+/**
+ * `robots` lives on the override row rather than inside `content`, so metadata
+ * has to read the row separately instead of trusting a default.
+ */
+export async function templateDetailRobots(
+  template: ChungDoiTemplate,
+): Promise<Metadata["robots"]> {
+  const overrides = await getPublicTemplateSeoOverrides();
+  const stored = overrides[template.slug];
+  if (!stored) return { index: true, follow: true };
+  return {
+    index: stored.robots.startsWith("index"),
+    follow: stored.robots.endsWith("follow"),
+  };
+}
+
 export async function templateDetailMetadata(locale: Locale, template: ChungDoiTemplate, canonicalSlug: string): Promise<Metadata> {
-  const copy = await getDetailCopy(locale, template);
+  const [copy, robots] = await Promise.all([
+    getDetailCopy(locale, template),
+    templateDetailRobots(template),
+  ]);
   return pageSeo({
     title: copy.metaTitle,
     description: copy.metaDescription,
     alternates: templateDetailAlternates(canonicalSlug, locale),
-    robots: { index: true, follow: true },
+    robots,
     locale,
     image: templatePreviewUrl(template.landscape),
     imageAlt: copy.imageAlt,
@@ -71,8 +101,13 @@ export async function TemplateSeoDetailPage({ locale, template, canonicalSlug }:
     }];
   });
   // Published posts only: editorial references cannot accidentally link drafts.
-  const posts = await Promise.all(copy.relatedBlogSlugs.map(getPublishedBlogPost));
-  const relatedBlog = posts.flatMap((post) => post ? [{ name: post.title, href: getPathname({ href: { pathname: "/blog/[slug]", params: { slug: post.slug } }, locale }) }] : []);
+  // One batched query rather than one per slug — the admin form allows up to
+  // six references, and this render path is revalidated on every marketing save.
+  const postBySlug = await getPublishedBlogPostsBySlugs(copy.relatedBlogSlugs);
+  const relatedBlog = copy.relatedBlogSlugs.flatMap((slug) => {
+    const post = postBySlug.get(slug);
+    return post ? [{ name: post.title, href: getPathname({ href: { pathname: "/blog/[slug]", params: { slug: post.slug } }, locale }) }] : [];
+  });
   return (
     <RouteMessages namespaces={["chrome"]}>
       <SiteHeader />

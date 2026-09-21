@@ -3029,6 +3029,7 @@
       "mobileThumbnails": "Thumbnail mobile"
     },
     "demosDescription": "Tên, URL và thứ tự mẫu thiệp áp dụng cho trang quản lý, danh sách thiệp của khách, bộ chọn mẫu trong trình chỉnh sửa và trang giới thiệu công khai. Đổi tên sẽ cập nhật URL demo; URL cũ vẫn tự chuyển sang URL mới. Để trống tên để dùng lại tên và URL mặc định.",
+    "seoLink": "Nội dung SEO",
     "renameUrlHelp": "Đổi tên cũng cập nhật URL demo; liên kết cũ vẫn tiếp tục hoạt động.",
     "renameErrors": {
       "invalidUrl": "Tên này không tạo được URL hợp lệ. Hãy dùng ít nhất một chữ cái hoặc số.",
