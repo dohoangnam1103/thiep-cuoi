@@ -10,9 +10,9 @@ import { test, expect } from "@playwright/test";
  */
 
 // Stable strings pulled from messages/vi.json ("home" namespace).
-// hero.title chứa "\n" để ngắt cố định 3 dòng; Playwright normalize whitespace
+// hero.title chứa "\n" để ngắt cố định 2 dòng; Playwright normalize whitespace
 // khi so text nên constant này viết liền bằng dấu cách.
-const HERO_TITLE = "Tạo thiệp cưới online đơn giản và miễn phí chỉ trong 15 phút";
+const HERO_TITLE = "Thiệp cưới online đẹp, dễ tạo và gửi đến từng khách mời";
 const CREATE_NOW = "TẠO THIỆP NGAY";
 
 test.describe("i18n default locale", () => {

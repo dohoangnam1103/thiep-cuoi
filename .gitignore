@@ -73,6 +73,10 @@ next-env.d.ts
 .claude/skills/customize/
 .claude/skills/release/
 
+# Local agent permission policy + local deployment receipts, not source.
+.dsh/
+/master-public/
+
 # Local temp files
 temp/
 tmp/

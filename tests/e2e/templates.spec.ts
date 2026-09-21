@@ -314,7 +314,7 @@ test.describe("templates — gallery listing", () => {
 
     // Header heading (messages/vi.json → listing.title).
     await expect(
-      page.getByRole("heading", { level: 1, name: "Mẫu thiệp cưới online thủ công" }),
+      page.getByRole("heading", { level: 1, name: "Mẫu thiệp cưới online đẹp theo nhiều phong cách" }),
     ).toBeVisible();
 
     // Each completed template is its own <article> card.

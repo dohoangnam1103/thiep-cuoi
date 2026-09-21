@@ -5,7 +5,9 @@
  * and opacity. Time-based entrance runs once on load; scroll-driven effects
  * use animation-timeline (view/scroll) with a static fallback when the
  * browser does not support it, and all of them switch off under
- * prefers-reduced-motion. No scroll listeners, no animation library. */
+ * prefers-reduced-motion. No scroll listeners, no animation library, except
+ * one passive rAF-throttled listener in MarketingNav that only flips a
+ * data-scrolled flag so the sticky bar turns near-opaque for readability. */
 
 .s2-marketing {
   background-color: var(--s2-canvas);
@@ -258,10 +260,27 @@
 }
 
 /* Nav glass: lighter treatment for sticky navigation. No border-radius so
- * it spans full width cleanly. */
+ * it spans full width cleanly. Once the page scrolls, MarketingNav flips
+ * data-scrolled and the bar turns near-opaque so headings, template names
+ * and swatches never show through behind the wordmark. Other sticky bars
+ * reuse .s2-glass-nav without the flag and keep the lighter treatment. */
 .s2-glass-nav {
   background: var(--s2-glass-bg);
   border-bottom: 1px solid var(--s2-glass-border);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.s2-glass-nav[data-scrolled="true"] {
+  background: color-mix(in oklab, var(--s2-surface) 92%, transparent);
+  border-bottom-color: var(--s2-line);
+  box-shadow: 0 14px 34px -20px rgb(66 36 46 / 0.4);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .s2-glass-nav[data-scrolled="true"] {
+    backdrop-filter: blur(20px) saturate(var(--s2-glass-saturate));
+    -webkit-backdrop-filter: blur(20px) saturate(var(--s2-glass-saturate));
+  }
 }
 
 @supports (backdrop-filter: blur(1px)) {

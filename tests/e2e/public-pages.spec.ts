@@ -10,7 +10,7 @@ test.describe("public pages — navigation & content", () => {
     expect(res?.ok()).toBeTruthy();
 
     await expect(
-      page.getByRole("heading", { name: "Tạo thiệp cưới online, miễn phí trong 10 phút" }),
+      page.getByRole("heading", { name: "Thiệp cưới online đẹp, dễ tạo và gửi đến từng khách mời" }),
     ).toBeVisible();
 
     // Site chrome should render the nav on desktop.

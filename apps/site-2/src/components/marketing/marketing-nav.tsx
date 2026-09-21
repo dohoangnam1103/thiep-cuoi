@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import vi from "@messages/vi.json";
 
@@ -16,8 +16,25 @@ const links = [
  * card drawer. */
 export function MarketingNav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 12);
+    };
+    const onScroll = () => {
+      if (frame === 0) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame !== 0) window.cancelAnimationFrame(frame);
+    };
+  }, []);
   return (
-    <header className="s2-glass-nav sticky top-0 z-30">
+    <header className="s2-glass-nav sticky top-0 z-30" data-scrolled={scrolled}>
       <nav
         aria-label={vi.site.navHome}
         data-testid="marketing-nav"

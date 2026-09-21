@@ -1,14 +1,14 @@
 import { test, expect } from "@playwright/test";
 
 // Homepage acceptance: one clear browse intent, real template imagery, real
-// numbers only, and a guided path from hero to register.
+// numbers only, and a guided path from hero to templates.
 
 test("homepage presents one clear browse intent and real template imagery", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Một lời mời đáng nhớ.",
+    /Muôn vẻ lời mời/,
   );
   await expect(
     page.getByRole("link", { name: "Xem mẫu thiệp" }),
@@ -17,14 +17,14 @@ test("homepage presents one clear browse intent and real template imagery", asyn
   await expect(page.getByText(/110\+|99\.9%|50\.000/)).toHaveCount(0);
 });
 
-test("homepage guides visitors from hero to register", async ({ page }) => {
+test("homepage guides visitors from hero to templates first", async ({ page }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("link", { name: "Tạo thiệp ngay" }),
-  ).toHaveAttribute("href", "/dang-nhap?mode=register");
+    page.locator("main").getByRole("link", { name: "Tạo thiệp ngay", exact: true }),
+  ).toHaveAttribute("href", "#bo-suu-tap");
   await expect(
-    page.getByRole("link", { name: "Bắt đầu miễn phí" }),
-  ).toHaveAttribute("href", "/dang-nhap?mode=register");
+    page.getByRole("link", { name: "Bắt đầu tạo thiệp" }),
+  ).toHaveAttribute("href", "/mau-thiep");
 });
 
 test("catalog searches, empties and clears the filter", async ({ page }) => {
@@ -76,7 +76,7 @@ test("pricing shows the fixed plan price from config", async ({
   await page.goto("/bang-gia");
   await expect(page.getByText("99.000 ₫")).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Tạo thiệp ngay" }),
+    page.locator("main").getByRole("link", { name: "Tạo thiệp ngay", exact: true }),
   ).toHaveAttribute("href", "/dang-nhap?mode=register");
 });
 
@@ -121,22 +121,21 @@ test("auth page offers no third party login", async ({ page }) => {
   await expect(page.getByRole("button", { name: /google/i })).toHaveCount(0);
 });
 
-// Liquid Glass UI rebuild acceptance tests
+// Copy-only hero acceptance. Shared marketing navigation is unchanged.
 
-test("home page renders all liquid glass sections", async ({ page }) => {
+test("home page renders copy-only hero and product information", async ({ page }) => {
   await page.goto("/");
-  // Hero with champagne glow
-  await expect(page.locator(".s2-champagne-glow").first()).toBeVisible();
+  await expect(page.locator(".s2-home-exhibition")).toHaveCount(0);
   // Live preview section
-  await expect(page.getByRole("heading", { name: "Một tấm thiệp sống" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Thử viết tên mình lên thiệp." })).toBeVisible();
   // Gallery section
-  await expect(page.getByRole("heading", { name: "Khám phá bộ sưu tập" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tìm thấy thiệp của hai bạn." })).toBeVisible();
   // Steps section
-  await expect(page.getByRole("heading", { name: "Làm thiệp trong 3 bước" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Từ lời thương đến lời mời." })).toBeVisible();
   // Story section
-  await expect(page.getByRole("heading", { name: "Mỗi tấm thiệp là một câu chuyện" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Một lời mời. Đủ mọi điều cần biết." })).toBeVisible();
   // Finale CTA
-  await expect(page.getByRole("heading", { name: "Ngày vui xứng đáng một tấm thiệp đẹp" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Một ngày đáng nhớ. Một lời mời xứng đáng." })).toBeVisible();
 });
 
 test("home gallery uses optimized image URLs", async ({ page }) => {
@@ -144,16 +143,14 @@ test("home gallery uses optimized image URLs", async ({ page }) => {
   const galleryImages = page.locator("[data-home-gallery] img");
   await expect.poll(() => galleryImages.count()).toBeGreaterThan(0);
   const firstSrc = await galleryImages.first().getAttribute("src");
-  expect(firstSrc).toContain("/_next/image");
-  expect(firstSrc).not.toMatch(/\.webp$/);
+  expect(firstSrc).toMatch(/\/home-exhibition\/.+-640\.webp$/);
 });
 
-test("glass utility classes are present on key elements", async ({ page }) => {
+test("shared navigation remains available alongside the new Home", async ({ page }) => {
   await page.goto("/");
   // Nav should have glass treatment
   await expect(page.locator(".s2-glass-nav").first()).toBeVisible();
-  // At least one glass card on the page
-  await expect(page.locator(".s2-glass").first()).toBeVisible();
+  await expect(page.locator(".s2-home-preview")).toBeVisible();
 });
 
 test("live preview updates on typing", async ({ page }) => {

@@ -11,7 +11,6 @@ type ColorFacetPageProps = {
   params: Promise<{ locale: Locale; slug: string }>;
 };
 
-export const dynamicParams = false;
 export const revalidate = 3600;
 
 export function generateStaticParams() {

@@ -325,6 +325,11 @@ rsh_stdin \
   "$REMOTE_APP_DIR" "$VERSION_IMAGE" "$MIGRATE_IMAGE" \
   "$([[ "$SMOKE_ONLY" == "1" ]] && echo 0 || echo "$NEEDS_MIGRATION")" "$CANDIDATE_DIR" <<'REMOTE_BUILD'
 set -euo pipefail
+# Docker 20.10 defaults to the legacy builder, which walks every stage in file
+# order even under --target. That built the dev-only `dependencies` stage
+# (948 packages, ~1.8 GiB) on every runner build and exhausted this disk. With
+# BuildKit, `--target runner` prunes that unreachable stage.
+export DOCKER_BUILDKIT=1
 app_dir="$1"
 version_image="$2"
 migrate_image="$3"
@@ -632,10 +637,26 @@ done
 log_step "verify public"
 
 # VPS uses timezone-explicit systemd timers. Never add duplicate legacy cron jobs.
-if [[ "${MANAGED_SCHEDULERS:-}" == systemd ]]; then
-  rsh 'systemctl is-active --quiet thiepmungonline-payos-reconcile.timer thiepmungonline-trial-reminders.timer thiepmungonline-backup.timer'
+# MANAGED_SCHEDULERS only states the intended scheme; verify the timers are
+# actually active before trusting them. The current VPS was cut over to root
+# cron (see deploy-vps.sh preflight), so a host that reports systemd here but
+# has no active timers must fall through to the cron check below instead of
+# failing the promotion and rolling back a healthy release.
+if [[ "${MANAGED_SCHEDULERS:-}" == systemd ]] && \
+   rsh 'systemctl is-active --quiet thiepmungonline-payos-reconcile.timer thiepmungonline-trial-reminders.timer thiepmungonline-backup.timer'; then
   DEPLOY_COMMITTED=1
   echo "✅ Deploy ${DEPLOYMENT_ID} complete; existing systemd schedules preserved."
+  exit 0
+fi
+
+# Cron-managed host. The marker-based installer below only recognises its own
+# job scheme, so on a host whose schedules were cut over from the MiniPC (ops/
+# scripts, no markers) it would append a second scheduler instead of replacing
+# the first. The preflight in deploy-vps.sh already accepts either form, so
+# preserve existing cron coverage and only install when it is missing.
+if rsh 'crontab -l 2>/dev/null | grep -q "cron-hit-endpoint.sh /api/cron/payos-reconcile" && crontab -l 2>/dev/null | grep -q "cron-hit-endpoint.sh /api/cron/trial-reminders" && crontab -l 2>/dev/null | grep -qi backup'; then
+  DEPLOY_COMMITTED=1
+  echo "✅ Deploy ${DEPLOYMENT_ID} complete; existing cron schedules preserved."
   exit 0
 fi
 

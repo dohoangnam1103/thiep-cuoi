@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "title": "Làm thiệp cưới online đơn giản chỉ trong 15 phút",
-    "description": "Tự tạo thiệp cưới online đơn giản nhất. Chọn mẫu, điền thông tin, không cần biết thiết kế. Tất cả chỉ tốn 15 phút. Bắt đầu miễn phí ngay hôm nay!",
-    "openGraphTitle": "Tạo Thiệp Cưới Online Đơn Giản, Miễn Phí Chỉ Trong 15 Phút",
-    "openGraphDescription": "Chọn mẫu, điền thông tin và tạo thiệp cưới online đẹp chỉ trong 15 phút. Không cần kỹ năng thiết kế. Bắt đầu miễn phí ngay hôm nay!",
-    "twitterTitle": "Tạo Thiệp Cưới Online Đơn Giản Trong 15 Phút",
-    "twitterDescription": "Tự tạo thiệp cưới online miễn phí, không cần biết thiết kế. Chỉ cần chọn mẫu và điền thông tin.",
+    "title": "Thiệp Cưới Online Đẹp, Tạo Trong 15 Phút | Thiệp Mừng Online",
+    "description": "Tạo thiệp cưới online đẹp với RSVP, bản đồ, album ảnh, nhạc và QR mừng cưới. Dễ dàng cá nhân hóa và gửi đến từng khách mời.",
+    "openGraphTitle": "Thiệp Cưới Online Đẹp, Tạo Trong 15 Phút",
+    "openGraphDescription": "Tạo thiệp cưới online đẹp với RSVP, bản đồ, album ảnh, nhạc và QR mừng cưới. Dễ dàng cá nhân hóa và gửi đến từng khách mời.",
+    "twitterTitle": "Thiệp Cưới Online Đẹp Trong 15 Phút",
+    "twitterDescription": "Tạo thiệp cưới online đẹp với RSVP, bản đồ, album ảnh, nhạc và QR mừng cưới.",
     "socialImageAlt": "Tạo thiệp cưới online tại Thiệp Mừng Online"
   },
   "gatefoldLab": {
@@ -802,7 +802,7 @@
     },
     "createNow": "TẠO THIỆP NGAY",
     "hero": {
-      "title": "Tạo thiệp cưới online\nđơn giản và miễn phí\nchỉ trong 15 phút",
+      "title": "Thiệp cưới online đẹp,\ndễ tạo và gửi đến từng khách mời",
       "subtitle": "Một tấm thiệp nhỏ, thay bạn gửi lời mời chân thành",
       "subtitle2": "Dễ dàng thiết kế, chia sẻ, nhận RSVP và lưu giữ những khoảnh khắc đẹp.",
       "trialNote": "Tạo miễn phí - Dùng thử 3 ngày - Chỉ trả khi bạn hài lòng",
@@ -1053,14 +1053,14 @@
   },
   "weddingGuide": {
     "metadata": {
-      "title": "Cách tạo thiệp cưới online chỉ với 7 bước | Thiệp Mừng Online",
-      "description": "Hướng dẫn từng bước có ảnh minh họa: chọn mẫu, điền thông tin, ghi tên khách, bật RSVP và thanh toán. Hoàn thành thiệp cưới online trong 10 phút."
+      "title": "Cách Tạo Thiệp Cưới Online Chỉ Với 7 Bước | Thiệp Mừng Online",
+      "description": "Hướng dẫn cách tạo thiệp cưới online từ chọn mẫu, nhập thông tin, thêm ảnh, RSVP đến gửi thiệp cho khách chỉ với 7 bước đơn giản."
     },
     "breadcrumbLabel": "Đường dẫn trang",
     "breadcrumbHome": "Trang chủ",
     "breadcrumbCurrent": "Tạo thiệp cưới online",
     "hero": {
-      "title": "Cách Tạo Thiệp Cưới Online: Hướng Dẫn 7 Bước",
+      "title": "Cách tạo thiệp cưới online: Hướng dẫn 7 bước đơn giản",
       "description": "Hướng dẫn từng bước có ảnh minh họa: chọn mẫu, điền thông tin, ghi tên khách, bật RSVP, thanh toán. Hoàn thành trong 10 phút.",
       "badge1": "Miễn phí",
       "badge2": "Không cần đăng ký",
@@ -1855,10 +1855,10 @@
   },
   "listing": {
     "detail": "Xem chi tiết",
-    "metaTitle": "Mẫu thiệp cưới online | Thiệp Mừng Online",
-    "metaDescription": "Kho mẫu thiệp cưới online của Thiệp Mừng Online: lọc theo phong cách và màu sắc, xem trước và demo thiệp với hiệu ứng mở thiệp, ảnh cưới, RSVP.",
+    "metaTitle": "Mẫu Thiệp Cưới Online Đẹp & Hiện Đại | Thiệp Mừng Online",
+    "metaDescription": "Khám phá các mẫu thiệp cưới online đẹp, hiện đại, truyền thống và tối giản. Xem demo, chọn mẫu yêu thích và tùy chỉnh theo đám cưới của bạn.",
     "eyebrow": "Mẫu thiệp cưới",
-    "title": "Mẫu thiệp mời cưới online",
+    "title": "Mẫu thiệp cưới online đẹp theo nhiều phong cách",
     "subtitle": "Tạo miễn phí · Dùng thử 3 ngày · Ưng ý mới thanh toán",
     "editingHint": "Dễ dàng đổi mẫu bất cứ lúc nào trong quá trình chỉnh sửa.",
     "styleLabel": "Phong cách",
@@ -2339,10 +2339,10 @@
     "faq5A": "Hoàn tiền cho trường hợp thanh toán trùng, thanh toán trái phép, hoặc sự cố chúng tôi không thể khắc phục trong 7 ngày."
   },
   "tools": {
-    "metaTitle": "Công cụ cưới | Thiệp Mừng Online",
-    "metaDescription": "Công cụ cưới miễn phí: tạo ảnh Save the Date, lời mời AI, tạo mã QR, nén ảnh và video.",
+    "metaTitle": "Công Cụ Cưới Miễn Phí Cho Cô Dâu Chú Rể | Thiệp Mừng Online",
+    "metaDescription": "Bộ công cụ cưới miễn phí giúp tạo lời mời, mã QR, Save the Date, nén ảnh và video, hỗ trợ bạn chuẩn bị đám cưới đơn giản hơn.",
     "eyebrow": "Công cụ",
-    "title": "Công cụ cưới miễn phí",
+    "title": "Công cụ cưới miễn phí cho cô dâu chú rể",
     "subtitle": "5 công cụ chúng tôi xây dựng để hỗ trợ chuẩn bị đám cưới: nhắn tin AI, nén ảnh và video. Không cần đăng ký, dùng được trên mọi thiết bị.",
     "popular": "Phổ biến",
     "open": "Mở công cụ",

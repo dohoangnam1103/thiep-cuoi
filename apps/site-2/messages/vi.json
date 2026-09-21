@@ -20,8 +20,29 @@
   },
   "home": {
     "badge": "mẫu thiệp cưới",
-    "heroTitle": "Một lời mời đáng nhớ.",
-    "heroSubtitle": "Chọn mẫu, điền thông tin rồi chia sẻ link cho khách mời. Xem demo đầy đủ trước khi quyết định.",
+    "heroTitle": "Muôn vẻ lời mời.",
+    "heroSubtitle": "Chọn một tấm thiệp hợp ý. Viết câu chuyện của hai bạn. Gửi niềm vui bằng một đường link.",
+    "envelopeOpen": "Chạm để mở lời mời",
+    "envelopeClose": "Khép lại lời mời",
+    "envelopeSalutation": "Trân trọng kính mời",
+    "envelopeTitle": "Ngày chung đôi",
+    "envelopeNote": "Gửi người thương, một lời mời thật riêng.",
+    "envelopeSeal": "S",
+    "envelopeDemo": "Xem demo mẫu {name}",
+    "previewCeremony": "Lễ thành hôn",
+    "previewDisclaimer": "Bản minh hoạ tương tác, không lưu thông tin.",
+    "previewLabel": "Thiệp minh hoạ của bạn",
+    "previewBride": "Mai Lan",
+    "previewGroom": "Đức Minh",
+    "previewDate": "22.11.2026",
+    "previewEmpty": "…",
+    "previewJoin": "&",
+    "previewCta": "Xem mẫu thiệp với tên này",
+    "collectionNote": "Truyền thống hay hiện đại, dịu dàng hay rực rỡ. Có một thiết kế dành cho ngày vui của bạn.",
+    "stepsLink": "Xem hướng dẫn tạo thiệp",
+    "storyLink": "Tìm hiểu cách sử dụng",
+    "finalNote": "Tấm thiệp đầu tiên cho hành trình mới của hai bạn.",
+    "pricingLink": "Xem bảng giá",
     "browseCta": "Xem mẫu thiệp",
     "heroSecondaryCta": "Tạo thiệp ngay",
     "heroEditorialAlt": "Thiệp cưới ivory đặt trên bàn cùng hoa trắng và lá xanh",
@@ -29,48 +50,112 @@
     "marqueeLabel": "Các phong cách thiệp đang có",
     "featuredTitle": "Mẫu nổi bật",
     "featuredCta": "Xem tất cả",
-    "stepsTitle": "Làm thiệp trong 3 bước",
+    "stepsTitle": "Từ lời thương đến lời mời.",
     "steps": [
       {
-        "title": "Chọn mẫu",
-        "body": "Duyệt catalog và mở demo toàn màn hình để xem từng chi tiết."
+        "title": "Tìm mẫu hợp ý",
+        "body": "Mở demo, xem từng chi tiết và chọn phong cách của hai bạn."
       },
       {
-        "title": "Điền thông tin",
-        "body": "Tên, ngày giờ, địa điểm, album ảnh và lời chúc trong editor."
+        "title": "Kể chuyện của mình",
+        "body": "Thêm tên, ảnh cưới, ngày giờ và địa điểm trong trình chỉnh sửa."
       },
       {
-        "title": "Chia sẻ",
-        "body": "Xuất bản để nhận link thiệp riêng, gửi khách qua bất kỳ kênh nào."
+        "title": "Gửi đến người thương",
+        "body": "Xuất bản thiệp và chia sẻ đường link qua Zalo, Messenger hoặc tin nhắn."
       }
     ],
-    "finalTitle": "Ngày vui xứng đáng một tấm thiệp đẹp",
-    "finalCta": "Bắt đầu miễn phí",
-    "livePreviewTitle": "Một tấm thiệp sống",
-    "livePreviewSubtitle": "Gõ tên và ngày cưới để xem thiệp cập nhật trực tiếp. Không cần đăng ký.",
+    "finalTitle": "Một ngày đáng nhớ.\nMột lời mời xứng đáng.",
+    "finalCta": "Bắt đầu tạo thiệp",
+    "livePreviewTitle": "Thử viết tên mình lên thiệp.",
+    "livePreviewSubtitle": "Một lời mời bắt đầu trở nên thật riêng, ngay từ tên của hai bạn.",
     "livePreviewBrideLabel": "Tên cô dâu",
     "livePreviewGroomLabel": "Tên chú rể",
     "livePreviewDateLabel": "Ngày cưới",
-    "galleryTitle": "Khám phá bộ sưu tập",
-    "galleryViewAll": "Xem tất cả {count} mẫu",
+    "galleryTitle": "Tìm thấy thiệp của hai bạn.",
+    "galleryViewAll": "Khám phá {count} mẫu thiệp",
     "storyTitle": "Mỗi tấm thiệp là một câu chuyện",
     "storyBody": "Thiệp cưới không chỉ là lời mời — nó là ấn tượng đầu tiên về ngày vui của bạn. Chúng tôi thiết kế từng mẫu với sự chăm chút để mỗi chi tiết đều kể câu chuyện riêng.",
     "storyImageAlt": "Thiệp cưới đặt trên bàn gỗ cùng hoa hồng nhạt",
-    "valueTitle": "Mọi thứ gói trong một link thiệp",
+    "valueTitle": "Một lời mời.\nĐủ mọi điều cần biết.",
     "value": [
       {
-        "title": "Editor trực quan",
-        "body": "Điền tên, ngày giờ, địa điểm rồi xem trước ngay khi gõ, không cần biết thiết kế."
+        "title": "Album của hai bạn",
+        "body": "Những bức ảnh yêu thích, câu chuyện và lời mời được giữ trong một tấm thiệp."
       },
       {
-        "title": "Một link cho mọi kênh",
-        "body": "Xuất bản để nhận link thiệp riêng, gửi khách qua tin nhắn hay mạng xã hội."
+        "title": "Ngày giờ & chỉ đường",
+        "body": "Lịch cưới và bản đồ giúp khách biết khi nào đến, đi đâu để chung vui."
       },
       {
-        "title": "Khách mời và RSVP",
-        "body": "Mỗi khách một link riêng, phản hồi của họ tự gom về một chỗ."
+        "title": "Lời chúc & quà mừng",
+        "body": "Khách gửi lời chúc và tìm thông tin quà mừng ngay trên thiệp."
       }
-    ]
+    ],
+    "heroEyebrow": "THIỆP CƯỚI ONLINE · THIỆP SIGNATURE",
+    "heroTitleAccent": "Một ngày của riêng bạn.",
+    "heroNote": "Xem trọn mẫu thiệp, không cần tài khoản.",
+    "exhibitionLabel": "Triển lãm mẫu thiệp cưới",
+    "exhibitionNote": "Mỗi phong cách, một lời thương.",
+    "galleryEyebrow": "BỘ SƯU TẬP",
+    "galleryPrevious": "Xem các mẫu trước",
+    "galleryNext": "Xem các mẫu tiếp theo",
+    "galleryRole": "bộ sưu tập dạng trượt",
+    "railLabel": "Mẫu kế tiếp",
+    "previewEyebrow": "MỘT CHÚT CỦA RIÊNG MÌNH",
+    "previewThemeLabel": "Chọn màu thiệp minh hoạ",
+    "previewThemes": [
+      "Giấy ngà",
+      "Đỏ son",
+      "Hồng phấn"
+    ],
+    "previewInvitation": "Hân hạnh mời bạn chung vui",
+    "stepsSubtitle": "Ba bước đơn giản để ngày vui có một tấm thiệp thật riêng.",
+    "valueSubtitle": "Từ lúc nhận thiệp đến khi đến chung vui, những điều khách cần đều ở cùng một nơi.",
+    "rsvpEyebrow": "KHÁCH MỜI & RSVP",
+    "rsvpTitle": "Biết ai sẽ đến.\nThảnh thơi chờ ngày vui.",
+    "rsvpBody": "Gửi lời mời riêng cho từng người. Theo dõi phản hồi và số người tham dự trong danh sách khách mời của bạn.",
+    "rsvpDemoLabel": "Minh hoạ phản hồi khách mời",
+    "rsvpGuest": "Anh Minh & chị An",
+    "rsvpGreeting": "Tụi mình sẽ đến chung vui!",
+    "rsvpStatus": "Đã xác nhận",
+    "rsvpCount": "2 người tham dự",
+    "rsvpDisclaimer": "Thông tin minh hoạ",
+    "rsvpCta": "Tìm hiểu quản lý khách mời",
+    "supportEyebrow": "LUÔN CÓ MỘT ĐIỂM BẮT ĐẦU",
+    "supportTitle": "Lần đầu làm thiệp?\nCứ thong thả, từng bước thôi.",
+    "supportBody": "Từ chọn mẫu đến gửi lời mời, hướng dẫn luôn ở đây để bạn dễ dàng bắt đầu.",
+    "supportCta": "Mở hướng dẫn",
+    "faqTitle": "Một vài điều bạn muốn biết.",
+    "faq": [
+      {
+        "q": "Tôi có cần biết thiết kế để tạo thiệp không?",
+        "a": "Không. Bạn chọn một mẫu đã dựng sẵn, điền thông tin và thêm ảnh của hai bạn trong trình chỉnh sửa."
+      },
+      {
+        "q": "Có thể xem mẫu trước khi đăng ký không?",
+        "a": "Có. Các bản demo mở công khai để bạn xem trọn nội dung và hiệu ứng trước khi chọn mẫu."
+      },
+      {
+        "q": "Thiệp có album, bản đồ và xác nhận tham dự không?",
+        "a": "Bạn có thể thêm ảnh, thông tin ngày cưới và địa điểm. Phần khách mời giúp bạn gửi lời mời riêng và theo dõi phản hồi tham dự. Hãy mở demo để xem bố cục của từng mẫu."
+      },
+      {
+        "q": "Gửi rồi có sửa lại thông tin được không?",
+        "a": "Có. Mở thiệp trong trang quản lý, chỉnh nội dung, lưu và xuất bản lại. Khách tiếp tục xem qua đường link của thiệp."
+      },
+      {
+        "q": "Khách mời có cần tải ứng dụng không?",
+        "a": "Không. Khách mở đường link ngay trên trình duyệt điện thoại hoặc máy tính."
+      },
+      {
+        "q": "Chi phí tạo thiệp là bao nhiêu?",
+        "a": "Bạn có thể xem demo miễn phí. Xem trang Bảng giá để biết chi phí và quyền lợi hiện tại trước khi tạo thiệp."
+      }
+    ],
+    "finalEyebrow": "NGÀY CỦA HAI BẠN",
+    "rsvpTry": "Thử xác nhận tham dự",
+    "rsvpPending": "Đang chờ phản hồi"
   },
   "templates": {
     "title": "Mẫu thiệp cưới",
@@ -246,17 +331,17 @@
           "Gửi link cho khách, sửa và xuất bản lại bất kỳ lúc nào."
         ]
       },
-        {
-          "slug": "thanh-toan-goi",
-          "title": "Thanh toán gói Signature",
-          "summary": "Gói hiện tại và cách kích hoạt.",
-          "category": "thanh-toan",
-          "steps": [
-            "Mở trang Bảng giá để xem quyền lợi gói.",
-            "Tạo thiệp rồi mở trang Thanh toán trong dashboard để lấy mã QR.",
-            "Quét mã để trả 99.000 ₫ cho một thiệp, thiệp được kích hoạt ngay sau khi tiền đến."
-          ]
-        }
+      {
+        "slug": "thanh-toan-goi",
+        "title": "Thanh toán gói Signature",
+        "summary": "Gói hiện tại và cách kích hoạt.",
+        "category": "thanh-toan",
+        "steps": [
+          "Mở trang Bảng giá để xem quyền lợi gói.",
+          "Tạo thiệp rồi mở trang Thanh toán trong dashboard để lấy mã QR.",
+          "Quét mã để trả 99.000 ₫ cho một thiệp, thiệp được kích hoạt ngay sau khi tiền đến."
+        ]
+      }
     ]
   },
   "legal": {

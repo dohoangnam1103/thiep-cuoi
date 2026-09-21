@@ -3,6 +3,7 @@ export const SITE2_EDITABLE_ROOTS = [
   "tests/e2e/site-2-",
   "tests/site-2-",
   "docs/deploy-site-2.md",
+  ".gitignore",
   "docs/releases/site-2-",
   "docs/research/site-2-",
   "docs/superpowers/plans/2026-09-14-site-2-",
