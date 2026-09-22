@@ -652,7 +652,9 @@ marker='# thiepmungonline Docker storage maintenance'
 # Chạy hàng ngày, không phải hàng tuần. Build cache sinh ra tới ~10GB trong một
 # ngày build nhiều, nên chu kỳ tuần cộng với chính sách giữ 120h có thể tích tụ
 # gần hai tuần cache giữa hai lần dọn. Đĩa đã từng bò lên 93% đúng vì vậy.
-cron_job="17 4 * * * $app_dir/releases/current/scripts/docker-storage-maintenance.sh >> $app_dir/docker-storage-maintenance.log 2>&1 $marker"
+# Giữ policy 48h/12GB của bản `ops/` cũ: mỗi deploy sinh ~4GB cache, để mặc
+# định 120h thì cache chạm ~20GB và lại chặn cổng 6 GiB (từng lên 25GB).
+cron_job="17 4 * * * DOCKER_BUILD_CACHE_MAX_AGE=48h DOCKER_BUILD_CACHE_SOFT_BUDGET_GB=12 $app_dir/releases/current/scripts/docker-storage-maintenance.sh >> $app_dir/docker-storage-maintenance.log 2>&1 $marker"
 (
   # Bỏ MỌI dòng maintenance cũ — bản có marker và bản `ops/` legacy của MiniPC
   # (không marker) — để chỉ còn đúng một job, luôn trỏ vào script trong release.
