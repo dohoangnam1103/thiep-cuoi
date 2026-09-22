@@ -27,12 +27,18 @@ image_rows=$(docker image ls --no-trunc "$repository" --format '{{.Tag}}|{{.ID}}
 # `rollback-20260820185043` ('s' > 'd' > '2'), nên script giữ đúng bản rollback
 # cũ và xoá mất bản rollback thật sự mới nhất — tức là image mà quy trình
 # rollback tay trong docs/deploy-minipc.md cần tới.
+#
+# Dedupe theo image ID trước khi lấy top N: nhiều deploy cùng trúng một image
+# (assembly cache hit) sinh ra nhiều tag `rollback-*` trỏ vào CHÍNH image đang
+# chạy. Không dedupe thì "2 rollback mới nhất" là cùng một image, và image của
+# bản phát hành trước bị coi là thừa rồi xoá — mất luôn bản rollback thật.
 rollback_ids=$(
   docker image ls --no-trunc "$repository" --format '{{.Tag}}|{{.ID}}|{{.CreatedAt}}' \
     | awk -F'|' '$1 ~ /^rollback-/' \
     | sort -t'|' -k3 -r \
-    | head -n "$rollback_keep" \
-    | cut -d'|' -f2
+    | cut -d'|' -f2 \
+    | awk '!seen[$0]++' \
+    | head -n "$rollback_keep"
 )
 
 is_kept_rollback() {
