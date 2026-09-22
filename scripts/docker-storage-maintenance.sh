@@ -41,8 +41,16 @@ is_kept_rollback() {
   printf '%s\n' "$rollback_ids" | grep -qxF "$candidate"
 }
 
+# `docker buildx du` needs the buildx CLI plugin, which the production VPS does
+# not install ("'buildx' is not a docker command"). Under `set -e` that failing
+# command substitution aborted the whole run before it pruned anything, so the
+# build cache grew unchecked until the 6 GiB deploy gate blocked a release.
+# `docker system df` is core Docker, reports the same build-cache total and
+# needs no plugin. `|| true` keeps a failing measurement from aborting the prune
+# that follows.
 cache_total() {
-  docker buildx du 2>/dev/null | awk '/^Total:/ { print $2; exit }'
+  docker system df --format '{{.Type}}|{{.Size}}' 2>/dev/null \
+    | awk -F'|' '$1 == "Build Cache" { print $2; exit }' || true
 }
 
 disk_free() {
@@ -58,6 +66,10 @@ disk_free() {
 # `--filter until=<duration>` thì hoạt động thật (đo được: giải phóng 1.778GB),
 # nên chuyển sang chính sách theo tuổi. Có in trước/sau để một no-op im lặng
 # như vậy không lặp lại mà không ai thấy.
+#
+# Dùng `docker builder prune` (lệnh core) chứ không phải `docker buildx prune`:
+# VPS production không cài plugin buildx, nên lệnh buildx chết ngay và cron
+# không dọn được gì. Cùng một BuildKit prune, cùng hỗ trợ `--filter until`.
 prune_build_cache() {
   local before after
   before=$(cache_total)
@@ -67,13 +79,13 @@ prune_build_cache() {
   # Đo được: sau một lần prune có --all, deploy kế tiếp mất 249s thay vì 16s vì
   # npm ci + npm prune phải chạy lại. Bỏ --all thì until mới thực sự là chính
   # sách theo tuổi.
-  printf 'docker buildx prune --force --filter until=%s\n' "$cache_max_age"
+  printf 'docker builder prune --force --filter until=%s\n' "$cache_max_age"
   if [[ $dry_run -eq 1 ]]; then
     printf '  build_cache_now=%s %s\n' "${before:-unknown}" "$(disk_free)"
     return 0
   fi
 
-  docker buildx prune --force --filter "until=${cache_max_age}" >/dev/null
+  docker builder prune --force --filter "until=${cache_max_age}" >/dev/null
   after=$(cache_total)
   printf '  build_cache before=%s after=%s | %s\n' \
     "${before:-unknown}" "${after:-unknown}" "$(disk_free)"

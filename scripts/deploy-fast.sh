@@ -636,6 +636,34 @@ for path in "/" "$VERIFY_DEMO_PATH"; do
 done
 log_step "verify public"
 
+# ---------------------------------------------------------------------------
+# 7b. Đảm bảo cron dọn Docker storage đã cài (không prune đồng bộ trong deploy)
+# ---------------------------------------------------------------------------
+# Phải chạy TRƯỚC hai nhánh "schedules preserved" bên dưới: nhánh đó thoát sớm
+# khi payOS/trial/backup đã tồn tại, nên khi đặt sau thì cron dọn storage không
+# bao giờ được cài/cập nhật — đúng lỗi đã để build cache phình lên 3.96GB và
+# chặn deploy ở cổng 6 GiB.
+echo "🧹 Đảm bảo cron dọn Docker storage đã được cài"
+rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_CLEANUP'
+set -euo pipefail
+app_dir="$1"
+
+marker='# thiepmungonline Docker storage maintenance'
+# Chạy hàng ngày, không phải hàng tuần. Build cache sinh ra tới ~10GB trong một
+# ngày build nhiều, nên chu kỳ tuần cộng với chính sách giữ 120h có thể tích tụ
+# gần hai tuần cache giữa hai lần dọn. Đĩa đã từng bò lên 93% đúng vì vậy.
+cron_job="17 4 * * * $app_dir/releases/current/scripts/docker-storage-maintenance.sh >> $app_dir/docker-storage-maintenance.log 2>&1 $marker"
+(
+  # Bỏ MỌI dòng maintenance cũ — bản có marker và bản `ops/` legacy của MiniPC
+  # (không marker) — để chỉ còn đúng một job, luôn trỏ vào script trong release.
+  # `releases/current` là symlink đổi mỗi deploy nên script tự cập nhật theo.
+  crontab -l 2>/dev/null | grep -Fv "$marker" | grep -Fv 'docker-storage-maintenance.sh' || true
+  printf '%s\n' "$cron_job"
+) | crontab -
+echo "cron_installed=1"
+REMOTE_CLEANUP
+log_step "cleanup Docker storage"
+
 # VPS uses timezone-explicit systemd timers. Never add duplicate legacy cron jobs.
 # MANAGED_SCHEDULERS only states the intended scheme; verify the timers are
 # actually active before trusting them. The current VPS was cut over to root
@@ -659,27 +687,6 @@ if rsh 'crontab -l 2>/dev/null | grep -q "cron-hit-endpoint.sh /api/cron/payos-r
   echo "✅ Deploy ${DEPLOYMENT_ID} complete; existing cron schedules preserved."
   exit 0
 fi
-
-# ---------------------------------------------------------------------------
-# 8. Đảm bảo cron dọn Docker storage đã cài (không prune đồng bộ trong deploy)
-# ---------------------------------------------------------------------------
-echo "🧹 Đảm bảo cron dọn Docker storage đã được cài"
-rsh_stdin "$REMOTE_APP_DIR" <<'REMOTE_CLEANUP'
-set -euo pipefail
-app_dir="$1"
-
-marker='# thiepmungonline Docker storage maintenance'
-# Chạy hàng ngày, không phải hàng tuần. Build cache sinh ra tới ~10GB trong một
-# ngày build nhiều, nên chu kỳ tuần cộng với chính sách giữ 120h có thể tích tụ
-# gần hai tuần cache giữa hai lần dọn. Đĩa đã từng bò lên 93% đúng vì vậy.
-cron_job="17 4 * * * $app_dir/releases/current/scripts/docker-storage-maintenance.sh >> $app_dir/docker-storage-maintenance.log 2>&1 $marker"
-(
-  crontab -l 2>/dev/null | grep -Fv "$marker" || true
-  printf '%s\n' "$cron_job"
-) | crontab -
-echo "cron_installed=1"
-REMOTE_CLEANUP
-log_step "cleanup Docker storage"
 
 # ---------------------------------------------------------------------------
 # 9. Đảm bảo cron đối soát payOS đã cài
