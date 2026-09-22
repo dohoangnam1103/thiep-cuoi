@@ -5,10 +5,17 @@ export function templatePreviewUrl(source: string): string {
   return `${source}${separator}v=${templatePreviewVersion}`;
 }
 
-/** Full-page capture used by the SEO detail preview scroller. */
-export function templateFullPreviewUrl(source: string): string {
-  const pngSource = source
-    .replace(/\/landscape\//, "/png/")
+/**
+ * Full-page capture used by the SEO detail preview scroller. The capture
+ * pipeline names the PNG after the template's `listing` asset
+ * (`scripts/capture-template-previews.mjs`), so callers must pass
+ * `template.listing`; for some templates the listing and landscape stems differ
+ * (e.g. `dragon_phoenix_red_480.webp` vs `dragon_phoenix_red.webp`), and
+ * deriving from `landscape` would request a PNG that was never generated.
+ */
+export function templateFullPreviewUrl(listingSource: string): string {
+  const pngSource = listingSource
+    .replace(/\/listing\//, "/png/")
     .replace(/\.webp(?:\?.*)?$/, ".png");
   return templatePreviewUrl(pngSource);
 }

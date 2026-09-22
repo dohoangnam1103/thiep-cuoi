@@ -114,7 +114,7 @@ export async function TemplateSeoDetailPage({ locale, template, canonicalSlug }:
       <TemplateSeoDetailView
         copy={copy} labels={labels} locale={locale} homeHref={getPathname({ href: "/", locale })}
         listingHref={getPathname({ href: "/templates", locale })} detailHref={detailHref} demoHref={demoHref}
-        image={templatePreviewUrl(template.landscape)} fullPreviewImage={templateFullPreviewUrl(template.landscape)} relatedTemplates={relatedTemplates} relatedBlog={relatedBlog}
+        image={templatePreviewUrl(template.landscape)} fullPreviewImage={templateFullPreviewUrl(template.listing)} relatedTemplates={relatedTemplates} relatedBlog={relatedBlog}
         createCta={<form action={createInvitation} data-ga-event="select_template" data-ga-param-template-id={template.slug} data-ga-param-source="template_detail"><input type="hidden" name="templateId" value={template.slug} /><button type="submit" className="rounded-full bg-primary px-5 py-3 font-semibold text-primary-foreground">{t("create")}</button></form>}
       />
       <SiteFooter />
