@@ -93,7 +93,7 @@ test("sitemap omits blog URLs entirely when no post is published", () => {
   assert.deepEqual(urls, [...staticUrls, ...facetUrls, ...detailUrls]);
 });
 
-test("robots allows noindex pages to be crawled and blocks only APIs", () => {
+test("robots keeps public assets crawlable, including deployment-versioned URLs", () => {
   const config = robots();
   const rules = Array.isArray(config.rules) ? config.rules : [config.rules];
   const disallowed = rules.flatMap((rule) => rule.disallow ?? []);

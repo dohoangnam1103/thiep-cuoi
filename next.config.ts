@@ -5,6 +5,19 @@ import { retiredTemplateSlugPattern } from "./src/data/retired-template-slugs";
 import { canonicalHostRedirects } from "./src/lib/seo-redirects";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+// Old published blog slugs with clear replacements in the current catalog.
+const legacyBlogSlugs = {
+  "cach-lap-danh-sach-khach-moi-dam-cuoi": "cach-lap-danh-sach-khach-moi-dam-cuoi-day-du-khong-trung-va-de-chot-so-ban",
+  "checklist-chuan-bi-dam-cuoi": "checklist-chuan-bi-dam-cuoi-day-du-theo-tung-moc-thoi-gian",
+  "du-toan-chi-phi-dam-cuoi": "chi-phi-dam-cuoi-bao-nhieu-bang-du-toan-ngan-sach-cuoi-chi-tiet-nam-2026",
+  "huong-dan-chi-tiet-cac-thu-tuc-cuoi-hoi-truyen-thong-cua-mien-nam-viet-nam": "thu-tuc-cuoi-hoi-mien-nam-gom-nhung-gi-trinh-tu-tu-dam-ngo-den-le-cuoi",
+  "khi-nao-nen-gui-thiep-cuoi": "nen-gui-thiep-cuoi-truoc-bao-lau-thoi-diem-phu-hop-cho-tung-nhom-khach",
+  "lich-trinh-ngay-cuoi": "lich-trinh-ngay-cuoi-chi-tiet-mau-timeline-tu-luc-chuan-bi-den-khi-ket-thuc-tiec",
+  "moi-cuoi-qua-zalo": "moi-cuoi-qua-zalo-sao-cho-lich-su-cach-gui-thiep-va-mau-tin-nhan-tinh-te",
+  "thiep-cuoi-giay-hay-online": "thiep-cuoi-giay-hay-thiep-cuoi-online-nen-chon-hinh-thuc-nao",
+  "tiec-cocktail-dam-cuoi": "tiec-cocktail-dam-cuoi-la-gi-cach-to-chuc-welcome-hour-hien-dai-va-tinh-te",
+  "xu-huong-chu-de-dam-cuoi-2026": "xu-huong-chu-de-dam-cuoi-2026-ca-nhan-hoa-giau-cam-xuc-va-dam-dau-an-rieng",
+} as const;
 const contentSecurityPolicy = [
   "default-src 'self'",
   // static.cloudflareinsights.com: beacon Cloudflare Web Analytics tự chèn ở edge.
@@ -83,11 +96,23 @@ const nextConfig: NextConfig = {
         destination: "/",
         permanent: true,
       },
+      ...Object.entries(legacyBlogSlugs).map(([oldSlug, newSlug]) => ({
+        source: `/blog/${oldSlug}`,
+        destination: `/blog/${newSlug}`,
+        statusCode: 301,
+      })),
       {
         // Facet "di sản Việt" đã rút khỏi taxonomy SEO vì toàn bộ mẫu thuộc
         // nhóm này đang bị ẩn. URL này từng nằm trong sitemap nên trả 301 về
         // trang danh sách thay vì để 404.
         source: "/mau-thiep/phong-cach/di-san-viet",
+        destination: "/mau-thiep",
+        statusCode: 301,
+      },
+      {
+        // Facet "tối giản" cũng từng nằm trong sitemap trước khi rút khỏi
+        // taxonomy; giữ đường dẫn cũ bằng 301 về danh sách mẫu.
+        source: "/mau-thiep/phong-cach/toi-gian",
         destination: "/mau-thiep",
         statusCode: 301,
       },

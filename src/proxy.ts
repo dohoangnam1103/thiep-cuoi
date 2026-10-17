@@ -44,7 +44,8 @@ export default async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     const unprefixedPath = request.nextUrl.pathname.replace(foreignLocalePrefix, "") || "/";
     url.pathname = vietnamesePaths[unprefixedPath] ?? unprefixedPath;
-    const response = NextResponse.redirect(url, 307);
+    // The old locale prefixes are gone for good; use a permanent redirect.
+    const response = NextResponse.redirect(url, 301);
     response.cookies.set("NEXT_LOCALE", routing.defaultLocale, { path: "/", sameSite: "lax" });
     return response;
   }

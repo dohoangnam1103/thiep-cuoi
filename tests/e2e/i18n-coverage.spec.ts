@@ -28,12 +28,13 @@ async function expectTranslated(page: Page, errors: string[]) {
 // the detail immediately so every template's translated sections are mounted.
 for (const template of templates) {
   if (retiredTemplateSlugs.has(template.slug)) {
-    test(`retired demo is unavailable: ${template.slug}`, async ({ page, context }) => {
+    test(`retired demo is unavailable: ${template.slug}`, async ({ page, context, request }) => {
       const slug = getVietnameseTemplateSlug(template.slug);
-      for (const suffix of ["demo", "demo/capture"]) {
-        const response = await page.goto(`/mau-thiep/${slug}/${suffix}`);
-        expect(response?.status()).toBe(404);
-      }
+      const redirect = await request.get(`/mau-thiep/${slug}/demo`, { maxRedirects: 0 });
+      expect(redirect.status()).toBe(301);
+      expect(redirect.headers().location).toBe("/mau-thiep");
+      const capture = await page.goto(`/mau-thiep/${slug}/demo/capture`);
+      expect(capture?.status()).toBe(404);
       const user = createUser();
       const demo = createInvitation(user.id, { templateId: template.slug, isDemo: true });
       try {

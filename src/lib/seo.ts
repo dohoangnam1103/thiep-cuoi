@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { templateSeoDetailStatus } from "@/data/template-seo-details";
 import type { TemplateSeoFacetKind } from "@/data/template-seo-facets";
 import { getPathname } from "@/i18n/navigation";
 import { indexableLocales, routing } from "@/i18n/routing";
@@ -92,15 +91,16 @@ export function templateDemoAlternates(
   }), locale);
 }
 
-/** Pending details redirect to demos, so they cannot be canonical targets yet. */
-export function templateDemoSeo(sourceSlug: string, locale: AppLocale, canonicalSlug: string): {
+/**
+ * Demos are `noindex` and stay self-canonical. Their content differs from the
+ * detail landing pages, so the detail URL is not a suitable demo canonical.
+ */
+export function templateDemoSeo(locale: AppLocale, canonicalSlug: string): {
   alternates: Alternates;
   robots: Metadata["robots"];
 } {
   return {
-    alternates: templateSeoDetailStatus(sourceSlug) === "enabled"
-      ? templateDetailAlternates(canonicalSlug, locale)
-      : templateDemoAlternates(canonicalSlug, locale),
+    alternates: templateDemoAlternates(canonicalSlug, locale),
     robots: { index: false, follow: true },
   };
 }
