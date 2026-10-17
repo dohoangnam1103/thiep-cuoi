@@ -1,7 +1,5 @@
 import type { SiteId } from "@chungdoi/site-config";
 
-import { isCatalogTemplate } from "./template-catalog";
-
 export const SIGNATURE_TEMPLATE_SLUGS = [
   "jasmine-white",
   "silk-flora-brown",
@@ -16,10 +14,6 @@ export function isSignatureTemplate(slug: string): boolean {
   return SIGNATURE_SET.has(slug);
 }
 
-export function isTemplateAvailable(siteId: SiteId, slug: string): boolean {
-  if (siteId === "master") {
-    return true;
-  }
-  // Site-2 serves the full cloned catalog; unknown slugs 404.
-  return isCatalogTemplate(slug);
+export function isTemplateAvailable(siteId: SiteId, _slug: string): boolean {
+  return siteId === "master";
 }

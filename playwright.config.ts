@@ -9,9 +9,6 @@ const TEST_DB_URL = "file:./tests/e2e/.data/test.db";
 export default defineConfig({
   testDir: "./tests/e2e",
   outputDir: "./tests/e2e/.artifacts",
-  // site-2-mvp runs under apps/site-2/playwright.config.ts against the site-2
-  // server (port 3222) with its own temp DB — never the master suite/server.
-  testIgnore: /site-2-mvp\.spec\.ts/,
   // Chromium E2E specs share one SQLite database and several deliberately
   // exercise direct database mutations alongside browser requests. WAL avoids
   // lock timeouts, but cannot provide test-level isolation between workers.

@@ -19,6 +19,6 @@
     "./nguyet-anh-sleeve-pilot": "./src/nguyet-anh-sleeve-pilot.ts"
   },
   "dependencies": {
-    "@chungdoi/site-config": "0.1.0"
+    "@chungdoi/site-config": "workspace:*"
   }
 }

@@ -37,11 +37,6 @@ next-env.d.ts
 
 # Prisma
 /src/generated/prisma
-/apps/site-2/src/generated/prisma
-/apps/site-2/.e2e/
-/apps/site-2/.next/
-/apps/site-2/dev-site2.db
-/apps/site-2/dev-site2.db-journal
 /prisma/*.db
 /prisma/*.db-journal
 /dev.db
@@ -124,6 +119,10 @@ docs/research/original-dom/
 
 # Verified local deployment receipts/artifacts (may contain private build configuration).
 /.deploy-cache/
+
+# Catalog-wide ceremony audit evidence. Regenerate with `npm run test:ceremonies`;
+# it is a 68MB screenshot dump, not source.
+/docs/research/multiple-ceremonies-audit/
 
 # Python deployment-test bytecode.
 __pycache__/

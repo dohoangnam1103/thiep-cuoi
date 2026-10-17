@@ -2,8 +2,7 @@
 
 > **Historical after 2026-08-31:** production moved to VPS `163.223.9.198`,
 > then to `163.61.110.34` on 2026-09-15 (both old hosts retired as prod).
-> Minipc currently hosts site-2 production (see `docs/deploy-site-2.md`);
-> no master container runs there.
+> No production application runs on the minipc.
 > Use [deploy-vps.md](./deploy-vps.md). The old web/tunnel and app cron are stopped;
 > do not restart them with the frozen database. `npm run deploy` now targets VPS.
 

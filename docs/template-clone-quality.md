@@ -40,12 +40,12 @@ Lưu ý các lỗi đã gặp ở Mahal Vàng:
 - Dùng prop/variant hoặc CSS có phạm vi riêng cho mẫu; không sửa style chung gây thay đổi các mẫu khác. Giữ label, validation, focus, trạng thái pending và binding gửi dữ liệu.
 - Không dựng nút trông có chức năng nhưng không hoạt động. Nếu nguồn có chức năng chưa được app hỗ trợ, ghi rõ chênh lệch thay vì giả lập thành công.
 - Đăng ký manifest/renderer/catalog theo pipeline hiện có; không sửa tay registry được sinh tự động. Chỉ seed demo đang làm, không ghi đè demo khác.
-- **Hợp đồng hiển thị nhiều lễ là bắt buộc khi clone:** manifest và entry trong renderer registry phải khai cùng một `ceremonyRendering`, với một trong hai giá trị `"inline-all"` hoặc `"post-template"`. Mẫu clone mới phải dùng `"inline-all"`; `"post-template"` chỉ dành cho renderer cũ chưa được nâng cấp và phải ghi rõ trong research note.
+- **Hợp đồng hiển thị nhiều lễ là bắt buộc khi clone:** manifest và entry trong renderer registry phải khai cùng một `ceremonyRendering: "inline-all"`. Tất cả renderer, kể cả mẫu cũ trên thiệp đã xuất bản, phải sở hữu toàn bộ lễ trong section native. `"post-template"` không còn được chấp nhận; typecheck và registrar phải từ chối cấu hình này.
   - Không thêm giá trị mặc định im lặng: thiếu field hoặc manifest và registry khai khác nhau phải làm registrar/typecheck báo lỗi trước khi mẫu được đăng ký.
   - Với `"inline-all"`, renderer phải gọi `invitationCeremonies(content)` và render toàn bộ kết quả bằng `.map(...)` trong đúng section lễ của mẫu. Không đọc riêng `couple.ceremonyHeader`, `couple.ceremonyDate` hoặc `couple.ceremonyTime` để bỏ qua các `CeremonyItem` bổ sung.
   - Hai factory `createArtTemplateManifest` và `createPorcelainTemplateManifest` đã đặt sẵn `"inline-all"`; renderer dùng chung của chúng phải giữ hợp đồng này. Mẫu bespoke dùng `defineTemplateManifest` phải khai mode ngay trong manifest.
   - Tạo fixture kiểm thử có **ít nhất hai lễ**, trong đó cả `title`, `date` và `time` của lễ thứ nhất và thứ hai đều khác nhau. Dùng fixture này khi kiểm tra renderer, không chỉ dùng dữ liệu demo một lễ.
-  - Ở `"inline-all"`, hai lễ phải xuất hiện cùng section native của mẫu trên desktop và mobile; DOM không được có `[data-additional-ceremonies]`. Nếu thấy khối đó, clone chưa đạt dù nội dung vẫn xuất hiện ở cuối trang.
+  - Ở `"inline-all"`, các lễ phải xuất hiện cùng section native của mẫu trên desktop và mobile; DOM không được có `[data-additional-ceremonies]`. Nếu thấy khối đó, clone chưa đạt dù nội dung vẫn xuất hiện ở cuối trang. Test tự khám phá registry/catalog phải render cả mẫu mới với ba lễ khác title/date/time; chạy `npm run test:ceremonies` để kiểm tra trình duyệt. Không thêm allowlist chỉ chứa mẫu đã qua.
 - Khi đưa mẫu mới lên production, phải tạo demo row trên **DB production**, không chỉ deploy renderer/assets hoặc seed local. Dùng `scripts/seed-demos.ts --missing --only=<slug>` qua runtime Prisma phù hợp sau khi backup; không chạy seed toàn bộ. Kiểm tra `Invitation.isDemo=true`, content và quan hệ của mẫu, rồi xác nhận mẫu có trong `/admin/demos`. Trang public có fallback nội dung tĩnh nên HTTP 200 của public **không chứng minh** admin đã có mẫu.
 
 ## 4. Đối chiếu trực quan trong khi làm
@@ -69,7 +69,7 @@ Ghi kết quả từng mục trong research note, kèm đường dẫn ảnh ho�
 - [ ] Các tiêu đề và nội dung không đè lên họa tiết; khoảng cách giữa các mục đúng.
 - [ ] Lịch: tháng, thứ, đủ sáu hàng ngày, ngày nổi bật và khoảng đệm đều nằm trong viền.
 - [ ] Nhiều lễ: manifest/registry có `ceremonyRendering`; mẫu mới dùng `"inline-all"`, gọi `invitationCeremonies(content).map(...)`, và fixture có ít nhất hai lễ khác `title`/`date`/`time`.
-- [ ] Nhiều lễ trên desktop/mobile: hai lễ nằm trong cùng section native, không xuất hiện `[data-additional-ceremonies]`; nếu dùng `"post-template"` cho mẫu cũ, ghi rõ lý do và trạng thái nâng cấp.
+- [ ] Nhiều lễ trên desktop/mobile: hai lễ nằm trong cùng section native, không xuất hiện `[data-additional-ceremonies]`; registrar/typecheck từ chối `"post-template"` cho cả mẫu mới và mẫu cũ.
 - [ ] Album mở/đóng, chuyển ảnh; địa điểm và liên kết lịch/chỉ đường đúng.
 - [ ] Sổ lưu bút đúng style; kiểm tra validation. Chỉ thử gửi trên môi trường local/test phù hợp, không gửi lời chúc thử lên website nguồn.
 - [ ] Phong bao đúng asset, đúng lớp/animation; mở và đóng hộp QR hoạt động.

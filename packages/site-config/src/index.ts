@@ -1,4 +1,4 @@
-export const SITE_IDS = ["master", "site-2"] as const;
+export const SITE_IDS = ["master"] as const;
 export type SiteId = (typeof SITE_IDS)[number];
 
 export type SiteFeatures = {
@@ -15,29 +15,9 @@ export type SiteDefinition = {
 };
 
 export const MASTER_SESSION_COOKIE = "session";
-export const SITE2_SESSION_COOKIE = "site2_session";
 
 export function isSiteId(value: string): value is SiteId {
   return (SITE_IDS as readonly string[]).includes(value);
-}
-
-function featuresForSite(id: SiteId): SiteFeatures {
-  if (id === "site-2") {
-    return {
-      payments: false,
-      trialReminders: false,
-      transactionalEmail: false,
-    };
-  }
-  return {
-    payments: true,
-    trialReminders: true,
-    transactionalEmail: true,
-  };
-}
-
-function sessionCookieForSite(id: SiteId): string {
-  return id === "site-2" ? SITE2_SESSION_COOKIE : MASTER_SESSION_COOKIE;
 }
 
 export function createSiteDefinition(
@@ -47,7 +27,11 @@ export function createSiteDefinition(
   return {
     id,
     publicUrl,
-    sessionCookieName: sessionCookieForSite(id),
-    features: featuresForSite(id),
+    sessionCookieName: MASTER_SESSION_COOKIE,
+    features: {
+      payments: true,
+      trialReminders: true,
+      transactionalEmail: true,
+    },
   };
 }
