@@ -82,6 +82,9 @@
     "test:deploy": "tsx --test src/lib/deploy-i18n-gate.test.ts && node --test tests/deploy-inputs.test.mjs && python3 tests/deploy-cache.test.py && python3 tests/deploy-assembled-image-cache.test.py && bash tests/deploy-sync-source.test.sh && bash tests/deploy-fast-safety.test.sh && bash tests/deploy-release.test.sh && bash tests/deploy-transaction.test.sh && bash tests/pull-prod-db.test.sh"
   },
   "dependencies": {
+    "@chungdoi/invitation-core": "workspace:*",
+    "@chungdoi/invitation-data": "workspace:*",
+    "@chungdoi/site-config": "workspace:*",
     "@base-ui/react": "^1.6.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

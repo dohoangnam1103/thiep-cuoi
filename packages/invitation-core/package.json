@@ -9,8 +9,7 @@
     ".": "./src/resolve-template.ts",
     "./signature": "./src/signature/index.ts",
     "./templates": "./src/templates/index.tsx",
-    "./templates/*": "./src/templates/*",
-    "./demo-shell": "./src/demo-shell/chungdoi-demo.tsx"
+    "./templates/*": "./src/templates/*"
   },
   "dependencies": {
     "@chungdoi/invitation-data": "workspace:*",

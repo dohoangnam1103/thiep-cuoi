@@ -41,6 +41,7 @@ rsync -aL --delete \
   --exclude '/.next' \
   --exclude '/.next-prebuilt' \
   --exclude '/node_modules' \
+  --exclude 'node_modules' \
   --exclude '/.deploy-worktree' \
   --exclude '/.worktrees' \
   --exclude '/docs' \
