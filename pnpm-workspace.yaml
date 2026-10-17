@@ -1,0 +1,16 @@
+packages:
+  - "packages/*"
+
+# Next.js/NFT (Turbopack) reads node_modules entries as real files. pnpm's
+# default symlinked layout makes @img/sharp-libvips-* a symlink to a directory,
+# which crashes the production build with "Is a directory (os error 21)".
+nodeLinker: hoisted
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@swc/core': true
+  better-sqlite3: true
+  esbuild: true
+  prisma: true
+  unrs-resolver: true

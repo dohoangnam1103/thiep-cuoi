@@ -81,7 +81,7 @@ required = [
     'scripts/canonical-path-from-html.py', 'scripts/migration-preflight.py',
     'scripts/seed-tracks-if-empty.py', 'scripts/cron-hit-endpoint.sh',
     'prisma/schema.prisma', 'prisma/migrations/001/migration.sql',
-    'prisma/tracks.json', 'package.json', 'package-lock.json',
+    'prisma/tracks.json', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml',
     'prisma.config.ts', 'Dockerfile.prebuilt', 'Dockerfile.prebuilt.dockerignore',
     'src/app/page.tsx', 'messages/vi.json',
 ]

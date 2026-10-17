@@ -49,11 +49,11 @@ cp .next/standalone/server.js "$ARTIFACT_STAGE/server.js"
 # Sinh package.json "chỉ dependency" cho stage dependencies của Dockerfile.
 # Giữ đúng những field ảnh hưởng tới việc npm giải dependency, bỏ scripts /
 # description / keywords... Nhờ vậy sửa scripts hay đổi mô tả không còn làm
-# npm ci + npm prune chạy lại ~200s trên VPS.
+# pnpm install + pnpm prune chạy lại ~200s trên VPS.
 node -e '
 const fs = require("node:fs");
 const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-// name + version phải giữ để npm ci không báo lệch với package-lock.json.
+// name + version phải giữ để pnpm install --frozen-lockfile không báo lệch.
 // overrides + engines ảnh hưởng trực tiếp tới cây dependency được cài.
 const fields = [
   "name",

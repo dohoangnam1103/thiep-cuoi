@@ -27,9 +27,10 @@ A web app for creating and sharing digital wedding invitations (thiệp cưới)
 - **Database:** Prisma 7 + SQLite (better-sqlite3 adapter)
 - **Auth:** session-based (`jose` JWT, `bcryptjs` password hashing)
 - **i18n:** next-intl — Vietnamese only (`messages/vi.json`). en/ko/ja/zh were removed; `src/i18n/routing.ts` serves `vi` with no URL prefix and every other prefix 404s. Copy still goes through the catalog, so do not hardcode strings.
-- **Deployment:** site-1 prod VPS `163.61.110.34`, site-2 prod minipc / Docker (see `docs/deploy-vps.md`, `docs/deploy-site-2.md`). The old VPS `163.223.9.198` is retired. No master container runs on minipc; never start one there.
+- **Deployment:** production runs on the VPS `163.61.110.34` (see `docs/deploy-vps.md`). The old VPS `163.223.9.198` and the minipc deployment are retired.
 
 ## Commands
+Dependencies are installed with pnpm (`pnpm install`); `pnpm-lock.yaml` and `pnpm-workspace.yaml` are the source of truth. `pnpm run` and `npm run` both work once `node_modules` exists.
 - `npm run dev` — Start dev server
 - `npm run build` — Production build. **Fails locally on purpose**: `next build` forces `NODE_ENV=production` and `src/lib/site-url.ts` rejects the `http://localhost` value in `.env.local`. CI and Docker pass a real HTTPS `NEXT_PUBLIC_SITE_URL`, so this script stays untouched.
 - `npm run build:local` — Same build with `ALLOW_INSECURE_SITE_URL=1`. Use this one locally; the failure above is not a bug to fix.

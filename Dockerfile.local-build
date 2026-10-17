@@ -13,7 +13,10 @@ FROM node:${NODE_VERSION} AS dependencies
 
 WORKDIR /app
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY package.json yarn.lock* pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
+COPY packages/invitation-core/package.json ./packages/invitation-core/package.json
+COPY packages/invitation-data/package.json ./packages/invitation-data/package.json
+COPY packages/site-config/package.json ./packages/site-config/package.json
 
 RUN --mount=type=cache,target=/root/.npm \
   --mount=type=cache,target=/usr/local/share/.cache/yarn \
@@ -28,15 +31,15 @@ RUN --mount=type=cache,target=/root/.npm \
   echo "No lockfile found." && exit 1; \
   fi
 
-# `npm ci --ignore-scripts` intentionally skips this native binary. Rebuild it
-# for the Linux target that will run on the Mini PC.
-RUN npm rebuild better-sqlite3
+# `--ignore-scripts` intentionally skips this native binary. Rebuild it for the
+# Linux target that will run on the Mini PC.
+RUN pnpm rebuild better-sqlite3
 
 FROM dependencies AS runtime-dependencies
 
 # Keep only packages declared for runtime. This stage remains Linux/amd64, so
 # every native module used by the runner is installed for the target platform.
-RUN npm prune --omit=dev --ignore-scripts
+RUN pnpm prune --prod --ignore-scripts
 
 FROM node:${NODE_VERSION} AS migrate
 

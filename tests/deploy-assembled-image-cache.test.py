@@ -32,7 +32,8 @@ class AssembledImageCacheTest(unittest.TestCase):
         self.cache = self.root / "cache"
         self.cache.mkdir()
         for name, content in {"Dockerfile.prebuilt": "FROM node:24-slim AS runner\n",
-                              "package-lock.json": '{"lockfileVersion": 3}\n',
+                              "pnpm-lock.yaml": "lockfileVersion: '9.0'\n",
+                              "pnpm-workspace.yaml": "packages:\n  - \"packages/*\"\n",
                               ".dockerignore": "node_modules\n",
                               ".npmrc": "audit=false\n"}.items():
             (self.source / name).write_text(content)
@@ -118,7 +119,7 @@ print(json.dumps(result))
         for root, name in ((self.artifact, "server.js"), (self.artifact, "static/chunk.js"),
                            (self.artifact, "package.deps.json"),
                            (self.source, "Dockerfile.prebuilt"),
-                           (self.source, "package-lock.json"), (self.source, ".npmrc"),
+                           (self.source, "pnpm-lock.yaml"), (self.source, "pnpm-workspace.yaml"), (self.source, ".npmrc"),
                            (self.source, ".dockerignore")):
             with self.subTest(name=name):
                 before = self.key()
@@ -132,7 +133,7 @@ print(json.dumps(result))
     def test_specific_dockerignore_overrides_root_ignore(self):
         original = self.key()
         specific = self.source / "Dockerfile.prebuilt.dockerignore"
-        specific.write_text("!package-lock.json\n")
+        specific.write_text("!pnpm-lock.yaml\n")
         selected = self.key()
         self.assertNotEqual(original, selected)
         (self.source / ".dockerignore").write_text("irrelevant while overridden\n")
@@ -164,7 +165,7 @@ print(json.dumps(result))
         (self.artifact / ".next/node_modules/sharp-hash").symlink_to("../../node_modules/sharp")
         self.key()
         link.unlink()
-        link.symlink_to(self.source / "package-lock.json")
+        link.symlink_to(self.source / "pnpm-lock.yaml")
         self.run_cli("key", self.artifact, self.source, BASE_ID, "linux/amd64", expected=2)
         link.unlink()
         link.symlink_to("missing")

@@ -8,7 +8,8 @@ import { fileURLToPath } from "node:url";
 
 export const REQUIRED_FILES = [
   "package.json",
-  "package-lock.json",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml",
   "prisma/schema.prisma",
   "prisma.config.ts",
   "messages/vi.json",
@@ -81,20 +82,6 @@ export function publicOrigin(environment) {
   return url.origin;
 }
 
-/**
- * Two-site guard: master and site-2 production origins must be distinct HTTPS
- * origins. Values are validated the same way as the master deploy preflight;
- * only the hostnames are compared here, never any credential.
- */
-export function assertDistinctSiteOrigins(masterValue, site2Value) {
-  const master = publicOrigin({ NEXT_PUBLIC_SITE_URL: masterValue });
-  const site2 = publicOrigin({ NEXT_PUBLIC_SITE_URL: site2Value });
-  if (new URL(master).hostname === new URL(site2).hostname) {
-    throw new Error("Master and site-2 must not share a production hostname.");
-  }
-  return { master, site2 };
-}
-
 export function checkDeployInputs({
   root = process.cwd(),
   environment,
@@ -123,12 +110,12 @@ export function checkDeployInputs({
     const range = manifest.engines?.node;
     const semver = requireModule("next/dist/compiled/semver");
     if (!range || !semver.validRange(range) || !semver.satisfies(nodeVersion, range)) {
-      add("Runtime", "Node does not satisfy package.json engines.node; install and select the required Node version, then run npm ci.");
+      add("Runtime", "Node does not satisfy package.json engines.node; install and select the required Node version, then run pnpm install.");
     } else {
       passed.push(`Node ${nodeVersion} satisfies engines.node`);
     }
   } catch {
-    add("Runtime", "Cannot validate Node against package.json; restore the manifest and run npm ci to install Next.js dependencies.");
+    add("Runtime", "Cannot validate Node against package.json; restore the manifest and run pnpm install to install Next.js dependencies.");
   }
 
   for (const name of REQUIRED_CLI) {
@@ -137,7 +124,7 @@ export function checkDeployInputs({
       if (!statSync(cli).isFile()) throw new Error("Not a file");
       accessSync(cli, constants.X_OK);
     } catch {
-      add("Dependencies", `node_modules/.bin/${name} is missing, broken or not executable; run npm ci in this build directory and preserve symlinks when copying dependencies.`);
+      add("Dependencies", `node_modules/.bin/${name} is missing, broken or not executable; run pnpm install in this build directory and preserve symlinks when copying dependencies.`);
     }
   }
 
@@ -157,7 +144,7 @@ export function checkDeployInputs({
       // Match next build: .env.production.local, .env.local, .env.production, .env.
       effectiveEnvironment = loadBuildEnvironment(root, requireModule);
     } catch {
-      add("Environment", "Cannot load build environment; run npm ci and check the local .env file permissions.");
+      add("Environment", "Cannot load build environment; run pnpm install and check the local .env file permissions.");
     }
   }
 

@@ -25,18 +25,24 @@ WORKDIR /app
 # package.deps.json là bản package.json đã lược bỏ mọi field không liên quan
 # tới dependency (scripts, keywords, description...), do deploy-fast.sh sinh ra
 # trên Mac. Nếu COPY package.json thật vào đây thì chỉ sửa một dòng `scripts`
-# cũng làm layer này vô hiệu, kéo theo npm ci + npm prune chạy lại ~200s trên
+# cũng làm layer này vô hiệu, kéo theo install + prune chạy lại ~200s trên
 # VPS dù dependency không đổi gì. Đo được đúng trường hợp đó ở deploy
-# 20260820185043: 219s thay vì 16s.
-COPY package-lock.json .npmrc* ./
+# 20260820185043: 219s thay vì 16s. pnpm so khớp specifier chứ không so toàn bộ
+# field, nên bản lược vẫn đủ để `--frozen-lockfile` kiểm tra đúng.
+COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc* ./
+# pnpm needs every workspace project's manifest to resolve pnpm-lock.yaml. Only
+# the manifests are copied so editing renderer sources does not bust this layer.
+COPY packages/invitation-core/package.json ./packages/invitation-core/package.json
+COPY packages/invitation-data/package.json ./packages/invitation-data/package.json
+COPY packages/site-config/package.json ./packages/site-config/package.json
 COPY .next-prebuilt/package.deps.json ./package.json
 
-RUN --mount=type=cache,id=thiepmungonline-npm,target=/root/.npm \
-  npm ci --ignore-scripts --no-audit --no-fund
+RUN --mount=type=cache,id=thiepmungonline-pnpm,target=/root/.local/share/pnpm/store \
+  corepack enable pnpm && pnpm install --frozen-lockfile --ignore-scripts
 
 # --ignore-scripts bỏ qua prebuild-install của better-sqlite3 nên binding .node
 # chưa được tải. Rebuild riêng package đó cho Node ABI + platform hiện tại.
-RUN npm rebuild better-sqlite3
+RUN pnpm rebuild better-sqlite3
 
 # ============================================
 # Stage 2: runtime dependencies
@@ -44,14 +50,17 @@ RUN npm rebuild better-sqlite3
 FROM node:${NODE_VERSION} AS runtime-dependencies
 
 WORKDIR /app
-COPY package-lock.json .npmrc* ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc* ./
+COPY packages/invitation-core/package.json ./packages/invitation-core/package.json
+COPY packages/invitation-data/package.json ./packages/invitation-data/package.json
+COPY packages/site-config/package.json ./packages/site-config/package.json
 COPY .next-prebuilt/package.deps.json ./package.json
 
 # Install only what the runner uses. Installing dev dependencies then pruning
 # them cost 72 seconds on the VPS; the migration target keeps its separate tree.
-RUN --mount=type=cache,id=thiepmungonline-npm,target=/root/.npm \
-  npm ci --omit=dev --ignore-scripts --no-audit --no-fund
-RUN npm rebuild better-sqlite3 --no-audit --no-fund
+RUN --mount=type=cache,id=thiepmungonline-pnpm,target=/root/.local/share/pnpm/store \
+  corepack enable pnpm && pnpm install --frozen-lockfile --prod --ignore-scripts
+RUN pnpm rebuild better-sqlite3
 
 # ============================================
 # Stage 3: migrate (chạy prisma migrate deploy cạnh database production)

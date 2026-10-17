@@ -104,7 +104,7 @@ def artifact_records(root):
 def source_records(root):
     if not root.is_dir():
         raise ValueError("source root is missing")
-    paths = [root / "Dockerfile.prebuilt", root / "package-lock.json"]
+    paths = [root / "Dockerfile.prebuilt", root / "pnpm-lock.yaml", root / "pnpm-workspace.yaml"]
     # Dockerfile-specific ignore files take precedence over the root ignore.
     specific = root / "Dockerfile.prebuilt.dockerignore"
     selected_ignore = specific if specific.exists() or specific.is_symlink() else root / ".dockerignore"

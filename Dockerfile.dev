@@ -2,8 +2,9 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages ./packages
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
 # Source files are mounted as a volume at runtime for hot reload
 
@@ -12,4 +13,4 @@ EXPOSE 3000
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "run", "dev"]

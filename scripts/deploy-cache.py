@@ -88,7 +88,8 @@ def include_file(relative, mode):
 
 
 def source_files(root, mode):
-    required_files = ["package.json", "package-lock.json", "node_modules/.package-lock.json",
+    required_files = ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml",
+                      "node_modules/.modules.yaml",
                       "next.config.ts", "tsconfig.json", "messages/vi.json", "prisma/schema.prisma"]
     required_dirs = ["src/app", "public"]
     if mode == "gate":

@@ -15,7 +15,10 @@ FROM node:${NODE_VERSION} AS dependencies
 WORKDIR /app
 
 # Copy package-related files first to leverage Docker's caching mechanism
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+COPY package.json yarn.lock* pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
+COPY packages/invitation-core/package.json ./packages/invitation-core/package.json
+COPY packages/invitation-data/package.json ./packages/invitation-data/package.json
+COPY packages/site-config/package.json ./packages/site-config/package.json
 
 # Install project dependencies with frozen lockfile for reproducible builds
 RUN --mount=type=cache,target=/root/.npm \
@@ -34,7 +37,7 @@ RUN --mount=type=cache,target=/root/.npm \
 # --ignore-scripts above skips better-sqlite3's install script (prebuild-install),
 # so its native .node binding is never fetched. Rebuild just that package to pull
 # the prebuilt binary for this Node ABI/platform.
-RUN npm rebuild better-sqlite3
+RUN pnpm rebuild better-sqlite3
 
 # ============================================
 # Stage 2: Build Next.js application in standalone mode
