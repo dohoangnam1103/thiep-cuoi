@@ -27,7 +27,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { Barcode, PerforationRule } from "@/components/chungdoi-tpl-ornaments";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -71,7 +71,10 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
   const t = useTranslations("invitationTemplate");
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -184,27 +187,26 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
 
         {/* Cuống: lễ + tiệc */}
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {ceremony ? (
-            <Stub>
-              <StubHeading>{t("ceremony")}</StubHeading>
-              <p className="whitespace-pre-line text-[12px] font-semibold uppercase leading-relaxed">
-                {invitationCeremonyMessage(content)}
-              </p>
-              <div className="mt-5 flex items-baseline gap-3">
-                <span className="font-serif text-[40px] leading-none md:text-[52px]">
-                  {ceremony.day}
-                </span>
-                <div className="flex flex-col text-[11px] uppercase tracking-[0.16em] text-[#a4462d]">
-                  <span>{t("month", { month: ceremony.month })}</span>
-                  <span>{ceremony.yearNumber}</span>
-                </div>
-              </div>
-              {couple.ceremonyTime ? (
-                <p className="mt-3 text-[14px] font-semibold">{couple.ceremonyTime}</p>
-              ) : null}
-              <p className="mt-1 text-[11px] opacity-65">{ceremony.lunar}</p>
-            </Stub>
-          ) : null}
+          {ceremonies.length > 0 ? <div data-template-ceremonies className="contents">
+            {ceremonies.map((item, index) => {
+              const ceremony = formatDate(item.date);
+              return <div key={index} data-template-ceremony-item className="contents">
+                <Stub>
+                  <StubHeading>{t("ceremony")}</StubHeading>
+                  <p className="whitespace-pre-line text-[12px] font-semibold uppercase leading-relaxed">{item.title}</p>
+                  {ceremony ? <div className="mt-5 flex items-baseline gap-3">
+                    <span className="font-serif text-[40px] leading-none md:text-[52px]">{ceremony.day}</span>
+                    <div className="flex flex-col text-[11px] uppercase tracking-[0.16em] text-[#a4462d]">
+                      <span>{t("month", { month: ceremony.month })}</span>
+                      <span>{ceremony.yearNumber}</span>
+                    </div>
+                  </div> : null}
+                  {item.time ? <p className="mt-3 text-[14px] font-semibold">{item.time}</p> : null}
+                  {ceremony ? <p className="mt-1 text-[11px] opacity-65">{ceremony.lunar}</p> : null}
+                </Stub>
+              </div>;
+            })}
+          </div> : null}
 
           <Stub>
             <StubHeading>{t("reception")}</StubHeading>

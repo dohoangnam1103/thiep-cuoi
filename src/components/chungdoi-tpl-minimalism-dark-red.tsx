@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { createContext, useContext } from "react";
 import guestbookStyles from "./minimalism-guestbook.module.css";
 
@@ -259,6 +260,7 @@ function MinimalismInvitation({
   palette: MinimalismPalette;
   testId: string;
 }) {
+  const t = useTranslations("invitationTemplate");
   const {
     decorPath: DECOR,
     themePath: THEME,
@@ -400,33 +402,41 @@ function MinimalismInvitation({
                 <div className="text-[10px] uppercase" style={{ ...UCHEN, color: CREAM_SOFT, letterSpacing: "0.14em" }}>{people[1].birthOrder}</div>
               </div>
 
-              <div data-template-ceremonies data-minimalism-dark-red-ceremonies className="flex w-full flex-col items-center gap-8">
-                {ceremonies.map((ceremony, index) => {
-                  const ceremonyDate = formatDate(ceremony.date);
-                  return ceremonyDate ? (
-                    <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY}>
-                      {ceremony.title ? (
-                        <div style={{ color: CREAM_SOFT }}>
-                          <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{ceremony.title}</span>
-                        </div>
-                      ) : null}
-                      <div className="flex w-full max-w-[180px] items-center justify-between px-0 text-[13px] uppercase md:max-w-[210px] md:text-[15px]" style={{ color: CREAM_SOFT }}>
-                        <span>{ceremony.time ? `Vào lúc ${ceremony.time}` : ""}</span>
-                        <span>{ceremonyDate.weekday}</span>
+              {ceremonies.length > 0 ? (
+                <div data-template-ceremonies data-minimalism-dark-red-ceremonies className="flex w-full flex-col items-center gap-8">
+                  {ceremonies.map((ceremony, index) => {
+                    const ceremonyDate = formatDate(ceremony.date);
+                    return (
+                      <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="relative flex flex-col items-center gap-4 text-center md:gap-5" style={BODY}>
+                        {ceremony.title ? (
+                          <div style={{ color: CREAM_SOFT }}>
+                            <span className="whitespace-pre-line text-center text-[16px] font-normal md:text-[18px]">{ceremony.title}</span>
+                          </div>
+                        ) : null}
+                        {ceremony.time || ceremonyDate ? (
+                          <div className="flex w-full max-w-[180px] items-center justify-between px-0 text-[13px] uppercase md:max-w-[210px] md:text-[15px]" style={{ color: CREAM_SOFT }}>
+                            <span>{ceremony.time ? t("atTime", { time: ceremony.time }) : ""}</span>
+                            {ceremonyDate ? <span>{ceremonyDate.weekday}</span> : null}
+                          </div>
+                        ) : null}
+                        {ceremonyDate ? (
+                          <>
+                            <div className="flex items-center justify-center gap-4" style={{ color: CREAM }}>
+                              <span className="text-[40px] leading-none md:text-[46px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.day}</span>
+                              <div className="h-[46px] w-px" style={{ backgroundColor: "rgba(236,228,216,0.45)" }} />
+                              <div className="flex flex-col items-start justify-center gap-1 text-left">
+                                <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{t("month", { month: ceremonyDate.month })}</span>
+                                <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.yearNumber}</span>
+                              </div>
+                            </div>
+                            <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>{ceremonyDate.lunar}</div>
+                          </>
+                        ) : null}
                       </div>
-                      <div className="flex items-center justify-center gap-4" style={{ color: CREAM }}>
-                        <span className="text-[40px] leading-none md:text-[46px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.day}</span>
-                        <div className="h-[46px] w-px" style={{ backgroundColor: "rgba(236,228,216,0.45)" }} />
-                        <div className="flex flex-col items-start justify-center gap-1 text-left">
-                          <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>Tháng {ceremonyDate.month}</span>
-                          <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.yearNumber}</span>
-                        </div>
-                      </div>
-                      <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>{ceremonyDate.lunar}</div>
-                    </div>
-                  ) : null;
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </WineCard>
         </section>

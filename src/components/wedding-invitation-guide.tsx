@@ -329,7 +329,7 @@ export async function WeddingInvitationGuide({ locale }: { locale: Locale }) {
             <h2 className="font-heading text-2xl font-black text-foreground">{t("resources.title")}</h2>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               <Link
-                href={{ pathname: "/blog/[slug]", params: { slug: "lich-trinh-ngay-cuoi" } }}
+                href={{ pathname: "/blog/[slug]", params: { slug: "lich-trinh-ngay-cuoi-chi-tiet-mau-timeline-tu-luc-chuan-bi-den-khi-ket-thuc-tiec" } }}
                 className="rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
               >
                 <h3 className="font-heading text-lg font-black text-foreground">{t("resources.item1Title")}</h3>

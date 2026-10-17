@@ -318,8 +318,7 @@ test("generated template manifests are wired through every public data registry"
 
   for (const manifest of generatedTemplateManifests) {
     assert.ok(
-      manifest.ceremonyRendering === "inline-all"
-        || manifest.ceremonyRendering === "post-template",
+      manifest.ceremonyRendering === "inline-all",
       `${manifest.slug}: ceremony rendering mode`,
     );
     assert.equal(

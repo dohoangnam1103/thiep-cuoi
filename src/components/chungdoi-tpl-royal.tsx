@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
@@ -17,7 +18,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const ROYAL_GOLD = "#E1BC7C";
 const ROYAL_GOLD_MUTED = "#C39E5E";
@@ -118,9 +119,11 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
   const RYL = palette.assetPath;
   const BASE_GRADIENT = `linear-gradient(to bottom right, ${palette.baseFrom}, ${palette.baseTo}, ${palette.baseFrom})`;
   const wedding = formatDate(couple.date);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const ceremonies = content.ceremonies || couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim()
+    ? invitationCeremonies(content)
+    : [];
   const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
-  const ceremonyWeekdayUpper = ceremony ? ceremony.weekday.toUpperCase() : "";
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const [giftOpen, setGiftOpen] = useState(false);
@@ -184,13 +187,22 @@ function RoyalInvitation({ content, palette = ROYAL_RED_PALETTE }: { content: Ch
               <h3 className="font-couple-garamond text-[30px] leading-[1.15] md:text-[40px]" style={{ color: ROYAL_GOLD }}>{people[1].fullName}</h3>
             </div>
             {/* ceremony date */}
-            <div className="flex flex-col items-center gap-2 text-center" style={{ color: ROYAL_GOLD }}>
-              <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
-              {couple.ceremonyTime ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: ROYAL_GOLD_MUTED }}>Vào lúc {couple.ceremonyTime}</p> : null}
-              {ceremony ? <RoyalDateRow weekday={ceremonyWeekdayUpper} day={ceremony.day} month={ceremony.month} /> : null}
-              {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.yearNumber}</div> : null}
-              {ceremony ? <div className="text-xs opacity-75 md:text-sm" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.lunar}</div> : null}
-            </div>
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies className="flex w-full flex-col gap-8">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return (
+                    <div data-template-ceremony-item key={index} className="flex flex-col items-center gap-2 text-center" style={{ color: ROYAL_GOLD }}>
+                      <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{item.title}</span>
+                      {item.time ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: ROYAL_GOLD_MUTED }}>{t("atTime", { time: item.time })}</p> : null}
+                      {ceremony ? <RoyalDateRow weekday={ceremony.weekday.toUpperCase()} day={ceremony.day} month={ceremony.month} /> : null}
+                      {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.yearNumber}</div> : null}
+                      {ceremony ? <div className="text-xs opacity-75 md:text-sm" style={{ color: ROYAL_GOLD_MUTED }}>{ceremony.lunar}</div> : null}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
           {/* Album */}

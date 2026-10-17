@@ -208,9 +208,10 @@ export function CoiTrauKhamTraiInvitation({
         />
         <div className="relative mx-auto max-w-6xl">
           <SectionHeading light number="02">{t("ceremony")}</SectionHeading>
-          <div className="mt-14 grid gap-5 lg:grid-cols-12">
+          <div data-template-ceremonies className="mt-14 grid gap-5 lg:grid-cols-12">
             {ceremonies.map((ceremony, index) => (
               <article
+                data-template-ceremony-item
                 key={`${ceremony.title}-${ceremony.date}-${ceremony.time}`}
                 className={cn(
                   "relative overflow-hidden border border-[#D8E3DF]/32 bg-[#244632] p-7 shadow-[0_1.5rem_4rem_rgba(12,28,20,0.32)] sm:p-9",

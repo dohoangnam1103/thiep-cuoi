@@ -8,7 +8,7 @@ import {
   MapDirectionsButton, SharedCountdown, SharedWishForm, WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import styles from "./mahal-gold.module.css";
 
 const ROOT = "/chungdoi/images/themes/mahal-gold";
@@ -57,7 +57,10 @@ export function MahalGoldInvitation({ content }: { content: ChungDoiDemoContent 
   const t = useTranslations("invitationTemplate");
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const banquetTime = venue.banquetTime || couple.time;
@@ -109,11 +112,16 @@ export function MahalGoldInvitation({ content }: { content: ChungDoiDemoContent 
             <h3 className="font-art-nautigal text-[clamp(38px,10vw,72px)] leading-tight">{people[1].fullName}</h3>
             <p className="text-sm lowercase text-[#ab7a45] md:text-lg">{people[1].birthOrder}</p>
           </div>
-          {ceremony && <>
-            <p className="font-mg-times whitespace-pre-line text-center text-sm uppercase md:text-lg">{couple.ceremonyHeader}</p>
-            <p className="text-sm uppercase md:text-lg">{t("atTime", { time: couple.ceremonyTime })}</p>
-            <DateBlock date={ceremony} />
-          </>}
+          {ceremonies.length > 0 && <div data-template-ceremonies className="contents">
+            {ceremonies.map((item, index) => {
+              const ceremony = formatDate(item.date);
+              return <div key={index} data-template-ceremony-item className="flex w-full flex-col items-center gap-6 md:gap-8">
+                <p className="font-mg-times whitespace-pre-line text-center text-sm uppercase md:text-lg">{item.title}</p>
+                {item.time && <p className="text-sm uppercase md:text-lg">{t("atTime", { time: item.time })}</p>}
+                {ceremony && <DateBlock date={ceremony} />}
+              </div>;
+            })}
+          </div>}
         </PalaceSection>
 
         {gallery.length > 0 && <section className="relative z-10 px-[9%] py-[8%] md:px-[12%]">

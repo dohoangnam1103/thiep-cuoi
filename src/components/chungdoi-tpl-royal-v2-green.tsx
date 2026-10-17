@@ -19,7 +19,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
   orderByBrideFirst,
@@ -142,7 +142,10 @@ export function RoyalV2GreenInvitation({ content }: { content: ChungDoiDemoConte
   const t = useTranslations("invitationTemplate");
   const { couple, families, gallery, schedule, venue, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -243,21 +246,28 @@ export function RoyalV2GreenInvitation({ content }: { content: ChungDoiDemoConte
                 <span className="text-[10px] uppercase tracking-[0.12em] opacity-55 md:text-[13px]">{people[1].birthOrder}</span>
               </div>
 
-              <p className="mt-11 max-w-[280px] whitespace-pre-line text-[11px] font-semibold uppercase leading-6 tracking-[0.03em] opacity-70 md:max-w-[400px] md:text-[16px] md:leading-7">
-                {invitationCeremonyMessage(content)}
-              </p>
-              {couple.ceremonyTime ? (
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide opacity-70 md:text-[16px]">
-                  {t("atTime", { time: couple.ceremonyTime })}
-                </p>
-              ) : null}
-              {ceremony ? (
-                <div className="mt-7 flex flex-col items-center gap-5">
-                  <DateStrip date={ceremony} />
-                  <span className="text-[16px] font-semibold opacity-70 md:text-[22px]">{ceremony.yearNumber}</span>
-                  <span className="text-[10px] opacity-70 md:text-[14px]"><LunarDate value={ceremony.lunar} /></span>
-                </div>
-              ) : null}
+              {ceremonies.length > 0 ? <div data-template-ceremonies className="contents">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return <div key={index} data-template-ceremony-item className="contents">
+                    <p className="mt-11 max-w-[280px] whitespace-pre-line text-[11px] font-semibold uppercase leading-6 tracking-[0.03em] opacity-70 md:max-w-[400px] md:text-[16px] md:leading-7">
+                      {item.title}
+                    </p>
+                    {item.time ? (
+                      <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide opacity-70 md:text-[16px]">
+                        {t("atTime", { time: item.time })}
+                      </p>
+                    ) : null}
+                    {ceremony ? (
+                      <div className="mt-7 flex flex-col items-center gap-5">
+                        <DateStrip date={ceremony} />
+                        <span className="text-[16px] font-semibold opacity-70 md:text-[22px]">{ceremony.yearNumber}</span>
+                        <span className="text-[10px] opacity-70 md:text-[14px]"><LunarDate value={ceremony.lunar} /></span>
+                      </div>
+                    ) : null}
+                  </div>;
+                })}
+              </div> : null}
             </div>
           </div>
         </section>

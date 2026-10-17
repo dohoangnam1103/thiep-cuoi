@@ -429,9 +429,10 @@ export function NguyetAnhSleeveInvitationBody({
         className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-7 sm:py-28"
       >
         <SectionTitle id="sleeve-events-heading">{t("ceremony")}</SectionTitle>
-        <div className="mt-11 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-12">
+        <div data-template-ceremonies className="mt-11 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-12">
           {ceremonies.map((ceremony, index) => (
             <div
+              data-template-ceremony-item
               key={`${ceremony.title}-${ceremony.date}-${ceremony.time}`}
               className={cn(
                 "min-w-0",

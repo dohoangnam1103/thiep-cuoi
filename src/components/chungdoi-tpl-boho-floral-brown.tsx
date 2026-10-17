@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroPhotos, orderedCouple } from "@/lib/invitation-display";
 import {
@@ -35,6 +36,7 @@ function BohoDivider() {
 export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
+  const t = useTranslations("invitationTemplate");
   const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -133,17 +135,21 @@ export function BohoFloralInvitation({ content }: { content: ChungDoiDemoContent
             <div data-template-ceremonies data-boho-ceremonies className="flex w-full flex-col items-center gap-8">
               {ceremonies.map((ceremony, index) => {
                 const ceremonyDate = formatDate(ceremony.date);
-                return ceremonyDate ? (
+                return (
                   <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-1 text-center">
                     {ceremony.title ? <span className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{ceremony.title}</span> : null}
                     {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
-                    <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
-                      <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>Tháng {ceremonyDate.month}</span>
-                    </div>
-                    <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
-                    <div className="text-xs opacity-75 md:text-sm">{ceremonyDate.lunar}</div>
+                    {ceremonyDate ? (
+                      <>
+                        <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                          <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>{t("month", { month: ceremonyDate.month })}</span>
+                        </div>
+                        <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                        <div className="text-xs opacity-75 md:text-sm">{ceremonyDate.lunar}</div>
+                      </>
+                    ) : null}
                   </div>
-                ) : null;
+                );
               })}
             </div>
           </section>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -74,9 +74,13 @@ function ParentColumn({ title, father, mother, address }: { title: string; fathe
 }
 
 export function SunflowerInvitation({ content }: { content: ChungDoiDemoContent }) {
+  const t = useTranslations("invitationTemplate");
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const banquetTime = venue.banquetTime || couple.time;
@@ -151,16 +155,27 @@ export function SunflowerInvitation({ content }: { content: ChungDoiDemoContent 
               <h3 className="flex min-h-[80px] w-[80%] items-center justify-center whitespace-nowrap font-couple-garamond text-[35px] leading-[46px] md:text-[38px] md:leading-[54px]" style={{ color: GOLD }}>{people[1].fullName}</h3>
               <p className="text-[10px] uppercase tracking-[0.25em]">{people[1].birthOrder}</p>
             </div>
-            {ceremony ? (
-              <div className="mt-8 flex flex-col items-center gap-[6px] text-[12px] uppercase tracking-[0.04em] md:text-[14px]">
-                <p className="whitespace-pre-line leading-relaxed">{couple.ceremonyHeader}</p>
-                <p>Vào lúc {couple.ceremonyTime}</p>
-                <div className="flex items-center gap-[9px] md:gap-[15px]">
-                  <span>{ceremony.weekday}</span>
-                  <strong className="text-[52px] font-normal leading-none md:text-[57px]" style={{ color: GOLD }}>{ceremony.day}</strong>
-                  <span className="border-l pl-3 text-left md:pl-[15px]" style={{ borderColor: hexToRgba(OLIVE, 0.4) }}>Tháng {ceremony.month}<br />{ceremony.yearNumber}</span>
-                </div>
-                <p className="text-[11px] tracking-[0.12em] md:text-sm">{ceremony.lunar}</p>
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies className="mt-8 flex w-full flex-col items-center gap-8">
+                {ceremonies.map((ceremony, index) => {
+                  const ceremonyDate = formatDate(ceremony.date);
+                  return (
+                    <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`} className="flex flex-col items-center gap-[6px] text-[12px] uppercase tracking-[0.04em] md:text-[14px]">
+                      {ceremony.title ? <p className="whitespace-pre-line leading-relaxed">{ceremony.title}</p> : null}
+                      {ceremony.time ? <p>{t("atTime", { time: ceremony.time })}</p> : null}
+                      {ceremonyDate ? (
+                        <>
+                          <div className="flex items-center gap-[9px] md:gap-[15px]">
+                            <span>{ceremonyDate.weekday}</span>
+                            <strong className="text-[52px] font-normal leading-none md:text-[57px]" style={{ color: GOLD }}>{ceremonyDate.day}</strong>
+                            <span className="border-l pl-3 text-left md:pl-[15px]" style={{ borderColor: hexToRgba(OLIVE, 0.4) }}>{t("month", { month: ceremonyDate.month })}<br />{ceremonyDate.yearNumber}</span>
+                          </div>
+                          <p className="text-[11px] tracking-[0.12em] md:text-sm">{ceremonyDate.lunar}</p>
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
             ) : null}
           </div>

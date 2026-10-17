@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -16,7 +17,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const MAROON_BASE_FROM = "#5C0A11";
 const MAROON_BASE_TO = "#7A0C15";
@@ -88,9 +89,11 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
   const people = orderedCouple(content);
   const BASE_GRADIENT = `linear-gradient(to bottom right, ${MAROON_BASE_FROM}, ${MAROON_BASE_TO}, ${MAROON_BASE_FROM})`;
   const wedding = formatDate(couple.date);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const ceremonies = content.ceremonies || couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim()
+    ? invitationCeremonies(content)
+    : [];
   const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
-  const ceremonyWeekdayUpper = ceremony ? ceremony.weekday.toUpperCase() : "";
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const [giftOpen, setGiftOpen] = useState(false);
@@ -150,13 +153,22 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
               <h3 className="text-[30px] leading-[1.15] md:text-[40px]" style={{ color: CREAM }}>{people[1].fullName}</h3>
             </div>
             {/* ceremony date */}
-            <div className="flex flex-col items-center gap-2 text-center" style={{ color: CREAM }}>
-              <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
-              {couple.ceremonyTime ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: PINK }}>Vào lúc {couple.ceremonyTime}</p> : null}
-              {ceremony ? <MaroonDateRow weekday={ceremonyWeekdayUpper} day={ceremony.day} month={ceremony.month} /> : null}
-              {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: PINK }}>{ceremony.yearNumber}</div> : null}
-              {ceremony ? <div className="text-xs opacity-75 md:text-sm" style={{ color: PINK_MUTED }}>{ceremony.lunar}</div> : null}
-            </div>
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies className="flex w-full flex-col gap-8">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return (
+                    <div data-template-ceremony-item key={index} className="flex flex-col items-center gap-2 text-center" style={{ color: CREAM }}>
+                      <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{item.title}</span>
+                      {item.time ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: PINK }}>{t("atTime", { time: item.time })}</p> : null}
+                      {ceremony ? <MaroonDateRow weekday={ceremony.weekday.toUpperCase()} day={ceremony.day} month={ceremony.month} /> : null}
+                      {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: PINK }}>{ceremony.yearNumber}</div> : null}
+                      {ceremony ? <div className="text-xs opacity-75 md:text-sm" style={{ color: PINK_MUTED }}>{ceremony.lunar}</div> : null}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
           {/* Album */}

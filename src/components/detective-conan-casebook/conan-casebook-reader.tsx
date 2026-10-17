@@ -575,11 +575,13 @@ function CasebookChapterComponent({
         />
         <div
           className="mt-3 grid min-h-0 w-full min-w-0 flex-1 gap-2 overflow-y-auto overscroll-contain pr-1 sm:mt-6 sm:gap-3"
+          data-template-ceremonies
           data-reader-swipe-ignore
         >
           {ceremonies.map((ceremony) => (
             <section
               className="grid min-w-0 grid-cols-[4.5rem_1fr] items-center border border-[#102236]/15 bg-white/42 px-2 py-2 text-center sm:grid-cols-[6rem_1fr] sm:px-4 sm:py-3"
+              data-template-ceremony-item
               key={`${ceremony.title}-${ceremony.date}-${ceremony.time}`}
             >
               <div className="border-r border-[#102236]/14 pr-2">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
@@ -41,6 +42,7 @@ function RedHeading({ children }: { children: React.ReactNode }) {
 export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
+  const t = useTranslations("invitationTemplate");
   const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -130,17 +132,21 @@ export function DragonPhoenixV3Invitation({ content }: { content: ChungDoiDemoCo
             <div data-template-ceremonies data-dragon-phoenix-v3-ceremonies className="flex w-full flex-col items-center gap-8">
               {ceremonies.map((ceremony, index) => {
                 const ceremonyDate = formatDate(ceremony.date);
-                return ceremonyDate ? (
+                return (
                   <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-1 text-center">
                     {ceremony.title ? <div className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[20px]">{ceremony.title}</div> : null}
                     {ceremony.time ? <div className="text-[20px] font-semibold md:text-[30px]">{ceremony.time}</div> : null}
-                    <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
-                      <span>{ceremonyDate.weekday}</span><span style={{ color: GOLD }}>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span style={{ color: GOLD }}>|</span><span>Tháng {ceremonyDate.month}</span>
-                    </div>
-                    <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
-                    <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{ceremonyDate.lunar}</div>
+                    {ceremonyDate ? (
+                      <>
+                        <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
+                          <span>{ceremonyDate.weekday}</span><span style={{ color: GOLD }}>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span style={{ color: GOLD }}>|</span><span>{t("month", { month: ceremonyDate.month })}</span>
+                        </div>
+                        <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                        <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{ceremonyDate.lunar}</div>
+                      </>
+                    ) : null}
                   </div>
-                ) : null;
+                );
               })}
             </div>
           </section>

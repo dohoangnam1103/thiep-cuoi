@@ -24,7 +24,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { EnsoCircle, HairRule } from "@/components/chungdoi-tpl-ornaments";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -56,7 +56,10 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
   const t = useTranslations("invitationTemplate");
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
 
@@ -154,28 +157,29 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
           </Block>
 
           {/* Lễ cưới */}
-          {ceremony ? (
-            <Block className="gap-10">
-              <Marker>{t("ceremony")}</Marker>
-              <p className="max-w-[400px] whitespace-pre-line text-center text-[12px] leading-[2] tracking-[0.12em] text-[#2c2a26]/70">
-                {invitationCeremonyMessage(content)}
-              </p>
-              <div className="flex flex-col items-center gap-3">
-                <span className="font-serif text-[52px] leading-none md:text-[64px]">
-                  {ceremony.day}
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.36em] text-[#2c2a26]/55">
-                  {t("month", { month: ceremony.month })} · {ceremony.yearNumber}
-                </span>
-                {couple.ceremonyTime ? (
-                  <span className="text-[15px] tracking-[0.2em]">{couple.ceremonyTime}</span>
-                ) : null}
-                <span className="text-[11px] text-[#2c2a26]/45">
-                  {ceremony.lunar}
-                </span>
-              </div>
-            </Block>
-          ) : null}
+          {ceremonies.length > 0 ? <div data-template-ceremonies className="contents">
+            {ceremonies.map((item, index) => {
+              const ceremony = formatDate(item.date);
+              return <div key={index} data-template-ceremony-item className="contents">
+                <Block className="gap-10">
+                  <Marker>{t("ceremony")}</Marker>
+                  <p className="max-w-[400px] whitespace-pre-line text-center text-[12px] leading-[2] tracking-[0.12em] text-[#2c2a26]/70">
+                    {item.title}
+                  </p>
+                  <div className="flex flex-col items-center gap-3">
+                    {ceremony ? <>
+                      <span className="font-serif text-[52px] leading-none md:text-[64px]">{ceremony.day}</span>
+                      <span className="text-[10px] uppercase tracking-[0.36em] text-[#2c2a26]/55">
+                        {t("month", { month: ceremony.month })} · {ceremony.yearNumber}
+                      </span>
+                    </> : null}
+                    {item.time ? <span className="text-[15px] tracking-[0.2em]">{item.time}</span> : null}
+                    {ceremony ? <span className="text-[11px] text-[#2c2a26]/45">{ceremony.lunar}</span> : null}
+                  </div>
+                </Block>
+              </div>;
+            })}
+          </div> : null}
 
           {/* Album */}
           {gallery.length > 0 ? (

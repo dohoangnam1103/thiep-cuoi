@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -139,6 +140,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
   const ENVELOPE = palette.envelope;
   const people = orderedCouple(content);
   const headerNames = people.map((person) => person.shortName);
+  const t = useTranslations("invitationTemplate");
   const ceremonies = invitationCeremonies(content);
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
@@ -275,19 +277,23 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
             <div data-template-ceremonies data-dragon-phoenix-ceremonies className="flex w-full flex-col items-center gap-10" style={{ fontFamily: LPD_BODY, color: GOLD }}>
               {ceremonies.map((ceremony, index) => {
                 const ceremonyDate = formatDate(ceremony.date);
-                return ceremonyDate ? (
+                return (
                   <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${index}`} className="flex flex-col items-center gap-4 text-center">
                     <div className="flex flex-col items-center gap-1">
                       {ceremony.title ? <span className="text-[15px] font-semibold md:text-[19px]" style={{ whiteSpace: "pre-line" }}>{ceremony.title}</span> : null}
                       <span className="text-[13px] opacity-70 md:text-[15px]" style={{ whiteSpace: "pre-line" }}>婚禮儀式舉行地點{"\n"}自宅</span>
                     </div>
-                    <p className="text-[15px] font-semibold uppercase md:text-[18px]">Vào lúc <span className="opacity-70">/ 時間</span></p>
+                    {ceremony.time ? <p className="text-[15px] font-semibold uppercase md:text-[18px]">{t("ceremonyAtTime")} <span className="opacity-70">/ 時間</span></p> : null}
                     {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
-                    <LpdDateRow vnWeekday={ceremonyDate.weekday} cnWeekday={LPD_CN_WEEKDAY[new Date(`${ceremony.date}T00:00:00`).getDay()]} day={ceremonyDate.day} month={ceremonyDate.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
-                    <div className="text-[22px] font-semibold md:text-[26px]">{ceremonyDate.yearNumber}</div>
-                    <div className="text-[14px] opacity-80 md:text-[16px]">{ceremonyDate.lunar}</div>
+                    {ceremonyDate ? (
+                      <>
+                        <LpdDateRow vnWeekday={ceremonyDate.weekday} cnWeekday={LPD_CN_WEEKDAY[new Date(`${ceremony.date}T00:00:00`).getDay()]} day={ceremonyDate.day} month={ceremonyDate.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
+                        <div className="text-[22px] font-semibold md:text-[26px]">{ceremonyDate.yearNumber}</div>
+                        <div className="text-[14px] opacity-80 md:text-[16px]">{ceremonyDate.lunar}</div>
+                      </>
+                    ) : null}
                   </div>
-                ) : null;
+                );
               })}
             </div>
 

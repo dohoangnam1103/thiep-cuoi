@@ -1,0 +1,30 @@
+[
+  {
+    "width": 1440,
+    "ceremonies": 2,
+    "times": [
+      "07:00",
+      "09:00"
+    ],
+    "sameSection": true,
+    "beforeAlbum": true,
+    "beforeFooter": true,
+    "additionalCards": 0,
+    "documentWidth": 1440,
+    "pageErrors": []
+  },
+  {
+    "width": 390,
+    "ceremonies": 2,
+    "times": [
+      "07:00",
+      "09:00"
+    ],
+    "sameSection": true,
+    "beforeAlbum": true,
+    "beforeFooter": true,
+    "additionalCards": 0,
+    "documentWidth": 390,
+    "pageErrors": []
+  }
+]

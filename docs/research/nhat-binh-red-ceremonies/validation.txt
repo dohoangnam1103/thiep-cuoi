@@ -1,0 +1,12 @@
+2026-10-17 — Nhật Bình Đỏ ceremony regression
+Runtime: src/components/chungdoi-tpl-nhat-binh.tsx; nhat-binh-red registry entry only.
+Lint: 0 errors, 412 existing warnings; scoped changed files clean.
+Typecheck: passed.
+Typecheck tests: passed.
+Unit suite: 937 passed, 0 failed; deploy-fast-safety passed.
+Independent review: empty legacy case corrected, no remaining findings.
+Browser validation: 4 passed (58.3s), 1440 / 768 / 390 / 320 x 900.
+Browser environment: Next dev --webpack, localhost:3120, system Chrome, reduced motion, isolated test DB, 2D cover.
+All four screenshots inspected. Every ceremony in the native section, independent title/date/time, before album and footer; zero additional-ceremonies blocks, zero horizontal overflow, zero pageerror.
+Production build remains blocked: Turbopack sharp-libvips directory/NFT panic; Webpack node:crypto import from payment.ts through PaymentPanel.tsx.
+Production customer invitation expired; not visually verified. No deployment.

@@ -20,7 +20,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { HairRule, OrnamentDivider } from "@/components/chungdoi-tpl-ornaments";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccounts,
   invitationHeroImage,
   invitationOpeningMessage,
@@ -68,7 +68,10 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
   const hero = invitationHeroImage(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -154,12 +157,17 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
               {people.map((person) => (
                 <DataRow key={person.side} label={t(person.side === "bride" ? "bride" : "groom")} value={person.fullName} />
               ))}
-              {ceremony ? (
-                <DataRow
-                  label={t("ceremony")}
-                  value={`${invitationCeremonyMessage(content)} · ${couple.ceremonyTime} · ${ceremony.weekday}, ${ceremony.day}/${ceremony.monthNumber}/${ceremony.yearNumber}`}
-                />
-              ) : null}
+              {ceremonies.length > 0 ? <div data-template-ceremonies className="contents">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return <div key={index} data-template-ceremony-item className="contents">
+                    <DataRow
+                      label={t("ceremony")}
+                      value={[item.title, item.time, ceremony ? `${ceremony.weekday}, ${ceremony.day}/${ceremony.monthNumber}/${ceremony.yearNumber}` : ""].filter(Boolean).join(" · ")}
+                    />
+                  </div>;
+                })}
+              </div> : null}
               {reception ? (
                 <DataRow
                   label={t("reception")}

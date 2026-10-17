@@ -19,7 +19,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 
 const ASSET_ROOT = "/chungdoi/images/themes/crystal-floral-red";
 const RED = "#9c1f2c";
@@ -81,7 +81,10 @@ export function CrystalFloralRedInvitation({
   const t = useTranslations("invitationTemplate");
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const banquetTime = venue.banquetTime || couple.time;
@@ -194,29 +197,36 @@ export function CrystalFloralRedInvitation({
               <p className="uppercase tracking-[0.18em] text-[#560207]/75">{people[1].birthOrder}</p>
             </div>
 
-            {ceremony ? (
-              <div className="relative flex flex-col items-center gap-3 text-center">
-                <img
-                  src={`${ASSET_ROOT}/flower3.webp`}
-                  alt=""
-                  aria-hidden
-                  className="pointer-events-none absolute -left-[18%] top-1/2 -z-10 h-[260px] w-auto max-w-none -translate-y-1/2 rotate-[20deg] object-contain md:h-[430px]"
-                />
-                <p className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[18px]">
-                  {couple.ceremonyHeader}
-                </p>
-                <p className="text-[16px] uppercase">{t("atTime", { time: couple.ceremonyTime })}</p>
-                <div className="mt-1 flex items-center justify-center gap-5 text-[#9c1f2c] md:gap-7">
-                  <span className="text-[12px] uppercase md:text-[16px]">{ceremony.weekday}</span>
-                  <span className="text-xl text-[#560207]/35">|</span>
-                  <span className="text-[34px] md:text-[44px]">{ceremony.day}</span>
-                  <span className="text-xl text-[#560207]/35">|</span>
-                  <span className="text-[12px] uppercase md:text-[16px]">{t("month", { month: ceremony.month })}</span>
-                </div>
-                <p className="text-[20px] md:text-[26px]">{ceremony.yearNumber}</p>
-                <p className="text-xs uppercase tracking-[0.12em] md:text-sm">{ceremony.lunar}</p>
-              </div>
-            ) : null}
+            {ceremonies.length > 0 ? <div data-template-ceremonies className="contents">
+              {ceremonies.map((item, index) => {
+                const ceremony = formatDate(item.date);
+                return (
+                  <div key={index} data-template-ceremony-item className="relative flex flex-col items-center gap-3 text-center">
+                    <img
+                      src={`${ASSET_ROOT}/flower3.webp`}
+                      alt=""
+                      aria-hidden
+                      className="pointer-events-none absolute -left-[18%] top-1/2 -z-10 h-[260px] w-auto max-w-none -translate-y-1/2 rotate-[20deg] object-contain md:h-[430px]"
+                    />
+                    <p className="whitespace-pre-line text-[16px] uppercase leading-relaxed md:text-[18px]">
+                      {item.title}
+                    </p>
+                    {item.time ? <p className="text-[16px] uppercase">{t("atTime", { time: item.time })}</p> : null}
+                    {ceremony ? <>
+                      <div className="mt-1 flex items-center justify-center gap-5 text-[#9c1f2c] md:gap-7">
+                        <span className="text-[12px] uppercase md:text-[16px]">{ceremony.weekday}</span>
+                        <span className="text-xl text-[#560207]/35">|</span>
+                        <span className="text-[34px] md:text-[44px]">{ceremony.day}</span>
+                        <span className="text-xl text-[#560207]/35">|</span>
+                        <span className="text-[12px] uppercase md:text-[16px]">{t("month", { month: ceremony.month })}</span>
+                      </div>
+                      <p className="text-[20px] md:text-[26px]">{ceremony.yearNumber}</p>
+                      <p className="text-xs uppercase tracking-[0.12em] md:text-sm">{ceremony.lunar}</p>
+                    </> : null}
+                  </div>
+                );
+              })}
+            </div> : null}
 
             <img
               src={`${ASSET_ROOT}/filigree.webp`}

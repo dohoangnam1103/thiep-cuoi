@@ -38,8 +38,8 @@ function validateManifest({ fileName, manifest }: LoadedManifest) {
 
   assertNonEmpty(manifest.viRouteSlug, "viRouteSlug", fileName);
   assertNonEmpty(manifest.rendererExport, "rendererExport", fileName);
-  if (!["inline-all", "post-template"].includes(manifest.ceremonyRendering)) {
-    fail(`${fileName}: ceremonyRendering phải là inline-all hoặc post-template`);
+  if (manifest.ceremonyRendering !== "inline-all") {
+    fail(`${fileName}: ceremonyRendering phải là inline-all; mọi lễ phải nằm trong section gốc`);
   }
   assertNonEmpty(manifest.catalog.name, "catalog.name", fileName);
   assertNonEmpty(manifest.catalog.description, "catalog.description", fileName);

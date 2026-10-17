@@ -26,6 +26,7 @@ const templatesWithInternalCeremonies = [
   ["chungdoi-tpl-porcelain-family.tsx", "data-template-ceremonies"],
   ["chungdoi-tpl-floral-base.tsx", "data-floral-ceremonies"],
   ["chungdoi-tpl-boho-floral-brown.tsx", "data-boho-ceremonies"],
+  ["chungdoi-tpl-boho-floral-green.tsx", "data-boho-green-ceremonies"],
   ["chungdoi-tpl-dragon-phoenix.tsx", "data-dragon-phoenix-ceremonies"],
   ["chungdoi-tpl-dragon-phoenix-v3-red.tsx", "data-dragon-phoenix-v3-ceremonies"],
   ["chungdoi-tpl-minimalism-dark-red.tsx", "data-minimalism-dark-red-ceremonies"],
@@ -133,7 +134,7 @@ test("every manifest declares an explicit ceremony rendering contract", () => {
     }
     assert.match(
       source,
-      /ceremonyRendering:\s*"(?:inline-all|post-template)"/,
+      /ceremonyRendering:\s*"inline-all"/,
       `${file}: explicit ceremonyRendering`,
     );
   }

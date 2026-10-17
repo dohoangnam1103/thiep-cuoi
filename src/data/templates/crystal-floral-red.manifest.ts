@@ -26,7 +26,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "hoa-thuy-tinh-do",
   rendererExport: "CrystalFloralRedInvitation",
-  ceremonyRendering: "post-template",
+  ceremonyRendering: "inline-all",
   heroImageCount: 0,
   catalog: {
     name: "Crystal Floral Red",

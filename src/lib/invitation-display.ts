@@ -29,13 +29,11 @@ export function invitationCeremonies(content: ChungDoiDemoContent) {
       .filter((ceremony) => ceremony.title || ceremony.date || ceremony.time);
   }
 
-  const legacy = {
-    title: content.couple.ceremonyHeader?.trim()
-      || defaultCeremonyMessage(content.couple.ceremonyType),
-    date: content.couple.ceremonyDate.trim(),
-    time: content.couple.ceremonyTime.trim(),
-  };
-  return legacy.title || legacy.date || legacy.time ? [legacy] : [];
+  const title = content.couple.ceremonyHeader?.trim() || "";
+  const date = content.couple.ceremonyDate.trim();
+  const time = content.couple.ceremonyTime.trim();
+  if (!title && !date && !time) return [];
+  return [{ title: title || defaultCeremonyMessage(content.couple.ceremonyType), date, time }];
 }
 
 export function invitationCeremonyMessage(content: ChungDoiDemoContent): string {

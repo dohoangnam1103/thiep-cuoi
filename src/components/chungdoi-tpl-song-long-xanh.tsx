@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -15,7 +16,7 @@ import {
   parseISODate,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const SLX_GREEN = "#1F3A25";
 const SLX_LINEN = "#ECE8D6";
@@ -77,13 +78,14 @@ function SongLongXanhWishForm() {
 export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoContent }) {
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const ceremonies = content.ceremonies || couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim()
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const recDate = parseISODate(couple.date);
   const krWeekday = recDate ? KR_DAYS[recDate.getDay()] : "";
-  const ceremonyDate = parseISODate(couple.ceremonyDate);
-  const ceremonyKrWeekday = ceremonyDate ? KR_DAYS[ceremonyDate.getDay()] : "";
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const banquetTime = venue.banquetTime || couple.time || "11:00";
 
@@ -173,32 +175,43 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
             <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>{people[1].birthOrder}</div>
           </div>
 
-          <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>
-            <div className="flex flex-col items-center gap-1" style={{ color: SLX_GREEN }}>
-              <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
-              <span className="text-[13px] opacity-80 md:text-[14px]">결혼식 장소 자택</span>
+          {ceremonies.length > 0 ? (
+            <div data-template-ceremonies className="flex w-full flex-col gap-8">
+              {ceremonies.map((item, index) => {
+                const ceremony = formatDate(item.date);
+                const ceremonyDate = parseISODate(item.date);
+                const ceremonyKrWeekday = ceremonyDate ? KR_DAYS[ceremonyDate.getDay()] : "";
+                return (
+                  <div data-template-ceremony-item key={index} className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: SLX_GRAY, fontFamily: SLX_SERIF }}>
+                    <div className="flex flex-col items-center gap-1" style={{ color: SLX_GREEN }}>
+                      <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{item.title}</span>
+                      <span className="text-[13px] opacity-80 md:text-[14px]">결혼식 장소 자택</span>
+                    </div>
+                    {item.time ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: SLX_GRAY }}>{t("ceremonyAtTime")} / 시간 {item.time}</p> : null}
+                    {ceremony ? (
+                      <>
+                        <div className="mt-5 flex items-center justify-center" style={{ color: SLX_GREEN }}>
+                          <span className="flex w-[70px] flex-col items-center whitespace-nowrap text-center text-[13px] uppercase md:w-[85px] md:text-[14px]" style={{ color: SLX_GRAY }}>
+                            <span>{ceremony.weekday}</span>
+                            <span className="normal-case opacity-80">{ceremonyKrWeekday}</span>
+                          </span>
+                          <span className="mx-3 h-[34px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: SLX_GRAY }} />
+                          <span className="text-[32px] md:text-[38px]" style={{ color: SLX_GREEN }}>{ceremony.day}</span>
+                          <span className="mx-3 h-[34px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: SLX_GRAY }} />
+                          <span className="flex w-[70px] flex-col items-center whitespace-nowrap text-center text-[13px] uppercase md:w-[85px] md:text-[14px]" style={{ color: SLX_GRAY }}>
+                            <span>{t("month", { month: ceremony.month })}</span>
+                            <span className="normal-case opacity-80">{ceremony.monthNumber}월</span>
+                          </span>
+                        </div>
+                        <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{ceremony.yearNumber}</div>
+                        <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: SLX_GRAY }}>{ceremony.lunar}</div>
+                      </>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
-            {couple.ceremonyTime ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: SLX_GRAY }}>Vào lúc / 시간 {couple.ceremonyTime}</p> : null}
-            {ceremony ? (
-              <>
-                <div className="mt-5 flex items-center justify-center" style={{ color: SLX_GREEN }}>
-                  <span className="flex w-[70px] flex-col items-center whitespace-nowrap text-center text-[13px] uppercase md:w-[85px] md:text-[14px]" style={{ color: SLX_GRAY }}>
-                    <span>{ceremony.weekday}</span>
-                    <span className="normal-case opacity-80">{ceremonyKrWeekday}</span>
-                  </span>
-                  <span className="mx-3 h-[34px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: SLX_GRAY }} />
-                  <span className="text-[32px] md:text-[38px]" style={{ color: SLX_GREEN }}>{ceremony.day}</span>
-                  <span className="mx-3 h-[34px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: SLX_GRAY }} />
-                  <span className="flex w-[70px] flex-col items-center whitespace-nowrap text-center text-[13px] uppercase md:w-[85px] md:text-[14px]" style={{ color: SLX_GRAY }}>
-                    <span>Tháng {ceremony.month}</span>
-                    <span className="normal-case opacity-80">{ceremony.monthNumber}월</span>
-                  </span>
-                </div>
-                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{ceremony.yearNumber}</div>
-                <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: SLX_GRAY }}>{ceremony.lunar}</div>
-              </>
-            ) : null}
-          </div>
+          ) : null}
         </div>
 
         {gallery.length > 0 ? (

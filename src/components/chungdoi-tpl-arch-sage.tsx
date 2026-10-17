@@ -27,7 +27,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { ArchOutline, LeafSprig } from "@/components/chungdoi-tpl-ornaments";
 import {
-  invitationCeremonyMessage,
+  invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
   invitationHeroImage,
@@ -72,7 +72,10 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
   const t = useTranslations("invitationTemplate");
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -182,24 +185,27 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
           </section>
 
           {/* Lễ cưới */}
-          {ceremony ? (
-            <section className="flex w-full flex-col items-center gap-7">
-              <ArchHeading>{t("ceremony")}</ArchHeading>
-              <p className="max-w-[400px] whitespace-pre-line text-center text-[12.5px] uppercase leading-[1.9] tracking-[0.1em] text-[#33402f]/70">
-                {invitationCeremonyMessage(content)}
-              </p>
-              <Arch className="w-[200px] px-5 pb-6 pt-14 text-center md:w-[240px]">
-                <div className="font-serif text-[46px] leading-none md:text-[56px]">{ceremony.day}</div>
-                <div className="mt-2 text-[10px] uppercase tracking-[0.3em] text-[#33402f]/55">
-                  {t("month", { month: ceremony.month })} · {ceremony.yearNumber}
-                </div>
-                {couple.ceremonyTime ? (
-                  <div className="mt-3 text-[15px] tracking-[0.18em]">{couple.ceremonyTime}</div>
-                ) : null}
-                <div className="mt-1 text-[11px] text-[#33402f]/50">{ceremony.lunar}</div>
-              </Arch>
-            </section>
-          ) : null}
+          {ceremonies.length > 0 ? <div data-template-ceremonies className="contents">
+            {ceremonies.map((item, index) => {
+              const ceremony = formatDate(item.date);
+              return <section key={index} data-template-ceremony-item className="flex w-full flex-col items-center gap-7">
+                <ArchHeading>{t("ceremony")}</ArchHeading>
+                <p className="max-w-[400px] whitespace-pre-line text-center text-[12.5px] uppercase leading-[1.9] tracking-[0.1em] text-[#33402f]/70">
+                  {item.title}
+                </p>
+                <Arch className="w-[200px] px-5 pb-6 pt-14 text-center md:w-[240px]">
+                  {ceremony ? <>
+                    <div className="font-serif text-[46px] leading-none md:text-[56px]">{ceremony.day}</div>
+                    <div className="mt-2 text-[10px] uppercase tracking-[0.3em] text-[#33402f]/55">
+                      {t("month", { month: ceremony.month })} · {ceremony.yearNumber}
+                    </div>
+                  </> : null}
+                  {item.time ? <div className="mt-3 text-[15px] tracking-[0.18em]">{item.time}</div> : null}
+                  {ceremony ? <div className="mt-1 text-[11px] text-[#33402f]/50">{ceremony.lunar}</div> : null}
+                </Arch>
+              </section>;
+            })}
+          </div> : null}
 
           {/* Tiệc cưới + lịch + countdown */}
           <section className="flex w-full flex-col items-center gap-7">

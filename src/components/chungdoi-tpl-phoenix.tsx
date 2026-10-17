@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, type CSSProperties } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -18,7 +19,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 import type { ZodiacInvitationArtwork } from "@/lib/zodiac-invitation-artwork";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +103,10 @@ export function PhoenixInvitation({
   const M = invitationColor || content.theme.primaryColor || "#710001";
   const CREAM = "#ffffff";
   const headerNames = people.map((person) => person.shortName);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const ceremonies = content.ceremonies || couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim()
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -234,10 +238,21 @@ export function PhoenixInvitation({
               <h3 className="font-couple-garamond flex w-full items-center justify-center text-[30px] leading-[1.15] md:text-[40px] md:leading-[1.2]">{people[1].fullName}</h3>
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]">{people[1].birthOrder}</div>
             </div>
-            <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{invitationCeremonyMessage(content)}</p>
-            {couple.ceremonyTime ? <p className="text-[14px] md:text-[15px]">Vào lúc {couple.ceremonyTime}</p> : null}
-            {ceremony ? <p className="text-[14px] font-semibold uppercase md:text-[16px]">{ceremony.weekday}, {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}</p> : null}
-            {ceremony ? <p className="text-[12px] opacity-75 md:text-[13px]">{ceremony.lunar}</p> : null}
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies className="flex w-full flex-col gap-8">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return (
+                    <div data-template-ceremony-item key={index} className="flex w-full flex-col items-center gap-6 text-center md:gap-8">
+                      <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{item.title}</p>
+                      {item.time ? <p className="text-[14px] md:text-[15px]">{t("atTime", { time: item.time })}</p> : null}
+                      {ceremony ? <p className="text-[14px] font-semibold uppercase md:text-[16px]">{ceremony.weekday}, {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}</p> : null}
+                      {ceremony ? <p className="text-[12px] opacity-75 md:text-[13px]">{ceremony.lunar}</p> : null}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
         </section>
 

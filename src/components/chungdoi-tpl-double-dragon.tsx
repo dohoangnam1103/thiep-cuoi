@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
@@ -15,7 +16,7 @@ import {
   GiftQrGrid,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationCouple, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationCouple, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const DD_TEX = "/images/double-dragon.webp";
 const DD_HY = "/images/chu-hy.webp";
@@ -104,7 +105,10 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
   const DD_GRAY = palette.gray;
   const DD_AVATARS = palette.avatars;
   const people = orderedCouple(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const ceremonies = content.ceremonies || couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim()
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -205,25 +209,34 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
               <div className="text-[12px] uppercase tracking-[0.2em] md:text-[13px]" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>{people[1].birthOrder}</div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>
-              <div style={{ color: DD_RED }}>
-                <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{invitationCeremonyMessage(content)}</span>
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies className="flex w-full flex-col gap-8">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return (
+                    <div data-template-ceremony-item key={index} className="flex w-full flex-col items-center justify-center px-4 py-8 sm:px-6" style={{ color: DD_GRAY, fontFamily: DD_SERIF }}>
+                      <div style={{ color: DD_RED }}>
+                        <span className="flex flex-col items-center whitespace-pre-line text-center text-[16px] leading-relaxed md:text-[20px]">{item.title}</span>
+                      </div>
+                      {item.time ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: DD_GRAY }}>{t("atTime", { time: item.time })}</p> : null}
+                      {ceremony ? (
+                        <>
+                          <div className="mt-5 flex items-center justify-center" style={{ color: DD_RED }}>
+                            <span className="w-[70px] whitespace-nowrap text-right text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>{ceremony.weekday}</span>
+                            <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
+                            <span className="text-[32px] md:text-[38px]" style={{ color: DD_RED }}>{ceremony.day}</span>
+                            <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
+                            <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>{t("month", { month: ceremony.month })}</span>
+                          </div>
+                          <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{ceremony.yearNumber}</div>
+                          <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: DD_GRAY }}>{ceremony.lunar}</div>
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
-              {couple.ceremonyTime ? <p className="mt-2 text-center text-[14px] uppercase md:text-[15px]" style={{ color: DD_GRAY }}>Vào lúc {couple.ceremonyTime}</p> : null}
-              {ceremony ? (
-                <>
-                  <div className="mt-5 flex items-center justify-center" style={{ color: DD_RED }}>
-                    <span className="w-[70px] whitespace-nowrap text-right text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>{ceremony.weekday}</span>
-                    <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
-                    <span className="text-[32px] md:text-[38px]" style={{ color: DD_RED }}>{ceremony.day}</span>
-                    <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
-                    <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>Tháng {ceremony.month}</span>
-                  </div>
-                  <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{ceremony.yearNumber}</div>
-                  <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: DD_GRAY }}>{ceremony.lunar}</div>
-                </>
-              ) : null}
-            </div>
+            ) : null}
           </div>
         </div>
 

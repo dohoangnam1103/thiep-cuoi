@@ -425,3 +425,11 @@ test("invitationGiftAccountLabel preserves populated rank and separator", () => 
   assert.equal(invitationGiftAccountLabel("Út Nữ", "Nguyễn Văn A"), "Út Nữ - Nguyễn Văn A");
   assert.equal(invitationGiftAccountLabel("Trưởng Nam", "Nguyễn Văn A", " — "), "Trưởng Nam — Nguyễn Văn A");
 });
+
+test("an absent legacy ceremony does not create a default-title event", () => {
+  const base = displayContent();
+  const content = { ...base, couple: { ...base.couple, ceremonyHeader: " ", ceremonyDate: " ", ceremonyTime: " " } };
+  assert.deepEqual(invitationCeremonies(content), []);
+  content.couple.ceremonyDate = "2031-01-11";
+  assert.deepEqual(invitationCeremonies(content), [{ title: "LỄ THÀNH HÔN SẼ ĐƯỢC CỬ HÀNH TẠI TƯ GIA", date: "2031-01-11", time: "" }]);
+});

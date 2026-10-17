@@ -3439,6 +3439,7 @@
     "weddingInformation": "Thông tin lễ cưới",
     "photoAlbum": "Album ảnh",
     "atTime": "Vào lúc {time}",
+    "ceremonyAtTime": "Vào lúc",
     "lunarDateLong": "(Tức ngày {day} tháng {month} năm {yearName})",
     "receptionInformation": "Thông tin tiệc cưới",
     "receptionStartsAt": "Tiệc cưới sẽ diễn ra vào lúc:",

@@ -9,7 +9,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "vom-xanh-thao-moc",
   rendererExport: "ArchSageInvitation",
-  ceremonyRendering: "post-template",
+  ceremonyRendering: "inline-all",
   catalog: {
     name: "Arch Sage",
     title: "Arch Sage Wedding Invitation - Layered Botanical Arches | Thiệp Mừng Online",

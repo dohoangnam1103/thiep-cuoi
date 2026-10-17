@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -18,7 +19,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const COBA_MARVIN = '"SVN-HC Marvin Visions", sans-serif';
 const COBA_HAYDON = '"SVN-HC Haydon Brush", cursive';
@@ -85,7 +86,10 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
   const BROWN = "#542E08";
   const CREAM = "#F8F3E0";
   const names = people.map((person) => person.shortName);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const ceremonies = content.ceremonies || couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim()
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -225,20 +229,29 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
             </div>
 
             {/* ceremony */}
-            <div className="relative flex flex-col items-center gap-4 py-[10px] text-center md:gap-5 md:py-[15px] lg:py-[20px]" style={{ fontFamily: COBA_HELV }}>
-              <div className="flex flex-col items-center gap-2" style={{ color: BROWN }}>
-                <span className="text-center text-[15px] font-bold md:text-[19px] lg:text-[20px]" style={{ whiteSpace: "pre-line" }}>{invitationCeremonyMessage(content)}</span>
-                <p className="text-center text-[15px] font-bold uppercase md:text-[19px] lg:text-[20px]">Vào lúc</p>
+            {ceremonies.length > 0 ? (
+              <div data-template-ceremonies className="flex w-full flex-col gap-8">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return (
+                    <div data-template-ceremony-item key={index} className="relative flex flex-col items-center gap-4 py-[10px] text-center md:gap-5 md:py-[15px] lg:py-[20px]" style={{ fontFamily: COBA_HELV }}>
+                      <div className="flex flex-col items-center gap-2" style={{ color: BROWN }}>
+                        <span className="text-center text-[15px] font-bold md:text-[19px] lg:text-[20px]" style={{ whiteSpace: "pre-line" }}>{item.title}</span>
+                        {item.time ? <p className="text-center text-[15px] font-bold uppercase md:text-[19px] lg:text-[20px]">{t("ceremonyAtTime")}</p> : null}
+                      </div>
+                      {item.time ? <div className="text-[20px] md:text-[30px]">{item.time}</div> : null}
+                      {ceremony ? (
+                        <>
+                          <CoBaDateRow weekday={ceremony.weekday} day={ceremony.day} month={ceremony.month} dayFontClass="text-[36px] md:text-[42px] lg:text-[46px]" gap="gap-2 md:gap-3" dividerLen={30} />
+                          <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.yearNumber}</div>
+                          <div className="text-[15px] font-bold md:text-[18px] lg:text-[19px]">{ceremony.lunar}</div>
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
-              {couple.ceremonyTime ? <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime}</div> : null}
-              {ceremony ? (
-                <>
-                  <CoBaDateRow weekday={ceremony.weekday} day={ceremony.day} month={ceremony.month} dayFontClass="text-[36px] md:text-[42px] lg:text-[46px]" gap="gap-2 md:gap-3" dividerLen={30} />
-                  <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.yearNumber}</div>
-                  <div className="text-[15px] font-bold md:text-[18px] lg:text-[19px]">{ceremony.lunar}</div>
-                </>
-              ) : null}
-            </div>
+            ) : null}
 
             {/* Album ảnh cưới */}
             {gallery.length > 0 ? (

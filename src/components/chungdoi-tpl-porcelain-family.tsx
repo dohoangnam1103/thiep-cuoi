@@ -124,12 +124,20 @@ function DateComposition({
 }) {
   const t = useTranslations("invitationTemplate");
   const value = formatDate(date);
-  if (!value) return null;
+  if (!value) {
+    return ceremony && time ? (
+      <div className={styles.ceremonyDate}>
+        <div className={styles.dateMeta}>
+          <span>{t("atTime", { time })}</span>
+        </div>
+      </div>
+    ) : null;
+  }
 
   return (
     <div className={styles.ceremonyDate}>
       <div className={styles.dateMeta}>
-        <span>{ceremony ? t("atTime", { time }) : value.weekday}</span>
+        {!ceremony || time ? <span>{ceremony ? t("atTime", { time }) : value.weekday}</span> : null}
         <span>{ceremony ? value.weekday : time}</span>
       </div>
       <div className={styles.dateNumber}>

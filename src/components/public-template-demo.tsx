@@ -66,7 +66,7 @@ export async function publicDemoMetadata({
   }
 
   const copy = await localizedTemplateCopy(locale, template);
-  const demoSeo = templateDemoSeo(template.slug, locale, resolvedRoute.canonicalSlug);
+  const demoSeo = templateDemoSeo(locale, resolvedRoute.canonicalSlug);
 
   return pageSeo({
     title: copy.title,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -20,7 +21,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonyMessage, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const NB_PACIFICO = '"SVN-HC Pacifico", cursive';
 /**
@@ -115,7 +116,9 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
   const RED = content.theme.primaryColor || "#c32a29";
   const BROWN = "#542E08";
   const CREAM = "#F8F3E0";
-  const ceremony = formatDate(couple.ceremonyDate);
+  const t = useTranslations("invitationTemplate");
+  const hasLegacyCeremony = Boolean(couple.ceremonyHeader?.trim() || couple.ceremonyDate.trim() || couple.ceremonyTime.trim());
+  const ceremonies = content.ceremonies || hasLegacyCeremony ? invitationCeremonies(content) : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -256,22 +259,33 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
               <div className="text-[14px] uppercase md:text-[17px]" style={{ fontFamily: NB_HELV, color: BROWN }}>{people[1].birthOrder}</div>
             </FitTextGroup>
           </div>
-          {ceremony ? (
-            <div className="mt-10 flex flex-col items-center gap-4 text-center md:gap-5" style={{ fontFamily: NB_HELV, color: BROWN }}>
-              <div className="flex flex-col items-center gap-2">
-                <span className="whitespace-pre-line text-center font-bold text-[15px] md:text-[19px] lg:text-[20px]">{invitationCeremonyMessage(content)}</span>
-                <p className="text-center font-bold uppercase text-[15px] md:text-[19px] lg:text-[20px]">VÀO LÚC</p>
-              </div>
-              <div className="text-[20px] md:text-[30px]">{couple.ceremonyTime || "09:00"}</div>
-              <div className="flex items-center justify-center gap-2 md:gap-3">
-                <span className="text-right font-bold text-[15px] uppercase md:text-[18px] lg:text-[19px]">{ceremony.weekday}</span>
-                <div className="shrink-0" style={{ width: "30px", height: "1px", transform: "rotate(90deg)", backgroundColor: BROWN }} />
-                <span className="text-[36px] font-bold leading-none md:text-[42px] lg:text-[46px]">{ceremony.day}</span>
-                <div className="shrink-0" style={{ width: "30px", height: "1px", transform: "rotate(90deg)", backgroundColor: BROWN }} />
-                <span className="text-left font-bold text-[15px] uppercase md:text-[18px] lg:text-[19px]">Tháng {ceremony.month}</span>
-              </div>
-              <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.yearNumber}</div>
-              <div className="font-bold text-[15px] md:text-[18px] lg:text-[19px]">{ceremony.lunar}</div>
+          {ceremonies.length > 0 ? (
+            <div data-template-ceremonies data-nhat-binh-ceremonies className="mt-10 flex w-full flex-col gap-10" style={{ fontFamily: NB_HELV, color: BROWN }}>
+              {ceremonies.map((ceremony, index) => {
+                const ceremonyDate = formatDate(ceremony.date);
+                return (
+                  <div data-template-ceremony-item key={`${ceremony.title}-${ceremony.date}-${ceremony.time}-${index}`} className="flex w-full flex-col items-center gap-4 text-center md:gap-5">
+                    <div className="flex flex-col items-center gap-2">
+                      {ceremony.title ? <span className="whitespace-pre-line text-center font-bold text-[15px] md:text-[19px] lg:text-[20px]">{ceremony.title}</span> : null}
+                      {ceremony.time ? <p className="text-center font-bold uppercase text-[15px] md:text-[19px] lg:text-[20px]">{t("ceremonyAtTime")}</p> : null}
+                    </div>
+                    {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
+                    {ceremonyDate ? (
+                      <>
+                        <div className="flex items-center justify-center gap-2 md:gap-3">
+                          <span className="text-right font-bold text-[15px] uppercase md:text-[18px] lg:text-[19px]">{ceremonyDate.weekday}</span>
+                          <div className="w-[30px] h-px shrink-0 rotate-90 bg-[#542E08]" />
+                          <span className="text-[36px] font-bold leading-none md:text-[42px] lg:text-[46px]">{ceremonyDate.day}</span>
+                          <div className="w-[30px] h-px shrink-0 rotate-90 bg-[#542E08]" />
+                          <span className="text-left font-bold text-[15px] uppercase md:text-[18px] lg:text-[19px]">{t("month", { month: ceremonyDate.month })}</span>
+                        </div>
+                        <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremonyDate.yearNumber}</div>
+                        <div className="font-bold text-[15px] md:text-[18px] lg:text-[19px]">{ceremonyDate.lunar}</div>
+                      </>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
           ) : null}
         </section>

@@ -22,6 +22,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { comicHeroAssemblePalette } from "@/data/comic-hero-assemble-pilot";
 import {
+  invitationCeremonies,
   invitationCouple,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
@@ -205,7 +206,10 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
   const { bride, groom } = invitationCouple(content);
   const [firstHero, secondHero] = orderByBrideFirst(bride, groom, couple.brideFirst);
   const heroImage = invitationHeroImage(content);
-  const ceremony = formatDate(couple.ceremonyDate);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const reception = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
@@ -382,27 +386,34 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
             <SectionMarker>{c("missionBriefing")}</SectionMarker>
 
             <div className="flex w-full flex-col gap-4 md:flex-row md:gap-6">
-              {ceremony ? (
-                <ComicPanel className="flex-1 overflow-hidden">
-                  <CaptionBox>{c("ceremonyPanel")}</CaptionBox>
-                  <div className="px-4 py-5 text-center">
-                    {couple.ceremonyHeader ? (
-                      <p className="whitespace-pre-line text-[12px] font-bold uppercase leading-relaxed tracking-[0.1em] text-[#12141f] opacity-70 md:text-[13px]">
-                        {couple.ceremonyHeader}
-                      </p>
-                    ) : null}
-                    <p className="mt-3 text-[30px] font-bold leading-none text-[#d7263d] md:text-[38px]">
-                      {couple.ceremonyTime}
-                    </p>
-                    <p className="mt-2 text-[14px] font-bold uppercase tracking-[0.1em] text-[#12141f] md:text-[16px]">
-                      {ceremony.weekday} · {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}
-                    </p>
-                    <p className="mt-1 text-[11px] text-[#12141f] opacity-60 md:text-[12px]">
-                      {t("lunarDate")}: {ceremony.lunar}
-                    </p>
-                  </div>
-                </ComicPanel>
-              ) : null}
+              {ceremonies.length > 0 ? <div data-template-ceremonies className="flex flex-1 flex-col gap-4 md:gap-6">
+                {ceremonies.map((item, index) => {
+                  const ceremony = formatDate(item.date);
+                  return <div key={index} data-template-ceremony-item className="contents">
+                    <ComicPanel className="flex-1 overflow-hidden">
+                      <CaptionBox>{c("ceremonyPanel")}</CaptionBox>
+                      <div className="px-4 py-5 text-center">
+                        {item.title ? (
+                          <p className="whitespace-pre-line text-[12px] font-bold uppercase leading-relaxed tracking-[0.1em] text-[#12141f] opacity-70 md:text-[13px]">
+                            {item.title}
+                          </p>
+                        ) : null}
+                        {item.time ? <p className="mt-3 text-[30px] font-bold leading-none text-[#d7263d] md:text-[38px]">
+                          {item.time}
+                        </p> : null}
+                        {ceremony ? <>
+                          <p className="mt-2 text-[14px] font-bold uppercase tracking-[0.1em] text-[#12141f] md:text-[16px]">
+                            {ceremony.weekday} · {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}
+                          </p>
+                          <p className="mt-1 text-[11px] text-[#12141f] opacity-60 md:text-[12px]">
+                            {t("lunarDate")}: {ceremony.lunar}
+                          </p>
+                        </> : null}
+                      </div>
+                    </ComicPanel>
+                  </div>;
+                })}
+              </div> : null}
 
               {reception ? (
                 <ComicPanel className="flex-1 overflow-hidden">

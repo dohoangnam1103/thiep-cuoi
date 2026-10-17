@@ -456,9 +456,10 @@ export function DoraemonDoorInvitationBody({
           >
             {doorT("destinationTitle")}
           </SectionTitle>
-          <div className="relative mt-12 grid grid-cols-1 gap-5 md:grid-cols-12">
+          <div data-template-ceremonies className="relative mt-12 grid grid-cols-1 gap-5 md:grid-cols-12">
             {ceremonies.map((ceremony, index) => (
               <article
+                data-template-ceremony-item
                 key={`${ceremony.title}-${ceremony.date}-${ceremony.time}`}
                 className={cn(
                   "rounded-[1.5rem] border border-[#17334A]/12 bg-[#FFF9EE] p-7 text-center",

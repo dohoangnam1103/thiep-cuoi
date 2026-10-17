@@ -57,6 +57,7 @@ type FamilyChapter = {
 };
 
 type EventInsertProps = {
+  ceremonyItem?: boolean;
   date: string;
   label: string;
   message: string;
@@ -244,6 +245,7 @@ function CoupleNames({
 }
 
 function EventInsert({
+  ceremonyItem = false,
   date,
   label,
   message,
@@ -259,6 +261,7 @@ function EventInsert({
   return (
     <article
       data-gatefold-paper-insert="true"
+      data-template-ceremony-item={ceremonyItem || undefined}
       className={cn(
         "relative min-w-0 border p-7 transition-transform duration-300 hover:-translate-y-1 sm:p-9",
         isIvory
@@ -518,6 +521,7 @@ export function LongPhungGatefoldInvitationBody({
 
       <section
         aria-labelledby="gatefold-events-heading"
+        data-template-ceremonies
         className="relative mx-auto w-full max-w-6xl px-4 py-20 sm:px-7 sm:py-28"
       >
         <PaperHeading
@@ -530,6 +534,7 @@ export function LongPhungGatefoldInvitationBody({
           {primaryCeremony ? (
             <div className="min-w-0 md:col-span-7">
               <EventInsert
+                ceremonyItem
                 date={formatGatefoldLocalizedDate(primaryCeremony.date, locale)}
                 label={t("ceremony")}
                 message={primaryCeremony.title}
@@ -557,6 +562,7 @@ export function LongPhungGatefoldInvitationBody({
             <div className="grid min-w-0 gap-4 md:col-span-12 md:ml-[14%] md:grid-cols-2">
               {additionalCeremonies.map((ceremony) => (
                 <EventInsert
+                  ceremonyItem
                   key={`${ceremony.title}-${ceremony.date}-${ceremony.time}`}
                   date={formatGatefoldLocalizedDate(ceremony.date, locale)}
                   label={t("ceremony")}

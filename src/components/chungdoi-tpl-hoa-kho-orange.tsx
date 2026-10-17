@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { AlbumGallery, buildCalendar, FamilyColumn, FitText, formatDate, formatWishTime, GiftEnvelope, googleCalendarUrl, InvitationMap, MapDirectionsButton, SharedCountdown, SharedWishForm, WEEKDAY_LABELS } from "@/components/chungdoi-tpl-shared";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import styles from "./hoa-kho-orange.module.css";
 
 const ROOT = "/chungdoi/images/themes/hoa-kho-orange";
@@ -35,6 +35,10 @@ export function HoaKhoOrangeInvitation({ content }: { content: ChungDoiDemoConte
   const t = useTranslations("invitationTemplate");
   const { couple, families, venue, gallery, wishes, schedule } = content;
   const people = orderedCouple(content);
+  const ceremonies = content.ceremonies !== undefined
+    || [couple.ceremonyHeader, couple.ceremonyDate, couple.ceremonyTime].some((value) => value?.trim())
+    ? invitationCeremonies(content)
+    : [];
   const calendar = buildCalendar(couple.date);
   const time = venue.banquetTime || couple.time;
   const [banquetHour, banquetMinute] = time.split(":").map(Number);
@@ -68,7 +72,12 @@ export function HoaKhoOrangeInvitation({ content }: { content: ChungDoiDemoConte
         <FitText maxFontSize={44} className={`${styles.coupleName} flex min-h-20 w-[80%] items-center justify-center leading-[48px] md:leading-[56px]`}>{people[1].fullName}</FitText>
         <p className="text-[10px] uppercase tracking-[0.14em]">{people[1].birthOrder}</p>
       </div>
-      <div className="relative z-10 flex w-full flex-col items-center gap-2"><p className="whitespace-pre-line text-center text-xs uppercase leading-relaxed text-[#f26100] md:text-sm">{couple.ceremonyHeader}</p><EventDate date={couple.ceremonyDate} time={couple.ceremonyTime} ceremony /></div>
+      {ceremonies.length > 0 && <div data-template-ceremonies className="contents">
+        {ceremonies.map((item, index) => <div key={index} data-template-ceremony-item className="relative z-10 flex w-full flex-col items-center gap-2">
+          <p className="whitespace-pre-line text-center text-xs uppercase leading-relaxed text-[#f26100] md:text-sm">{item.title}</p>
+          {formatDate(item.date) ? <EventDate date={item.date} time={item.time} ceremony /> : item.time ? <p className="text-xs uppercase md:text-sm">{t("atTime", { time: item.time })}</p> : null}
+        </div>)}
+      </div>}
     </Panel>
     {gallery.length > 0 && <section className="relative z-10 flex w-full flex-col items-center px-7 pb-8 pt-4"><Heading>{t("photoAlbum")}</Heading><div className="mt-6 w-full max-w-[432px] md:max-w-[600px]"><AlbumGallery photos={gallery} layout={content.albumLayout ?? "coverflow"} accent={GREEN} radiusClass="rounded-2xl" /></div></section>}
     <Panel flowers={[8, 9, 10, 11]} className="gap-6">

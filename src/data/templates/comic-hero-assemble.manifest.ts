@@ -10,7 +10,7 @@ export const manifest = defineTemplateManifest({
   slug,
   viRouteSlug: "sieu-anh-hung-comic",
   rendererExport: "ComicHeroAssembleInvitation",
-  ceremonyRendering: "post-template",
+  ceremonyRendering: "inline-all",
   heroImageCount: 1,
   catalog: {
     name: "Anh Hùng Hội Tụ",
