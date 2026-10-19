@@ -822,26 +822,26 @@ html.lenis body {
   }
 }
 
-/* `background-position` là thuộc tính Chromium KHÔNG chạy được trên compositor,
-   nên mỗi frame của vệt sáng này là một lượt recalc style + repaint toàn document
-   trên main thread. Animation CSS lại vẫn tick khi phần tử đã cuộn khỏi màn hình,
-   nên cái giá đó phải trả suốt thời gian tab mở, đổi lấy đúng con số 0.
-
-   Đo trên PRODUCTION (thiepmungonline.com) ở scrollY=2200 (hero đã khuất), trang
-   đứng yên, cửa sổ 6000ms, CPU throttle x4: chỉ tạm dừng riêng phần tử này kéo
-   main thread từ 3457ms xuống 2032ms (-41%) và style recalc từ 679 xuống 324
-   (-52%). `ScriptDuration` gần như không đổi (254ms -> 259ms), xác nhận đây là chi
-   phí style/paint thuần, không phải JS.
-
-   Đừng đo con số này ở local `next dev`: trang chủ ở dev KHÔNG hydrate (không có
-   React fiber, embla không khởi tạo, useRevealOnScroll không chạy), nên mọi số
-   liên quan tới JS đo ở đó đều vô nghĩa và sẽ phóng đại tỉ lệ của animation.
-
-   `HeroShinyTitle` bật cờ khi hero ra khỏi viewport. Không ai nhìn thấy phần bị
-   dừng, nên không có thay đổi thị giác nào. Dừng chứ không phải `animation: none`
-   để lúc quay lại vệt sáng chạy tiếp từ đúng vị trí cũ, không nhảy. */
+/* Background-position needs paint. Home pauses it outside the viewport or
+   while the tab is hidden; mobile plays only two cycles in total. */
 .shiny-text[data-sheen-paused="true"] {
   animation-play-state: paused;
+}
+
+@media (max-width: 1023px) {
+  .home-hero-shiny {
+    animation-iteration-count: 2;
+    animation-fill-mode: forwards;
+  }
+}
+
+.home-carousel-slide {
+  opacity: 0.42;
+}
+
+.home-carousel-card {
+  transform: translate3d(0, 16px, 0) scale(0.4);
+  box-shadow: 0 24px 54px rgb(95 49 47 / 18%), 0 5px 18px rgb(95 49 47 / 8%);
 }
 
 .template-carousel-viewport {

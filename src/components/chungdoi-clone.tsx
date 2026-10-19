@@ -154,43 +154,45 @@ function useRevealOnScroll() {
   }, []);
 }
 
-/**
- * Tiêu đề hero với vệt sáng gradient chạy qua.
- *
- * Chỉ cho animation chạy khi tiêu đề còn trong khung nhìn. `.shiny-text` animate
- * `background-position` — thuộc tính không compositable — nên mỗi frame là một
- * lượt recalc style + repaint main thread, và animation CSS không tự dừng khi
- * phần tử cuộn khỏi màn hình. Đo trên production: nó chiếm 41% chi phí main thread
- * của trang chủ lúc nhàn rỗi; số liệu đầy đủ ở comment cạnh `.shiny-text` trong
- * globals.css.
- *
- * Không đổi được sang `transform` cho compositable: hiệu ứng dựa trên
- * `background-clip: text` + `color: transparent`, gradient bị cắt theo hình chữ,
- * nên dời phần tử là dời cả chữ chứ không dời vệt sáng.
- */
-function HeroShinyTitle({ children }: { children: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
+function useMotionActivity<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [active, setActive] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        node.dataset.sheenPaused = entry.isIntersecting ? "false" : "true";
-      },
-      // Chạy lại trước khi hero thật sự lộ ra, để cuộn về đầu trang không bắt
-      // gặp một khoảnh khắc vệt sáng đứng im rồi mới nhích.
-      { rootMargin: "200px" },
-    );
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let inView = false;
+    const sync = () => {
+      const visible = inView && document.visibilityState === "visible";
+      setVisible(visible);
+      setActive(visible && !motion.matches);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
+    });
     observer.observe(node);
-    return () => observer.disconnect();
+    document.addEventListener("visibilitychange", sync);
+    motion.addEventListener("change", sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      motion.removeEventListener("change", sync);
+    };
   }, []);
 
-  // Không đặt data-sheen-paused ở lần render đầu: hero luôn nằm trong khung nhìn
-  // khi trang vừa mở, nên mặc định "đang chạy" là đúng và không có nháy.
+  return { ref, active, visible };
+}
+
+/** Background-position needs paint, so pause offscreen/hidden and cap mobile
+ * playback in CSS. Pausing preserves the gradient position when returning. */
+function HeroShinyTitle({ children }: { children: string }) {
+  const { ref, active } = useMotionActivity<HTMLSpanElement>();
+
   return (
-    <span ref={ref} className="shiny-text whitespace-pre-line">
+    <span ref={ref} data-sheen-paused={!active} className="shiny-text home-hero-shiny whitespace-pre-line">
       {children}
     </span>
   );
@@ -199,6 +201,7 @@ function HeroShinyTitle({ children }: { children: string }) {
 const heroPreviewTemplates = featuredTemplates.slice(0, 6);
 
 function StackFan() {
+  const { ref, active: motionActive } = useMotionActivity<HTMLDivElement>();
   const [active, setActive] = useState(0);
   const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
   const pausedRef = useRef(false);
@@ -214,7 +217,8 @@ function StackFan() {
     }
     if (
       pausedRef.current
-      || window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      || !motionActive
+      || selected !== null
     ) {
       return;
     }
@@ -224,7 +228,7 @@ function StackFan() {
       setActive((previous) => (previous + 1) % count);
       scheduleNextTemplate();
     }, 2800);
-  }, [count]);
+  }, [count, motionActive, selected]);
 
   useEffect(() => {
     resetAutoplay();
@@ -240,7 +244,7 @@ function StackFan() {
   const slotOf = (index: number) => (index - active + count) % count;
 
   return (
-    <div className="relative mx-auto w-full max-w-[380px]">
+    <div ref={ref} className="relative mx-auto w-full max-w-[380px]">
       <div
         className="stack-fan-stage"
         onMouseEnter={() => {
@@ -430,93 +434,148 @@ const TWEEN_FACTOR = 2.3;
 const EMPHASIS_TWEEN_FACTOR = 9;
 
 function TemplateCarousel() {
+  const { ref: sectionRef, active: motionActive, visible } = useMotionActivity<HTMLElement>();
   const t = useTranslations("home");
   const listingT = useTranslations("listing");
   const locale = useLocale();
   const templateName = useTemplateName();
   const mobileThumbnailOverrides = useTemplateMobileThumbnailOverrides();
   const autoplay = useRef(
-    Autoplay({ delay: 4200, stopOnInteraction: false, stopOnMouseEnter: true }),
+    Autoplay({
+      delay: 4200,
+      playOnInit: false,
+      stopOnInteraction: true,
+      stopOnMouseEnter: false,
+      stopOnFocusIn: false,
+    }),
   );
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: "center", skipSnaps: false },
+    {
+      loop: true,
+      align: "center",
+      skipSnaps: false,
+      breakpoints: { "(prefers-reduced-motion: reduce)": { duration: 0 } },
+    },
     [autoplay.current],
   );
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
   const [selected, setSelected] = useState<ChungDoiTemplate | null>(null);
 
+  const slideElements = useRef<{ node: HTMLElement; inner: HTMLElement }[]>([]);
+  const previousTweenIndices = useRef(new Set<number>());
+
   const applyTween = useCallback((api: NonNullable<typeof emblaApi>) => {
+    if (!visible) return;
     const engine = api.internalEngine();
     const scrollProgress = api.scrollProgress();
+    const snaps = api.scrollSnapList();
     const slidesInView = api.slidesInView();
+    // Include one neighbour on either side before it enters, and update a
+    // departing slide once more. Distant slides need no per-frame writes.
+    const current = new Set<number>();
+    for (const index of slidesInView.length ? slidesInView : [api.selectedScrollSnap()]) {
+      for (const offset of [-1, 0, 1]) {
+        current.add((index + offset + snaps.length) % snaps.length);
+      }
+    }
+    const indices = new Set([...current, ...previousTweenIndices.current]);
+    previousTweenIndices.current = current;
 
-    api.scrollSnapList().forEach((snap, snapIndex) => {
-      let diffToTarget = snap - scrollProgress;
-
+    for (const snapIndex of indices) {
+      const elements = slideElements.current[snapIndex];
+      if (!elements) continue;
+      let diffToTarget = snaps[snapIndex] - scrollProgress;
       if (engine.options.loop) {
-        engine.slideLooper.loopPoints.forEach((loopItem) => {
+        for (const loopItem of engine.slideLooper.loopPoints) {
           const target = loopItem.target();
           if (snapIndex === loopItem.index && target !== 0) {
-            const sign = Math.sign(target);
-            if (sign === -1) diffToTarget = snap - (1 + scrollProgress);
-            if (sign === 1) diffToTarget = snap + (1 - scrollProgress);
+            diffToTarget = snaps[snapIndex] - (target < 0 ? 1 + scrollProgress : scrollProgress - 1);
           }
-        });
+        }
       }
-
-      const tween = 1 - Math.abs(diffToTarget * TWEEN_FACTOR);
-      const rawProminence = Math.min(
-        Math.max(1 - Math.abs(diffToTarget * EMPHASIS_TWEEN_FACTOR), 0),
-        1,
-      );
-      const prominence = rawProminence ** 1.35;
-      const scale = Math.min(Math.max(tween, 0.4), 1);
-      const lift = 16 - prominence * 30;
-      const opacity = 0.42 + prominence * 0.58;
-      const saturation = 0.35 + prominence * 0.75;
-      const brightness = 0.88 + prominence * 0.12;
-      const contrast = 0.82 + prominence * 0.24;
-      const shadowOpacity = 0.03 + prominence * 0.24;
-      const shadowY = 10 + prominence * 24;
-      const shadowBlur = 22 + prominence * 56;
-      const node = api.slideNodes()[snapIndex];
-      const inner = node?.firstElementChild as HTMLElement | null;
-      if (!node || !inner) return;
-      const image = inner.querySelector<HTMLImageElement>("[data-carousel-preview]");
-
-      inner.style.transform = `translate3d(0, ${lift.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-      inner.style.boxShadow = `0 ${shadowY.toFixed(0)}px ${shadowBlur.toFixed(0)}px rgb(95 49 47 / ${shadowOpacity.toFixed(3)}), 0 5px 18px rgb(95 49 47 / ${(shadowOpacity * 0.45).toFixed(3)})`;
-      node.style.opacity = opacity.toFixed(3);
-      node.style.transition = "opacity 240ms ease";
-      node.style.zIndex = prominence > 0.85 ? "2" : slidesInView.includes(snapIndex) ? "1" : "0";
-
-      if (image) {
-        image.style.filter = `saturate(${saturation.toFixed(3)}) brightness(${brightness.toFixed(3)}) contrast(${contrast.toFixed(3)})`;
-      }
-    });
-  }, []);
+      const prominence = Math.min(Math.max(1 - Math.abs(diffToTarget * EMPHASIS_TWEEN_FACTOR), 0), 1) ** 1.35;
+      const scale = Math.min(Math.max(1 - Math.abs(diffToTarget * TWEEN_FACTOR), 0.4), 1);
+      const transform = `translate3d(0, ${(16 - prominence * 30).toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+      const opacity = (0.42 + prominence * 0.58).toFixed(3);
+      const zIndex = prominence > 0.85 ? "2" : slidesInView.includes(snapIndex) ? "1" : "0";
+      const { node, inner } = elements;
+      if (inner.style.transform !== transform) inner.style.transform = transform;
+      if (node.style.opacity !== opacity) node.style.opacity = opacity;
+      if (node.style.zIndex !== zIndex) node.style.zIndex = zIndex;
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (!emblaApi) return;
-
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
-    setScrollSnaps(emblaApi.scrollSnapList());
-    onSelect();
-    applyTween(emblaApi);
-
-    emblaApi.on("select", onSelect);
-    emblaApi.on("scroll", () => applyTween(emblaApi));
-    emblaApi.on("reInit", () => {
+    const onScroll = () => applyTween(emblaApi);
+    const onReInit = () => {
+      slideElements.current = emblaApi.slideNodes().flatMap((node) => {
+        const inner = node.firstElementChild;
+        return inner instanceof HTMLElement ? [{ node, inner }] : [];
+      });
+      previousTweenIndices.current.clear();
       setScrollSnaps(emblaApi.scrollSnapList());
       onSelect();
-      applyTween(emblaApi);
-    });
+      onScroll();
+    };
+    onReInit();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("scroll", onScroll);
+    emblaApi.on("slidesInView", onScroll);
+    emblaApi.on("reInit", onReInit);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("scroll", onScroll);
+      emblaApi.off("slidesInView", onScroll);
+      emblaApi.off("reInit", onReInit);
+    };
   }, [emblaApi, applyTween]);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!emblaApi || !section) return;
+    const player = autoplay.current;
+    let dragging = false;
+    let hovering = window.matchMedia("(hover: hover)").matches && section.matches(":hover");
+    let focused = section.contains(document.activeElement);
+    const sync = () => {
+      if (motionActive && selected === null && !dragging && !hovering && !focused) player.play();
+      else player.stop();
+    };
+    const onEnter = () => { hovering = window.matchMedia("(hover: hover)").matches; sync(); };
+    const onLeave = () => { hovering = false; sync(); };
+    const onFocus = () => { focused = true; sync(); };
+    const onBlur = (event: FocusEvent) => {
+      focused = event.relatedTarget instanceof Node && section.contains(event.relatedTarget);
+      sync();
+    };
+    const onPointerDown = () => { dragging = true; sync(); };
+    const onPointerUp = () => { dragging = false; sync(); };
+    section.addEventListener("mouseenter", onEnter);
+    section.addEventListener("mouseleave", onLeave);
+    section.addEventListener("focusin", onFocus);
+    section.addEventListener("focusout", onBlur);
+    emblaApi.on("pointerDown", onPointerDown);
+    emblaApi.on("pointerUp", onPointerUp);
+    emblaApi.on("reInit", sync);
+    sync();
+    return () => {
+      player.stop();
+      section.removeEventListener("mouseenter", onEnter);
+      section.removeEventListener("mouseleave", onLeave);
+      section.removeEventListener("focusin", onFocus);
+      section.removeEventListener("focusout", onBlur);
+      emblaApi.off("pointerDown", onPointerDown);
+      emblaApi.off("pointerUp", onPointerUp);
+      emblaApi.off("reInit", sync);
+    };
+  }, [emblaApi, motionActive, sectionRef, selected]);
 
   return (
     <>
-    <section className={`overflow-hidden bg-background ${sectionPaddingClass}`}>
+    <section ref={sectionRef} className={`overflow-hidden bg-background ${sectionPaddingClass}`}>
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <div className="reveal">
           <h2 className={`${sectionTitleClass} text-foreground`}>
@@ -540,22 +599,14 @@ function TemplateCarousel() {
               return (
                 <div
                   key={template.slug}
-                  className="min-w-0 shrink-0 grow-0 basis-[286px] px-2.5 [will-change:opacity]"
-                  onMouseEnter={(event) => {
-                    const image = event.currentTarget.querySelector<HTMLImageElement>("[data-carousel-preview]");
-                    event.currentTarget.style.opacity = "1";
-                    if (image) image.style.filter = "saturate(1.1) brightness(1) contrast(1.06)";
-                  }}
-                  onMouseLeave={() => {
-                    if (emblaApi) applyTween(emblaApi);
-                  }}
+                  className="home-carousel-slide min-w-0 shrink-0 grow-0 basis-[286px] px-2.5"
                 >
                   <button
                     type="button"
                     onClick={() => setSelected(template)}
                     draggable={false}
                     aria-current={isActive ? "true" : undefined}
-                    className={`group relative block h-[520px] w-full overflow-hidden rounded-2xl border bg-card text-left transition-[border-color] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
+                    className={`home-carousel-card group relative block h-[520px] w-full overflow-hidden rounded-2xl border bg-card text-left transition-[border-color] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary ${
                       isActive ? "border-primary/85" : "border-border/40"
                     }`}
                   >
@@ -581,7 +632,7 @@ function TemplateCarousel() {
                           loading="lazy"
                           decoding="async"
                           data-carousel-preview
-                          className="pointer-events-none hidden h-auto w-full max-w-none [transition-duration:240ms,1200ms] [transition-property:filter,translate] [transition-timing-function:ease,ease-out] group-hover:translate-y-[calc(520px_-_100%)] group-hover:[transition-duration:240ms,40000ms] group-hover:[transition-timing-function:ease,linear] motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none sm:block"
+                          className="pointer-events-none hidden h-auto w-full max-w-none transition-[translate] duration-[1200ms] ease-out group-hover:translate-y-[calc(520px_-_100%)] group-hover:duration-[40000ms] group-hover:ease-linear motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none sm:block"
                         />
                       </>
                     ) : (
@@ -595,7 +646,7 @@ function TemplateCarousel() {
                         loading="lazy"
                         decoding="async"
                         data-carousel-preview
-                        className="pointer-events-none block h-auto w-full max-w-none [transition-duration:240ms,1200ms] [transition-property:filter,translate] [transition-timing-function:ease,ease-out] group-hover:translate-y-[calc(520px_-_100%)] group-hover:[transition-duration:240ms,40000ms] group-hover:[transition-timing-function:ease,linear] motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none"
+                        className="pointer-events-none block h-auto w-full max-w-none transition-[translate] duration-[1200ms] ease-out group-hover:translate-y-[calc(520px_-_100%)] group-hover:duration-[40000ms] group-hover:ease-linear motion-reduce:group-hover:translate-y-0 motion-reduce:transition-none"
                       />
                     )}
                     <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/80 via-foreground/40 to-transparent p-5">
