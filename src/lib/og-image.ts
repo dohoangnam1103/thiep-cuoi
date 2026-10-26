@@ -11,6 +11,10 @@ export type OgCoupleContent = {
   brideFirst: boolean;
 };
 
+// Dates must stay readable at chat-preview sizes, independently of the couple's
+// decorative typeface. This static local font also avoids variable-font parsing.
+export const OG_DATE_FONT = { family: "Helvetica Neue Roman", file: "HelveticaNeueRoman.otf" };
+
 export function resolveCoupleNames(content: OgCoupleContent): string {
   const bride = content.brideShortName || content.brideFullName;
   const groom = content.groomShortName || content.groomFullName;
@@ -42,9 +46,10 @@ export function resolveOgImageUrl(
   // a new image URL after the couple edits their names, wedding date or theme.
   const version = createHash("sha256")
     .update(JSON.stringify([
-      "stacked-bride-first-v1",
+      "stacked-bride-first-date-v2",
       resolveOgNameLines(content),
       resolveOgDate(content.date),
+      OG_DATE_FONT,
       resolveOgFont(templateId),
       resolveOgTheme(templateId, content.primaryColor),
     ]))

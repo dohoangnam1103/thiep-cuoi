@@ -6,6 +6,7 @@ import sharp from "sharp";
 import { getTranslations } from "next-intl/server";
 
 import {
+  OG_DATE_FONT,
   resolveOgNameLines,
   resolveOgDate,
   resolveOgFont,
@@ -82,6 +83,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const { content } = invitation;
   const nameLines = resolveOgNameLines(content);
   const date = resolveOgDate(content.date);
+  const dateFontData = await loadFont(OG_DATE_FONT.file);
   let font = resolveOgFont(invitation.templateId);
   const theme = resolveOgTheme(invitation.templateId, content.primaryColor);
 
@@ -167,13 +169,28 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             ))}
           </div>
           {date ? (
-            <div style={{ marginTop: 24, fontSize: 40, color: theme.textSecondary }}>
+            <div
+              style={{
+                marginTop: 32,
+                fontFamily: OG_DATE_FONT.family,
+                fontSize: 44,
+                letterSpacing: 3,
+                lineHeight: 1.25,
+                color: theme.textSecondary,
+              }}
+            >
               {date}
             </div>
           ) : null}
         </div>
       </div>
     ),
-    { ...size, fonts: [{ name: font.family, data: fontData, style: "normal", weight: 400 }] },
+    {
+      ...size,
+      fonts: [
+        { name: font.family, data: fontData, style: "normal", weight: 400 },
+        { name: OG_DATE_FONT.family, data: dateFontData, style: "normal", weight: 400 },
+      ],
+    },
   );
 }

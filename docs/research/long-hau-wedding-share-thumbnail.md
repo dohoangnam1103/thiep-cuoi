@@ -176,3 +176,65 @@ UNVERIFIED: authenticated Meta Sharing Debugger report and actual Facebook/Zalo 
 RISKS: previously cached platform page metadata may require a fresh scrape
 NEXT: use authenticated Meta Sharing Debugger if Facebook still displays a stale or missing preview
 ```
+
+## Date readability refinement — 2026-10-26
+
+The user clarified that only the date row looked cramped and its typeface was
+hard to read. The couple names and their decorative font are outside this
+refinement. Reference: user attachment
+`codex-clipboard-f182de53-b919-494b-83ee-9f0f3ff63da0.png`.
+
+- Keep the names, three-row name layout, date content, theme and decorations.
+- Render the date with existing local static font
+  `public/chungdoi/fonts/HelveticaNeueRoman.otf` (Helvetica Neue Roman, 400).
+- Date size 40 → 44px; letter spacing 3px; line height 1.25; top margin
+  24 → 32px, all in the fixed 1200 × 630 raster canvas.
+- Include the date font in the image fingerprint and bump layout version, so
+  the new typography receives a new image URL.
+- Files: `src/lib/og-image.ts` and
+  `src/app/thiep/[slug]/opengraph-image.tsx`; no client invitation UI changes.
+
+```text
+PHASE: inspect
+STATUS: complete
+CHANGED: none
+VERIFIED: screenshot concern isolated to the date after user clarification; existing static local font available
+UNVERIFIED: actual app client cache
+RISKS: existing platform previews may retain prior images
+NEXT: apply font and spacing changes to date only
+
+PHASE: plan
+STATUS: complete
+CHANGED: none
+VERIFIED: existing data, names, template assets, routes and share behavior preserved; fixed canvas applies at every display size
+UNVERIFIED: none within implementation scope
+RISKS: platform cache remains independent of renderer typography
+NEXT: implement date typography
+
+PHASE: implement
+STATUS: complete
+CHANGED: src/lib/og-image.ts; src/app/thiep/[slug]/opengraph-image.tsx
+VERIFIED: separate local date font; 44px/3px tracking; content-versioned image URL
+UNVERIFIED: deployment
+RISKS: platform cache may need a fresh scrape after deployment
+NEXT: render production PNG and inspect
+
+PHASE: verify
+STATUS: complete
+CHANGED: none
+VERIFIED: rendered Long–Hậu production PNG visually inspected; date is clearly separated sans-serif numerals; names retain their decorative font
+UNVERIFIED: actual Facebook/Zalo app preview
+RISKS: stale external platform cache
+NEXT: regression and deployment
+
+PHASE: regression
+STATUS: complete
+CHANGED: this record
+VERIFIED: lint 0 errors (401 existing warnings); typecheck; 15 OG unit tests; targeted production-build Playwright test passed; git diff --check
+UNVERIFIED: deployment and platform client cache
+RISKS: platform previews require separate refresh
+NEXT: deploy and inspect live date row
+```
+
+Local PNG evidence uses the existing Playwright paths above; those images now
+show the refined date typography.
