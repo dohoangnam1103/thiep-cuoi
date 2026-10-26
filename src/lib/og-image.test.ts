@@ -8,6 +8,8 @@ import {
   resolveCoupleNames,
   resolveOgDate,
   resolveOgFont,
+  resolveOgImageUrl,
+  resolveOgNameLines,
   resolveOgTheme,
 } from "@/lib/og-image";
 
@@ -81,6 +83,48 @@ test("resolveCoupleNames bỏ vế trống, không để '& '", () => {
 
 test("resolveOgDate trả nguyên chuỗi user nhập, trim", () => {
   assert.equal(resolveOgDate("  20.12.2026  "), "20.12.2026");
+});
+
+const SHARE_COUPLE = {
+  brideShortName: "Lê Thị Hậu",
+  groomShortName: "Lê Văn Long",
+  brideFullName: "Lê Thị Hậu",
+  groomFullName: "Lê Văn Long",
+  brideFirst: false,
+  date: "2026-12-06",
+  primaryColor: "#511419",
+};
+
+test("share thumbnail puts the bride, ampersand and groom on separate lines", () => {
+  assert.deepEqual(resolveOgNameLines(SHARE_COUPLE), ["Lê Thị Hậu", "&", "Lê Văn Long"]);
+  assert.deepEqual(resolveOgNameLines({
+    ...SHARE_COUPLE,
+    brideShortName: " ",
+    groomShortName: "",
+  }), ["Lê Thị Hậu", "&", "Lê Văn Long"]);
+  assert.deepEqual(resolveOgNameLines({
+    ...SHARE_COUPLE,
+    groomShortName: "",
+    groomFullName: "",
+  }), ["Lê Thị Hậu"]);
+});
+
+test("share date preserves the calendar day without timezone conversion", () => {
+  assert.equal(resolveOgDate("2026-12-06"), "06.12.2026");
+  assert.equal(resolveOgDate(" 2027-01-01 "), "01.01.2027");
+});
+
+test("share image URL changes when the wedding date, names or theme change", () => {
+  const urlFor = (content = SHARE_COUPLE, templateId = "minimalism-dark-red") =>
+    resolveOgImageUrl("https://thiepmungonline.com", "long-hau-wedding", templateId, content);
+  const original = urlFor();
+  assert.match(original, /^https:\/\/thiepmungonline\.com\/thiep\/long-hau-wedding\/opengraph-image\?v=[a-f0-9]{16}$/);
+  assert.equal(urlFor({ ...SHARE_COUPLE }), original);
+  assert.notEqual(urlFor({ ...SHARE_COUPLE, date: "2026-12-05" }), original);
+  assert.notEqual(urlFor({ ...SHARE_COUPLE, brideShortName: "Hậu" }), original);
+  assert.notEqual(urlFor({ ...SHARE_COUPLE, groomShortName: "Long" }), original);
+  assert.notEqual(urlFor(SHARE_COUPLE, "minimalism-dark-blue"), original);
+  assert.equal(urlFor({ ...SHARE_COUPLE, brideFirst: true }), original);
 });
 
 test("resolveOgDate trả chuỗi rỗng khi trống", () => {

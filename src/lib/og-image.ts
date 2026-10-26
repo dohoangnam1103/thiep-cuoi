@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { resolveZodiacCardImages } from "@/lib/zodiac-decor";
 
@@ -18,7 +20,39 @@ export function resolveCoupleNames(content: OgCoupleContent): string {
 }
 
 export function resolveOgDate(date: string): string {
-  return date.trim();
+  const value = date.trim();
+  const isoDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  // A wedding date is a calendar day, not an instant to convert between zones.
+  return isoDate ? `${isoDate[3]}.${isoDate[2]}.${isoDate[1]}` : value;
+}
+
+export function resolveOgNameLines(content: OgCoupleContent): string[] {
+  const bride = content.brideShortName.trim() || content.brideFullName.trim();
+  const groom = content.groomShortName.trim() || content.groomFullName.trim();
+  return bride && groom ? [bride, "&", groom] : [bride, groom].filter(Boolean);
+}
+
+export function resolveOgImageUrl(
+  siteUrl: string,
+  slug: string,
+  templateId: string,
+  content: OgCoupleContent & { date: string; primaryColor: string },
+): string {
+  // Next's file hash only changes when code changes. Social crawlers also need
+  // a new image URL after the couple edits their names, wedding date or theme.
+  const version = createHash("sha256")
+    .update(JSON.stringify([
+      "stacked-bride-first-v1",
+      resolveOgNameLines(content),
+      resolveOgDate(content.date),
+      resolveOgFont(templateId),
+      resolveOgTheme(templateId, content.primaryColor),
+    ]))
+    .digest("hex")
+    .slice(0, 16);
+  const url = new URL(`/thiep/${encodeURIComponent(slug)}/opengraph-image`, siteUrl);
+  url.searchParams.set("v", version);
+  return url.href;
 }
 
 const FONT_FILE_BY_FAMILY: Record<string, string> = {

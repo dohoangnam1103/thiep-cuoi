@@ -2630,6 +2630,16 @@
     }
   },
   "publicInvitation": {
+    "metadata": {
+      "siteName": "Thiệp Mừng Online",
+      "defaultTitle": "Thiệp cưới | Thiệp Mừng Online",
+      "invitationTitle": "Thiệp cưới",
+      "coupleTitle": "Đám cưới {names}",
+      "pageTitle": "{title} | Thiệp Mừng Online",
+      "coupleDescription": "Trân trọng kính mời bạn đến chung vui trong ngày cưới của {names}.",
+      "defaultDescription": "Trân trọng kính mời bạn đến chung vui trong ngày cưới.",
+      "imageAlt": "Thiệp cưới | Thiệp Mừng Online"
+    },
     "manage": "Quản lý thiệp",
     "guestFallback": "Quý khách",
     "personalization": {

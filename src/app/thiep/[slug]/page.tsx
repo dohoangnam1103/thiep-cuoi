@@ -15,7 +15,7 @@ import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getCurrentUserId } from "@/lib/dal";
 import { isInvitationExpired } from "@/lib/invitation-entitlement";
 import { readInvitationVisitSignals, recordInvitationVisit } from "@/lib/invitation-views";
-import { resolveCoupleNames } from "@/lib/og-image";
+import { resolveCoupleNames, resolveOgImageUrl } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
 import { loadPublished } from "@/lib/published-invitation";
 import { FREE_TRIAL_DAYS } from "@/lib/trial";
@@ -48,19 +48,29 @@ export async function generateMetadata({
   const { slug } = await params;
   const invitation = await loadPublished(slug);
   if (!invitation) notFound();
+  const t = await getTranslations({ locale: "vi", namespace: "publicInvitation.metadata" });
   if (!invitation.content) {
-    return { title: "Thiệp cưới | Thiệp Mừng Online" };
+    return { title: t("defaultTitle") };
   }
 
   const names = resolveCoupleNames(invitation.content);
-  const title = names ? `Đám cưới ${names}` : "Thiệp cưới";
+  const title = names ? t("coupleTitle", { names }) : t("invitationTitle");
   const description = names
-    ? `Trân trọng kính mời bạn đến chung vui trong ngày cưới của ${names}.`
-    : "Trân trọng kính mời bạn đến chung vui trong ngày cưới.";
+    ? t("coupleDescription", { names })
+    : t("defaultDescription");
+  const imageUrl = resolveOgImageUrl(SITE_URL, slug, invitation.templateId, invitation.content);
+  const image = {
+    url: imageUrl,
+    secureUrl: imageUrl,
+    type: "image/png",
+    width: 1200,
+    height: 630,
+    alt: t("imageAlt"),
+  };
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: `${title} | Thiệp Mừng Online`,
+    title: t("pageTitle", { title }),
     description,
     robots: { index: false, follow: false },
     alternates: { canonical: `/thiep/${slug}` },
@@ -68,13 +78,16 @@ export async function generateMetadata({
       title,
       description,
       url: `/thiep/${slug}`,
-      siteName: "Thiệp Mừng Online",
+      siteName: t("siteName"),
       type: "website",
+      locale: "vi_VN",
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [image],
     },
   };
 }

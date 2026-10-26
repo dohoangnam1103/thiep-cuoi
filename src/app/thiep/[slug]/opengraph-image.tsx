@@ -3,9 +3,10 @@ import { join } from "node:path";
 
 import { ImageResponse } from "next/og";
 import sharp from "sharp";
+import { getTranslations } from "next-intl/server";
 
 import {
-  resolveCoupleNames,
+  resolveOgNameLines,
   resolveOgDate,
   resolveOgFont,
   resolveOgTheme,
@@ -40,7 +41,7 @@ async function decorToPngDataUri(src: string): Promise<string | null> {
   }
 }
 
-function fallbackImage(fontData: Buffer, family: string) {
+function fallbackImage(fontData: Buffer, family: string, label: string) {
   return new ImageResponse(
     (
       <div
@@ -56,7 +57,7 @@ function fallbackImage(fontData: Buffer, family: string) {
           fontSize: 72,
         }}
       >
-        Thiệp Mừng Online
+        {label}
       </div>
     ),
     { ...size, fonts: [{ name: family, data: fontData, style: "normal", weight: 400 }] },
@@ -66,6 +67,7 @@ function fallbackImage(fontData: Buffer, family: string) {
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const invitation = await loadPublished(slug);
+  const t = await getTranslations({ locale: "vi", namespace: "publicInvitation.metadata" });
   // Lora-Regular.ttf trong bộ asset là variable font. Parser font của
   // @vercel/og hiện lỗi ở bảng fvar ("reading '256'"), làm stream ảnh trả 502.
   // Viaoda Libre là font tĩnh, có đủ dấu tiếng Việt và đã được kiểm tra qua
@@ -74,11 +76,11 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const fallbackFontData = await loadFont(fallbackFont.file);
 
   if (!invitation?.content) {
-    return fallbackImage(fallbackFontData, fallbackFont.family);
+    return fallbackImage(fallbackFontData, fallbackFont.family, t("siteName"));
   }
 
   const { content } = invitation;
-  const names = resolveCoupleNames(content);
+  const nameLines = resolveOgNameLines(content);
   const date = resolveOgDate(content.date);
   let font = resolveOgFont(invitation.templateId);
   const theme = resolveOgTheme(invitation.templateId, content.primaryColor);
@@ -130,22 +132,39 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "56px 72px",
+            padding: "40px 56px",
             borderRadius: 28,
             background: theme.cardBg,
-            maxWidth: 900,
+            width: 1000,
+            height: 550,
           }}
         >
           <div
             style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
               fontFamily: font.family,
-              fontSize: 92,
               lineHeight: 1.1,
               color: theme.textPrimary,
               textAlign: "center",
+              width: "100%",
             }}
           >
-            {names}
+            {nameLines.map((name, index) => (
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  fontSize: name === "&" ? 48 : Math.min(88, 1200 / Math.max(Array.from(name).length, 1)),
+                  whiteSpace: "nowrap",
+                  lineHeight: name === "&" ? 1.2 : 1.25,
+                }}
+              >
+                {name}
+              </div>
+            ))}
           </div>
           {date ? (
             <div style={{ marginTop: 24, fontSize: 40, color: theme.textSecondary }}>
