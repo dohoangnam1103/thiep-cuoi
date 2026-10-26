@@ -238,3 +238,48 @@ NEXT: deploy and inspect live date row
 
 Local PNG evidence uses the existing Playwright paths above; those images now
 show the refined date typography.
+
+### Refinement deployment and live verification
+
+- Application commit `958ca0b` pushed to `origin/codex/remove-site-2`.
+- Visually inspected the PNG at actual display widths of 390px and 320px in
+  Chromium; the date remains readable, without joined or clipped digits.
+- All 131 mandatory browser gate checks passed; production build passed.
+  Full deploy reused those verified gate/build artifacts.
+- Deployment `20261026064332`, release `20261026064724-73211`, completed with
+  image `sha256:8f21b768810646104be1297d4dc327025802b42c729251faca2ca4e235e54273`.
+  Health, public URLs, assets, database and scheduler checks passed; deployment
+  lock released. No schema migration or track seeding was needed.
+- Live PNG version `a5c27f907bc28012`: 115217 bytes, 1200 × 630, HTTP 200 for
+  Facebook and Zalo user-agent requests. SHA-256:
+  `ea348ac9cef1c2fb3af9bb60b76d05197ef360a0e2bd4b63c8ee7f3ccf849be1`.
+- Used the user's already authenticated Zalo Debug Sharing tab to collect the
+  original public URL again. It reported successful re-collection and its CDN
+  URL now references the new image version. Visually confirmed the new date
+  font in the actual debugger preview. Actual phone-app cache remains unverified.
+- Evidence: `/tmp/long-hau-date-deploy.log`, `/tmp/long-hau-date-live.jsonl`,
+  `/tmp/long-hau-zalo-date-refined.png`,
+  `/tmp/long-hau-zalo-date-refined-detail.png`.
+
+To satisfy the unchanged 6 GiB deploy capacity gate, cleared disposable Docker
+build cache, then archived the older rollback image
+`sha256:a5eeca9e590c9c905f16bbf0544bcfe64bfede07e14e286ebf680d49b3949f19`
+off the VPS before removing its only old tag. Verified gzip integrity and the
+Docker config SHA-256 against that exact image. The then-current production
+image, immediate rollback, source releases, database, media and backups were
+preserved. Free space was 6.8 GiB before deploying.
+
+Recovery archive:
+`/Users/namdo/Documents/thiepmung-vps-archive-20261026/rollback-a5eeca9e590c.tar.gz`;
+SHA-256 `57434e51ceebe456fb83ee192a59bf89129feb4bc3c4d327519c80ff1e7251f0`.
+Its adjacent README records restoration with `docker load`.
+
+```text
+PHASE: regression
+STATUS: complete
+CHANGED: production thumbnail date typography; this verification record
+VERIFIED: scoped date-only implementation; lint/typecheck/unit/e2e/build; 320px/390px visual review; production healthy; live PNG; authenticated Zalo debugger preview refreshed
+UNVERIFIED: actual phone-app preview cache
+RISKS: already cached app previews may still show an earlier image
+NEXT: none for the date-rendering change; phone-app cache is a separate verification surface
+```
