@@ -130,3 +130,49 @@ NEXT: deploy through the normal release workflow, then inspect the exact public 
 - Full invitation desktop/mobile interactions: not applicable to this narrow
   metadata/thumbnail change. No template layout or client behavior was edited.
 - Deployment and real Facebook/Zalo client previews: not performed.
+
+## Production deployment and verification — 2026-10-26
+
+This supersedes the pre-deployment status above. The user explicitly authorized
+commit, push, and production deployment after reviewing the local result.
+
+- Application commit: `ff472d51250bc260dec1745047d0e9b0acb5e243`, pushed to
+  `origin/codex/remove-site-2`.
+- Deployed through `npm run deploy` to `163.61.110.34`, deployment ID
+  `20261026060523`, release `20261026060523-67289`.
+- Initial local preflight stopped because Chromium was missing. Installed it
+  with `npx playwright install chromium`, then reran the unchanged pipeline.
+- All 131 mandatory browser gate checks passed; production build, source sync,
+  verified database backup, image assembly and activation completed. No schema
+  migration or track seeding was needed.
+- Running image:
+  `sha256:f698e83b96467e374010dac9c906e2193075d2b48da0ce2a051a588a79b21ffe`.
+  Container health is `healthy`; deployment lock released. Origin checks,
+  public home/demo checks, assets, database and scheduler verification passed.
+- The exact Long–Hậu public URL returns one versioned image declaration in
+  the initial HTML head, including secure URL, dimensions and matching Twitter
+  image. Facebook and Zalo user-agent requests both received page HTTP 200 and
+  image HTTP 200, `image/png`, 1200 × 630, 114639 bytes.
+- Live image URL:
+  https://thiepmungonline.com/thiep/long-hau-wedding/opengraph-image?v=f54551abee15afe7
+- Live PNG SHA-256 (identical for both user-agents):
+  `33d8293572416a03022b65739fdb9064c8cf599fb45782798d065be768c6efd8`.
+- Visually inspected the live PNG: Lê Thị Hậu, `&`, Lê Văn Long are on separate
+  rows; date is `06.12.2026`; no clipped text. Session evidence:
+  `/tmp/long-hau-share-live-facebook.png`,
+  `/tmp/long-hau-live-verification.jsonl`,
+  `/tmp/long-hau-thumbnail-deploy.log`.
+- Actual Facebook/Zalo client previews and authenticated Meta cache refresh
+  remain unverified. A platform with old page metadata may still require a
+  fresh scrape in Sharing Debugger; successful user-agent checks do not prove
+  the platform has refreshed its own cache.
+
+```text
+PHASE: regression
+STATUS: complete
+CHANGED: production release and this deployment record
+VERIFIED: commit pushed; 131 browser checks; build; backup; production healthy; public Long–Hậu HTML/PNG; live image visual review; deployment lock released
+UNVERIFIED: authenticated Meta Sharing Debugger report and actual Facebook/Zalo client previews
+RISKS: previously cached platform page metadata may require a fresh scrape
+NEXT: use authenticated Meta Sharing Debugger if Facebook still displays a stale or missing preview
+```
