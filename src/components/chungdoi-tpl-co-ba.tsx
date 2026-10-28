@@ -19,7 +19,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const COBA_MARVIN = '"SVN-HC Marvin Visions", sans-serif';
 const COBA_HAYDON = '"SVN-HC Haydon Brush", cursive';
@@ -37,6 +37,21 @@ function CoBaHeading({ children }: { children: React.ReactNode }) {
 }
 
 /** THỨ HAI | 11 | THÁNG 05 date row used in the ceremony and reception blocks. */
+function CoBaFamilyColumn({ family }: { family: { title: string; father: string; mother: string; address: string } }) {
+  const parents = familyParentSlots(family.father, family.mother);
+  return (
+    <div className="row-span-4 grid min-h-0 w-full min-w-0 grid-rows-subgrid items-start justify-items-center">
+      <span className="text-[12px] font-normal md:text-[18px] lg:text-[19px]">{family.title}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[15px] font-bold md:text-[20px]">{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[15px] font-bold md:text-[20px]">{"\u00a0"}</span>)}
+      <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{family.address}</div>
+    </div>
+  );
+}
+
 function CoBaDateRow({ weekday, day, month, dayFontClass, gap, dividerLen }: {
   weekday: string;
   day: string;
@@ -196,19 +211,9 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                 thẳng hàng nhau dù một tên phải xuống dòng. Vạch phân cách thành đường
                 dọc trải hết khối ở mọi bề rộng. */}
             <div className="relative grid w-full max-w-[366px] grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 py-[10px] text-center md:max-w-[520px] md:gap-x-6 md:py-[15px] lg:max-w-[600px] lg:py-[20px]" style={{ color: BROWN, fontFamily: COBA_HELV }}>
-              <div className="row-span-4 grid min-h-0 w-full min-w-0 grid-rows-subgrid items-start justify-items-center">
-                <span className="text-[12px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[0].title}</span>
-                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[0].father}</span>
-                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[0].mother}</span>
-                <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[0].address}</div>
-              </div>
+              <CoBaFamilyColumn family={familyColumns[0]} />
               <div className="row-span-4 w-px self-stretch justify-self-center bg-[#542e08]" />
-              <div className="row-span-4 grid min-h-0 w-full min-w-0 grid-rows-subgrid items-start justify-items-center">
-                <span className="text-[12px] font-normal md:text-[18px] lg:text-[19px]">{familyColumns[1].title}</span>
-                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[1].father}</span>
-                <span className="text-[15px] font-bold md:text-[20px]">{familyColumns[1].mother}</span>
-                <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] font-normal leading-normal md:max-w-[260px] md:text-[15px] lg:max-w-[300px] lg:text-[16px]">{familyColumns[1].address}</div>
-              </div>
+              <CoBaFamilyColumn family={familyColumns[1]} />
             </div>
 
             <div className="flex max-w-[320px] flex-col gap-1 py-[10px] text-center text-[16px] leading-snug md:max-w-[460px] md:py-[15px] md:text-[22px] lg:max-w-[560px] lg:py-[20px] lg:text-[23px]" style={{ whiteSpace: "pre-line", fontFamily: COBA_HELV, color: BROWN, fontWeight: 700 }}>

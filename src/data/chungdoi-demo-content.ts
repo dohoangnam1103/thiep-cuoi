@@ -65,6 +65,7 @@ export type ChungDoiDemoContent = {
   heroImage?: string;
   heroImage2?: string;
   showHeroImage?: boolean;
+  showAlbum?: boolean;
   dressCodeColors?: string;
   albumLayout?: AlbumLayout;
   wishes: { name: string; time: string; text: string }[];
@@ -77,6 +78,10 @@ export type ChungDoiDemoContent = {
     groomAccountName: string;
   };
   music: string | null;
+  musicEnabled?: boolean;
+  musicStartAt?: number;
+  musicTitle?: string;
+  musicArtist?: string;
 };
 
 const templateDemoContent: Record<string, ChungDoiDemoContent> = {

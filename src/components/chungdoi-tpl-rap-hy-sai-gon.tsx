@@ -20,6 +20,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationHeroImage,
@@ -137,8 +138,9 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
               {familiesInOrder.map((family, index) => (
                 <OffsetPanel key={family.side} cyan={index === 1} className={index === 1 ? "p-7 sm:translate-y-7" : "p-7"}>
                   <p className="text-xs font-black uppercase tracking-[0.18em]">{family.side}</p>
-                  <p className="mt-6 text-lg font-black">{family.title} {family.father}</p>
-                  <p className="text-lg font-black">{family.title} {family.mother}</p>
+                  {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                    ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-6 " : ""}text-lg font-black`}>{family.title} {parent.name}</p>
+                    : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-6 " : ""}invisible select-none text-lg font-black`}>{"\u00a0"}</p>)}
                   <p className="mt-4 whitespace-pre-line text-sm font-medium leading-6 opacity-75">{family.address}</p>
                 </OffsetPanel>
               ))}

@@ -27,6 +27,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { ArchOutline, LeafSprig } from "@/components/chungdoi-tpl-ornaments";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
@@ -157,8 +158,9 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
                   <span className="text-[10px] uppercase tracking-[0.28em] text-[#33402f]/50">
                     {family.title}
                   </span>
-                  <p className="mt-3 font-serif text-[15px]">{family.father}</p>
-                  <p className="font-serif text-[15px]">{family.mother}</p>
+                  {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                    ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-3 " : ""}font-serif text-[15px]`}>{parent.name}</p>
+                    : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-3 " : ""}invisible select-none font-serif text-[15px]`}>{"\u00a0"}</p>)}
                   <p className="mt-3 text-[12px] leading-relaxed text-[#33402f]/60">
                     {family.address}
                   </p>

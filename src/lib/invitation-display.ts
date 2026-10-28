@@ -105,6 +105,26 @@ export function orderByBrideFirst<T>(bride: T, groom: T, brideFirst: boolean): [
   return brideFirst ? [bride, groom] : [groom, bride];
 }
 
+export type FamilyParent = { role: "father" | "mother"; name: string };
+
+/**
+ * Two fixed display slots for a family column: father then mother, with an empty
+ * slot at the end. A missing father therefore promotes the mother to the first
+ * row while the empty row keeps the address aligned with the other family.
+ */
+export function familyParentSlots(father: string, mother: string): [FamilyParent | null, FamilyParent | null] {
+  const parents: FamilyParent[] = [
+    father.trim() ? { role: "father", name: father } : null,
+    mother.trim() ? { role: "mother", name: mother } : null,
+  ].filter((parent): parent is FamilyParent => parent !== null);
+  return [parents[0] ?? null, parents[1] ?? null];
+}
+
+/** Parents that actually have a name, in the order they should appear. */
+export function familyParents(father: string, mother: string): FamilyParent[] {
+  return familyParentSlots(father, mother).filter((parent): parent is FamilyParent => parent !== null);
+}
+
 export type CoupleSide = "bride" | "groom";
 
 export type InvitationPerson = {

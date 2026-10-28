@@ -19,26 +19,28 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   // here. An anonymous session must still reach this form: bouncing it to
   // /dashboard is what locks a visitor into their cookie-only account, where
   // they can never attach an email and a paid invitation dies with the cookie.
-  if (await getAccountSessionUserId()) {
-    redirect("/dashboard");
-  }
-
   const { authError, error, next, reason } = await searchParams;
+  const nextPath = safeAuthReturnPath(next);
+  if (await getAccountSessionUserId()) {
+    redirect(nextPath);
+  }
   const oauthError = authError === "google" || authError === "facebook" || error ? authCopy.oauthError : undefined;
   const notice =
-    reason === "checkout"
-      ? authCopy.checkoutNotice
-      : reason === "create"
-        ? authCopy.createNotice
-        : reason === "slideshow"
-          ? authCopy.slideshowNotice
-          : undefined;
-  const nextPath = safeAuthReturnPath(next);
+    reason === "publish"
+      ? authCopy.publishNotice
+      : reason === "checkout"
+        ? authCopy.checkoutNotice
+        : reason === "create"
+          ? authCopy.createNotice
+          : reason === "slideshow"
+            ? authCopy.slideshowNotice
+            : undefined;
 
   return (
     <AuthForm
       copy={authCopy}
       nextPath={nextPath}
+      backToDraft={reason === "publish" && nextPath.startsWith("/editor2/") ? nextPath.split("?")[0] : undefined}
       notice={notice}
       oauthError={oauthError}
     />

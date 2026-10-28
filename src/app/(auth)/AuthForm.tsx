@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 
 import { googleCompleteHref } from "@/lib/auth-redirects";
@@ -9,11 +10,12 @@ import type { AuthCopy } from "./auth-copy";
 type AuthFormProps = {
   copy: AuthCopy;
   nextPath: string;
+  backToDraft?: string;
   notice?: string;
   oauthError?: string;
 };
 
-export function AuthForm({ copy, nextPath, notice, oauthError }: AuthFormProps) {
+export function AuthForm({ copy, nextPath, backToDraft, notice, oauthError }: AuthFormProps) {
   return (
     <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow">
       <h1 className="text-center font-heading text-3xl text-foreground">{copy.loginTitle}</h1>
@@ -52,6 +54,8 @@ export function AuthForm({ copy, nextPath, notice, oauthError }: AuthFormProps) 
         </svg>
         {copy.loginWithGoogle}
       </button>
+
+      {backToDraft && <Link href={backToDraft} className="mt-4 block text-center text-sm text-muted-foreground underline underline-offset-4">{copy.backToDraft}</Link>}
 
       {oauthError ? (
         <p className="mt-4 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">

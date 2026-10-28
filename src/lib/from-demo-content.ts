@@ -6,6 +6,10 @@ export type DemoContentFields = {
   fontFamily: string | null;
   assetFolder: string | null;
   music: string | null;
+  musicEnabled: boolean;
+  musicStartAt: number;
+  musicTitle: string;
+  musicArtist: string;
 
   brideFullName: string;
   groomFullName: string;
@@ -66,6 +70,10 @@ export function fromDemoContent(demo: ChungDoiDemoContent): DemoSeed {
       fontFamily: theme.fontFamily ?? null,
       assetFolder: theme.assetFolder ?? null,
       music: demo.music ?? null,
+      musicEnabled: demo.musicEnabled ?? true,
+      musicStartAt: demo.musicStartAt ?? 0,
+      musicTitle: demo.musicTitle ?? "",
+      musicArtist: demo.musicArtist ?? "",
 
       brideFullName: couple.brideFullName ?? "",
       groomFullName: couple.groomFullName ?? "",

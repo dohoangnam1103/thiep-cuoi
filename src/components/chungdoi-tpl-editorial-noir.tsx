@@ -20,6 +20,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { HairRule, OrnamentDivider } from "@/components/chungdoi-tpl-ornaments";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationHeroImage,
@@ -140,8 +141,9 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
               {orderedFamilies.map((family) => (
                 <div key={family.side} className="flex flex-col gap-2">
                   <Kicker>{family.side}</Kicker>
-                  <p className="text-[15px] font-semibold md:text-[16px]">{family.title} {family.father}</p>
-                  <p className="text-[15px] font-semibold md:text-[16px]">{family.title} {family.mother}</p>
+                  {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                    ? <p key={parent.role} data-family-parent={parent.role} className="text-[15px] font-semibold md:text-[16px]">{family.title} {parent.name}</p>
+                    : <p key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[15px] font-semibold md:text-[16px]">{"\u00a0"}</p>)}
                   <p className="text-[13px] leading-relaxed text-[#111111]/65">{family.address}</p>
                 </div>
               ))}

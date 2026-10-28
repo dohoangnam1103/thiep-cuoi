@@ -24,6 +24,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -185,8 +186,9 @@ export function CoiTrauKhamTraiInvitation({
                 <p className={`${coiTrauTypography.displayFontClass} mt-7 text-3xl font-medium`}>
                   {family.title}
                 </p>
-                <p className="mt-5 text-base font-semibold leading-7">{family.father}</p>
-                <p className="text-base font-semibold leading-7">{family.mother}</p>
+                {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                  ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-5 " : ""}text-base font-semibold leading-7`}>{parent.name}</p>
+                  : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-5 " : ""}invisible select-none text-base font-semibold leading-7`}>{"\u00a0"}</p>)}
                 <p className="mt-5 whitespace-pre-line text-sm leading-6 text-[#32151F]/65">
                   {family.address}
                 </p>
@@ -236,7 +238,7 @@ export function CoiTrauKhamTraiInvitation({
               </article>
             ))}
 
-            <article className="relative overflow-hidden border border-[#929B98]/45 bg-[#F1E8D8] p-7 text-[#32151F] shadow-[0_1.5rem_4rem_rgba(12,28,20,0.28)] sm:p-9 lg:col-span-12 lg:grid lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-12">
+            <article data-template-reception className="relative overflow-hidden border border-[#929B98]/45 bg-[#F1E8D8] p-7 text-[#32151F] shadow-[0_1.5rem_4rem_rgba(12,28,20,0.28)] sm:p-9 lg:col-span-12 lg:grid lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-12">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#315A42]">
                   {t("reception")}

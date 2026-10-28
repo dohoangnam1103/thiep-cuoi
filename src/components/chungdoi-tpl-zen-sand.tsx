@@ -24,6 +24,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { EnsoCircle, HairRule } from "@/components/chungdoi-tpl-ornaments";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
@@ -123,12 +124,9 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
                   <span className="text-[10px] uppercase tracking-[0.3em] text-[#2c2a26]/50">
                     {family.title}
                   </span>
-                  <span className="font-serif text-[15px]">
-                    {family.father}
-                  </span>
-                  <span className="font-serif text-[15px]">
-                    {family.mother}
-                  </span>
+                  {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                    ? <span key={parent.role} data-family-parent={parent.role} className="font-serif text-[15px]">{parent.name}</span>
+                    : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none font-serif text-[15px]">{"\u00a0"}</span>)}
                   <span className="mt-2 max-w-[220px] text-[12px] leading-relaxed text-[#2c2a26]/55">
                     {family.address}
                   </span>

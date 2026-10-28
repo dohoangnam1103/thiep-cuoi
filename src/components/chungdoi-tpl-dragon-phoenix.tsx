@@ -19,7 +19,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonies, invitationGiftAccounts, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const LPD_UNI = '"UNI Chu truyen thong", "Baskerville", "Times New Roman", serif';
 const LPD_BODY = 'Baskerville, "Times New Roman", serif';
@@ -240,15 +240,21 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                 / địa chỉ / địa chỉ dịch), khai tường minh ở khung cha rồi mượn lại bằng
                 grid-rows-subgrid để hai nhà thẳng hàng nhau dù một tên xuống dòng. */}
             <div className="grid w-full max-w-[366px] grid-cols-2 grid-rows-[auto_auto_auto_auto_auto] items-start gap-x-3 gap-y-1.5 text-center md:max-w-[560px] md:gap-x-10" style={{ color: GOLD, fontFamily: LPD_BODY }}>
-              {familyColumns.map((family) => (
-                <div key={`${family.father}-${family.mother}`} className="row-span-5 grid min-w-0 grid-rows-subgrid items-start justify-items-center">
-                  <span className="text-[12px] md:text-[18px]">{family.title} <span className="opacity-70">/ 先生與女士</span></span>
-                  <span className="text-[15px] font-semibold md:text-[21px]">{family.father}</span>
-                  <span className="text-[15px] font-semibold md:text-[21px]">{family.mother}</span>
-                  <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{family.address}</div>
-                  <div className="text-[10px] opacity-60 md:text-[13px]">{family.translatedAddress}</div>
-                </div>
-              ))}
+              {familyColumns.map((family) => {
+                const parents = familyParentSlots(family.father, family.mother);
+                return (
+                  <div key={`${family.father}-${family.mother}`} className="row-span-5 grid min-w-0 grid-rows-subgrid items-start justify-items-center">
+                    <span className="text-[12px] md:text-[18px]">{family.title} <span className="opacity-70">/ 先生與女士</span></span>
+                    {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới
+                        vẫn giữ chiều cao để địa chỉ hai nhà không lệch hàng. */}
+                    {parents.map((parent, index) => parent
+                      ? <span key={parent.role} data-family-parent={parent.role} className="text-[15px] font-semibold md:text-[21px]">{parent.name}</span>
+                      : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[15px] font-semibold md:text-[21px]">{"\u00a0"}</span>)}
+                    <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] leading-normal opacity-90 md:max-w-[240px] md:text-[15px]">{family.address}</div>
+                    <div className="text-[10px] opacity-60 md:text-[13px]">{family.translatedAddress}</div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* báo tin */}

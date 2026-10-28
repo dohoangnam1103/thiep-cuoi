@@ -19,6 +19,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -56,11 +57,15 @@ function SectionHeading({ children, className = "" }: { children: ReactNode; cla
 }
 
 function FamilyColumn({ family }: { family: FamilyDetails }) {
+  const parents = familyParentSlots(family.father, family.mother);
   return (
     <div className="flex min-w-0 flex-col items-center text-center text-[#e5e4d0]">
       <span className="text-[11px] opacity-70 md:text-[16px]">{family.title}</span>
-      <span className="mt-1 text-[12px] font-semibold leading-5 md:text-[16px] md:leading-7">{family.father}</span>
-      <span className="text-[12px] font-semibold leading-5 md:text-[16px] md:leading-7">{family.mother}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-1 " : ""}text-[12px] font-semibold leading-5 md:text-[16px] md:leading-7`}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-1 " : ""}invisible select-none text-[12px] font-semibold leading-5 md:text-[16px] md:leading-7`}>{"\u00a0"}</span>)}
       <span className="mt-1 text-[10px] leading-4 opacity-60 md:text-[13px] md:leading-5">{family.address}</span>
     </div>
   );

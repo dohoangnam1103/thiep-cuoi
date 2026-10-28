@@ -18,7 +18,7 @@ import {
   MapDirectionsButton,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const ROYAL_GOLD = "#E1BC7C";
 const ROYAL_GOLD_MUTED = "#C39E5E";
@@ -77,6 +77,7 @@ function RoyalDateRow({ weekday, day, month }: { weekday: string; day: string; m
 }
 
 function RoyalFamilyColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  const parents = familyParentSlots(a, b);
   return (
     // Hai nhà nằm ngang hàng nhau kể cả mobile, nên cột chỉ được nửa khung: cỡ chữ
     // dải mobile hạ xuống, và cột mượn lưới hàng của khung cha bằng grid-rows-subgrid
@@ -86,8 +87,11 @@ function RoyalFamilyColumn({ title, a, b, addr }: { title: string; a: string; b:
     // tràn ra ngoài cột. Cho cột trải hết track rồi mới cap lại từ md.
     <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center" style={{ color: ROYAL_GOLD, fontFamily: ROYAL_SERIF }}>
       <span className="text-[12px] md:text-[18px]">{title}</span>
-      <span className="text-[15px] font-semibold md:text-[21px]">{a}</span>
-      <span className="text-[15px] font-semibold md:text-[21px]">{b}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[15px] font-semibold md:text-[21px]">{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[15px] font-semibold md:text-[21px]">{"\u00a0"}</span>)}
       {/* w-full: trong ô subgrid, div không khai bề rộng sẽ tự co theo max-content nên
           địa chỉ dài tràn ra ngoài cột. Ràng về 100% cột để nó xuống dòng. */}
       {addr ? <div className="mt-1 w-full max-w-full whitespace-pre-line text-[11px] leading-normal opacity-90 md:text-[15px]">{addr}</div> : null}

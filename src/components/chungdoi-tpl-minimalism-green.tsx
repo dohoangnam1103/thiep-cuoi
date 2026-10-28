@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { resolveArtDisplayFontClass } from "@/lib/art-invitation-typography";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   orderedCouple,
@@ -105,11 +106,15 @@ function GreenHeading({
 
 /** Một cột "Ông Bà + tên bố + tên mẹ + địa chỉ", mượn lưới hàng của khung cha. */
 function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  const parents = familyParentSlots(a, b);
   return (
     <div className="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center">
       <span className="text-[12px]" style={{ color: "rgba(255,255,255,0.7)" }}>{title}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: "#ffffff" }}>{a}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: "#ffffff" }}>{b}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: "#ffffff" }}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[12px] font-semibold">{"\u00a0"}</span>)}
       <div
         className="mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight"
         style={{ color: "rgba(255,255,255,0.7)" }}

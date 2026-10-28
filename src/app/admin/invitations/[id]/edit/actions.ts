@@ -16,6 +16,7 @@ import {
   type PreparedInvitationDraft,
 } from "@/lib/invitation-editor-store";
 import { prisma } from "@/lib/prisma";
+import { scheduleInvitationOgImage } from "@/lib/prepare-invitation-og";
 import { isGoogleMapsUrl } from "@/lib/google-maps";
 import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
 import {
@@ -127,6 +128,7 @@ export async function saveSupportedInvitation(
     return editorFailure(error);
   }
 
+  scheduleInvitationOgImage(id);
   revalidatePath(`/admin/invitations/${id}/edit`);
   revalidatePath(`/admin/users`);
   revalidatePath(`/editor/${id}`);
@@ -226,6 +228,7 @@ export async function publishSupportedInvitation(
     revalidatePath(`/thiep/${result.slug}`);
   }
 
+  scheduleInvitationOgImage(id);
   return {
     ok: true,
     persisted: true,

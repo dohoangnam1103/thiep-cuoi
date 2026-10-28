@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { useInvitationEditing } from "@/components/invitation-editing-context";
+import { displayShortName } from "@/lib/short-name";
 import { TemplateGiftArtwork } from "@/components/chungdoi-gift-envelope-artwork";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroImage, invitationOpeningMessage, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 import { useWishFormBinding } from "@/components/chungdoi-live-forms";
 import {
   buildCalendar,
@@ -18,7 +20,6 @@ import {
   Lightbox,
   InvitationMap,
   MapDirectionsButton,
-  SharedCarousel,
   useLightbox,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
@@ -36,7 +37,6 @@ type SongHyPalette = {
   arcFill: string;
   starSrc: string | null;
   modalBg: string;
-  albumCarousel: boolean;
   showCountdown: boolean;
 };
 
@@ -50,7 +50,6 @@ const SONG_HY_GREEN: SongHyPalette = {
   arcFill: "#e8f0e4",
   starSrc: `${SHG}/star.webp`,
   modalBg: "rgb(220, 235, 222)",
-  albumCarousel: false,
   showCountdown: true,
 };
 
@@ -64,14 +63,8 @@ const SONG_HY_RED: SongHyPalette = {
   arcFill: "#ffeed2",
   starSrc: null,
   modalBg: "rgb(245, 224, 224)",
-  albumCarousel: true,
   showCountdown: false,
 };
-
-function givenName(full: string) {
-  const parts = full.trim().split(/\s+/).filter(Boolean);
-  return parts.length >= 3 ? parts.slice(-2).join(" ") : parts.join(" ");
-}
 
 function SongHyBand({ palette, children }: { palette: SongHyPalette; children: React.ReactNode }) {
   return (
@@ -104,21 +97,25 @@ function SongHyWishForm({ palette }: { palette: SongHyPalette }) {
 }
 
 function SongHyFamilyColumn({ palette, title, a, b, addr }: { palette: SongHyPalette; title: string; a: string; b: string; addr: string }) {
+  const parents = familyParentSlots(a, b);
   return (
     // Hai nhà nằm ngang hàng nhau kể cả mobile, nên cột mượn lưới hàng của khung cha
     // bằng grid-rows-subgrid để bốn hàng của hai nhà thẳng hàng nhau dù một tên phải
     // xuống dòng. Cỡ chữ dải mobile hạ thêm vì cột chỉ còn nửa khung.
     // w-full + không justify-self-center ở mobile: cột shrink-to-fit thì ô lưới rộng hơn
     // hộp cột, `w-full` của địa chỉ tính theo ô lưới nên tràn ra ngoài cột.
-    <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center">
+    <div data-family-column className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center">
       <span className="text-[12px] md:text-[15px]" style={{ color: palette.gray }}>{title}</span>
       {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài
           sẽ bị cắt mất chữ ở hai bên cột hẹp trên mobile. */}
-      <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: palette.accent }}>{a}</span>
-      <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: palette.accent }}>{b}</span>
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role}
+          className="text-[13px] font-semibold md:text-[15px]" style={{ color: palette.accent }}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden
+          className="invisible select-none text-[13px] font-semibold md:text-[15px]">{"\u00a0"}</span>)}
       {/* w-full: trong ô subgrid, div không khai bề rộng sẽ tự co theo max-content nên
           địa chỉ dài tràn ra ngoài cột. Ràng về 100% cột để nó xuống dòng. */}
-      {addr ? <div className="mt-1 flex w-full max-w-full flex-col whitespace-pre-line text-[11px] leading-tight md:text-[13px]" style={{ color: palette.gray }}>{addr}</div> : null}
+      {addr ? <div data-family-address className="row-start-4 mt-1 flex w-full max-w-full flex-col whitespace-pre-line text-[11px] leading-tight md:text-[13px]" style={{ color: palette.gray }}>{addr}</div> : null}
     </div>
   );
 }
@@ -161,6 +158,7 @@ function SongHyCountdown({ palette, target }: { palette: SongHyPalette; target: 
 
 /** Faithful rebuild of the Song Hỷ (double-happiness) opened invitation, palette-parametrized for the green and red variants. */
 function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; palette: SongHyPalette }) {
+  const editing = useInvitationEditing();
   const { couple, families, venue, schedule, gallery, wishes } = content;
   const [giftOpen, setGiftOpen] = useState(false);
   useEffect(() => {
@@ -172,6 +170,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
     };
   }, [giftOpen]);
   const people = orderedCouple(content);
+  const headerNames = people.map(person => displayShortName(person.fullName,
+    person.side === "bride" ? couple.brideShortName : couple.groomShortName));
   const wedding = formatDate(couple.date);
   const weekdayUpper = wedding ? wedding.weekday.toUpperCase() : "";
   const calendar = buildCalendar(couple.date);
@@ -203,14 +203,14 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         <div className="relative z-10 mx-auto mt-3 flex w-full max-w-[872px] items-center justify-center gap-4 px-4 md:mt-4 md:gap-5 md:px-10">
           <div className="min-w-0 flex-1 text-center">
             <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{people[0].birthOrder}</p>
-            <p data-invitation-short-name className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[0].fullName)}</p>
+            <p data-invitation-short-name className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{headerNames[0]}</p>
           </div>
           <div className="flex w-[64px] shrink-0 items-center justify-center md:w-[83px]">
             <img alt="" className="h-[64px] w-[64px] object-contain md:h-[83px] md:w-[83px]" src={`${SHR}/chu-hy.webp`} style={{ filter: palette.chuHyFilter }} />
           </div>
           <div className="min-w-0 flex-1 text-center">
             <p className="mb-1 text-[11px] md:text-[14px]" style={{ color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{people[1].birthOrder}</p>
-            <p data-invitation-short-name className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{givenName(people[1].fullName)}</p>
+            <p data-invitation-short-name className="w-full min-w-0 text-balance break-words uppercase leading-tight" style={{ fontSize: "clamp(13px, 4.2vw, 23px)", color: palette.bandText, textShadow: `${palette.accent} 0px 1px 4px` }}>{headerNames[1]}</p>
           </div>
         </div>
         <div className="relative z-10 mt-2 flex justify-center px-6 md:mt-3">
@@ -316,12 +316,8 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             <div className="relative z-10 mx-auto w-full max-w-lg px-2 py-4 sm:px-4">
               {(content.albumLayout ?? "grid") !== "grid" ? (
                 <AlbumGallery photos={gallery} layout={content.albumLayout ?? "grid"} accent={palette.accent} gridAspect="aspect-square" />
-              ) : palette.albumCarousel ? (
-                <div className="relative mx-auto aspect-[3/4] w-full max-w-[400px] overflow-hidden rounded-lg">
-                  <SharedCarousel photos={gallery} />
-                </div>
               ) : (
-                <div className="grid grid-cols-2 gap-4">
+                <div data-invitation-album="grid" className="grid grid-cols-2 gap-4">
                   {albumShown.map((src, i) => (
                     <button key={src} type="button" onClick={() => setLightbox(i)} className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg">
                       <img alt={`Wedding photo ${i + 1}`} className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" src={src} />
@@ -362,7 +358,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
             </div>
           ) : null}
           {calendar ? (
-            <div className="mx-auto mt-2 w-[296px] max-w-full md:w-[352px]">
+            <div data-invitation-calendar className="mx-auto mt-2 w-[296px] max-w-full md:w-[352px]">
               <div className="mx-auto w-full overflow-hidden rounded-lg border" style={{ borderColor: hexToRgba(palette.accent, 0.27), color: palette.accent }}>
                 <div className="border-b py-2.5 text-center text-[13px] font-semibold tracking-wide md:text-[14px]" style={{ borderColor: hexToRgba(palette.accent, 0.27) }}>Tháng {calendar.month} / {calendar.year}</div>
                 <div className="grid grid-cols-7 border-b-2" style={{ borderColor: palette.accent }}>
@@ -454,7 +450,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
         </section>
       </div>
 
-      {banks.length > 0 ? (
+      {banks.length > 0 || editing ? (
         <div className="relative w-full overflow-hidden" style={{ backgroundColor: palette.cardBg }}>
           <div className="relative z-10 flex flex-col items-center justify-center py-8">
             <h2 className="mb-4 flex flex-col items-center text-[20px] font-bold uppercase tracking-wide md:text-[24px]" style={{ color: palette.accent }}>Phong Bao Mừng Cưới</h2>

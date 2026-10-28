@@ -1,0 +1,52 @@
+name: Editor2 template regression
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  schedule:
+    # 03:00 Vietnam time. Also exercise Safari's engine on the daily run.
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: editor2-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  templates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ${{ fromJSON((github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '["chromium","webkit"]' || '["chromium"]') }}
+    env:
+      EDITOR2_WEBKIT: ${{ matrix.browser == 'webkit' && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install browser
+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Check test types
+        run: pnpm run typecheck:tests
+      - name: Verify every template and the shared editor flows
+        run: pnpm run test:editor2 --project=${{ matrix.browser }}
+      - name: Keep report, screenshots, videos and failure traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editor2-regression-${{ matrix.browser }}-${{ github.run_attempt }}
+          path: |
+            tests/e2e/.report/editor2-*
+            tests/e2e/.artifacts
+          retention-days: 14

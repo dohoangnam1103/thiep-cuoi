@@ -1,10 +1,71 @@
-import { writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { randomUUID } from "node:crypto";
 
 import { expect, test } from "@playwright/test";
 import sharp from "sharp";
 
+import { resolveOgImageVersion, type OgImageContent } from "../../src/lib/og-image";
+import { loginAsUser } from "./helpers/auth";
 import { getDb } from "./helpers/db";
 import { cleanupUser, createInvitation, createUser, publishInvitation } from "./helpers/fixtures";
+
+test("publishing prepares a PNG in the background and autosave rebuilds names and date", async ({ page, context, request }) => {
+  const user = createUser();
+  try {
+    const invitation = createInvitation(user.id, { templateId: "minimalism-dark-red" });
+    const suffix = randomUUID().replace(/[^0-9]/g, "").slice(0, 8);
+    const slug = `prepared-share-${randomUUID().slice(0, 8)}`;
+    const version = () => {
+      const content = getDb().prepare("SELECT * FROM InvitationContent WHERE invitationId = ?")
+        .get(invitation.id) as OgImageContent;
+      return resolveOgImageVersion(invitation.templateId, content);
+    };
+    const cachedFile = () => join(process.cwd(), ".next", "cache", "invitation-og", `${version()}.png`);
+    await loginAsUser(context, user.id);
+    await page.goto(`/editor/${invitation.id}`);
+    await page.locator("#brideFullName").fill(`Nguyễn Mai ${suffix}`);
+    await page.locator("#groomFullName").fill(`Trần Nam ${suffix}`);
+    await page.locator("#date").fill("2026-12-20");
+    await page.locator("#time").fill("18:00");
+    await page.locator("#slug").fill(slug);
+    await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+
+    // Publication succeeds first; the background task eventually creates the PNG
+    // without any crawler/image request needing to trigger it.
+    await expect.poll(() => existsSync(cachedFile())).toBe(true);
+    let previousVersion = version();
+    let previousBytes = await readFile(cachedFile());
+    expect((await sharp(previousBytes).metadata()).width).toBe(1200);
+    await page.keyboard.press("Escape");
+
+    for (const [field, value] of [
+      ["brideFullName", `Nguyễn Lan ${suffix}`],
+      ["groomFullName", `Trần Minh ${suffix}`],
+      ["date", "2027-01-15"],
+    ]) {
+      await page.locator(`#${field}`).fill(value);
+      // Date inputs have several keyboard segments; Tab may stay inside the input.
+      await page.locator(`#${field}`).blur();
+      await expect.poll(() => getDb().prepare(`SELECT ${field} AS value FROM InvitationContent WHERE invitationId = ?`)
+        .get(invitation.id), { timeout: 15_000 }).toEqual({ value });
+      expect(version()).not.toBe(previousVersion);
+      // Assert autosave prepared the new file BEFORE requesting the OG endpoint.
+      await expect.poll(() => existsSync(cachedFile())).toBe(true);
+      const prepared = await readFile(cachedFile());
+      expect(prepared.equals(previousBytes)).toBe(false);
+      const response = await request.get(`/thiep/${slug}/opengraph-image?v=${version()}`);
+      expect(response.status()).toBe(200);
+      expect((await response.body()).equals(prepared)).toBe(true);
+      previousVersion = version();
+      previousBytes = prepared;
+    }
+  } finally {
+    cleanupUser(user.id);
+  }
+});
 
 test("share crawlers receive a versioned, accessible PNG that refreshes after editing the date", async ({ request }, testInfo) => {
   const user = createUser();

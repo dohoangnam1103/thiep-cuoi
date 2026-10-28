@@ -25,6 +25,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { nguyetAnhSleevePilot } from "@/data/nguyet-anh-sleeve-pilot";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -163,12 +164,9 @@ function FamilyProofCard({
       <p className="mt-7 text-sm font-semibold text-[#D7E4EA]/62">
         {proof.title}
       </p>
-      <p className="mt-4 break-words text-lg font-semibold leading-8 text-[#D7E4EA]">
-        {proof.father}
-      </p>
-      <p className="break-words text-lg font-semibold leading-8 text-[#D7E4EA]">
-        {proof.mother}
-      </p>
+      {familyParentSlots(proof.father, proof.mother).map((parent, index) => parent
+        ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-4 " : ""}break-words text-lg font-semibold leading-8 text-[#D7E4EA]`}>{parent.name}</p>
+        : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-4 " : ""}invisible select-none break-words text-lg font-semibold leading-8 text-[#D7E4EA]`}>{"\u00a0"}</p>)}
       {proof.address ? (
         <>
           <p className="mx-auto mt-7 max-w-[32ch] whitespace-pre-line text-sm leading-7 text-[#D7E4EA]/68">

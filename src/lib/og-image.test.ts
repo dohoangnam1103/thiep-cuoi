@@ -9,6 +9,7 @@ import {
   resolveOgDate,
   resolveOgFont,
   resolveOgImageUrl,
+  resolveOgImageVersion,
   resolveOgNameLines,
   resolveOgTheme,
 } from "@/lib/og-image";
@@ -130,6 +131,21 @@ test("share image URL changes when the wedding date, names or theme change", () 
 test("resolveOgDate trả chuỗi rỗng khi trống", () => {
   assert.equal(resolveOgDate(""), "");
   assert.equal(resolveOgDate("   "), "");
+});
+
+test("prepared thumbnail versions rebuild for both full names and date edits", () => {
+  const version = resolveOgImageVersion("minimalism-dark-red", SHARE_COUPLE);
+  for (const change of [
+    { brideFullName: "Nguyễn Thị Hậu" },
+    { groomFullName: "Nguyễn Văn Long" },
+    { brideShortName: "Hậu" },
+    { groomShortName: "Long" },
+    { date: "2027-01-01" },
+  ]) {
+    assert.notEqual(resolveOgImageVersion("minimalism-dark-red", { ...SHARE_COUPLE, ...change }), version);
+  }
+  const url = resolveOgImageUrl("https://example.com", "wedding", "minimalism-dark-red", SHARE_COUPLE);
+  assert.equal(new URL(url).searchParams.get("v"), version);
 });
 
 test("resolveOgFont map template có font riêng (song-hy-green → Fz Qellia)", () => {

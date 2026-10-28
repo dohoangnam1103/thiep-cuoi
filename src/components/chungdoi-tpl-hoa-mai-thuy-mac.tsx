@@ -23,6 +23,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
@@ -251,8 +252,9 @@ export function HoaMaiThuyMacInvitation({
           <article className={styles.familyCard}>
             <p className={styles.cardKicker}>{familiesInOrder[0].side}</p>
             <h3>{familiesInOrder[0].title}</h3>
-            <p>{familiesInOrder[0].father}</p>
-            <p>{familiesInOrder[0].mother}</p>
+            {familyParentSlots(familiesInOrder[0].father, familiesInOrder[0].mother).map((parent, index) => parent
+              ? <p key={parent.role} data-family-parent={parent.role}>{parent.name}</p>
+              : <p key={`family-slot-${index}`} aria-hidden className="invisible">{"\u00a0"}</p>)}
             <address>{familiesInOrder[0].address}</address>
           </article>
 
@@ -289,8 +291,9 @@ export function HoaMaiThuyMacInvitation({
           <article className={styles.familyCard}>
             <p className={styles.cardKicker}>{familiesInOrder[1].side}</p>
             <h3>{familiesInOrder[1].title}</h3>
-            <p>{familiesInOrder[1].father}</p>
-            <p>{familiesInOrder[1].mother}</p>
+            {familyParentSlots(familiesInOrder[1].father, familiesInOrder[1].mother).map((parent, index) => parent
+              ? <p key={parent.role} data-family-parent={parent.role}>{parent.name}</p>
+              : <p key={`family-slot-${index}`} aria-hidden className="invisible">{"\u00a0"}</p>)}
             <address>{familiesInOrder[1].address}</address>
           </article>
         </div>

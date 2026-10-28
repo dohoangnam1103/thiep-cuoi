@@ -23,6 +23,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -185,8 +186,9 @@ export function BanVeToAmInvitation({
               <article className={styles.familyCard} key={family.side}>
                 <p className={styles.familySide}>{family.side}</p>
                 <h3>{family.title}</h3>
-                <p className={styles.familyNames}>{family.father}</p>
-                <p className={styles.familyNames}>{family.mother}</p>
+                {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                  ? <p key={parent.role} data-family-parent={parent.role} className={styles.familyNames}>{parent.name}</p>
+                  : <p key={`family-slot-${index}`} aria-hidden className={`${styles.familyNames} invisible select-none`}>{"\u00a0"}</p>)}
                 <p className={styles.familyAddress}>{family.address}</p>
               </article>
             ))}
@@ -233,7 +235,7 @@ export function BanVeToAmInvitation({
               </article>
             ))}
 
-            <article className={styles.receptionCard}>
+            <article data-template-reception className={styles.receptionCard}>
               <div>
                 <p className={styles.cardKicker}>{t("receptionLabel")}</p>
                 {receptionDate ? (

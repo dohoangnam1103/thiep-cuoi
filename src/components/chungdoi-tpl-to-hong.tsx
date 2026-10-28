@@ -33,7 +33,7 @@ function DateLine({ date, time }: { date: string; time?: string }) {
   const t = useTranslations("invitationTemplate");
   const parsed = formatDate(date);
   return <div className={styles.dateLine}>
-    {time ? <p>{t("atTime", { time })}</p> : null}
+      {time ? <p data-invitation-time>{t("atTime", { time })}</p> : null}
     {parsed ? <><p className={styles.largeDate}>{parsed.dayNumber}<span>/</span>{parsed.monthNumber}<span>/</span>{parsed.yearNumber}</p><p>{parsed.weekday}</p><p className={styles.muted}>{parsed.lunar}</p></> : null}
   </div>;
 }

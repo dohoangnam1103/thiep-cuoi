@@ -34,7 +34,7 @@ function DateLine({ date, time }: { date: string; time?: string }) {
   const parsed = formatDate(date);
   return (
     <div className="mt-5 text-center">
-      {time ? <p className="text-sm">{t("atTime", { time })}</p> : null}
+      {time ? <p data-invitation-time className="text-sm">{t("atTime", { time })}</p> : null}
       {parsed ? (
         <>
           <div className="mx-auto mt-3 grid max-w-[310px] grid-cols-[1fr_auto_1fr] items-center gap-4">

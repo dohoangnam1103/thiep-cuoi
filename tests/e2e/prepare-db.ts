@@ -1,12 +1,12 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync } from "node:fs";
 import path from "node:path";
+import { TEST_DB_DIR, TEST_DB_URL } from "./helpers/db";
 
 // Runs inside the webServer command, BEFORE `next start`, so the test db
 // exists before the server boots. Playwright starts webServer before globalSetup,
 // which is why db prep lives here and not in global-setup.
-const DATA_DIR = path.join(process.cwd(), "tests/e2e/.data");
-const TEST_DB_URL = "file:./tests/e2e/.data/test.db";
+const DATA_DIR = TEST_DB_DIR;
 
 async function main() {
   rmSync(DATA_DIR, { recursive: true, force: true });
@@ -15,7 +15,7 @@ async function main() {
   // Prisma 7.8's SQLite schema engine can exit with an empty "Schema engine
   // error" on macOS unless its Rust log level is initialized.
   const env = { ...process.env, DATABASE_URL: TEST_DB_URL, RUST_LOG: "info" };
-  execSync(`npx prisma db push --url ${TEST_DB_URL} --accept-data-loss`, {
+  execFileSync("npx", ["prisma", "db", "push", "--url", TEST_DB_URL, "--accept-data-loss"], {
     stdio: "inherit",
     env,
   });

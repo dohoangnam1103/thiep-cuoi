@@ -13,7 +13,7 @@ import { templates } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
 import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getCurrentUserId } from "@/lib/dal";
-import { isInvitationExpired } from "@/lib/invitation-entitlement";
+import { isInvitationActivated, isInvitationExpired } from "@/lib/invitation-entitlement";
 import { readInvitationVisitSignals, recordInvitationVisit } from "@/lib/invitation-views";
 import { resolveCoupleNames, resolveOgImageUrl } from "@/lib/og-image";
 import { prisma } from "@/lib/prisma";
@@ -161,6 +161,8 @@ export default async function PublicInvitationPage({
 
   const template = templates.find((t) => t.slug === invitation.templateId) ?? templates[0];
   const content = toDemoContent(invitation);
+  // Watermark is a trial entitlement: every paid or complimentary invitation hides it.
+  const hideBranding = isInvitationActivated(invitation);
 
   const guestRecord = g
       ? await prisma.guest.findUnique({
@@ -305,6 +307,7 @@ export default async function PublicInvitationPage({
           mediaLabels,
         }}
         cover3dEnabled={cover3dEnabled}
+        hideBranding={hideBranding}
       />
     </>
   );

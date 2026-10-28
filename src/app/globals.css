@@ -5,6 +5,55 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Keep the existing viewport breakpoints everywhere outside the direct editor
+   canvas. Inside it, the same template utilities respond to the preview width,
+   so the desktop phone frame needs neither an iframe nor a scaled document. */
+@custom-variant sm {
+  @media (width >= 40rem) {
+    &:where(:not([data-editor2-inline] *)) { @slot; }
+  }
+  @container editor2-preview (width >= 40rem) {
+    &:where([data-editor2-inline] *) { @slot; }
+  }
+}
+
+@custom-variant md {
+  @media (width >= 48rem) {
+    &:where(:not([data-editor2-inline] *)) { @slot; }
+  }
+  @container editor2-preview (width >= 48rem) {
+    &:where([data-editor2-inline] *) { @slot; }
+  }
+}
+
+@custom-variant lg {
+  @media (width >= 64rem) {
+    &:where(:not([data-editor2-inline] *)) { @slot; }
+  }
+  @container editor2-preview (width >= 64rem) {
+    &:where([data-editor2-inline] *) { @slot; }
+  }
+}
+
+@custom-variant xl {
+  @media (width >= 80rem) {
+    &:where(:not([data-editor2-inline] *)) { @slot; }
+  }
+  @container editor2-preview (width >= 80rem) {
+    &:where([data-editor2-inline] *) { @slot; }
+  }
+}
+
+@custom-variant 2xl {
+  @media (width >= 96rem) {
+    &:where(:not([data-editor2-inline] *)) { @slot; }
+  }
+  @container editor2-preview (width >= 96rem) {
+    &:where([data-editor2-inline] *) { @slot; }
+  }
+}
+
+
 /* Tailwind v4 bỏ default cursor:pointer cho button — khôi phục cho mọi phần tử bấm được. */
 button:not(:disabled),
 [role="button"]:not([aria-disabled="true"]),
@@ -2411,3 +2460,8 @@ div.minimalism-brown-opening-fly > img {
 .hoa-mai-cover-card-content > div:last-of-type { display: none !important; }
 .hoa-mai-cover-card-content > span { margin-top: .7rem !important; }
 .hoa-mai-cover-card-content button { border-radius: 999px !important; background: #a95231 !important; box-shadow: 0 9px 18px rgba(62,36,29,.22) !important; }
+
+/* Paid/complimentary invitations drop the footer watermark on every template. */
+[data-invitation-branding="hidden"] a[href*="thiepmungonline.com"] {
+  display: none !important;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useInvitationDetailVisible } from "@/components/prepared-invitation-detail";
+import { useInvitationEditing } from "@/components/invitation-editing-context";
 
 import { createContext, startTransition, type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -33,6 +34,7 @@ import {
   isGoogleMapsUrl,
 } from "@/lib/google-maps";
 import { buildVietQrImageUrl } from "@/lib/vietqr";
+import { familyParentSlots } from "@/lib/invitation-display";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import { cn } from "@/lib/utils";
 
@@ -274,9 +276,12 @@ export function Lightbox({
   ), document.body);
 }
 
+// The configured production key can reject localhost/LAN referrers. Keep dev previews usable.
+const GOOGLE_MAPS_API_KEY = process.env.NODE_ENV === "development" ? "" : process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+
 export function mapEmbedUrl(query: string) {
   const trimmed = query.trim();
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+  const apiKey = GOOGLE_MAPS_API_KEY;
 
   // Có API key → dùng Maps Embed API chính thức. URL này được Google cho phép
   // embed ở mọi webview kể cả Facebook in-app browser.
@@ -322,7 +327,7 @@ type InvitationMapProps = Omit<ComponentPropsWithoutRef<"iframe">, "src"> & {
  */
 export function InvitationMap({ query, title, className, style, ...iframeProps }: InvitationMapProps) {
   const detailVisible = useInvitationDetailVisible();
-  const hasApiKey = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+  const hasApiKey = !!GOOGLE_MAPS_API_KEY;
   const [isFacebookWebview, setIsFacebookWebview] = useState(false);
 
   useEffect(() => {
@@ -422,8 +427,9 @@ export function FamilyColumn({
    */
   sideBySideOnMobile?: boolean;
 }) {
+  const parents = familyParentSlots(a, b);
   return (
-    <div
+    <div data-family-column
       className={cn(
         "min-h-0 w-full min-w-0 text-center",
         sideBySideOnMobile
@@ -435,10 +441,15 @@ export function FamilyColumn({
     >
       <span className={cn("font-normal md:text-[18px] lg:text-[19px]", sideBySideOnMobile ? "text-[12px]" : "text-[15px]")}>{title}</span>
       {/* Không dùng whitespace-nowrap: thẻ thiệp có overflow-hidden nên tên dài sẽ bị
-          cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên. */}
-      <span className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{a}</span>
-      <span className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{b}</span>
-      {addr ? <div className={cn("mt-1 w-full whitespace-pre-line leading-normal md:max-w-[260px] md:text-[14px] lg:max-w-[300px] lg:text-[15px]", sideBySideOnMobile ? "max-w-full text-[10px]" : "max-w-[169px] text-[12px]")}>{addr}</div> : null}
+          cắt mất chữ. Cho xuống dòng thì vẫn đọc được trọn tên.
+          Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role}
+          className={cn("font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden
+          className={cn("invisible select-none font-bold md:text-[20px]", sideBySideOnMobile ? "text-[15px]" : "text-[20px]")}>{"\u00a0"}</span>)}
+      {addr ? <div data-family-address className={cn(sideBySideOnMobile && "row-start-4", "mt-1 w-full whitespace-pre-line leading-normal md:max-w-[260px] md:text-[14px] lg:max-w-[300px] lg:text-[15px]", sideBySideOnMobile ? "max-w-full text-[10px]" : "max-w-[169px] text-[12px]")}>{addr}</div> : null}
     </div>
   );
 }
@@ -1375,6 +1386,7 @@ export function GiftEnvelope({
   /** Ghi đè class của heading khi mẫu có bộ heading riêng. */
   headingClassName?: string;
 }) {
+  const editing = useInvitationEditing();
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (!open) return;
@@ -1385,9 +1397,9 @@ export function GiftEnvelope({
     };
   }, [open]);
   const cards = giftCardsWithQr(banks);
-  // Without a usable account the envelope would open onto an empty modal, so it
-  // is never offered in the first place.
-  if (cards.length === 0) return null;
+  // The private editor can offer configuration without fabricating an account.
+  // Public invitations still require a usable account before showing the gift.
+  if (cards.length === 0 && !editing) return null;
   const muted = labelColor ?? hexToRgba(dark, 0.72);
   const visual = resolveGiftVisual(templateSlug);
   const sourceEnvelope = artworkVariant === "source" && visual.kind === "layered-image";
@@ -1406,7 +1418,7 @@ export function GiftEnvelope({
         data-gift-visual-slug={templateSlug}
         type="button"
         aria-label={openLabel}
-        onClick={() => setOpen(true)}
+        onClick={() => { if (cards.length) setOpen(true); }}
         className={cn(
           "group relative cursor-pointer border-none bg-transparent outline-none",
           sourceEnvelope

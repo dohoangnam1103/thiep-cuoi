@@ -128,8 +128,8 @@ function FamilyPaper({
     <article className={styles.familyPaper}>
       <h3>{label}</h3>
       {parentTitle ? <p>{parentTitle}</p> : null}
-      {father ? <p>{father}</p> : null}
-      {mother ? <p>{mother}</p> : null}
+      {father ? <p>{father}</p> : <p aria-hidden className="invisible">{"\u00a0"}</p>}
+      {mother ? <p>{mother}</p> : <p aria-hidden className="invisible">{"\u00a0"}</p>}
       {address ? <address>{address}</address> : null}
     </article>
   );

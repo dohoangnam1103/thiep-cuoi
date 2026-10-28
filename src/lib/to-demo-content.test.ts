@@ -15,6 +15,10 @@ function contentRow(overrides: Partial<ContentFields> = {}): ContentFields {
     fontFamily: null,
     assetFolder: null,
     music: null,
+    musicEnabled: true,
+    musicStartAt: 0,
+    musicTitle: "",
+    musicArtist: "",
     brideFullName: "Trần An Nhiên",
     groomFullName: "Nguyễn Minh Khôi",
     brideShortName: "An Nhiên",
@@ -34,6 +38,7 @@ function contentRow(overrides: Partial<ContentFields> = {}): ContentFields {
     heroImage: "",
     heroImage2: "",
     showHeroImage: true,
+    showAlbum: true,
     dressCodeColors: "",
     albumLayout: "grid",
     brideFather: "Trần Văn Thành",
@@ -46,6 +51,7 @@ function contentRow(overrides: Partial<ContentFields> = {}): ContentFields {
     groomParentTitle: "Ông Bà",
     address: "Trung tâm Hội nghị Riverside Palace",
     mapAddress: "Riverside Palace, Quận 4, Hồ Chí Minh",
+    venueName: "",
     banquetTime: "18:00",
     brideBankName: "Vietcombank",
     brideAccountNumber: "1026888899",
@@ -101,6 +107,19 @@ test("an invitation with no CeremonyItem row keeps the ceremony from its content
   assert.equal(content.couple.ceremonyDate, "2026-12-12");
   assert.equal(content.couple.ceremonyTime, "09:00");
   assert.equal(content.couple.ceremonyHeader, "LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI\nTƯ GIA");
+});
+
+test("published venue projection includes the separate name and preserves legacy addresses and map overrides", () => {
+  const invitation = invitationRow([]);
+  invitation.content = contentRow({ venueName: "Nhà hàng Hoa Mai", address: "123 Nguyễn Huệ", mapAddress: "https://www.google.com/maps?q=10.7,106.6" });
+  const rendered = toDemoContent(invitation);
+  assert.equal(rendered.venue.address, "Nhà hàng Hoa Mai\n123 Nguyễn Huệ");
+  assert.equal(rendered.venue.mapAddress, invitation.content.mapAddress);
+  invitation.content = contentRow({ venueName: "", address: "Nhà hàng cũ, 12 Nguyễn Huệ", mapAddress: "" });
+  assert.equal(toDemoContent(invitation).venue.address, "Nhà hàng cũ, 12 Nguyễn Huệ");
+  assert.equal(toDemoContent(invitation).venue.mapAddress, "Nhà hàng cũ, 12 Nguyễn Huệ");
+  invitation.content = contentRow({ venueName: "Nhà hàng Hoa Mai", address: "123 Nguyễn Huệ", mapAddress: "" });
+  assert.equal(toDemoContent(invitation).venue.mapAddress, "123 Nguyễn Huệ");
 });
 
 /**

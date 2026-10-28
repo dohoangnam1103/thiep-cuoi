@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -62,11 +62,15 @@ function LotusHeading({ children, className }: { children: ReactNode; className?
 }
 
 function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  const parents = familyParentSlots(a, b);
   return (
     <div className="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center">
       <span className="mb-1 text-[12px] md:text-[14px]" style={{ color: INK }}>{title}</span>
-      <span className="text-[12px] font-medium [overflow-wrap:anywhere]" style={{ color: ACCENT }}>{a}</span>
-      <span className="text-[12px] font-medium [overflow-wrap:anywhere]" style={{ color: ACCENT }}>{b}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[12px] font-medium [overflow-wrap:anywhere]" style={{ color: ACCENT }}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[12px] font-medium">{"\u00a0"}</span>)}
       <div className="mt-1 flex flex-col whitespace-pre-line text-[11px] leading-snug md:text-[12px]" style={{ color: INK }}>{addr}</div>
     </div>
   );

@@ -22,7 +22,7 @@ test("Song Hỷ hides wedding gift section when no VietQR account exists", () =>
     '<div data-template-footer',
   );
 
-  assert.match(giftSection, /\{banks\.length > 0 \? \(/);
+  assert.match(giftSection, /\{banks\.length > 0(?: \|\| editing)? \? \(/);
   assert.match(giftSection, /Phong Bao Mừng Cưới/);
 });
 

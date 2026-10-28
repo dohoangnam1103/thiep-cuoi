@@ -24,6 +24,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -180,12 +181,9 @@ function FamilyPanel({
           </span>
         </summary>
         <div className="mt-6 border-t border-[#B58A3A]/35 pt-5">
-          <p className="break-words text-lg font-semibold leading-7 text-[#EAD9B8]">
-            {chapter.father}
-          </p>
-          <p className="break-words text-lg font-semibold leading-7 text-[#EAD9B8]">
-            {chapter.mother}
-          </p>
+          {familyParentSlots(chapter.father, chapter.mother).map((parent, index) => parent
+            ? <p key={parent.role} data-family-parent={parent.role} className="break-words text-lg font-semibold leading-7 text-[#EAD9B8]">{parent.name}</p>
+            : <p key={`family-slot-${index}`} aria-hidden className="invisible select-none break-words text-lg font-semibold leading-7 text-[#EAD9B8]">{"\u00a0"}</p>)}
           {chapter.address ? (
             <>
               <p className="mx-auto mt-6 max-w-[28ch] whitespace-pre-line text-sm leading-6 text-[#EAD9B8]/72">

@@ -69,6 +69,7 @@ import { cn } from "@/lib/utils";
 import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage } from "@/lib/invitation-display";
 import { isGoogleMapsShortUrl, isGoogleMapsUrl } from "@/lib/google-maps";
 import { shortNameFromFullName } from "@/lib/short-name";
+import { venueDisplayAddress, venueMapQuery } from "@/lib/venue-address";
 import {
   capitalizeVietnameseSentences,
   titleCaseVietnameseName,
@@ -351,8 +352,8 @@ function buildPreviewContent(form: HTMLFormElement, invitationId: string): Chung
       groomParentTitle: read("groomParentTitle"),
     },
     venue: {
-      address: read("address"),
-      mapAddress: read("mapAddress"),
+      address: venueDisplayAddress(read("venueName"), read("address")),
+      mapAddress: venueMapQuery(read("venueName"), read("address"), read("mapAddress")),
       banquetTime: read("time"),
     },
     ceremonies,
@@ -2112,6 +2113,7 @@ function EditorFormBody({
           content={previewContent}
           previewMode
           cover3dEnabled={cover3dEnabled}
+          hideBranding={activated}
         />
       ) : null}
 
@@ -2201,6 +2203,7 @@ function EditorFormBody({
           className="space-y-4"
           id="editor-form"
         >
+        <input type="hidden" name="venueName" value={seed("venueName", field(content, "venueName"))} readOnly />
         <Accordion title="Thông tin chính" icon="♡">
           <Grid>
             <div className="min-w-0">
@@ -2972,6 +2975,7 @@ function DemoEditorFormBody({
           className="space-y-4"
           id="editor-form"
         >
+        <input type="hidden" name="venueName" value={seed("venueName", field(content, "venueName"))} readOnly />
         <Accordion title="Thông tin chính" icon="♡">
           <Grid>
             <div>

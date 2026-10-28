@@ -32,6 +32,7 @@ import {
 import { ConanCasebookFittedName } from "@/components/detective-conan-casebook/conan-casebook-fitted-name";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -536,12 +537,9 @@ function CasebookChapterComponent({
               <p className="mt-2 text-[0.58rem] font-bold text-[#516170] sm:text-xs">
                 {family.title}
               </p>
-              <p className="mt-2 truncate text-[0.68rem] font-bold text-[#102236] sm:text-sm">
-                {family.father}
-              </p>
-              <p className="truncate text-[0.68rem] font-bold text-[#102236] sm:text-sm">
-                {family.mother}
-              </p>
+              {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-2 " : ""}truncate text-[0.68rem] font-bold text-[#102236] sm:text-sm`}>{parent.name}</p>
+                : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-2 " : ""}invisible select-none truncate text-[0.68rem] font-bold text-[#102236] sm:text-sm`}>{"\u00a0"}</p>)}
               <p className="mt-2 line-clamp-3 whitespace-pre-line text-[0.56rem] leading-4 text-[#516170] sm:text-[0.68rem] sm:leading-5">
                 {family.address}
               </p>

@@ -27,7 +27,7 @@ const contentSecurityPolicy = [
   "font-src 'self' data:",
   "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://cloudflareinsights.com",
   "media-src 'self' data: blob: https:",
-  "frame-src https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com",
+  "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -38,8 +38,12 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // Parallel editor audits must not replace a running dev/E2E server's chunks.
+  ...(process.env.E2E_NEXT_DIST_DIR ? { distDir: process.env.E2E_NEXT_DIST_DIR } : {}),
   output: "standalone",
   poweredByHeader: false,
+  // Permit the local phone-testing origin to connect to the dev runtime/HMR.
+  allowedDevOrigins: ["192.168.0.94"],
   serverExternalPackages: ["heic-decode", "libheif-js"],
   images: {
     qualities: [75, 84, 88, 90, 92],

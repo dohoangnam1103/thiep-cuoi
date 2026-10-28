@@ -4,6 +4,7 @@ import { normalizeAlbumLayout } from "@/lib/album-layout";
 import { DEFAULT_OPENING_MESSAGE } from "@/lib/invitation-display";
 import { shortNameFromFullName } from "@/lib/short-name";
 import { dedicatedHeroImage } from "@/lib/hero-image-source";
+import { venueDisplayAddress, venueMapQuery } from "@/lib/venue-address";
 
 export type InvitationWithRelations = Prisma.InvitationGetPayload<{
   include: {
@@ -94,8 +95,8 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       groomParentTitle: c?.groomParentTitle ?? "",
     },
     venue: {
-      address: c?.address ?? "",
-      mapAddress: c?.mapAddress ?? "",
+      address: venueDisplayAddress(c?.venueName, c?.address),
+      mapAddress: venueMapQuery(c?.venueName, c?.address, c?.mapAddress),
       banquetTime: clean(c?.time) ?? c?.banquetTime ?? "",
     },
     // No CeremonyItem row means "never set", not "explicitly cleared", so leave
@@ -110,6 +111,7 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
     heroImage: dedicatedHeroImage(c?.heroImage),
     heroImage2: dedicatedHeroImage(c?.heroImage2),
     showHeroImage: c?.showHeroImage ?? true,
+    showAlbum: c?.showAlbum ?? true,
     dressCodeColors: c?.dressCodeColors ?? "",
     albumLayout: normalizeAlbumLayout(c?.albumLayout),
     wishes: invitation.wishes.map((w) => ({
@@ -126,5 +128,9 @@ export function toDemoContent(invitation: InvitationWithRelations): ChungDoiDemo
       groomAccountName: c?.groomAccountName ?? "",
     },
     music: clean(c?.music),
+    musicEnabled: c?.musicEnabled ?? true,
+    musicStartAt: c?.musicStartAt ?? 0,
+    musicTitle: c?.musicTitle ?? "",
+    musicArtist: c?.musicArtist ?? "",
   };
 }

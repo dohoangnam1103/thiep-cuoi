@@ -25,6 +25,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { doraemonDoorPilot } from "@/data/doraemon-door-pilot";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationOpeningMessage,
@@ -183,12 +184,9 @@ function FamilyPanel({
       <p className="relative mt-5 text-sm font-semibold text-[#17334A]/58">
         {panel.title}
       </p>
-      <p className="relative mt-4 text-lg font-semibold leading-8 text-[#17334A]">
-        {panel.father}
-      </p>
-      <p className="relative text-lg font-semibold leading-8 text-[#17334A]">
-        {panel.mother}
-      </p>
+      {familyParentSlots(panel.father, panel.mother).map((parent, index) => parent
+        ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-4 " : ""}relative text-lg font-semibold leading-8 text-[#17334A]`}>{parent.name}</p>
+        : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-4 " : ""}relative invisible select-none text-lg font-semibold leading-8 text-[#17334A]`}>{"\u00a0"}</p>)}
       {panel.address ? (
         <>
           <p className="relative mx-auto mt-6 max-w-[34ch] whitespace-pre-line text-sm leading-7 text-[#17334A]/68">

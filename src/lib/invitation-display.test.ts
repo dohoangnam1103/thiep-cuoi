@@ -5,6 +5,7 @@ import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import {
   DEFAULT_OPENING_MESSAGE,
   defaultCeremonyMessage,
+  familyParentSlots,
   invitationCeremonies,
   invitationCeremonyMessage,
   invitationCouple,
@@ -67,6 +68,22 @@ function displayContent(
     music: null,
   };
 }
+
+test("a missing parent leaves the surviving parent in the first family row", () => {
+  assert.deepEqual(familyParentSlots("Nguyễn Văn An", "Trần Thị Bình"), [
+    { role: "father", name: "Nguyễn Văn An" },
+    { role: "mother", name: "Trần Thị Bình" },
+  ]);
+  assert.deepEqual(familyParentSlots("", "Trần Thị Bình"), [
+    { role: "mother", name: "Trần Thị Bình" },
+    null,
+  ]);
+  assert.deepEqual(familyParentSlots("Nguyễn Văn An", "  "), [
+    { role: "father", name: "Nguyễn Văn An" },
+    null,
+  ]);
+  assert.deepEqual(familyParentSlots("", ""), [null, null]);
+});
 
 test("default invitation messages match the editor defaults", () => {
   assert.equal(DEFAULT_OPENING_MESSAGE, "TRÂN TRỌNG BÁO TIN\nLỄ THÀNH HÔN CỦA CON CHÚNG TÔI.");

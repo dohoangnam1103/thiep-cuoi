@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -46,11 +46,15 @@ function PinkHeading({ children }: { children: React.ReactNode }) {
 }
 
 function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  const parents = familyParentSlots(a, b);
   return (
     <div className="row-span-4 grid min-w-0 max-w-[180px] grid-rows-subgrid justify-items-center text-center md:max-w-[280px]">
       <span className="text-[12px] md:text-[14px]" style={{ color: WINE }}>{title}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ ...BODY_FONT, color: ROSE }}>{a}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ ...BODY_FONT, color: ROSE }}>{b}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ ...BODY_FONT, color: ROSE }}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[12px] font-semibold">{"\u00a0"}</span>)}
       <div className="mt-1 flex flex-col whitespace-pre-line text-[10px] leading-snug md:text-[12px]" style={{ color: WINE }}>{addr}</div>
     </div>
   );

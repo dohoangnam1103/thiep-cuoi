@@ -27,6 +27,7 @@ import {
 } from "@/components/chungdoi-tpl-shared";
 import { Barcode, PerforationRule } from "@/components/chungdoi-tpl-ornaments";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccountLabel,
   invitationGiftAccounts,
@@ -157,8 +158,9 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
                   <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#a4462d]/75">
                     {family.title}
                   </span>
-                  <span className="text-[14px] font-semibold">{family.father}</span>
-                  <span className="text-[14px] font-semibold">{family.mother}</span>
+                  {familyParentSlots(family.father, family.mother).map((parent, index) => parent
+                    ? <span key={parent.role} data-family-parent={parent.role} className="text-[14px] font-semibold">{parent.name}</span>
+                    : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[14px] font-semibold">{"\u00a0"}</span>)}
                   <span className="mt-1 text-[12px] leading-relaxed opacity-70">{family.address}</span>
                 </div>
               ))}

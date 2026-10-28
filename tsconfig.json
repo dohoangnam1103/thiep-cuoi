@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,8 +23,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@chungdoi/site-config": ["./packages/site-config/src/index.ts"],
+      "@/*": [
+        "./src/*"
+      ],
+      "@chungdoi/site-config": [
+        "./packages/site-config/src/index.ts"
+      ],
       "@chungdoi/invitation-data": [
         "./packages/invitation-data/src/signature-registry.ts"
       ],
@@ -46,5 +54,11 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "tests", "playwright.config.ts", "apps"]
+  "exclude": [
+    "node_modules",
+    "tests",
+    "playwright.config.ts",
+    "apps",
+    ".next-editor2-*/**"
+  ]
 }

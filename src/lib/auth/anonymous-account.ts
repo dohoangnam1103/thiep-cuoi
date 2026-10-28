@@ -6,12 +6,10 @@ import { getSession } from "@/lib/session";
 export type AnonymityFields = Pick<User, "email" | "passwordHash">;
 
 /**
- * Trước đây luồng tạo thiệp mint được User row không có credential nào, nên
- * đường duy nhất trở lại account đó là session cookie — sống 7 ngày và không
- * bao giờ được gia hạn. Lối tạo đó đã bị chặn (mọi flow tạo thiệp giờ đòi
- * account thật), nhưng các row cũ trên prod vẫn còn: một row như vậy có thể
- * được nhận về bởi account mà khách đăng nhập; row đã có email hoặc password là
- * của một người cụ thể và không bao giờ được chạm vào.
+ * A cookie-only user owns temporary drafts. The experimental /editor2 flow
+ * deliberately creates these before login; legacy creation/editing and all
+ * publication/payment flows still require a real account. Signing in upgrades
+ * or adopts only rows without email/password credentials.
  */
 export function isAnonymousUser(user: AnonymityFields | null | undefined): boolean {
   if (!user) return false;

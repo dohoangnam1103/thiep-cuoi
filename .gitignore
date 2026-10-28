@@ -82,6 +82,8 @@ tmp/
 
 # Playwright E2E artifacts + isolated test db
 /tests/e2e/.data/
+/tests/e2e/.data-editor2-*/
+/.next-editor2-*/
 /tests/e2e/.artifacts/
 /tests/e2e/.report/
 /tests/e2e/*.log

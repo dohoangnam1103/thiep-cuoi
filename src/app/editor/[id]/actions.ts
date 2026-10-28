@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
+import { scheduleInvitationOgImage } from "@/lib/prepare-invitation-og";
 import { verifyAccountSession, ownInvitation } from "@/lib/dal";
 import { isGoogleMapsUrl } from "@/lib/google-maps";
 import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
@@ -50,6 +51,7 @@ export async function saveDraft(id: string, _prev: EditorState, formData: FormDa
   }
 
   await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
+  scheduleInvitationOgImage(id);
   revalidatePath(`/editor/${id}`);
   return { ok: true, persisted: true };
 }
@@ -67,6 +69,7 @@ export async function autosaveDraft(id: string, formData: FormData): Promise<boo
   if ("errorCode" in prepared) return false;
 
   await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
+  scheduleInvitationOgImage(id);
   return true;
 }
 
@@ -100,6 +103,7 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
   }
 
   await prisma.$transaction((db) => writeInvitationDraft(db, id, prepared.data));
+  scheduleInvitationOgImage(id);
   // Draft đã ghi nội dung mới nhất; giữ Server Component đồng bộ kể cả khi
   // các điều kiện xuất bản bên dưới chưa đạt.
   revalidatePath(`/editor/${id}`);

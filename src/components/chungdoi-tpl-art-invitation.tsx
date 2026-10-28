@@ -21,6 +21,7 @@ import {
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationGiftAccounts,
   invitationHeroImage,
@@ -338,15 +339,17 @@ function EventCard({
   date,
   time,
   config,
+  reception = false,
 }: {
   label: string;
   message: string;
   date: ReturnType<typeof formatDate>;
   time: string;
   config: ArtInvitationConfig;
+  reception?: boolean;
 }) {
   return (
-    <article data-event-card className={cn("border p-7 sm:p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
+    <article data-event-card data-template-reception={reception || undefined} className={cn("border p-7 sm:p-8", config.surfaceClass, config.borderClass, contentRadiusClass())}>
       <h3 className={cn("text-xs font-semibold uppercase tracking-[0.22em]", config.displayFontClass, config.accentTextClass)}>{label}</h3>
       <p className={cn("mt-6 whitespace-pre-line text-base leading-7", config.inkClass)}>{message}</p>
       {date ? (
@@ -385,6 +388,7 @@ export function ArtInvitation({
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
   const familyPair = orderByBrideFirst(
     {
+      person: "bride" as const,
       side: t("brideFamily"),
       father: families.brideFather,
       mother: families.brideMother,
@@ -392,6 +396,7 @@ export function ArtInvitation({
       title: families.brideParentTitle || t("parents"),
     },
     {
+      person: "groom" as const,
       side: t("groomFamily"),
       father: families.groomFather,
       mother: families.groomMother,
@@ -432,8 +437,11 @@ export function ArtInvitation({
               {familyPair.map((family) => (
                 <div key={family.side}>
                   <h3 className={cn("text-xs font-semibold uppercase tracking-[0.2em]", effectiveConfig.displayFontClass, config.accentTextClass)}>{family.side}</h3>
-                  <p className={cn("mt-4 font-semibold", config.inkClass)}>{family.title} {family.father}</p>
-                  <p className={cn("font-semibold", config.inkClass)}>{family.title} {family.mother}</p>
+                  {familyParentSlots(family.father, family.mother).map((parent, index) => (
+                    <p key={index} data-invitation-family-field={parent ? `${family.person}${parent.role === "father" ? "Father" : "Mother"}` : undefined} className={cn(index === 0 && "mt-4", "font-semibold", !parent && "invisible select-none", config.inkClass)}>
+                      {parent ? `${family.title} ${parent.name}` : "\u00a0"}
+                    </p>
+                  ))}
                   <p className={cn("mt-2 text-sm leading-6", config.mutedClass)}>{family.address}</p>
                 </div>
               ))}
@@ -457,6 +465,7 @@ export function ArtInvitation({
             </div>
           ))}
           <EventCard
+            reception
             label={t("reception")}
             message={venue.address}
             date={receptionDate}

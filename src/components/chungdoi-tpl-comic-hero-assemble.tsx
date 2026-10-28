@@ -22,6 +22,7 @@ import {
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { comicHeroAssemblePalette } from "@/data/comic-hero-assemble-pilot";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationCouple,
   invitationGiftAccountLabel,
@@ -122,6 +123,7 @@ function HeroCard({
   labels: { secretIdentity: string; affiliation: string; homeBase: string };
 }) {
   const stripeClass = accent === BLUE ? "bg-[#1b4dc1]" : "bg-[#d7263d]";
+  const parents = familyParentSlots(father, mother);
   return (
     <ComicPanel className="flex min-w-0 flex-1 flex-col overflow-hidden">
       <div className={`flex items-center justify-between px-3 py-1.5 ${stripeClass}`}>
@@ -157,9 +159,9 @@ function HeroCard({
             {labels.affiliation}
           </dt>
           <dd className="text-[13px] leading-snug text-[#12141f] md:text-[14px]">
-            {parentTitle} {father}
+            {parents[0] ? `${parentTitle} ${parents[0].name}` : "\u00a0"}
             <br />
-            {parentTitle} {mother}
+            {parents[1] ? `${parentTitle} ${parents[1].name}` : "\u00a0"}
           </dd>
         </div>
         {base ? (

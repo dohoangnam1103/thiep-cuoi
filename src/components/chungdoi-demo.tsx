@@ -34,6 +34,7 @@ import { HeroTypographyScope } from "@/components/hero-typography-provider";
 import { PreparedInvitationDetail } from "@/components/prepared-invitation-detail";
 import { PublicRsvpDialog } from "@/components/public-rsvp-dialog";
 import { PublicGuestMediaDialog } from "@/components/public-guest-media-dialog";
+import { InvitationBrandingDialog } from "@/components/invitation-branding-dialog";
 import {
   GuestMediaGalleryProvider,
   PublicGuestMomentsPortal,
@@ -65,6 +66,7 @@ import {
   isZodiacArtworkPath,
 } from "@/lib/zodiac";
 import {
+  familyParentSlots,
   invitationCeremonies,
   invitationCeremonyMessage,
   invitationGiftAccounts,
@@ -1614,11 +1616,15 @@ function FamilyBlock({
   address: string;
   tokens: Tokens;
 }) {
+  const parents = familyParentSlots(father, mother);
   return (
     <div className="text-center" style={{ color: tokens.textPrimary }}>
       <p className="text-sm font-semibold uppercase tracking-wide">{title}</p>
-      <p className="mt-2 text-lg font-semibold">{father}</p>
-      <p className="text-lg font-semibold">{mother}</p>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <p key={parent.role} data-family-parent={parent.role} className={`${index === 0 ? "mt-2 " : ""}text-lg font-semibold`}>{parent.name}</p>
+        : <p key={`family-slot-${index}`} aria-hidden className={`${index === 0 ? "mt-2 " : ""}invisible select-none text-lg font-semibold`}>{"\u00a0"}</p>)}
       {address ? <p className="mt-2 text-sm leading-6 opacity-90">{address}</p> : null}
     </div>
   );
@@ -1855,14 +1861,17 @@ export function ChungDoiDemo({
   liveForms = null,
   captureMode = false,
   previewMode = false,
+  embedded = false,
   heading,
   cover3dEnabled = DEFAULT_COVER_3D_ENABLED,
+  hideBranding = false,
 }: {
   template: ChungDoiTemplate;
   content: ChungDoiDemoContent;
   liveForms?: LiveForms;
   captureMode?: boolean;
   previewMode?: boolean;
+  embedded?: boolean;
   heading?: string;
   /**
    * Công tắc bìa 3D ở /admin/settings. Server component đọc từ AppConfig rồi
@@ -1870,7 +1879,25 @@ export function ChungDoiDemo({
    * ở một call site thì hệ quả là bìa nhanh, không phải bìa nặng.
    */
   cover3dEnabled?: boolean;
+  /** Paid/complimentary invitations hide the footer watermark for every template. */
+  hideBranding?: boolean;
 }) {
+  const [brandingOpen, setBrandingOpen] = useState(false);
+  // Every template renders its own footer link. Intercept the real anchor so the
+  // click explains the watermark instead of navigating away.
+  useEffect(() => {
+    const intercept = (event: MouseEvent) => {
+      const link = event.target instanceof Element
+        ? event.target.closest<HTMLAnchorElement>('a[href*="thiepmungonline.com"]')
+        : null;
+      if (!link) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setBrandingOpen(true);
+    };
+    document.addEventListener("click", intercept, true);
+    return () => document.removeEventListener("click", intercept, true);
+  }, []);
   const gatefoldT = useTranslations("gatefoldLab");
   const sleeveT = useTranslations("sleeveLab");
   const coiTrauT = useTranslations("coiTrauLab");
@@ -1914,6 +1941,7 @@ export function ChungDoiDemo({
   const autoScrollTimerRef = useRef<number | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const musicStartAppliedRef = useRef(false);
   const lenisRef = useRef<Lenis | null>(null);
   const [autoScrolling, setAutoScrolling] = useState(false);
   const [atInvitationEnd, setAtInvitationEnd] = useState(false);
@@ -1925,10 +1953,15 @@ export function ChungDoiDemo({
     autoScrollingRef.current = autoScrolling;
   }, [autoScrolling]);
 
+  // A new track or start position must seek again on its first playback.
+  useEffect(() => {
+    musicStartAppliedRef.current = false;
+  }, [content.music, content.musicStartAt]);
+
   // Đã cuộn tới cuối thiệp hay chưa — quyết định nút hiện "tự động cuộn" hay "xem lại
   // từ đầu". Chỉ set state ở thời điểm đổi trạng thái nên không gây re-render mỗi frame.
   useEffect(() => {
-    if (!opened || captureMode || isPaginatedExperience) return;
+    if (!opened || captureMode || previewMode || isPaginatedExperience) return;
 
     const update = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -1937,7 +1970,7 @@ export function ChungDoiDemo({
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, [captureMode, isPaginatedExperience, opened]);
+  }, [captureMode, previewMode, isPaginatedExperience, opened]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -1950,7 +1983,7 @@ export function ChungDoiDemo({
   const tokens = useMemo(() => (content ? resolveTokens(content) : null), [content]);
 
   useEffect(() => {
-    if (!content || (opened && !isPaginatedExperience)) return;
+    if (previewMode || !content || (opened && !isPaginatedExperience)) return;
     const originalBodyOverflow = document.body.style.overflow;
     const originalRootOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
@@ -1961,7 +1994,7 @@ export function ChungDoiDemo({
       document.body.style.overflow = originalBodyOverflow;
       document.documentElement.style.overflow = originalRootOverflow;
     };
-  }, [content, isPaginatedExperience, opened]);
+  }, [content, isPaginatedExperience, opened, previewMode]);
 
   useEffect(() => {
     if (
@@ -1993,7 +2026,7 @@ export function ChungDoiDemo({
   ]);
 
   useEffect(() => {
-    if (!opened || captureMode || isPaginatedExperience) return;
+    if (!opened || captureMode || previewMode || isPaginatedExperience) return;
 
     const lenis = new Lenis({ syncTouch: false, allowNestedScroll: true });
     lenisRef.current = lenis;
@@ -2019,7 +2052,7 @@ export function ChungDoiDemo({
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [captureMode, isPaginatedExperience, opened]);
+  }, [captureMode, previewMode, isPaginatedExperience, opened]);
 
   useEffect(() => {
     if (
@@ -2107,6 +2140,7 @@ export function ChungDoiDemo({
   }, [isDetectiveConanCasebookExperience, physicalReplayVersion]);
 
   useEffect(() => {
+    if (previewMode) return;
     const originalScrollRestoration = history.scrollRestoration;
     history.scrollRestoration = "manual";
 
@@ -2125,7 +2159,7 @@ export function ChungDoiDemo({
       cancelAnimationFrame(raf);
       history.scrollRestoration = originalScrollRestoration;
     };
-  }, []);
+  }, [previewMode]);
 
   const handlePhysicalExperienceStateChange = useCallback((nextState: "closed" | "opening" | "handoff" | "opened") => {
     if (!isPhysicalExperience || !content) return;
@@ -2144,8 +2178,9 @@ export function ChungDoiDemo({
         openingRef.current = true;
         setOpenPhase("opening");
         const audio = audioRef.current;
-        if (audio) {
+        if (audio && content.musicEnabled !== false) {
           audio.src = content.music ?? DEFAULT_INVITATION_MUSIC;
+          applyMusicStart(audio);
           audio.play().then(() => {
             setPlaying(true);
             setAudioMuted(false);
@@ -2191,6 +2226,15 @@ export function ChungDoiDemo({
     : atInvitationEnd
       ? invitationControlsT("replayAutoScroll")
       : invitationControlsT("startAutoScroll");
+
+  /** Seek to the configured start once; resuming or looping is left alone. */
+  function applyMusicStart(audio: HTMLAudioElement) {
+    if (musicStartAppliedRef.current) return;
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    const start = Number.isFinite(content.musicStartAt) ? Math.max(0, content.musicStartAt ?? 0) : 0;
+    if (start > 0) audio.currentTime = Math.min(start, Math.max(0, audio.duration - 1));
+    musicStartAppliedRef.current = true;
+  }
 
   function getInteractiveAudio() {
     const audio = audioRef.current;
@@ -2247,8 +2291,10 @@ export function ChungDoiDemo({
     if (content.slug === "to-hong") {
       return;
     }
+    if (content.musicEnabled === false) return;
     const audio = getInteractiveAudio();
     if (audio) {
+      applyMusicStart(audio);
       audio.play().then(() => {
         setPlaying(true);
         setAudioMuted(false);
@@ -2260,6 +2306,7 @@ export function ChungDoiDemo({
     const audio = getInteractiveAudio();
     if (!audio) return;
     if (audio.paused) {
+      applyMusicStart(audio);
       audio.play().then(() => {
         setPlaying(true);
         setAudioMuted(false);
@@ -2303,11 +2350,13 @@ export function ChungDoiDemo({
     setAutoScrolling(true);
   }
 
+  const Root = embedded ? "div" : "main";
   return (
     <LiveFormsProvider value={liveForms}>
-    <main
+    <Root
       id="top"
       data-capture-mode={captureMode ? "true" : undefined}
+      data-invitation-branding={hideBranding ? "hidden" : "visible"}
       className={cn(
         isPaginatedExperience
           ? "relative h-[100dvh] overflow-hidden bg-[#111820]"
@@ -2320,7 +2369,8 @@ export function ChungDoiDemo({
       )}
     >
       <h1 className="sr-only">{semanticHeading}</h1>
-      {!captureMode ? <audio ref={audioRef} loop preload="none" /> : null}
+      {!captureMode ? <audio ref={audioRef} loop preload="none"
+        onLoadedMetadata={event => applyMusicStart(event.currentTarget)} /> : null}
 
       {isDetectiveConanCasebookExperience
         && !captureMode
@@ -2514,6 +2564,7 @@ export function ChungDoiDemo({
             ) : null}
             <button
               type="button"
+              data-invitation-music
               onClick={toggleMusic}
               aria-label={
                 playing
@@ -2538,7 +2589,8 @@ export function ChungDoiDemo({
           </div>
         </>
       ) : null}
-    </main>
+      <InvitationBrandingDialog open={brandingOpen} onOpenChange={setBrandingOpen} />
+    </Root>
     </LiveFormsProvider>
   );
 }

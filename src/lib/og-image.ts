@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { resolveZodiacCardImages } from "@/lib/zodiac-decor";
 
+export type OgImageContent = OgCoupleContent & { date: string; primaryColor: string };
+
 export type OgCoupleContent = {
   brideShortName: string;
   groomShortName: string;
@@ -36,17 +38,17 @@ export function resolveOgNameLines(content: OgCoupleContent): string[] {
   return bride && groom ? [bride, "&", groom] : [bride, groom].filter(Boolean);
 }
 
-export function resolveOgImageUrl(
-  siteUrl: string,
-  slug: string,
-  templateId: string,
-  content: OgCoupleContent & { date: string; primaryColor: string },
-): string {
-  // Next's file hash only changes when code changes. Social crawlers also need
-  // a new image URL after the couple edits their names, wedding date or theme.
-  const version = createHash("sha256")
+// Shared by metadata URLs and the PNG cache: every render-affecting edit must
+// select a new file, even while an older render is still running.
+export function resolveOgImageVersion(templateId: string, content: OgImageContent): string {
+  return createHash("sha256")
     .update(JSON.stringify([
-      "stacked-bride-first-date-v2",
+      "stacked-bride-first-date-v3",
+      templateId,
+      content.brideShortName.trim(),
+      content.groomShortName.trim(),
+      content.brideFullName.trim(),
+      content.groomFullName.trim(),
       resolveOgNameLines(content),
       resolveOgDate(content.date),
       OG_DATE_FONT,
@@ -55,8 +57,16 @@ export function resolveOgImageUrl(
     ]))
     .digest("hex")
     .slice(0, 16);
+}
+
+export function resolveOgImageUrl(
+  siteUrl: string,
+  slug: string,
+  templateId: string,
+  content: OgImageContent,
+): string {
   const url = new URL(`/thiep/${encodeURIComponent(slug)}/opengraph-image`, siteUrl);
-  url.searchParams.set("v", version);
+  url.searchParams.set("v", resolveOgImageVersion(templateId, content));
   return url.href;
 }
 

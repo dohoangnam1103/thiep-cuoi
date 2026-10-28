@@ -484,6 +484,12 @@ model InvitationContent {
   assetFolder  String?
   music        String?
 
+  // background music
+  musicEnabled Boolean @default(true)
+  musicStartAt Int     @default(0)
+  musicTitle   String  @default("")
+  musicArtist  String  @default("")
+
   // couple
   brideFullName   String  @default("")
   groomFullName   String  @default("")
@@ -507,6 +513,9 @@ model InvitationContent {
   heroImage2    String  @default("")
   showHeroImage Boolean @default(true)
 
+  // album section visibility; an empty visible album projects template samples
+  showAlbum Boolean @default(true)
+
   // dress code: CSV of hex colors, e.g. "#b53131,#f8ecdb,#c9a227"
   dressCodeColors String @default("")
 
@@ -524,6 +533,7 @@ model InvitationContent {
   groomParentTitle String @default("")
 
   // venue
+  venueName   String @default("")
   address     String @default("")
   mapAddress  String @default("")
   banquetTime String @default("")

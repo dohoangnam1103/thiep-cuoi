@@ -10,5 +10,5 @@
     "src/**/*.test.ts",
     "tests/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next", ".claude/worktrees"]
+  "exclude": ["node_modules", ".next", ".next-editor2-*/**", ".claude/worktrees"]
 }

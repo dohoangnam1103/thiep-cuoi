@@ -5,7 +5,7 @@ import { createContext, useContext } from "react";
 import guestbookStyles from "./minimalism-guestbook.module.css";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccountLabel, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -240,12 +240,16 @@ function WineCard({
 
 function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
   const { cream, creamSoft } = useMinimalismPalette();
+  const parents = familyParentSlots(a, b);
 
   return (
     <div className="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center">
       <span className="text-[12px]" style={{ color: creamSoft }}>{title}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: cream }}>{a}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: cream }}>{b}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: cream }}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[12px] font-semibold">{"\u00a0"}</span>)}
       <div className="mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight" style={{ color: creamSoft }}>{addr}</div>
     </div>
   );

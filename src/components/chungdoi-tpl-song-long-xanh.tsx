@@ -16,7 +16,7 @@ import {
   parseISODate,
   WEEKDAY_LABELS,
 } from "@/components/chungdoi-tpl-shared";
-import { invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, orderByBrideFirst, orderedCouple } from "@/lib/invitation-display";
 
 const SLX_GREEN = "#1F3A25";
 const SLX_LINEN = "#ECE8D6";
@@ -142,21 +142,29 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
               hạ xuống thay vì xếp dọc. 4 hàng khai tường minh, mỗi cột mượn lại bằng
               grid-rows-subgrid nên hai nhà thẳng hàng nhau dù một tên xuống dòng. */}
           <div className="mt-6 grid w-full grid-cols-[1fr_auto_1fr] grid-rows-[auto_auto_auto_auto] items-start gap-x-2 gap-y-1 px-2 sm:px-4 md:gap-x-8" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>
-            {familyColumns.map((f, i) => (
-              <div key={i} className="contents">
-                {i === 1 ? <div className="row-span-4 w-px self-stretch justify-self-center" style={{ backgroundColor: SLX_GREEN }} /> : null}
-                {/* w-full + không justify-self-center ở mobile: cột shrink-to-fit thì
-                    ô lưới rộng hơn hộp cột nên địa chỉ tràn ra ngoài. */}
-                <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center">
-                  <span className="text-[12px] md:text-[15px]" style={{ color: SLX_GRAY }}>{f.title} / 부모님</span>
-                  <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: SLX_GREEN }}>{f.a}</span>
-                  <span className="text-[13px] font-semibold md:text-[15px]" style={{ color: SLX_GREEN }}>{f.b}</span>
-                  {/* w-full: trong ô subgrid, div không khai bề rộng sẽ co theo
-                      max-content nên địa chỉ dài tràn ra ngoài cột. */}
-                  <div className="mt-1 flex w-full max-w-full flex-col whitespace-pre-line text-[11px] leading-tight md:text-[13px]" style={{ color: SLX_GRAY }}>{f.addr}</div>
+            {familyColumns.map((f, i) => {
+              const parents = familyParentSlots(f.a, f.b);
+              return (
+                <div key={i} className="contents">
+                  {i === 1 ? <div className="row-span-4 w-px self-stretch justify-self-center" style={{ backgroundColor: SLX_GREEN }} /> : null}
+                  {/* w-full + không justify-self-center ở mobile: cột shrink-to-fit thì
+                      ô lưới rộng hơn hộp cột nên địa chỉ tràn ra ngoài. */}
+                  <div className="row-span-4 grid w-full min-w-0 grid-rows-subgrid items-start justify-items-center text-center md:max-w-[280px] md:justify-self-center">
+                    <span className="text-[12px] md:text-[15px]" style={{ color: SLX_GRAY }}>{f.title} / 부모님</span>
+                    {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới
+                        vẫn giữ chiều cao để địa chỉ hai nhà không lệch hàng. */}
+                    {parents.map((parent, index) => parent
+                      ? <span key={parent.role} data-family-parent={parent.role}
+                        className="text-[13px] font-semibold md:text-[15px]" style={{ color: SLX_GREEN }}>{parent.name}</span>
+                      : <span key={`family-slot-${index}`} aria-hidden
+                        className="invisible select-none text-[13px] font-semibold md:text-[15px]">{"\u00a0"}</span>)}
+                    {/* w-full: trong ô subgrid, div không khai bề rộng sẽ co theo
+                        max-content nên địa chỉ dài tràn ra ngoài cột. */}
+                    <div className="mt-1 flex w-full max-w-full flex-col whitespace-pre-line text-[11px] leading-tight md:text-[13px]" style={{ color: SLX_GRAY }}>{f.addr}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="mt-8 flex flex-col gap-1 px-4 text-center" style={{ color: SLX_GREEN, fontFamily: SLX_SERIF }}>

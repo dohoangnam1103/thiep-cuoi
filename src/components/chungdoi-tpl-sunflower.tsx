@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, orderedCouple } from "@/lib/invitation-display";
 import {
   AlbumGallery,
   buildCalendar,
@@ -63,11 +63,15 @@ function Flower({
 }
 
 function ParentColumn({ title, father, mother, address }: { title: string; father: string; mother: string; address: string }) {
+  const parents = familyParentSlots(father, mother);
   return (
     <div className="min-w-0 text-center text-[12px] leading-[21px] md:text-[16px] md:leading-[28px]">
       <p className="mb-[3px] opacity-70 md:text-[14px]">{title}</p>
-      <p className="font-semibold" style={{ color: GOLD }}>{father}</p>
-      <p className="font-semibold" style={{ color: GOLD }}>{mother}</p>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <p key={parent.role} data-family-parent={parent.role} className="font-semibold" style={{ color: GOLD }}>{parent.name}</p>
+        : <p key={`family-slot-${index}`} aria-hidden className="invisible select-none font-semibold">{"\u00a0"}</p>)}
       <p className="mt-1 whitespace-pre-line text-[10px] leading-tight opacity-75 md:mt-2 md:text-[13px] md:leading-[19px]">{address}</p>
     </div>
   );

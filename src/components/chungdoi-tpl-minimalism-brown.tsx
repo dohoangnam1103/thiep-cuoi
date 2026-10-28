@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
-import { invitationCeremonies, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
+import { familyParentSlots, invitationCeremonies, invitationGiftAccounts, invitationHeroImage, orderedCouple } from "@/lib/invitation-display";
 import {
   buildCalendar,
   formatDate,
@@ -162,11 +162,15 @@ function PaperCard({
 
 /** Một cột "Ông Bà + tên bố + tên mẹ + địa chỉ", mượn lưới hàng của khung cha. */
 function ParentColumn({ title, a, b, addr }: { title: string; a: string; b: string; addr: string }) {
+  const parents = familyParentSlots(a, b);
   return (
     <div className="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center">
       <span className="text-[12px]" style={{ color: MUTED }}>{title}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: INK }}>{a}</span>
-      <span className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: INK }}>{b}</span>
+      {/* Thiếu bố/mẹ thì người còn lại dời lên hàng đầu; ô trống bên dưới vẫn giữ
+          chiều cao để địa chỉ hai nhà không lệch hàng. */}
+      {parents.map((parent, index) => parent
+        ? <span key={parent.role} data-family-parent={parent.role} className="text-[12px] font-semibold [overflow-wrap:anywhere]" style={{ color: INK }}>{parent.name}</span>
+        : <span key={`family-slot-${index}`} aria-hidden className="invisible select-none text-[12px] font-semibold">{"\u00a0"}</span>)}
       <div
         className="mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight"
         style={{ color: MUTED }}

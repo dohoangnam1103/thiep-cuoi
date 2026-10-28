@@ -4,7 +4,7 @@ export const homeMessageNamespaces = ["chrome", "home", "listing", "templatePrev
 export const templateSeoDetailMessageNamespaces = ["templateSeoDetails"] as const;
 export const pricingMessageNamespaces = ["chrome", "pricing"] as const;
 export const invitationMessageNamespaces = [
-  "invitationTemplate", "invitationControls", "gatefoldLab", "sleeveLab",
+  "invitationTemplate", "invitationBranding", "invitationControls", "gatefoldLab", "sleeveLab",
   "coiTrauLab", "banVeToAmTemplate", "doraemonDoorLab",
   "doraemonDoor", "detectiveConanCasebookLab", "detectiveConanCasebook",
   "comicHero", "hoaMaiThuyMac",

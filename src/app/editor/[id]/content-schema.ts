@@ -40,6 +40,10 @@ export const contentSchema = z.object({
   primaryColor: z.string().max(32).optional().default(""),
   fontFamily: z.string().max(80).optional().default(""),
   music: z.string().max(300).optional().default(""),
+  musicEnabled: formBoolean(true),
+  musicStartAt: z.coerce.number().int().min(0).max(86_400).optional().default(0),
+  musicTitle: z.string().max(200).optional().default(""),
+  musicArtist: z.string().max(200).optional().default(""),
   dressCodeColors: z.string().max(200).optional().default(""),
   albumLayout: z.enum(["grid", "mosaic", "coverflow"]).optional().default("grid"),
 
@@ -62,6 +66,7 @@ export const contentSchema = z.object({
   heroImage: z.string().max(300).optional().default(""),
   heroImage2: z.string().max(300).optional().default(""),
   showHeroImage: formBoolean(true),
+  showAlbum: formBoolean(true),
 
   brideFather: optionalName(120),
   brideMother: optionalName(120),
@@ -72,6 +77,7 @@ export const contentSchema = z.object({
   brideParentTitle: optionalSentence(60),
   groomParentTitle: optionalSentence(60),
 
+  venueName: optionalSentence(120),
   address: optionalSentence(200),
   mapAddress: z.string().max(1_200).optional().default(""),
   banquetTime: z.string().max(60).optional().default(""),

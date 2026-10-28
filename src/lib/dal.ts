@@ -26,8 +26,9 @@ export async function verifySession(): Promise<{ userId: string }> {
 }
 
 /**
- * Session gate for anything that takes the visitor's money, and for tạo/sửa
- * thiệp. `verifySession()` is satisfied by an anonymous cookie-only account,
+ * Account gate for payment, publication and the legacy create/editor flow.
+ * Editor2 allows cookie-owned guest drafts and calls this gate only to publish.
+ * `verifySession()` is satisfied by an anonymous cookie-only account,
  * which is how an invitation gets paid for with no email attached to it:
  * nothing in checkout ever asks who the buyer is, so a lost cookie leaves us
  * with a payment we cannot trace back to a person. Work — and money — moves

@@ -1,5 +1,6 @@
 "use server";
 
+import { getTranslations } from "next-intl/server";
 import { getDemoFontFamily } from "@/lib/demo-font-default";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -9,9 +10,11 @@ import type { Payment } from "@/generated/prisma/client";
 import { ADMIN_AUDIT_ACTIONS, writeAdminAudit } from "@/lib/admin-audit";
 import { verifyAdmin } from "@/lib/admin-dal";
 import { adminFinalPriceSchema } from "@/lib/invitation-pricing";
+import { DEFAULT_INVITATION_MUSIC, DEFAULT_INVITATION_MUSIC_ARTIST, DEFAULT_INVITATION_MUSIC_TITLE } from "@/lib/invitation-music";
 import { cancelPayosPayment } from "@/lib/payment-service";
 import { prisma } from "@/lib/prisma";
 import { parseAdminTemplateId, SYSTEM_EMAIL } from "@/lib/admin-support-input";
+import { editor2StarterSchedule } from "@/lib/editor2-starter";
 
 export type CreateInvitationState =
   | { ok: false; errorCode: "invalidTemplate" | "userNotFound" }
@@ -78,12 +81,26 @@ export async function createInvitationForUser(
       }
 
       const fontFamily = await getDemoFontFamily(db, templateId);
+      const t = await getTranslations("editor2");
+      // Match every other creation path: the timeline starts with editable samples.
+      const schedule = editor2StarterSchedule(templateId, [
+        { time: "17:30", label: t("starterSchedule.welcome") },
+        { time: "18:00", label: t("starterSchedule.ceremony") },
+        { time: "18:30", label: t("starterSchedule.reception") },
+        { time: "20:30", label: t("starterSchedule.photos") },
+      ]);
       const invitation = await db.invitation.create({
         data: {
           userId: target.id,
           templateId,
           status: "draft",
-          content: { create: { fontFamily } },
+          content: { create: {
+            fontFamily,
+            music: DEFAULT_INVITATION_MUSIC,
+            musicTitle: DEFAULT_INVITATION_MUSIC_TITLE,
+            musicArtist: DEFAULT_INVITATION_MUSIC_ARTIST,
+          } },
+          schedule: { create: schedule.map((item, sortOrder) => ({ ...item, sortOrder })) },
         },
         select: { id: true },
       });
