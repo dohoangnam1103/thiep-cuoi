@@ -39,6 +39,7 @@ rsync -aL --delete \
   --exclude '/.deploy-cache' \
   --exclude '/backups' \
   --exclude '/.next' \
+  --exclude '/.next-editor2-*' \
   --exclude '/.next-prebuilt' \
   --exclude '/node_modules' \
   --exclude 'node_modules' \

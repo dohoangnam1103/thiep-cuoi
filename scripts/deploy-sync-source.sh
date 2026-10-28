@@ -62,6 +62,7 @@ rsync -a --checksum --delete --stats --link-dest="$baseline_dir" \
     --exclude '.git' \
     --exclude 'node_modules' \
     --exclude '.next' \
+    --exclude '.next-editor2-*' \
     --exclude '.env*' \
     --exclude '.DS_Store' \
     --exclude '/*.png' \
