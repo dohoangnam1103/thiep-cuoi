@@ -33,7 +33,7 @@ test("trial invitations explain the footer watermark; paid invitations hide it",
 
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("heading", { name: "Dòng thiepmungonline.com" })).toBeVisible();
-    await expect(dialog.getByText(/Thiệp chưa thanh toán/)).toBeVisible();
+    await expect(dialog.getByText("Thiệp chưa thanh toán", { exact: true })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe(`/thiep/${slug}`);
     await dialog.getByRole("button", { name: "Đã hiểu" }).last().click();
     await expect(dialog).toHaveCount(0);

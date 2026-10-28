@@ -3544,8 +3544,10 @@
     "toBeContinued": "Còn tiếp..."
   },
   "invitationBranding": {
+    "eyebrow": "Thiệp chưa thanh toán",
     "title": "Dòng thiepmungonline.com",
-    "description": "Thiệp chưa thanh toán sẽ hiển thị dòng ♡ thiepmungonline.com ở cuối thiệp. Khi thiệp đã thanh toán, dòng này sẽ được ẩn khỏi thiệp của bạn và khách mời.",
+    "description": "Thiệp chưa thanh toán sẽ hiển thị dòng ♡ thiepmungonline.com ở cuối thiệp, trước mặt bạn và khách mời.",
+    "note": "Dòng này sẽ được ẩn ngay sau khi thiệp được thanh toán.",
     "close": "Đã hiểu"
   },
   "invitationTemplate": {
