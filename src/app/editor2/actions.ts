@@ -99,18 +99,16 @@ export type VisualPublicationAccess =
   | { errorCode: "invitationNotFound" };
 
 /** A guest can own a draft, but publishing always requires a real account. */
-export async function requestVisualPublication(id: string, slug?: string): Promise<VisualPublicationAccess> {
+export async function requestVisualPublication(id: string): Promise<VisualPublicationAccess> {
   const session = await getSession();
   if (!session || !await ownInvitation(id, session.userId)) return { errorCode: "invitationNotFound" };
   if (await getAccountSessionUserId()) return { ok: true };
-  const query = new URLSearchParams({ publish: "1" });
-  if (slug) query.set("slug", slug.slice(0, 180));
-  return { loginUrl: loginReasonHref("publish", `/editor2/${id}?${query}`) };
+  return { loginUrl: loginReasonHref("publish", `/editor2/${id}?publish=1`) };
 }
 
 /** Guard the mutation too; a forged client must not publish with a guest cookie. */
 export async function publishVisualInvitation(id: string, formData: FormData): Promise<EditorState | { loginUrl: string }> {
-  const access = await requestVisualPublication(id, String(formData.get("slug") ?? ""));
+  const access = await requestVisualPublication(id);
   if ("errorCode" in access) return access;
   if ("loginUrl" in access) {
     const saved = await saveVisualInvitation(id, formData);

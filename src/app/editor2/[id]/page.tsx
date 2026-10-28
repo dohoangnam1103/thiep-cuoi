@@ -12,7 +12,7 @@ import { isInvitationActivated } from "@/lib/invitation-entitlement";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
 
 export default async function Editor2Page({ params, searchParams }: {
-  params: Promise<{ id: string }>; searchParams: Promise<{ publish?: string; slug?: string }>;
+  params: Promise<{ id: string }>; searchParams: Promise<{ publish?: string }>;
 }) {
   const { id } = await params;
   const session = await getSession();
@@ -32,5 +32,5 @@ export default async function Editor2Page({ params, searchParams }: {
   }]));
   return <Editor2Workspace id={id} initial={editor2Seed(invitation.templateId, invitation.content, base)}
     labels={labels} currentSlug={invitation.slug} status={invitation.status} base={base} samples={samples} cover3dEnabled={cover3dEnabled} hideBranding={hideBranding}
-    isAccount={Boolean(accountUserId)} resumePublication={Boolean(accountUserId) && query.publish === "1"} resumeSlug={query.slug?.slice(0, 180)} />;
+    isAccount={Boolean(accountUserId)} resumePublication={Boolean(accountUserId) && query.publish === "1"} />;
 }

@@ -37,6 +37,11 @@ export const Editor2InvitationPreview = memo(function Editor2InvitationPreview({
   }, [draft, content, editing, onSelect, t]);
   const template = templates.find(item => item.slug === draft.fields.templateId)!;
   const missing = editor2MissingSections(draft);
+  // Seeded template photos are not user uploads; nudge for a real album once.
+  const sampleAlbum = samples?.gallery ?? [];
+  const hasOwnAlbum = draft.gallery.some(url => !sampleAlbum.includes(url));
+  const suggestions = draft.fields.showAlbum && !hasOwnAlbum && !missing.includes("album")
+    ? ["album" as const, ...missing] : missing;
   return <>
     <div ref={root} data-editor2-inline className="e2-inline-canvas">
       <InvitationEditingContext value={editing}>
@@ -46,10 +51,10 @@ export const Editor2InvitationPreview = memo(function Editor2InvitationPreview({
     <Editor2GiftPlaceholder root={root} enabled={editing && missing.includes("gift")}
       templateId={draft.fields.templateId} heading={t("sections.gift")}
       openLabel={t("editLabel", { section: t("sections.gift") })} accent={content.theme.primaryColor} />
-    {editing && missing.length > 0 && <aside className="e2-suggestions" aria-label={t("suggestions")}>
+    {editing && suggestions.length > 0 && <aside className="e2-suggestions" aria-label={t("suggestions")}>
       <h2>{t("suggestions")}</h2>
-      <div className="e2-actions">{missing.map(section => <button key={section} className="e2-button" data-editor2-gift-hint={section === "gift" ? "true" : undefined} onClick={() => onSelect(section)}>
-        <Plus size={16} className="shrink-0" aria-hidden />{section === "gift" ? t("giftSetupHint") : t("addSection", { section: t(`sections.${section}`) })}
+      <div className="e2-actions">{suggestions.map(section => <button key={section} className="e2-button" data-editor2-gift-hint={section === "gift" ? "true" : undefined} onClick={() => onSelect(section)}>
+        <Plus size={16} className="shrink-0" aria-hidden />{section === "gift" ? t("giftSetupHint") : section === "album" && draft.fields.showAlbum ? t("albumSetupHint") : t("addSection", { section: t(`sections.${section}`) })}
       </button>)}</div>
     </aside>}
   </>;

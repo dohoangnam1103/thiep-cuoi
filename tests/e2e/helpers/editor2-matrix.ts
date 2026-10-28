@@ -20,6 +20,8 @@ export const matrixInitial = {
   date: "2026-11-29", time: "18:37", banquetTime: "18:37",
   venueName: "Nhà Hàng Hoa Mai", address: "56 Nguyễn Huệ, TP. Hồ Chí Minh",
   heroImage: "/chungdoi/icon.png?matrix=bride", heroImage2: "/chungdoi/icon.png?matrix=groom",
+  music: "/chungdoi/music/song-hy-red.mp3", musicTitle: "Bài Nhạc Kiểm Tra",
+  musicArtist: "Nghệ Sĩ Kiểm Tra", musicStartAt: 11, musicEnabled: 1,
 };
 
 export function seedEditor2Matrix(userId: string, templateId: string, brideFirst: boolean) {
@@ -115,6 +117,6 @@ export async function closeMatrixDialog(page: Page) {
 }
 
 export async function saveMatrix(page: Page) {
-  await page.getByRole("button", { name: editor2Copy.save, exact: true }).click();
-  await expect(page.getByRole("status").first()).toHaveText(editor2Copy.saved);
+  // Saving is automatic; wait for the debounced autosave to acknowledge.
+  await expect(page.getByRole("status").first()).toHaveText(editor2Copy.saved, { timeout: 10_000 });
 }

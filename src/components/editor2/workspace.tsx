@@ -1,15 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@base-ui/react/dialog";
-import { ArrowLeft, ChevronRight, Eye, List, Monitor, Pencil, Plus, Redo2, Save, Smartphone, Undo2, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, Eye, LayoutTemplate, List, Monitor, Pencil, Plus, Redo2, Smartphone, Undo2, X } from "lucide-react";
 import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { saveVisualInvitation, requestVisualPublication, publishVisualInvitation } from "@/app/editor2/actions";
 import { TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
-import { slugFromFormFields, slugifyInput } from "@/app/editor/[id]/slug";
 import type { EditorErrorCode } from "@/app/editor/[id]/content-schema";
 import { EDITOR2_FIELD_GROUPS, EDITOR2_SECTIONS, editor2FormData, editor2MissingSections, isEditor2Section, withEditor2FullName, type Editor2Draft, type Editor2Samples, type Editor2Section } from "@/lib/editor2-draft";
 import { cacheEditor2Basics, editor2Basics, restoreEditor2DraftBasics, writeEditor2Basics } from "@/lib/editor2-basics-storage";
@@ -17,7 +17,9 @@ import { acknowledgeEditor2Defaults, editor2DefaultFields, initializeEditor2Defa
 import { titleCaseVietnameseName } from "@/lib/text-case";
 import { Editor2ClientReady } from "./client-ready";
 import { Editor2SectionFields } from "./section-fields";
+import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
+import { templatePreviewUrl } from "@/lib/template-preview-url";
 import { heroImageCount, templateSupportsHeroImage } from "@/data/editor-template-capabilities";
 
 function Editor2PreviewLoading() {
@@ -38,11 +40,11 @@ function historyReducer(state: History, action: HistoryAction): History {
   return JSON.stringify(present) === JSON.stringify(state.present) ? state : { past: [...state.past.slice(-79), state.present], present, future: [] };
 }
 
-type Panel = Editor2Section | "content" | "add" | "publish" | "basics" | null;
+type Panel = Editor2Section | "content" | "add" | "basics" | "templates" | null;
 const COMPACT_SCREEN_QUERY = "(max-width: 767px), (pointer: coarse)";
 
 type Editor2WorkspaceProps = {
-  id: string; initial: Editor2Draft; labels: Record<string, string>; currentSlug: string | null; status: string; isAccount: boolean; resumePublication?: boolean; resumeSlug?: string;
+  id: string; initial: Editor2Draft; labels: Record<string, string>; currentSlug: string | null; status: string; isAccount: boolean; resumePublication?: boolean;
   base: ChungDoiDemoContent; samples: Record<string, Editor2Samples>; cover3dEnabled: boolean; hideBranding: boolean;
 };
 
@@ -50,7 +52,7 @@ export function Editor2Workspace(props: Editor2WorkspaceProps) {
   return <Editor2ClientReady><Editor2WorkspaceBody {...props} /></Editor2ClientReady>;
 }
 
-function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAccount, base, samples, cover3dEnabled, hideBranding, resumePublication = false, resumeSlug }: Editor2WorkspaceProps) {
+function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAccount, base, samples, cover3dEnabled, hideBranding, resumePublication = false }: Editor2WorkspaceProps) {
   const router = useRouter();
   const t = useTranslations("editor2");
   const errorT = useTranslations("editor.errors");
@@ -65,7 +67,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
-  const [panel, setPanel] = useState<Panel>(!restored.fields.brideFullName || !restored.fields.groomFullName || !restored.fields.date ? "basics" : resumePublication ? "publish" : null);
+  const [panel, setPanel] = useState<Panel>(!restored.fields.brideFullName || !restored.fields.groomFullName || !restored.fields.date ? "basics" : null);
   const [editing, setEditing] = useState(true);
   const [phone, setPhone] = useState(false);
   const [hint, setHint] = useState(true);
@@ -74,7 +76,6 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const [publishing, setPublishing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState(currentSlug);
-  const [slug, setSlug] = useState(resumeSlug ? slugifyInput(resumeSlug) : currentSlug ?? slugFromFormFields(restored.fields));
   const focusField = useRef<string | undefined>(undefined);
   const dialogBody = useRef<HTMLDivElement>(null);
   const baseline = useRef(JSON.stringify(initial));
@@ -191,6 +192,15 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     });
     setPanel(null);
   };
+  const publishCurrent = async () => {
+    const form = editor2FormData(latest.current);
+    form.set("autoSlug", "true");
+    if (publishedSlug) form.set("slug", publishedSlug);
+    const result = await publishVisualInvitation(id, form);
+    if (result && "loginUrl" in result) { router.push(result.loginUrl); return; }
+    if (result?.errorCode) { setError(result.errorCode); return; }
+    if (result?.publishedSlug) setPublishedSlug(result.publishedSlug);
+  };
   const beginPublication = async () => {
     if (locked.current) return;
     locked.current = true; setPublishing(true); setError(null);
@@ -198,26 +208,20 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       // Flush the whole queued draft before navigating to OAuth. Account
       // adoption moves this same invitation; nothing is stored in URL content.
       if (!await saveNow()) return;
-      const access = await requestVisualPublication(id, slug);
+      const access = await requestVisualPublication(id);
       if ("errorCode" in access) { setError(access.errorCode); return; }
       if ("loginUrl" in access) { router.push(access.loginUrl); return; }
-      setPanel("publish");
+      await publishCurrent();
     } catch { setError("networkError"); }
     finally { locked.current = false; setPublishing(false); }
   };
-  const publishNow = async () => {
-    if (locked.current) return;
-    locked.current = true; setPublishing(true); setError(null);
-    try {
-      if (!await saveNow()) return;
-      const form = editor2FormData(latest.current); form.set("slug", slug);
-      const result = await publishVisualInvitation(id, form);
-      if (result && "loginUrl" in result) { router.push(result.loginUrl); return; }
-      if (result?.errorCode) { setError(result.errorCode); return; }
-      if (result?.publishedSlug) { setPublishedSlug(result.publishedSlug); setSlug(result.publishedSlug); }
-    } catch { setError("networkError"); }
-    finally { locked.current = false; setPublishing(false); }
-  };
+  const resumedPublication = useRef(false);
+  useEffect(() => {
+    if (!resumePublication || resumedPublication.current) return;
+    resumedPublication.current = true;
+    void beginPublication();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumePublication]);
   const setUploadState = (value: boolean) => { locked.current = value; setUploading(value); };
   const busy = publishing || uploading;
   const activeSection = isEditor2Section(panel) ? panel : null;
@@ -225,7 +229,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     && (activeSection !== "album" || draft.fields.showAlbum)
     && (activeSection !== "music" || Boolean(draft.fields.music))
     && !editor2MissingSections(draft).includes(activeSection);
-  const panelTitle = activeSection ? t(`sections.${activeSection}`) : panel === "basics" ? t("startTitle") : panel === "publish" ? t("publish") : panel === "add" ? t("add") : t("content");
+  const panelTitle = activeSection ? t(`sections.${activeSection}`) : panel === "basics" ? t("startTitle") : panel === "add" ? t("add") : panel === "templates" ? t("chooseTemplate") : t("content");
 
   return <main className="e2-shell">
     <header className="e2-header">
@@ -237,8 +241,9 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       </div>
       <div className="e2-actions e2-publish-actions">
         <span className="e2-save-state" role="status" aria-live="polite">{t(saveState)}</span>
-        <button type="button" className="e2-button" disabled={busy || saveState === "saving"} onClick={() => void saveNow()}><Save size={16} />{t("save")}</button>
-        <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void beginPublication()}>{t("publish")}</button>
+        <button type="button" className="e2-button" disabled={busy} onClick={() => open("templates")}><LayoutTemplate size={16} />{t("chooseTemplate")}</button>
+        {publishedSlug ? <a className="e2-button" target="_blank" rel="noopener noreferrer" href={`/thiep/${publishedSlug}`}>{t("openPublished")}</a> : null}
+        <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void beginPublication()}>{t(publishing ? "publishing" : "publish")}</button>
       </div>
     </header>
     <nav className="e2-tools" aria-label={t("content")}>
@@ -270,9 +275,9 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       setPanel(null);
     }}>
       <Dialog.Portal><Dialog.Backdrop className="e2-dialog-backdrop" /><Dialog.Viewport className="e2-dialog-viewport">
-        <Dialog.Popup initialFocus={initialDialogFocus} className={`e2-dialog${activeSection === "couple" || activeSection === "family" || activeSection === "gift" || (activeSection === "photos" && heroImageCount(draft.fields.templateId) === 2) || panel === "basics" ? " e2-dialog-couple" : ""}${activeSection === "schedule" ? " e2-dialog-schedule" : ""}`}>
+        <Dialog.Popup initialFocus={initialDialogFocus} className={`e2-dialog${activeSection === "couple" || activeSection === "family" || activeSection === "gift" || (activeSection === "photos" && heroImageCount(draft.fields.templateId) === 2) || panel === "basics" || panel === "templates" ? " e2-dialog-couple" : ""}${activeSection === "schedule" ? " e2-dialog-schedule" : ""}`}>
           <header className="e2-dialog-head"><div><Dialog.Title className="e2-dialog-title">{panelTitle}</Dialog.Title>
-            {panel === "publish" && <Dialog.Description className="e2-description">{t("publishDescription")}</Dialog.Description>}</div>
+            </div>
             <Dialog.Close className="e2-button e2-icon-button" aria-label={t("close")} disabled={busy}><X size={18} /></Dialog.Close>
           </header>
           <div className="e2-dialog-body" ref={dialogBody}>
@@ -288,16 +293,20 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
               <button className="e2-button e2-primary">{t("beginEditing")}</button>
             </form>}
             {activeSection && <fieldset disabled={busy}><Editor2SectionFields invitationId={id} section={activeSection} draft={draft} onChange={change} labels={labels} samples={samples[draft.fields.templateId]} onUploading={setUploadState} /></fieldset>}
+            {panel === "templates" && <div className="e2-template-picker">
+              {completedTemplates.map(template => <button key={template.slug} type="button" className="e2-template-option" aria-pressed={draft.fields.templateId === template.slug} onClick={() => {
+                change(previous => ({ ...previous, fields: { ...previous.fields, templateId: template.slug } }));
+                setPanel(null);
+              }}>
+                <span className="e2-template-option-media"><Image src={templatePreviewUrl(template.listing)} alt="" fill sizes="(max-width: 640px) 40vw, 180px" className="object-cover object-top" /></span>
+                <span className="e2-template-option-name">{labels[template.slug] ?? template.name}</span>
+              </button>)}
+            </div>}
             {(panel === "content" || panel === "add") && <div className="e2-section-list">
               {(panel === "content" ? EDITOR2_SECTIONS : ["ceremonies", ...editor2MissingSections(draft).filter(section => section !== "ceremonies" && section !== "gift")] as Editor2Section[])
                 .filter(section => section !== "photos" || templateSupportsHeroImage(draft.fields.templateId)).map(section => <button key={section} type="button" className="e2-section-link" onClick={() => open(section)}>
                 {panel === "add" ? t("addSection", { section: t(`sections.${section}`) }) : t(`sections.${section}`)}<ChevronRight size={17} />
               </button>)}
-            </div>}
-            {panel === "publish" && <div className="e2-dialog-fields">
-              <label className="e2-field"><span>{t("slug")}</span><input name="slug" value={slug} onChange={event => setSlug(slugifyInput(event.target.value))} maxLength={180} disabled={busy} /></label>
-              {publishedSlug && <div><p>{t("published")}</p><a className="e2-button" target="_blank" rel="noopener noreferrer" href={`/thiep/${publishedSlug}`}>{t("openPublished")}</a></div>}
-              <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void publishNow()}>{t(publishing ? "publishing" : "publish")}</button>
             </div>}
             {error && <p className="e2-error mt-4" role="alert">{error === "networkError" ? t(error) : errorT(error)}</p>}
           </div>

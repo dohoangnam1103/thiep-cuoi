@@ -44,3 +44,43 @@ function dateToSlug(date?: string | null): string {
   const [, year, month, day] = match;
   return `${day}${month}${year}`;
 }
+
+const SLUG_MAX_LENGTH = 180;
+
+function fitSlug(base: string, suffix = ""): string {
+  const tail = suffix ? `-${suffix}` : "";
+  const stem = base.slice(0, Math.max(0, SLUG_MAX_LENGTH - tail.length)).replace(/-+$/g, "");
+  return `${stem}${tail}`;
+}
+
+function dateTimeToSlug(date: Date): string {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${pad(date.getDate())}${pad(date.getMonth() + 1)}${date.getFullYear()}-${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+}
+
+/**
+ * Names first. A taken names-only slug gains the wedding day; a still-taken slug
+ * gains the current date and time. `isTaken` must exclude the invitation being
+ * published so republishing keeps its existing slug.
+ */
+export async function uniqueSlugFromFormFields(
+  source: SlugSource,
+  isTaken: (slug: string) => Promise<boolean>,
+  now = new Date(),
+): Promise<string> {
+  const names = slugFromFormFields({ ...source, date: null }) || "thiep-cuoi";
+  const base = fitSlug(names);
+  if (!await isTaken(base)) return base;
+
+  const eventDay = dateToSlug(source.date);
+  const withEventDay = eventDay ? fitSlug(base, eventDay) : "";
+  if (withEventDay && !await isTaken(withEventDay)) return withEventDay;
+
+  const stamp = dateTimeToSlug(now);
+  let candidate = fitSlug(base, stamp);
+  for (let counter = 1; counter <= 50; counter += 1) {
+    if (!await isTaken(candidate)) return candidate;
+    candidate = fitSlug(base, `${stamp}-${counter}`);
+  }
+  return candidate;
+}

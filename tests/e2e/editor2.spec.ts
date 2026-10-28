@@ -42,8 +42,8 @@ async function close(page: Page) {
 }
 async function save(page: Page) {
   const state = page.getByRole("status").first();
-  await page.getByRole("button", { name: "Lưu ngay", exact: true }).click();
-  await expect(state).toHaveText("Đã lưu");
+  // Saving is automatic; wait for the debounced autosave to acknowledge.
+  await expect(state).toHaveText("Đã lưu", { timeout: 10_000 });
 }
 test.afterEach(() => { while (users.length) cleanupUser(users.pop()!); });
 test.beforeAll(async () => { await mkdir(evidence, { recursive: true }); });
@@ -380,9 +380,7 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("");
   await close(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("alert")).toHaveText("Cần giờ tiệc cưới trước khi xuất bản.");
-  await close(page);
+  await expect(page.locator(".e2-alert")).toHaveText("Cần giờ tiệc cưới trước khi xuất bản.");
   await section(page, "Thời gian tiệc cưới");
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("18:30");
   await close(page);
@@ -390,9 +388,26 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("Trung tâm tiệc cưới, 123 Nguyễn Huệ, TP. Hồ Chí Minh");
   await close(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Xuất bản", exact: true }).click();
   await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
   expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
+});
+
+test("publishing silently adds the wedding day when the names-only slug is taken", async ({ page, context }) => {
+  const user = createUser(); users.push(user.id);
+  const first = createInvitation(user.id);
+  const second = createInvitation(user.id);
+  const statement = getDb().prepare("UPDATE InvitationContent SET brideFullName = ?, groomFullName = ?, date = ? WHERE invitationId = ?");
+  for (const invitation of [first, second]) statement.run("Nguyễn Quỳnh Anh", "Trần Gia Khánh", "2026-11-29", invitation.id);
+  await loginAsUser(context, user.id);
+  await page.goto(`/editor2/${first.id}`);
+  await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
+  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  await page.goto(`/editor2/${second.id}`);
+  await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
+  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  const rows = getDb().prepare("SELECT id, slug FROM Invitation WHERE id IN (?, ?)").all(first.id, second.id) as { id: string; slug: string }[];
+  expect(rows.find(row => row.id === first.id)?.slug).toBe("quynh-anh-gia-khanh");
+  expect(rows.find(row => row.id === second.id)?.slug).toBe("quynh-anh-gia-khanh-29112026");
 });
 
 for (const width of [768, 390, 320]) {
@@ -492,18 +507,14 @@ for (const existingAccount of [false, true]) {
     await verifiedGoogleSession(context, email);
     await page.goto(`/auth/google/complete?next=${encodeURIComponent(next)}`);
     await expect(page).toHaveURL(new RegExp(`/editor2/${guest.id}\\?publish=1`));
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page.getByRole("dialog").getByRole("heading", { name: "Xuất bản", exact: true })).toBeVisible();
     const owner = getDb().prepare("SELECT userId,status FROM Invitation WHERE id = ?").get(guest.id) as { userId: string; status: string };
     expect(owner.userId).toBe(account?.id ?? guest.userId);
-    expect(owner.status).toBe("draft"); // GET callbacks never publish automatically.
     expect(getDb().prepare("SELECT email FROM User WHERE id = ?").get(owner.userId)).toEqual({ email });
     if (account) expect(getDb().prepare("SELECT id FROM User WHERE id = ?").get(guest.userId)).toBeUndefined();
+    await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+    await expect.poll(() => getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(guest.id)).toEqual({ status: "published" });
     expect(getDb().prepare("SELECT COUNT(*) AS n FROM GalleryPhoto WHERE invitationId = ?").get(guest.id)).toEqual({ n: 1 });
     expect(content(guest.id).brideFather).toBe("Nguyễn Văn Thành");
-    await page.getByRole("dialog").getByRole("button", { name: "Xuất bản", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
-    expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(guest.id)).toEqual({ status: "published" });
   });
 }
 
@@ -523,11 +534,10 @@ test("an already signed-in account follows a safe publication return URL", async
   await loginAsUser(context, user.id);
   await page.goto("/login");
   await expect(page).toHaveURL(/\/dashboard$/);
-  const next = `/editor2/${invitation.id}?publish=1&slug=quynh-anh-gia-khanh`;
+  const next = `/editor2/${invitation.id}?publish=1`;
   await page.goto(`/login?reason=publish&next=${encodeURIComponent(next)}`);
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await expect(page.getByLabel("Đường dẫn thiệp", { exact: true })).toHaveValue("quynh-anh-gia-khanh");
-  expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "draft" });
+  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  await expect.poll(() => getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
 });
 
 

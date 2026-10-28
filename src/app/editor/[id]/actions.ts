@@ -10,7 +10,7 @@ import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
 import { publicationIssue, validateInvitationSlug } from "@/lib/invitation-editor-rules";
 import { prepareInvitationDraft, writeInvitationDraft } from "@/lib/invitation-editor-store";
 import { type EditorState, type SlugCheckResult } from "./content-schema";
-import { slugFromFormFields } from "./slug";
+import { slugFromFormFields, uniqueSlugFromFormFields } from "./slug";
 
 /**
  * Cùng một cửa với trang editor: chỉ account thật được ghi. Session ẩn danh bị
@@ -118,18 +118,27 @@ export async function publish(id: string, _prev: EditorState, formData: FormData
   }
 
   const formSlug = String(formData.get("slug") ?? "").trim().toLowerCase();
-  const baseSlug = formSlug || slugFromFormFields(prepared.data.persistedData);
-  if (!baseSlug) {
-    return { errorCode: "slugMissing", persisted: true };
-  }
+  const autoSlug = formData.get("autoSlug") === "true";
+  let baseSlug = formSlug;
+  if (!baseSlug && autoSlug) {
+    baseSlug = await uniqueSlugFromFormFields(prepared.data.persistedData, async (slug) => {
+      const row = await prisma.invitation.findUnique({ where: { slug }, select: { id: true } });
+      return Boolean(row && row.id !== id);
+    });
+  } else {
+    baseSlug = formSlug || slugFromFormFields(prepared.data.persistedData);
+    if (!baseSlug) {
+      return { errorCode: "slugMissing", persisted: true };
+    }
 
-  const syntax = validateInvitationSlug(baseSlug);
-  if (!syntax.available) {
-    return {
-      errorCode: syntax.reasonCode,
-      focusField: "slug",
-      persisted: true,
-    };
+    const syntax = validateInvitationSlug(baseSlug);
+    if (!syntax.available) {
+      return {
+        errorCode: syntax.reasonCode,
+        focusField: "slug",
+        persisted: true,
+      };
+    }
   }
 
   const published = await prisma.$transaction(async (db) => {

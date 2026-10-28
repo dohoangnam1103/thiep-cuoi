@@ -2482,6 +2482,9 @@ export function ChungDoiDemo({
             />
           ) : null}
           <div
+            data-invitation-controls={
+              content.slug === "hy-uoc" ? "top-left" : isPaginatedExperience ? "top-right" : "bottom-right"
+            }
             className={
               content.slug === "hy-uoc"
                 ? "absolute left-3 top-3 z-40 flex flex-col items-start gap-3"

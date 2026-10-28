@@ -149,6 +149,21 @@ for (const template of completedTemplates) {
           await closeMatrixDialog(page);
         });
 
+        await test.step("music control opens the saved background-music configuration", async () => {
+          // The shared music control lives in the demo shell, outside the
+          // template renderer, but still inside the editable canvas.
+          const music = page.locator("[data-editor2-inline] [data-invitation-music]").filter({ visible: true }).first();
+          await expect(music).toHaveCount(1);
+          await clickCanvas(page, music);
+          const dialog = await expectSection(page, "music");
+          await expect(dialog.locator(".e2-music-copy strong")).toHaveText(expected.musicTitle);
+          await expect(dialog.locator(".e2-music-copy > span")).toHaveText(expected.musicArtist);
+          await expect(dialog.getByRole("slider")).toHaveValue(String(expected.musicStartAt));
+          await expect(dialog).toContainText("Bắt đầu từ");
+          await expect(dialog.getByLabel(t.musicAutoPlay, { exact: true })).toBeChecked();
+          await closeMatrixDialog(page);
+        });
+
         await test.step("save reaches the server before reload and preserves unrelated fields", async () => {
           await saveMatrix(page);
           expect(matrixContent(invitation.id)).toMatchObject({ ...expected, albumLayout: "mosaic", groomAccountName: "Tran Hoang Gia Minh" });
