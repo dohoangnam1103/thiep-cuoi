@@ -5,10 +5,11 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@base-ui/react/dialog";
-import { ArrowLeft, ChevronRight, Eye, LayoutTemplate, List, Monitor, Pencil, Plus, Redo2, Smartphone, Undo2, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, Eye, LayoutTemplate, List, Monitor, Pencil, Plus, Redo2, Save, Smartphone, Undo2, X } from "lucide-react";
 import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { saveVisualInvitation, requestVisualPublication, publishVisualInvitation } from "@/app/editor2/actions";
+import { ShareInvitationDialog } from "@/app/editor/[id]/ShareInvitationDialog";
 import { TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 import type { EditorErrorCode } from "@/app/editor/[id]/content-schema";
 import { EDITOR2_FIELD_GROUPS, EDITOR2_SECTIONS, editor2FormData, editor2MissingSections, isEditor2Section, withEditor2FullName, type Editor2Draft, type Editor2Samples, type Editor2Section } from "@/lib/editor2-draft";
@@ -76,6 +77,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const [publishing, setPublishing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState(currentSlug);
+  const [shareOpen, setShareOpen] = useState(false);
   const focusField = useRef<string | undefined>(undefined);
   const dialogBody = useRef<HTMLDivElement>(null);
   const baseline = useRef(JSON.stringify(initial));
@@ -224,6 +226,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   }, [resumePublication]);
   const setUploadState = (value: boolean) => { locked.current = value; setUploading(value); };
   const busy = publishing || uploading;
+  const isPublished = Boolean(publishedSlug) || status === "published";
   const activeSection = isEditor2Section(panel) ? panel : null;
   const canHide = activeSection && ["album", "music", "ceremonies", "schedule", "photos", "gift"].includes(activeSection)
     && (activeSection !== "album" || draft.fields.showAlbum)
@@ -239,11 +242,15 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
         <div><h1>{labels[draft.fields.templateId] ?? draft.fields.templateId}</h1>
           <p className="e2-meta">{publishedSlug || status === "published" ? t("existingPublished") : t("draft")}</p></div>
       </div>
-      <div className="e2-actions e2-publish-actions">
-        <span className="e2-save-state" role="status" aria-live="polite">{t(saveState)}</span>
-        <button type="button" className="e2-button" disabled={busy} onClick={() => open("templates")}><LayoutTemplate size={16} />{t("chooseTemplate")}</button>
-        {publishedSlug ? <a className="e2-button" target="_blank" rel="noopener noreferrer" href={`/thiep/${publishedSlug}`}>{t("openPublished")}</a> : null}
-        <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void beginPublication()}>{t(publishing ? "publishing" : "publish")}</button>
+      <div className="e2-header-tools">
+        <button type="button" className="e2-button e2-change-template" disabled={busy} onClick={() => open("templates")}><LayoutTemplate size={16} />{t("chooseTemplate")}</button>
+        <div className="e2-actions e2-publish-actions">
+          <span className="e2-save-state" role="status" aria-live="polite">{t(saveState)}</span>
+          {publishedSlug ? <button type="button" className="e2-button" onClick={() => setShareOpen(true)}>{t("sharePublished")}</button> : null}
+          {isPublished
+          ? <button type="button" className="e2-button e2-primary" disabled={busy || saveState === "saving"} onClick={() => void saveNow()}><Save size={16} />{t("save")}</button>
+          : <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void beginPublication()}>{t(publishing ? "publishing" : "publish")}</button>}
+        </div>
       </div>
     </header>
     <nav className="e2-tools" aria-label={t("content")}>
@@ -318,5 +325,6 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
         </Dialog.Popup>
       </Dialog.Viewport></Dialog.Portal>
     </Dialog.Root>
+    {shareOpen && publishedSlug ? <ShareInvitationDialog slug={publishedSlug} templateId={draft.fields.templateId} onClose={() => setShareOpen(false)} /> : null}
   </main>;
 }

@@ -31,7 +31,7 @@ for (const viewport of [
   { width: 320, height: 700, mobile: true },
   { width: 844, height: 390, mobile: true },
 ]) {
-  test(`autosave, template picker and publish use the mobile footer at ${viewport.width}x${viewport.height} with touch=${viewport.mobile}`, async ({ browser, baseURL }, testInfo) => {
+  test(`autosave/publish footer and header template picker at ${viewport.width}x${viewport.height} with touch=${viewport.mobile}`, async ({ browser, baseURL }, testInfo) => {
     const user = createUser();
     const context = await browser.newContext({
       baseURL, locale: "vi-VN", viewport: { width: viewport.width, height: viewport.height },
@@ -46,10 +46,14 @@ for (const viewport of [
       await page.goto(`/editor2/${invitation.id}`);
       await expect(canvasText(page, matrixInitial.brideShortName)).toBeVisible();
       const actions = page.locator(".e2-publish-actions");
-      const templates = actions.getByRole("button", { name: t.chooseTemplate, exact: true });
+      const templates = page.locator(".e2-header-tools").getByRole("button", { name: t.chooseTemplate, exact: true });
       const publish = actions.getByRole("button", { name: t.publish, exact: true });
       await expect(templates).toHaveCount(1);
       await expect(publish).toHaveCount(1);
+      // "Đổi mẫu" belongs to the top header, never the sticky action bar.
+      await expect(actions.getByRole("button", { name: t.chooseTemplate, exact: true })).toHaveCount(0);
+      await expect(templates).toBeInViewport();
+      expect(await templates.evaluate(element => element.closest(".e2-header") !== null)).toBe(true);
       expect(await actions.evaluate(element => getComputedStyle(element).position)).toBe(viewport.mobile ? "fixed" : "static");
       const header = await page.locator(".e2-header").boundingBox();
       if (viewport.mobile) {
@@ -61,7 +65,6 @@ for (const viewport of [
           expect(bounds!.x).toBe(0);
           expect(Math.abs(bounds!.width - viewport.width)).toBeLessThanOrEqual(1);
           expect(Math.abs(bounds!.y + bounds!.height - viewport.height)).toBeLessThanOrEqual(1);
-          await expect(templates).toBeInViewport();
           await expect(publish).toBeInViewport();
         }
         const workspace = page.locator(".e2-workspace");
@@ -101,10 +104,12 @@ for (const viewport of [
         expect(matrixContent(invitation.id).brideShortName).toBe("Bình An");
       }
       await publish.click();
-      await expect(page.getByRole("link", { name: t.openPublished, exact: true })).toBeVisible();
+      await expect(actions.getByRole("button", { name: t.sharePublished, exact: true })).toBeVisible();
       expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
       await expect(templates).toBeVisible();
-      await expect(publish).toBeVisible();
+      // Once published, the primary action changes from publishing to saving.
+      await expect(actions.getByRole("button", { name: t.save, exact: true })).toBeVisible();
+      await expect(publish).toHaveCount(0);
       expect(errors).toEqual([]);
     } finally { await context.close(); cleanupUser(user.id); }
   });

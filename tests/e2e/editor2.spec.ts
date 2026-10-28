@@ -82,7 +82,7 @@ for (const width of [1440, 390]) test(`every available template exposes exactly 
   const mismatches: { template: string; expected: number; actual: string[] }[] = [];
   for (const template of completedTemplates) {
     await section(page, "Mẫu & giao diện");
-    await page.getByLabel("Đổi mẫu thiệp", { exact: true }).selectOption(template.slug);
+    await page.getByLabel("Đổi mẫu", { exact: true }).selectOption(template.slug);
     await close(page);
     const renderer = page.locator(`[data-template-renderer="${template.slug}"]`);
     await expect(renderer).toBeVisible();
@@ -191,7 +191,7 @@ for (const width of [1440, 390]) test(`two opening-photo uploads stay person-sco
   expect(storedGallery()).toEqual(gallery);
   for (const template of ["song-hy-red", "spring-garden-green", "double-dragon-red"]) {
     await section(page, "Mẫu & giao diện");
-    await page.getByLabel("Đổi mẫu thiệp", { exact: true }).selectOption(template);
+    await page.getByLabel("Đổi mẫu", { exact: true }).selectOption(template);
     await close(page);
     await expect(page.locator(`[data-template-renderer="${template}"]`)).toBeVisible();
     if (template === "spring-garden-green") {
@@ -388,8 +388,11 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("Trung tâm tiệc cưới, 123 Nguyễn Huệ, TP. Hồ Chí Minh");
   await close(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
   expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
+  await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "Chia sẻ thiệp", exact: true })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Đường dẫn thiệp", exact: true })).toHaveValue(/\/thiep\/quynh-anh-gia-khanh$/);
 });
 
 test("publishing silently adds the wedding day when the names-only slug is taken", async ({ page, context }) => {
@@ -401,10 +404,10 @@ test("publishing silently adds the wedding day when the names-only slug is taken
   await loginAsUser(context, user.id);
   await page.goto(`/editor2/${first.id}`);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
   await page.goto(`/editor2/${second.id}`);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
   const rows = getDb().prepare("SELECT id, slug FROM Invitation WHERE id IN (?, ?)").all(first.id, second.id) as { id: string; slug: string }[];
   expect(rows.find(row => row.id === first.id)?.slug).toBe("quynh-anh-gia-khanh");
   expect(rows.find(row => row.id === second.id)?.slug).toBe("quynh-anh-gia-khanh-29112026");
@@ -432,7 +435,7 @@ for (const width of [768, 390, 320]) {
     await expect(page.locator("[data-editor2-inline]")).toBeVisible();
     await page.getByRole("button", { name: "Nội dung", exact: true }).click();
     await page.getByRole("button", { name: "Mẫu & giao diện", exact: true }).click();
-    await page.getByLabel("Đổi mẫu thiệp").selectOption("song-hy-green");
+    await page.getByLabel("Đổi mẫu").selectOption("song-hy-green");
     await close(page);
     await expect(frame.locator('[data-template-renderer="song-hy-green"]')).toBeVisible();
   });
@@ -511,7 +514,7 @@ for (const existingAccount of [false, true]) {
     expect(owner.userId).toBe(account?.id ?? guest.userId);
     expect(getDb().prepare("SELECT email FROM User WHERE id = ?").get(owner.userId)).toEqual({ email });
     if (account) expect(getDb().prepare("SELECT id FROM User WHERE id = ?").get(guest.userId)).toBeUndefined();
-    await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
     await expect.poll(() => getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(guest.id)).toEqual({ status: "published" });
     expect(getDb().prepare("SELECT COUNT(*) AS n FROM GalleryPhoto WHERE invitationId = ?").get(guest.id)).toEqual({ n: 1 });
     expect(content(guest.id).brideFather).toBe("Nguyễn Văn Thành");
@@ -536,7 +539,7 @@ test("an already signed-in account follows a safe publication return URL", async
   await expect(page).toHaveURL(/\/dashboard$/);
   const next = `/editor2/${invitation.id}?publish=1`;
   await page.goto(`/login?reason=publish&next=${encodeURIComponent(next)}`);
-  await expect(page.getByRole("link", { name: "Mở thiệp đã xuất bản" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
   await expect.poll(() => getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
 });
 
@@ -1194,7 +1197,7 @@ for (const width of [1440, 390]) test(`every available template offers one edita
   const frame = invitationPreview(page);
   for (const template of completedTemplates) {
     await section(page, "Mẫu & giao diện");
-    await page.getByLabel("Đổi mẫu thiệp", { exact: true }).selectOption(template.slug);
+    await page.getByLabel("Đổi mẫu", { exact: true }).selectOption(template.slug);
     await close(page);
     await expect(frame.locator(`[data-template-renderer="${template.slug}"]`)).toBeVisible();
     if (width < 768) {
