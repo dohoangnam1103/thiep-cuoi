@@ -35,7 +35,7 @@
 .e2-start-art { position: relative; width: 100%; max-width: 370px; justify-self: end; padding: 1.1rem; background: #e7e0d6; border-radius: .75rem; }
 .e2-start-art img { width: 100%; height: 500px; object-fit: cover; object-position: top; border-radius: .3rem; box-shadow: 0 18px 36px #5c46351a; }
 .e2-shell { min-height: 100dvh; }
-.e2-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1rem 1.4rem; background: #fffdfa; border-bottom: 1px solid #ded8d1; }
+.e2-header { position: sticky; top: 0; z-index: 45; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1rem 1.4rem; background: #fffdfa; border-bottom: 1px solid #ded8d1; }
 .e2-header-tools { display: flex; align-items: center; gap: .5rem; }
 .e2-heading { display: flex; align-items: center; gap: 1.2rem; }
 .e2-heading h1 { font-size: 1rem; font-weight: 650; }
@@ -229,6 +229,7 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
 }
 @media (max-width: 767px), (max-width: 1024px) and (pointer: coarse) {
   .e2-shell { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+  .e2-header { position: static; z-index: auto; }
   .e2-header-tools { display: contents; }
   .e2-publish-actions { position: fixed; inset: auto 0 0; z-index: 45; display: flex; align-items: center; gap: .5rem; width: 100%; padding: .6rem .75rem calc(.7rem + env(safe-area-inset-bottom)); border-top: 1px solid #ded8d1; background: #fffdfa; box-shadow: 0 -4px 24px #3020140a; }
   /* Keep the live save status for assistive tech without showing it above the actions. */

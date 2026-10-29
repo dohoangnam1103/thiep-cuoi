@@ -56,7 +56,7 @@ export default async function AdminInvitationsPage({
   const params = await searchParams;
   const search = (params.q ?? "").trim().slice(0, 120);
   const normalizedSearch = normalizeSearch(params.q);
-  const status = parseStatusFilter(params.status);
+  const status = parseStatusFilter(params.status ?? "published");
   const activation = parseActivationFilter(params.activation);
   const requestedPage = parsePage(params.page);
   const perPage = parsePerPage(params.perPage);
@@ -138,7 +138,7 @@ export default async function AdminInvitationsPage({
   ]);
 
   const { pagination, rows: invitations, publishedCount, paidCount } = page;
-  const isFiltered = Boolean(search) || status !== "all" || activation !== "all";
+  const isFiltered = Boolean(search) || status !== "published" || activation !== "all";
 
   const statusLabel = (value: string): string =>
     value === "published" ? t("published") : t("draft");
@@ -354,7 +354,7 @@ export default async function AdminInvitationsPage({
         basePath="/admin/invitations"
         params={{
           q: search || undefined,
-          status: status === "all" ? undefined : status,
+          status,
           activation: activation === "all" ? undefined : activation,
         }}
       />
