@@ -1,5 +1,5 @@
 import { isAcceptedImageUpload } from "./upload-image-formats";
-import { EDITOR_IMAGE_MAX_EDGE, EDITOR_IMAGE_WEBP_QUALITY, MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "./upload-image-limits";
+import { EDITOR_IMAGE_WEBP_QUALITY, MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "./upload-image-limits";
 
 const MIN_COMPRESSION_BYTES = 64 * 1024;
 const MAX_DECODED_PIXELS = 60_000_000;
@@ -47,10 +47,9 @@ export async function compressUploadImage(file: File): Promise<File> {
     decoded = await decodeImage(file);
     const { width, height } = decoded;
     if (!width || !height || width * height > MAX_DECODED_PIXELS) return file;
-    const scale = Math.min(1, EDITOR_IMAGE_MAX_EDGE / width, EDITOR_IMAGE_MAX_EDGE / height);
     canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(width * scale));
-    canvas.height = Math.max(1, Math.round(height * scale));
+    canvas.width = width;
+    canvas.height = height;
     const context = canvas.getContext("2d");
     if (!context) return file;
     context.imageSmoothingEnabled = true;
@@ -58,23 +57,12 @@ export async function compressUploadImage(file: File): Promise<File> {
     context.drawImage(decoded.source, 0, 0, canvas.width, canvas.height);
     const target = canvas;
     const encode = (type: string, quality?: number) => new Promise<Blob | null>(resolve => target.toBlob(resolve, type, quality));
-    let blob = await encode("image/webp", EDITOR_IMAGE_WEBP_QUALITY / 100);
-    // WebKit may return PNG for WebP. Still reduce upload bytes on these browsers,
-    // preserving transparency and letting the server produce the final WebP.
-    if (blob?.type !== "image/webp") {
-      const pixels = context.getImageData(0, 0, target.width, target.height).data;
-      let transparent = false;
-      for (let i = 3; i < pixels.length; i += 4) {
-        if (pixels[i] < 255) { transparent = true; break; }
-      }
-      const type = transparent ? "image/png" : "image/jpeg";
-      if (blob?.type !== type) blob = await encode(type, .86);
-    }
-    if (!blob || !blob.size || blob.size >= file.size) return file;
-    const extension = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" }[blob.type];
-    if (!extension) return file;
+    const blob = await encode("image/webp", EDITOR_IMAGE_WEBP_QUALITY / 100);
+    // Unsupported WebP encoders may return PNG. Upload the untouched original
+    // and let the server encode WebP, without JPEG/PNG recompression.
+    if (!blob || blob.type !== "image/webp" || !blob.size || blob.size >= file.size) return file;
     const name = file.name.replace(/\.[^.]+$/, "") || "image";
-    return new File([blob], `${name}.${extension}`, { type: blob.type, lastModified: file.lastModified });
+    return new File([blob], `${name}.webp`, { type: blob.type, lastModified: file.lastModified });
   } catch {
     // Preserve HEIC/other native-decoder fallbacks and upload error handling.
     return file;

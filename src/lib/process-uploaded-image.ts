@@ -26,8 +26,8 @@ type HeifFrames = HeifFrame[] & {
 type ProcessUploadedImageOptions = {
   bytes: Buffer;
   allowedFormats: readonly StandardUploadImageFormat[];
-  maxWidth: number;
-  maxHeight: number;
+  maxWidth?: number;
+  maxHeight?: number;
   quality: number;
   maxOutputBytes?: number;
 };
@@ -104,11 +104,11 @@ async function encodeWebp(
   assertOutputLimit(maxOutputBytes);
 
   const qualities = maxOutputBytes === undefined ? [quality] : compressionQualities(quality);
-  const scales = maxOutputBytes === undefined ? [1] : OUTPUT_SCALE_FACTORS;
+  const scales = maxOutputBytes === undefined || maxWidth === undefined || maxHeight === undefined ? [1] : OUTPUT_SCALE_FACTORS;
 
   for (const scale of scales) {
     for (const candidateQuality of qualities) {
-      const image = scale === 1
+      const image = scale === 1 || maxWidth === undefined || maxHeight === undefined
         ? processor.clone()
         : processor.clone().resize({
           width: Math.max(1, Math.floor(maxWidth * scale)),
@@ -148,14 +148,13 @@ export async function processUploadedImageToWebp({
     assertSafeDimensions(metadata.width, metadata.height);
   }
 
-  const normalized = processor
-    .rotate()
-    .resize({
-      width: maxWidth,
-      height: maxHeight,
-      fit: "inside",
-      withoutEnlargement: true,
-    });
+  const oriented = processor.rotate();
+  const normalized = maxWidth === undefined && maxHeight === undefined ? oriented : oriented.resize({
+    width: maxWidth,
+    height: maxHeight,
+    fit: "inside",
+    withoutEnlargement: true,
+  });
 
   return encodeWebp(normalized, {
     maxWidth,

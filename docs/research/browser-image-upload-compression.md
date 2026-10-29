@@ -1,68 +1,69 @@
-# Compress editor photos before sending them
+# Full-resolution WebP upload compression
 
-## Scope and existing behavior
+## Current contract
 
-The editor already normalized images to WebP on the server, after receiving the
-entire original file. This saved storage but did not reduce upload bandwidth.
-The new browser helper runs before FormData is sent to `/api/upload` for editor2
-album/cover slots, legacy editor albums/cover slots and admin mobile thumbnails.
-The API, ownership checks, 50 MiB source cap, stored paths and server validation
-remain unchanged. Other media endpoints retain their existing behavior.
+The user's correction is explicit: only compress to WebP and preserve the
+original image dimensions. Editor2 album/cover, legacy editor album/cover and
+admin mobile thumbnail uploads share `src/lib/compress-upload-image.ts`.
 
-## Compression contract
+The browser decodes the image with EXIF orientation, draws it at its original
+oriented pixel dimensions and encodes WebP at quality 0.82. It uses that file
+only when it is smaller than the source. There is no 1600px edge limit, scaling,
+cropping or enlargement. Transparency is preserved.
 
-`src/lib/compress-upload-image.ts` decodes supported browser images, applies EXIF
-orientation, scales inside a 1600px square without cropping or enlargement, and
-encodes WebP at quality 0.82. Resolution and quality match the existing editor
-storage preset in `src/lib/upload-image-limits.ts`. Alpha is preserved.
+Unsupported WebP encoders, including the tested WebKit build, send the untouched
+original file. JPEG/PNG fallback recompression has been removed. The server
+converts uploads to WebP at the original oriented resolution too; no resize
+preset is supplied by `/api/upload`. Other media endpoints keep their own
+existing resize presets.
 
-Files below 64 KiB and existing WebPs at or below 512 KiB avoid unnecessary
-recompression. GIFs retain the existing server handling. The helper only uses a
-nonempty WebP when it is smaller than the source. When WebP encoding is unavailable, the same resized canvas uses JPEG at quality
-0.86 for opaque photos or PNG for transparency; the server still produces WebP.
-Unsupported decoding or failed encoders, including HEIC on browsers without
-native support, retain the original. No format is relabeled and only a smaller
-file is sent.
-Files over the original source cap cannot bypass the upload size guard by being
-compressed first. Server image validation and sanitization still run.
+Files below 64 KiB and WebPs at or below 512 KiB avoid redundant recompression.
+GIF and undecodable HEIC retain the existing server conversion. Browser buffers,
+object URLs and canvas memory are released after each attempt. Sequential album
+processing preserves file order and avoids decoding the full album at once.
 
-Decode bitmaps, object URLs and canvases are released after each attempt. The
-existing sequential album processing preserves selected order and avoids keeping
-an entire album decoded at once. Editor2 remains locked during both compression
-and upload and displays the catalog's optimizing status during preprocessing.
+The 50 MiB source cap, 60-million-pixel decoder guard, request/auth validation,
+WebP output limit and upload URL contracts remain. When output is too large,
+server quality retries may reduce file size but cannot reduce pixel dimensions
+in this full-resolution mode. If no quality fits, the existing output-too-large
+error is returned. Server validation and metadata stripping still run.
+
+## Existing autosave correction
+
+Returning to a saved template while an older save was pending could retain an
+unsaved status or stale persisted template. The debounce queues acknowledgement
+of the current draft even when it initially matches the last saved snapshot.
+A deterministic browser test holds the older action, restores the old template,
+and checks the stored template and image after reload.
 
 ## Platform references
 
-The bitmap decoder explicitly respects EXIF orientation using
-[`createImageBitmap` with `imageOrientation: "from-image"`](https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap).
-The image element decoder provides a fallback. The encoder checks the returned
-MIME type because [`canvas.toBlob`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob)
-may return PNG when the requested encoder is unavailable, or null on failure.
-No new dependencies were added.
+[`createImageBitmap`](https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap)
+uses `imageOrientation: "from-image"`. An image-element decoder is available as
+a fallback. [`canvas.toBlob`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob)
+may return PNG when WebP encoding is unavailable; the actual MIME type is checked
+and that PNG is discarded. No new dependencies were added.
 
-## Verification
+## Verification contract
 
-- Lint: zero errors; app and E2E typechecks pass.
-- Existing server image normalization/upload-path unit cases: 5 pass.
-- Browser compression E2E: 9 cases verified on both Chromium and WebKit/iPhone
-  emulation (18 cases, including a focused orientation rerun), covering editor2 at 1440/390px, real multipart
-  bytes, EXIF portrait rotation, alpha, album order, missing bitmap API, unavailable
-  WebP encoder with JPEG/PNG fallback, HEIC server fallback and legacy album integration.
-- Synthetic 3200x2400 JPEG fixture: 7,792,044 bytes became 958,706 bytes sent as a
-  real 1600x1200 WebP, approximately 88% fewer image bytes before the request.
-  This is a fixture measurement, not a guarantee of upload latency or savings
-  for every photo or connection.
-- WebKit fixture measurement: approximately 7.79 MB became 1.66 MB in its
-  compatible JPEG fallback (79% fewer image bytes), then stored as WebP.
-- EXIF orientation 6 produced 1067x1600; transparent PNG retained alpha 0/255
-  on the corresponding transparent/opaque sides. Both uploaded successfully.
-- Six existing upload-control/cover/album regressions passed across focused runs,
-  including blocked modal dismissal until successful/failed upload completion.
-- The upload regression exposed a preexisting autosave race: returning to the saved
-  template while an older save was pending could retain an unsaved status or stale
-  persisted template. The debounce now queues acknowledgement of the current draft
-  even when it initially matches the last saved snapshot. A deterministic test
-  holds the older server action, restores the previous template, and checks the
-  final stored template and uploaded image after reload in both engines.
-- Lint and both typechecks pass. Production build/deployment and final public
-  verification are recorded in completion evidence after they finish.
+- Unit cases cover full-resolution storage (3600x2400) and rejection when the
+  byte limit cannot be met without resizing. Other endpoint presets are tested.
+- Browser cases assert a 3200x2400 JPEG remains 3200x2400 in the transmitted
+  WebP (or unchanged original) and the stored WebP.
+- EXIF portrait orientation is applied once: 2400x1600/orientation 6 becomes
+  1600x2400 in storage. A 2200x1800 transparent PNG keeps its dimensions/alpha.
+- Tests cover Chromium and WebKit, unsupported encoders, missing bitmap API,
+  HEIC fallback, album order, legacy integration and serialized autosave.
+- Previous 79–88% savings measurements used the removed 1600px resize policy;
+  they do not describe this full-resolution implementation. Current transfer
+  measurements and deployment results are recorded in completion evidence.
+
+## Verified results
+
+Lint: zero errors (402 existing warnings); application/test typechecks passed.
+Seven targeted server/upload unit tests passed. All 18 browser cases passed in
+Chromium and WebKit, including original transmission on unsupported WebP,
+full-resolution stored dimensions, EXIF and alpha checks, reload and autosave.
+The full-resolution synthetic JPEG fixture went from 7,793,023 to 5,055,354
+bytes in Chromium (35% less), retaining 3200x2400 pixels. Tested WebKit sent its
+original unchanged and stored a full-resolution WebP on the server.

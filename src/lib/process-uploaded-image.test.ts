@@ -6,7 +6,7 @@ import test from "node:test";
 
 import sharp from "sharp";
 
-import { processUploadedImageToWebp } from "@/lib/process-uploaded-image";
+import { ImageOutputTooLargeError, processUploadedImageToWebp } from "@/lib/process-uploaded-image";
 import {
   EDITOR_UPLOAD_IMAGE_FORMATS,
   hasHeifSignature,
@@ -77,4 +77,18 @@ test("an output byte limit adaptively compresses a valid image", async () => {
 
   assert.ok(output.byteLength <= maxOutputBytes);
   assert.equal((await sharp(output).metadata()).format, "webp");
+});
+
+test("editor uploads keep original dimensions when no resize preset is supplied", async () => {
+  const bytes = await sharp({ create: { width: 3600, height: 2400, channels: 3, background: "#c79d81" } }).jpeg().toBuffer();
+  const output = await processUploadedImageToWebp({ bytes, allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS, quality: 82, maxOutputBytes: 19 * 1024 * 1024 });
+  const metadata = await sharp(output).metadata();
+  assert.equal(metadata.width, 3600);
+  assert.equal(metadata.height, 2400);
+  assert.equal(metadata.format, "webp");
+});
+
+test("an output byte limit never silently shrinks a full-resolution upload", async () => {
+  const bytes = await sharp({ create: { width: 2000, height: 1800, channels: 3, background: "#c79d81" } }).jpeg().toBuffer();
+  await assert.rejects(processUploadedImageToWebp({ bytes, allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS, quality: 82, maxOutputBytes: 1 }), ImageOutputTooLargeError);
 });

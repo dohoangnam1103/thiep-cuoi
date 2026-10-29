@@ -13,6 +13,5 @@ export const MAX_IMAGE_UPLOAD_REQUEST_BYTES = MAX_IMAGE_UPLOAD_SOURCE_BYTES + ME
  */
 export const MAX_IMAGE_UPLOAD_OUTPUT_BYTES = 19 * MEBIBYTE;
 
-/** Match client precompression to the editor's existing stored-image resolution. */
-export const EDITOR_IMAGE_MAX_EDGE = 1600;
+/** Shared WebP quality; editor uploads preserve the source pixel dimensions. */
 export const EDITOR_IMAGE_WEBP_QUALITY = 82;

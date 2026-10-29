@@ -91,10 +91,14 @@ for (const width of [1440, 390]) test(`album sends a compressed image before upl
   await expect(page.locator(".e2-photo-row img")).toHaveCount(1);
   expect(sent).toHaveLength(1);
   const webp = await canEncodeWebp(page);
-  expect(sent[0].name).toBe(webp ? "camera.webp" : "camera.jpg");
+  expect(sent[0].name).toBe(webp ? "camera.webp" : "camera.JPG");
   expect(sent[0].type).toBe(webp ? "image/webp" : "image/jpeg");
-  expect(sent[0].bytes.length).toBeLessThan(photo.length * .25);
-  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ format: webp ? "webp" : "jpeg", width: 1600, height: 1200 });
+  if (await canEncodeWebp(page)) expect(sent[0].bytes.length).toBeLessThan(photo.length);
+  else expect(sent[0].bytes.equals(photo)).toBe(true);
+  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ format: webp ? "webp" : "jpeg", width: 3200, height: 2400 });
+  await expect.poll(() => savedFiles.length).toBe(1);
+  expect(await sharp(await readFile(path.join(process.cwd(), "tests/e2e/.data/editor-uploads", savedFiles[0]))).metadata())
+    .toMatchObject({ format: "webp", width: 3200, height: 2400 });
   console.log(`upload_bytes source=${photo.length} sent=${sent[0].bytes.length} saved=${Math.round(100 * (1 - sent[0].bytes.length / photo.length))}%`);
   await page.getByRole("button", { name: "Xong", exact: true }).click();
   await expect(page.locator(".e2-dialog")).toHaveCount(0);
@@ -111,17 +115,19 @@ test("compression preserves EXIF portrait orientation, alpha and selected album 
   await expect(page.locator(".e2-photo-row img")).toHaveCount(2);
   const webp = await canEncodeWebp(page);
   expect(sent.map(file => file.name)).toEqual(webp ? ["portrait.webp", "transparent.webp"] : ["portrait.jpg", "transparent.png"]);
-  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ width: 1067, height: 1600, format: webp ? "webp" : "jpeg" });
-  // WebKit's JPEG encoder may add fresh density/normal-orientation EXIF.
-  expect((await sharp(sent[0].bytes).metadata()).orientation ?? 1).toBe(1);
+  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ width: webp ? 1600 : 2400, height: webp ? 2400 : 1600, format: webp ? "webp" : "jpeg" });
+  // A browser without WebP encoding sends the original EXIF metadata unchanged.
+  expect((await sharp(sent[0].bytes).metadata()).orientation ?? 1).toBe(webp ? 1 : 6);
   await expect.poll(() => savedFiles.length).toBe(2);
   const storedPortrait = await sharp(await readFile(path.join(process.cwd(), "tests/e2e/.data/editor-uploads", savedFiles[0]))).metadata();
   expect(storedPortrait.exif).toBeUndefined();
   expect(storedPortrait.orientation).toBeUndefined();
-  expect(storedPortrait.format).toBe("webp");
-  expect(await sharp(sent[1].bytes).metadata()).toMatchObject({ hasAlpha: true, width: 1600, height: 1309 });
+  expect(storedPortrait).toMatchObject({ format: "webp", width: 1600, height: 2400 });
+  const storedTransparent = await sharp(await readFile(path.join(process.cwd(), "tests/e2e/.data/editor-uploads", savedFiles[1]))).metadata();
+  expect(storedTransparent).toMatchObject({ format: "webp", width: 2200, height: 1800, hasAlpha: true });
+  expect(await sharp(sent[1].bytes).metadata()).toMatchObject({ hasAlpha: true, width: 2200, height: 1800 });
   const left = await sharp(sent[1].bytes).extract({ left: 0, top: 0, width: 1, height: 1 }).raw().toBuffer();
-  const right = await sharp(sent[1].bytes).extract({ left: 1599, top: 0, width: 1, height: 1 }).raw().toBuffer();
+  const right = await sharp(sent[1].bytes).extract({ left: 2199, top: 0, width: 1, height: 1 }).raw().toBuffer();
   expect(left[3]).toBe(0);
   expect(right[3]).toBe(255);
   await page.getByRole("button", { name: "Xong", exact: true }).click();
@@ -135,10 +141,11 @@ test("a browser without createImageBitmap still compresses with its image elemen
   await input.setInputFiles({ name: "camera.jpg", mimeType: "image/jpeg", buffer: photo });
   await expect(page.locator(".e2-photo-row img")).toHaveCount(1);
   expect(sent[0].type).toBe(await canEncodeWebp(page) ? "image/webp" : "image/jpeg");
-  expect(sent[0].bytes.length).toBeLessThan(photo.length * .25);
+  if (await canEncodeWebp(page)) expect(sent[0].bytes.length).toBeLessThan(photo.length);
+  else expect(sent[0].bytes.equals(photo)).toBe(true);
 });
 
-test("unsupported WebP encoding still reduces bytes with JPEG fallback and server conversion", async ({ page, context }) => {
+test("unsupported WebP encoding sends the untouched original for full-resolution server WebP conversion", async ({ page, context }) => {
   await page.addInitScript(() => {
     const encode = HTMLCanvasElement.prototype.toBlob;
     HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) { encode.call(this, callback, type === "image/webp" ? "image/png" : type, quality); };
@@ -149,8 +156,8 @@ test("unsupported WebP encoding still reduces bytes with JPEG fallback and serve
   await expect(page.locator(".e2-photo-row img")).toHaveCount(1);
   expect(sent[0].name).toBe("camera.jpg");
   expect(sent[0].type).toBe("image/jpeg");
-  expect(sent[0].bytes.length).toBeLessThan(photo.length * .25);
-  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ format: "jpeg", width: 1600, height: 1200 });
+  expect(sent[0].bytes.equals(photo)).toBe(true);
+  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ format: "jpeg", width: 3200, height: 2400 });
 });
 
 test("HEIC remains uploadable through the server fallback", async ({ page, context }) => {
@@ -169,7 +176,8 @@ test("legacy album uploads use the same precompression", async ({ page, context 
   await expect.poll(() => sent.length).toBe(1);
   await expect(page.locator('input[name="galleryUrl"]')).toHaveCount(1);
   expect(sent[0].type).toBe(await canEncodeWebp(page) ? "image/webp" : "image/jpeg");
-  expect(sent[0].bytes.length).toBeLessThan(photo.length * .25);
+  if (await canEncodeWebp(page)) expect(sent[0].bytes.length).toBeLessThan(photo.length);
+  else expect(sent[0].bytes.equals(photo)).toBe(true);
 });
 
 test("returning to the saved template during an older autosave preserves the uploaded draft", async ({ page, context }) => {
@@ -209,7 +217,7 @@ test("returning to the saved template during an older autosave preserves the upl
   await expect(page.locator('[data-template-renderer="song-hy-red"]')).toBeVisible();
 });
 
-test("WebKit fallback preserves transparent PNG alpha before upload", async ({ page, context }) => {
+test("WebKit fallback sends original transparent PNG without recompression", async ({ page, context }) => {
   await page.addInitScript(() => {
     const encode = HTMLCanvasElement.prototype.toBlob;
     HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) { encode.call(this, callback, type === "image/webp" ? "image/png" : type, quality); };
@@ -219,8 +227,8 @@ test("WebKit fallback preserves transparent PNG alpha before upload", async ({ p
   await input.setInputFiles({ name: "transparent.png", mimeType: "image/png", buffer: transparent });
   await expect(page.locator(".e2-photo-row img")).toHaveCount(1);
   expect(sent[0].type).toBe("image/png");
-  expect(sent[0].bytes.length).toBeLessThan(transparent.length);
-  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ format: "png", hasAlpha: true, width: 1600, height: 1309 });
+  expect(sent[0].bytes.equals(transparent)).toBe(true);
+  expect(await sharp(sent[0].bytes).metadata()).toMatchObject({ format: "png", hasAlpha: true, width: 2200, height: 1800 });
   const pixel = await sharp(sent[0].bytes).extract({ left: 0, top: 0, width: 1, height: 1 }).raw().toBuffer();
   expect(pixel[3]).toBe(0);
 });
