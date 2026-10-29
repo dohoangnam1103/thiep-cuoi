@@ -9,7 +9,6 @@ import NextLink from "next/link";
 import { LogoMark } from "@/components/logo-mark";
 import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { Link, usePathname } from "@/i18n/navigation";
-import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 import {
   bodyClass,
   ctaSecondaryClass,
@@ -153,33 +152,18 @@ export function SiteHeader({
           {/* Nút "Tạo ngay": khi hideCreateButton (vd trang Mẫu thiệp) vẫn render
               nhưng GIỮ CHỖ vô hình (invisible + non-interactive) → header đồng vị
               trí mọi trang, nav không bị dồn lệch sang phải. */}
-          {loggedIn ? (
-            <Link
-              href="/templates"
-              aria-label={t("createNow")}
-              aria-hidden={hideCreateButton || undefined}
-              tabIndex={hideCreateButton ? -1 : undefined}
-              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary ${ctaSecondaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
-                hideCreateButton ? "pointer-events-none invisible" : ""
-              }`}
-            >
-              <Plus className="size-5 lg:hidden" />
-              <span className="hidden lg:inline">{t("createNow")}</span>
-            </Link>
-          ) : (
-            <NextLink
-              href={loginHref(TEMPLATE_LIST_PATH)}
-              aria-label={t("createNow")}
-              aria-hidden={hideCreateButton || undefined}
-              tabIndex={hideCreateButton ? -1 : undefined}
-              className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary ${ctaSecondaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
-                hideCreateButton ? "pointer-events-none invisible" : ""
-              }`}
-            >
-              <Plus className="size-5 lg:hidden" />
-              <span className="hidden lg:inline">{t("createNow")}</span>
-            </NextLink>
-          )}
+          <NextLink
+            href="/editor2"
+            aria-label={t("createNow")}
+            aria-hidden={hideCreateButton || undefined}
+            tabIndex={hideCreateButton ? -1 : undefined}
+            className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-primary ${ctaSecondaryClass} text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90 lg:size-auto lg:whitespace-nowrap lg:px-4 lg:py-2 ${
+              hideCreateButton ? "pointer-events-none invisible" : ""
+            }`}
+          >
+            <Plus className="size-5 lg:hidden" />
+            <span className="hidden lg:inline">{t("createNow")}</span>
+          </NextLink>
         </div>
       </div>
       <AdaptiveToaster />
@@ -307,13 +291,13 @@ export function SiteFooter() {
   const pricingActive = isActivePath(pathname, "/pricing");
   const toolsActive = isActivePath(pathname, "/tools");
 
-  const columns: Array<[string, Array<[string, "/templates" | "/pricing" | "/tools" | "/blog" | "/help" | "/privacy-policy" | "/terms-of-service"]>]> = [
+  const columns: Array<[string, Array<[string, "/editor2" | "/templates" | "/pricing" | "/tools" | "/blog" | "/help" | "/privacy-policy" | "/terms-of-service"]>]> = [
     [
       t("product"),
       [
         [t("weddingTemplates"), "/templates"],
         [t("pricing"), "/pricing"],
-        [t("createInvitation"), "/templates"],
+        [t("createInvitation"), "/editor2"],
       ],
     ],
     [
@@ -348,9 +332,15 @@ export function SiteFooter() {
             <ul className={`mt-4 space-y-3 ${bodyClass} text-muted-foreground`}>
               {items.map(([label, href]) => (
                 <li key={label}>
-                  <Link href={href} className="transition hover:text-foreground">
-                    {label}
-                  </Link>
+                  {href === "/editor2" ? (
+                    <NextLink href={href} className="transition hover:text-foreground">
+                      {label}
+                    </NextLink>
+                  ) : (
+                    <Link href={href} className="transition hover:text-foreground">
+                      {label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

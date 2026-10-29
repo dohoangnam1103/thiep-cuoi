@@ -84,7 +84,7 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
   const brideName = `Quỳnh Anh ${unique}`;
   const groomName = `Gia Khánh ${unique}`;
   const address = `Trung tâm tiệc cưới E2E ${unique}`;
-  const slug = `quynh-anh-gia-khanh-${unique}`;
+  let slug = "";
   let userId: string | undefined;
   let guestContext: BrowserContext | undefined;
 
@@ -111,32 +111,34 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
       await expect(dialog.getByRole("heading", { name: TEMPLATE_NAME, exact: true })).toBeVisible();
       await dialog.getByRole("button", { name: "TẠO THIỆP" }).click();
 
-      await page.waitForURL("**/editor/**");
+      await page.waitForURL("**/editor2/**");
       invitationId = new URL(page.url()).pathname.split("/").filter(Boolean).at(-1) ?? "";
       expect(invitationId).not.toBe("");
       await expect.poll(() => invitationTemplate(invitationId)).toBe(TEMPLATE_ID);
     });
 
-    await test.step("fill the form and publish the invitation", async () => {
-      await page.locator("#brideFullName").fill(brideName);
-      await page.locator("#groomFullName").fill(groomName);
-      await page.locator("#brideShortName").fill("Quỳnh Anh");
-      await page.locator("#groomShortName").fill("Gia Khánh");
-      await page.locator("#date").fill("2026-12-20");
-      await page.locator("#time").fill("18:00");
-      await page.locator("#address").fill(address);
-      await page.locator("#slug").fill(slug);
+    await test.step("edit inline and publish the invitation", async () => {
+      await page.getByLabel("Họ tên cô dâu", { exact: true }).fill(brideName);
+      await page.getByLabel("Họ tên chú rể", { exact: true }).fill(groomName);
+      await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-12-20");
+      await page.getByRole("button", { name: "Bắt đầu chỉnh sửa trên thiệp", exact: true }).click();
 
-      await page.getByRole("button", { name: "Xuất bản thiệp" }).click();
+      await page.getByRole("button", { name: "Nội dung", exact: true }).click();
+      await page.getByRole("button", { name: "Thời gian tiệc cưới", exact: true }).click();
+      await page.getByLabel("Giờ tiệc", { exact: true }).fill("18:00");
+      await page.getByRole("button", { name: "Xong", exact: true }).click();
+      await page.getByRole("button", { name: "Nội dung", exact: true }).click();
+      await page.getByRole("button", { name: "Địa điểm tổ chức", exact: true }).click();
+      await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill(address);
+      await page.getByRole("button", { name: "Xong", exact: true }).click();
+      await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
+      await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
 
-      // Publishing opens a success dialog instead of redirecting; follow its
-      // "Xem thiệp" link to reach the public page.
-      const publishedDialog = page.getByRole("dialog").filter({
-        has: page.getByRole("heading", { name: "Thiệp đã xuất bản!" }),
-      });
-      await expect(publishedDialog).toBeVisible();
-      await publishedDialog.getByRole("link", { name: "Xem thiệp" }).click();
-      await page.waitForURL(`**/thiep/${slug}`);
+      // The inline editor chooses the public slug from the couple's names.
+      const published = getDb().prepare("SELECT slug FROM Invitation WHERE id = ?").get(invitationId) as { slug: string };
+      expect(published.slug).toBeTruthy();
+      slug = published.slug;
+      await page.goto(`/thiep/${slug}`);
       await expect(page.locator("main#top")).toBeVisible();
       // The cover only shows the short names; the full names live inside the
       // invitation body, which mounts after "Mở thiệp".

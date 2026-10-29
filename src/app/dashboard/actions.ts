@@ -79,5 +79,5 @@ export async function createInvitation(formData?: FormData): Promise<void> {
       schedule: { create: schedule.map((item, sortOrder) => ({ ...item, sortOrder })) },
     },
   });
-  redirect(`/editor/${invitation.id}`);
+  redirect(`/editor2/${invitation.id}`);
 }

@@ -101,7 +101,7 @@ export function DashboardInvitationCard({
 
           <div className={`flex flex-wrap gap-2 ${bodyClass} sm:justify-end`}>
             <Link
-              href={`/editor/${id}`}
+              href={`/editor2/${id}`}
               className="rounded-full bg-secondary px-4 py-1.5 font-medium text-secondary-foreground transition hover:bg-muted"
             >
               Chỉnh sửa

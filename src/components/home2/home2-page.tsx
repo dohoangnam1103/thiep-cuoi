@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { ContactFab } from "@/components/chungdoi-chrome";
-import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 
 import { Home2Footer, Home2Header } from "./chrome";
 import {
@@ -55,24 +52,7 @@ export function Home2Page({
   rsvpImage: ImageSize;
   languagesImage: ImageSize;
 }) {
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    fetch("/api/auth/session")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: { loggedIn?: boolean } | null) => {
-        if (active && data?.loggedIn) setLoggedIn(true);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  // Giữ đúng luật điều hướng của sản phẩm hiện tại: chưa đăng nhập thì CTA đi
-  // qua trang đăng nhập rồi mới tới danh sách mẫu.
-  const createHref = loggedIn ? TEMPLATE_LIST_PATH : loginHref(TEMPLATE_LIST_PATH);
+  const createHref = "/editor2";
 
   const heroShots = shots.slice(0, 5);
   const gridShots = shots.slice(5, 11);

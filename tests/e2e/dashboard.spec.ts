@@ -163,11 +163,11 @@ test.describe("dashboard — create", () => {
 
       await page.getByRole("button", { name: "+ Tạo thiệp mới" }).click();
       await expect(page.getByRole("heading", { name: "Chọn mẫu thiệp" })).toBeVisible();
-      // Pick the first template; the server action redirects to /editor/{id}.
+      // Pick the first template; the server action opens the inline editor.
       await page.locator('div.fixed form button[type="submit"]').first().click();
 
-      await page.waitForURL("**/editor/**");
-      expect(page.url()).toContain("/editor/");
+      await page.waitForURL("**/editor2/**");
+      await expect(page.locator("[data-editor2-inline]")).toBeVisible();
       // The createInvitation action persisted a new row for this user.
       await expect.poll(() => invitationCount(user.id)).toBe(1);
     } finally {
@@ -198,8 +198,8 @@ test.describe("dashboard — navigation", () => {
       await loginAsUser(context, user.id);
       await page.goto("/dashboard");
       await page.getByRole("link", { name: "Chỉnh sửa" }).click();
-      await page.waitForURL(`**/editor/${inv.id}`);
-      expect(page.url()).toContain(`/editor/${inv.id}`);
+      await page.waitForURL(`**/editor2/${inv.id}`);
+      await expect(page.locator("[data-editor2-inline]")).toBeVisible();
     } finally {
       cleanupUser(user.id);
     }

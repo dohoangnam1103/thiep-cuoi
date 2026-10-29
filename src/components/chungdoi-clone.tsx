@@ -36,7 +36,6 @@ import { useTemplateName } from "@/components/template-name-overrides";
 import { TemplatePreviewModal } from "@/components/template-preview-modal";
 import { templates, type ChungDoiTemplate } from "@/data/chungdoi";
 import { Link } from "@/i18n/navigation";
-import { loginHref, TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 import { sectionPaddingClass } from "@/lib/section-spacing";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
 import {
@@ -917,8 +916,7 @@ function TestimonialsSection() {
 }
 
 export function ChungDoiClone() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const createHref = isAuthenticated ? TEMPLATE_LIST_PATH : loginHref(TEMPLATE_LIST_PATH);
+  const createHref = "/editor2";
 
   useRevealOnScroll();
   useScrollProgress();
@@ -926,7 +924,7 @@ export function ChungDoiClone() {
   return (
     <main className="font-app-sans min-h-screen bg-background text-foreground">
       <div id="scroll-progress" className="scroll-progress" aria-hidden />
-      <SiteHeader onSessionChange={setIsAuthenticated} />
+      <SiteHeader />
       <HeroSection createHref={createHref} />
       <TemplateCarousel />
       <HowItWorks />

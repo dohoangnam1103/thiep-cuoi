@@ -1345,35 +1345,35 @@ test.describe("templates — create with this template", () => {
       await expect(useTemplateButton.locator("xpath=ancestor::form[1]")).toHaveCSS("position", "fixed");
 
       await useTemplateButton.click();
-      await page.waitForURL("**/editor/**", { timeout: 30_000 });
+      await page.waitForURL("**/editor2/**", { timeout: 30_000 });
 
       const invitation = latestInvitation(user.id);
       expect(invitation?.templateId).toBe("double-phoenix-red");
-      expect(page.url()).toContain(`/editor/${invitation?.id}`);
+      expect(page.url()).toContain(`/editor2/${invitation?.id}`);
+      await expect(page.locator("[data-editor2-inline]")).toBeVisible();
     } finally {
       cleanupUser(user.id);
     }
   });
 
-  test("'Dùng mẫu này' creates an invitation and lands in the editor", async ({
+  test("template picker creates an invitation and lands in editor2", async ({
     page,
     context,
   }) => {
     const user = createUser();
     try {
-      // Forge a session so createInvitation's getOrCreateUserId() reuses this id
-      // instead of minting an anonymous user (keeps cleanup deterministic).
+      // Use an account session so the draft belongs to the test user.
       await loginAsUser(context, user.id);
-      await page.goto("/vi/templates");
+      await page.goto("/mau-thiep");
       expect(invitationCount(user.id)).toBe(0);
 
-      // Open the modal, then submit the "use this template" form (server action).
-      await page.getByRole("button", { name: "Xem trước" }).first().click();
+      // Open the modal, then submit the template creation form.
+      await page.getByRole("button", { name: "CHỌN THIỆP", exact: true }).first().click();
       await expect(page.getByRole("dialog")).toBeVisible();
-      await page.getByRole("dialog").getByRole("button", { name: "Dùng mẫu này" }).click();
+      await page.getByRole("dialog").getByRole("button", { name: "TẠO THIỆP", exact: true }).click();
 
-      await page.waitForURL("**/editor/**", { timeout: 30_000 });
-      expect(page.url()).toContain("/editor/");
+      await page.waitForURL("**/editor2/**", { timeout: 30_000 });
+      await expect(page.locator("[data-editor2-inline]")).toBeVisible();
       await expect.poll(() => invitationCount(user.id)).toBe(1);
     } finally {
       cleanupUser(user.id);
