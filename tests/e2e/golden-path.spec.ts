@@ -1,3 +1,4 @@
+import { chooseEditor2Date } from "./helpers/editor2-date";
 import { createHmac, randomUUID } from "node:crypto";
 
 import { test, expect, type BrowserContext } from "@playwright/test";
@@ -120,7 +121,7 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
     await test.step("edit inline and publish the invitation", async () => {
       await page.getByLabel("Họ tên cô dâu", { exact: true }).fill(brideName);
       await page.getByLabel("Họ tên chú rể", { exact: true }).fill(groomName);
-      await page.getByLabel("Ngày cưới", { exact: true }).fill("20/12/2026");
+      await chooseEditor2Date(page, page.getByLabel("Ngày cưới", { exact: true }), "20/12/2026");
       await page.getByRole("button", { name: "Bắt đầu chỉnh sửa trên thiệp", exact: true }).click();
 
       await page.getByRole("button", { name: "Nội dung", exact: true }).click();

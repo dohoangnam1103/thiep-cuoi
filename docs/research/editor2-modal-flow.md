@@ -66,3 +66,35 @@ NEXT: deploy and verify production
 - Sequential publication verifies default venue samples remain a draft until
   both actual venue fields are completed, then publication happens automatically.
 - Full unit suite: 1,104 passed and one existing skip. Lint: zero errors.
+
+## Calendar opens on date-field focus
+
+Editor2 date fields open their existing Vietnamese calendar on keyboard focus
+and pointer clicks, including creation, initial basics, reception and ceremonies.
+They suppress the mobile numeric keyboard with `inputMode="none"`; the shared
+admin/legacy date input retains its numeric input mode. Pointer focus is deferred
+to the click to avoid immediately dismissing a calendar opened by that gesture.
+Final focus returns to the date field with a one-use guard so selection, Escape
+and close do not reopen it. Clicking again or returning with Tab opens it again.
+Clicking the already-selected day also confirms and closes the calendar.
+DD/MM/YYYY display, hidden ISO values, autosave and validation are preserved.
+
+PHASE: implement
+STATUS: complete
+CHANGED: editor2 date field, shared inputMode override, browser date selection helpers and regressions
+VERIFIED: lint/typechecks, focus/click/Tab/Shift+Tab/Escape, DD/MM/YYYY selection, ISO persistence/reload at 1440/320px, creation and nested calendar flows
+UNVERIFIED: production deployment; browsers other than Chromium
+RISKS: none identified in tested calendar flows
+NEXT: production verification
+
+PHASE: verify
+STATUS: complete
+CHANGED: calendar focus/return handling and same-day confirmation
+VERIFIED: 8 final Chromium E2E cases covering focus, pointer/keyboard reopening, selection/escape without loops at 1440/320px, creation, multiple ceremonies including an already-selected date, autosave/reload and publication at 1440/390px; lint/typechecks passed
+UNVERIFIED: production deployment; browsers other than Chromium
+RISKS: none identified
+NEXT: deploy
+
+Screenshots `/tmp/editor2-evidence/date-focus-calendar-1440.png` and
+`date-focus-calendar-320.png` were captured after the opening transition; the
+320px calendar layout was visually inspected.

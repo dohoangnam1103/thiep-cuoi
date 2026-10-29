@@ -5,7 +5,7 @@ import { DayPicker } from "@daypicker/react";
 import { vi } from "@daypicker/react/locale";
 import { CalendarDays, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DateInput } from "@/components/ui/date-input";
 
 function parseDate(value: string): Date | undefined {
@@ -29,19 +29,39 @@ export function Editor2DateField({ name, label, value, onChange, required = fals
   const [open, setOpen] = useState(false);
   const selected = parseDate(value);
   const [month, setMonth] = useState<Date>(selected ?? new Date());
+  const restoringFocus = useRef(false);
+  const inputId = `e2-date-${name}`;
+  const showCalendar = () => {
+    if (disabled) return;
+    setMonth(parseDate(value) ?? new Date());
+    setOpen(true);
+  };
   return <div className="e2-field">
-    <label htmlFor={`e2-date-${name}`}>{label}</label>
+    <label htmlFor={inputId}>{label}</label>
     <div className="e2-date-control">
-      <DateInput id={`e2-date-${name}`} name={name} value={value} required={required} disabled={disabled} picker={false}
-        onValueChange={onChange} />
+      <DateInput id={inputId} name={name} value={value} required={required} disabled={disabled} picker={false}
+        inputMode="none" aria-haspopup="dialog" aria-expanded={open}
+        onFocus={() => {
+          if (restoringFocus.current) { restoringFocus.current = false; return; }
+          showCalendar();
+        }}
+        onBlur={() => { restoringFocus.current = false; }}
+        // Open pointer gestures on click, so opening on pointer focus cannot
+        // make the same gesture dismiss the calendar.
+        onPointerDown={event => { if (event.button === 0) event.preventDefault(); }}
+        onClick={showCalendar} onValueChange={onChange} />
       <Dialog.Root open={open} onOpenChange={next => { if (next) setMonth(parseDate(value) ?? new Date()); setOpen(next); }}>
         <Dialog.Trigger className="e2-button e2-date-trigger" disabled={disabled} aria-label={t("chooseDate", { field: label })}><CalendarDays size={19} /></Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Backdrop className="e2-date-backdrop" />
           <Dialog.Viewport className="e2-date-viewport">
-            <Dialog.Popup className="e2-date-popup">
+            <Dialog.Popup className="e2-date-popup" finalFocus={() => {
+              // Restoring focus after selection/dismissal must not reopen the calendar.
+              restoringFocus.current = true;
+              return document.getElementById(inputId);
+            }}>
               <div className="e2-date-head"><Dialog.Title>{t("dateDialogTitle")}</Dialog.Title><Dialog.Close className="e2-button e2-icon-button" aria-label={t("close")}><X size={18} /></Dialog.Close></div>
-              <DayPicker mode="single" locale={vi} weekStartsOn={1} selected={selected} month={month} onMonthChange={setMonth}
+              <DayPicker mode="single" required locale={vi} weekStartsOn={1} selected={selected} month={month} onMonthChange={setMonth}
                 captionLayout="dropdown" startMonth={new Date(1900, 0)} endMonth={new Date(2100, 11)} autoFocus
                 onSelect={date => { if (date) { onChange(toValue(date)); setOpen(false); } }} />
             </Dialog.Popup>

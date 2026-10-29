@@ -1,3 +1,4 @@
+import { chooseEditor2Date } from "./helpers/editor2-date";
 import { test, expect } from "@playwright/test";
 
 import { loginAsUser } from "./helpers/auth";
@@ -173,7 +174,7 @@ test.describe("dashboard — create", () => {
       const id = new URL(page.url()).pathname.split("/").pop()!;
       await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Lan Anh");
       await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Minh Đức");
-      await page.getByLabel("Ngày cưới", { exact: true }).fill("20/12/2026");
+      await chooseEditor2Date(page, page.getByLabel("Ngày cưới", { exact: true }), "20/12/2026");
       await page.getByRole("button", { name: "Bắt đầu chỉnh sửa trên thiệp" }).click();
       await page.getByRole("button", { name: "Nội dung", exact: true }).click();
       await page.getByRole("button", { name: "Lễ cưới", exact: true }).click();

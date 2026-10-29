@@ -16,7 +16,7 @@ type DateInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "valu
 };
 
 /** The named hidden field submits ISO; people only enter and see DD/MM/YYYY. */
-export function DateInput({ value, defaultValue = "", onValueChange, name, id, min, max, disabled, required, className, picker = true, ...props }: DateInputProps) {
+export function DateInput({ value, defaultValue = "", onValueChange, name, id, min, max, disabled, required, className, picker = true, inputMode = "numeric", ...props }: DateInputProps) {
   const t = useTranslations("dateInput");
   const generatedId = useId();
   const inputId = id ?? generatedId;
@@ -51,7 +51,7 @@ export function DateInput({ value, defaultValue = "", onValueChange, name, id, m
 
   const fields = <>
     <input {...props} ref={element => { input.current = element; element?.setCustomValidity(error); }}
-      id={inputId} name={name ? `${name}-display` : undefined} type="text" inputMode="numeric" autoComplete="off"
+      id={inputId} name={name ? `${name}-display` : undefined} type="text" inputMode={inputMode} autoComplete="off"
       placeholder={t("placeholder")} pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" maxLength={10}
       value={text} disabled={disabled} required={required} aria-invalid={Boolean(error) || undefined}
       className={cn(className, picker && "pr-10")}
