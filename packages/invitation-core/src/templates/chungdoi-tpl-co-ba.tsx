@@ -234,7 +234,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
               {ceremony ? (
                 <>
                   <CoBaDateRow weekday={ceremony.weekday} day={ceremony.day} month={ceremony.month} dayFontClass="text-[36px] md:text-[42px] lg:text-[46px]" gap="gap-2 md:gap-3" dividerLen={30} />
-                  <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.yearNumber}</div>
+                  <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremony.fullDate}</div>
                   <div className="text-[15px] font-bold md:text-[18px] lg:text-[19px]">{ceremony.lunar}</div>
                 </>
               ) : null}
@@ -258,7 +258,7 @@ export function CoBaInvitation({ content }: { content: ChungDoiDemoContent }) {
                   <h3 className="flex flex-col items-center text-center text-[19px] font-bold uppercase md:text-[33px] lg:text-[36px]" style={{ color: BROWN, fontFamily: COBA_MARVIN, fontWeight: 400, letterSpacing: "0.02em" }}>Tiệc cưới sẽ diễn ra vào lúc:</h3>
                   <div className="text-center text-[26px] md:text-[38px]">{venue.banquetTime || couple.time}</div>
                   <CoBaDateRow weekday={reception.weekday} day={reception.day} month={reception.month} dayFontClass="text-[38px] md:text-[50px]" gap="gap-6" dividerLen={34} />
-                  <div className="text-[23px] font-bold md:text-[31px]">{reception.yearNumber}</div>
+                  <div className="text-[23px] font-bold md:text-[31px]">{reception.fullDate}</div>
                   <div className="text-[15px] uppercase tracking-[0.2em] md:text-[18px]">{reception.lunar}</div>
                   <div className="mt-4 flex items-center justify-center gap-8">
                     <div className="flex flex-col items-center">

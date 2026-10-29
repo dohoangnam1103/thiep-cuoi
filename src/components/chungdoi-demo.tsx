@@ -8,6 +8,8 @@ import { useTranslations } from "next-intl";
 import { type CSSProperties, type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
+import { formatCalendarDate, isCalendarDate } from "@/lib/calendar-date";
+import { formatVietnamDateTime } from "@/lib/datetime";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import type { ArtOpeningEffect } from "@/data/templates/opening-effect";
@@ -226,11 +228,13 @@ function hexToRgba(hex: string, alpha: number) {
 }
 
 function parseISODate(iso: string) {
+  if (!isCalendarDate(iso)) return null;
   const d = new Date(`${iso}T00:00:00`);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
 type FormattedDate = {
+  fullDate: string;
   weekday: string;
   day: string;
   month: string;
@@ -244,6 +248,7 @@ function formatDate(iso: string): FormattedDate | null {
   const d = parseISODate(iso);
   if (!d) return null;
   return {
+    fullDate: formatCalendarDate(iso),
     weekday: VN_DAYS[d.getDay()],
     day: String(d.getDate()).padStart(2, "0"),
     month: String(d.getMonth() + 1).padStart(2, "0"),
@@ -271,8 +276,7 @@ function buildCalendar(iso: string) {
 function formatWishTime(raw: string) {
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return raw;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  return formatVietnamDateTime(d);
 }
 
 function AdditionalCeremonies({
@@ -314,7 +318,7 @@ function AdditionalCeremonies({
                   {ceremony.time && date ? <span aria-hidden>·</span> : null}
                   {date ? (
                     <span>
-                      {date.weekday}, {date.day}/{date.month}/{date.yearNumber}
+                      {date.weekday}, {date.fullDate}
                     </span>
                   ) : null}
                 </div>
@@ -1008,7 +1012,7 @@ function CoverCard({
 
         {date ? (
           <p className="mb-5 text-[18px]" style={{ color: tokens.textSecondary }}>
-            {date.dayNumber} tháng {date.monthNumber}, {date.yearNumber}
+            {date.fullDate}
           </p>
         ) : null}
 
@@ -1703,7 +1707,7 @@ function InvitationBody({ content, tokens }: { content: ChungDoiDemoContent; tok
               <span>|</span>
               <span>Tháng {ceremony.month}</span>
             </div>
-            <p className="mt-2 text-2xl font-bold">{ceremony.yearNumber}</p>
+            <p className="mt-2 text-2xl font-bold">{ceremony.fullDate}</p>
             <p className="mt-2 text-xs leading-5 opacity-75">{ceremony.lunar}</p>
           </div>
         ) : null}

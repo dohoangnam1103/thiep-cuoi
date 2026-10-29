@@ -130,7 +130,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
-            <Field label={t("day")} value={reception ? `${reception.day}.${reception.month}.${reception.yearNumber}` : ""} />
+            <Field label={t("day")} value={reception ? `${reception.fullDate}` : ""} />
             <Field label={t("time")} value={couple.time || venue.banquetTime} />
             <Field label={t("weekday")} value={reception?.weekday ?? ""} />
             <Field label={t("lunarDate")} value={reception?.lunar ?? ""} />
@@ -196,7 +196,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
                 </span>
                 <div className="flex flex-col text-[11px] uppercase tracking-[0.16em] text-[#a4462d]">
                   <span>{t("month", { month: ceremony.month })}</span>
-                  <span>{ceremony.yearNumber}</span>
+                  <span>{ceremony.fullDate}</span>
                 </div>
               </div>
               {couple.ceremonyTime ? (
@@ -214,7 +214,7 @@ export function TicketTerracottaInvitation({ content }: { content: ChungDoiDemoC
               </span>
               <div className="flex flex-col text-[11px] uppercase tracking-[0.16em] text-[#a4462d]">
                 <span>{t("month", { month: reception?.month ?? "--" })}</span>
-                <span>{reception?.yearNumber ?? ""}</span>
+                <span>{reception?.fullDate ?? ""}</span>
               </div>
             </div>
             <p className="mt-3 text-[14px] font-semibold">{couple.time || venue.banquetTime}</p>

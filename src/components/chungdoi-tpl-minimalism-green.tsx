@@ -398,7 +398,7 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
                             <span className="flex items-center justify-center text-[24px] leading-none" style={{ color: "rgba(255,255,255,0.5)" }}>|</span>
                             <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremonyDate.monthNumber}</span>
                           </div>
-                          <div className="text-[18px] md:text-[24px]" style={{ color: "#ffffff" }}>{ceremonyDate.yearNumber}</div>
+                          <div className="text-[18px] md:text-[24px]" style={{ color: "#ffffff" }}>{ceremonyDate.fullDate}</div>
                           <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
                             {ceremonyDate.lunar}
                           </div>
@@ -477,7 +477,7 @@ export function MinimalismGreenInvitation({ content }: { content: ChungDoiDemoCo
                       <div className="h-6 w-[2px]" style={{ backgroundColor: INK }} />
                       <span className={`${F_TIMES} text-left text-[12px] uppercase md:text-[16px]`} style={{ color: INK }}>Tháng {reception.monthNumber}</span>
                     </div>
-                    <div className={`${F_TIMES} text-[18px] md:text-[24px]`} style={{ color: INK }}>{reception.yearNumber}</div>
+                    <div className={`${F_TIMES} text-[18px] md:text-[24px]`} style={{ color: INK }}>{reception.fullDate}</div>
                     <div className="text-xs uppercase tracking-[0.25em] md:text-base" style={{ color: LEAF }}>{reception.lunar}</div>
                   </>
                 ) : null}

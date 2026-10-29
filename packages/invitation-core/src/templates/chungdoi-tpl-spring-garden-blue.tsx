@@ -161,7 +161,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
                 <div className="mt-2 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[30px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
-                <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-[18px] md:text-[24px]">{ceremony.fullDate}</div>
                 <div className="text-xs opacity-75 md:text-sm">{ceremony.lunar}</div>
               </div>
             ) : null}
@@ -173,7 +173,7 @@ export function SpringGardenBlueInvitation({ content }: { content: ChungDoiDemoC
             <p className="mt-2 text-[16px] uppercase md:text-[20px]">Tiệc cưới sẽ diễn ra vào lúc:</p>
             <div className="text-[22px] font-semibold md:text-[32px]">{venue.banquetTime || couple.time}</div>
             {reception ? <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]"><span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span></div> : null}
-            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div> : null}
             {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
             <CalendarBlock calendar={calendar} />
             <a href={googleCalendarUrl(content)} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center justify-center rounded-full border px-6 py-2 text-sm font-semibold transition hover:bg-white/70" style={{ borderColor: ACCENT, color: ACCENT }}>Thêm vào lịch</a>

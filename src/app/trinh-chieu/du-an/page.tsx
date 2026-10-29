@@ -1,3 +1,4 @@
+import { formatVietnamDateTime } from "@/lib/datetime";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,10 +54,6 @@ export default async function SlideshowProjectsPage() {
   ]);
   const projects = await listOwnSlideshowProjects(userId);
   const now = new Date();
-  const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
   const unpaidCount = projects.filter(
     (project) => !project.paid && !project.complimentary,
   ).length;
@@ -178,7 +175,7 @@ export default async function SlideshowProjectsPage() {
               const statusLabel = t(`status.${entitlement}.label`);
               const statusDescription = entitlement === "trial"
                 ? t("status.trial.description", {
-                    date: dateFormatter.format(slideshowTrialEndsAt(project.trialStartedAt)),
+                    date: formatVietnamDateTime(slideshowTrialEndsAt(project.trialStartedAt)),
                   })
                 : t(`status.${entitlement}.description`);
 
@@ -211,7 +208,7 @@ export default async function SlideshowProjectsPage() {
                       <span className="inline-flex items-center gap-1.5">
                         <Clock3 size={14} aria-hidden />
                         <time dateTime={project.updatedAt.toISOString()}>
-                          {t("updatedAt", { date: dateFormatter.format(project.updatedAt) })}
+                          {t("updatedAt", { date: formatVietnamDateTime(project.updatedAt) })}
                         </time>
                       </span>
                       <span className="inline-flex items-center gap-1.5">

@@ -117,7 +117,8 @@ export async function publishVisualInvitation(id: string, formData: FormData): P
   }
   const parsed = contentSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { errorCode: "invalidData" };
-  const issue = editor2PublicationIssue(parsed.data);
+  const sample = await getTranslations("editor2.samples");
+  const issue = editor2PublicationIssue(parsed.data, editor2DefaultFields(key => sample(key)));
   if (issue) {
     const saved = await saveVisualInvitation(id, formData);
     return saved?.ok ? { errorCode: issue.errorCode, focusField: issue.focusField, persisted: true } : saved;

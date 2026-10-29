@@ -213,7 +213,7 @@ export function CrystalFloralRedInvitation({
                   <span className="text-xl text-[#560207]/35">|</span>
                   <span className="text-[12px] uppercase md:text-[16px]">{t("month", { month: ceremony.month })}</span>
                 </div>
-                <p className="text-[20px] md:text-[26px]">{ceremony.yearNumber}</p>
+                <p className="text-[20px] md:text-[26px]">{ceremony.fullDate}</p>
                 <p className="text-xs uppercase tracking-[0.12em] md:text-sm">{ceremony.lunar}</p>
               </div>
             ) : null}
@@ -267,7 +267,7 @@ export function CrystalFloralRedInvitation({
                     <span className="text-xl text-[#560207]/35">|</span>
                     <span className="text-[12px] uppercase md:text-[16px]">{t("month", { month: reception.month })}</span>
                   </div>
-                  <p className="text-[20px] md:text-[26px]">{reception.yearNumber}</p>
+                  <p className="text-[20px] md:text-[26px]">{reception.fullDate}</p>
                   <p className="text-xs uppercase tracking-[0.12em] md:text-sm">{reception.lunar}</p>
                 </>
               ) : null}

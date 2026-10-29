@@ -26,8 +26,7 @@ export const metadata: Metadata = {
 };
 
 const dateTimeFormat = createVietnamDateFormatter({
-  dateStyle: "medium",
-  timeStyle: "short",
+  day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
 });
 
 function formatVnd(value: number): string {

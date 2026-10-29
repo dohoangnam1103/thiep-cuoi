@@ -45,7 +45,7 @@ export function HongVanCover({
         <h1 className="max-w-full font-art-qellia text-[2.6rem] leading-[.95] tracking-tight [overflow-wrap:anywhere] sm:text-[2.9rem] md:text-[3.5rem]">
           {people[0]} <span className="my-2 block text-[.48em] text-[#edc77e]">&amp;</span> {people[1]}
         </h1>
-        {date ? <p className="mt-6 text-sm tracking-[.32em] text-[#f4d8a0] md:text-base">{date.day}.{date.month}.{date.yearNumber}</p> : null}
+        {date ? <p className="mt-6 text-sm tracking-[.32em] text-[#f4d8a0] md:text-base">{date.fullDate}</p> : null}
         <button type="button" onClick={onOpen} className="mt-7 rounded-full border border-[#edc77e]/80 bg-[#a82432] px-8 py-3 text-sm font-semibold text-[#fff7eb] shadow-[0_12px_28px_rgba(0,0,0,.35)] transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#edc77e] md:mt-8 md:px-10 md:py-3.5">
           Mở thiệp
         </button>

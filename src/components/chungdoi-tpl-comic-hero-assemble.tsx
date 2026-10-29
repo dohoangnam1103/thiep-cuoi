@@ -405,7 +405,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
                         </p> : null}
                         {ceremony ? <>
                           <p className="mt-2 text-[14px] font-bold uppercase tracking-[0.1em] text-[#12141f] md:text-[16px]">
-                            {ceremony.weekday} · {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}
+                            {ceremony.weekday} · {ceremony.fullDate}
                           </p>
                           <p className="mt-1 text-[11px] text-[#12141f] opacity-60 md:text-[12px]">
                             {t("lunarDate")}: {ceremony.lunar}
@@ -428,7 +428,7 @@ export function ComicHeroAssembleInvitation({ content }: { content: ChungDoiDemo
                       {venue.banquetTime || couple.time}
                     </p>
                     <p className="mt-2 text-[14px] font-bold uppercase tracking-[0.1em] text-[#12141f] md:text-[16px]">
-                      {reception.weekday} · {reception.day}/{reception.month}/{reception.yearNumber}
+                      {reception.weekday} · {reception.fullDate}
                     </p>
                     <p className="mt-1 text-[11px] text-[#12141f] opacity-60 md:text-[12px]">
                       {t("lunarDate")}: {reception.lunar}

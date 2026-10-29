@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { DateInput } from "@/components/ui/date-input";
 
 import { createVoucher, type VoucherState } from "./actions";
 
@@ -44,7 +45,7 @@ export function VoucherForm() {
         <label htmlFor="expiresAt" className={labelClass}>
           Ngày hết hạn
         </label>
-        <input id="expiresAt" name="expiresAt" type="date" className={inputClass} />
+        <DateInput id="expiresAt" name="expiresAt" className={inputClass} />
       </div>
 
       {state?.error ? (

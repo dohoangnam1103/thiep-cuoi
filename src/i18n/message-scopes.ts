@@ -12,7 +12,7 @@ export const invitationMessageNamespaces = [
 
 // Every EditorForm entry point also renders invitation previews.
 export const editorMessageNamespaces = [
-  "editor", ...invitationMessageNamespaces, "flowDemoLab", "listing",
+  "editor", "dateInput", ...invitationMessageNamespaces, "flowDemoLab", "listing",
   "templatePreviewModal", "trialCountdown", "home", "chrome",
 ] as const;
 

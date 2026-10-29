@@ -27,7 +27,7 @@ test("publishing prepares a PNG in the background and autosave rebuilds names an
     await page.goto(`/editor/${invitation.id}`);
     await page.locator("#brideFullName").fill(`Nguyễn Mai ${suffix}`);
     await page.locator("#groomFullName").fill(`Trần Nam ${suffix}`);
-    await page.locator("#date").fill("2026-12-20");
+    await page.locator("#date").fill("20/12/2026");
     await page.locator("#time").fill("18:00");
     await page.locator("#slug").fill(slug);
     await page.getByRole("button", { name: "Xuất bản thiệp" }).click();

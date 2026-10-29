@@ -59,17 +59,10 @@ for (const template of templates) {
     assert.ok(base, `${template.slug}: demo content exists`);
     const html = render(component, {
       ...base,
-      couple: { ...base.couple, ceremonyHeader: "STALE LEGACY CEREMONY", ceremonyDate: "2020-04-17", ceremonyTime: "02:11" },
+      couple: { ...base.couple, date: "2041-04-03", ceremonyHeader: "STALE LEGACY CEREMONY", ceremonyDate: "2020-04-17", ceremonyTime: "02:11" },
       ceremonies,
     });
-    // Some designs intentionally print day.month only. Calibrate the year
-    // assertion against the same renderer's legacy single ceremony instead of
-    // keeping a per-template allowlist that would silently drift.
-    const yearProbe = ceremonyMarkup(render(component, {
-      ...base, ceremonies: undefined,
-      couple: { ...base.couple, ceremonyHeader: "LEGACY SINGLE CEREMONY", ceremonyDate: "2031-01-11", ceremonyTime: "03:17" },
-    }));
-    const showsYear = yearProbe.items[0]?.includes("2031") ?? false;
+    assert.ok(html.includes("03/04/2041"), `${template.slug}: reception uses DD/MM/YYYY`);
     for (const ceremony of ceremonies) assert.ok(html.includes(ceremony.title), `${template.slug}: missing native ${ceremony.title}`);
     const { regions, items, regionPositions, footerPositions } = ceremonyMarkup(html);
     assert.ok(footerPositions.length > 0, `${template.slug}: native footer must be identified`);
@@ -79,7 +72,8 @@ for (const template of templates) {
     for (const [index, ceremony] of ceremonies.entries()) {
       assert.ok(items[index].includes(ceremony.title), `${template.slug}: ceremony order/title ${index}`);
       assert.ok(items[index].includes(ceremony.time), `${template.slug}: own time ${index}`);
-      assertCeremonyDate(items[index], ceremony.date, ceremony.time, !showsYear, `${template.slug} ceremony ${index}`);
+      assert.ok(items[index].includes(ceremony.date.split("-").reverse().join("/")), `${template.slug}: ceremony ${index} uses DD/MM/YYYY`);
+      assertCeremonyDate(items[index], ceremony.date, ceremony.time, false, `${template.slug} ceremony ${index}`);
       assert.ok(!items[index].includes("02:11"), `${template.slug}: no stale legacy time`);
       assert.ok(regions[0].includes(ceremony.title), `${template.slug}: all ceremonies share native region`);
     }

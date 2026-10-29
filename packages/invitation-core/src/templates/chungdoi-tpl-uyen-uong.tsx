@@ -37,10 +37,10 @@ function DateLine({ date, time }: { date: string; time?: string }) {
       {time ? <p className="text-sm">{t("atTime", { time })}</p> : null}
       {parsed ? (
         <>
-          <div className="mx-auto mt-3 grid max-w-[310px] grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div className="mx-auto mt-3 grid max-w-[310px] grid-cols-[1fr_auto_auto] items-center gap-2 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
             <span className="text-sm">{parsed.weekday}</span>
-            <span className="border-x border-[#922b32]/25 px-5 text-5xl tabular-nums md:text-6xl">{parsed.dayNumber}</span>
-            <span className="text-sm">{parsed.monthNumber} / {parsed.yearNumber}</span>
+            <span className="border-x border-[#922b32]/25 px-3 text-5xl tabular-nums sm:px-5 md:text-6xl">{parsed.dayNumber}</span>
+            <span className="whitespace-nowrap text-xs tabular-nums sm:text-sm">{parsed.fullDate}</span>
           </div>
           <p className="mt-4 text-xs leading-relaxed text-[#705653]">{parsed.lunar}</p>
         </>
@@ -120,7 +120,7 @@ export function UyenUongInvitation({ content }: { content: ChungDoiDemoContent }
           <span className="my-1 block font-body-serif text-lg italic md:text-xl">{t("and")}</span>
           <span className="block">{people[1].shortName}</span>
         </h1>
-        {wedding ? <p className="relative z-10 mt-6 text-lg tabular-nums tracking-[0.2em]">{wedding.dayNumber}.{wedding.monthNumber}.{wedding.yearNumber}</p> : null}
+        {wedding ? <p className="relative z-10 mt-6 text-lg tabular-nums tracking-[0.2em]">{wedding.fullDate}</p> : null}
         <img src={ART} alt={u("artAlt")} width={1536} height={1024} fetchPriority="high" className="mx-auto -mt-2 w-full max-w-[740px] md:-mt-14" />
         <p className="mx-auto mt-3 max-w-[400px] text-balance text-sm italic leading-relaxed md:text-base">{u("verse")}</p>
       </header>

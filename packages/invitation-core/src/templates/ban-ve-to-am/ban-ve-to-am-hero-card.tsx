@@ -1,7 +1,8 @@
 "use client";
 
+import { formatCalendarDate } from "@chungdoi/invitation-data/calendar-date";
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 import type { ChungDoiDemoContent } from "../../signature/types";
 import { orderedCouple } from "../../signature/invitation-display";
@@ -10,14 +11,8 @@ import styles from "./ban-ve-to-am-hero.module.css";
 
 const GARDEN_FRAME = "/chungdoi/templates/ban-ve-to-am/cover/garden-frame.svg";
 
-function formatWeddingDate(value: string, locale: string) {
-  const parsed = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(parsed);
+function formatWeddingDate(value: string) {
+  return formatCalendarDate(value);
 }
 
 export function BanVeToAmHeroCard({
@@ -25,12 +20,11 @@ export function BanVeToAmHeroCard({
 }: {
   content: ChungDoiDemoContent;
 }) {
-  const locale = useLocale();
   const t = useTranslations("banVeToAmTemplate");
   const invitationT = useTranslations("invitationTemplate");
   const people = orderedCouple(content);
   const coupleLabel = `${people[0].shortName} ${invitationT("and")} ${people[1].shortName}`;
-  const weddingDate = formatWeddingDate(content.couple.date, locale);
+  const weddingDate = formatWeddingDate(content.couple.date);
   const heroImage = content.heroImage || content.portraits?.bride || content.gallery[0];
 
   return (

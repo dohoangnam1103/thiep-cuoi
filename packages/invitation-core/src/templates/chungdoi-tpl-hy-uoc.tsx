@@ -98,8 +98,9 @@ function CoupleNames({ first, second, size }: { first: string; second: string; s
 }
 
 /** Một dòng ngày: THỨ · ngày · THÁNG, ngăn bằng vạch dọc mảnh. */
-function HyDateRow({ weekday, day, month }: { weekday: string; day: string; month: string }) {
+function HyDateRow({ weekday, day, month, date }: { weekday: string; day: string; month: string; date: string }) {
   return (
+    <>
     <div className="mt-4 flex items-center justify-center">
       <span className="w-[74px] whitespace-nowrap text-right text-[13px] uppercase tracking-wide md:w-[92px] md:text-[15px]" style={{ color: hexToRgba(INK, 0.75) }}>{weekday}</span>
       <span className="mx-3 h-[26px] w-px self-center md:mx-4" style={{ backgroundColor: hexToRgba(GOLD, 0.6) }} />
@@ -107,6 +108,8 @@ function HyDateRow({ weekday, day, month }: { weekday: string; day: string; mont
       <span className="mx-3 h-[26px] w-px self-center md:mx-4" style={{ backgroundColor: hexToRgba(GOLD, 0.6) }} />
       <span className="w-[74px] whitespace-nowrap text-left text-[13px] uppercase tracking-wide md:w-[92px] md:text-[15px]" style={{ color: hexToRgba(INK, 0.75) }}>Tháng {month}</span>
     </div>
+    <p className="mt-2 text-center text-lg tabular-nums">{date}</p>
+    </>
   );
 }
 
@@ -310,7 +313,7 @@ export function HyUocInvitation({ content }: { content: ChungDoiDemoContent }) {
         <div className="relative mx-auto mt-6 w-[74%] max-w-[300px]">
           <img alt="" aria-hidden="true" src={`${HY}/date-band-red.svg`} className="h-auto w-full" />
           <span className="absolute inset-0 flex items-center justify-center text-center text-[13px] font-semibold uppercase tracking-[0.2em] md:text-[15px]" style={{ color: IVORY }}>
-            {wedding ? `${wedding.dayNumber}.${wedding.monthNumber}.${wedding.yearNumber}` : ""}
+            {wedding ? `${wedding.fullDate}` : ""}
           </span>
         </div>
 
@@ -358,7 +361,7 @@ export function HyUocInvitation({ content }: { content: ChungDoiDemoContent }) {
                 {ceremony.time ? (
                   <p className="mt-2 text-[13px] uppercase tracking-wide md:text-[15px]" style={{ color: hexToRgba(INK, 0.75) }}>Vào lúc {ceremony.time}</p>
                 ) : null}
-                {ceremonyDate ? <HyDateRow weekday={ceremonyDate.weekday.toUpperCase()} day={ceremonyDate.day} month={ceremonyDate.month} /> : null}
+                {ceremonyDate ? <HyDateRow weekday={ceremonyDate.weekday.toUpperCase()} day={ceremonyDate.day} month={ceremonyDate.month} date={ceremonyDate.fullDate} /> : null}
                 {ceremonyDate ? <p className="mt-2 text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: hexToRgba(INK, 0.62) }}>{ceremonyDate.lunar}</p> : null}
               </div>
             );
@@ -370,7 +373,7 @@ export function HyUocInvitation({ content }: { content: ChungDoiDemoContent }) {
       <section className="relative w-full overflow-hidden px-4 py-8 md:px-10" style={IVORY_PAPER}>
         <p className="text-center text-[15px] uppercase tracking-[0.08em] md:text-[19px]" style={{ color: RED }}>Tiệc cưới sẽ diễn ra vào lúc</p>
         <p className="font-art-qellia mt-2 text-center text-[30px] leading-none md:text-[38px]" style={{ color: RED }}>{venue.banquetTime || couple.time}</p>
-        {wedding ? <HyDateRow weekday={wedding.weekday.toUpperCase()} day={wedding.day} month={wedding.month} /> : null}
+        {wedding ? <HyDateRow weekday={wedding.weekday.toUpperCase()} day={wedding.day} month={wedding.month} date={wedding.fullDate} /> : null}
         {wedding ? <p className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: hexToRgba(INK, 0.62) }}>{wedding.lunar}</p> : null}
 
         <p className="mt-8 text-center text-[13px] uppercase tracking-[0.2em]" style={{ color: hexToRgba(INK, 0.62) }}>Cùng đếm ngược</p>

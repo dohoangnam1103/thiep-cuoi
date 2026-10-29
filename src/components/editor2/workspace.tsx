@@ -59,7 +59,8 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const router = useRouter();
   const t = useTranslations("editor2");
   const errorT = useTranslations("editor.errors");
-  const [restored] = useState(() => initializeEditor2Defaults(id, restoreEditor2DraftBasics(id, initial), editor2DefaultFields(key => t(`samples.${key}`)), status === "published"));
+  const defaultFields = editor2DefaultFields(key => t(`samples.${key}`));
+  const [restored] = useState(() => initializeEditor2Defaults(id, restoreEditor2DraftBasics(id, initial), defaultFields, status === "published"));
   const [history, dispatch] = useReducer(historyReducer, { past: [], present: restored, future: [] });
   const draft = history.present;
   const previewDraft = useDeferredValue(draft);
@@ -70,7 +71,15 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
-  const [panel, setPanel] = useState<Panel>(!restored.fields.brideFullName || !restored.fields.groomFullName || !restored.fields.date ? "basics" : null);
+  const [{ panel, renderedPanel }, setDialog] = useState<{ panel: Panel; renderedPanel: Panel }>(() => {
+    const initialPanel: Panel = !restored.fields.brideFullName || !restored.fields.groomFullName || !restored.fields.date ? "basics" : null;
+    return { panel: initialPanel, renderedPanel: initialPanel };
+  });
+  // Base UI keeps the popup mounted through its exit transition. Keep its
+  // fields and dimensions intact until it has finished fading out too.
+  const setPanel = useCallback((next: Panel) => {
+    setDialog(previous => ({ panel: next, renderedPanel: next ?? previous.renderedPanel }));
+  }, []);
   const [editing, setEditing] = useState(true);
   const [phone, setPhone] = useState(false);
   const [hint, setHint] = useState(true);
@@ -144,7 +153,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     if (section === "photos" && !templateSupportsHeroImage(latest.current.fields.templateId)) return;
     focusField.current = field;
     setPanel(section);
-  }, []);
+  }, [setPanel]);
 
   useEffect(() => {
     if (snapshot === baseline.current) { acknowledgeEditor2Defaults(id); return; }
@@ -165,7 +174,8 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     const input = focusField.current ? document.getElementById(`e2-${focusField.current}`)
       ?? document.getElementById(`e2-date-${focusField.current}`) : null;
     if (input && dialogBody.current?.contains(input)) {
-      focusField.current = undefined;
+      // Opening focus can run after the transition, even if publication has
+      // already advanced to another panel. Keep its latest requested target.
       const details = input.closest("details");
       if (details) details.open = true;
       return input;
@@ -216,7 +226,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     if (result && "loginUrl" in result) { router.push(result.loginUrl); return; }
     if (result?.errorCode) {
       setError(result.errorCode);
-      const issue = editor2PublicationIssue(latest.current.fields);
+      const issue = editor2PublicationIssue(latest.current.fields, defaultFields);
       if (issue && issue.errorCode === result.errorCode) {
         focusField.current = issue.focusField;
         setPublicationPending(true); setPanel(issue.section);
@@ -230,7 +240,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   };
   const beginPublication = async () => {
     if (locked.current) return;
-    const issue = editor2PublicationIssue(latest.current.fields);
+    const issue = editor2PublicationIssue(latest.current.fields, defaultFields);
     if (issue) {
       focusField.current = issue.focusField;
       setError(issue.errorCode); setPublicationPending(true); setPanel(issue.section);
@@ -251,7 +261,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   };
   const continuePublication = () => {
     if (locked.current) return;
-    const issue = editor2PublicationIssue(latest.current.fields);
+    const issue = editor2PublicationIssue(latest.current.fields, defaultFields);
     if (issue) {
       focusField.current = issue.focusField;
       setError(issue.errorCode); setPanel(issue.section);
@@ -273,12 +283,12 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const setUploadState = (value: boolean) => { locked.current = value; setUploading(value); };
   const busy = publishing || uploading;
   const isPublished = Boolean(publishedSlug) || status === "published";
-  const activeSection = isEditor2Section(panel) ? panel : null;
+  const activeSection = isEditor2Section(renderedPanel) ? renderedPanel : null;
   const canHide = activeSection && ["album", "music", "ceremonies", "schedule", "photos", "gift"].includes(activeSection)
     && (activeSection !== "album" || draft.fields.showAlbum)
     && (activeSection !== "music" || Boolean(draft.fields.music))
     && !editor2MissingSections(draft).includes(activeSection);
-  const panelTitle = activeSection ? t(`sections.${activeSection}`) : panel === "basics" ? t("startTitle") : panel === "add" ? t("add") : panel === "templates" ? t("chooseTemplate") : t("content");
+  const panelTitle = activeSection ? t(`sections.${activeSection}`) : renderedPanel === "basics" ? t("startTitle") : renderedPanel === "add" ? t("add") : renderedPanel === "templates" ? t("chooseTemplate") : t("content");
 
   return <main className="e2-shell">
     <header className="e2-header">
@@ -330,14 +340,14 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       setPanel(null);
     }}>
       <Dialog.Portal><Dialog.Backdrop className="e2-dialog-backdrop" /><Dialog.Viewport className="e2-dialog-viewport">
-        <Dialog.Popup initialFocus={initialDialogFocus} className={`e2-dialog${activeSection === "couple" || activeSection === "family" || activeSection === "gift" || (activeSection === "photos" && heroImageCount(draft.fields.templateId) === 2) || panel === "basics" || panel === "templates" ? " e2-dialog-couple" : ""}${activeSection === "schedule" ? " e2-dialog-schedule" : ""}`}>
+        <Dialog.Popup initialFocus={initialDialogFocus} className={`e2-dialog${activeSection === "couple" || activeSection === "family" || activeSection === "gift" || (activeSection === "photos" && heroImageCount(draft.fields.templateId) === 2) || renderedPanel === "basics" || renderedPanel === "templates" ? " e2-dialog-couple" : ""}${activeSection === "schedule" ? " e2-dialog-schedule" : ""}`}>
           <header className="e2-dialog-head"><div><Dialog.Title className="e2-dialog-title">{panelTitle}</Dialog.Title>
             {publicationPending && <Dialog.Description className="e2-description">{t("completeToPublish")}</Dialog.Description>}
             </div>
             <Dialog.Close className="e2-button e2-icon-button" aria-label={t("close")} disabled={busy}><X size={18} /></Dialog.Close>
           </header>
           <div className="e2-dialog-body" ref={dialogBody}>
-            {panel === "basics" && <form className="e2-dialog-fields" onSubmit={event => { event.preventDefault(); setPanel(null); }}>
+            {renderedPanel === "basics" && <form className="e2-dialog-fields" onSubmit={event => { event.preventDefault(); setPanel(null); }}>
               <div className="e2-couple-grid">
                 {(["brideFullName", "groomFullName"] as const).map(name => <label key={name} className="e2-field"><span>{t(`fields.${name}`)}</span>
                   <input name={name} value={draft.fields[name]} required maxLength={120} onChange={event => change(previous => ({ ...previous, fields: withEditor2FullName(previous.fields, name, event.target.value) }))} />
@@ -349,7 +359,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
               <button className="e2-button e2-primary">{t("beginEditing")}</button>
             </form>}
             {activeSection && <fieldset key={activeSection} disabled={busy}><Editor2SectionFields invitationId={id} section={activeSection} draft={draft} onChange={change} labels={labels} samples={samples[draft.fields.templateId]} onUploading={setUploadState} /></fieldset>}
-            {panel === "templates" && <div className="e2-template-picker">
+            {renderedPanel === "templates" && <div className="e2-template-picker">
               {completedTemplates.map(template => <button key={template.slug} type="button" className="e2-template-option" aria-pressed={draft.fields.templateId === template.slug} onClick={() => {
                 change(previous => ({ ...previous, fields: { ...previous.fields, templateId: template.slug } }));
                 setPanel(null);
@@ -358,10 +368,10 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
                 <span className="e2-template-option-name">{labels[template.slug] ?? template.name}</span>
               </button>)}
             </div>}
-            {(panel === "content" || panel === "add") && <div className="e2-section-list">
-              {(panel === "content" ? EDITOR2_SECTIONS : ["ceremonies", ...editor2MissingSections(draft).filter(section => section !== "ceremonies" && section !== "gift")] as Editor2Section[])
+            {(renderedPanel === "content" || renderedPanel === "add") && <div className="e2-section-list">
+              {(renderedPanel === "content" ? EDITOR2_SECTIONS : ["ceremonies", ...editor2MissingSections(draft).filter(section => section !== "ceremonies" && section !== "gift")] as Editor2Section[])
                 .filter(section => section !== "photos" || templateSupportsHeroImage(draft.fields.templateId)).map(section => <button key={section} type="button" className="e2-section-link" onClick={() => open(section)}>
-                {panel === "add" ? t("addSection", { section: t(`sections.${section}`) }) : t(`sections.${section}`)}<ChevronRight size={17} />
+                {renderedPanel === "add" ? t("addSection", { section: t(`sections.${section}`) }) : t(`sections.${section}`)}<ChevronRight size={17} />
               </button>)}
             </div>}
             {error && <p className="e2-error mt-4" role="alert">{error === "networkError" ? t(error) : errorT(error)}</p>}

@@ -21,6 +21,7 @@ import {
   parseUserSearch,
 } from "@/lib/admin-support-input";
 import { formatVietnamDateTimeShort } from "@/lib/datetime";
+import { DateInput } from "@/components/ui/date-input";
 import { emailClickSecret } from "@/lib/email-click";
 import { funnelRate, loadEmailFunnel, sumEmailFunnel } from "@/lib/email-funnel";
 import { prisma } from "@/lib/prisma";
@@ -503,11 +504,11 @@ export default async function AdminEmailLogsPage({
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-from" className="text-xs text-muted-foreground">{t("emailFromDate")}</label>
-          <input id="email-log-from" name="from" type="date" defaultValue={fromValue ?? ""} className={inputClass} />
+          <DateInput id="email-log-from" name="from" defaultValue={fromValue ?? ""} className={inputClass} />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-to" className="text-xs text-muted-foreground">{t("emailToDate")}</label>
-          <input id="email-log-to" name="to" type="date" defaultValue={toValue ?? ""} className={inputClass} />
+          <DateInput id="email-log-to" name="to" defaultValue={toValue ?? ""} className={inputClass} />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email-log-type" className="text-xs text-muted-foreground">{t("emailType")}</label>

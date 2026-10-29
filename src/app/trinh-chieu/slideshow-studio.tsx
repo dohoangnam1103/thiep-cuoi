@@ -1,5 +1,8 @@
 "use client";
 
+import { formatVietnamDateTime } from "@/lib/datetime";
+import { formatCalendarDate, parseCalendarDateLabel } from "@/lib/calendar-date";
+import { DateInput } from "@/components/ui/date-input";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -434,7 +437,7 @@ export function SlideshowStudio({
 
       {mode === "editor" && project?.entitlement === "trial" ? (
         <div className="border-b border-[#d8ff3e]/20 bg-[#d8ff3e]/8 px-4 py-2.5 text-center text-xs text-white/60">
-          Đang dùng thử miễn phí · chỉnh sửa đến {new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(project.trialEndsAt))}
+          Đang dùng thử miễn phí · chỉnh sửa đến {formatVietnamDateTime(new Date(project.trialEndsAt))}
         </div>
       ) : null}
       {mode === "editor" && project?.entitlement === "expired" ? (
@@ -578,7 +581,7 @@ function EditorPanel({
       <details className="border-t border-white/10 pt-5">
         <summary className="cursor-pointer text-sm font-semibold text-white/75">Thông tin nâng cao</summary>
         <div className="mt-4 grid gap-3">
-          <Field label="Ngày cưới"><input value={draft.source.event.dateLabel} onChange={(event) => onSource((source) => ({ ...source, event: { ...source.event, dateLabel: event.target.value } }))} className={inputClass} /></Field>
+          <Field label="Ngày cưới"><DateInput value={parseCalendarDateLabel(draft.source.event.dateLabel) ?? ""} onValueChange={(date) => onSource((source) => ({ ...source, event: { ...source.event, dateLabel: formatCalendarDate(date) } }))} className={inputClass} /></Field>
           <Field label="Địa điểm"><input value={draft.source.event.locationLabel} onChange={(event) => onSource((source) => ({ ...source, event: { ...source.event, locationLabel: event.target.value } }))} className={inputClass} /></Field>
           <Field label="Mở đầu"><textarea value={draft.source.story.opening} onChange={(event) => onSource((source) => ({ ...source, story: { ...source.story, opening: event.target.value } }))} rows={2} className={`${inputClass} h-auto py-2`} /></Field>
           <Field label="Hành trình"><textarea value={draft.source.story.journey} onChange={(event) => onSource((source) => ({ ...source, story: { ...source.story, journey: event.target.value } }))} rows={3} className={`${inputClass} h-auto py-2`} /></Field>

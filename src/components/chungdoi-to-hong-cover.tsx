@@ -43,7 +43,7 @@ export function ToHongCover({ content, onOpen, onReady }: {
       <ToHongCordRaster />
       <ToHongKnot className={styles.coverKnot} />
       <div className={styles.coverNames}><p>{people[0].shortName}</p><span>&amp;</span><p>{people[1].shortName}</p></div>
-      {date ? <p className={styles.date}>{date.dayNumber}.{date.monthNumber}.{date.yearNumber}</p> : null}
+      {date ? <p className={styles.date}>{date.fullDate}</p> : null}
       <div className={styles.recipient}><p>{salutation}</p><strong>{recipient}</strong><p>{message}</p></div>
       <button data-open-btn type="button" className={styles.openButton} onClick={open} disabled={opening}>
         <ToHongKnot /><span>{opening ? u("opening") : u("open")}</span>

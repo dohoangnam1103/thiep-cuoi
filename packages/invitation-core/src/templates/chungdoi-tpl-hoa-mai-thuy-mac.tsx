@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCalendarDateWithWeekday } from "@chungdoi/invitation-data/calendar-date";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
@@ -83,12 +84,7 @@ function SectionHeading({ children, couple = false, eyebrow }: SectionHeadingPro
 function formatEventDate(value: string, locale: string) {
   const parsed = new Date(`${value}T00:00:00`);
   if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat(locale, {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(parsed);
+  return formatCalendarDateWithWeekday(value, locale);
 }
 
 type WatercolorArtworkProps = {

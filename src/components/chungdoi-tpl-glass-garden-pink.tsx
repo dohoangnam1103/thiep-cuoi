@@ -221,7 +221,7 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                                 <span className="flex items-center justify-center text-[20px] leading-none md:text-[28px]" style={{ color: WINE, opacity: 0.5 }}>|</span>
                                 <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {ceremonyDate.month}</span>
                               </div>
-                              <div className="text-[18px] md:text-[24px]" style={{ color: ROSE }}>{ceremonyDate.yearNumber}</div>
+                              <div className="text-[18px] md:text-[24px]" style={{ color: ROSE }}>{ceremonyDate.fullDate}</div>
                               {/* Không bọc ngoặc: formatVietnameseLunarDate() trả về chuỗi
                                   trần "Tức ngày ... âm lịch", các template render nguyên văn. */}
                               <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-sm md:tracking-[0.25em]" style={{ color: WINE }}>{ceremonyDate.lunar}</div>
@@ -275,7 +275,7 @@ export function GlassGardenPinkInvitation({ content }: { content: ChungDoiDemoCo
                         <div className="h-6 w-px md:h-8" style={{ backgroundColor: WINE, opacity: 0.6 }} />
                         <span className="text-left text-[12px] uppercase md:text-[16px]">Tháng {reception.month}</span>
                       </div>
-                      <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div>
+                      <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div>
                       <div className="text-[clamp(8px,2.5vw,9px)] uppercase tracking-[0.14em] md:text-base md:tracking-[0.25em]">{reception.lunar}</div>
                     </>
                   ) : null}

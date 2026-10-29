@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/signature-registry.ts",
     "./catalog": "./src/chungdoi.ts",
+    "./calendar-date": "./src/calendar-date.ts",
     "./demo-content": "./src/chungdoi-demo-content.ts",
     "./generated": "./src/templates/generated-data.ts",
     "./theme-config": "./src/chungdoi-theme-config.ts",

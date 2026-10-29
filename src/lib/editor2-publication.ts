@@ -8,11 +8,15 @@ type PublicationIssue = {
 };
 
 /** Check the current draft on every step, so edits determine what opens next. */
-export function editor2PublicationIssue(fields: Editor2Fields): PublicationIssue | null {
+export function editor2PublicationIssue(fields: Editor2Fields, samples: Pick<Editor2Fields, "venueName" | "address">): PublicationIssue | null {
   const issue = publicationIssue(fields);
   if (issue) return { ...issue, section: issue.errorCode === "coupleRequired" ? "couple" : "event" };
-  if (!fields.venueName.trim() || !fields.address.trim()) {
-    return { errorCode: "venueRequired", focusField: !fields.venueName.trim() ? "venueName" : "address", section: "venue" };
+  const missingVenueField = (["venueName", "address"] as const).find(key => {
+    const value = fields[key].trim().toLocaleLowerCase("vi-VN");
+    return !value || value === samples[key].trim().toLocaleLowerCase("vi-VN");
+  });
+  if (missingVenueField) {
+    return { errorCode: "venueRequired", focusField: missingVenueField, section: "venue" };
   }
   return null;
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { formatCalendarDate, isCalendarDate } from "@chungdoi/invitation-data/calendar-date";
+
 import { useInvitationDetailVisible } from "./prepared-invitation-detail";
 
 import { createContext, startTransition, type ComponentPropsWithoutRef, type CSSProperties, type Dispatch, type FormEvent, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from "react";
@@ -53,11 +55,13 @@ export function hexToRgba(hex: string, alpha: number) {
 }
 
 export function parseISODate(iso: string) {
+  if (!isCalendarDate(iso)) return null;
   const d = new Date(`${iso}T00:00:00`);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
 export type FormattedDate = {
+  fullDate: string;
   weekday: string;
   day: string;
   month: string;
@@ -71,6 +75,7 @@ export function formatDate(iso: string): FormattedDate | null {
   const d = parseISODate(iso);
   if (!d) return null;
   return {
+    fullDate: formatCalendarDate(iso),
     weekday: VN_DAYS[d.getDay()],
     day: String(d.getDate()).padStart(2, "0"),
     month: String(d.getMonth() + 1).padStart(2, "0"),
@@ -98,8 +103,7 @@ export function buildCalendar(iso: string) {
 export function formatWishTime(raw: string) {
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return raw;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(d);
 }
 
 export function useLightbox(count: number) {

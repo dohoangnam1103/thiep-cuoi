@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import {
   useCallback,
   useEffect,
@@ -11,7 +12,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import dynamic from "next/dynamic";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 import {
   buildForestJourneyScenes,
@@ -100,7 +101,6 @@ export function ForestWeddingJourneyLab({
   readonly diagnosticsEnabled?: boolean;
   readonly fixture?: ForestWeddingJourneyFixture;
 }) {
-  const format = useFormatter();
   const t = useTranslations("forestWeddingJourneyLab");
   const content = useMemo(() => {
     const longCopy = fixture === "long-copy";
@@ -186,20 +186,10 @@ export function ForestWeddingJourneyLab({
   const ceremonyDate = parseIsoDate(content.ceremonyDate);
   const receptionDate = parseIsoDate(content.receptionDate);
   const formattedCeremonyDate = ceremonyDate
-    ? format.dateTime(ceremonyDate, {
-      day: "numeric",
-      month: "long",
-      timeZone: "UTC",
-      year: "numeric",
-    })
+    ? formatCalendarDate(content.ceremonyDate)
     : content.ceremonyDate;
   const formattedReceptionDate = receptionDate
-    ? format.dateTime(receptionDate, {
-      day: "numeric",
-      month: "long",
-      timeZone: "UTC",
-      year: "numeric",
-    })
+    ? formatCalendarDate(content.receptionDate)
     : content.receptionDate;
   const sceneNames = useMemo<ForestJourneySceneNames>(() => {
     const names: Record<ForestJourneySceneType, string> = {

@@ -27,6 +27,7 @@ export default function SlideshowLayout({ children }: { children: React.ReactNod
         <NextIntlClientProvider
           locale="vi"
           messages={{
+            dateInput: viMessages.dateInput,
             slideshowStudio: viMessages.slideshowStudio,
             slideshowPayment: viMessages.slideshowPayment,
             slideshowDashboard: viMessages.slideshowDashboard,

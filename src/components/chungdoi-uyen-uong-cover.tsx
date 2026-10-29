@@ -24,7 +24,7 @@ export function UyenUongCover({ content, onOpen }: {
       <div className="font-art-qellia mt-4 text-3xl leading-snug sm:text-4xl">
         <p>{people[0].shortName}</p><p className="my-0.5 font-body-serif text-sm italic">{t("and")}</p><p>{people[1].shortName}</p>
       </div>
-      {date ? <p className="mt-4 text-sm tabular-nums tracking-[0.15em]">{date.dayNumber}.{date.monthNumber}.{date.yearNumber}</p> : null}
+      {date ? <p className="mt-4 text-sm tabular-nums tracking-[0.15em]">{date.fullDate}</p> : null}
       <img src="/chungdoi/images/themes/uyen-uong/pond-engraving.webp" alt="" aria-hidden="true" width={1536} height={1024} fetchPriority="high" className="-mx-5 -mt-2 w-[calc(100%+40px)] max-w-none sm:-mx-7 sm:w-[calc(100%+56px)]" />
       <p className="mt-2 text-xs">{salutation}</p>
       <p className="mt-2 text-base font-semibold leading-relaxed">{recipient}</p>

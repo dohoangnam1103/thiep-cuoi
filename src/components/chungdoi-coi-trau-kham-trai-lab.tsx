@@ -1,7 +1,8 @@
 "use client";
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { Rotate3D } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   useCallback,
   useEffect,
@@ -117,14 +118,8 @@ function useCaddyAudio(muted: boolean) {
   return playOpenCue;
 }
 
-function formatCoverDate(date: string, locale: string) {
-  const parsed = new Date(`${date}T00:00:00`);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(parsed);
+function formatCoverDate(date: string) {
+  return formatCalendarDate(date);
 }
 
 export function CoiTrauKhamTraiLab({
@@ -135,7 +130,6 @@ export function CoiTrauKhamTraiLab({
 }: CoiTrauKhamTraiLabProps) {
   const t = useTranslations("coiTrauLab");
   const invitationT = useTranslations("invitationTemplate");
-  const locale = useLocale();
   const people = orderedCouple(content);
   const stageRef = useRef<HTMLElement>(null);
   const dragRef = useRef<DragSnapshot | null>(null);
@@ -149,7 +143,7 @@ export function CoiTrauKhamTraiLab({
   const playOpenCue = useCaddyAudio(muted);
   const frontFacing = Math.abs(tiltY) <= 1;
   const backFacing = Math.abs(tiltY) >= 3;
-  const coverDate = formatCoverDate(content.couple.date, locale);
+  const coverDate = formatCoverDate(content.couple.date);
 
   useInvitationCoverReady(stageRef, true, onCoverReady);
 

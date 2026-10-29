@@ -279,7 +279,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
                           <div className="w-[30px] h-px shrink-0 rotate-90 bg-[#542E08]" />
                           <span className="text-left font-bold text-[15px] uppercase md:text-[18px] lg:text-[19px]">{t("month", { month: ceremonyDate.month })}</span>
                         </div>
-                        <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremonyDate.yearNumber}</div>
+                        <div className="text-[22px] font-bold md:text-[26px] lg:text-[28px]">{ceremonyDate.fullDate}</div>
                         <div className="font-bold text-[15px] md:text-[18px] lg:text-[19px]">{ceremonyDate.lunar}</div>
                       </>
                     ) : null}
@@ -316,7 +316,7 @@ export function NhatBinhInvitation({ content }: { content: ChungDoiDemoContent }
                 <div className="shrink-0" style={{ width: "34px", height: "1px", transform: "rotate(90deg)", backgroundColor: BROWN }} />
                 <span className="text-left text-[15px] uppercase tracking-wide md:text-[20px]">Tháng {reception.month}</span>
               </div>
-              <div className="text-[23px] font-bold md:text-[31px]">{reception.yearNumber}</div>
+              <div className="text-[23px] font-bold md:text-[31px]">{reception.fullDate}</div>
               <div className="text-[15px] uppercase tracking-[0.2em] md:text-[18px]">{reception.lunar}</div>
               <div className="mt-4 flex items-center justify-center gap-8">
                 <div className="flex flex-col items-center">

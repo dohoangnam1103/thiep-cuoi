@@ -64,7 +64,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
   const receptionDate = formatDate(couple.date);
   const calendar = buildCalendar(couple.date);
   const mapQuery = venue.mapAddress || venue.address.replace(/\n+/g, ", ").trim();
-  const dateLine = receptionDate ? `${receptionDate.day}.${receptionDate.month}.${receptionDate.yearNumber}` : "";
+  const dateLine = receptionDate ? `${receptionDate.fullDate}` : "";
   const familiesInOrder = orderByBrideFirst(
     { side: t("brideFamily"), title: families.brideParentTitle || t("parents"), father: families.brideFather, mother: families.brideMother, address: families.brideAddress },
     { side: t("groomFamily"), title: families.groomParentTitle || t("parents"), father: families.groomFather, mother: families.groomMother, address: families.groomAddress },
@@ -161,7 +161,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
                     <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#f5d83d]/20">{String(index + 1).padStart(2, "0")}</span>
                     <h3 className="font-art-marvin relative text-4xl uppercase text-[#f5d83d]">{t("ceremony")}</h3>
                     <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{ceremony.title}</p>
-                    {ceremonyDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{ceremonyDate.day}.{ceremonyDate.month}</p> : null}
+                    {ceremonyDate ? <p className="relative mt-8 font-art-marvin text-2xl leading-none sm:text-3xl">{ceremonyDate.fullDate}</p> : null}
                     <p className="tabular-nums relative mt-2 text-sm font-bold">{ceremony.time}</p>
                   </article>
                 );
@@ -170,7 +170,7 @@ export function RapHySaiGonInvitation({ content }: { content: ChungDoiDemoConten
                 <span className="absolute -right-5 -top-8 font-art-marvin text-[8rem] text-[#12b9c7]/35">{String(ceremonies.length + 1).padStart(2, "0")}</span>
                 <h3 className="font-art-marvin relative text-4xl uppercase text-[#d7192d]">{t("reception")}</h3>
                 <p className="relative mt-8 whitespace-pre-line font-semibold leading-7">{venue.address}</p>
-                {receptionDate ? <p className="relative mt-8 font-art-marvin text-6xl leading-none">{receptionDate.day}.{receptionDate.month}</p> : null}
+                {receptionDate ? <p className="relative mt-8 font-art-marvin text-2xl leading-none sm:text-3xl">{receptionDate.fullDate}</p> : null}
                 <p className="tabular-nums relative mt-2 text-sm font-bold">{venue.banquetTime || couple.time}</p>
               </article>
             </div>

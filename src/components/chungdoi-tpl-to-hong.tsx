@@ -34,7 +34,7 @@ function DateLine({ date, time }: { date: string; time?: string }) {
   const parsed = formatDate(date);
   return <div className={styles.dateLine}>
       {time ? <p data-invitation-time>{t("atTime", { time })}</p> : null}
-    {parsed ? <><p className={styles.largeDate}>{parsed.dayNumber}<span>/</span>{parsed.monthNumber}<span>/</span>{parsed.yearNumber}</p><p>{parsed.weekday}</p><p className={styles.muted}>{parsed.lunar}</p></> : null}
+    {parsed ? <><p className={styles.largeDate}>{parsed.fullDate}</p><p>{parsed.weekday}</p><p className={styles.muted}>{parsed.lunar}</p></> : null}
   </div>;
 }
 
@@ -124,7 +124,7 @@ export function ToHongInvitation({ content }: { content: ChungDoiDemoContent }) 
       <ToHongPortrait content={content} priority />
       <ToHongKnot className={styles.heroKnot} />
       <h1 className={styles.names} tabIndex={-1} data-to-hong-focus><span data-invitation-short-name>{people[0].shortName}</span><em>&amp;</em><span data-invitation-short-name>{people[1].shortName}</span></h1>
-      {wedding ? <p className={styles.date}>{wedding.dayNumber}.{wedding.monthNumber}.{wedding.yearNumber}</p> : null}
+      {wedding ? <p className={styles.date}>{wedding.fullDate}</p> : null}
       <p className={styles.heroFootnote}>{u("heroNote")}</p>
       <a href="#to-hong-reception" className={styles.heroLink}>{u("viewDate")}<span aria-hidden="true">↓</span></a>
     </header>

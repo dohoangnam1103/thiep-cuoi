@@ -1,11 +1,12 @@
 "use client";
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
 import { PreparedInvitationDetail } from "@/components/prepared-invitation-detail";
 
 import { Pause, Play, Rotate3D, RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   Component,
   useCallback,
@@ -213,16 +214,11 @@ function useCasebookAudio(muted: boolean) {
   return { play };
 }
 
-function formatCasebookDate(iso: string, time: string, locale: string): string {
+function formatCasebookDate(iso: string, time: string): string {
   const date = new Date(`${iso}T00:00:00`);
   if (Number.isNaN(date.getTime())) return `${iso} / ${time}`;
 
-  const localized = new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "long",
-    timeZone: "UTC",
-    year: "numeric",
-  }).format(date);
+  const localized = formatCalendarDate(iso);
   return `${localized} / ${time}`;
 }
 
@@ -250,7 +246,6 @@ export function DetectiveConanCasebookLab({
   onStateChange,
   showControls = true,
 }: DetectiveConanCasebookLabProps) {
-  const locale = useLocale();
   const t = useTranslations("detectiveConanCasebookLab");
   const stageRef = useRef<HTMLElement>(null);
   const readerLayerRef = useRef<HTMLDivElement>(null);
@@ -291,7 +286,6 @@ export function DetectiveConanCasebookLab({
   const dateAndTime = formatCasebookDate(
     content.couple.date,
     content.couple.time,
-    locale,
   );
   const coverContent = useMemo<ConanCasebookCoverContent>(() => ({
     backDate: dateAndTime,

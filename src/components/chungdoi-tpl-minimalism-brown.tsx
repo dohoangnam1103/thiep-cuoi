@@ -264,7 +264,7 @@ export function MinimalismBrownInvitation({ content }: { content: ChungDoiDemoCo
         className={`${dividerAsRule ? F_TIMES : F_BASKERVILLE} text-[18px] md:text-[24px]`}
         style={{ color: INK }}
       >
-        {date.yearNumber}
+        {date.fullDate}
       </div>
       <div
         className={`${F_BASKERVILLE} text-xs uppercase tracking-[0.25em] ${dividerAsRule ? "md:text-base" : "md:text-sm"}`}

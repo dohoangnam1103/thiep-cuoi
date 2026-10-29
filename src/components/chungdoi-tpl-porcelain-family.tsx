@@ -144,7 +144,7 @@ function DateComposition({
         <span className={styles.day}>{value.day}</span>
         <span className={styles.monthYear}>
           <span>{t("month", { month: value.month })}</span>
-          <span>{value.yearNumber}</span>
+          <span>{value.fullDate}</span>
         </span>
       </div>
       <p className={styles.lunar}>{value.lunar}</p>

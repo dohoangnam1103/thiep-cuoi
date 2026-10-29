@@ -2,7 +2,7 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { encode } from "next-auth/jwt";
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { loginAsUser } from "./helpers/auth";
+import { loginAsAdmin, loginAsUser, SEEDED_ADMIN } from "./helpers/auth";
 import { cleanupUser, createInvitation, createUser } from "./helpers/fixtures";
 import { getDb } from "./helpers/db";
 import { EDITOR2_BASICS_STORAGE_KEY, editor2BasicsDraftKey } from "../../src/lib/editor2-basics-storage";
@@ -26,6 +26,183 @@ function seed(templateId = "song-hy-red") {
 function content(id: string) {
   return getDb().prepare("SELECT * FROM InvitationContent WHERE invitationId = ?").get(id) as Record<string, string>;
 }
+for (const width of [1440, 320]) test(`DD/MM/YYYY manual dates preserve ISO values at ${width}px`, async ({ page, context }) => {
+  const { user, invitation } = seed();
+  await loginAsUser(context, user.id);
+  await page.setViewportSize({ width, height: 900 });
+  await page.goto(`/editor2/${invitation.id}`);
+  await section(page, "Thời gian tiệc cưới");
+  const date = page.getByLabel("Ngày cưới", { exact: true });
+  await expect(date).toHaveValue("29/11/2026");
+  await expect(date).toHaveAttribute("placeholder", "DD/MM/YYYY");
+  await date.fill("31/04/2027");
+  expect(await date.evaluate((input: HTMLInputElement) => input.checkValidity())).toBe(false);
+  await expect(page.locator('input[type="hidden"][name="date"]')).toHaveValue("");
+  await date.fill("03/04/2027");
+  expect(await date.evaluate((input: HTMLInputElement) => input.checkValidity())).toBe(true);
+  await expect(page.locator('input[type="hidden"][name="date"]')).toHaveValue("2027-04-03");
+  await page.screenshot({ path: path.join(evidence, `date-input-${width}.png`) });
+  await close(page);
+  await expect.poll(() => content(invitation.id).date).toBe("2027-04-03");
+  await page.reload();
+  await section(page, "Thời gian tiệc cưới");
+  await expect(date).toHaveValue("03/04/2027");
+  await date.fill("29022028");
+  await expect(date).toHaveValue("29/02/2028");
+  await close(page);
+  await expect.poll(() => content(invitation.id).date).toBe("2028-02-29");
+});
+
+test("DD/MM/YYYY creation rejects impossible dates and submits ISO to the server", async ({ page }) => {
+  await page.goto("/editor2");
+  await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Mai");
+  await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Nam");
+  const date = page.getByLabel("Ngày cưới", { exact: true });
+  await date.fill("31/02/2027");
+  await page.getByRole("button", { name: "Tạo thiệp và chỉnh trực tiếp" }).click();
+  await expect(page).toHaveURL(/\/editor2$/);
+  expect(await date.evaluate((input: HTMLInputElement) => input.checkValidity())).toBe(false);
+  await date.fill("03/04/2027");
+  await page.getByRole("button", { name: "Tạo thiệp và chỉnh trực tiếp" }).click();
+  await expect(page).toHaveURL(/\/editor2\/[^/?]+$/);
+  const id = new URL(page.url()).pathname.split("/").pop()!;
+  const row = getDb().prepare("SELECT userId FROM Invitation WHERE id = ?").get(id) as { userId: string };
+  users.push(row.userId);
+  expect(content(id).date).toBe("2027-04-03");
+});
+
+test("DD/MM/YYYY admin filters submit ISO and voucher dates reset after saving", async ({ page, context }) => {
+  const admin = getDb().prepare("SELECT id FROM Admin WHERE email = ?").get(SEEDED_ADMIN.email) as { id: string };
+  await loginAsAdmin(context, admin.id);
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto("/admin/payments?from=2026-04-03&to=2026-04-04");
+  await expect(page.locator("#payment-from")).toHaveValue("03/04/2026");
+  await expect(page.locator("#payment-to")).toHaveValue("04/04/2026");
+  await page.locator("#payment-from").fill("05/04/2026");
+  await page.locator("#payment-to").fill("06/04/2026");
+  await page.getByRole("button", { name: "Lọc", exact: true }).click();
+  await expect.poll(() => new URL(page.url()).searchParams.get("from")).toBe("2026-04-05");
+  expect(new URL(page.url()).searchParams.get("to")).toBe("2026-04-06");
+  await page.goto("/admin/vouchers");
+  const code = `DATE${Date.now()}`;
+  try {
+    await page.locator("#code").fill(code);
+    await page.locator("#amountOff").fill("50000");
+    await page.locator("#expiresAt").fill("03/04/2028");
+    await page.getByRole("button", { name: "Tạo voucher", exact: true }).click();
+    await expect(page.getByText("Đã tạo voucher.", { exact: true })).toBeVisible();
+    await expect(page.locator("#expiresAt")).toHaveValue("");
+    const voucher = getDb().prepare("SELECT expiresAt FROM Voucher WHERE code = ?").get(code) as { expiresAt: number };
+    expect(new Date(voucher.expiresAt).toISOString().slice(0, 10)).toBe("2028-04-03");
+  } finally { getDb().prepare("DELETE FROM Voucher WHERE code = ?").run(code); }
+  expect(errors).toEqual([]);
+});
+
+for (const width of [1440, 768, 320]) test(`DD/MM/YYYY captions fit every completed invitation at ${width}px`, async ({ page, context }) => {
+  test.setTimeout(300_000);
+  const { user, invitation } = seed();
+  getDb().prepare("UPDATE InvitationContent SET date = ?, time = ? WHERE invitationId = ?").run("2041-04-03", "18:00", invitation.id);
+  getDb().prepare("INSERT INTO CeremonyItem (id, invitationId, title, date, time, sortOrder) VALUES (?, ?, ?, ?, ?, 0)")
+    .run(`${invitation.id}-date-audit`, invitation.id, "Kiểm tra ngày lễ", "2042-06-05", "10:00");
+  await loginAsUser(context, user.id);
+  await page.setViewportSize({ width, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(`/editor2/${invitation.id}`);
+  const failures: { template: string; date: string; reason: string }[] = [];
+  for (const template of completedTemplates) {
+    await section(page, "Mẫu & giao diện");
+    await page.getByLabel("Đổi mẫu", { exact: true }).selectOption(template.slug);
+    await close(page);
+    const renderer = page.locator(`[data-template-renderer="${template.slug}"]`);
+    await expect(renderer).toHaveCount(1);
+    for (const date of ["03/04/2041", "05/06/2042"]) {
+      // Conan's ceremony chapter is paginated; the editor modal still checks
+      // that date separately below instead of silently skipping its input.
+      if (template.slug === "detective-conan-casebook" && date === "05/06/2042") {
+        await section(page, "Lễ cưới");
+        await expect(page.getByLabel("Ngày tổ chức", { exact: true })).toHaveValue(date);
+        await close(page);
+        continue;
+      }
+      await expect(renderer).toContainText(date);
+      const candidates = await renderer.getByText(date, { exact: false }).all();
+      let found = false;
+      for (const caption of candidates) {
+        if (!await caption.isVisible()) continue;
+        await caption.scrollIntoViewIfNeeded();
+        const result = await caption.evaluate((element, date) => {
+          const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const start = (node.textContent ?? "").indexOf(date);
+            if (start < 0) continue;
+            const range = document.createRange();
+            range.setStart(node, start); range.setEnd(node, start + date.length);
+            const rects = [...range.getClientRects()];
+            if (rects.length !== 1) return "date wraps across lines";
+            if (rects[0].width > innerWidth || rects[0].left < -1 || rects[0].right > innerWidth + 1) return "date overflows viewport";
+            return "";
+          }
+          return "date text node not found";
+        }, date);
+        if (result) failures.push({ template: template.slug, date, reason: result });
+        found = true;
+        if (["song-hy-red", "to-hong", "ao-dai-hue", "porcelain-red"].includes(template.slug)) {
+          await page.screenshot({ path: path.join(evidence, `date-caption-${template.slug}-${width}-${date.startsWith("03") ? "reception" : "ceremony"}.png`) });
+        }
+        break;
+      }
+      if (!found) failures.push({ template: template.slug, date, reason: "no visible date caption" });
+    }
+  }
+  expect(failures).toEqual([]);
+});
+
+for (const width of [1440, 320]) test(`information modals blur the editor and animate both directions at ${width}px`, async ({ page, context }) => {
+  const { user, invitation } = seed();
+  getDb().prepare("UPDATE InvitationContent SET brideFullName = '', groomFullName = '', date = '' WHERE invitationId = ?").run(invitation.id);
+  await loginAsUser(context, user.id);
+  await page.setViewportSize({ width, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`/editor2/${invitation.id}`);
+  const popup = page.locator(".e2-dialog");
+  await expect(popup).toBeVisible();
+  await expect(page.locator(".e2-dialog-backdrop")).toHaveCSS("backdrop-filter", "blur(6px)");
+  await expect(popup).toHaveCSS("transition-duration", "0.24s, 0.24s");
+  await expect(popup).toHaveCSS("opacity", "1");
+  const title = await popup.getByRole("heading").textContent();
+  const height = await popup.evaluate(element => element.clientHeight);
+  await page.screenshot({ path: path.join(evidence, `basics-backdrop-${width}.png`) });
+  const exit = await popup.evaluate(async element => {
+    element.querySelector<HTMLButtonElement>('button[aria-label="Đóng"]')!.click();
+    await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+    return { ending: element.hasAttribute("data-ending-style"), title: element.querySelector("h2")?.textContent,
+      height: element.clientHeight, duration: getComputedStyle(element).transitionDuration,
+      running: element.getAnimations().some(animation => animation.playState === "running") };
+  });
+  expect(exit).toMatchObject({ ending: true, title, height, duration: "0.18s", running: true });
+  await expect(popup).toHaveCount(0);
+  await section(page, "Tên hai bạn & lời mời");
+  await expect(popup).toHaveCSS("transition-duration", "0.24s, 0.24s");
+  await page.keyboard.press("Escape");
+  await expect(popup).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await section(page, "Thời gian tiệc cưới");
+  await expect(popup).toHaveCSS("transition-duration", "0s");
+  await page.getByRole("button", { name: "Chọn Ngày cưới" }).click();
+  const calendar = page.locator(".e2-date-popup");
+  await expect(calendar).toBeVisible();
+  await expect(calendar).toHaveCSS("transition-duration", "0s");
+  await page.keyboard.press("Escape");
+  await expect(calendar).toHaveCount(0);
+  await close(page);
+  await save(page);
+  expect(errors).toEqual([]);
+});
+
 test("custom calendar selects and saves dates in nested mobile dialogs", async ({ page, context }) => {
   const { user, invitation } = seed();
   await loginAsUser(context, user.id);
@@ -41,7 +218,7 @@ test("custom calendar selects and saves dates in nested mobile dialogs", async (
   expect(rect!.x + rect!.width).toBeLessThanOrEqual(320);
   await picker.locator(".rdp-day:not(.rdp-outside) .rdp-day_button").filter({ hasText: /^15$/ }).click();
   await expect(picker).toHaveCount(0);
-  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-11-15");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("15/11/2026");
   await close(page);
   await expect.poll(() => content(invitation.id).date).toBe("2026-11-15");
   await section(page, "Lễ cưới");
@@ -61,6 +238,12 @@ function seedGallery(id: string, template: string) {
 async function section(page: Page, name: string) {
   await page.getByRole("button", { name: "Nội dung", exact: true }).click();
   await page.getByRole("button", { name, exact: true }).click();
+}
+async function completeVenue(page: Page) {
+  await section(page, "Địa điểm tổ chức");
+  await page.getByLabel("Tên địa điểm", { exact: true }).fill("Nhà hàng Hoa Mai");
+  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("123 Nguyễn Huệ");
+  await close(page);
 }
 async function close(page: Page) {
   await page.getByRole("button", { name: "Xong", exact: true }).click();
@@ -276,7 +459,7 @@ test("three-field creation, click editing, autosave, and sample-free guest previ
   await page.screenshot({ path: path.join(evidence, "start-desktop.png") });
   await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Quỳnh Anh");
   await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Gia Khánh");
-  await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-11-29");
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("29/11/2026");
   await page.getByRole("button", { name: "Tạo thiệp và chỉnh trực tiếp" }).click();
   await expect(page).toHaveURL(/\/editor2\/[^/?]+$/);
   const id = page.url().split("/").pop()!;
@@ -370,11 +553,11 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await frame.getByRole("button", { name: "Thêm Lễ cưới", exact: true }).click();
   await page.getByRole("button", { name: "Thêm một lễ" }).click();
   await page.getByRole("textbox", { name: "Nội dung lễ" }).fill("Lễ vu quy tại nhà gái");
-  await page.locator('input[name="ceremony-0-date"]').fill("2026-11-28");
+  await page.locator('input[name="ceremony-0-date-display"]').fill("28/11/2026");
   await page.locator('input[name="ceremony-0-time"]').fill("08:00");
   await page.getByRole("button", { name: "Thêm một lễ" }).click();
   await page.getByRole("textbox", { name: "Nội dung lễ" }).nth(1).fill("Lễ thành hôn tại nhà trai");
-  await page.locator('input[name="ceremony-1-date"]').fill("2026-11-29");
+  await page.locator('input[name="ceremony-1-date-display"]').fill("29/11/2026");
   await page.locator('input[name="ceremony-1-time"]').fill("09:30");
   await close(page);
   await expect(frame.locator("[data-template-ceremony-item]")).toHaveCount(2);
@@ -401,6 +584,7 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await save(page);
   expect(getDb().prepare("SELECT COUNT(*) AS n FROM GalleryPhoto WHERE invitationId = ?").get(invitation.id)).toEqual({ n: 1 });
   expect(getDb().prepare("SELECT COUNT(*) AS n FROM CeremonyItem WHERE invitationId = ?").get(invitation.id)).toEqual({ n: 2 });
+  await completeVenue(page);
   await section(page, "Thời gian tiệc cưới");
   await expect(page.getByLabel("Giờ tiệc", { exact: true })).toHaveValue("18:00");
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("");
@@ -474,11 +658,9 @@ for (const width of [1440, 390]) test(`publication completes missing sections in
   await close(page);
   await section(page, "Thời gian tiệc cưới");
   await page.getByLabel("Ngày cưới", { exact: true }).fill("");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("");
+  await expect(page.locator('input[type="hidden"][name="date"]')).toHaveValue("");
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("");
-  await close(page);
-  await section(page, "Địa điểm tổ chức");
-  await page.getByLabel("Tên địa điểm", { exact: true }).fill("");
-  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("");
   await close(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
   const couple = page.getByRole("dialog", { name: "Tên hai bạn & lời mời", exact: true });
@@ -493,13 +675,15 @@ for (const width of [1440, 390]) test(`publication completes missing sections in
   await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Thời gian tiệc cưới", exact: true })).toBeVisible();
   await expect(page.getByLabel("Ngày cưới", { exact: true })).toBeFocused();
-  await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-11-29");
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("29/11/2026");
   await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
   await expect(page.getByLabel("Giờ tiệc", { exact: true })).toBeFocused();
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("18:30");
   await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Địa điểm tổ chức", exact: true })).toBeVisible();
   await expect(page.getByLabel("Tên địa điểm", { exact: true })).toBeFocused();
+  await expect(page.getByLabel("Tên địa điểm", { exact: true })).toHaveValue("Tên địa điểm tổ chức");
+  await expect(page.getByLabel("Địa chỉ địa điểm", { exact: true })).toHaveValue("Địa chỉ địa điểm tổ chức");
   expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "draft" });
   expect(await page.getByRole("dialog").evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   await page.screenshot({ path: path.join(evidence, `publication-venue-${width}.png`) });
@@ -557,9 +741,11 @@ test("publishing silently adds the wedding day when the names-only slug is taken
   for (const invitation of [first, second]) statement.run("Nguyễn Quỳnh Anh", "Trần Gia Khánh", "2026-11-29", invitation.id);
   await loginAsUser(context, user.id);
   await page.goto(`/editor2/${first.id}`);
+  await completeVenue(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
   await expect(page.getByRole("dialog").getByRole("link", { name: /quynh-anh-gia-khanh/ })).toHaveAttribute("href", "/thiep/quynh-anh-gia-khanh");
   await page.goto(`/editor2/${second.id}`);
+  await completeVenue(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
   await expect(page.getByRole("dialog").getByRole("link", { name: /quynh-anh-gia-khanh-29112026/ })).toHaveAttribute("href", "/thiep/quynh-anh-gia-khanh-29112026");
   const rows = getDb().prepare("SELECT id, slug FROM Invitation WHERE id IN (?, ?)").all(first.id, second.id) as { id: string; slug: string }[];
@@ -629,7 +815,7 @@ async function createGuestDraft(page: Page, template?: string) {
   await page.goto(template ? `/editor2?template=${encodeURIComponent(template)}` : "/editor2");
   await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Quỳnh Anh");
   await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Gia Khánh");
-  await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-11-29");
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("29/11/2026");
   await page.getByRole("button", { name: "Tạo thiệp và chỉnh trực tiếp" }).click();
   await expect(page).toHaveURL(/\/editor2\/[^/?]+$/);
   const id = page.url().split("/").pop()!;
@@ -669,6 +855,7 @@ for (const existingAccount of [false, true]) {
     await page.getByLabel("Giờ tiệc", { exact: true }).fill("18:30");
     await close(page);
     await section(page, "Địa điểm tổ chức");
+    await page.getByLabel("Tên địa điểm", { exact: true }).fill("Trung tâm tiệc cưới");
     await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("Trung tâm tiệc cưới, 123 Nguyễn Huệ");
     await close(page);
     await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
@@ -717,6 +904,7 @@ test("failed Google completion retains the guest draft and publication return pa
 
 test("an already signed-in account follows a safe publication return URL", async ({ page, context }) => {
   const { user, invitation } = seed();
+  getDb().prepare("UPDATE InvitationContent SET time = ?, venueName = ?, address = ? WHERE invitationId = ?").run("18:00", "Nhà hàng Hoa Mai", "123 Nguyễn Huệ", invitation.id);
   await loginAsUser(context, user.id);
   await page.goto("/login");
   await expect(page).toHaveURL(/\/dashboard$/);
@@ -731,11 +919,11 @@ test("names and wedding date survive start-page refresh, clearing and switching 
   await page.goto("/editor2");
   await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Lan Anh");
   await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Minh Đức");
-  await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-12-20");
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("20/12/2026");
   await page.reload();
   await expect(page.getByLabel("Họ tên cô dâu", { exact: true })).toHaveValue("Nguyễn Lan Anh");
   await expect(page.getByLabel("Họ tên chú rể", { exact: true })).toHaveValue("Trần Minh Đức");
-  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-12-20");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("20/12/2026");
   await page.getByLabel("Họ tên chú rể", { exact: true }).clear();
   await page.reload();
   await expect(page.getByLabel("Họ tên chú rể", { exact: true })).toHaveValue("");
@@ -744,7 +932,7 @@ test("names and wedding date survive start-page refresh, clearing and switching 
   await expect(page.locator('input[name="templateId"]')).toHaveValue("song-hy-green");
   await expect(page.getByLabel("Họ tên cô dâu", { exact: true })).toHaveValue("Nguyễn Lan Anh");
   await expect(page.getByLabel("Họ tên chú rể", { exact: true })).toHaveValue("Trần Minh Đức");
-  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-12-20");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("20/12/2026");
   await page.getByRole("button", { name: "Tạo thiệp và chỉnh trực tiếp" }).click();
   await expect(page).toHaveURL(/\/editor2\/[^/?]+$/);
   const id = page.url().split("/").pop()!;
@@ -768,7 +956,7 @@ test("editor changes and undo update remembered basics; refresh recovers edits b
   await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Minh Đức");
   await close(page);
   await section(page, "Thời gian tiệc cưới");
-  await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-12-20");
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("20/12/2026");
   await close(page);
   const remembered = () => page.evaluate(key => JSON.parse(localStorage.getItem(key) ?? "null")?.values, EDITOR2_BASICS_STORAGE_KEY);
   await expect.poll(remembered).toEqual({ brideFullName: "Nguyễn Lan Anh", groomFullName: "Trần Minh Đức", date: "2026-12-20" });
@@ -783,7 +971,7 @@ test("editor changes and undo update remembered basics; refresh recovers edits b
   await expect(page.getByLabel("Tên ngắn cô dâu", { exact: true })).toHaveValue("Lan Anh");
   await close(page);
   await section(page, "Thời gian tiệc cưới");
-  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-12-20");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("20/12/2026");
   await close(page);
   expect(content(invitation.id).brideFullName).toBe("Nguyễn Quỳnh Anh");
   const other = createInvitation(user.id);
@@ -801,7 +989,7 @@ test("editor changes and undo update remembered basics; refresh recovers edits b
   await page.goto("/editor2?template=song-hy-green");
   await expect(page.getByLabel("Họ tên cô dâu", { exact: true })).toHaveValue("Nguyễn Lan Anh");
   await expect(page.getByLabel("Họ tên chú rể", { exact: true })).toHaveValue("Trần Minh Đức");
-  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-12-20");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("20/12/2026");
 });
 
 test("birth order dropdowns save standard choices and preserve custom values", async ({ page, context }) => {
@@ -1040,7 +1228,7 @@ test("new guest modals match real defaults and Song Hy provides a configurable g
   await page.setViewportSize({ width: 1440, height: 1000 });
   await close(page);
   await section(page, "Thời gian tiệc cưới");
-  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-11-29");
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("29/11/2026");
   await expect(page.getByLabel("Giờ tiệc", { exact: true })).toHaveValue("18:00");
   await close(page);
   await section(page, "Địa điểm tổ chức");
@@ -1277,7 +1465,7 @@ for (const template of ["song-hy-red", "double-dragon-red", "boho-floral-green",
     await expect(page.getByLabel("Số tài khoản cô dâu", { exact: true })).toHaveValue("");
     await close(page);
     await section(page, "Lễ cưới");
-    await expect(page.locator('input[name="ceremony-0-date"]')).toHaveValue("2026-11-29");
+    await expect(page.locator('input[name="ceremony-0-date-display"]')).toHaveValue("29/11/2026");
     await expect(page.locator('input[name="ceremony-0-time"]')).toHaveValue(ceremonies[0].time);
     await close(page);
     await section(page, "Album ảnh cưới");
@@ -1318,7 +1506,7 @@ for (const template of ["song-hy-red", "double-dragon-red", "boho-floral-green",
     await page.getByRole("button", { name: "Ẩn phần này", exact: true }).click();
     await save(page); await page.reload();
     await section(page, "Lễ cưới");
-    await expect(page.locator('input[name="ceremony-0-date"]')).toHaveCount(0);
+    await expect(page.locator('input[name="ceremony-0-date-display"]')).toHaveCount(0);
     await close(page);
     await section(page, "Album ảnh cưới");
     await expect(page.locator(".e2-photo-row img")).toHaveCount(0);
@@ -1460,10 +1648,10 @@ for (const width of [1440, 768, 390, 320]) {
     await calendar.getByText("11", { exact: true }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByRole("heading")).toHaveText("Thời gian tiệc cưới");
-    await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-11-29");
+    await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("29/11/2026");
     await expect(page.getByLabel("Giờ tiệc", { exact: true })).toHaveValue("18:00");
     await expect(page.getByLabel("Tên địa điểm", { exact: true })).toHaveCount(0);
-    await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-12-20");
+    await page.getByLabel("Ngày cưới", { exact: true }).fill("20/12/2026");
     await page.getByLabel("Giờ tiệc", { exact: true }).fill("19:15");
     await page.screenshot({ path: path.join(evidence, `time-modal-${width}.png`) });
     await close(page);

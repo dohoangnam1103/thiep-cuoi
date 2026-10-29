@@ -172,7 +172,7 @@ export function SunflowerInvitation({ content }: { content: ChungDoiDemoContent 
                           <div className="flex items-center gap-[9px] md:gap-[15px]">
                             <span>{ceremonyDate.weekday}</span>
                             <strong className="text-[52px] font-normal leading-none md:text-[57px]" style={{ color: GOLD }}>{ceremonyDate.day}</strong>
-                            <span className="border-l pl-3 text-left md:pl-[15px]" style={{ borderColor: hexToRgba(OLIVE, 0.4) }}>{t("month", { month: ceremonyDate.month })}<br />{ceremonyDate.yearNumber}</span>
+                            <span className="border-l pl-3 text-left md:pl-[15px]" style={{ borderColor: hexToRgba(OLIVE, 0.4) }}>{t("month", { month: ceremonyDate.month })}<br />{ceremonyDate.fullDate}</span>
                           </div>
                           <p className="text-[11px] tracking-[0.12em] md:text-sm">{ceremonyDate.lunar}</p>
                         </>
@@ -206,7 +206,7 @@ export function SunflowerInvitation({ content }: { content: ChungDoiDemoContent 
               <div className="mt-5 flex items-center justify-center gap-4 md:gap-6">
                 <span className="text-[12px] uppercase md:text-[15px]">{reception.weekday}<br />{banquetTime}</span>
                 <strong className="text-[48px] font-normal leading-none md:text-[64px]" style={{ color: GOLD }}>{reception.day}</strong>
-                <span className="border-l pl-4 text-left text-[12px] uppercase md:pl-6 md:text-[15px]" style={{ borderColor: hexToRgba(OLIVE, 0.4) }}>Tháng {reception.month}<br />{reception.yearNumber}</span>
+                <span className="border-l pl-4 text-left text-[12px] uppercase md:pl-6 md:text-[15px]" style={{ borderColor: hexToRgba(OLIVE, 0.4) }}>Tháng {reception.month}<br />{reception.fullDate}</span>
               </div>
             ) : null}
             <p className="mt-3 text-[10px] uppercase md:text-[12px]">{reception?.lunar}</p>

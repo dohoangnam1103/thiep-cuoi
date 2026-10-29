@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCalendarDateWithWeekday } from "@/lib/calendar-date";
 import {
   ArrowLeft,
   ArrowRight,
@@ -173,13 +174,7 @@ function formatLocalizedDate(iso: string, locale: string): string {
   const date = parseIsoDate(iso);
   if (!date) return iso;
 
-  return new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "long",
-    timeZone: "UTC",
-    weekday: "long",
-    year: "numeric",
-  }).format(date);
+  return formatCalendarDateWithWeekday(iso, locale);
 }
 
 function localizedWeekdays(locale: string): string[] {

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeCalendarDateLabel } from "@/lib/calendar-date";
 
 export const slideshowSourceMediaSchema = z.object({
   id: z.string().trim().min(1).optional(),
@@ -13,7 +14,7 @@ export const weddingSlideshowSourceSchema = z.object({
     groomName: z.string().trim().min(1).max(100),
   }),
   event: z.object({
-    dateLabel: z.string().trim().max(120).default("Ngày cưới đang cập nhật"),
+    dateLabel: z.string().trim().max(120).default("Ngày cưới đang cập nhật").transform(normalizeCalendarDateLabel),
     locationLabel: z.string().trim().max(160).default("Địa điểm đang cập nhật"),
   }).default({
     dateLabel: "Ngày cưới đang cập nhật",
@@ -40,7 +41,7 @@ export const demoWeddingSlideshowSource = weddingSlideshowSourceSchema.parse({
     groomName: "Hoàng Nam",
   },
   event: {
-    dateLabel: "18 · 10 · 2026",
+    dateLabel: "18/10/2026",
     locationLabel: "Sài Gòn",
   },
   story: {

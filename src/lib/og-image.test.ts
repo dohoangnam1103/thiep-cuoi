@@ -82,8 +82,8 @@ test("resolveCoupleNames bỏ vế trống, không để '& '", () => {
   );
 });
 
-test("resolveOgDate trả nguyên chuỗi user nhập, trim", () => {
-  assert.equal(resolveOgDate("  20.12.2026  "), "20.12.2026");
+test("resolveOgDate chuẩn hoá cả nhãn ngày cũ", () => {
+  assert.equal(resolveOgDate("  20.12.2026  "), "20/12/2026");
 });
 
 const SHARE_COUPLE = {
@@ -111,8 +111,8 @@ test("share thumbnail puts the bride, ampersand and groom on separate lines", ()
 });
 
 test("share date preserves the calendar day without timezone conversion", () => {
-  assert.equal(resolveOgDate("2026-12-06"), "06.12.2026");
-  assert.equal(resolveOgDate(" 2027-01-01 "), "01.01.2027");
+  assert.equal(resolveOgDate("2026-12-06"), "06/12/2026");
+  assert.equal(resolveOgDate(" 2027-01-01 "), "01/01/2027");
 });
 
 test("share image URL changes when the wedding date, names or theme change", () => {

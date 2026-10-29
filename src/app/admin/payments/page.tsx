@@ -12,6 +12,7 @@ import {
   parseUserSearch,
 } from "@/lib/admin-support-input";
 import { formatVietnamDateTimeShort } from "@/lib/datetime";
+import { DateInput } from "@/components/ui/date-input";
 import { isPendingPaymentExpired } from "@/lib/payment";
 import { prisma } from "@/lib/prisma";
 
@@ -163,13 +164,13 @@ export default async function AdminPaymentsPage({
           <label htmlFor="payment-from" className="text-xs text-muted-foreground">
             Ngày tạo từ
           </label>
-          <input id="payment-from" name="from" type="date" defaultValue={from ?? ""} className={inputClass} />
+          <DateInput id="payment-from" name="from" defaultValue={from ?? ""} className={inputClass} />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="payment-to" className="text-xs text-muted-foreground">
             Đến ngày
           </label>
-          <input id="payment-to" name="to" type="date" defaultValue={to ?? ""} className={inputClass} />
+          <DateInput id="payment-to" name="to" defaultValue={to ?? ""} className={inputClass} />
         </div>
         <button
           type="submit"

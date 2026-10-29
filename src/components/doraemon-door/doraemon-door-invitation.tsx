@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCalendarDateWithWeekday } from "@/lib/calendar-date";
 import { CalendarPlus, Check, Copy } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
@@ -80,13 +81,7 @@ export function formatDoraemonDoorLocalizedDate(
   const date = dateFromIso(iso);
   if (!date) return iso;
 
-  return new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "long",
-    timeZone: "UTC",
-    weekday: "long",
-    year: "numeric",
-  }).format(date);
+  return formatCalendarDateWithWeekday(iso, locale);
 }
 
 function localizedWeekdays(locale: string): string[] {

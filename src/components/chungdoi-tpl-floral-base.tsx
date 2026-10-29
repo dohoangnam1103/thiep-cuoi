@@ -168,7 +168,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
                           <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                             <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>Tháng {ceremonyDate.month}</span>
                           </div>
-                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.fullDate}</div>
                           <div className="text-xs leading-relaxed opacity-75 md:text-sm">{ceremonyDate.lunar}</div>
                         </>
                       ) : null}
@@ -190,7 +190,7 @@ export function FloralInvitation({ content, palette, hero, albumFirst = false, b
                 <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
               </div>
             ) : null}
-            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div> : null}
             {reception ? <div className="text-xs leading-relaxed opacity-75 md:text-sm">{reception.lunar}</div> : null}
             {calendar ? (
               <div className="relative mx-auto mt-8 w-full max-w-[340px] rounded-2xl border px-8 py-6 md:mt-10 md:max-w-[420px]" style={{ borderColor: hexToRgba(P.accent, 0.3), backgroundColor: P.cardBg }}>

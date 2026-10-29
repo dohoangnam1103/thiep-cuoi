@@ -109,7 +109,7 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
 
           {reception ? (
             <p className="mt-16 text-[11px] tracking-[0.4em] text-[#2c2a26]/60">
-              {reception.day} · {reception.month} · {reception.yearNumber}
+              {reception.fullDate}
             </p>
           ) : null}
         </header>
@@ -168,7 +168,7 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
                     {ceremony ? <>
                       <span className="font-serif text-[52px] leading-none md:text-[64px]">{ceremony.day}</span>
                       <span className="text-[10px] uppercase tracking-[0.36em] text-[#2c2a26]/55">
-                        {t("month", { month: ceremony.month })} · {ceremony.yearNumber}
+                        {ceremony.fullDate}
                       </span>
                     </> : null}
                     {item.time ? <span className="text-[15px] tracking-[0.2em]">{item.time}</span> : null}
@@ -195,7 +195,7 @@ export function ZenSandInvitation({ content }: { content: ChungDoiDemoContent })
                 {reception?.day ?? "--"}
               </span>
               <span className="text-[10px] uppercase tracking-[0.36em] text-[#2c2a26]/55">
-                {t("month", { month: reception?.month ?? "--" })} · {reception?.yearNumber ?? ""}
+                {reception?.fullDate ?? ""}
               </span>
               <span className="text-[15px] tracking-[0.2em]">{couple.time || venue.banquetTime}</span>
               <span className="text-[11px] text-[#2c2a26]/45">

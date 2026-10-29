@@ -211,7 +211,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
                             <span className="normal-case opacity-80">{ceremony.monthNumber}월</span>
                           </span>
                         </div>
-                        <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{ceremony.yearNumber}</div>
+                        <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{ceremony.fullDate}</div>
                         <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: SLX_GRAY }}>{ceremony.lunar}</div>
                       </>
                     ) : null}
@@ -256,7 +256,7 @@ export function SongLongXanhInvitation({ content }: { content: ChungDoiDemoConte
                     <span className="normal-case opacity-80">{reception.monthNumber}월</span>
                   </span>
                 </div>
-                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{reception.yearNumber}</div>
+                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: SLX_GRAY }}>{reception.fullDate}</div>
                 <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: SLX_GRAY }}>{reception.lunar}</div>
                 <div className="mt-4 flex items-center justify-center gap-10">
                   {[

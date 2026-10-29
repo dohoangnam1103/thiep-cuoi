@@ -124,7 +124,7 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
             <span data-invitation-short-name className="font-qellia leading-tight" style={{ fontSize: 56 }}>{people[1].shortName}</span>
           </div>
           {wedding ? (
-            <p className="relative z-10 mt-4 text-[16px] tracking-wide md:text-[18px]" style={{ color: PINK, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.dayNumber} tháng {wedding.monthNumber}, {wedding.yearNumber}</p>
+            <p className="relative z-10 mt-4 text-[16px] tracking-wide md:text-[18px]" style={{ color: PINK, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{wedding.fullDate}</p>
           ) : null}
         </header>
 
@@ -162,7 +162,7 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
                       <span className="whitespace-pre-line text-[16px] leading-relaxed md:text-[20px]">{item.title}</span>
                       {item.time ? <p className="text-[14px] uppercase md:text-[15px]" style={{ color: PINK }}>{t("atTime", { time: item.time })}</p> : null}
                       {ceremony ? <MaroonDateRow weekday={ceremony.weekday.toUpperCase()} day={ceremony.day} month={ceremony.month} /> : null}
-                      {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: PINK }}>{ceremony.yearNumber}</div> : null}
+                      {ceremony ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: PINK }}>{ceremony.fullDate}</div> : null}
                       {ceremony ? <div className="text-xs opacity-75 md:text-sm" style={{ color: PINK_MUTED }}>{ceremony.lunar}</div> : null}
                     </div>
                   );
@@ -185,7 +185,7 @@ export function MaroonLoveInvitation({ content }: { content: ChungDoiDemoContent
             <p className="mt-2 text-center text-[16px] uppercase md:text-[20px]" style={{ color: CREAM, fontFamily: 'Baskerville, "Times New Roman", serif' }}>Tiệc cưới sẽ diễn ra vào lúc:</p>
             <div className="text-[20px] font-semibold md:text-[24px]" style={{ color: CREAM, fontFamily: 'Baskerville, "Times New Roman", serif' }}>{venue.banquetTime || couple.time}</div>
             {wedding ? <MaroonDateRow weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
-            {wedding ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: PINK }}>{wedding.yearNumber}</div> : null}
+            {wedding ? <div className="mt-1 text-[20px] md:text-[22px]" style={{ color: PINK }}>{wedding.fullDate}</div> : null}
             {wedding ? <div className="text-xs opacity-75 md:text-sm" style={{ color: PINK_MUTED }}>{wedding.lunar}</div> : null}
 
             {/* calendar */}

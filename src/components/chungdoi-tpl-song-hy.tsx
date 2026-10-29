@@ -300,7 +300,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
                       month={ceremonyDate.month}
                     />
                   ) : null}
-                  {ceremonyDate ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{ceremonyDate.yearNumber}</div> : null}
+                  {ceremonyDate ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{ceremonyDate.fullDate}</div> : null}
                   {ceremonyDate ? <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: palette.gray }}>{ceremonyDate.lunar}</div> : null}
                 </section>
               );
@@ -343,7 +343,7 @@ function SongHyInvitation({ content, palette }: { content: ChungDoiDemoContent; 
           <h3 className="flex flex-col items-center text-center text-[16px] uppercase md:text-[20px]" style={{ color: palette.accent }}>Tiệc cưới sẽ diễn ra vào lúc:</h3>
           <div className="mt-2 text-center text-[20px] font-semibold md:text-[24px]" style={{ color: palette.accent }}>{venue.banquetTime || couple.time}</div>
           {wedding ? <SongHyDateRow palette={palette} weekday={weekdayUpper} day={wedding.day} month={wedding.month} /> : null}
-          {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{wedding.yearNumber}</div> : null}
+          {wedding ? <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: palette.gray }}>{wedding.fullDate}</div> : null}
           <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: palette.gray }}>{wedding?.lunar}</div>
           <div className="mt-4 flex items-center justify-center gap-8">
             <div className="flex flex-col items-center">

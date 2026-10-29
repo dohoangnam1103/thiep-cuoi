@@ -125,7 +125,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
                           <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                             <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>{t("month", { month: ceremony.month })}</span>
                           </div>
-                          <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                          <div className="text-[18px] md:text-[24px]">{ceremony.fullDate}</div>
                           <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GOLD_MUTED }}>{ceremony.lunar}</div>
                         </>
                       ) : null}
@@ -155,7 +155,7 @@ export function DragonPhoenixV2Invitation({ content }: { content: ChungDoiDemoCo
                 <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
               </div>
             ) : null}
-            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div> : null}
             {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: GOLD_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar — bordered box (no frame image in this set) */}

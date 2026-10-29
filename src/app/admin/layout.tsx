@@ -56,6 +56,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <NextIntlClientProvider
           locale="vi"
           messages={{
+            dateInput: viMessages.dateInput,
             adminSupport: viMessages.adminSupport,
             adminDemos: viMessages.adminDemos,
             adminFunds: viMessages.adminFunds,

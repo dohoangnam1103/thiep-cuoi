@@ -246,7 +246,7 @@ export function PhoenixInvitation({
                     <div data-template-ceremony-item key={index} className="flex w-full flex-col items-center gap-6 text-center md:gap-8">
                       <p className="whitespace-pre-line text-center text-[14px] md:text-[15px]">{item.title}</p>
                       {item.time ? <p className="text-[14px] md:text-[15px]">{t("atTime", { time: item.time })}</p> : null}
-                      {ceremony ? <p className="text-[14px] font-semibold uppercase md:text-[16px]">{ceremony.weekday}, {ceremony.day}/{ceremony.month}/{ceremony.yearNumber}</p> : null}
+                      {ceremony ? <p className="text-[14px] font-semibold uppercase md:text-[16px]">{ceremony.weekday}, {ceremony.fullDate}</p> : null}
                       {ceremony ? <p className="text-[12px] opacity-75 md:text-[13px]">{ceremony.lunar}</p> : null}
                     </div>
                   );
@@ -276,6 +276,7 @@ export function PhoenixInvitation({
               <span className="mx-2 text-[14px] opacity-50 md:mx-3">/</span>
               <span className="text-[18px] font-semibold uppercase md:text-[20px]">Tháng {reception.month}</span>
             </div>
+            <p className="text-lg tabular-nums md:text-xl">{reception.fullDate}</p>
             <div className="text-[12px] opacity-75 md:text-[13px]">{reception.lunar}</div>
             <div className="flex items-center justify-center gap-8">
               {schedule.slice(0, 2).map((s) => (

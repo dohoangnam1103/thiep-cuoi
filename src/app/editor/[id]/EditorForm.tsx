@@ -106,6 +106,7 @@ import { createAutosaveController } from "@/lib/autosave-controller";
 import { slugify, slugifyInput, slugFromFormFields } from "./slug";
 import { templateLabel } from "./templates";
 import { PublishSuccessDialog } from "./PublishSuccessDialog";
+import { DateInput } from "@/components/ui/date-input";
 
 const ChungDoiDemo = dynamic(() =>
   import("@/components/chungdoi-demo").then((module) => module.ChungDoiDemo),
@@ -755,14 +756,13 @@ function EventDateTimeField({
         </label>
         <label className="block">
           <span className="mb-1 block text-xs font-medium text-muted-foreground">Ngày tháng</span>
-          <input
+          <DateInput
             id={dateName}
             name={dateName}
-            type="date"
             value={date}
-            onChange={(event) => {
-              setInternalDate(event.target.value);
-              onDateChange?.(event.target.value);
+            onValueChange={(nextDate) => {
+              setInternalDate(nextDate);
+              onDateChange?.(nextDate);
             }}
             aria-label={`${label} - ngày`}
             aria-required={requiredMark || undefined}
@@ -2432,12 +2432,10 @@ function EditorFormBody({
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <label className="block">
                       <span className={labelClass}>{ceremonyT("dateLabel")}</span>
-                      <input
+                      <DateInput
                         name="ceremonyItemDate"
-                        type="date"
                         value={row.date}
-                        onChange={(event) => {
-                          const date = event.target.value;
+                        onValueChange={(date) => {
                           setCeremonyRows((rows) => rows.map((item) => (
                             item.id === row.id
                               ? { ...item, date }
@@ -3195,12 +3193,10 @@ function DemoEditorFormBody({
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <label className="block">
                       <span className={labelClass}>{ceremonyT("dateLabel")}</span>
-                      <input
+                      <DateInput
                         name="ceremonyItemDate"
-                        type="date"
                         value={row.date}
-                        onChange={(event) => {
-                          const date = event.target.value;
+                        onValueChange={(date) => {
                           setCeremonyRows((rows) => rows.map((item) => (
                             item.id === row.id
                               ? { ...item, date }

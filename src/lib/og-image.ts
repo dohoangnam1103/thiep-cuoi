@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { normalizeCalendarDateLabel } from "@/lib/calendar-date";
 
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { resolveZodiacCardImages } from "@/lib/zodiac-decor";
@@ -26,10 +27,8 @@ export function resolveCoupleNames(content: OgCoupleContent): string {
 }
 
 export function resolveOgDate(date: string): string {
-  const value = date.trim();
-  const isoDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   // A wedding date is a calendar day, not an instant to convert between zones.
-  return isoDate ? `${isoDate[3]}.${isoDate[2]}.${isoDate[1]}` : value;
+  return normalizeCalendarDateLabel(date);
 }
 
 export function resolveOgNameLines(content: OgCoupleContent): string[] {

@@ -244,7 +244,7 @@ function ArtworkHero({
   const people = orderedCouple(content);
   const date = formatDate(content.couple.date);
   const names = <HeroNames people={people} config={config} t={t} />;
-  const dateLine = date ? `${date.day}.${date.month}.${date.yearNumber}` : "";
+  const dateLine = date ? `${date.fullDate}` : "";
 
   return (
     <section className="relative z-30 w-full overflow-hidden">
@@ -353,8 +353,8 @@ function EventCard({
       <h3 className={cn("text-xs font-semibold uppercase tracking-[0.22em]", config.displayFontClass, config.accentTextClass)}>{label}</h3>
       <p className={cn("mt-6 whitespace-pre-line text-base leading-7", config.inkClass)}>{message}</p>
       {date ? (
-        <p className={cn("mt-8 text-3xl font-semibold tabular-nums", config.inkClass)}>
-          {date.day}.{date.month}
+        <p className={cn("mt-8 text-xl font-semibold tabular-nums sm:text-2xl", config.inkClass)}>
+          {date.fullDate}
         </p>
       ) : null}
       <p className={cn("mt-2 text-sm", config.mutedClass)}>{time}</p>

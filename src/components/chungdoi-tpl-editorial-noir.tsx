@@ -98,7 +98,7 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
           <HairRule color={INK} weight={2} />
           <div className="flex items-center justify-between py-3">
             <Kicker>{t("invitation")}</Kicker>
-            <Kicker>{reception ? `${reception.day}.${reception.monthNumber}.${reception.yearNumber}` : "—"}</Kicker>
+            <Kicker>{reception ? `${reception.fullDate}` : "—"}</Kicker>
           </div>
           <HairRule color={INK} />
 
@@ -165,7 +165,7 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
                   return <div key={index} data-template-ceremony-item className="contents">
                     <DataRow
                       label={t("ceremony")}
-                      value={[item.title, item.time, ceremony ? `${ceremony.weekday}, ${ceremony.day}/${ceremony.monthNumber}/${ceremony.yearNumber}` : ""].filter(Boolean).join(" · ")}
+                      value={[item.title, item.time, ceremony ? `${ceremony.weekday}, ${ceremony.fullDate}` : ""].filter(Boolean).join(" · ")}
                     />
                   </div>;
                 })}
@@ -173,7 +173,7 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
               {reception ? (
                 <DataRow
                   label={t("reception")}
-                  value={`${couple.time || venue.banquetTime} · ${reception.weekday}, ${reception.day}/${reception.monthNumber}/${reception.yearNumber}`}
+                  value={`${couple.time || venue.banquetTime} · ${reception.weekday}, ${reception.fullDate}`}
                 />
               ) : null}
               {reception?.lunar ? <DataRow label={t("lunarDate")} value={reception.lunar} /> : null}

@@ -123,7 +123,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
                           <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                             <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>Tháng {ceremonyDate.month}</span>
                           </div>
-                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.fullDate}</div>
                           <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: GREEN_MUTED }}>{ceremonyDate.lunar}</div>
                         </>
                       ) : null}
@@ -159,7 +159,7 @@ export function GlassGardenInvitation({ content }: { content: ChungDoiDemoConten
                 <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
               </div>
             ) : null}
-            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div> : null}
             {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: GREEN_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar — CSS bordered box (no frame image), heart marker */}

@@ -266,7 +266,7 @@ export function RoyalV2GreenInvitation({ content }: { content: ChungDoiDemoConte
                     {ceremony ? (
                       <div className="mt-7 flex flex-col items-center gap-5">
                         <DateStrip date={ceremony} />
-                        <span className="text-[16px] font-semibold opacity-70 md:text-[22px]">{ceremony.yearNumber}</span>
+                        <span className="text-[16px] font-semibold opacity-70 md:text-[22px]">{ceremony.fullDate}</span>
                         <span className="text-[10px] opacity-70 md:text-[14px]"><LunarDate value={ceremony.lunar} /></span>
                       </div>
                     ) : null}
@@ -303,7 +303,7 @@ export function RoyalV2GreenInvitation({ content }: { content: ChungDoiDemoConte
               {reception ? (
                 <div className="mt-7 flex flex-col items-center gap-6">
                   <DateStrip date={reception} />
-                  <span className="text-[17px] font-semibold opacity-70 md:text-[24px]">{reception.yearNumber}</span>
+                  <span className="text-[17px] font-semibold opacity-70 md:text-[24px]">{reception.fullDate}</span>
                   <span className="text-[10px] opacity-70 md:text-[16px]"><LunarDate value={reception.lunar} /></span>
                 </div>
               ) : null}

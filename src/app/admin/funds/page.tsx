@@ -15,6 +15,7 @@ import {
   vietnamDayKey,
 } from "@/lib/datetime";
 import { prisma } from "@/lib/prisma";
+import { DateInput } from "@/components/ui/date-input";
 import { RecordWithdrawalDialog, VoidWithdrawalDialog } from "./FundDialogs";
 
 const inputClass =
@@ -216,13 +217,13 @@ export default async function AdminFundsPage({
             <label htmlFor="fund-from" className="text-xs text-muted-foreground">
               {t("fromDate")}
             </label>
-            <input id="fund-from" name="from" type="date" defaultValue={from ?? ""} className={inputClass} />
+            <DateInput id="fund-from" name="from" defaultValue={from ?? ""} className={inputClass} />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="fund-to" className="text-xs text-muted-foreground">
               {t("toDate")}
             </label>
-            <input id="fund-to" name="to" type="date" defaultValue={to ?? ""} className={inputClass} />
+            <DateInput id="fund-to" name="to" defaultValue={to ?? ""} className={inputClass} />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="fund-status" className="text-xs text-muted-foreground">

@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import { CalendarDays, Clock3, Heart, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -91,9 +92,7 @@ function Decoration({ type, className }: { type: StudioDecoration; className?: s
 }
 
 function formatDate(value: string): string {
-  const date = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "long" }).format(date);
+  return formatCalendarDate(value);
 }
 
 function HeroSection({

@@ -219,7 +219,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
                     <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
                     <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>Tháng {ceremony.month}</span>
                   </div>
-                  <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{ceremony.yearNumber}</div>
+                  <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{ceremony.fullDate}</div>
                   <div className="mt-2 text-center text-[13px] uppercase tracking-wide md:text-[14px]" style={{ color: DD_GRAY }}>{ceremony.lunar}</div>
                 </>
               ) : null}
@@ -254,7 +254,7 @@ function DoubleDragonInvitation({ content, palette = DD_RED_PALETTE }: { content
                   <span className="mx-3 h-[25px] w-px self-center opacity-50 md:mx-4" style={{ backgroundColor: DD_GRAY }} />
                   <span className="w-[70px] whitespace-nowrap text-left text-[14px] uppercase md:w-[85px] md:text-[15px]" style={{ color: DD_GRAY }}>Tháng {reception.month}</span>
                 </div>
-                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{reception.yearNumber}</div>
+                <div className="mt-2 text-center text-[20px] md:text-[22px]" style={{ color: DD_GRAY }}>{reception.fullDate}</div>
                 <div className="mt-2 text-center text-[13px] md:text-[14px]" style={{ color: DD_GRAY }}>{reception.lunar}</div>
                 {schedule.length > 0 ? (
                   <div className="mt-4 flex items-center justify-center gap-8">

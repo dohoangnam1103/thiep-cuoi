@@ -1,5 +1,7 @@
 "use client";
 
+import { DateInput } from "@/components/ui/date-input";
+
 import { useActionState, useCallback, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -229,10 +231,9 @@ function RecordWithdrawalPanel({
               <label htmlFor="fund-withdrawal-date" className="text-sm font-medium text-foreground">
                 {t("dateLabel")}
               </label>
-              <input
+              <DateInput
                 id="fund-withdrawal-date"
                 name="withdrawnAt"
-                type="date"
                 defaultValue={today}
                 max={today}
                 required

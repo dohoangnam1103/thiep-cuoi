@@ -94,7 +94,7 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
           <HairRule color={INK} weight={2} />
           <div className="flex items-center justify-between py-3">
             <Kicker>{t("invitation")}</Kicker>
-            <Kicker>{reception ? `${reception.day}.${reception.monthNumber}.${reception.yearNumber}` : "—"}</Kicker>
+            <Kicker>{reception ? `${reception.fullDate}` : "—"}</Kicker>
           </div>
           <HairRule color={INK} />
 
@@ -157,13 +157,13 @@ export function EditorialNoirInvitation({ content }: { content: ChungDoiDemoCont
               {ceremony ? (
                 <DataRow
                   label={t("ceremony")}
-                  value={`${invitationCeremonyMessage(content)} · ${couple.ceremonyTime} · ${ceremony.weekday}, ${ceremony.day}/${ceremony.monthNumber}/${ceremony.yearNumber}`}
+                  value={`${invitationCeremonyMessage(content)} · ${couple.ceremonyTime} · ${ceremony.weekday}, ${ceremony.fullDate}`}
                 />
               ) : null}
               {reception ? (
                 <DataRow
                   label={t("reception")}
-                  value={`${couple.time || venue.banquetTime} · ${reception.weekday}, ${reception.day}/${reception.monthNumber}/${reception.yearNumber}`}
+                  value={`${couple.time || venue.banquetTime} · ${reception.weekday}, ${reception.fullDate}`}
                 />
               ) : null}
               {reception?.lunar ? <DataRow label={t("lunarDate")} value={reception.lunar} /> : null}

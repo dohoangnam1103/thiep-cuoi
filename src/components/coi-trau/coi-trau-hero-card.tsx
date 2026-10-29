@@ -1,7 +1,8 @@
 "use client";
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 
 import {
@@ -24,14 +25,8 @@ export const coiTrauTypography = {
   displayFontClass: "font-mg-cormorant",
 } as const;
 
-function formatWeddingDate(date: string, locale: string) {
-  const parsed = new Date(`${date}T00:00:00`);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return new Intl.DateTimeFormat(locale, {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(parsed);
+function formatWeddingDate(date: string) {
+  return formatCalendarDate(date);
 }
 
 type CoiTrauHeroCardProps = Omit<
@@ -46,8 +41,7 @@ export const CoiTrauHeroCard = forwardRef<HTMLElement, CoiTrauHeroCardProps>(
     { content, className, inert, tabIndex, ...sectionProps },
     ref,
   ) {
-    const locale = useLocale();
-    const t = useTranslations("invitationTemplate");
+      const t = useTranslations("invitationTemplate");
     const people = orderedCouple(content);
     const heroImage = invitationHeroImage(content);
     const coupleLabel = `${people[0].shortName} ${t("and")} ${people[1].shortName}`;
@@ -127,7 +121,7 @@ export const CoiTrauHeroCard = forwardRef<HTMLElement, CoiTrauHeroCardProps>(
                 width={1200}
               />
               <p className="mt-5 text-sm font-semibold uppercase tracking-[0.18em] text-[#315A42] sm:text-base">
-                {formatWeddingDate(content.couple.date, locale)}
+                {formatWeddingDate(content.couple.date)}
               </p>
               <p className="mx-auto mt-6 max-w-[34ch] whitespace-pre-line text-sm leading-7 text-[#32151F]/72 md:mx-0">
                 {invitationOpeningMessage(content)}

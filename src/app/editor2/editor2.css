@@ -57,6 +57,15 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
 .e2-dialog-backdrop { position: fixed; inset: 0; z-index: 50; background: #32241b45; }
 .e2-dialog-viewport { position: fixed; inset: 0; z-index: 51; display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .e2-dialog { display: flex; flex-direction: column; width: min(100%, 440px); min-width: 0; max-width: 100%; max-height: calc(100dvh - 2rem); background: #fffdfa; border: 1px solid #e2d9ce; border-radius: 1rem; box-shadow: 0 20px 80px #30201430; }
+.e2-dialog-backdrop, .e2-date-backdrop { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 1; transition: opacity 240ms ease-out; }
+.e2-dialog, .e2-date-popup { opacity: 1; transform: translateY(0) scale(1); transition: opacity 240ms ease-out, transform 240ms cubic-bezier(.2, .8, .2, 1); }
+.e2-dialog-backdrop[data-starting-style], .e2-dialog-backdrop[data-ending-style], .e2-date-backdrop[data-starting-style], .e2-date-backdrop[data-ending-style] { opacity: 0; }
+.e2-dialog[data-starting-style], .e2-dialog[data-ending-style], .e2-date-popup[data-starting-style], .e2-date-popup[data-ending-style] { opacity: 0; transform: translateY(12px) scale(.97); }
+.e2-dialog-backdrop[data-ending-style], .e2-dialog[data-ending-style], .e2-date-backdrop[data-ending-style], .e2-date-popup[data-ending-style] { transition-duration: 180ms; transition-timing-function: ease-in; }
+@media (prefers-reduced-motion: reduce) {
+  .e2-dialog-backdrop, .e2-dialog, .e2-date-backdrop, .e2-date-popup { transition: none; }
+  .e2-dialog[data-starting-style], .e2-dialog[data-ending-style], .e2-date-popup[data-starting-style], .e2-date-popup[data-ending-style] { transform: none; }
+}
 .e2-dialog-head { display: flex; align-items: start; justify-content: space-between; gap: .75rem; padding: 1.4rem 1.4rem 1rem; border-bottom: 1px solid #e9e2d9; }
 .e2-dialog-title { font-size: 1.2rem; font-weight: 650; }
 .e2-description { color: var(--e2-muted); font-size: .8rem; line-height: 1.65; margin-top: .4rem; }

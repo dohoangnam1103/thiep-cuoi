@@ -122,7 +122,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
                           <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                             <span>{ceremonyDate.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremonyDate.day}</span><span>|</span><span>{t("month", { month: ceremonyDate.month })}</span>
                           </div>
-                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.yearNumber}</div>
+                          <div className="text-[18px] md:text-[24px]">{ceremonyDate.fullDate}</div>
                           <div className="text-xs opacity-75 md:text-sm">{ceremonyDate.lunar}</div>
                         </>
                       ) : null}
@@ -161,7 +161,7 @@ export function HoaTinhInvitation({ content }: { content: ChungDoiDemoContent })
                 <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
               </div>
             ) : null}
-            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div> : null}
             {reception ? <div className="text-xs opacity-75 md:text-sm">{reception.lunar}</div> : null}
 
             <div className="mt-4 flex flex-col items-center">

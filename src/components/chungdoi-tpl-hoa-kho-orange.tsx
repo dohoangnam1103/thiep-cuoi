@@ -27,7 +27,7 @@ function EventDate({ date, time, ceremony = false }: { date: string; time: strin
   if (!value) return null;
   return <div className="flex w-full flex-col items-center gap-2 text-center text-xs uppercase md:text-sm">
     <div className="flex w-full max-w-[230px] items-center justify-between gap-4"><span>{ceremony ? t("atTime", { time }) : value.weekday}</span><span>{ceremony ? value.weekday : time}</span></div>
-    <div className="flex items-center gap-2 text-[#f26100]"><span className="text-[56px] leading-none">{value.day}</span><span className="border-l border-[#f26100] pl-2 text-left leading-7">{t("month", { month: value.month })}<br />{value.yearNumber}</span></div>
+    <div className="flex items-center gap-2 text-[#f26100]"><span className="text-[56px] leading-none">{value.day}</span><span className="border-l border-[#f26100] pl-2 text-left leading-7">{t("month", { month: value.month })}<br />{value.fullDate}</span></div>
     <p className="tracking-[0.08em]">{value.lunar}</p>
   </div>;
 }

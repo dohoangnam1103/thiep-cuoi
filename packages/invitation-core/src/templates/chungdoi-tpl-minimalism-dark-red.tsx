@@ -419,7 +419,7 @@ function MinimalismInvitation({
                         <div className="h-[46px] w-px" style={{ backgroundColor: "rgba(236,228,216,0.45)" }} />
                         <div className="flex flex-col items-start justify-center gap-1 text-left">
                           <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>Tháng {ceremonyDate.month}</span>
-                          <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.yearNumber}</span>
+                          <span className="text-[14px] uppercase md:text-[18px]" style={{ ...SERIF, color: CREAM }}>{ceremonyDate.fullDate}</span>
                         </div>
                       </div>
                       <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ ...BODY, color: CREAM_SOFT }}>{ceremonyDate.lunar}</div>
@@ -471,7 +471,7 @@ function MinimalismInvitation({
                       <div className="h-[46px] w-px" style={{ backgroundColor: "rgba(236,228,216,0.45)" }} />
                       <div className="flex flex-col items-start justify-center gap-1 text-left">
                         <span className="text-[12px] uppercase md:text-[16px]" style={{ ...SERIF, color: CREAM }}>Tháng {reception.month}</span>
-                        <span className="text-[18px] md:text-[24px]" style={{ ...SERIF, color: CREAM }}>{reception.yearNumber}</span>
+                        <span className="text-[18px] md:text-[24px]" style={{ ...SERIF, color: CREAM }}>{reception.fullDate}</span>
                       </div>
                     </div>
                     <div className="px-0 text-xs uppercase tracking-[0.12em] md:text-base" style={{ ...BODY, color: CREAM_SOFT }}>{reception.lunar}</div>

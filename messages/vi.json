@@ -1,4 +1,11 @@
 {
+  "dateInput": {
+    "placeholder": "DD/MM/YYYY",
+    "invalid": "Nhập ngày hợp lệ theo định dạng DD/MM/YYYY.",
+    "min": "Ngày phải từ {date} trở đi.",
+    "max": "Ngày không được sau {date}.",
+    "choose": "Chọn ngày"
+  },
   "editor2": {
     "title": "Chỉnh sửa trực tiếp trên thiệp | Thiệp Mừng Online",
     "home": "Trang chủ",
@@ -9,7 +16,7 @@
     "dashboard": "Danh sách thiệp",
     "startTitle": "Thiệp của hai bạn, bắt đầu từ 3 điều.",
     "dateDialogTitle": "Chọn ngày",
-    "datePlaceholder": "YYYY-MM-DD",
+    "datePlaceholder": "DD/MM/YYYY",
     "chooseDate": "Chọn {field}",
     "startDescription": "Tên hai bạn và ngày chung đôi. Phần còn lại, hãy chạm vào thiệp để viết tiếp.",
     "startFootnote": "Bắt đầu với mẫu {template}. Bạn có thể đổi mẫu khi chỉnh sửa.",
@@ -218,7 +225,7 @@
     "stateOpened": "Thiệp đã mở.",
     "innerKicker": "Trân trọng kính mời",
     "couple": "Ngọc Hân & Minh Khang",
-    "date": "16.11.2026",
+    "date": "16/11/2026",
     "innerMessage": "Sự hiện diện của quý khách là niềm vui trọn vẹn trong ngày thành hôn của chúng mình.",
     "labKicker": "Lab kiểm tra vật lý",
     "controlsTitle": "Kiểm tra opening theo từng nhịp",
@@ -377,7 +384,7 @@
       "kicker": "Khung nội dung",
       "title": "Lorem & Ipsum",
       "body": "Nội dung trung tính để chuyển động và bố cục giữ vai trò chính.",
-      "date": "00 · 00 · 0000"
+      "date": "00/00/0000"
     },
     "choreographies": {
       "splitGate": {
@@ -444,35 +451,35 @@
       "mistGate": {
         "name": "Cổng sương",
         "kicker": "Trước bình minh",
-        "title": "00 · 00 · 0000",
+        "title": "00/00/0000",
         "body": "Một cánh cổng mở vào khu rừng phủ sương. Hành trình bắt đầu từ đây.",
         "detail": "Cổng sương — nơi khởi đầu."
       },
       "memoryPines": {
         "name": "Rừng ký ức",
         "kicker": "Nắng xuyên tán thông",
-        "title": "00 · 00 · 0000",
+        "title": "00/00/0000",
         "body": "Những tấm ký ức mờ ảo treo giữa hàng thông.",
         "detail": "Rừng ký ức — kéo ngang để nhìn quanh."
       },
       "timeGlasshouse": {
         "name": "Nhà kính thời gian",
         "kicker": "Giữa nhà kính",
-        "title": "00 · 00 · 0000",
+        "title": "00/00/0000",
         "body": "Thời gian nở thành những vòng hoa trên vách kính.",
         "detail": "Nhà kính thời gian — ngày giờ nằm ở đây."
       },
       "lakePavilion": {
         "name": "Pavilion bên hồ",
         "kicker": "Giờ vàng",
-        "title": "00 · 00 · 0000",
+        "title": "00/00/0000",
         "body": "Con đường soi bóng xuống mặt hồ phẳng lặng.",
         "detail": "Pavilion bên hồ — chỉ đường nằm dưới chân."
       },
       "wishValley": {
         "name": "Thung lũng nguyện ước",
         "kicker": "Hoàng hôn chuyển tối",
-        "title": "00 · 00 · 0000",
+        "title": "00/00/0000",
         "body": "Thung lũng sáng lên cùng những lời nguyện ước.",
         "detail": "Thung lũng nguyện ước — lời chúc nằm trên bàn đá."
       }
@@ -1527,7 +1534,7 @@
     "card": {
       "invite": "Trân trọng kính mời",
       "couple": "Minh & Hà",
-      "date": "20 · 11 · 2026",
+      "date": "20/11/2026",
       "passport": "TMO / VI",
       "flight": "Tuyến TMO–2026",
       "status": "Đang nhận RSVP",
@@ -1648,7 +1655,7 @@
       "groomFallback": "Minh",
       "brideFallback": "Hà",
       "invite": "Trân trọng kính mời",
-      "date": "20 · 11 · 2026",
+      "date": "20/11/2026",
       "venue": "18:00 · Tiệc cưới của chúng mình"
     },
     "guest": {
@@ -1794,7 +1801,7 @@
       "scrollHint": "Cuộn để sân khấu chuyển động",
       "cardEyebrow": "Trân trọng kính mời",
       "cardNames": "Minh & Hà",
-      "cardDate": "20 · 11 · 2026"
+      "cardDate": "20/11/2026"
     },
     "manifesto": {
       "ariaLabel": "Tuyên ngôn thiết kế của Home V11",
@@ -1833,7 +1840,7 @@
       "lede": "Gõ thử ngay tại đây. Tên vừa nhập xuất hiện trên tấm thiệp sống — cũng là dữ liệu sẽ theo hai bạn vào trình chỉnh sửa.",
       "liveLabel": "Thiệp đang cập nhật trực tiếp",
       "cardEyebrow": "Trân trọng kính mời",
-      "cardDate": "20 · 11 · 2026",
+      "cardDate": "20/11/2026",
       "cardVenue": "18:00 · Tiệc cưới của chúng mình",
       "formEyebrow": "Thử ngay trên thiệp",
       "formTitle": "Hai cái tên sẽ đứng cạnh nhau thế nào?",
@@ -1902,7 +1909,7 @@
         "previewUrl": "thiepmungonline.com/thiep/minh-ha",
         "sent": "Đã gửi an toàn",
         "inviteEyebrow": "Trân trọng kính mời",
-        "inviteDate": "20 · 11 · 2026",
+        "inviteDate": "20/11/2026",
         "inviteVenue": "18:00 · Tiệc cưới của chúng mình",
         "mapEyebrow": "Chỉ đường đến ngày vui",
         "mapTitle": "Sảnh tiệc Ánh Dương",

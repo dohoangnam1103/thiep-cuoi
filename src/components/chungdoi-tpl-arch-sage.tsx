@@ -132,7 +132,7 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
               </span>
               {reception ? (
                 <span className="mt-7 text-[11px] tracking-[0.28em] text-[#33402f]/60">
-                  {reception.day}.{reception.month}.{reception.yearNumber}
+                  {reception.fullDate}
                 </span>
               ) : null}
             </div>
@@ -199,7 +199,7 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
                   {ceremony ? <>
                     <div className="font-serif text-[46px] leading-none md:text-[56px]">{ceremony.day}</div>
                     <div className="mt-2 text-[10px] uppercase tracking-[0.3em] text-[#33402f]/55">
-                      {t("month", { month: ceremony.month })} · {ceremony.yearNumber}
+                      {ceremony.fullDate}
                     </div>
                   </> : null}
                   {item.time ? <div className="mt-3 text-[15px] tracking-[0.18em]">{item.time}</div> : null}
@@ -219,7 +219,7 @@ export function ArchSageInvitation({ content }: { content: ChungDoiDemoContent }
               <span className="font-serif text-[26px] md:text-[32px]">{couple.time || venue.banquetTime}</span>
               {reception ? (
                 <span className="mt-1 text-[12px] tracking-[0.18em] text-[#33402f]/65">
-                  {reception.weekday} · {reception.day}.{reception.month}.{reception.yearNumber}
+                  {reception.weekday} · {reception.fullDate}
                 </span>
               ) : null}
               {reception ? (

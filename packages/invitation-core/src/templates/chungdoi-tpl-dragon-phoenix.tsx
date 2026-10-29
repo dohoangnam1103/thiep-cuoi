@@ -284,7 +284,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                     <p className="text-[15px] font-semibold uppercase md:text-[18px]">Vào lúc <span className="opacity-70">/ 時間</span></p>
                     {ceremony.time ? <div className="text-[20px] md:text-[30px]">{ceremony.time}</div> : null}
                     <LpdDateRow vnWeekday={ceremonyDate.weekday} cnWeekday={LPD_CN_WEEKDAY[new Date(`${ceremony.date}T00:00:00`).getDay()]} day={ceremonyDate.day} month={ceremonyDate.month} gold={GOLD} dayClass="text-[36px] md:text-[46px]" />
-                    <div className="text-[22px] font-semibold md:text-[26px]">{ceremonyDate.yearNumber}</div>
+                    <div className="text-[22px] font-semibold md:text-[26px]">{ceremonyDate.fullDate}</div>
                     <div className="text-[14px] opacity-80 md:text-[16px]">{ceremonyDate.lunar}</div>
                   </div>
                 ) : null;
@@ -303,7 +303,7 @@ function DragonPhoenixInvitation({ content, palette = DP_RED_PALETTE }: { conten
                 </div>
                 <div className="text-[26px] md:text-[38px]">{venue.banquetTime || couple.time}</div>
                 <LpdDateRow vnWeekday={reception.weekday} cnWeekday={LPD_CN_WEEKDAY[new Date(`${couple.date}T00:00:00`).getDay()]} day={reception.day} month={reception.month} gold={GOLD} dayClass="text-[38px] md:text-[50px]" />
-                <div className="text-[23px] font-semibold md:text-[31px]">{reception.yearNumber}</div>
+                <div className="text-[23px] font-semibold md:text-[31px]">{reception.fullDate}</div>
                 <div className="text-[14px] opacity-80 md:text-[16px]">{reception.lunar}</div>
                 <div className="flex flex-col items-center">
                   <span className="text-sm uppercase tracking-wider md:text-[15px]">Khai tiệc <span className="opacity-70">/ 開席</span></span>

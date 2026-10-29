@@ -93,7 +93,7 @@ export const home2Copy = {
     bridePlaceholder: "Jordan",
     invitePrompt: "Trân trọng kính mời",
     inviteBody: "đến chung vui trong ngày cưới của",
-    dateLine: "Chủ nhật · 20 · 11 · 2026",
+    dateLine: "Chủ nhật · 20/11/2026",
     cta: "Tạo thiệp mang tên này",
     note: "Tên vừa gõ sẽ được điền sẵn vào thiệp khi bạn bắt đầu.",
   },

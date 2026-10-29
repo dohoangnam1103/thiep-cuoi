@@ -123,7 +123,7 @@ export const v7Copy = {
     invitePrompt: "Trân trọng kính mời",
     coupleNames: "Minh & Hà",
     joiner: "đến chung vui trong ngày cưới của chúng tôi",
-    dateLine: "Chủ nhật · 20 · 11 · 2026",
+    dateLine: "Chủ nhật · 20/11/2026",
     venueLine: "Trung tâm tiệc cưới Hoa Sen · TP.HCM",
     openHint: "Thiệp mở ra ngay trên trình duyệt của khách",
   },

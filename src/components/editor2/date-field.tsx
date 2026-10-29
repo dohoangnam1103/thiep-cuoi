@@ -6,6 +6,7 @@ import { vi } from "@daypicker/react/locale";
 import { CalendarDays, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { DateInput } from "@/components/ui/date-input";
 
 function parseDate(value: string): Date | undefined {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -31,9 +32,8 @@ export function Editor2DateField({ name, label, value, onChange, required = fals
   return <div className="e2-field">
     <label htmlFor={`e2-date-${name}`}>{label}</label>
     <div className="e2-date-control">
-      <input id={`e2-date-${name}`} name={name} type="text" inputMode="numeric" placeholder={t("datePlaceholder")}
-        value={value} required={required} disabled={disabled} pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" maxLength={10}
-        onClick={() => { setMonth(parseDate(value) ?? new Date()); setOpen(true); }} onChange={event => onChange(event.target.value)} />
+      <DateInput id={`e2-date-${name}`} name={name} value={value} required={required} disabled={disabled} picker={false}
+        onValueChange={onChange} />
       <Dialog.Root open={open} onOpenChange={next => { if (next) setMonth(parseDate(value) ?? new Date()); setOpen(next); }}>
         <Dialog.Trigger className="e2-button e2-date-trigger" disabled={disabled} aria-label={t("chooseDate", { field: label })}><CalendarDays size={19} /></Dialog.Trigger>
         <Dialog.Portal>

@@ -255,7 +255,7 @@ export function LienHoaPinkInvitation({ content }: { content: ChungDoiDemoConten
                                 <span className="flex items-center justify-center text-[20px] leading-none opacity-50 md:text-[28px]" style={{ color: INK }}>|</span>
                                 <span className="text-[12px] uppercase md:text-[16px]">{t("month", { month: ceremonyDate.month })}</span>
                               </div>
-                              <div className="text-[18px] md:text-[24px]" style={{ color: ACCENT }}>{ceremonyDate.yearNumber}</div>
+                              <div className="text-[18px] md:text-[24px]" style={{ color: ACCENT }}>{ceremonyDate.fullDate}</div>
                               <div className="text-xs uppercase tracking-[0.12em] md:text-sm" style={{ color: INK }}>{ceremonyDate.lunar}</div>
                             </>
                           ) : null}
@@ -315,7 +315,7 @@ export function LienHoaPinkInvitation({ content }: { content: ChungDoiDemoConten
                     <div className="h-6 w-[1px] md:h-8" style={{ backgroundColor: INK }} />
                     <span className="text-[13px] uppercase md:text-[15px]">Tháng {reception.month}</span>
                   </div>
-                  <div className="mt-2 text-[18px] font-semibold md:text-[20px]" style={{ color: ACCENT }}>{reception.yearNumber}</div>
+                  <div className="mt-2 text-[18px] font-semibold md:text-[20px]" style={{ color: ACCENT }}>{reception.fullDate}</div>
                   <div className="mt-1 text-xs uppercase tracking-[0.12em] md:text-sm" style={{ color: ACCENT }}>{reception.lunar}</div>
                 </>
               ) : null}

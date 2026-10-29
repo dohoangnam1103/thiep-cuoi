@@ -18,19 +18,18 @@ import {
 const LATE_NIGHT_IN_VIETNAM = new Date("2026-08-23T18:57:00.000Z");
 
 test("timestamps format in Vietnam time, not the runtime timezone", () => {
-  // vi-VN renders time before date and does not zero-pad the month, which is
-  // why the admin table reads `01:57 24/8/26`.
+  // The date portion is padded and always includes the four-digit year.
   const short = formatVietnamDateTimeShort(LATE_NIGHT_IN_VIETNAM);
-  assert.ok(short.includes("24/8/26"), `mong đợi ngày 24/8/26, nhận được: ${short}`);
+  assert.ok(short.includes("24/08/2026"), `mong đợi ngày 24/08/2026, nhận được: ${short}`);
   assert.ok(short.includes("01:57"), `mong đợi giờ 01:57, nhận được: ${short}`);
-  assert.ok(!short.includes("23/8/26"), `vẫn còn ngày UTC: ${short}`);
+  assert.ok(!short.includes("23/08/2026"), `vẫn còn ngày UTC: ${short}`);
   assert.ok(!short.includes("18:57"), `vẫn còn giờ UTC: ${short}`);
 });
 
 test("medium formatters keep the same instant on the Vietnamese calendar day", () => {
-  assert.ok(formatVietnamDateTime(LATE_NIGHT_IN_VIETNAM).includes("24"));
+  assert.ok(formatVietnamDateTime(LATE_NIGHT_IN_VIETNAM).includes("24/08/2026"));
   assert.ok(formatVietnamDateTime(LATE_NIGHT_IN_VIETNAM).includes("01:57"));
-  assert.ok(formatVietnamDate(LATE_NIGHT_IN_VIETNAM).includes("24"));
+  assert.equal(formatVietnamDate(LATE_NIGHT_IN_VIETNAM), "24/08/2026");
 });
 
 /**

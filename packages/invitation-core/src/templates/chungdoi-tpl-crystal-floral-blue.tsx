@@ -102,7 +102,7 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
                 <div className="mt-1 flex items-center justify-center gap-3 text-[15px] font-semibold uppercase md:text-[18px]">
                   <span>{ceremony.weekday}</span><span>|</span><span className="text-[28px] font-bold">{ceremony.day}</span><span>|</span><span>Tháng {ceremony.month}</span>
                 </div>
-                <div className="text-[18px] md:text-[24px]">{ceremony.yearNumber}</div>
+                <div className="text-[18px] md:text-[24px]">{ceremony.fullDate}</div>
                 <div className="text-xs uppercase tracking-[0.25em] md:text-sm" style={{ color: BLUE_MUTED }}>{ceremony.lunar}</div>
               </div>
             ) : null}
@@ -130,7 +130,7 @@ export function CrystalFloralInvitation({ content }: { content: ChungDoiDemoCont
                 <span>{reception.weekday}</span><span>/</span><span>{reception.day}</span><span>/</span><span>Tháng {reception.month}</span>
               </div>
             ) : null}
-            {reception ? <div className="text-[18px] md:text-[24px]">{reception.yearNumber}</div> : null}
+            {reception ? <div className="text-[18px] md:text-[24px]">{reception.fullDate}</div> : null}
             {reception ? <div className="text-[10px] uppercase tracking-[0.15em] md:text-base md:tracking-[0.25em]" style={{ color: BLUE_MUTED }}>{reception.lunar}</div> : null}
 
             {/* calendar framed by calendar-frame */}

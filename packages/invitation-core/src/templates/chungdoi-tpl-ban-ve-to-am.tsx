@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCalendarDateWithWeekday } from "@chungdoi/invitation-data/calendar-date";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -82,12 +83,7 @@ function BotanicalDivider({ inverse = false }: { inverse?: boolean }) {
 function formatEventDate(value: string, locale: string) {
   const parsed = new Date(`${value}T00:00:00`);
   if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat(locale, {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(parsed);
+  return formatCalendarDateWithWeekday(value, locale);
 }
 
 export function BanVeToAmInvitation({

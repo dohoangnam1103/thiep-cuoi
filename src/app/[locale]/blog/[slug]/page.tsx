@@ -55,7 +55,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
 
   const related = await getRelatedBlogPosts(post);
   const contentHtml = sanitizeBlogHtml(post.contentHtml);
-  const dateFormatter = createVietnamDateFormatter({ dateStyle: "long" }, locale);
+  const dateFormatter = createVietnamDateFormatter({ day: "2-digit", month: "2-digit", year: "numeric" }, locale);
 
   return (
     <main className="font-app-sans min-h-screen bg-background text-foreground">

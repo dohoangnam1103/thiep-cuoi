@@ -83,7 +83,7 @@ export const v8Copy = {
   /** Chữ in trên con dấu sáp khi nó ép xuống cuối ngày. */
   seal: {
     label: "Niêm phong",
-    dateLine: "20 · 11 · 2026",
+    dateLine: "20/11/2026",
     note: "Một ngày, một lời mời, một đường link duy nhất.",
   },
 

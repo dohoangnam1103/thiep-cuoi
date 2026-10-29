@@ -146,7 +146,7 @@ async function fillPublishableDraft(page: Page): Promise<string> {
   const slug = `support-${randomUUID().slice(0, 8)}`;
   await page.locator("#brideFullName").fill("Nguyễn Mai");
   await page.locator("#groomFullName").fill("Trần Nam");
-  await page.locator("#date").fill("2026-12-20");
+  await page.locator("#date").fill("20/12/2026");
   await page.locator("#time").fill("18:00");
   await page.locator("#slug").fill(slug);
   return slug;
@@ -788,7 +788,7 @@ test.describe("admin: user invitation support", () => {
       const rewrite = await installBoundIdRewrite(page, invitationA.id, invitationB.id);
       await page.locator("#brideFullName").fill("Nguyễn Mai");
       await page.locator("#groomFullName").fill("Trần Nam");
-      await page.locator("#date").fill("2026-12-20");
+      await page.locator("#date").fill("20/12/2026");
       await page.locator("#time").fill("18:00");
       await page.getByRole("button", { name: "Lưu bản nháp" }).click();
       await expect.poll(() => readContent(invitationB.id, "brideFullName")).toBe("Nguyễn Mai");

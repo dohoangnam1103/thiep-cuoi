@@ -48,7 +48,7 @@ function DateBlock({ date }: { date: NonNullable<ReturnType<typeof formatDate>> 
       <span className="text-[#ab7a45]/50" aria-hidden>|</span>
       <span className="text-xs uppercase md:text-base">{t("month", { month: date.month })}</span>
     </div>
-    <p className="text-xl md:text-2xl">{date.yearNumber}</p>
+    <p className="text-xl md:text-2xl">{date.fullDate}</p>
     <p className="text-xs md:text-sm">{date.lunar}</p>
   </div>;
 }

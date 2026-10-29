@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { trackEvent } from "@/lib/analytics";
+import { formatVietnamDateTime } from "@/lib/datetime";
 import { BANK, buildVietQrUrl } from "@/lib/payment";
 import { createPaymentPoller } from "@/lib/payment-polling";
 import {
@@ -26,7 +27,7 @@ function formatVnd(amount: number): string {
 }
 
 function formatDateTime(date: Date): string {
-  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(date);
+  return formatVietnamDateTime(date);
 }
 
 type PaymentTerminalState = "active" | "paid" | "expired" | "superseded";

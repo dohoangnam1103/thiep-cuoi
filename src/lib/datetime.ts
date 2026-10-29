@@ -30,28 +30,26 @@ export function createVietnamDateFormatter(
 }
 
 const dateTimeShortFormatter = createVietnamDateFormatter({
-  dateStyle: "short",
-  timeStyle: "short",
+  day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
 });
 
 const dateTimeMediumFormatter = createVietnamDateFormatter({
-  dateStyle: "medium",
-  timeStyle: "short",
+  day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
 });
 
-const dateMediumFormatter = createVietnamDateFormatter({ dateStyle: "medium" });
+const dateMediumFormatter = createVietnamDateFormatter({ day: "2-digit", month: "2-digit", year: "numeric" });
 
-/** `23/08/26 18:57` — dense tables where rows carry both date and time. */
+/** `18:57 23/08/2026` — timestamps always include the full calendar year. */
 export function formatVietnamDateTimeShort(date: Date): string {
   return dateTimeShortFormatter.format(date);
 }
 
-/** `23 thg 8, 2026 18:57` — detail views with room to breathe. */
+/** `18:57 23/08/2026` — the same date convention in detail views. */
 export function formatVietnamDateTime(date: Date): string {
   return dateTimeMediumFormatter.format(date);
 }
 
-/** `23 thg 8, 2026` — where the time of day carries no meaning. */
+/** `23/08/2026` — where the time of day carries no meaning. */
 export function formatVietnamDate(date: Date): string {
   return dateMediumFormatter.format(date);
 }

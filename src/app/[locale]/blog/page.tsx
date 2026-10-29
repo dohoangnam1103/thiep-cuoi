@@ -38,7 +38,7 @@ export default async function BlogPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "blog" });
   const posts = await listPublishedBlogPosts();
-  const dateFormatter = createVietnamDateFormatter({ dateStyle: "medium" }, locale);
+  const dateFormatter = createVietnamDateFormatter({ day: "2-digit", month: "2-digit", year: "numeric" }, locale);
 
   return (
     <main className="font-app-sans min-h-screen bg-background text-foreground">

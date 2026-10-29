@@ -1,3 +1,4 @@
+import { formatCalendarDate } from "../../src/lib/calendar-date";
 import { expect, test } from "@playwright/test";
 import { completedTemplates } from "../../src/data/chungdoi";
 import { heroImageCount } from "../../src/data/editor-template-capabilities";
@@ -66,11 +67,11 @@ for (const template of completedTemplates) {
         await test.step("wedding time opens event, separately from venue and ceremonies", async () => {
           await clickCanvas(page, canvasEventTime(page, expected.time));
           const dialog = await expectSection(page, "event");
-          await expect(field("date")).toHaveValue(expected.date);
+          await expect(field("date")).toHaveValue(formatCalendarDate(expected.date));
           await expect(field("time")).toHaveValue(expected.time);
           await expect(dialog.getByLabel(t.fields.address, { exact: true })).toHaveCount(0);
           expected.date = "2026-12-20"; expected.time = "19:41"; expected.banquetTime = expected.time;
-          await field("date").fill(expected.date);
+          await field("date").fill(formatCalendarDate(expected.date));
           await field("time").fill(expected.time);
           await closeMatrixDialog(page);
           await expect(canvasEventTime(page, expected.time)).toBeVisible();
@@ -101,7 +102,7 @@ for (const template of completedTemplates) {
         await test.step("native ceremony and timeline open their own collection modals", async () => {
           await clickCanvas(page, canvasText(page, "Lễ Vu Quy Kiểm Tra"));
           await expectSection(page, "ceremonies");
-          await expect(page.getByLabel(t.ceremonyDate, { exact: true })).toHaveValue("2026-11-28");
+          await expect(page.getByLabel(t.ceremonyDate, { exact: true })).toHaveValue("28/11/2026");
           await page.getByLabel(t.ceremonyTitle, { exact: true }).fill("Lễ Thành Hôn Đã Sửa");
           await closeMatrixDialog(page);
           await expect(canvasText(page, "Lễ Thành Hôn Đã Sửa")).toBeVisible();

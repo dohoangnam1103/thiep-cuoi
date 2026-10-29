@@ -173,12 +173,12 @@ test.describe("dashboard — create", () => {
       const id = new URL(page.url()).pathname.split("/").pop()!;
       await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Lan Anh");
       await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Minh Đức");
-      await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-12-20");
+      await page.getByLabel("Ngày cưới", { exact: true }).fill("20/12/2026");
       await page.getByRole("button", { name: "Bắt đầu chỉnh sửa trên thiệp" }).click();
       await page.getByRole("button", { name: "Nội dung", exact: true }).click();
       await page.getByRole("button", { name: "Lễ cưới", exact: true }).click();
       await expect(page.locator('input[name="ceremony-0-title"]')).toHaveValue("Lễ thành hôn được cử hành tại tư gia");
-      await expect(page.locator('input[name="ceremony-0-date"]')).toHaveValue("2026-12-20");
+      await expect(page.locator('input[name="ceremony-0-date-display"]')).toHaveValue("20/12/2026");
       await expect(page.locator('input[name="ceremony-0-time"]')).not.toHaveValue("");
       await page.getByRole("button", { name: "Xong", exact: true }).click();
       await expect.poll(() => getDb().prepare("SELECT date FROM CeremonyItem WHERE invitationId = ?").get(id)).toEqual({ date: "2026-12-20" });

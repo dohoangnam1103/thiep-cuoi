@@ -6,6 +6,7 @@
 // the look throttle and the fallback handoff are all journey mechanics rather
 // than location. Fixes must be applied to both.
 
+import { formatCalendarDate } from "@/lib/calendar-date";
 import {
   useCallback,
   useEffect,
@@ -17,7 +18,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import dynamic from "next/dynamic";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 import {
   buildBeachJourneyScenes,
@@ -117,7 +118,6 @@ export function BeachWeddingJourneyLab({
    */
   readonly videoBackdrop?: boolean;
 }) {
-  const format = useFormatter();
   const t = useTranslations("beachWeddingJourneyLab");
   const content = useMemo(() => {
     const longCopy = fixture === "long-copy";
@@ -203,20 +203,10 @@ export function BeachWeddingJourneyLab({
   const ceremonyDate = parseIsoDate(content.ceremonyDate);
   const receptionDate = parseIsoDate(content.receptionDate);
   const formattedCeremonyDate = ceremonyDate
-    ? format.dateTime(ceremonyDate, {
-      day: "numeric",
-      month: "long",
-      timeZone: "UTC",
-      year: "numeric",
-    })
+    ? formatCalendarDate(content.ceremonyDate)
     : content.ceremonyDate;
   const formattedReceptionDate = receptionDate
-    ? format.dateTime(receptionDate, {
-      day: "numeric",
-      month: "long",
-      timeZone: "UTC",
-      year: "numeric",
-    })
+    ? formatCalendarDate(content.receptionDate)
     : content.receptionDate;
   const sceneNames = useMemo<BeachJourneySceneNames>(() => {
     const names: Record<BeachJourneySceneType, string> = {

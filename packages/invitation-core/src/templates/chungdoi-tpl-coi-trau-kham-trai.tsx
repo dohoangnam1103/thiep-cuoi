@@ -100,7 +100,7 @@ function PaperPanel({
 function formattedEventDate(date: string) {
   const formatted = formatDate(date);
   if (!formatted) return date;
-  return `${formatted.weekday}, ${formatted.day}.${formatted.month}.${formatted.yearNumber}`;
+  return `${formatted.weekday}, ${formatted.fullDate}`;
 }
 
 export function CoiTrauKhamTraiInvitation({
