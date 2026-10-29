@@ -478,6 +478,10 @@ test("mobile editor dialogs keep their fields within the visible scroll area", a
   await page.goto(`/editor2/${invitation.id}`);
   for (const name of ["Tên hai bạn & lời mời", "Thông tin hai gia đình", "Thời gian tiệc cưới", "Địa điểm tổ chức", "Lễ cưới", "Album ảnh cưới", "Nhạc nền", "Lịch trình", "Hộp quà mừng", "Mẫu & giao diện"]) {
     await section(page, name);
+    if (name === "Lễ cưới") {
+      await page.getByRole("button", { name: "Thêm một lễ" }).click();
+      await expect(page.locator('input[name="ceremony-0-time"]')).toBeVisible();
+    }
     const body = page.locator(".e2-dialog-body");
     const overflow = await body.evaluate(element => {
       const box = element.getBoundingClientRect();
@@ -488,6 +492,10 @@ test("mobile editor dialogs keep their fields within the visible scroll area", a
     });
     expect(overflow, name).toEqual([]);
     expect(await body.evaluate(element => element.scrollWidth <= element.clientWidth + 1), name).toBe(true);
+    const smallFields = await body.evaluate(element => [...element.querySelectorAll('input:not([type=hidden]):not([type=file]):not([type=checkbox]):not([type=radio]):not([type=range]), textarea, select')]
+      .filter(field => field.getBoundingClientRect().width > 0 && parseFloat(getComputedStyle(field).fontSize) < 16)
+      .map(field => field.getAttribute("name") || field.getAttribute("aria-label")));
+    expect(smallFields, name).toEqual([]);
     await close(page);
   }
 });

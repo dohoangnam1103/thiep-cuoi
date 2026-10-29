@@ -97,11 +97,13 @@ export function Editor2SectionFields({ invitationId, section, draft, onChange, l
     {!draft.ceremonies.length && <p className="e2-description">{t("empty")}</p>}
     {draft.ceremonies.map((item, index) => <fieldset className="e2-repeat" key={index}>
       <legend className="e2-repeat-head">{t("ceremonyNumber", { number: index + 1 })}</legend>
+      <div className="e2-repeat-fields">
       {(["title", "date", "time"] as const).map(key => key === "date" ? <Editor2DateField key={key} name={`ceremony-${index}-date`} label={t("ceremonyDate")} value={item.date} onChange={value => onChange(previous => ({ ...previous, ceremonies: previous.ceremonies.map((row, i) => i === index ? { ...row, date: value } : row) }))} /> : <label key={key} className="e2-field"><span>{t(key === "title" ? "ceremonyTitle" : "ceremonyTime")}</span>
         <input name={`ceremony-${index}-${key}`} type={key === "title" ? "text" : "time"} value={item[key]} maxLength={key === "title" ? 200 : 20}
           onChange={event => onChange(previous => ({ ...previous, ceremonies: previous.ceremonies.map((row, i) => i === index ? { ...row, [key]: event.target.value } : row) }))} />
       </label>)}
       <button type="button" className="e2-button e2-danger" aria-label={t("removeCeremony", { number: index + 1 })} onClick={() => onChange(previous => ({ ...previous, ceremonies: previous.ceremonies.filter((_, i) => i !== index) }))}><Trash2 size={15} />{t("remove")}</button>
+      </div>
     </fieldset>)}
     <button type="button" className="e2-button" disabled={draft.ceremonies.length >= 20} onClick={() => onChange(previous => ({ ...previous, ceremonies: [...previous.ceremonies, { title: t("newCeremony"), date: previous.fields.date, time: previous.fields.time }] }))}><Plus size={16} />{t("addCeremony")}</button>
   </div>;

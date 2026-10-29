@@ -135,7 +135,9 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
 .e2-section-link:hover { background: #f4eee6; }
 .e2-checkbox { display: flex; align-items: center; gap: .65rem; font-size: .85rem; line-height: 1.5; }
 .e2-checkbox input { width: 1rem; height: 1rem; accent-color: #a93232; }
-.e2-repeat { display: grid; gap: .8rem; padding: 1rem 0; border-bottom: 1px solid #e6ded3; }
+.e2-repeat { min-width: 0; width: 100%; padding: 1rem 0; border-bottom: 1px solid #e6ded3; }
+.e2-repeat-fields { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: .8rem; }
+.e2-repeat-fields .e2-field input { box-sizing: border-box; max-width: 100%; }
 .e2-repeat-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .85rem; }
 .e2-dialog-schedule { width: min(100%, 620px); }
 .e2-schedule { gap: .65rem; }
@@ -180,6 +182,10 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
   .e2-save-state { min-width: auto; }
 }
 @media (max-width: 600px) {
+  /* iOS Safari zooms the page when an editable control uses a font below 16px. */
+  .editor2-page input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="hidden"]),
+  .editor2-page textarea,
+  .editor2-page select { font-size: 16px; }
   .e2-start { padding: 1.5rem 1.25rem 3rem; }
   .e2-start-grid { display: block; padding-top: 2.5rem; }
   .e2-start-art { display: none; }
