@@ -98,7 +98,8 @@ export type EditorErrorCode =
   | "slugTaken"
   | "coupleRequired"
   | "dateRequired"
-  | "timeRequired";
+  | "timeRequired"
+  | "venueRequired";
 
 export type EditorState =
   | {

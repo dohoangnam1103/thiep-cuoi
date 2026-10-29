@@ -16,6 +16,7 @@ import type { EditorErrorCode } from "@/app/editor/[id]/content-schema";
 import { EDITOR2_FIELD_GROUPS, EDITOR2_SECTIONS, editor2FormData, editor2MissingSections, isEditor2Section, withEditor2FullName, type Editor2Draft, type Editor2Samples, type Editor2Section } from "@/lib/editor2-draft";
 import { cacheEditor2Basics, editor2Basics, restoreEditor2DraftBasics, writeEditor2Basics } from "@/lib/editor2-basics-storage";
 import { acknowledgeEditor2Defaults, editor2DefaultFields, initializeEditor2Defaults } from "@/lib/editor2-defaults";
+import { editor2PublicationIssue } from "@/lib/editor2-publication";
 import { titleCaseVietnameseName } from "@/lib/text-case";
 import { Editor2ClientReady } from "./client-ready";
 import { Editor2DateField } from "./date-field";
@@ -77,6 +78,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const [saveState, setSaveState] = useState<"saved" | "saving" | "unsaved" | "saveError">(restored === initial ? "saved" : "unsaved");
   const [error, setError] = useState<EditorErrorCode | "networkError" | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [publicationPending, setPublicationPending] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState(currentSlug);
   const [shareOpen, setShareOpen] = useState(false);
@@ -162,15 +164,26 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   }, [snapshot, uploading]);
 
   const initialDialogFocus = useCallback(() => {
-    const input = focusField.current ? document.getElementById(`e2-${focusField.current}`) : null;
-    focusField.current = undefined;
+    const input = focusField.current ? document.getElementById(`e2-${focusField.current}`)
+      ?? document.getElementById(`e2-date-${focusField.current}`) : null;
     if (input && dialogBody.current?.contains(input)) {
+      focusField.current = undefined;
       const details = input.closest("details");
       if (details) details.open = true;
       return input;
     }
     return true;
   }, []);
+  const previousPanel = useRef(panel);
+  useLayoutEffect(() => {
+    const wasOpen = previousPanel.current !== null;
+    previousPanel.current = panel;
+    // The dialog manages focus when opening. Only move it ourselves when
+    // replacing the fields inside an already open publication dialog.
+    if (!publicationPending || !panel || !wasOpen) return;
+    const input = initialDialogFocus();
+    if (input !== true) input.focus();
+  }, [panel, publicationPending, initialDialogFocus]);
 
   const change = (update: (previous: Editor2Draft) => Editor2Draft) => {
     dispatch({ type: "change", update }); setSaveState("unsaved"); setError(null);
@@ -203,7 +216,15 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     if (publishedSlug) form.set("slug", publishedSlug);
     const result = await publishVisualInvitation(id, form);
     if (result && "loginUrl" in result) { router.push(result.loginUrl); return; }
-    if (result?.errorCode) { setError(result.errorCode); return; }
+    if (result?.errorCode) {
+      setError(result.errorCode);
+      const issue = editor2PublicationIssue(latest.current.fields);
+      if (issue && issue.errorCode === result.errorCode) {
+        focusField.current = issue.focusField;
+        setPublicationPending(true); setPanel(issue.section);
+      }
+      return;
+    }
     if (result?.publishedSlug) {
       setPublishedSlug(result.publishedSlug);
       setPublishSuccessOpen(true);
@@ -211,6 +232,13 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   };
   const beginPublication = async () => {
     if (locked.current) return;
+    const issue = editor2PublicationIssue(latest.current.fields);
+    if (issue) {
+      focusField.current = issue.focusField;
+      setError(issue.errorCode); setPublicationPending(true); setPanel(issue.section);
+      return;
+    }
+    setPublicationPending(false); setPanel(null);
     locked.current = true; setPublishing(true); setError(null);
     try {
       // Flush the whole queued draft before navigating to OAuth. Account
@@ -222,6 +250,20 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       await publishCurrent();
     } catch { setError("networkError"); }
     finally { locked.current = false; setPublishing(false); }
+  };
+  const continuePublication = () => {
+    if (locked.current) return;
+    const issue = editor2PublicationIssue(latest.current.fields);
+    if (issue) {
+      focusField.current = issue.focusField;
+      setError(issue.errorCode); setPanel(issue.section);
+      if (panel === issue.section) {
+        const input = initialDialogFocus();
+        if (input !== true) input.focus();
+      }
+      return;
+    }
+    void beginPublication();
   };
   const resumedPublication = useRef(false);
   useEffect(() => {
@@ -285,11 +327,14 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       // Cancel dismissal in the dialog itself; the synchronous lock also covers
       // requests arriving before the uploading state has rendered.
       if (busy || locked.current) { details.cancel(); return; }
+      setPublicationPending(false);
+      if (publicationPending) setError(null);
       setPanel(null);
     }}>
       <Dialog.Portal><Dialog.Backdrop className="e2-dialog-backdrop" /><Dialog.Viewport className="e2-dialog-viewport">
         <Dialog.Popup initialFocus={initialDialogFocus} className={`e2-dialog${activeSection === "couple" || activeSection === "family" || activeSection === "gift" || (activeSection === "photos" && heroImageCount(draft.fields.templateId) === 2) || panel === "basics" || panel === "templates" ? " e2-dialog-couple" : ""}${activeSection === "schedule" ? " e2-dialog-schedule" : ""}`}>
           <header className="e2-dialog-head"><div><Dialog.Title className="e2-dialog-title">{panelTitle}</Dialog.Title>
+            {publicationPending && <Dialog.Description className="e2-description">{t("completeToPublish")}</Dialog.Description>}
             </div>
             <Dialog.Close className="e2-button e2-icon-button" aria-label={t("close")} disabled={busy}><X size={18} /></Dialog.Close>
           </header>
@@ -305,7 +350,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
                 }} />
               <button className="e2-button e2-primary">{t("beginEditing")}</button>
             </form>}
-            {activeSection && <fieldset disabled={busy}><Editor2SectionFields invitationId={id} section={activeSection} draft={draft} onChange={change} labels={labels} samples={samples[draft.fields.templateId]} onUploading={setUploadState} /></fieldset>}
+            {activeSection && <fieldset key={activeSection} disabled={busy}><Editor2SectionFields invitationId={id} section={activeSection} draft={draft} onChange={change} labels={labels} samples={samples[draft.fields.templateId]} onUploading={setUploadState} /></fieldset>}
             {panel === "templates" && <div className="e2-template-picker">
               {completedTemplates.map(template => <button key={template.slug} type="button" className="e2-template-option" aria-pressed={draft.fields.templateId === template.slug} onClick={() => {
                 change(previous => ({ ...previous, fields: { ...previous.fields, templateId: template.slug } }));
@@ -326,7 +371,9 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
           <footer className="e2-dialog-footer">
             {uploading ? <span className="e2-save-state" role="status" aria-live="polite">{t("uploading")}</span>
               : canHide ? <button type="button" className="e2-button e2-danger" onClick={hideSection} disabled={busy}>{t("hideSection")}</button> : <span className="e2-save-state" role="status">{t(saveState)}</span>}
-            <Dialog.Close className="e2-button" disabled={busy}>{t("done")}</Dialog.Close>
+            {publicationPending
+              ? <button type="button" className="e2-button e2-primary" disabled={busy} onClick={continuePublication}>{t("continuePublication")}</button>
+              : <Dialog.Close className="e2-button" disabled={busy}>{t("done")}</Dialog.Close>}
           </footer>
         </Dialog.Popup>
       </Dialog.Viewport></Dialog.Portal>

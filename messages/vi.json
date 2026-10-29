@@ -29,6 +29,8 @@
     "saveError": "Chưa lưu được. Nội dung vẫn còn trong phiên chỉnh sửa này.",
     "networkError": "Không thể kết nối. Nội dung vẫn còn trong phiên chỉnh sửa này.",
     "publish": "Xuất bản",
+    "continuePublication": "Tiếp tục",
+    "completeToPublish": "Bổ sung thông tin còn thiếu. Hoàn tất các bước để tự động xuất bản thiệp.",
     "publishDescription": "Kiểm tra tên, ngày giờ, địa chỉ và các thông tin mẫu trước khi chia sẻ.",
     "published": "Thiệp đã xuất bản",
     "openPublished": "Mở thiệp đã xuất bản",
@@ -3373,7 +3375,8 @@
       "slugTaken": "Đường dẫn đã được dùng.",
       "coupleRequired": "Cần tên cô dâu và chú rể trước khi xuất bản.",
       "dateRequired": "Cần ngày cưới trước khi xuất bản.",
-      "timeRequired": "Cần giờ tiệc cưới trước khi xuất bản."
+      "timeRequired": "Cần giờ tiệc cưới trước khi xuất bản.",
+      "venueRequired": "Cần tên và địa chỉ địa điểm tổ chức trước khi xuất bản."
     },
     "upload": {
       "galleryHelp": "Ảnh nguồn tối đa 50MB; ảnh trên 20MB sẽ được tự động nén xuống dưới 20MB trước khi lưu. Tối đa 30 ảnh.",

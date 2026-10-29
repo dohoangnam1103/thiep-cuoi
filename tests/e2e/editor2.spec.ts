@@ -406,14 +406,11 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("");
   await close(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.locator(".e2-alert")).toHaveText("Cần giờ tiệc cưới trước khi xuất bản.");
-  await section(page, "Thời gian tiệc cưới");
+  await expect(page.getByRole("dialog", { name: "Thời gian tiệc cưới", exact: true })).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveText("Cần giờ tiệc cưới trước khi xuất bản.");
+  await expect(page.getByLabel("Giờ tiệc", { exact: true })).toBeFocused();
   await page.getByLabel("Giờ tiệc", { exact: true }).fill("18:30");
-  await close(page);
-  await section(page, "Địa điểm tổ chức");
-  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("Trung tâm tiệc cưới, 123 Nguyễn Huệ, TP. Hồ Chí Minh");
-  await close(page);
-  await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
   await expect(page.getByRole("dialog").getByRole("heading", { name: "Thiệp đã xuất bản!", exact: true })).toBeVisible();
   expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
   await expect(page.getByRole("dialog").getByRole("link", { name: /quynh-anh-gia-khanh/ })).toHaveAttribute("href", "/thiep/quynh-anh-gia-khanh");
@@ -423,6 +420,92 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await page.getByRole("dialog").getByRole("button", { name: "Đóng" }).click();
   await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
   await expect(page.getByRole("dialog").getByRole("heading", { name: "Chia sẻ thiệp", exact: true })).toBeVisible();
+});
+
+for (const width of [1440, 390]) test(`publication completes missing sections in order and publishes automatically at ${width}px`, async ({ page, context }) => {
+  const { user, invitation } = seed();
+  await loginAsUser(context, user.id);
+  await page.setViewportSize({ width, height: 900 });
+  await page.goto(`/editor2/${invitation.id}`);
+  await section(page, "Tên hai bạn & lời mời");
+  await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("");
+  await page.getByLabel("Họ tên chú rể", { exact: true }).fill("");
+  await close(page);
+  await section(page, "Thời gian tiệc cưới");
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("");
+  await page.getByLabel("Giờ tiệc", { exact: true }).fill("");
+  await close(page);
+  await section(page, "Địa điểm tổ chức");
+  await page.getByLabel("Tên địa điểm", { exact: true }).fill("");
+  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("");
+  await close(page);
+  await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
+  const couple = page.getByRole("dialog", { name: "Tên hai bạn & lời mời", exact: true });
+  await expect(couple).toBeVisible();
+  await expect(page.getByLabel("Họ tên cô dâu", { exact: true })).toBeFocused();
+  await page.getByLabel("Họ tên cô dâu", { exact: true }).fill("Nguyễn Mai");
+  await page.getByLabel("Họ tên chú rể", { exact: true }).fill("   ");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(couple).toBeVisible();
+  await expect(page.getByLabel("Họ tên chú rể", { exact: true })).toBeFocused();
+  await page.getByLabel("Họ tên chú rể", { exact: true }).fill("Trần Nam");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Thời gian tiệc cưới", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toBeFocused();
+  await page.getByLabel("Ngày cưới", { exact: true }).fill("2026-11-29");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(page.getByLabel("Giờ tiệc", { exact: true })).toBeFocused();
+  await page.getByLabel("Giờ tiệc", { exact: true }).fill("18:30");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Địa điểm tổ chức", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Tên địa điểm", { exact: true })).toBeFocused();
+  expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "draft" });
+  expect(await page.getByRole("dialog").evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  await page.screenshot({ path: path.join(evidence, `publication-venue-${width}.png`) });
+  await page.getByLabel("Tên địa điểm", { exact: true }).fill("Nhà hàng Hoa Mai");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(page.getByLabel("Địa chỉ địa điểm", { exact: true })).toBeFocused();
+  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("123 Nguyễn Huệ, TP. Hồ Chí Minh");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Thiệp đã xuất bản!", exact: true })).toBeVisible();
+  expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
+  expect(content(invitation.id)).toMatchObject({ brideFullName: "Nguyễn Mai", groomFullName: "Trần Nam", date: "2026-11-29", time: "18:30", venueName: "Nhà hàng Hoa Mai", address: "123 Nguyễn Huệ, TP. Hồ Chí Minh" });
+});
+
+test("dismissing a publication step cancels automatic publication and preserves edits", async ({ page, context }) => {
+  const { user, invitation } = seed();
+  getDb().prepare("UPDATE InvitationContent SET time = ?, venueName = ?, address = ? WHERE invitationId = ?")
+    .run("18:00", "Nhà hàng Hoa Mai", "", invitation.id);
+  await loginAsUser(context, user.id);
+  await page.goto(`/editor2/${invitation.id}`);
+  for (const dismissal of ["close", "escape", "backdrop"]) {
+    await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Địa điểm tổ chức", exact: true })).toBeVisible();
+    if (dismissal === "close") await page.getByRole("button", { name: "Đóng", exact: true }).click();
+    else if (dismissal === "escape") await page.keyboard.press("Escape");
+    else await page.locator(".e2-dialog-viewport").click({ position: { x: 5, y: 5 } });
+    await expect(page.locator(".e2-dialog")).toHaveCount(0);
+  }
+  await section(page, "Địa điểm tổ chức");
+  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("123 Nguyễn Huệ");
+  await close(page);
+  await save(page);
+  expect(content(invitation.id).address).toBe("123 Nguyễn Huệ");
+  expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "draft" });
+  await expect(page.getByRole("heading", { name: "Thiệp đã xuất bản!", exact: true })).toHaveCount(0);
+});
+
+test("resuming publication opens the missing venue and publishes after completion", async ({ page, context }) => {
+  const { user, invitation } = seed();
+  getDb().prepare("UPDATE InvitationContent SET time = ?, venueName = ?, address = ? WHERE invitationId = ?")
+    .run("18:00", "Nhà hàng Hoa Mai", "", invitation.id);
+  await loginAsUser(context, user.id);
+  await page.goto(`/editor2/${invitation.id}?publish=1`);
+  await expect(page.getByRole("dialog", { name: "Địa điểm tổ chức", exact: true })).toBeVisible();
+  await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("123 Nguyễn Huệ");
+  await page.getByRole("button", { name: "Tiếp tục", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Thiệp đã xuất bản!", exact: true })).toBeVisible();
+  expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
 });
 
 test("publishing silently adds the wedding day when the names-only slug is taken", async ({ page, context }) => {

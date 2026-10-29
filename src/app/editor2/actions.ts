@@ -20,7 +20,8 @@ import { shortNameFromFullName } from "@/lib/short-name";
 import { isGoogleMapsUrl } from "@/lib/google-maps";
 import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
 import { zodiacTemplatePrimaryColor } from "@/lib/zodiac";
-import type { EditorState } from "@/app/editor/[id]/content-schema";
+import { contentSchema, type EditorState } from "@/app/editor/[id]/content-schema";
+import { editor2PublicationIssue } from "@/lib/editor2-publication";
 
 const creationSchema = z.object({
   brideFullName: z.string().trim().min(1).max(120),
@@ -113,6 +114,13 @@ export async function publishVisualInvitation(id: string, formData: FormData): P
   if ("loginUrl" in access) {
     const saved = await saveVisualInvitation(id, formData);
     return saved?.ok ? access : saved;
+  }
+  const parsed = contentSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { errorCode: "invalidData" };
+  const issue = editor2PublicationIssue(parsed.data);
+  if (issue) {
+    const saved = await saveVisualInvitation(id, formData);
+    return saved?.ok ? { errorCode: issue.errorCode, focusField: issue.focusField, persisted: true } : saved;
   }
   return publish(id, undefined, formData);
 }
