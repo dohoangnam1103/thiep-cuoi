@@ -1,0 +1,29 @@
+# Search defaults only: these files remain tracked and available by explicit path.
+# Keep .gitignore active. For a scoped historical search, use:
+#   rg --no-ignore-dot -n 'pattern' docs/research/specific-note.md
+# Do not use --no-ignore/-uuu at the repository root.
+
+# Git internals must stay hidden even with rg --hidden.
+/.git/
+/.codegraph/
+
+# Historical notes, crawl captures and screenshots are opt-in.
+/docs/research/
+/docs/superpowers/
+
+# Dependency resolution and vendored/minified bundles are opt-in.
+/pnpm-lock.yaml
+/public/proto/
+*.min.js
+*.map
+
+# Logs and database artifacts are not application source.
+*.log
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# Do not exclude packages/: some app imports execute that code directly.

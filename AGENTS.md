@@ -12,110 +12,67 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # Chungdoi — Wedding Invitation App
 
+Vietnamese digital wedding invitations: choose a template, edit couple/family/event details, publish a shareable page. Next.js 16 / React 19 / TypeScript strict, Tailwind v4, shadcn primitives, Lucide, Prisma 7 + SQLite (`better-sqlite3`), session auth (`jose`, `bcryptjs`).
+
+## Read less, follow the active code
+
+- Begin with `git status --short`. Preserve unrelated changes.
+- Use [docs/ai-context-map.md](docs/ai-context-map.md) only for the task's feature row. Do not read every linked file.
+- Find paths in the relevant directory (`rg --files src/components/editor2`), locate symbols (`rg -n`), then read a small surrounding range. Avoid whole-repo content searches and entire large files.
+- `.rgignore` excludes historical research/plans, Git internals, logs, minified bundles and the lockfile from default ripgrep searches. For relevant history, pass an explicit file or use `rg --no-ignore-dot` with a narrow path. Never use root-wide `--no-ignore` / `-uuu`. Other search tools must use the same exclusions explicitly.
+- Start with the app route in `src/` and follow imports. `packages/` contains overlapping code but is also used directly by the app. Do not delete it, read both copies by default, or assume matching filenames have the same runtime consumers.
+- Do not output environment files, databases, agent memory or deployment receipts. Keep verbose command output in temporary logs and show only relevant failures / a short tail.
+
 ## Wedding Invitation Agent Rules
 
-For any task that creates, clones, redesigns, or materially changes the UI, assets, sections, or presentation flow of a wedding invitation template, the agent MUST read [docs/wedding-invitation-agent-rules.md](docs/wedding-invitation-agent-rules.md) before planning, inspecting, or editing that task. Do not read this document for unrelated work. The rules in that document apply in addition to this file.
+For any task that creates, clones, redesigns, or materially changes the UI, assets, sections, or presentation flow of a wedding invitation template, read [docs/wedding-invitation-agent-rules.md](docs/wedding-invitation-agent-rules.md) **before planning, inspecting, or editing**. Do not read it for unrelated work. Its rules apply in addition to this file.
 
-## What This Is
-A web app for creating and sharing digital wedding invitations (thiệp cưới). Users pick a template, customize couple/family/event details in an editor, and publish a shareable invitation page. Supports multiple languages and multiple visual themes.
+Before cloning a template or correcting visual fidelity, also read [docs/template-clone-quality.md](docs/template-clone-quality.md) and apply its inspection, implementation and visual acceptance checklist:
 
-## Tech Stack
-- **Framework:** Next.js 16 (App Router, React 19, TypeScript strict)
-- **UI:** shadcn/ui (Radix primitives, Tailwind CSS v4, `cn()` utility)
-- **Styling:** Tailwind CSS v4 with oklch design tokens
-- **Icons:** Lucide React
-- **Database:** Prisma 7 + SQLite (better-sqlite3 adapter)
-- **Auth:** session-based (`jose` JWT, `bcryptjs` password hashing)
-- **i18n:** next-intl — Vietnamese only (`messages/vi.json`). en/ko/ja/zh were removed; `src/i18n/routing.ts` serves `vi` with no URL prefix and every other prefix 404s. Copy still goes through the catalog, so do not hardcode strings.
-- **Deployment:** production runs on the VPS `163.61.110.34` (see `docs/deploy-vps.md`). The old VPS `163.223.9.198` and the minipc deployment are retired.
+- Inspect the complete reference on desktop and mobile, including opening cover, calendar, guestbook, gift envelope and footer. Record each decoration's containing block; do not copy percentage offsets without checking parent dimensions.
+- Reuse shared behavior, but match each template's artwork and styles explicitly. Do not fall back silently to generic gift artwork or forms.
+- Compare every section at matching viewport, zoom, scroll and interaction state. Record evidence and unverified differences in a per-template research note. Lint/typecheck do not establish visual fidelity; incomplete visual checks must not be marked passed.
 
-## Commands
-Dependencies are installed with pnpm (`pnpm install`); `pnpm-lock.yaml` and `pnpm-workspace.yaml` are the source of truth. `pnpm run` and `npm run` both work once `node_modules` exists.
-- `npm run dev` — Start dev server
-- `npm run build` — Production build. **Fails locally on purpose**: `next build` forces `NODE_ENV=production` and `src/lib/site-url.ts` rejects the `http://localhost` value in `.env.local`. CI and Docker pass a real HTTPS `NEXT_PUBLIC_SITE_URL`, so this script stays untouched.
-- `npm run build:local` — Same build with `ALLOW_INSECURE_SITE_URL=1`. Use this one locally; the failure above is not a bug to fix.
-- `npm run lint` — ESLint check (fastest gate, run this first)
-- `npm run typecheck` — TypeScript check for `src/`
-- `npm run typecheck:tests` — TypeScript check for `tests/`
-- `npm run test:unit` — Unit tests (`src/**/*.test.ts` via tsx)
-- `npm run check` — lint + typecheck + typecheck:tests + test:unit + build:local. Slow; use only as the final gate.
-- `npm run test:e2e` — Playwright E2E. Target one spec (`npx playwright test tests/e2e/<file>`) instead of the whole suite.
-- `npm run prisma:migrate` — Run Prisma migrations (dev)
-- `npm run prisma:generate` — Regenerate Prisma client
-- `npm run test:lightbox` — Playwright check for the demo lightbox
-- `npm run deploy` — Deploy to VPS (`scripts/deploy-vps.sh`, existing prebuilt pipeline in `scripts/deploy-fast.sh`). `deploy:smoke` runs smoke checks; `deploy:setup` checks VPS provisioning/timers. Requires at least 6 GiB free before build. `deploy:legacy` is retired-host guarded. Details in `docs/deploy-vps.md`.
+## Commands and verification
 
-## Code Style
-- TypeScript strict mode, no `any`
-- Named exports, PascalCase components, camelCase utils
-- Tailwind utility classes, no inline styles
-- 2-space indentation
-- Responsive: mobile-first
-- All user-facing copy goes through next-intl message catalogs (`messages/*.json`), never hardcoded
+Use pnpm for dependencies; `pnpm-lock.yaml` and `pnpm-workspace.yaml` are authoritative. `npm run` works with installed dependencies.
 
-## Project Structure
-```
-src/
-  app/
-    (auth)/         # login, signup, auth actions
-    [locale]/       # public localized pages (home, pricing, blog, help, templates, policies, tools)
-    api/            # route handlers
-    dashboard/      # authenticated user dashboard
-    editor/[id]/    # invitation editor
-    thiep/          # published invitation pages
-  components/       # React components (chungdoi-*.tsx) + ui/ (shadcn primitives)
-  data/             # invitation content, demo content, theme config
-  generated/prisma/ # generated Prisma client (do not edit)
-  hooks/            # custom React hooks
-  i18n/             # next-intl config
-  lib/              # dal.ts, prisma.ts, session.ts, utils.ts
-  types/            # TypeScript interfaces
-prisma/
-  schema.prisma     # DB schema
-  migrations/       # DB migrations
-messages/           # i18n catalogs: vi, en, ko, ja, zh
-public/chungdoi/    # fonts, images, music, uploads, icons
-docs/               # deploy guides + research notes
-```
+- `npm run dev`: development server.
+- `npm run lint`: first application-code gate; then `npm run typecheck` (`src/`).
+- `npm run typecheck:tests`: test types. `npm run test:unit`: `src/**/*.test.ts` via tsx.
+- `npx playwright test tests/e2e/<file>`: target relevant E2E specs instead of the whole suite. `npm run test:lightbox`: demo lightbox checks.
+- `npm run build:local`: local production build with `ALLOW_INSECURE_SITE_URL=1`. Plain `npm run build` deliberately rejects the localhost URL in `.env.local`; CI/Docker pass real HTTPS `NEXT_PUBLIC_SITE_URL`. Do not change this safeguard.
+- `npm run check`: lint + both typechecks + unit tests + local build; use only as a final gate when appropriate. Do not build for documentation/search-filter-only edits.
+- `npm run prisma:migrate` / `npm run prisma:generate`: dev migrations / generated client.
+- `npm run deploy`: current VPS pipeline (`scripts/deploy-vps.sh`, `scripts/deploy-fast.sh`). Read [docs/deploy-vps.md](docs/deploy-vps.md) first; requires at least 6 GiB free before build. `deploy:smoke` checks production; `deploy:setup` checks provisioning/timers. `deploy:legacy` is guarded and retired.
 
-## Notes
-- `dev.db` and `prisma/*.db` are gitignored — the SQLite database is local only.
-- Files in `src/data/` marked `// Auto-generated` were seeded from research crawls; edit them directly. The crawl scripts they name (e.g. `scripts/crawl-chungdoi-demo-content.mjs`) no longer exist — do not go looking for them.
-- Some Prisma writes are wrapped in a data-access layer (`src/lib/dal.ts`) — prefer it over calling the client directly from components.
-- `public/chungdoi/images/template-previews/en/` is **not** a locale folder. It is a legacy directory name inherited from the cloned source and is the only preview directory; leave the path alone.
+Production is VPS `163.61.110.34`; `163.223.9.198` and the minipc deployment are retired. Historical deployment documents are not current instructions.
 
-## Cloning Invitation Templates — Required
-- Before cloning a template or correcting its visual fidelity, read [docs/template-clone-quality.md](docs/template-clone-quality.md). Apply its inspection, implementation, and visual acceptance checklist.
-- Inspect the complete reference on desktop and mobile, including opening cover, calendar, guestbook, gift envelope, and footer. Record each decoration's actual containing block; never copy percentage offsets without checking the parent dimensions.
-- Reuse shared behavior, but explicitly match each template's artwork and styles. Do not silently fall back to generic gift artwork or form styling.
-- Compare every section against the reference at matching viewport, zoom, scroll position, and interaction state before claiming completion. Lint/typecheck passing is not evidence of visual fidelity. Record evidence and any unverified differences in a per-template research note; do not mark incomplete visual checks as passed.
+## Code and structure
 
-## Reference Docs — Read On Demand Only
-Do NOT read these unless the current task actually needs them. They are large and cost a lot of context.
-- `docs/research/INSPECTION_GUIDE.md` (36KB) — checklist for reverse-engineering a target website. Only for crawl/clone-a-template tasks.
-- `docs/research/DISTINCTIVE_TEMPLATE_ROADMAP.md` (50KB) — template roadmap.
-- `docs/research/asset-provenance.md` (57KB) — where each public asset came from.
-- `docs/deploy-vps.md` — current production deployment. Read before touching deploy scripts. `docs/deploy-minipc.md` is historical only.
-- `docs/superpowers/plans/*.md` — historical plan docs, some 80-175KB. Skim by heading, never read whole.
+- Named exports, PascalCase components, camelCase utilities, strict TypeScript without `any`, two-space indentation.
+- Mobile-first Tailwind utility classes with oklch tokens and `cn()`; no inline styles.
+- All user-visible copy uses next-intl `messages/vi.json`. Vietnamese only: `src/i18n/routing.ts` serves `vi` without a URL prefix; other locale prefixes 404. Do not restore removed en/ko/ja/zh catalogs.
+- Routes live in `src/app/`: `(auth)/`, `[locale]/`, `dashboard/`, `admin/`, `editor/[id]/`, `editor2/`, `thiep/`, `api/`. Shared UI is in `src/components/`; data/theme configs in `src/data/`; utilities/DAL/session in `src/lib/`; hooks/types in their own directories.
+- Prefer existing data access in `src/lib/dal.ts` over direct Prisma writes from components. Schema/migrations are in `prisma/`; never edit or read generated `src/generated/prisma/` client files. Import their types instead.
+- `src/data/` files marked auto-generated were seeded from research crawls and may be edited directly. The old crawl scripts named there no longer exist; do not search for them.
+- SQLite files and uploads are local/operational data, not source. `public/chungdoi/images/template-previews/en/` is a legacy asset directory, not a locale; preserve its path.
+- `CLAUDE.md` / `GEMINI.md` reference this file; keep a single instruction source.
 
-## Context Efficiency Rules
-These matter: the repo has several files big enough to blow a context window in one read.
+## Large files and opt-in material
 
-**Never read whole; jump to the section you need:**
+Do not read these whole. Use symbol/key searches instead of fixed line numbers, which drift:
 
-| File | Size | How to navigate |
-|---|---|---|
-| `src/app/editor/[id]/EditorForm.tsx` | 3488 lines | Field components ~370-1740, `EditorFormBody` 1737-2765, `DemoEditorFormBody` 2766-3420, `EditorForm` export 3421+. Grep the field label first. |
-| `src/data/chungdoi-demo-content.ts` | 4422 lines | Type `ChungDoiDemoContent` at top (~lines 1-300); rest is data. Read the type only. |
-| `messages/vi.json` | 131KB | Grep the message key, then read that namespace's line range. Top keys: `home`, `weddingGuide`, `templateSeoFacets`, `listing`, `guestManager`, `templateStudio`, `editor`. |
-| `src/components/chungdoi-demo.tsx` | 1986 lines | Grep the section name. |
-| `src/data/chungdoi-theme-config.ts` | 1776 lines | Keyed by template id — grep the id. |
-| `tests/e2e/forest-wedding-journey-lab.spec.ts` | 3288 lines | Grep the test name. |
+| File | Locate first |
+|---|---|
+| `src/app/editor/[id]/EditorForm.tsx` | Field label, `EditorFormBody`, `DemoEditorFormBody` |
+| `src/components/editor2/workspace.tsx` | Save/publish handler or panel name |
+| `src/data/chungdoi-demo-content.ts` | `ChungDoiDemoContent` type or template ID |
+| `src/data/chungdoi-theme-config.ts` | Template ID |
+| `src/components/chungdoi-demo.tsx` | Section/component name |
+| `messages/vi.json` | Requested namespace/key; extract that subtree only |
+| `tests/e2e/editor2.spec.ts`, `tests/e2e/forest-wedding-journey-lab.spec.ts` | Matching test title |
 
-**Never read or search these (generated, duplicated, or disposable):**
-- `src/generated/prisma/**` — generated client, some files 100-176KB. Import types from it, never open it.
-- `.deploy-worktree/` — full duplicate of the source tree. Any hit here is a false positive.
-- `.next/`, `tmp/`, `temp/`, `.playwright-mcp/`, `.capture/`, `tests/e2e/.report/`, `.claude-flow/logs/`
-- `docs/research/original-dom/`, `docs/research/templates/` — raw crawl dumps.
+Read research notes only when the feature needs them. `docs/research/INSPECTION_GUIDE.md` is for crawl/clone work; `DISTINCTIVE_TEMPLATE_ROADMAP.md` for roadmap work; `asset-provenance.md` for asset origins. `docs/superpowers/` contains historical plans/specs, not current requirements.
 
-**Verification order — cheapest first.** Run `npm run lint` and `npm run typecheck` before reaching for `npm run check`; a full build of 48 pages × 5 locales produces a long log. When a command output is long, pipe it (`2>&1 | tail -40`).
+Do not search/read generated or disposable trees: `.git/`, `node_modules/` (except the specific Next guide above), `.next*/`, `.deploy-worktree/`, `.worktrees/`, `.codegraph/`, `tmp/`, `temp/`, `.playwright-mcp/`, `.capture/`, test artifacts/reports, `.claude-flow/`, `docs/research/original-dom/`, `docs/research/templates/`. Do not delete active worktrees or real user data as a context optimization.
