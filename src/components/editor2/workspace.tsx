@@ -8,6 +8,8 @@ import { Dialog } from "@base-ui/react/dialog";
 import { ArrowLeft, ChevronRight, Eye, LayoutTemplate, List, Monitor, Pencil, Plus, Redo2, Save, Smartphone, Undo2, X } from "lucide-react";
 import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { AdaptiveToaster } from "@/components/adaptive-toaster";
 import { saveVisualInvitation, requestVisualPublication, publishVisualInvitation } from "@/app/editor2/actions";
 import { PublishSuccessDialog } from "@/app/editor/[id]/PublishSuccessDialog";
 import { TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
@@ -42,6 +44,8 @@ function historyReducer(state: History, action: HistoryAction): History {
   const present = action.update(state.present);
   return JSON.stringify(present) === JSON.stringify(state.present) ? state : { past: [...state.past.slice(-79), state.present], present, future: [] };
 }
+
+type SaveResult = { ok: true } | { ok: false; errorCode: EditorErrorCode | "networkError" };
 
 type Panel = Editor2Section | "content" | "add" | "basics" | "templates" | null;
 const COMPACT_SCREEN_QUERY = "(max-width: 767px), (pointer: coarse)";
@@ -96,7 +100,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const basicsBaseline = useRef(editor2Basics(initial.fields));
   const latest = useRef(draft);
   const editingRef = useRef(editing);
-  const queue = useRef<Promise<boolean>>(Promise.resolve(true));
+  const queue = useRef<Promise<SaveResult>>(Promise.resolve({ ok: true }));
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const locked = useRef(false);
   const mounted = useRef(true);
@@ -116,17 +120,17 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
 
   const persist = useCallback((value: Editor2Draft) => {
     const serialized = JSON.stringify(value);
-    queue.current = queue.current.catch(() => false).then(async () => {
+    queue.current = queue.current.catch((): SaveResult => ({ ok: false, errorCode: "networkError" })).then(async (): Promise<SaveResult> => {
       if (baseline.current === serialized) {
         if (mounted.current && JSON.stringify(latest.current) === serialized) { setSaveState("saved"); setError(null); }
-        return true;
+        return { ok: true };
       }
       if (mounted.current) setSaveState("saving");
       try {
         const result = await saveVisualInvitation(id, editor2FormData(value));
         if (!result?.ok) {
           if (mounted.current) { setSaveState("saveError"); setError(result?.errorCode ?? "networkError"); }
-          return false;
+          return { ok: false, errorCode: result?.errorCode ?? "networkError" };
         }
         baseline.current = serialized;
         acknowledgeEditor2Defaults(id);
@@ -140,10 +144,10 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
           setSaveState(JSON.stringify(latest.current) === serialized ? "saved" : "unsaved");
           setError(null);
         }
-        return true;
+        return { ok: true };
       } catch {
         if (mounted.current) { setSaveState("saveError"); setError("networkError"); }
-        return false;
+        return { ok: false, errorCode: "networkError" };
       }
     });
     return queue.current;
@@ -155,14 +159,25 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     setPanel(section);
   }, [setPanel]);
 
+  const showSaveFailure = useCallback((errorCode: EditorErrorCode | "networkError") => {
+    toast.error(t("saveFailed"), {
+      id: `editor2-save-${id}`,
+      description: errorCode === "networkError" ? t(errorCode) : errorT(errorCode),
+    });
+  }, [id, t, errorT]);
+
   useEffect(() => {
     if (snapshot === baseline.current) acknowledgeEditor2Defaults(id);
     // A return to the saved draft still needs acknowledgement after any older
     // queued save; otherwise its status (or persisted template) can stay stale.
     if (publishing || uploading) return;
-    timer.current = setTimeout(() => { void persist(draft); }, 1800);
+    timer.current = setTimeout(() => {
+      void persist(draft).then(result => {
+        if (!result.ok && mounted.current) showSaveFailure(result.errorCode);
+      });
+    }, 1800);
     return () => { if (timer.current) clearTimeout(timer.current); };
-  }, [id, snapshot, draft, persist, publishing, uploading]);
+  }, [id, snapshot, draft, persist, publishing, uploading, showSaveFailure]);
 
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => {
@@ -202,10 +217,16 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     if (locked.current || (value === "photos" && !templateSupportsHeroImage(latest.current.fields.templateId))) return;
     focusField.current = undefined; setPanel(value);
   };
-  const saveNow = async () => {
+  const saveNow = async (notify = false) => {
     if (timer.current) clearTimeout(timer.current);
     if (JSON.stringify(latest.current) !== baseline.current) setSaveState("saving");
-    return persist(latest.current);
+    if (notify) toast.loading(t("saving"), { id: `editor2-save-${id}` });
+    const result = await persist(latest.current);
+    if (mounted.current) {
+      if (!result.ok) showSaveFailure(result.errorCode);
+      else if (notify) toast.success(t("saveSuccess"), { id: `editor2-save-${id}` });
+    }
+    return result.ok;
   };
   const hideSection = () => {
     if (!panel || locked.current) return;
@@ -293,6 +314,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const panelTitle = activeSection ? t(`sections.${activeSection}`) : renderedPanel === "basics" ? t("startTitle") : renderedPanel === "add" ? t("add") : renderedPanel === "templates" ? t("chooseTemplate") : t("content");
 
   return <main className="e2-shell">
+    <AdaptiveToaster />
     <header className="e2-header">
       <div className="e2-heading"><Link href={TEMPLATE_LIST_PATH} className="e2-back" onClick={async event => {
         event.preventDefault(); if (!busy && await saveNow()) router.push(TEMPLATE_LIST_PATH);
@@ -306,7 +328,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
           <span className="e2-save-state" role="status" aria-live="polite">{t(saveState)}</span>
           {publishedSlug ? <button type="button" className="e2-button" onClick={() => setPublishSuccessOpen(true)}>{t("sharePublished")}</button> : null}
           {isPublished
-          ? <button type="button" className="e2-button e2-primary" disabled={busy || saveState === "saving"} onClick={() => void saveNow()}><Save size={16} />{t("save")}</button>
+          ? <button type="button" className="e2-button e2-primary" disabled={busy || saveState === "saving"} onClick={() => void saveNow(true)}><Save size={16} />{t(saveState === "saving" ? "saving" : "save")}</button>
           : <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void beginPublication()}>{t(publishing ? "publishing" : "publish")}</button>}
         </div>
       </div>

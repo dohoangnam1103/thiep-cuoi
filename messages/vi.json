@@ -13,6 +13,8 @@
     "guestDraftNotice": "Bạn có thể chỉnh sửa ngay. Chỉ cần đăng nhập khi xuất bản để giữ thiệp trong tài khoản.",
     "beginEditing": "Bắt đầu chỉnh sửa trên thiệp",
     "save": "Lưu",
+    "saveSuccess": "Đã lưu thiệp thành công.",
+    "saveFailed": "Không lưu được thiệp. Vui lòng thử lại.",
     "dashboard": "Danh sách thiệp",
     "startTitle": "Thiệp của hai bạn, bắt đầu từ 3 điều.",
     "dateDialogTitle": "Chọn ngày",
