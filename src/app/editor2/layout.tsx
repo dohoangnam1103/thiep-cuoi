@@ -5,6 +5,7 @@ import { editorMessageNamespaces, selectMessages } from "@/i18n/message-scopes";
 import { appFontVariables } from "@/lib/fonts";
 import viMessages from "../../../messages/vi.json";
 import "../globals.css";
+import "@daypicker/react/style.css";
 import "./editor2.css";
 
 export const metadata: Metadata = { title: viMessages.editor2.title, robots: { index: false, follow: false } };

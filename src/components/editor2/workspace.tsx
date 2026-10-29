@@ -10,6 +10,7 @@ import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useReducer, 
 import { useTranslations } from "next-intl";
 import { saveVisualInvitation, requestVisualPublication, publishVisualInvitation } from "@/app/editor2/actions";
 import { ShareInvitationDialog } from "@/app/editor/[id]/ShareInvitationDialog";
+import { PublishSuccessDialog } from "@/app/editor/[id]/PublishSuccessDialog";
 import { TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 import type { EditorErrorCode } from "@/app/editor/[id]/content-schema";
 import { EDITOR2_FIELD_GROUPS, EDITOR2_SECTIONS, editor2FormData, editor2MissingSections, isEditor2Section, withEditor2FullName, type Editor2Draft, type Editor2Samples, type Editor2Section } from "@/lib/editor2-draft";
@@ -17,6 +18,7 @@ import { cacheEditor2Basics, editor2Basics, restoreEditor2DraftBasics, writeEdit
 import { acknowledgeEditor2Defaults, editor2DefaultFields, initializeEditor2Defaults } from "@/lib/editor2-defaults";
 import { titleCaseVietnameseName } from "@/lib/text-case";
 import { Editor2ClientReady } from "./client-ready";
+import { Editor2DateField } from "./date-field";
 import { Editor2SectionFields } from "./section-fields";
 import { completedTemplates } from "@/data/chungdoi";
 import type { ChungDoiDemoContent } from "@/data/chungdoi-demo-content";
@@ -78,6 +80,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const [uploading, setUploading] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState(currentSlug);
   const [shareOpen, setShareOpen] = useState(false);
+  const [publishSuccessOpen, setPublishSuccessOpen] = useState(false);
   const focusField = useRef<string | undefined>(undefined);
   const dialogBody = useRef<HTMLDivElement>(null);
   const baseline = useRef(JSON.stringify(initial));
@@ -201,7 +204,10 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     const result = await publishVisualInvitation(id, form);
     if (result && "loginUrl" in result) { router.push(result.loginUrl); return; }
     if (result?.errorCode) { setError(result.errorCode); return; }
-    if (result?.publishedSlug) setPublishedSlug(result.publishedSlug);
+    if (result?.publishedSlug) {
+      setPublishedSlug(result.publishedSlug);
+      setPublishSuccessOpen(true);
+    }
   };
   const beginPublication = async () => {
     if (locked.current) return;
@@ -294,9 +300,9 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
                   <input name={name} value={draft.fields[name]} required maxLength={120} onChange={event => change(previous => ({ ...previous, fields: withEditor2FullName(previous.fields, name, event.target.value) }))} />
                 </label>)}
               </div>
-              <label className="e2-field"><span>{t("fields.date")}</span>
-                <input name="date" type="date" value={draft.fields.date} required onChange={event => change(previous => ({ ...previous, fields: { ...previous.fields, date: event.target.value } }))} />
-              </label>
+              <Editor2DateField name="date" label={t("fields.date")} value={draft.fields.date} required onChange={date => {
+                  change(previous => ({ ...previous, fields: { ...previous.fields, date }, ceremonies: /^\d{4}-\d{2}-\d{2}$/.test(date) ? previous.ceremonies.map(item => item.date ? item : { ...item, date }) : previous.ceremonies }));
+                }} />
               <button className="e2-button e2-primary">{t("beginEditing")}</button>
             </form>}
             {activeSection && <fieldset disabled={busy}><Editor2SectionFields invitationId={id} section={activeSection} draft={draft} onChange={change} labels={labels} samples={samples[draft.fields.templateId]} onUploading={setUploadState} /></fieldset>}
@@ -326,5 +332,6 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
       </Dialog.Viewport></Dialog.Portal>
     </Dialog.Root>
     {shareOpen && publishedSlug ? <ShareInvitationDialog slug={publishedSlug} templateId={draft.fields.templateId} onClose={() => setShareOpen(false)} /> : null}
+    {publishSuccessOpen && publishedSlug ? <PublishSuccessDialog invitationId={id} activated={hideBranding} slug={publishedSlug} onClose={() => setPublishSuccessOpen(false)} /> : null}
   </main>;
 }

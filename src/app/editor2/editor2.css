@@ -20,6 +20,17 @@
 .e2-bank-select svg { position: absolute; top: 50%; right: .8rem; transform: translateY(-50%); pointer-events: none; }
 .e2-field input:focus, .e2-field textarea:focus, .e2-field select:focus, .e2-select:focus { border-color: #a93232; box-shadow: inset 0 0 0 1px #a93232; }
 .e2-field input[aria-invalid=true] { border-color: #b42828; }
+.e2-date-control { display: flex; min-width: 0; gap: .4rem; }
+.e2-date-control input { flex: 1; }
+.e2-date-trigger { flex: 0 0 2.9rem; width: 2.9rem; padding: 0; }
+.e2-date-backdrop { position: fixed; inset: 0; z-index: 160; background: #32241b80; }
+.e2-date-viewport { position: fixed; inset: 0; z-index: 161; display: flex; align-items: center; justify-content: center; padding: .75rem; }
+.e2-date-popup { width: min(100%, 360px); max-height: calc(100dvh - 1.5rem); overflow-y: auto; padding: 1rem; border: 1px solid #e2d9ce; border-radius: 1rem; background: #fffdfa; box-shadow: 0 20px 80px #30201430; }
+.e2-date-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: 1rem; font-weight: 650; }
+.e2-date-popup .rdp-root { --rdp-accent-color: #a93232; --rdp-accent-background-color: #fbefec; --rdp-day-width: 2.5rem; --rdp-day-height: 2.5rem; --rdp-day_button-width: 2.4rem; --rdp-day_button-height: 2.4rem; margin: .75rem auto 0; width: fit-content; max-width: 100%; }
+.e2-date-popup .rdp-dropdowns { gap: .6rem; }
+.e2-date-popup .rdp-dropdown_root { border-radius: .4rem; padding: .35rem .45rem; background: #f5efe8; }
+.e2-date-popup .rdp-day_button:focus-visible { outline: 2px solid #a93232; outline-offset: 1px; }
 .e2-footnote { margin-top: 1rem; font-size: .78rem; color: var(--e2-muted); line-height: 1.7; }
 .e2-start-art { position: relative; width: 100%; max-width: 370px; justify-self: end; padding: 1.1rem; background: #e7e0d6; border-radius: .75rem; }
 .e2-start-art img { width: 100%; height: 500px; object-fit: cover; object-position: top; border-radius: .3rem; box-shadow: 0 18px 36px #5c46351a; }
@@ -45,12 +56,13 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
 .e2-alert { max-width: 1088px; margin: .7rem auto; padding: .7rem 1rem; border-radius: .5rem; background: #fce9e4; }
 .e2-dialog-backdrop { position: fixed; inset: 0; z-index: 50; background: #32241b45; }
 .e2-dialog-viewport { position: fixed; inset: 0; z-index: 51; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.e2-dialog { display: flex; flex-direction: column; width: min(100%, 440px); max-height: calc(100dvh - 2rem); background: #fffdfa; border: 1px solid #e2d9ce; border-radius: 1rem; box-shadow: 0 20px 80px #30201430; }
+.e2-dialog { display: flex; flex-direction: column; width: min(100%, 440px); min-width: 0; max-width: 100%; max-height: calc(100dvh - 2rem); background: #fffdfa; border: 1px solid #e2d9ce; border-radius: 1rem; box-shadow: 0 20px 80px #30201430; }
 .e2-dialog-head { display: flex; align-items: start; justify-content: space-between; gap: .75rem; padding: 1.4rem 1.4rem 1rem; border-bottom: 1px solid #e9e2d9; }
 .e2-dialog-title { font-size: 1.2rem; font-weight: 650; }
 .e2-description { color: var(--e2-muted); font-size: .8rem; line-height: 1.65; margin-top: .4rem; }
-.e2-dialog-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 1.4rem; }
-.e2-dialog-fields { display: grid; gap: 1.15rem; }
+.e2-dialog-body { flex: 1; min-width: 0; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 1.4rem; }
+.e2-dialog-body fieldset { min-width: 0; }
+.e2-dialog-fields { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 1.15rem; }
 .e2-map-preview, .e2-map-override { min-width: 0; overflow: hidden; border: 1px solid #ded8d1; border-radius: .65rem; }
 .e2-map-preview-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; padding: .85rem; font-size: .82rem; }
 .e2-map-preview-head strong, .e2-map-toggle strong { font-size: .85rem; font-weight: 600; }
@@ -137,7 +149,7 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
 .e2-schedule-row .e2-icon-button { width: 2.75rem; height: 2.75rem; min-height: 2.75rem; padding: 0; border-color: transparent; background: transparent; }
 .e2-schedule-row .e2-icon-button:hover { border-color: #e6ceca; background: #a9323209; }
 .e2-schedule-add { margin-top: .25rem; border-style: dashed; color: var(--e2-muted); }
-.e2-two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.e2-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
 .e2-upload { position: relative; display: grid; place-items: center; gap: .6rem; min-height: 110px; border: 1px dashed #b7a492; border-radius: .7rem; background: #f6f1e9; text-align: center; padding: 1rem; font-size: .85rem; }
 .e2-upload input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer; }
 .e2-upload:focus-within { outline: 2px solid #a93232; outline-offset: 2px; }

@@ -141,6 +141,14 @@ export function PublishSuccessDialog({
                   {t("qr")}
                 </button>
               </div>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <a href={`https://sp.zalo.me/plugins/share?url=${encodeURIComponent(publicUrl)}`} target="_blank" rel="noopener noreferrer"
+                  onClick={() => trackEvent("share_invitation", { method: "zalo", source: "publish_success" })}
+                  className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card px-3 text-sm font-semibold transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">{t("shareZalo")}</a>
+                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(publicUrl)}`} target="_blank" rel="noopener noreferrer"
+                  onClick={() => trackEvent("share_invitation", { method: "facebook", source: "publish_success" })}
+                  className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-border bg-card px-3 text-sm font-semibold transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">{t("shareFacebook")}</a>
+              </div>
 
               {showQr ? (
                 <div className="mt-4 rounded-2xl border border-border bg-card p-4 text-center">

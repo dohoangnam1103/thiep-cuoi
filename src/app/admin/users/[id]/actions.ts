@@ -14,7 +14,7 @@ import { DEFAULT_INVITATION_MUSIC, DEFAULT_INVITATION_MUSIC_ARTIST, DEFAULT_INVI
 import { cancelPayosPayment } from "@/lib/payment-service";
 import { prisma } from "@/lib/prisma";
 import { parseAdminTemplateId, SYSTEM_EMAIL } from "@/lib/admin-support-input";
-import { editor2StarterSchedule } from "@/lib/editor2-starter";
+import { editor2StarterCeremony, editor2StarterSchedule } from "@/lib/editor2-starter";
 
 export type CreateInvitationState =
   | { ok: false; errorCode: "invalidTemplate" | "userNotFound" }
@@ -82,6 +82,8 @@ export async function createInvitationForUser(
 
       const fontFamily = await getDemoFontFamily(db, templateId);
       const t = await getTranslations("editor2");
+      const sample = await getTranslations("editor2.samples");
+      const ceremony = editor2StarterCeremony(templateId, "", sample("time"), t("newCeremony"));
       // Match every other creation path: the timeline starts with editable samples.
       const schedule = editor2StarterSchedule(templateId, [
         { time: "17:30", label: t("starterSchedule.welcome") },
@@ -96,10 +98,14 @@ export async function createInvitationForUser(
           status: "draft",
           content: { create: {
             fontFamily,
+            ceremonyHeader: ceremony.title,
+            ceremonyDate: ceremony.date,
+            ceremonyTime: ceremony.time,
             music: DEFAULT_INVITATION_MUSIC,
             musicTitle: DEFAULT_INVITATION_MUSIC_TITLE,
             musicArtist: DEFAULT_INVITATION_MUSIC_ARTIST,
           } },
+          ceremonies: { create: { ...ceremony, sortOrder: 0 } },
           schedule: { create: schedule.map((item, sortOrder) => ({ ...item, sortOrder })) },
         },
         select: { id: true },

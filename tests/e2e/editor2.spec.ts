@@ -26,6 +26,32 @@ function seed(templateId = "song-hy-red") {
 function content(id: string) {
   return getDb().prepare("SELECT * FROM InvitationContent WHERE invitationId = ?").get(id) as Record<string, string>;
 }
+test("custom calendar selects and saves dates in nested mobile dialogs", async ({ page, context }) => {
+  const { user, invitation } = seed();
+  await loginAsUser(context, user.id);
+  await page.setViewportSize({ width: 320, height: 780 });
+  await page.goto(`/editor2/${invitation.id}`);
+  await section(page, "Thời gian tiệc cưới");
+  await page.getByRole("button", { name: "Chọn Ngày cưới" }).click();
+  const picker = page.getByRole("dialog", { name: "Chọn ngày" });
+  await expect(picker).toBeVisible();
+  await expect(picker.locator(".rdp-root")).toBeVisible();
+  const rect = await picker.boundingBox();
+  expect(rect!.x).toBeGreaterThanOrEqual(0);
+  expect(rect!.x + rect!.width).toBeLessThanOrEqual(320);
+  await picker.locator(".rdp-day:not(.rdp-outside) .rdp-day_button").filter({ hasText: /^15$/ }).click();
+  await expect(picker).toHaveCount(0);
+  await expect(page.getByLabel("Ngày cưới", { exact: true })).toHaveValue("2026-11-15");
+  await close(page);
+  await expect.poll(() => content(invitation.id).date).toBe("2026-11-15");
+  await section(page, "Lễ cưới");
+  await page.getByRole("button", { name: "Thêm một lễ" }).click();
+  await page.getByRole("button", { name: "Chọn Ngày tổ chức" }).click();
+  await expect(picker).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(picker).toHaveCount(0);
+  await expect(page.getByRole("dialog")).toHaveCount(1);
+});
 function seedGallery(id: string, template: string) {
   const photos = chungdoiDemoContent[template].gallery.slice(0, 6);
   const insert = getDb().prepare("INSERT INTO GalleryPhoto (id, invitationId, url, sortOrder) VALUES (?, ?, ?, ?)");
@@ -388,11 +414,15 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill("Trung tâm tiệc cưới, 123 Nguyễn Huệ, TP. Hồ Chí Minh");
   await close(page);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "Thiệp đã xuất bản!", exact: true })).toBeVisible();
   expect(getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
+  await expect(page.getByRole("dialog").getByRole("link", { name: /quynh-anh-gia-khanh/ })).toHaveAttribute("href", "/thiep/quynh-anh-gia-khanh");
+  await expect(page.getByRole("link", { name: "Thanh toán", exact: true })).toHaveAttribute("href", `/dashboard/${invitation.id}/thanh-toan`);
+  await expect(page.getByRole("link", { name: "Chia sẻ Facebook" })).toHaveAttribute("href", /facebook\.com\/sharer/);
+  await expect(page.getByRole("link", { name: "Chia sẻ Zalo" })).toHaveAttribute("href", /sp\.zalo\.me/);
+  await page.getByRole("dialog").getByRole("button", { name: "Đóng" }).click();
   await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
   await expect(page.getByRole("dialog").getByRole("heading", { name: "Chia sẻ thiệp", exact: true })).toBeVisible();
-  await expect(page.getByRole("textbox", { name: "Đường dẫn thiệp", exact: true })).toHaveValue(/\/thiep\/quynh-anh-gia-khanh$/);
 });
 
 test("publishing silently adds the wedding day when the names-only slug is taken", async ({ page, context }) => {
@@ -404,10 +434,10 @@ test("publishing silently adds the wedding day when the names-only slug is taken
   await loginAsUser(context, user.id);
   await page.goto(`/editor2/${first.id}`);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("link", { name: /quynh-anh-gia-khanh/ })).toHaveAttribute("href", "/thiep/quynh-anh-gia-khanh");
   await page.goto(`/editor2/${second.id}`);
   await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("link", { name: /quynh-anh-gia-khanh-29112026/ })).toHaveAttribute("href", "/thiep/quynh-anh-gia-khanh-29112026");
   const rows = getDb().prepare("SELECT id, slug FROM Invitation WHERE id IN (?, ?)").all(first.id, second.id) as { id: string; slug: string }[];
   expect(rows.find(row => row.id === first.id)?.slug).toBe("quynh-anh-gia-khanh");
   expect(rows.find(row => row.id === second.id)?.slug).toBe("quynh-anh-gia-khanh-29112026");
@@ -440,6 +470,27 @@ for (const width of [768, 390, 320]) {
     await expect(frame.locator('[data-template-renderer="song-hy-green"]')).toBeVisible();
   });
 }
+
+test("mobile editor dialogs keep their fields within the visible scroll area", async ({ page, context }) => {
+  const { user, invitation } = seed();
+  await loginAsUser(context, user.id);
+  await page.setViewportSize({ width: 320, height: 780 });
+  await page.goto(`/editor2/${invitation.id}`);
+  for (const name of ["Tên hai bạn & lời mời", "Thông tin hai gia đình", "Thời gian tiệc cưới", "Địa điểm tổ chức", "Lễ cưới", "Album ảnh cưới", "Nhạc nền", "Lịch trình", "Hộp quà mừng", "Mẫu & giao diện"]) {
+    await section(page, name);
+    const body = page.locator(".e2-dialog-body");
+    const overflow = await body.evaluate(element => {
+      const box = element.getBoundingClientRect();
+      return [...element.querySelectorAll("input:not([type=hidden]):not([type=file]), textarea, select")]
+        .filter(field => field.getBoundingClientRect().width > 0)
+        .map(field => ({ name: field.getAttribute("name"), left: field.getBoundingClientRect().left - box.left, right: field.getBoundingClientRect().right - box.right }))
+        .filter(field => field.left < -1 || field.right > 1);
+    });
+    expect(overflow, name).toEqual([]);
+    expect(await body.evaluate(element => element.scrollWidth <= element.clientWidth + 1), name).toBe(true);
+    await close(page);
+  }
+});
 
 
 async function createGuestDraft(page: Page, template?: string) {
@@ -514,7 +565,7 @@ for (const existingAccount of [false, true]) {
     expect(owner.userId).toBe(account?.id ?? guest.userId);
     expect(getDb().prepare("SELECT email FROM User WHERE id = ?").get(owner.userId)).toEqual({ email });
     if (account) expect(getDb().prepare("SELECT id FROM User WHERE id = ?").get(guest.userId)).toBeUndefined();
-    await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
+    await expect(page.getByRole("dialog").getByRole("heading", { name: "Thiệp đã xuất bản!" })).toBeVisible();
     await expect.poll(() => getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(guest.id)).toEqual({ status: "published" });
     expect(getDb().prepare("SELECT COUNT(*) AS n FROM GalleryPhoto WHERE invitationId = ?").get(guest.id)).toEqual({ n: 1 });
     expect(content(guest.id).brideFather).toBe("Nguyễn Văn Thành");
@@ -539,7 +590,7 @@ test("an already signed-in account follows a safe publication return URL", async
   await expect(page).toHaveURL(/\/dashboard$/);
   const next = `/editor2/${invitation.id}?publish=1`;
   await page.goto(`/login?reason=publish&next=${encodeURIComponent(next)}`);
-  await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "Thiệp đã xuất bản!" })).toBeVisible();
   await expect.poll(() => getDb().prepare("SELECT status FROM Invitation WHERE id = ?").get(invitation.id)).toEqual({ status: "published" });
 });
 

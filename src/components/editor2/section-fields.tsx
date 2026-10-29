@@ -13,6 +13,7 @@ import { VIETQR_BANKS } from "@/lib/vietqr";
 import { ZODIAC } from "@/lib/zodiac";
 import { AlbumLayoutPreview } from "@/components/album-layout-preview";
 import { Editor2MusicFields } from "./music-fields";
+import { Editor2DateField } from "./date-field";
 import { Editor2VenueFields } from "./venue-fields";
 
 type Change = (update: (previous: Editor2Draft) => Editor2Draft) => void;
@@ -34,6 +35,7 @@ export function Editor2SectionFields({ invitationId, section, draft, onChange, l
     return { ...previous, fields };
   });
   const field = (name: Exclude<keyof Editor2Fields, "brideFirst" | "showHeroImage">) => {
+    if (name === "date") return <Editor2DateField key={name} name={name} label={t("fields.date")} value={draft.fields.date} onChange={value => setField(name, value)} />;
     if (name === "brideBirthOrder" || name === "groomBirthOrder") return <Editor2BirthOrderField key={name} name={name}
       value={draft.fields[name]} options={name === "brideBirthOrder" ? BRIDE_BIRTH_ORDER_OPTIONS : GROOM_BIRTH_ORDER_OPTIONS}
       onChange={value => setField(name, value)} />;
@@ -42,7 +44,7 @@ export function Editor2SectionFields({ invitationId, section, draft, onChange, l
       : /Address$|^address$|dressCodeColors/.test(name) ? 200 : /ShortName$|BirthOrder$|AccountNumber$|ParentTitle$/.test(name) ? 60 : 120;
     return <label key={name} className="e2-field"><span>{t(`fields.${name}`)}</span>
       {multiline ? <textarea aria-label={t(`fields.${name}`)} id={`e2-${name}`} name={name} value={String(draft.fields[name])} maxLength={maxLength} onChange={event => setField(name, event.target.value as Editor2Fields[typeof name])} />
-        : <input aria-label={t(`fields.${name}`)} id={`e2-${name}`} name={name} type={name === "date" ? "date" : name === "time" ? "time" : "text"} maxLength={maxLength}
+        : <input aria-label={t(`fields.${name}`)} id={`e2-${name}`} name={name} type={name === "time" ? "time" : "text"} maxLength={maxLength}
           value={String(draft.fields[name])} onChange={event => setField(name, event.target.value as Editor2Fields[typeof name])} />}
     </label>;
   };
@@ -95,8 +97,8 @@ export function Editor2SectionFields({ invitationId, section, draft, onChange, l
     {!draft.ceremonies.length && <p className="e2-description">{t("empty")}</p>}
     {draft.ceremonies.map((item, index) => <fieldset className="e2-repeat" key={index}>
       <legend className="e2-repeat-head">{t("ceremonyNumber", { number: index + 1 })}</legend>
-      {(["title", "date", "time"] as const).map(key => <label key={key} className="e2-field"><span>{t(key === "title" ? "ceremonyTitle" : key === "date" ? "ceremonyDate" : "ceremonyTime")}</span>
-        <input name={`ceremony-${index}-${key}`} type={key === "title" ? "text" : key} value={item[key]} maxLength={key === "title" ? 200 : 20}
+      {(["title", "date", "time"] as const).map(key => key === "date" ? <Editor2DateField key={key} name={`ceremony-${index}-date`} label={t("ceremonyDate")} value={item.date} onChange={value => onChange(previous => ({ ...previous, ceremonies: previous.ceremonies.map((row, i) => i === index ? { ...row, date: value } : row) }))} /> : <label key={key} className="e2-field"><span>{t(key === "title" ? "ceremonyTitle" : "ceremonyTime")}</span>
+        <input name={`ceremony-${index}-${key}`} type={key === "title" ? "text" : "time"} value={item[key]} maxLength={key === "title" ? 200 : 20}
           onChange={event => onChange(previous => ({ ...previous, ceremonies: previous.ceremonies.map((row, i) => i === index ? { ...row, [key]: event.target.value } : row) }))} />
       </label>)}
       <button type="button" className="e2-button e2-danger" aria-label={t("removeCeremony", { number: index + 1 })} onClick={() => onChange(previous => ({ ...previous, ceremonies: previous.ceremonies.filter((_, i) => i !== index) }))}><Trash2 size={15} />{t("remove")}</button>

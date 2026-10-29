@@ -132,7 +132,7 @@ test("real user creates, publishes, pays for, and shares an invitation", async (
       await page.getByLabel("Địa chỉ địa điểm", { exact: true }).fill(address);
       await page.getByRole("button", { name: "Xong", exact: true }).click();
       await page.getByRole("button", { name: "Xuất bản", exact: true }).click();
-      await expect(page.getByRole("button", { name: "Chia sẻ", exact: true })).toBeVisible();
+      await expect(page.getByRole("dialog").getByRole("heading", { name: "Thiệp đã xuất bản!" })).toBeVisible();
 
       // The inline editor chooses the public slug from the couple's names.
       const published = getDb().prepare("SELECT slug FROM Invitation WHERE id = ?").get(invitationId) as { slug: string };

@@ -11,7 +11,7 @@ import { getAccountSessionUserId } from "@/lib/auth/anonymous-account";
 import { loginReasonHref, startInvitationHref } from "@/lib/auth-redirects";
 import { zodiacTemplatePrimaryColor } from "@/lib/zodiac";
 import { editor2DefaultFields } from "@/lib/editor2-defaults";
-import { editor2StarterSchedule } from "@/lib/editor2-starter";
+import { editor2StarterCeremony, editor2StarterSchedule } from "@/lib/editor2-starter";
 
 const DEFAULT_TEMPLATE_ID = "song-hy-red";
 
@@ -51,6 +51,7 @@ export async function createInvitation(formData?: FormData): Promise<void> {
   const sample = await getTranslations("editor2.samples");
   const t = await getTranslations("editor2");
   const defaults = editor2DefaultFields(key => sample(key));
+  const ceremony = editor2StarterCeremony(templateId, "", defaults.time, t("newCeremony"));
   // Every new card starts with an editable timeline instead of an empty block.
   const schedule = editor2StarterSchedule(templateId, [
     { time: "17:30", label: t("starterSchedule.welcome") },
@@ -70,12 +71,16 @@ export async function createInvitation(formData?: FormData): Promise<void> {
           fontFamily,
           groomShortName,
           brideShortName,
+          ceremonyHeader: ceremony.title,
+          ceremonyDate: ceremony.date,
+          ceremonyTime: ceremony.time,
           music: DEFAULT_INVITATION_MUSIC,
           musicTitle: DEFAULT_INVITATION_MUSIC_TITLE,
           musicArtist: DEFAULT_INVITATION_MUSIC_ARTIST,
           ...(primaryColor ? { primaryColor } : {}),
         },
       },
+      ceremonies: { create: { ...ceremony, sortOrder: 0 } },
       schedule: { create: schedule.map((item, sortOrder) => ({ ...item, sortOrder })) },
     },
   });
