@@ -419,8 +419,49 @@ test("add native ceremonies, gift and uploaded album; hide, undo, save and publi
   await expect(page.getByRole("link", { name: "Chia sẻ Zalo" })).toHaveAttribute("href", /sp\.zalo\.me/);
   await page.getByRole("dialog").getByRole("button", { name: "Đóng" }).click();
   await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
-  await expect(page.getByRole("dialog").getByRole("heading", { name: "Chia sẻ thiệp", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "Thiệp đã xuất bản!", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Chia sẻ Facebook" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Mời khách", exact: false })).toHaveAttribute("href", `/dashboard/${invitation.id}/guests`);
 });
+
+for (const width of [1440, 320]) for (const paid of [false, true]) {
+  test(`sharing always opens the full dialog in both editors at ${width}px for ${paid ? "paid" : "trial"} invitations`, async ({ page, context }) => {
+    const { user, invitation } = seed();
+    const slug = `full-share-${invitation.id}`;
+    getDb().prepare("UPDATE Invitation SET status = 'published', slug = ?, paid = ? WHERE id = ?").run(slug, paid ? 1 : 0, invitation.id);
+    await loginAsUser(context, user.id);
+    await page.setViewportSize({ width, height: 900 });
+    const errors: string[] = [];
+    page.on("pageerror", error => errors.push(error.message));
+    for (const editor of ["editor2", "editor"]) {
+      await page.goto(`/${editor}/${invitation.id}`);
+      await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
+      const dialog = page.getByRole("dialog", { name: "Thiệp đã xuất bản!", exact: true });
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByRole("link", { name: "Chia sẻ Zalo", exact: true })).toHaveAttribute("href", new RegExp(`sp\\.zalo\\.me.*${slug}`));
+      await expect(dialog.getByRole("link", { name: "Chia sẻ Facebook", exact: true })).toHaveAttribute("href", new RegExp(`facebook\\.com/sharer/.*${slug}`));
+      await expect(dialog.getByRole("link", { name: "Xem thiệp", exact: true })).toHaveAttribute("href", `/thiep/${slug}`);
+      await expect(dialog.getByRole("link", { name: /Mời khách/ })).toHaveAttribute("href", `/dashboard/${invitation.id}/guests`);
+      const payment = dialog.getByRole("link", { name: "Thanh toán", exact: true });
+      if (paid) await expect(payment).toHaveCount(0);
+      else await expect(payment).toHaveAttribute("href", `/dashboard/${invitation.id}/thanh-toan`);
+      await expect(dialog.getByRole("button", { name: "Mã QR", exact: true })).toHaveAttribute("aria-expanded", "false");
+      await dialog.getByRole("button", { name: "Mã QR", exact: true }).click();
+      await expect(dialog.getByAltText("Mã QR mở thiệp cưới")).toBeVisible();
+      await expect(dialog.getByRole("link", { name: "Tải mã QR", exact: true })).toHaveAttribute("download", `ma-qr-${slug}.png`);
+      expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: path.join(evidence, `full-share-${editor}-${width}-${paid ? "paid" : "trial"}.png`) });
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
+      await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole("button", { name: "Đóng", exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+    }
+    expect(errors).toEqual([]);
+  });
+}
 
 for (const width of [1440, 390]) test(`publication completes missing sections in order and publishes automatically at ${width}px`, async ({ page, context }) => {
   const { user, invitation } = seed();

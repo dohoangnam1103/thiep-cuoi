@@ -106,7 +106,6 @@ import { createAutosaveController } from "@/lib/autosave-controller";
 import { slugify, slugifyInput, slugFromFormFields } from "./slug";
 import { templateLabel } from "./templates";
 import { PublishSuccessDialog } from "./PublishSuccessDialog";
-import { ShareInvitationDialog } from "./ShareInvitationDialog";
 
 const ChungDoiDemo = dynamic(() =>
   import("@/components/chungdoi-demo").then((module) => module.ChungDoiDemo),
@@ -1618,34 +1617,18 @@ function TierDivider() {
   );
 }
 
-function PublishedShareButton({ slug, templateId }: { slug: string; templateId: string }) {
+function PublishedShareButton({ onShare }: { onShare: () => void }) {
   const t = useTranslations("editor.publishSuccess");
-  const [open, setOpen] = useState(false);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => {
-          setOpen(true);
-          trackEvent("open_share_dialog", {
-            source: "editor_header",
-            template_id: templateId,
-          });
-        }}
-        className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-muted sm:px-4 sm:text-sm"
-      >
-        <Share2 className="size-4" aria-hidden />
-        {t("headerShare")}
-      </button>
-      {open ? (
-        <ShareInvitationDialog
-          slug={slug}
-          templateId={templateId}
-          onClose={() => setOpen(false)}
-        />
-      ) : null}
-    </>
+    <button
+      type="button"
+      onClick={onShare}
+      className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold text-muted-foreground transition hover:bg-muted sm:px-4 sm:text-sm"
+    >
+      <Share2 className="size-4" aria-hidden />
+      {t("headerShare")}
+    </button>
   );
 }
 
@@ -1653,14 +1636,12 @@ function TabBar({
   tab,
   onEdit,
   onPreview,
-  shareSlug,
-  templateId,
+  onShare,
 }: {
   tab: "edit" | "preview";
   onEdit: () => void;
   onPreview: () => void;
-  shareSlug?: string;
-  templateId: string;
+  onShare?: () => void;
 }) {
   const base = "shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm";
   const active = "bg-primary text-primary-foreground shadow-lg shadow-primary/25";
@@ -1673,7 +1654,7 @@ function TabBar({
       <button type="button" onClick={onPreview} className={`${base} ${tab === "preview" ? active : idle}`}>
         Xem trước
       </button>
-      {shareSlug ? <PublishedShareButton slug={shareSlug} templateId={templateId} /> : null}
+      {onShare ? <PublishedShareButton onShare={onShare} /> : null}
     </div>
   );
 }
@@ -2076,6 +2057,7 @@ function EditorFormBody({
   }
 
   const isPublished = status === "published" || Boolean(publishedSlug);
+  const shareSlug = publishedSlug ?? (status === "published" ? currentSlug : null);
 
   const backHref = supportMode
     ? `/admin/users/${supportContext?.userId ?? ""}`
@@ -2096,12 +2078,10 @@ function EditorFormBody({
           tab={tab}
           onEdit={() => setTab("edit")}
           onPreview={onShowPreview}
-          shareSlug={
-            ownerMode
-              ? publishedSlug ?? (status === "published" ? currentSlug ?? undefined : undefined)
-              : undefined
-          }
-          templateId={selectedTemplateId}
+          onShare={ownerMode && shareSlug ? () => {
+            setPublishDialogSlug(shareSlug);
+            trackEvent("open_share_dialog", { source: "editor_header", template_id: selectedTemplateId });
+          } : undefined}
         />
       </div>
       {tab === "preview" && previewContent ? (
@@ -2942,7 +2922,6 @@ function DemoEditorFormBody({
           tab={tab}
           onEdit={() => setTab("edit")}
           onPreview={onShowPreview}
-          templateId={selectedTemplateId}
         />
       </div>
       {tab === "preview" && previewContent ? (

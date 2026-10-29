@@ -3442,21 +3442,6 @@
       "cancel": "Huỷ",
       "confirmDelete": "Xoá lễ"
     },
-    "shareDialog": {
-      "title": "Chia sẻ thiệp",
-      "description": "Sao chép đường dẫn hoặc tải mã QR để gửi cho khách mời.",
-      "urlLabel": "Đường dẫn thiệp",
-      "copyUrl": "Sao chép URL",
-      "copied": "Đã sao chép",
-      "copyError": "Không thể sao chép URL. Vui lòng thử lại.",
-      "qrLabel": "Mã QR",
-      "qrDescription": "Khách mời quét mã này để mở thiệp.",
-      "qrAlt": "Mã QR mở thiệp cưới",
-      "loadingQr": "Đang tạo mã QR",
-      "qrError": "Không thể tạo mã QR. Vui lòng đóng modal và thử lại.",
-      "downloadQr": "Tải mã QR",
-      "close": "Đóng"
-    },
     "publishSuccess": {
       "title": "Thiệp đã xuất bản!",
       "bonus": "Tặng 20 khách mời + 3 ngày dùng thử miễn phí",

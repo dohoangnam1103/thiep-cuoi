@@ -719,7 +719,7 @@ test.describe("invitation editor", () => {
 
       await page.getByRole("button", { name: "Chỉnh sửa", exact: true }).click();
       await page.getByRole("button", { name: "Chia sẻ", exact: true }).click();
-      await expect(page.getByRole("dialog", { name: "Chia sẻ thiệp" })).toBeVisible();
+      await expect(page.getByRole("dialog", { name: "Thiệp đã xuất bản!" })).toBeVisible();
       await assertControlsCannotTriggerIosZoom("share dialog");
       await assertNoHorizontalOverflow("share dialog");
     });

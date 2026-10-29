@@ -9,7 +9,6 @@ import { ArrowLeft, ChevronRight, Eye, LayoutTemplate, List, Monitor, Pencil, Pl
 import { useCallback, useDeferredValue, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { saveVisualInvitation, requestVisualPublication, publishVisualInvitation } from "@/app/editor2/actions";
-import { ShareInvitationDialog } from "@/app/editor/[id]/ShareInvitationDialog";
 import { PublishSuccessDialog } from "@/app/editor/[id]/PublishSuccessDialog";
 import { TEMPLATE_LIST_PATH } from "@/lib/auth-redirects";
 import type { EditorErrorCode } from "@/app/editor/[id]/content-schema";
@@ -81,7 +80,6 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   const [publicationPending, setPublicationPending] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [publishedSlug, setPublishedSlug] = useState(currentSlug);
-  const [shareOpen, setShareOpen] = useState(false);
   const [publishSuccessOpen, setPublishSuccessOpen] = useState(false);
   const focusField = useRef<string | undefined>(undefined);
   const dialogBody = useRef<HTMLDivElement>(null);
@@ -294,7 +292,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
         <button type="button" className="e2-button e2-change-template" disabled={busy} onClick={() => open("templates")}><LayoutTemplate size={16} />{t("chooseTemplate")}</button>
         <div className="e2-actions e2-publish-actions">
           <span className="e2-save-state" role="status" aria-live="polite">{t(saveState)}</span>
-          {publishedSlug ? <button type="button" className="e2-button" onClick={() => setShareOpen(true)}>{t("sharePublished")}</button> : null}
+          {publishedSlug ? <button type="button" className="e2-button" onClick={() => setPublishSuccessOpen(true)}>{t("sharePublished")}</button> : null}
           {isPublished
           ? <button type="button" className="e2-button e2-primary" disabled={busy || saveState === "saving"} onClick={() => void saveNow()}><Save size={16} />{t("save")}</button>
           : <button type="button" className="e2-button e2-primary" disabled={busy} onClick={() => void beginPublication()}>{t(publishing ? "publishing" : "publish")}</button>}
@@ -378,7 +376,6 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
         </Dialog.Popup>
       </Dialog.Viewport></Dialog.Portal>
     </Dialog.Root>
-    {shareOpen && publishedSlug ? <ShareInvitationDialog slug={publishedSlug} templateId={draft.fields.templateId} onClose={() => setShareOpen(false)} /> : null}
     {publishSuccessOpen && publishedSlug ? <PublishSuccessDialog invitationId={id} activated={hideBranding} slug={publishedSlug} onClose={() => setPublishSuccessOpen(false)} /> : null}
   </main>;
 }
