@@ -127,7 +127,7 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
 .e2-repeat-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .85rem; }
 .e2-dialog-schedule { width: min(100%, 620px); }
 .e2-schedule { gap: .65rem; }
-.e2-schedule-head, .e2-schedule-row { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) 2.75rem; align-items: center; gap: .45rem; }
+.e2-schedule-head, .e2-schedule-row { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr) 2.75rem; align-items: center; gap: .45rem; }
 .e2-schedule-head { color: var(--e2-muted); font-size: .75rem; font-weight: 550; padding: 0 .1rem; }
 .e2-schedule-row .e2-field input { min-height: 2.75rem; height: 2.75rem; padding: .5rem .65rem; }
 .e2-schedule-row input[type=time] { font-size: .875rem; font-variant-numeric: tabular-nums; appearance: none; -webkit-appearance: none; }
@@ -192,7 +192,7 @@ body.editor2-page:has([data-editor2-inline]):has([data-testid="wedding-lightbox"
   .e2-dialog { width: 100%; max-height: 87dvh; border-radius: 1.1rem; }
   .e2-dialog-head, .e2-dialog-body { padding: 1rem; }
   .e2-dialog-footer { padding: .8rem 1rem max(.8rem, env(safe-area-inset-bottom)); }
-  .e2-schedule-head, .e2-schedule-row { grid-template-columns: 4.25rem minmax(0, 1fr) 2.75rem; gap: .35rem; }
+  .e2-schedule-head, .e2-schedule-row { grid-template-columns: 7.5rem minmax(0, 1fr) 2.75rem; gap: .35rem; }
   .e2-schedule-row .e2-field input { padding-inline: .45rem; }
   .e2-music-current { flex-wrap: wrap; }
   .e2-music-current > .e2-button:last-child { flex: 1 0 100%; }
