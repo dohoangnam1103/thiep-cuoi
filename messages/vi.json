@@ -75,7 +75,7 @@
     "brideHeroPhoto": "Ảnh cô dâu",
     "groomHeroPhoto": "Ảnh chú rể",
     "uploadPhotoSlot": "Chọn ảnh: {slot}",
-    "singlePhotoUploadHelp": "Mỗi vị trí dùng 1 ảnh. Ảnh nguồn tối đa 50MB; tự động nén nếu trên 20MB.",
+    "singlePhotoUploadHelp": "Mỗi vị trí dùng 1 ảnh. Ảnh nguồn dưới 50MB và được tự động tối ưu để tải lên nhanh hơn.",
     "albumLayout": "Bố cục album",
     "layouts": {
       "grid": "Lưới ảnh",
@@ -3386,7 +3386,8 @@
       "venueRequired": "Cần tên và địa chỉ địa điểm tổ chức trước khi xuất bản."
     },
     "upload": {
-      "galleryHelp": "Ảnh nguồn tối đa 50MB; ảnh trên 20MB sẽ được tự động nén xuống dưới 20MB trước khi lưu. Tối đa 30 ảnh.",
+      "galleryHelp": "Tối đa 30 ảnh, mỗi ảnh nguồn dưới 50MB. Ảnh được tự động tối ưu để tải lên nhanh hơn.",
+      "optimizing": "Đang tối ưu ảnh…",
       "heroAlbumFallbackOne": "Mặc định dùng ảnh đầu tiên trong album. Bạn có thể tải ảnh riêng ở đây để thay thế; xoá ảnh riêng để dùng lại ảnh album.",
       "heroAlbumFallbackTwo": "Mặc định dùng hai ảnh đầu tiên trong album theo thứ tự hiển thị. Ảnh riêng tải lên sẽ được ưu tiên cho từng vị trí; xoá ảnh riêng để dùng lại ảnh album.",
       "sourceTooLarge": "Ảnh nguồn quá lớn để xử lý. Vui lòng chọn ảnh dưới 50MB.",

@@ -77,6 +77,7 @@ import {
 import { normalizeAlbumLayout, type AlbumLayout } from "@/lib/album-layout";
 import { trialExpiresAt } from "@/lib/trial";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
+import { compressUploadImage } from "@/lib/compress-upload-image";
 import { MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "@/lib/upload-image-limits";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
 import {
@@ -1086,9 +1087,9 @@ function GalleryUploader({ initial }: { initial: string[] }) {
         toast.error(uploadT("sourceTooLarge"));
         continue;
       }
-      const body = new FormData();
-      body.append("file", file);
       try {
+        const body = new FormData();
+        body.append("file", await compressUploadImage(file));
         const res = await fetch("/api/upload", { method: "POST", body });
         const data = (await res.json()) as { url?: string; error?: string };
         if (!res.ok || !data.url) {
@@ -1215,10 +1216,10 @@ function HeroImageSlot({
       toast.error(uploadT("sourceTooLarge"));
       return;
     }
-    const body = new FormData();
-    body.append("file", file);
     setUploading(true);
     try {
+      const body = new FormData();
+      body.append("file", await compressUploadImage(file));
       const response = await fetch("/api/upload", { method: "POST", body });
       const data = (await response.json()) as { url?: string; error?: string };
       if (!response.ok || !data.url) {

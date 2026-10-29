@@ -156,7 +156,9 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
   }, [setPanel]);
 
   useEffect(() => {
-    if (snapshot === baseline.current) { acknowledgeEditor2Defaults(id); return; }
+    if (snapshot === baseline.current) acknowledgeEditor2Defaults(id);
+    // A return to the saved draft still needs acknowledgement after any older
+    // queued save; otherwise its status (or persisted template) can stay stale.
     if (publishing || uploading) return;
     timer.current = setTimeout(() => { void persist(draft); }, 1800);
     return () => { if (timer.current) clearTimeout(timer.current); };

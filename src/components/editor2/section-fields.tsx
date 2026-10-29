@@ -8,6 +8,7 @@ import { BRIDE_BIRTH_ORDER_OPTIONS, FONT_OPTIONS, GROOM_BIRTH_ORDER_OPTIONS, typ
 import { heroImageCount, templateSupportsZodiac } from "@/data/editor-template-capabilities";
 import { EDITOR2_FIELD_GROUPS, editor2UploadedPhoto, editor2UploadedPhotos, withEditor2FullName, type Editor2Draft, type Editor2Fields, type Editor2Samples, type Editor2Section } from "@/lib/editor2-draft";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
+import { compressUploadImage } from "@/lib/compress-upload-image";
 import { MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "@/lib/upload-image-limits";
 import { VIETQR_BANKS } from "@/lib/vietqr";
 import { ZODIAC } from "@/lib/zodiac";
@@ -215,6 +216,7 @@ function Editor2Upload({ multiple = false, remaining = 1, inputId, uploadLabel, 
   const t = useTranslations("editor2");
   const uploadT = useTranslations("editor.upload");
   const [busy, setBusy] = useState(false);
+  const [optimizing, setOptimizing] = useState(false);
   const [error, setError] = useState("");
   async function upload(files: File[]) {
     setError(""); setBusy(true); onUploading(true);
@@ -222,7 +224,10 @@ function Editor2Upload({ multiple = false, remaining = 1, inputId, uploadLabel, 
     try {
       for (const file of files.slice(0, remaining)) {
         if (file.size > MAX_IMAGE_UPLOAD_SOURCE_BYTES) { setError(uploadT("sourceTooLarge")); continue; }
-        const body = new FormData(); body.set("file", file);
+        setOptimizing(true);
+        const optimized = await compressUploadImage(file);
+        setOptimizing(false);
+        const body = new FormData(); body.set("file", optimized);
         const response = await fetch("/api/upload", { method: "POST", body });
         const result: unknown = await response.json();
         if (!response.ok || !result || typeof result !== "object" || !("url" in result) || typeof result.url !== "string") {
@@ -232,10 +237,10 @@ function Editor2Upload({ multiple = false, remaining = 1, inputId, uploadLabel, 
       }
       if (urls.length) onUploaded(urls);
     } catch { setError(t("uploadError")); }
-    finally { setBusy(false); onUploading(false); }
+    finally { setOptimizing(false); setBusy(false); onUploading(false); }
   }
   return <div>
-    <label className="e2-upload"><Upload size={22} aria-hidden /><span>{t(busy ? "uploading" : "upload")}</span>
+    <label className="e2-upload"><Upload size={22} aria-hidden /><span>{optimizing ? uploadT("optimizing") : t(busy ? "uploading" : "upload")}</span>
       <input id={inputId} type="file" accept={EDITOR_IMAGE_ACCEPT} multiple={multiple} disabled={busy || remaining <= 0} aria-label={uploadLabel ?? t("upload")} onChange={event => {
         const files = Array.from(event.target.files ?? []); event.target.value = ""; if (files.length) void upload(files);
       }} />

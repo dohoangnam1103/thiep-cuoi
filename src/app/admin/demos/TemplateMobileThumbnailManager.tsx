@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
+import { compressUploadImage } from "@/lib/compress-upload-image";
 import { EDITOR_IMAGE_ACCEPT } from "@/lib/upload-image-formats";
 import { templatePreviewUrl } from "@/lib/template-preview-url";
 
@@ -32,7 +33,7 @@ type ErrorCode = Extract<TemplateMobileThumbnailState, { ok: false }>["errorCode
 
 async function uploadMobileThumbnail(file: File): Promise<string> {
   const formData = new FormData();
-  formData.set("file", file);
+  formData.set("file", await compressUploadImage(file));
 
   const response = await fetch("/api/upload", {
     method: "POST",

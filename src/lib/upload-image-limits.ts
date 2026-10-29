@@ -12,3 +12,7 @@ export const MAX_IMAGE_UPLOAD_REQUEST_BYTES = MAX_IMAGE_UPLOAD_SOURCE_BYTES + ME
  * Keep the persisted WebP comfortably below the product-facing 20 MiB limit.
  */
 export const MAX_IMAGE_UPLOAD_OUTPUT_BYTES = 19 * MEBIBYTE;
+
+/** Match client precompression to the editor's existing stored-image resolution. */
+export const EDITOR_IMAGE_MAX_EDGE = 1600;
+export const EDITOR_IMAGE_WEBP_QUALITY = 82;

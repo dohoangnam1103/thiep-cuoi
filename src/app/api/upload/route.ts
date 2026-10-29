@@ -16,6 +16,8 @@ import {
 } from "@/lib/process-uploaded-image";
 import { getSession } from "@/lib/session";
 import {
+  EDITOR_IMAGE_MAX_EDGE,
+  EDITOR_IMAGE_WEBP_QUALITY,
   MAX_IMAGE_UPLOAD_OUTPUT_BYTES,
   MAX_IMAGE_UPLOAD_REQUEST_BYTES,
   MAX_IMAGE_UPLOAD_SOURCE_BYTES,
@@ -60,9 +62,9 @@ export async function POST(request: NextRequest) {
     output = await processUploadedImageToWebp({
       bytes,
       allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS,
-      maxWidth: 1600,
-      maxHeight: 1600,
-      quality: 82,
+      maxWidth: EDITOR_IMAGE_MAX_EDGE,
+      maxHeight: EDITOR_IMAGE_MAX_EDGE,
+      quality: EDITOR_IMAGE_WEBP_QUALITY,
       maxOutputBytes: MAX_IMAGE_UPLOAD_OUTPUT_BYTES,
     });
   } catch (error) {
