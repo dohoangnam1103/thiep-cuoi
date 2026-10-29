@@ -3345,6 +3345,7 @@
     }
   },
   "editor": {
+    "inlineEditorLink": "Chỉnh sửa trực tiếp trên thiệp",
     "album": {
       "label": "Kiểu hiển thị album",
       "gridName": "Lưới",

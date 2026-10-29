@@ -1779,6 +1779,7 @@ function EditorFormBody({
   resolveMapAction: resolveMapActionProp,
   restoredDraft,
 }: EditorFormBodyConfig) {
+  const editorT = useTranslations("editor");
   const venueT = useTranslations("editor.venue");
   const ceremonyT = useTranslations("editor.ceremonies");
   const zodiacT = useTranslations("editor.zodiac");
@@ -2126,6 +2127,14 @@ function EditorFormBody({
             {backLabel.startsWith("←") ? backLabel : `← ${backLabel}`}
           </Link>
           <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Chỉnh sửa thiệp</h1>
+          {ownerMode ? (
+            <Link
+              href={`/editor2/${invitationId}`}
+              className="mt-2 mb-2 inline-block text-sm font-medium text-primary underline underline-offset-4 hover:text-primary/80 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            >
+              {editorT("inlineEditorLink")}
+            </Link>
+          ) : null}
           <p className="text-sm text-muted-foreground">
             Trạng thái: {isPublished ? "Đã xuất bản" : "Bản nháp"}
           </p>
