@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Props = {
   photos: string[];
@@ -66,23 +67,60 @@ const AUTOPLAY_MS = 4000;
  */
 const SWIPE_MIN_PX = 40;
 
-export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
+export function CoverflowGallery({ photos, accent, onOpen }: Props) {
+  const t = useTranslations("invitationTemplate");
   const count = photos.length;
   const [active, setActive] = useState(0);
+  const root = useRef<HTMLDivElement>(null);
+  const [hasEntered, setHasEntered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [pageVisible, setPageVisible] = useState(() => typeof document !== "undefined" && !document.hidden);
+  const [reducedMotion, setReducedMotion] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const timer = useRef<number | null>(null);
   const gesture = useRef<{ id: number; x: number; y: number } | null>(null);
   // Nhả tay sau khi vuốt vẫn sinh ra một click trên thẻ nằm dưới ngón. Cờ này để
   // chặn nó, nếu không mỗi lần vuốt sẽ mở luôn lightbox.
   const swiped = useRef(false);
+  const canAutoplay = isVisible && pageVisible && !reducedMotion;
+
+  useEffect(() => {
+    const element = root.current;
+    if (!element) return;
+    // Reserve the stage's height immediately, but don't fetch full-resolution
+    // photos while the guest is still at the opening/hero.
+    const preload = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setHasEntered(true);
+      preload.disconnect();
+    }, { rootMargin: "600px 0px" });
+    const visibility = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    });
+    preload.observe(element);
+    visibility.observe(element);
+    return () => { preload.disconnect(); visibility.disconnect(); };
+  }, []);
+
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotion = () => setReducedMotion(motion.matches);
+    const onVisibility = () => setPageVisible(!document.hidden);
+    motion.addEventListener("change", onMotion);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      motion.removeEventListener("change", onMotion);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
 
   const schedule = useCallback(function next() {
     if (timer.current !== null) window.clearTimeout(timer.current);
-    if (count <= 1) return;
+    if (count <= 1 || !canAutoplay) return;
     timer.current = window.setTimeout(() => {
       setActive((i) => (i + 1) % count);
       next();
     }, AUTOPLAY_MS);
-  }, [count]);
+  }, [count, canAutoplay]);
 
   useEffect(() => {
     schedule();
@@ -90,6 +128,14 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
       if (timer.current !== null) window.clearTimeout(timer.current);
     };
   }, [schedule]);
+
+  useEffect(() => {
+    if (!canAutoplay) return;
+    // Restart the delay on scroll, without rerendering on each scroll event.
+    // A new 3D transition must not compete with the guest's vertical gesture.
+    window.addEventListener("scroll", schedule, { passive: true, capture: true });
+    return () => window.removeEventListener("scroll", schedule, true);
+  }, [canAutoplay, schedule]);
 
   if (count === 0) return null;
 
@@ -136,7 +182,7 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
   };
 
   return (
-    <div className="w-full">
+    <div ref={root} className="w-full" data-invitation-album="coverflow">
       <div
         className="relative h-[340px] touch-pan-y md:h-[520px]"
         onPointerDown={handlePointerDown}
@@ -157,7 +203,7 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
           <>
             <button
               type="button"
-              aria-label="Ảnh trước"
+              aria-label={t("lightboxPrevious")}
               onClick={() => step(-1)}
               className="absolute left-0 top-1/2 z-[200] hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/10 transition-colors hover:bg-black/20 md:flex"
               style={{ color: accent }}
@@ -168,7 +214,7 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
             </button>
             <button
               type="button"
-              aria-label="Ảnh sau"
+              aria-label={t("lightboxNext")}
               onClick={() => step(1)}
               className="absolute right-0 top-1/2 z-[200] hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/10 transition-colors hover:bg-black/20 md:flex"
               style={{ color: accent }}
@@ -180,9 +226,13 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
           </>
         ) : null}
 
-        <div className="relative flex h-full w-full items-center justify-center" style={{ perspective: "1000px" }}>
-          {photos.map((src, index) => {
+        <div className="relative flex h-full w-full items-center justify-center [perspective:1000px]">
+          {hasEntered && photos.map((src, index) => {
             const offset = signedOffset(index);
+            // Far cards used to stack at the same ±4 position, retaining every
+            // huge decoded image and 3D layer. Keep only the visible window;
+            // dots and the lightbox still address the complete original album.
+            if (Math.abs(offset) > MAX_DISTANCE) return null;
             const s = stepFor(Math.abs(offset));
             const sign = Math.sign(offset);
             const isActive = offset === 0;
@@ -193,10 +243,9 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
                 key={`${index}-${src}`}
                 type="button"
                 onClick={() => (isActive ? onOpen(index) : select(index))}
-                aria-label={isActive ? `Xem ảnh cưới ${index + 1}` : `Chuyển tới ảnh ${index + 1}`}
-                className={`absolute h-[92%] cursor-pointer overflow-hidden rounded-[16px] shadow-xl transition-all ease-in-out ${isActive ? "ring-2 ring-white/30" : ""}`}
+                aria-label={t(isActive ? "coverflowOpen" : "coverflowSelect", { index: index + 1 })}
+                className={`absolute aspect-[2/3] h-[92%] cursor-pointer overflow-hidden rounded-[16px] shadow-xl transition-[transform,opacity] ease-in-out motion-reduce:transition-none ${isActive ? "ring-2 ring-white/30" : ""}`}
                 style={{
-                  aspectRatio: "0.6666666666666666",
                   transitionDuration: "1100ms",
                   transform: `translateX(${sign * s.x}%) translateZ(${s.z}px) rotateY(${sign * s.rotate}deg) scale(${s.scale})`,
                   opacity: s.opacity,
@@ -206,7 +255,7 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
                 {/* draggable=false: ảnh kéo được theo mặc định, trên desktop cú
                     kéo native sẽ cắt ngang chuỗi pointer và vuốt bằng chuột hỏng */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt={`Ảnh cưới ${index + 1}`} draggable={false} className="h-full w-full object-cover" />
+                <img src={src} alt={t("lightboxPhotoAlt", { index: index + 1 })} decoding="async" draggable={false} className="h-full w-full object-cover" />
               </button>
             );
           })}
@@ -219,7 +268,8 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
             <button
               key={`${index}-${src}`}
               type="button"
-              aria-label={`Tới ảnh ${index + 1}`}
+              aria-label={t("coverflowGoTo", { index: index + 1 })}
+              aria-current={index === active ? "true" : undefined}
               onClick={() => select(index)}
               className={`rounded-full bg-current transition-all duration-300 ${index === active ? "h-2 w-6 opacity-70" : "h-2 w-2 opacity-25 hover:opacity-40"}`}
               style={{ color: accent }}
@@ -230,3 +280,5 @@ export default function CoverflowGallery({ photos, accent, onOpen }: Props) {
     </div>
   );
 }
+
+export default CoverflowGallery;
