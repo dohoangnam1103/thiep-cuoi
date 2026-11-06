@@ -222,6 +222,7 @@ test.describe("published invitation /thiep/[slug]", () => {
       const slug = publishInvitation(inv.id);
 
       await page.goto(`/thiep/${slug}`);
+      await expect(page.locator("[data-open-invitation-control]")).toBeEnabled();
       await page.locator("[data-open-invitation-control]").evaluate((button) => {
         (button as HTMLButtonElement).click();
       });

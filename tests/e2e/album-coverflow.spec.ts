@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import path from "node:path";
 import sharp from "sharp";
 import { expect, test, type Page } from "@playwright/test";
 
@@ -21,7 +23,7 @@ test.afterEach(() => {
   while (users.length) cleanupUser(users.pop()!);
 });
 
-async function openInvitation(page: Page, count = 25, deferAlbum = false) {
+async function openInvitation(page: Page, count = 25, deferAlbum = false, sourceUrls?: string[]) {
   const user = createUser();
   users.push(user.id);
   const invitation = createInvitation(user.id, { templateId: "song-hy-red" });
@@ -30,7 +32,7 @@ async function openInvitation(page: Page, count = 25, deferAlbum = false) {
     date: "2027-12-02", albumLayout: "coverflow", heroImage: "/chungdoi/icon.png",
   });
   const insert = getDb().prepare("INSERT INTO GalleryPhoto (id, invitationId, url, sortOrder) VALUES (?, ?, ?, ?)");
-  for (let index = 0; index < count; index++) insert.run(randomUUID(), invitation.id, photoUrl(index), index);
+  for (let index = 0; index < count; index++) insert.run(randomUUID(), invitation.id, sourceUrls?.[index] ?? photoUrl(index), index);
   const requested = new Set<string>();
   await page.route("**/*coverflow-test=*", route => {
     requested.add(route.request().url());
@@ -85,9 +87,16 @@ for (const width of [1440, 768, 390, 320]) {
     await album.getByRole("button", { name: "Xem ảnh cưới 25", exact: true }).click();
     const lightbox = page.getByTestId("wedding-lightbox");
     await expect(lightbox).toBeVisible();
+    await expect(lightbox.getByTestId("wedding-lightbox-track").locator("img")).toHaveCount(3);
+    const thumbnails = lightbox.getByTestId("wedding-lightbox-thumbnails");
+    await expect(thumbnails.getByRole("button")).toHaveCount(25);
+    await expect.poll(() => thumbnails.locator("img").count()).toBeGreaterThan(0);
+    expect(await thumbnails.locator("img").count()).toBeLessThanOrEqual(9);
+    await expect(page.locator("html")).toHaveCSS("overflow", "hidden");
     await expect(lightbox.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(24));
     await page.keyboard.press("ArrowRight");
     await expect(lightbox.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(0));
+    await expect(lightbox.getByTestId("wedding-lightbox-track")).toHaveCSS("transition-property", "none");
     await page.keyboard.press("Escape");
     await expect(lightbox).toHaveCount(0);
     expect(errors).toEqual([]);
@@ -152,4 +161,130 @@ test("coverflow swipes wrap without opening the lightbox or capturing vertical g
   await stage.dispatchEvent("pointercancel", pointer);
   await stage.dispatchEvent("pointerup", { ...pointer, clientX: 100, clientY: 200 });
   await expect(album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true })).toBeVisible();
+});
+
+test("lightbox bounds image loading while preserving full-resolution zoom, pinch and distant thumbnails", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const { album, requested } = await openInvitation(page);
+  await album.scrollIntoViewIfNeeded();
+  const overflow = await page.evaluate(() => ({ body: document.body.style.overflow, root: document.documentElement.style.overflow }));
+  await album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true }).click();
+  const box = page.getByTestId("wedding-lightbox");
+  const track = box.getByTestId("wedding-lightbox-track");
+  const image = box.getByTestId("wedding-lightbox-image");
+  const thumbnails = box.getByTestId("wedding-lightbox-thumbnails");
+  await expect(track.locator("img")).toHaveCount(3);
+  await expect.poll(() => thumbnails.locator("img").count()).toBeGreaterThan(0);
+  expect(await thumbnails.locator("img").count()).toBeLessThanOrEqual(9);
+  expect(requested.size).toBeLessThan(25);
+  await expect.poll(() => image.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBe(3600);
+  expect(await image.evaluate(node => (node as HTMLImageElement).naturalHeight)).toBe(2400);
+
+  await box.getByTestId("wedding-lightbox-zoom-in").click();
+  await expect(image).toHaveAttribute("data-zoom-scale", "1.50");
+  await box.getByTestId("wedding-lightbox-zoom-reset").click();
+  await track.evaluate(element => {
+    const pointer = (type: string, id: number, x: number) => element.dispatchEvent(new PointerEvent(type, {
+      bubbles: true, cancelable: true, pointerId: id, pointerType: "touch", clientX: x, clientY: 300,
+    }));
+    pointer("pointerdown", 11, 140);
+    pointer("pointerdown", 12, 240);
+    pointer("pointermove", 11, 100);
+    pointer("pointermove", 12, 280);
+    pointer("pointerup", 11, 100);
+    pointer("pointerup", 12, 280);
+  });
+  await expect.poll(async () => Number(await image.getAttribute("data-zoom-scale"))).toBeGreaterThan(1.5);
+  await page.keyboard.press("0");
+  await expect(image).toHaveAttribute("data-zoom-scale", "1.00");
+  await thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 13", exact: true }).click();
+  await expect(image).toHaveAttribute("src", photoUrl(12));
+  await expect(track.locator("img")).toHaveCount(3);
+  await expect(track).toHaveCSS("transition-property", "none");
+  await expect(thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 13", exact: true })).toBeInViewport();
+  await expect.poll(() => thumbnails.locator("img").count()).toBeGreaterThan(0);
+  expect(await thumbnails.locator("img").count()).toBeLessThanOrEqual(9);
+  await box.screenshot({ path: testInfo.outputPath("lightbox-mobile.png") });
+  await page.keyboard.press("Escape");
+  await expect(box).toHaveCount(0);
+  expect(await page.evaluate(() => ({ body: document.body.style.overflow, root: document.documentElement.style.overflow }))).toEqual(overflow);
+});
+
+test("opening a lightbox stops page auto-scroll and pauses the background coverflow", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 600 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const { album } = await openInvitation(page);
+  await album.scrollIntoViewIfNeeded();
+  const autoScroll = page.getByTestId("invitation-auto-scroll-toggle");
+  await autoScroll.click();
+  await expect(autoScroll).toHaveAttribute("aria-pressed", "true");
+  await album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true }).click();
+  await expect(autoScroll).toHaveAttribute("aria-pressed", "false");
+  await page.clock.install();
+  await page.clock.runFor(5000);
+  await expect(album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true })).toBeAttached();
+  await page.keyboard.press("Escape");
+  await page.clock.runFor(4100);
+  await expect(album.getByRole("button", { name: "Xem ảnh cưới 2", exact: true })).toBeVisible();
+});
+
+test("lightbox thumbnails use display derivatives without changing the original upload", async ({ page }) => {
+  const uploadRoot = path.join(process.cwd(), "tests/e2e/.data/editor-uploads");
+  const filename = `${randomUUID()}.webp`;
+  const file = path.join(uploadRoot, filename);
+  await mkdir(uploadRoot, { recursive: true });
+  await writeFile(file, photo, { flag: "wx" });
+  try {
+    const source = `/uploads/${filename}`;
+    const { album } = await openInvitation(page, 1, false, [source]);
+    await album.scrollIntoViewIfNeeded();
+    await album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true }).click();
+    const box = page.getByTestId("wedding-lightbox");
+    const original = box.getByTestId("wedding-lightbox-image");
+    await expect(original).toHaveAttribute("src", source);
+    await expect.poll(() => original.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBe(3600);
+    const thumbnail = box.getByTestId("wedding-lightbox-thumbnails").locator("img");
+    await expect(thumbnail).toHaveCount(1);
+    await expect.poll(() => thumbnail.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    const displayUrl = await thumbnail.evaluate(node => (node as HTMLImageElement).currentSrc);
+    expect(new URL(displayUrl).pathname).toBe("/_next/image");
+    const response = await page.request.get(displayUrl);
+    expect(response.ok()).toBe(true);
+    const preview = await sharp(await response.body()).metadata();
+    expect(preview.width).toBeLessThanOrEqual(384);
+    expect(preview.height).toBeLessThan(2400);
+    expect(await readFile(file)).toEqual(photo);
+    await page.keyboard.press("Escape");
+  } finally {
+    await rm(file, { force: true });
+  }
+});
+
+test("a delayed photo cannot override a newer choice or reopen a closed lightbox", async ({ page }) => {
+  await page.addInitScript(() => {
+    const decode = HTMLImageElement.prototype.decode;
+    HTMLImageElement.prototype.decode = async function () {
+      if (new URL(this.src, location.href).searchParams.get("coverflow-test") === "12") {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      return decode.call(this);
+    };
+  });
+  const { album } = await openInvitation(page);
+  await album.scrollIntoViewIfNeeded();
+  await album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true }).click();
+  const box = page.getByTestId("wedding-lightbox");
+  const thumbnails = box.getByTestId("wedding-lightbox-thumbnails");
+  await page.clock.install();
+  await thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 13", exact: true }).click();
+  await expect(box.getByRole("status")).toHaveText("Đang tải ảnh…");
+  await thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 18", exact: true }).click();
+  await expect(box.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(17));
+  await page.clock.runFor(1500);
+  await expect(box.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(17));
+  await thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 13", exact: true }).click();
+  await expect(box.getByRole("status")).toHaveText("Đang tải ảnh…");
+  await page.keyboard.press("Escape");
+  await page.clock.runFor(1500);
+  await expect(box).toHaveCount(0);
 });

@@ -7,6 +7,7 @@ type Props = {
   photos: string[];
   accent: string;
   onOpen: (index: number) => void;
+  paused?: boolean;
 };
 
 /**
@@ -67,7 +68,7 @@ const AUTOPLAY_MS = 4000;
  */
 const SWIPE_MIN_PX = 40;
 
-export function CoverflowGallery({ photos, accent, onOpen }: Props) {
+export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Props) {
   const t = useTranslations("invitationTemplate");
   const count = photos.length;
   const [active, setActive] = useState(0);
@@ -81,7 +82,7 @@ export function CoverflowGallery({ photos, accent, onOpen }: Props) {
   // Nhả tay sau khi vuốt vẫn sinh ra một click trên thẻ nằm dưới ngón. Cờ này để
   // chặn nó, nếu không mỗi lần vuốt sẽ mở luôn lightbox.
   const swiped = useRef(false);
-  const canAutoplay = isVisible && pageVisible && !reducedMotion;
+  const canAutoplay = isVisible && pageVisible && !reducedMotion && !paused;
 
   useEffect(() => {
     const element = root.current;

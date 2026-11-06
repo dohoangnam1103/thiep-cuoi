@@ -7,6 +7,8 @@ import { createContext, startTransition, type ComponentPropsWithoutRef, type CSS
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
+import { LightboxThumbnails } from "@/components/lightbox-thumbnails";
+import { INVITATION_LIGHTBOX_OPEN_EVENT } from "@/lib/invitation-lightbox-events";
 
 import type { AlbumLayout } from "@/lib/album-layout";
 import { formatCalendarDate, isCalendarDate } from "@/lib/calendar-date";
@@ -132,9 +134,44 @@ export function Lightbox({
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const open = index !== null;
+  const [instantNavigation, setInstantNavigation] = useState(false);
+  const [loadingPhoto, setLoadingPhoto] = useState(false);
+  const navigationVersion = useRef(0);
+  const pendingIndex = useRef<number | null>(null);
+  const decodedImages = useRef(new Map<string, HTMLImageElement>());
+  const preparePhoto = useCallback((position: number) => {
+    const src = gallery[position];
+    let image = decodedImages.current.get(src);
+    if (!image) {
+      image = new Image();
+      image.decoding = "async";
+      image.src = src;
+      decodedImages.current.set(src, image);
+    }
+    return image.decode().catch(() => { /* Retain the existing broken-image fallback. */ });
+  }, [gallery]);
+  const requestPhoto = useCallback((next: number) => {
+    const version = ++navigationVersion.current;
+    pendingIndex.current = next;
+    setInstantNavigation(index !== null && Math.abs(next - index) > 1);
+    setLoadingPhoto(true);
+    // Keep the old photo responsive until the replacement has decoded. Merely
+    // setting decoding="async" does not guarantee a decode-free next paint.
+    const retained = new Set([next, index, index === null ? null : (index - 1 + count) % count, index === null ? null : (index + 1) % count].filter((i): i is number => i !== null).map(i => gallery[i]));
+    for (const src of decodedImages.current.keys()) {
+      if (retained.has(src)) continue;
+      decodedImages.current.delete(src);
+    }
+    void preparePhoto(next).then(() => {
+      if (version !== navigationVersion.current) return;
+      setLoadingPhoto(false);
+      setIndex(next);
+    });
+  }, [count, gallery, index, preparePhoto, setIndex]);
   const step = useCallback((dir: number) => {
-    setIndex((v) => (v === null ? v : (v + dir + count) % count));
-  }, [count, setIndex]);
+    if (index === null) return;
+    requestPhoto(((pendingIndex.current ?? index) + dir + count) % count);
+  }, [count, index, requestPhoto]);
   const zoom = useLightboxZoom({
     enabled: index !== null,
     onSwipe: step,
@@ -146,24 +183,61 @@ export function Lightbox({
     resetZoom(false);
     step(direction);
   }, [resetZoom, step]);
+
+  const select = useCallback((next: number) => {
+    resetZoom(false);
+    requestPhoto(next);
+  }, [requestPhoto, resetZoom]);
   const close = useCallback(() => {
+    navigationVersion.current++;
+    pendingIndex.current = null;
+    setLoadingPhoto(false);
     resetZoom(false);
     setIndex(null);
   }, [resetZoom, setIndex]);
 
   useEffect(() => {
-    if (!open || !modal) return;
+    if (index === null || count === 0) {
+      navigationVersion.current++;
+      pendingIndex.current = null;
+      decodedImages.current.clear();
+      return;
+    }
+    const nearby = new Set([(index - 1 + count) % count, index, (index + 1) % count]);
+    const retained = new Set([...nearby].map(i => gallery[i]));
+    for (const src of decodedImages.current.keys()) {
+      if (retained.has(src)) continue;
+      decodedImages.current.delete(src);
+    }
+    for (const position of nearby) void preparePhoto(position);
+  }, [count, gallery, index, preparePhoto]);
+
+  useEffect(() => {
+    const cache = decodedImages.current;
+    const version = navigationVersion;
+    return () => {
+      version.current++;
+      cache.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
     const previousFocus = document.activeElement instanceof HTMLElement
       ? document.activeElement
       : null;
     const originalOverflow = document.body.style.overflow;
+    const originalRootOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
-    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
+    document.documentElement.style.overflow = "hidden";
+    window.dispatchEvent(new Event(INVITATION_LIGHTBOX_OPEN_EVENT));
+    const focusFrame = modal ? window.requestAnimationFrame(() => closeButtonRef.current?.focus()) : null;
 
     return () => {
-      window.cancelAnimationFrame(focusFrame);
+      if (focusFrame !== null) window.cancelAnimationFrame(focusFrame);
       document.body.style.overflow = originalOverflow;
-      previousFocus?.focus();
+      document.documentElement.style.overflow = originalRootOverflow;
+      if (modal) previousFocus?.focus();
     };
   }, [modal, open]);
 
@@ -211,6 +285,7 @@ export function Lightbox({
     <div
       ref={dialogRef}
       data-testid="wedding-lightbox"
+      data-lenis-prevent
       role={modal ? "dialog" : undefined}
       aria-modal={modal ? "true" : undefined}
       aria-label={modal ? t("lightboxLabel") : undefined}
@@ -220,6 +295,7 @@ export function Lightbox({
     >
       <button ref={closeButtonRef} type="button" aria-label={t("lightboxClose")} onClick={(e) => { e.stopPropagation(); close(); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
       <div className="absolute top-5 z-10 text-sm text-white/80">{index + 1} / {count}</div>
+      {loadingPhoto ? <div role="status" className="pointer-events-none absolute top-12 z-10 text-xs text-white/80">{t("lightboxLoading")}</div> : null}
       <button type="button" aria-label={t("lightboxPrevious")} onClick={(e) => { e.stopPropagation(); navigate(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
       <button type="button" aria-label={t("lightboxNext")} onClick={(e) => { e.stopPropagation(); navigate(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
 
@@ -234,27 +310,28 @@ export function Lightbox({
         style={{
           touchAction: "none",
           transform: `translate3d(calc(${-index * 100}% + ${zoom.trackDrag}px), 0, 0)`,
-          transition: zoom.trackAnimating ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
+          transition: zoom.trackAnimating && !instantNavigation ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
         }}
       >
         {gallery.map((src, i) => (
           <div
-            key={src}
+            key={`${i}-${src}`}
             ref={i === index ? zoom.viewportRef : undefined}
             className="flex h-full w-full shrink-0 items-center justify-center px-4"
           >
-            <img
+            {Math.min(Math.abs(i - index), count - Math.abs(i - index)) <= 1 ? <img
               ref={i === index ? zoom.imageRef : undefined}
               src={src}
               alt={t("lightboxPhotoAlt", { index: i + 1 })}
               data-testid={i === index ? "wedding-lightbox-image" : undefined}
               data-zoom-scale={i === index ? zoom.scale.toFixed(2) : undefined}
               draggable={false}
+              decoding="async"
               onClick={(e) => e.stopPropagation()}
               onDoubleClick={i === index ? zoom.onDoubleClick : undefined}
               style={i === index ? zoom.imageStyle : undefined}
               className="max-h-[78vh] max-w-[92vw] select-none rounded-lg object-contain"
-            />
+            /> : null}
           </div>
         ))}
       </div>
@@ -269,13 +346,7 @@ export function Lightbox({
         zoomOut={zoom.zoomOut}
       />
 
-      <div className="absolute bottom-4 z-10 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
-        {gallery.map((src, i) => (
-          <button key={src} type="button" onClick={() => { zoom.resetZoom(false); setIndex(i); }} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === index ? accent : "transparent", opacity: i === index ? 1 : 0.6 }}>
-            <img src={src} alt={t("lightboxThumbnailAlt", { index: i + 1 })} draggable={false} className="h-full w-full object-cover" />
-          </button>
-        ))}
-      </div>
+      <LightboxThumbnails gallery={gallery} index={index} accent={accent} onSelect={select} />
     </div>
   ), document.body);
 }
@@ -1542,7 +1613,7 @@ export function AlbumGallery({
   if (layout === "coverflow") {
     return (
       <div className="w-full">
-        <CoverflowGallery photos={photos} accent={accent} onOpen={setLightbox} />
+        <CoverflowGallery photos={photos} accent={accent} onOpen={setLightbox} paused={lightbox !== null} />
         {lightboxEl}
       </div>
     );

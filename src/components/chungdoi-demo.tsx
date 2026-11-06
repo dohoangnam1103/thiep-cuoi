@@ -29,6 +29,7 @@ import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } f
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { fitEnvelopeWidth } from "@/components/chungdoi-envelope-constants";
 import { DEFAULT_COVER_3D_ENABLED } from "@/lib/cover-3d";
+import { INVITATION_LIGHTBOX_OPEN_EVENT } from "@/lib/invitation-lightbox-events";
 import { cn } from "@/lib/utils";
 import footerClearanceStyles from "./invitation-footer-clearance.module.css";
 import { useInvitationCoverReady } from "@/hooks/use-invitation-cover-ready";
@@ -2048,11 +2049,13 @@ export function ChungDoiDemo({
     };
     window.addEventListener("wheel", onUserGesture, { passive: true });
     window.addEventListener("touchmove", onUserGesture, { passive: true });
+    window.addEventListener(INVITATION_LIGHTBOX_OPEN_EVENT, onUserGesture);
 
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("wheel", onUserGesture);
       window.removeEventListener("touchmove", onUserGesture);
+      window.removeEventListener(INVITATION_LIGHTBOX_OPEN_EVENT, onUserGesture);
       lenis.destroy();
       lenisRef.current = null;
     };

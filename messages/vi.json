@@ -3628,6 +3628,7 @@
     "lightboxNext": "Ảnh sau",
     "lightboxPhotoAlt": "Ảnh cưới {index}",
     "lightboxThumbnailAlt": "Ảnh thu nhỏ {index}",
+    "lightboxLoading": "Đang tải ảnh…",
     "coverflowOpen": "Xem ảnh cưới {index}",
     "coverflowSelect": "Chuyển tới ảnh {index}",
     "coverflowGoTo": "Tới ảnh {index}",

@@ -54,7 +54,86 @@ Reference: https://thiepmungonline.com/thiep/kieu-tien-minh-quoc
 
 ## Limits
 
-- No deployment has been performed by this task.
+- The measurements above were captured before production promotion.
 - CPU emulation on desktop does not reproduce a physical phone's GPU, thermal limits or browser memory policy. Physical iOS/Android testing remains unverified.
-- Original full-resolution images still have a decoding cost. The shared lightbox's existing thumbnail/full-track loading is outside this scroll-album change; opening it can load additional originals.
+- Original full-resolution images still have a decoding cost. The lightbox follow-up below limits their display window and uses cached derivatives only for small thumbnails; source uploads remain unchanged.
 - This is an album performance verification, not a full-template clone/fidelity acceptance. Cover, calendar, forms, gifts and footer were not reimplemented or exhaustively revalidated.
+
+## Follow-up: lightbox performance
+
+The reported live lag was still present because the earlier coverflow commit had
+not yet been deployed. Direct inspection also confirmed an independent lightbox
+problem: 25 full-track image nodes plus 25 thumbnail nodes used the original
+33–42MP sources. The background coverflow kept advancing behind the overlay,
+the page was not scroll-locked in the non-dialog variant, and wrapping from the
+last image to the first animated through 24 full-width slots.
+
+### Changes and protected behavior
+
+- `src/components/chungdoi-tpl-shared.tsx`: mount full-size image nodes only for
+  the selected index and its immediate neighbours (at most three). Keep the
+  original track geometry and swipe/zoom hook. Disable long track transitions
+  for wraparound and distant thumbnail jumps; adjacent movement is retained.
+- `src/components/lightbox-thumbnails.tsx`: memoize the thumbnail strip so pinch
+  and pan state do not rerender it. Use an IntersectionObserver rooted in the
+  horizontal strip, with a 32px preload margin. Keep all 25 labelled buttons,
+  load only visible thumbnails and bring the selected thumbnail into view.
+  Mobile width stays 92vw; desktop width is intentionally capped at 448px to
+  bound decoded thumbnail work.
+- Same-origin unversioned sources use the existing Next image optimizer at a
+  56px display size / quality 75. Its browser-selected responsive derivative is
+  only a thumbnail. The full-size lightbox still uses the original URL and pixel
+  dimensions, and no original upload bytes are modified. External/versioned
+  URLs retain the direct path for compatibility with existing image policies.
+- `src/components/album-coverflow.tsx` pauses autoplay while its lightbox is open.
+  `src/lib/invitation-lightbox-events.ts` and the existing controller in
+  `src/components/chungdoi-demo.tsx` stop independent page auto-scroll on open.
+  Body/root scroll locks are restored on close; existing optional modal focus
+  handling is retained.
+- No schema, route, auth, storage or publishing changes. No new artwork or
+  product copy. Zoom, pinch, keyboard, all original indices, image aspect/crop,
+  escape/close and optional modal focus behavior remain the contract.
+
+### Verification and evidence
+
+- `tests/e2e/album-coverflow.spec.ts` additionally covers bounded full-size and
+  thumbnail nodes at all four viewports, distant navigation without a long
+  transition, pinch/zoom, source dimensions, scroll-lock restoration and paused
+  background autoplay. A real optimizer integration case verifies a small
+  returned thumbnail while the stored full-resolution WebP bytes are unchanged.
+- The existing desktop zoom/two-finger pinch case in `tests/e2e/thiep.spec.ts`
+  now waits for the existing opening control to be enabled before clicking it;
+  its previous immediate click could be ignored while cover assets loaded.
+- Same-original-photo evidence directory:
+  `/Users/namdo/.codex/visualizations/2026/11/06/01a1af68-a968-7433-9a16-06f8673e67a9/lightbox-performance/`.
+  Scenario: 390×844, DPR3, Chromium CPU4×, repeated first/last navigation followed
+  by continuous pinch. Original live reference: 409.2ms maximum interval,
+  6 intervals over 50ms, 50 image nodes, background advanced from photo 1 to 3.
+  Full-size selected source measured 5304×7952.
+- Final cached-thumbnail measurements and production verification are recorded
+  after the final browser run; physical iOS/Android testing remains unverified.
+
+### Decode-before-switch verification
+
+Further testing showed that limiting nodes alone did not eliminate all stalls
+with 42MP sources. The final implementation also calls `HTMLImageElement.decode()`
+before committing a navigation, retains only the current/adjacent decoded source
+window, and displays the existing photo with a short loading status while the
+replacement prepares. A navigation version prevents late image loads from
+overriding a newer selection or reopening a closed lightbox. Thumbnail/full-size
+files remain separate display concerns; original upload bytes remain untouched.
+Reference: https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decode
+
+- Final targeted browser run: **12 passed**, including the delayed-decode race,
+  full-resolution upload byte preservation, thumbnail optimization, autoplay
+  pause, four viewports and the existing desktop/pinch regression.
+- Intermediate measurements varied (including a 224–234ms first/last jump after
+  thumbnail optimization). They do **not** establish that every physical phone
+  is jank-free. Keep the final same-photo result and live verification distinct
+  from these intermediate observations.
+- Storage prerequisite: with user approval, 36 retired Thiệp Đẹp releases before
+  2026-10-31 were archived to Mac, and the complete deterministic compressed
+  archive checksum matched a fresh VPS stream before removing only those old
+  directories. Eight newer releases, current service and shared data remained.
+  VPS available capacity increased to about 8.8GiB. Private archive location:
+  `/Users/namdo/Documents/thiepdep-releases-archive-20261106-f04t5ae0/`.
