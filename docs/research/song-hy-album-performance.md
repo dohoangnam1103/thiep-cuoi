@@ -137,3 +137,33 @@ Reference: https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/dec
   directories. Eight newer releases, current service and shared data remained.
   VPS available capacity increased to about 8.8GiB. Private archive location:
   `/Users/namdo/Documents/thiepdep-releases-archive-20261106-f04t5ae0/`.
+
+## Production verification — 2026-11-06
+
+- Application commit `5c19722` (includes coverflow commit `f6ca8d9`) was pushed
+  and deployed as deployment `20261106072007`. Existing unrelated local
+  `next.config.ts` edits were excluded from the frozen deployment source.
+- Deployment gate: 131 browser checks passed. Production build, pre-deploy
+  backup, container health, database check, static asset, origin/public pages,
+  canonical demo redirect and preserved cron schedules passed. No schema
+  migration was required. VPS had about 7.7GiB available afterward; Thiệp Đẹp
+  remained active and the deploy lock was released.
+- Direct live browser verification on
+  https://thiepmungonline.com/thiep/kieu-tien-minh-quoc confirmed nine coverflow
+  images, three full-size lightbox image nodes, and six loaded thumbnail nodes
+  in the 390px viewport. The optimizer returned thumbnails 55px wide while the
+  selected original retained 5304×7952 pixels. Zoom, distant thumbnail choice,
+  last-to-first wrap without a long transition, background pause, escape and
+  scroll-lock restoration passed. No page JavaScript errors were observed.
+- Live lab scenario: 390×844, DPR3, CPU4×, repeated first/last choices followed
+  by continuous pinch. 391 frame intervals, p95 18.2ms, maximum 18.7ms, zero
+  intervals over 50ms. This is one observed lab run after relevant thumbnails
+  loaded, **not a guarantee for all devices or a cold-load benchmark**. The
+  local same-photo comparison before deployment still measured isolated
+  150.5ms stalls, so retain these environmental limits when interpreting results.
+- Evidence: `/Users/namdo/.codex/visualizations/2026/11/06/01a1af68-a968-7433-9a16-06f8673e67a9/album-live/`
+  contains `verification.json`, the verification script, the 390px album and
+  lightbox screenshots at 1440/768/390/320px. Visually inspected the live mobile,
+  desktop and 320px album/lightbox frames; selected image proportions, close,
+  navigation, zoom and thumbnail controls remain usable. Physical iOS/Android
+  testing remains unverified.
