@@ -7,7 +7,6 @@ import { editor2SampleAlbumPhotos, editor2SampleHeroPhotos, editor2Seed } from "
 import { prisma } from "@/lib/prisma";
 import { getTemplateLabels } from "@/lib/template-labels";
 import { toDemoContent } from "@/lib/to-demo-content";
-import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { isInvitationActivated } from "@/lib/invitation-entitlement";
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
 
@@ -17,11 +16,11 @@ export default async function Editor2Page({ params, searchParams }: {
   const { id } = await params;
   const session = await getSession();
   if (!session || !await ownInvitation(id, session.userId)) notFound();
-  const [invitation, labels, accountUserId, query, cover3dEnabled] = await Promise.all([
+  const [invitation, labels, accountUserId, query] = await Promise.all([
     prisma.invitation.findUnique({ where: { id }, include: {
       content: true, ceremonies: true, schedule: true, gallery: true,
     } }),
-    getTemplateLabels(), getAccountSessionUserId(), searchParams, getCover3dEnabled(),
+    getTemplateLabels(), getAccountSessionUserId(), searchParams,
   ]);
   if (!invitation) notFound();
   const base = toDemoContent({ ...invitation, wishes: [] });
@@ -31,6 +30,6 @@ export default async function Editor2Page({ params, searchParams }: {
     gallery: editor2SampleAlbumPhotos(sample),
   }]));
   return <Editor2Workspace id={id} initial={editor2Seed(invitation.templateId, invitation.content, base)}
-    labels={labels} currentSlug={invitation.slug} status={invitation.status} base={base} samples={samples} cover3dEnabled={cover3dEnabled} hideBranding={hideBranding}
+    labels={labels} currentSlug={invitation.slug} status={invitation.status} base={base} samples={samples} hideBranding={hideBranding}
     isAccount={Boolean(accountUserId)} resumePublication={Boolean(accountUserId) && query.publish === "1"} />;
 }

@@ -11,7 +11,6 @@ import { AnalyticsEventOnView } from "@/components/analytics-interactions";
 import { ChungDoiDemo } from "@/components/chungdoi-demo";
 import { templates } from "@/data/chungdoi";
 import { routing } from "@/i18n/routing";
-import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getCurrentUserId } from "@/lib/dal";
 import { isInvitationActivated, isInvitationExpired } from "@/lib/invitation-entitlement";
 import { readInvitationVisitSignals, recordInvitationVisit } from "@/lib/invitation-views";
@@ -111,10 +110,7 @@ export default async function PublicInvitationPage({
   const visitSignals = await readInvitationVisitSignals();
   after(() => recordInvitationVisit(slug, visitSignals));
 
-  const [currentUserId, cover3dEnabled] = await Promise.all([
-    getCurrentUserId(),
-    getCover3dEnabled(),
-  ]);
+  const currentUserId = await getCurrentUserId();
   const isOwner = currentUserId === invitation.userId;
   const requestedLocale = isOwner ? (await cookies()).get("NEXT_LOCALE")?.value : null;
   const locale = hasLocale(routing.locales, requestedLocale)
@@ -306,7 +302,6 @@ export default async function PublicInvitationPage({
           slug,
           mediaLabels,
         }}
-        cover3dEnabled={cover3dEnabled}
         hideBranding={hideBranding}
       />
     </>

@@ -28,7 +28,6 @@ const NAV = [
   { href: "/admin/template-suggestions", label: "Gợi ý mẫu thiệp" },
   { href: "/admin/payments", label: "Giao dịch" },
   { href: "/admin/vouchers", label: "Giá" },
-  { href: "/admin/settings", label: "Cài đặt" },
 ];
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {

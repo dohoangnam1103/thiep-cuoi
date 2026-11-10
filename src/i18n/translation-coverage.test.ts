@@ -11,6 +11,7 @@ import { generatedListingMessages } from "../data/templates/generated-data";
 import {
   editorMessageNamespaces,
   homeMessageNamespaces,
+  listingMessageNamespaces,
   invitationMessageNamespaces,
   pricingMessageNamespaces,
   selectMessages,
@@ -115,6 +116,7 @@ function requiredNamespaces(file: string, visited = new Set<string>()): Set<stri
 test("scoped payloads cover all hooks in their component dependency trees", () => {
   const cases = [
     ["src/components/chungdoi-clone.tsx", homeMessageNamespaces],
+    ["src/components/chungdoi-listing.tsx", listingMessageNamespaces],
     ["src/components/chungdoi-pricing.tsx", pricingMessageNamespaces],
     ["src/components/chungdoi-demo.tsx", invitationMessageNamespaces],
     ["src/app/editor/[id]/EditorForm.tsx", editorMessageNamespaces],

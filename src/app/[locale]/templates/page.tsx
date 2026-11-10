@@ -8,6 +8,7 @@ import { TemplateNameOverridesProvider } from "@/components/template-name-overri
 import { TemplateRouteOverridesProvider } from "@/components/template-route-overrides";
 import { completedTemplates } from "@/data/chungdoi";
 import type { Locale } from "@/i18n/routing";
+import { listingMessageNamespaces } from "@/i18n/message-scopes";
 import { pageSeo, staticAlternates } from "@/lib/seo";
 import {
   getPublicTemplateDisplayOrder,
@@ -73,7 +74,7 @@ export default async function TemplatesPage({
   );
 
   return (
-    <RouteMessages>
+    <RouteMessages namespaces={listingMessageNamespaces}>
       <TemplateMobileThumbnailOverridesProvider value={mobileThumbnailOverrides}>
         <TemplateNameOverridesProvider value={templateNameOverrides}>
           <TemplateRouteOverridesProvider value={templateRouteOverrides}>

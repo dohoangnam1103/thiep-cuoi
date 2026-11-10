@@ -28,7 +28,6 @@ import { HongVanCover } from "@/components/chungdoi-hong-van-cover";
 import { LiveFormsProvider, useLiveForms, useWishFormBinding, type LiveForms } from "@/components/chungdoi-live-forms";
 import { envelopeSizingForTemplate } from "@/components/chungdoi-envelope-sizing-policy";
 import { fitEnvelopeWidth } from "@/components/chungdoi-envelope-constants";
-import { DEFAULT_COVER_3D_ENABLED } from "@/lib/cover-3d";
 import { INVITATION_LIGHTBOX_OPEN_EVENT } from "@/lib/invitation-lightbox-events";
 import { cn } from "@/lib/utils";
 import footerClearanceStyles from "./invitation-footer-clearance.module.css";
@@ -51,8 +50,6 @@ import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-sh
 import { OpeningEffectArtwork } from "@/components/chungdoi-opening-effect";
 import { ZodiacMaskArtwork } from "@/components/zodiac-mask-artwork";
 import { GENERATED_TEMPLATE_RENDERERS } from "@/components/generated/template-renderers";
-import { LongPhungGatefoldLab } from "@/components/chungdoi-long-phung-gatefold-lab";
-import { NguyetAnhSleeveLab } from "@/components/chungdoi-nguyet-anh-sleeve-lab";
 import { LongPhungGatefoldInvitation } from "@/components/chungdoi-tpl-long-phung-gatefold";
 import { NguyetAnhSleeveInvitation } from "@/components/chungdoi-tpl-nguyet-anh-sleeve";
 import { DoraemonDoorInvitation } from "@/components/chungdoi-tpl-doraemon-door";
@@ -199,7 +196,12 @@ const TEMPLATE_RENDERERS = {
   ...AUDITED_TEMPLATE_RENDERERS,
 } satisfies Record<string, TemplateRendererEntry>;
 
-const Envelope3D = dynamic(() => import("@/components/chungdoi-envelope-3d"), { ssr: false });
+const LongPhungGatefoldLab = dynamic(
+  () => import("@/components/chungdoi-long-phung-gatefold-lab").then((module) => module.LongPhungGatefoldLab),
+);
+const NguyetAnhSleeveLab = dynamic(
+  () => import("@/components/chungdoi-nguyet-anh-sleeve-lab").then((module) => module.NguyetAnhSleeveLab),
+);
 const DoraemonDoorLab = dynamic(
   () => import("@/components/chungdoi-doraemon-door-lab")
     .then((module) => module.DoraemonDoorLab),
@@ -727,44 +729,13 @@ function BurstParticles({ tokens }: { tokens: Tokens }) {
   );
 }
 
-function OpeningFlyDecor({
-  tokens,
-  size,
-}: {
-  tokens: Tokens;
-  size: { width: number; height: number } | null;
-}) {
-  const flyingImages = tokens.cardImages.filter((image) => image.flyOnOpen);
-  if (!size || flyingImages.length === 0) return null;
-
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-    >
-      <div
-        className="relative"
-        style={{ width: size.width, height: size.height }}
-      >
-        {flyingImages.map((image, index) => (
-          <div
-            key={`${image.src}-${index}`}
-            className={`pointer-events-none absolute ${image.className}`}
-          >
-            <EnvelopeDecorationArtwork
-              src={image.src}
-              className="block h-auto w-full"
-              openingFly
-              animateFly
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function mobileCoverDecorSrc(src: string): string | null {
+  if (src === "/chungdoi/images/themes/_decor/royal-red/flower.webp") {
+    return "/chungdoi/images/themes/_decor/royal-red/flower-mobile.webp";
+  }
+  if (src === "/chungdoi/images/themes/_decor/minimalism-dark-red/flower2-decoration.webp") {
+    return "/chungdoi/images/themes/_decor/minimalism-dark-red/flower2-decoration-mobile.webp";
+  }
   if (src.endsWith("/phung-cover.webp")) {
     return src.replace("/phung-cover.webp", "/phung-cover-mobile.webp");
   }
@@ -777,7 +748,6 @@ function mobileCoverDecorSrc(src: string): string | null {
 function EnvelopeDecorationArtwork({
   src,
   className,
-  openingFly = false,
   coverFly = false,
   flySource = false,
   animateFly = false,
@@ -785,17 +755,7 @@ function EnvelopeDecorationArtwork({
 }: {
   src: string;
   className: string;
-  /**
-   * Bản sao bay của lớp decor NGOÀI thẻ, chỉ có ở bìa 3D (`OpeningFlyDecor`).
-   * Vài test trong templates.spec.ts khoá cứng số lượng
-   * `[data-envelope-opening-fly]`, nên đừng gắn thêm ở chỗ khác.
-   */
-  openingFly?: boolean;
-  /**
-   * Bản sao bay TRONG thẻ (lớp fly-out của `CoverCard`, dùng cho bìa 2D). Mốc
-   * neo riêng để `tests/e2e/opening-fly-decor.spec.ts` đo mà không đụng vào hợp
-   * đồng đếm của `data-envelope-opening-fly`.
-   */
+  /** Đánh dấu bản sao decor bay để đo kích thước so với ảnh gốc. */
   coverFly?: boolean;
   /**
    * Ảnh TĨNH của một decor có `flyOnOpen` — tức bản gốc mà bản sao bay ra phải
@@ -815,7 +775,6 @@ function EnvelopeDecorationArtwork({
     return (
       <ZodiacMaskArtwork
         src={src}
-        data-envelope-opening-fly={openingFly || undefined}
         data-envelope-cover-fly={coverFly || undefined}
         data-envelope-fly-source={flySource || undefined}
         className={`aspect-[1952/4105] ${className}`}
@@ -834,7 +793,6 @@ function EnvelopeDecorationArtwork({
       alt=""
       aria-hidden="true"
       fetchPriority={flySource ? "high" : undefined}
-      data-envelope-opening-fly={openingFly || undefined}
       data-envelope-cover-fly={coverFly || undefined}
       data-envelope-fly-source={flySource || undefined}
       className={className}
@@ -854,14 +812,13 @@ function EnvelopeDecorationArtwork({
   return image;
 }
 
-/** Chỉ phần thẻ thiệp (không có overlay/particle) — dùng chung cho cover 2D và node chụp texture 3D. */
+/** Thẻ thiệp bên trong bìa, tách khỏi nền và hiệu ứng hạt. */
 function CoverCard({
   content,
   tokens,
   onOpen,
   opening = false,
   hideDecor = false,
-  contentOnly = false,
   decorOverflow = "visible",
   naturalHeight = false,
 }: {
@@ -870,7 +827,6 @@ function CoverCard({
   onOpen: () => void;
   opening?: boolean;
   hideDecor?: boolean;
-  contentOnly?: boolean;
   decorOverflow?: EnvelopeDecorOverflow;
   naturalHeight?: boolean;
 }) {
@@ -904,19 +860,15 @@ function CoverCard({
           : "0 25px 60px -12px rgba(0,0,0,0.45), 0 8px 24px rgba(0,0,0,0.2)",
       }}
     >
-      {/* composited theme layer (behind everything). Content-only capture bỏ
-          toàn bộ nền để texture overlay phía trên WebGL giữ alpha trong suốt. */}
-      {!contentOnly ? (
-        <div
-          className="absolute inset-0 overflow-hidden rounded-lg"
-          style={{ background: coverCardBackground(tokens), border: `1px solid ${tokens.guestBoxBorder}` }}
-        />
-      ) : null}
+      <div
+        className="absolute inset-0 overflow-hidden rounded-lg"
+        style={{ background: coverCardBackground(tokens), border: `1px solid ${tokens.guestBoxBorder}` }}
+      />
 
       {/* fly-out layer (không clip): bản gốc phía trên ẩn đi, bản này phóng to bay ra.
           `coverFly` chỉ để gắn `data-envelope-cover-fly` — mốc neo cho
           tests/e2e/opening-fly-decor.spec.ts đo bản sao bay có đúng bằng ảnh tĩnh. */}
-      {opening && !contentOnly ? (
+      {opening ? (
         <div className="pointer-events-none absolute inset-0 z-20">
           {tokens.cardImages
             .filter((img) => img.flyOnOpen)
@@ -937,7 +889,7 @@ function CoverCard({
           suốt nằm thẳng trên nền floral rối nên cần tấm kính phủ trắng + blur để
           chữ đọc được. Các theme khác card có nền riêng (đặc hoặc rgba ~0.95) đọc
           tốt sẵn; tấm trắng chỉ làm bệt màu nên KHÔNG áp. */}
-      {glassGardenTemplateSlugs.has(content.slug) && !contentOnly ? (
+      {glassGardenTemplateSlugs.has(content.slug) ? (
         <div
           className="pointer-events-none absolute inset-0 z-[5] rounded-lg"
           style={{
@@ -949,10 +901,8 @@ function CoverCard({
         />
       ) : null}
 
-      {/* Các mẫu clip bake decor vào card ở z-6, dưới text/nút z-10. Riêng mẫu
-          cho phép vượt mép sẽ bỏ bản này: Envelope3D dùng một plane hoa nguyên
-          vẹn và một content overlay trong suốt ở phía trên, nên không có seam. */}
-      {tokens.cardImages.length && !hideDecor && !contentOnly ? (
+      {/* Decor bị cắt theo mép thẻ nằm dưới chữ và nút. Decor tràn mép có lớp riêng. */}
+      {tokens.cardImages.length && !hideDecor ? (
         <div
           className="pointer-events-none absolute inset-0 z-[6] overflow-hidden rounded-lg"
           data-envelope-decor-overflow={decorOverflow}
@@ -1042,11 +992,7 @@ function CoverCard({
           ) : null}
         </div>
 
-        {/* Bóng nút là một lớp radial-gradient riêng, KHÔNG phải box-shadow: card
-            này bị html-to-image chụp thành texture và Safari rasterize box-shadow
-            lệch thành vệt ghost bên phải nút. Gradient là background thuần nên ra
-            đúng ở mọi engine. Lớp phải nằm NGOÀI button vì button có
-            overflow-hidden (để cắt tia sáng) sẽ cắt mất glow. */}
+        {/* Bóng nằm ngoài nút để overflow-hidden của hiệu ứng tia sáng không cắt mất. */}
         <span className="relative mx-auto inline-flex justify-center">
           <span
             aria-hidden
@@ -1077,99 +1023,13 @@ function CoverCard({
   );
 }
 
-/** Màu three.js không nhận rgba()/gradient — ép về hex an toàn với fallback. */
-function toSolidColor(value: string, fallback: string) {
-  if (value.startsWith("#")) return value;
-  // cardBg thường là linear-gradient(...) → rút hex đầu tiên làm màu đặc.
-  const hex = value.match(/#[0-9a-fA-F]{3,8}/);
-  return hex ? hex[0] : fallback;
-}
-
-type RgbaColor = { r: number; g: number; b: number; a: number };
-
-function parseCssColor(value: string): RgbaColor | null {
-  const normalized = value.trim();
-  const hex = normalized.match(/^#([0-9a-fA-F]{3,8})$/);
-  if (hex) {
-    const raw = hex[1];
-    const expanded = raw.length === 3 || raw.length === 4
-      ? raw.split("").map((part) => part + part).join("")
-      : raw;
-    if (expanded.length !== 6 && expanded.length !== 8) return null;
-    return {
-      r: Number.parseInt(expanded.slice(0, 2), 16),
-      g: Number.parseInt(expanded.slice(2, 4), 16),
-      b: Number.parseInt(expanded.slice(4, 6), 16),
-      a: expanded.length === 8 ? Number.parseInt(expanded.slice(6, 8), 16) / 255 : 1,
-    };
-  }
-
-  const rgb = normalized.match(
-    /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
-  );
-  if (!rgb) return null;
-  return {
-    r: Number(rgb[1]),
-    g: Number(rgb[2]),
-    b: Number(rgb[3]),
-    a: rgb[4] === undefined ? 1 : Number(rgb[4]),
-  };
-}
-
-function representativeColor(value: string): RgbaColor | null {
-  const matches = value.match(/#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)/gi) ?? [];
-  const colors = matches.map(parseCssColor).filter((color): color is RgbaColor => color !== null);
-  return colors[Math.floor(colors.length / 2)] ?? null;
-}
-
-function compositeColor(foreground: RgbaColor, background: RgbaColor): RgbaColor {
-  const alpha = Math.min(1, Math.max(0, foreground.a));
-  return {
-    r: foreground.r * alpha + background.r * (1 - alpha),
-    g: foreground.g * alpha + background.g * (1 - alpha),
-    b: foreground.b * alpha + background.b * (1 - alpha),
-    a: 1,
-  };
-}
-
-function colorToHex(color: RgbaColor) {
-  const channel = (value: number) => Math.round(Math.min(255, Math.max(0, value))).toString(16).padStart(2, "0");
-  return `#${channel(color.r)}${channel(color.g)}${channel(color.b)}`;
-}
-
-/**
- * Card nền rgba trước đây phụ thuộc vào nền phía sau: DOM 2D pha trên nền theme,
- * còn node chụp texture 3D pha trên fallback màu kem. Ghép hai lớp ngay trong
- * card để cả hai đường render luôn nhận đúng cùng một kết quả.
- */
 function coverCardBackground(tokens: Tokens) {
   const cardBg = tokens.cardBg.trim();
   if (!/^rgba?\(/i.test(cardBg)) return cardBg;
   return `linear-gradient(${cardBg}, ${cardBg}), ${tokens.background}`;
 }
 
-/** Màu đại diện cho cạnh/lưng WebGL, sau khi đã pha cardBg lên nền theme. */
-function coverPaperColor(tokens: Tokens) {
-  const fallback: RgbaColor = { r: 255, g: 240, b: 231, a: 1 };
-  const background = representativeColor(tokens.background) ?? fallback;
-  const opaqueBackground = background.a < 1 ? compositeColor(background, fallback) : background;
-  const card = representativeColor(tokens.cardBg) ?? fallback;
-  return colorToHex(compositeColor(card, opaqueBackground));
-}
-
-/**
- * Bìa 2D: thẻ thiệp là DOM thật, không có WebGL và không chụp texture.
- *
- * Đây là đường mặc định (xem `cover3dEnabled` trong AppConfig). Bìa 3D phải tải
- * chunk three.js rồi rasterize DOM→SVG→canvas trước khi hiện được gì; đo trên
- * long-phung-v3-do ở Fast 4G + CPU x4 là ~4,9s so với ~1,5s của bản này, và nhẹ
- * hơn ~700KB JS. Bản này còn SSR được nên thẻ có sẵn trong HTML.
- *
- * Chiều rộng thẻ đi theo `responsiveEnvelopeWidth` bằng CSS breakpoint (SSR được,
- * không cần đọc window), rồi scale lại bằng `fitEnvelopeWidth` để thẻ không tràn
- * khỏi viewport thấp — đúng công thức bản 3D dùng, nên hai bìa cùng cỡ ở mọi
- * breakpoint (đã đo: lệch 0px ở 7 viewport).
- */
+/** Giữ chiều rộng theo breakpoint, rồi thu thẻ lại nếu viewport thấp. */
 function EnvelopeCover2D({
   content,
   tokens,
@@ -1192,8 +1052,7 @@ function EnvelopeCover2D({
   naturalHeight: boolean;
   openingEffect: ArtOpeningEffect | undefined;
   renderOverflowDecor: boolean;
-  /** Chuỗi `animation` cho lúc bìa bay lên, `undefined` khi chưa tới pha đó.
-   *  EnvelopeCover dựng sẵn để bìa 2D và 3D bay bằng đúng một công thức. */
+  /** Chuỗi animation cho pha bìa bay lên. */
   envelopeAwayAnimation: string | undefined;
   /** Bìa liền một mặt không có niêm phong nào để vỡ, nên không vẽ con dấu. */
   showSeal: boolean;
@@ -1247,6 +1106,7 @@ function EnvelopeCover2D({
       <div style={{ transform: `scale(${scale})` }}>
         <div
           ref={cardRef}
+          data-envelope-card
           className={content.slug === "hy-uoc" || content.slug === "uyen-uong"
             ? "relative w-[310px] sm:w-[340px] md:w-[400px]"
             : PORCELAIN_COVER_TEMPLATE_SLUGS.has(content.slug)
@@ -1281,18 +1141,13 @@ function EnvelopeCover2D({
             opening={opening}
             // Chỉ họ Vườn Kính mới ẩn lớp decor trong thẻ, vì lớp không-clip ở
             // trên đã vẽ thay. Mẫu art KHÔNG được ẩn: `cardImages[0]` của chúng
-            // chính là plate artwork (xem art-template-manifest.ts), ẩn đi là mất
-            // hẳn phần vẽ chính của bìa. Đây đúng là điều bản 3D làm — nó truyền
-            // `hideDecor={renderOverflowDecor}`, không phải renderSeparateDecor.
+            // chính là plate artwork của bìa.
             hideDecor={renderOverflowDecor}
             decorOverflow={decorOverflow}
             naturalHeight={naturalHeight}
           />
 
-          {/* Artwork mở thiệp của mẫu art nằm TRÊN lớp decor trong thẻ, clip theo
-              thẻ. Bản 3D phải tách thành plane tĩnh + lớp animate ở tầng cover
-              (định vị theo projectedSize) vì thẻ là texture; ở đây thẻ là DOM nên
-              một lớp lo cả trạng thái tĩnh và lúc mở. */}
+          {/* Artwork mở thiệp nằm trên decor và được cắt theo mép thẻ. */}
           {openingEffect ? (
             <div
               className="pointer-events-none absolute inset-0 z-[7] overflow-hidden rounded-lg"
@@ -1311,21 +1166,12 @@ function EnvelopeCover2D({
   );
 }
 
-/**
- * Cover phong bì. `cover3dEnabled` (công tắc ở /admin/settings) quyết định dùng
- * thẻ 3D WebGL hay thẻ 2D DOM. Khi tắt thì KHÔNG mount Envelope3D, nên chunk
- * three.js/drei/fiber/html-to-image không được tải — đó mới là chỗ tiết kiệm,
- * chứ không phải chỉ ẩn canvas đi.
- *
- * Vẫn giữ một renderer duy nhất cho mỗi lượt tải: không hiện 2D rồi hoán sang 3D.
- */
 function EnvelopeCover({
   content,
   tokens,
   onOpen,
   openPhase,
   reducedMotion,
-  cover3dEnabled,
   onReady,
 }: {
   content: ChungDoiDemoContent;
@@ -1333,20 +1179,13 @@ function EnvelopeCover({
   onOpen: () => void;
   openPhase: OpenPhase;
   reducedMotion: boolean;
-  cover3dEnabled: boolean;
   onReady: () => void;
 }) {
   const coverRoot = useRef<HTMLDivElement>(null);
   // Con dấu nứt, decor bay và việc chặn tương tác bắt đầu ngay từ pha đầu; chỉ
   // riêng bìa bay lên là phải đợi pha "away".
   const opening = openPhase !== "idle";
-  // Ảnh decor bìa nằm trong node chụp của Envelope3D, mà Envelope3D là dynamic
-  // ssr:false → trình duyệt chỉ thấy mấy ảnh này SAU khi tải xong chunk three.js
-  // rồi mount xong: chunk → mount → mới tải ảnh → mới chụp được, mà bìa chặn màn
-  // hình tới hết chuỗi đó. Mấy thẻ <link> dưới được React hoist lên <head> ngay
-  // trong HTML SSR nên ảnh tải song song với chunk thay vì xếp hàng sau nó.
-  // Dùng thẻ JSX chứ không dùng preload() của react-dom: gọi từ client component
-  // thì API đó không phát ra thẻ nào trong HTML (đã thử, <head> trống).
+  // Tải sớm artwork bìa và chọn đúng biến thể theo kích thước màn hình.
   const decorPreloads = tokens.cardImages
     .map((image) => image.src)
     .filter((src, index, all) => !isZodiacArtworkPath(src) && all.indexOf(src) === index)
@@ -1371,7 +1210,6 @@ function EnvelopeCover({
   // Hồng Vân dùng bìa hoa hồng DOM riêng; không phủ thêm plate/layer art chung
   // lên trên vì sẽ tạo một khung thừa ở phía trên bìa.
   const openingEffect = content.slug === "hong-van-rose" ? undefined : tokens.openingEffect;
-  const renderSeparateDecor = renderOverflowDecor || Boolean(openingEffect);
   // Bìa liền một mặt không có con dấu nên không có pha chờ nào phía trước: bấm là
   // trượt. Xem chungdoi-cover-variant-policy.ts.
   const singlePanelCover = coverVariantForTemplate(content.slug) === "single-panel";
@@ -1394,28 +1232,7 @@ function EnvelopeCover({
         ? `demo-single-panel-cover-away ${openingDuration}ms cubic-bezier(0.32, 0, 0.67, 0) forwards`
         : `demo-envelope-away ${openingDuration}ms ease-in forwards`
     : undefined;
-  const [projectedSize, setProjectedSize] = useState<{ width: number; height: number } | null>(null);
-  const [envelopeReady, setEnvelopeReady] = useState(false);
-  const handleProjectedSizeChange = useCallback((nextSize: { width: number; height: number }) => {
-    setProjectedSize((currentSize) => {
-      if (
-        currentSize &&
-        Math.abs(currentSize.width - nextSize.width) < 0.5 &&
-        Math.abs(currentSize.height - nextSize.height) < 0.5
-      ) {
-        return currentSize;
-      }
-      return nextSize;
-    });
-  }, []);
-  const handleEnvelopeReadyChange = useCallback((ready: boolean) => {
-    setEnvelopeReady(ready);
-  }, []);
-
-  // Bìa 2D là DOM thuần nên bấm được ngay từ frame đầu; bìa 3D phải chờ chụp
-  // xong texture mới có toạ độ nút để hit-test.
-  const coverInteractive = cover3dEnabled ? envelopeReady : true;
-  useInvitationCoverReady(coverRoot, coverInteractive, onReady);
+  useInvitationCoverReady(coverRoot, true, onReady);
   const coverStyle: CSSProperties & { "--zodiac-art-color"?: string } = {
     background: tokens.background,
     // Nền cũng chỉ mờ dần trong pha "away". Trước đây nó mờ ngay từ lúc bấm nút
@@ -1449,7 +1266,7 @@ function EnvelopeCover({
         type="button"
         data-open-invitation-control
         onClick={onOpen}
-        disabled={opening || !coverInteractive}
+        disabled={opening}
         className="sr-only focus:fixed focus:bottom-6 focus:left-1/2 focus:z-[100] focus:block focus:h-auto focus:w-auto focus:-translate-x-1/2 focus:overflow-visible focus:rounded-full focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-neutral-900 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2"
       >
         Mở thiệp
@@ -1468,131 +1285,22 @@ function EnvelopeCover({
       {content.slug !== "hy-uoc" ? <ParticleField tokens={tokens} /> : null}
       {/* Đợt confetti nổ cùng nhịp bìa bắt đầu bay, không nổ lúc con dấu mới nứt. */}
       {flyingAway && content.slug !== "hy-uoc" ? <BurstParticles tokens={tokens} /> : null}
-      {/* Chỉ đường 3D cần hai lớp này ở tầng cover: thẻ là texture nên hoa bay ra
-          và artwork mở thiệp phải vẽ ngoài thẻ, định vị theo projectedSize. Bản 2D
-          animate ngay trong thẻ DOM (CoverCard tự có lớp fly-out). */}
-      {cover3dEnabled && opening && !openingEffect ? (
-        <OpeningFlyDecor tokens={tokens} size={projectedSize} />
-      ) : null}
-      {cover3dEnabled && opening && openingEffect && projectedSize ? (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
-          style={{ width: projectedSize.width, height: projectedSize.height }}
-        >
-          <OpeningEffectArtwork
-            effect={openingEffect}
-            opening
-            reducedMotion={reducedMotion}
-          />
-        </div>
-      ) : null}
 
-      {!cover3dEnabled ? (
-        <div className="relative z-10 h-full w-full">
-          <EnvelopeCover2D
-            content={content}
-            tokens={tokens}
-            onOpen={onOpen}
-            opening={opening}
-            reducedMotion={reducedMotion}
-            decorOverflow={decorOverflow}
-            naturalHeight={naturalHeight}
-            openingEffect={openingEffect}
-            renderOverflowDecor={renderOverflowDecor}
-            envelopeAwayAnimation={envelopeAwayAnimation}
-            showSeal={!singlePanelCover && content.slug !== "hoa-mai-thuy-mac"}
-          />
-        </div>
-      ) : (
-      <div
-        className={`relative z-10 h-full w-full ${opening ? "pointer-events-none" : ""}`}
-        data-envelope-renderer="3d"
-        data-envelope-ready={envelopeReady ? "true" : "false"}
-        data-envelope-projected-size={projectedSize
-          ? `${Math.round(projectedSize.width)}x${Math.round(projectedSize.height)}`
-          : undefined}
-        style={{ animation: envelopeAwayAnimation }}
-      >
-        <div className="absolute inset-0">
-          <Envelope3D
-            sizing={sizing}
-            decorVisible={openingEffect ? !opening : true}
-            buttonShineEnabled={!reducedMotion}
-            onOpen={onOpen}
-            onProjectedSizeChange={handleProjectedSizeChange}
-            onReadyChange={handleEnvelopeReadyChange}
-            paperColor={coverPaperColor(tokens)}
-            accentColor={toSolidColor(tokens.accent, "#8C1C13")}
-            renderCard={(handleOpen) => (
-              <div className="relative">
-                {content.slug !== "hoa-mai-thuy-mac" ? <Seal tokens={tokens} opening={opening} /> : null}
-                <CoverCard
-                  content={content}
-                  tokens={tokens}
-                  onOpen={handleOpen}
-                  opening={opening}
-                  hideDecor={renderOverflowDecor}
-                  decorOverflow={decorOverflow}
-                  naturalHeight={naturalHeight}
-                />
-              </div>
-            )}
-            renderDecor={
-              renderSeparateDecor
-                ? () => (
-                    <div
-                      className={`pointer-events-none absolute inset-0 ${
-                        openingEffect ? "overflow-hidden rounded-lg" : ""
-                      }`}
-                      data-opening-static-clip={openingEffect ? "card" : undefined}
-                    >
-                      {openingEffect ? (
-                        <OpeningEffectArtwork effect={openingEffect} />
-                      ) : (
-                        tokens.cardImages.map((img, i) => (
-                          <EnvelopeDecorationArtwork
-                            key={i}
-                            src={img.src}
-                            className={`pointer-events-none absolute ${img.className}`}
-                          />
-                        ))
-                      )}
-                    </div>
-                  )
-                : undefined
-            }
-            renderOverlay={
-              renderSeparateDecor
-                ? () => (
-                    <div className="relative">
-                      <Seal tokens={tokens} opening={false} />
-                      <CoverCard
-                        content={content}
-                        tokens={tokens}
-                        onOpen={onOpen}
-                        contentOnly
-                        hideDecor
-                        decorOverflow={decorOverflow}
-                        naturalHeight={naturalHeight}
-                      />
-                    </div>
-                  )
-                : undefined
-            }
-          />
-        </div>
-
-        {!opening && envelopeReady ? (
-          <p
-            className="pointer-events-none absolute inset-x-0 bottom-6 text-center text-sm"
-            style={{ color: tokens.accent, opacity: 0.1 }}
-          >
-            Kéo để xoay · Chụm 2 ngón để zoom
-          </p>
-        ) : null}
+      <div className="relative z-10 h-full w-full">
+        <EnvelopeCover2D
+          content={content}
+          tokens={tokens}
+          onOpen={onOpen}
+          opening={opening}
+          reducedMotion={reducedMotion}
+          decorOverflow={decorOverflow}
+          naturalHeight={naturalHeight}
+          openingEffect={openingEffect}
+          renderOverflowDecor={renderOverflowDecor}
+          envelopeAwayAnimation={envelopeAwayAnimation}
+          showSeal={!singlePanelCover && content.slug !== "hoa-mai-thuy-mac"}
+        />
       </div>
-      )}
     </div>
   );
 }
@@ -1868,7 +1576,6 @@ export function ChungDoiDemo({
   previewMode = false,
   embedded = false,
   heading,
-  cover3dEnabled = DEFAULT_COVER_3D_ENABLED,
   hideBranding = false,
 }: {
   template: ChungDoiTemplate;
@@ -1878,12 +1585,6 @@ export function ChungDoiDemo({
   previewMode?: boolean;
   embedded?: boolean;
   heading?: string;
-  /**
-   * Công tắc bìa 3D ở /admin/settings. Server component đọc từ AppConfig rồi
-   * truyền vào. Mặc định lấy theo DEFAULT_COVER_3D_ENABLED (tắt): nếu quên truyền
-   * ở một call site thì hệ quả là bìa nhanh, không phải bìa nặng.
-   */
-  cover3dEnabled?: boolean;
   /** Paid/complimentary invitations hide the footer watermark for every template. */
   hideBranding?: boolean;
 }) {
@@ -1922,7 +1623,6 @@ export function ChungDoiDemo({
   const isDetectiveConanCasebookExperience =
     content?.slug === "detective-conan-casebook";
   const isPaginatedExperience = isDetectiveConanCasebookExperience;
-  const usesTwoDimensionalCover = content.slug === "ban-ve-to-am" || content.slug === "hy-uoc" || content.slug === "uyen-uong";
   const rendererEntry = TEMPLATE_RENDERERS[
     content.slug as keyof typeof TEMPLATE_RENDERERS
   ];
@@ -2432,7 +2132,6 @@ export function ChungDoiDemo({
             openPhase={openPhase}
             reducedMotion={prefersReducedMotion}
             onOpen={openInvitation}
-            cover3dEnabled={usesTwoDimensionalCover ? false : cover3dEnabled}
             onReady={handleCoverReady}
           />
         )

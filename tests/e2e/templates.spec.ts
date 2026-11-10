@@ -1,5 +1,4 @@
 import { test, expect, type Page } from "@playwright/test";
-import sharp from "sharp";
 
 import { getVietnameseTemplateSlug } from "@/data/template-route-slugs";
 
@@ -9,6 +8,7 @@ import {
   createInvitation,
   createUser,
   cleanupUser,
+  publishInvitation,
 } from "./helpers/fixtures";
 
 // Template gallery + detail + demo coverage.
@@ -23,8 +23,30 @@ import {
 //  - /[locale]/templates/[slug] has no page of its own — it redirect()s to
 //    /[locale]/templates/[slug]/demo (src/app/[locale]/templates/[slug]/page.tsx).
 //  - The demo page renders <ChungDoiDemo> which always mounts <main id="top">
-//    plus an <audio> tag. The "Mở thiệp" open button lives in a client-only
-//    dynamic (ssr:false) Envelope3D, so it appears after hydration.
+//    plus an <audio> tag. The 2D envelope and its open button are server-rendered.
+
+// Retired templates redirect from the catalog but still render on published invitations.
+const publishedCoverTest = test.extend<{
+  visitPublishedCover: (templateId: string, content?: Record<string, string>) => Promise<void>;
+}>({
+  visitPublishedCover: async ({ page }, provide) => {
+    const user = createUser();
+    try {
+      await provide(async (templateId, content) => {
+        const invitation = createInvitation(user.id, { templateId });
+        const slug = publishInvitation(invitation.id, {
+          brideFullName: "Trần An Nhiên",
+          groomFullName: "Nguyễn Minh Khôi",
+          ...content,
+        });
+        const response = await page.goto(`/thiep/${slug}`, { waitUntil: "domcontentloaded" });
+        expect(response?.status()).toBe(200);
+      });
+    } finally {
+      cleanupUser(user.id);
+    }
+  },
+});
 
 const KNOWN_NAMES = {
   songHy: "Song Hỷ Đỏ",
@@ -147,7 +169,7 @@ const ENVELOPE_GROUP_E_SLUGS = [
   "maroon-love",
 ] as const;
 
-// Chung Đôi capture widths per breakpoint (responsiveEnvelopeWidth()).
+// Chung Đôi envelope layout widths per breakpoint.
 // Desktop/tablet were widened on purpose (600 → 732, 520 → 640) because cover
 // height saturates around 518px from the 520px mark up, so width is the only
 // lever left on the cover's proportions there. The two sub-768px cases keep
@@ -187,7 +209,7 @@ const ART_OPENING_CASES = [
  * breakpoint. Height is intentionally unchecked — it follows real content, so
  * it legitimately differs per template.
  *
- * Each case is a viewport resize on an already-loaded WebGL page, so the cost
+ * Each case is a viewport resize on an already-loaded page, so the cost
  * per extra breakpoint is far below a fresh `goto`. Batches may still narrow to
  * the mobile/desktop ends when a full sweep would blow up suite runtime.
  */
@@ -200,29 +222,22 @@ async function expectResponsiveEnvelopeSizing(
   await page.setViewportSize(cases[0].viewport);
   await page.goto(`/mau-thiep/${routeSlug}/demo`, { timeout: 60_000 });
 
-  // The capture root only mounts after the client-only Envelope3D hydrates, and
-  // that waits on `document.fonts.ready` plus two `toCanvas` passes. On a
-  // freshly built server with several workers rendering WebGL at once that
-  // exceeds the 10s default, so give hydration its own budget — a short timeout
-  // here reports a sizing failure for what is really a cold start.
-  const capture = page.locator('[data-envelope-capture-root="responsive-natural"]');
-  await expect(capture, `${routeSlug} must use the responsive capture root`).toHaveCount(1, {
-    timeout: 45_000,
-  });
+  const card = page.locator("[data-envelope-card]");
+  await expect(card, `${routeSlug} must render the envelope card`).toBeVisible();
 
   // Shared CoverCard contract for every template: whenever cardImages exist,
   // their in-card copy must sit below the text/button layer. Templates with no
   // cardImages legitimately have no decor layer.
-  const cardContent = capture.locator("[data-envelope-card-content]");
+  const cardContent = card.locator("[data-envelope-card-content]");
   await expect(cardContent).toHaveCount(1);
-  const cardDecor = capture.locator("[data-envelope-decor-overflow]");
+  const cardDecor = card.locator("[data-envelope-decor-overflow]");
   const cardDecorCount = await cardDecor.count();
   expect(
     cardDecorCount,
     `${routeSlug} has at most one in-card decor layer`,
   ).toBeLessThanOrEqual(1);
   if (cardDecorCount === 1) {
-    const stacking = await capture.evaluate((root) => {
+    const stacking = await card.evaluate((root) => {
       const content = root.querySelector<HTMLElement>(
         "[data-envelope-card-content]",
       );
@@ -251,41 +266,11 @@ async function expectResponsiveEnvelopeSizing(
     await expect
       .poll(
         async () =>
-          Math.round(await capture.evaluate((node) => node.getBoundingClientRect().width)),
+          await card.evaluate((node) => (node as HTMLElement).offsetWidth),
         { message: `${routeSlug} @ ${current.viewport.width}px` },
       )
       .toBe(current.expectedWidth);
   }
-}
-
-async function openCapturedEnvelope(page: Page) {
-  const stage = page.locator('[data-envelope-renderer="3d"]');
-  const capture = page.locator("[data-envelope-capture-root]");
-  await expect(stage).toBeVisible({ timeout: 30_000 });
-  await expect(capture).toHaveCount(1, { timeout: 45_000 });
-
-  const buttonRatio = await capture.evaluate((root) => {
-    const button = root.querySelector<HTMLElement>("[data-open-btn]");
-    if (!button) throw new Error("captured envelope has no open button");
-    const rootBox = root.getBoundingClientRect();
-    const buttonBox = button.getBoundingClientRect();
-    return {
-      x: (buttonBox.left + buttonBox.width / 2 - rootBox.left) / rootBox.width,
-      y: (buttonBox.top + buttonBox.height / 2 - rootBox.top) / rootBox.height,
-    };
-  });
-  const projectedSize = (await stage.getAttribute("data-envelope-projected-size"))
-    ?.split("x")
-    .map(Number);
-  const stageBox = await stage.boundingBox();
-  if (!stageBox || !projectedSize || projectedSize.length !== 2) {
-    throw new Error("3D envelope has no projected layout");
-  }
-  await page.mouse.click(
-    stageBox.x + stageBox.width / 2 + (buttonRatio.x - 0.5) * projectedSize[0],
-    stageBox.y + stageBox.height / 2 + (buttonRatio.y - 0.5) * projectedSize[1],
-  );
-  return stage;
 }
 
 function invitationCount(userId: string): number {
@@ -493,7 +478,7 @@ test.describe("templates — detail redirect", () => {
 });
 
 test.describe("templates — demo pages", () => {
-  test("capture mode renders the opened invitation without 3D cover or audio", async ({ page }) => {
+  test("capture mode renders the opened invitation without an envelope cover or audio", async ({ page }) => {
     const res = await page.goto("/vi/templates/song-hy-do/demo?capture=1", { timeout: 60_000 });
     expect(res?.ok()).toBeTruthy();
 
@@ -733,7 +718,6 @@ test.describe("templates — demo pages", () => {
   });
 
   test("song-hy demo loads without crashing", async ({ page }) => {
-    // Heavy 3D/canvas invitation — assert the shell mounts, not the 3D scene.
     const res = await page.goto("/vi/templates/song-hy-do/demo", { timeout: 60_000 });
     expect(res?.ok()).toBeTruthy();
 
@@ -742,63 +726,15 @@ test.describe("templates — demo pages", () => {
     await expect(page.locator("main#top audio")).toHaveCount(1);
   });
 
-  test("song-hy cover never swaps back to a visible 2D fallback", async ({ page }) => {
-    await page.goto("/mau-thiep/song-hy-xanh/demo", { timeout: 60_000 });
+  test("fly-on-open decorations stay visible while the 2D cover leaves", async ({ page }) => {
+    await page.goto("/mau-thiep/song-phung-do/demo", { timeout: 60_000 });
 
-    const stage = page.locator("[data-envelope-renderer]");
+    const stage = page.locator('[data-envelope-renderer="2d"]');
     await expect(stage).toBeVisible();
+    const flyingDecor = stage.locator("[data-envelope-cover-fly]");
+    await expect(flyingDecor).toHaveCount(0);
+    await stage.locator("[data-open-btn]").click();
 
-    const visibleOpenButtonCount = () => page.locator("[data-open-btn]").evaluateAll(
-      (buttons) => buttons.filter((button) => {
-        const rect = button.getBoundingClientRect();
-        return rect.left >= 0 && rect.top >= 0 && rect.width > 0 && rect.height > 0;
-      }).length,
-    );
-
-    await expect(stage).toHaveAttribute("data-envelope-renderer", "3d");
-    expect(await visibleOpenButtonCount()).toBe(0);
-
-    await page.waitForTimeout(3_000);
-    await expect(stage).toBeVisible();
-    await expect(stage).toHaveAttribute("data-envelope-renderer", "3d");
-    expect(await visibleOpenButtonCount()).toBe(0);
-  });
-
-  test("fly-on-open decorations stay visible while the 3D cover leaves", async ({ page }) => {
-    const port = Number(process.env.E2E_PORT ?? 3100);
-    await page.goto(`http://localhost:${port}/mau-thiep/song-phung-do/demo`, {
-      timeout: 60_000,
-    });
-
-    const stage = page.locator('[data-envelope-renderer="3d"]');
-    await expect(stage).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator("[data-envelope-opening-fly]")).toHaveCount(0);
-
-    const capture = page.locator("[data-envelope-capture-root]");
-    await expect(capture).toHaveCount(1, { timeout: 45_000 });
-    const buttonRatio = await capture.evaluate((root) => {
-      const button = root.querySelector<HTMLElement>("[data-open-btn]");
-      if (!button) throw new Error("captured envelope has no open button");
-      const rootBox = root.getBoundingClientRect();
-      const buttonBox = button.getBoundingClientRect();
-      return {
-        x: (buttonBox.left + buttonBox.width / 2 - rootBox.left) / rootBox.width,
-        y: (buttonBox.top + buttonBox.height / 2 - rootBox.top) / rootBox.height,
-      };
-    });
-    const projectedSize = (await stage.getAttribute("data-envelope-projected-size"))
-      ?.split("x")
-      .map(Number);
-    const stageBox = await stage.boundingBox();
-    if (!stageBox || !projectedSize || projectedSize.length !== 2) {
-      throw new Error("3D envelope has no projected layout");
-    }
-    await page.mouse.click(
-      stageBox.x + stageBox.width / 2 + (buttonRatio.x - 0.5) * projectedSize[0],
-      stageBox.y + stageBox.height / 2 + (buttonRatio.y - 0.5) * projectedSize[1],
-    );
-
-    const flyingDecor = page.locator("[data-envelope-opening-fly]");
     await expect(flyingDecor).toHaveCount(2);
     for (const image of await flyingDecor.all()) {
       await expect(image).toBeVisible();
@@ -807,14 +743,14 @@ test.describe("templates — demo pages", () => {
     await expect(stage).toHaveCSS("animation-name", "demo-envelope-away");
   });
 
-  test("zodiac cover resolves selected masks, clips them, and preserves the fly-on-open contract", async ({
-    page,
+  publishedCoverTest("zodiac cover resolves selected masks, clips them, and preserves the fly-on-open contract", async ({
+    page, visitPublishedCover,
   }) => {
-    await page.goto("/mau-thiep/thap-nhi-chi-do/demo", { timeout: 60_000 });
+    await visitPublishedCover("thap-nhi-chi-do", { brideZodiac: "meo", groomZodiac: "rong" });
 
-    const capture = page.locator('[data-envelope-capture-root="responsive-natural"]');
-    await expect(capture).toHaveCount(1, { timeout: 45_000 });
-    const clippedDecor = capture.locator('[data-envelope-decor-overflow="clip"]');
+    const card = page.locator("[data-envelope-card]");
+    await expect(card).toHaveCount(1, { timeout: 45_000 });
+    const clippedDecor = card.locator('[data-envelope-decor-overflow="clip"]');
     await expect(clippedDecor).toHaveCount(1);
     await expect(clippedDecor).toHaveCSS("overflow", "hidden");
 
@@ -827,10 +763,8 @@ test.describe("templates — demo pages", () => {
       "/chungdoi/images/themes/_decor/thap-nhi-chi-do/zodiac-rong.webp",
     ]);
 
-    await page.locator("[data-open-invitation-control]").evaluate((button) => {
-      (button as HTMLButtonElement).click();
-    });
-    const flyingMasks = page.locator("[data-envelope-opening-fly]");
+    await page.locator("[data-open-btn]").click();
+    const flyingMasks = page.locator("[data-envelope-cover-fly]");
     await expect(flyingMasks).toHaveCount(2);
     for (const mask of await flyingMasks.all()) {
       await expect(mask).toHaveCSS("animation-name", "demo-dragon-fly");
@@ -843,7 +777,7 @@ test.describe("templates — demo pages", () => {
         animation.currentTime = 720;
       }
     });
-    const cardBounds = await capture.boundingBox();
+    const cardBounds = await card.boundingBox();
     const flyingBounds = await Promise.all(
       (await flyingMasks.all()).map((mask) => mask.boundingBox()),
     );
@@ -901,19 +835,17 @@ test.describe("templates — demo pages", () => {
     }
   });
 
-  test("zodiac invitation is overflow-safe and disables parallax motion at 390px", async ({
-    page,
+  publishedCoverTest("zodiac invitation is overflow-safe and disables parallax motion at 390px", async ({
+    page, visitPublishedCover,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/mau-thiep/thap-nhi-chi-do/demo", { timeout: 60_000 });
+    await visitPublishedCover("thap-nhi-chi-do", { brideZodiac: "meo", groomZodiac: "rong" });
     await expect(
-      page.locator('[data-envelope-capture-root="responsive-natural"]'),
+      page.locator("[data-envelope-card]"),
     ).toHaveCount(1, { timeout: 45_000 });
-    await page.locator("[data-open-invitation-control]").evaluate((button) => {
-      (button as HTMLButtonElement).click();
-    });
-    const reducedMotionFly = page.locator("[data-envelope-opening-fly]");
+    await page.locator("[data-open-btn]").click();
+    const reducedMotionFly = page.locator("[data-envelope-cover-fly]");
     await expect(reducedMotionFly).toHaveCount(2);
     for (const mask of await reducedMotionFly.all()) {
       await expect(mask).toHaveCSS("animation-name", "none");
@@ -921,10 +853,8 @@ test.describe("templates — demo pages", () => {
       await expect(mask).toHaveCSS("filter", "none");
     }
 
-    await page.goto("/mau-thiep/thap-nhi-chi-do/demo?capture=1", { timeout: 60_000 });
-
     const renderer = page.locator('[data-template-renderer="thap-nhi-chi-do"]');
-    await expect(renderer).toBeAttached({ timeout: 30_000 });
+    await expect(renderer).toBeVisible();
     const parallax = renderer.locator("[data-parallax]");
     await expect(parallax.first()).toBeAttached();
     const transforms = await parallax.evaluateAll((nodes) => (
@@ -972,49 +902,20 @@ test.describe("templates — demo pages", () => {
     expect(transforms.line).not.toBe(transforms.foreground);
   });
 
-  test("isolated art opening layers replace the WebGL decor without removing the 3D stage", async ({ page }) => {
-    const port = Number(process.env.E2E_PORT ?? 3100);
-    await page.goto(`http://localhost:${port}/mau-thiep/dong-ho-dan-gian/demo`, {
-      timeout: 60_000,
-    });
+  publishedCoverTest("layered art opening animates the 2D card before revealing the invitation", async ({ page, visitPublishedCover }) => {
+    await visitPublishedCover("dong-ho-folk");
 
-    const stage = page.locator('[data-envelope-renderer="3d"]');
-    const capture = page.locator("[data-envelope-capture-root]");
-    const staticEffect = page.locator('[data-opening-effect-mode="static"]');
-    await expect(stage).toBeVisible({ timeout: 30_000 });
-    await expect(capture).toHaveCount(1, { timeout: 45_000 });
-    await expect(staticEffect).toHaveCount(1);
+    const stage = page.locator('[data-envelope-renderer="2d"]');
+    const staticEffect = stage.locator('[data-opening-effect-mode="static"]');
+    await expect(stage).toBeVisible();
     await expect(staticEffect.locator("[data-opening-layer]")).toHaveCount(3);
-    const staticClip = page.locator('[data-opening-static-clip="card"]');
-    await expect(staticClip).toHaveCount(1);
+    const staticClip = stage.locator('[data-opening-static-clip="card"]');
     await expect(staticClip).toHaveCSS("overflow", "hidden");
 
-    const buttonRatio = await capture.evaluate((root) => {
-      const button = root.querySelector<HTMLElement>("[data-open-btn]");
-      if (!button) throw new Error("captured art envelope has no open button");
-      const rootBox = root.getBoundingClientRect();
-      const buttonBox = button.getBoundingClientRect();
-      return {
-        x: (buttonBox.left + buttonBox.width / 2 - rootBox.left) / rootBox.width,
-        y: (buttonBox.top + buttonBox.height / 2 - rootBox.top) / rootBox.height,
-      };
-    });
-    const projectedSize = (await stage.getAttribute("data-envelope-projected-size"))
-      ?.split("x")
-      .map(Number);
-    const stageBox = await stage.boundingBox();
-    if (!stageBox || !projectedSize || projectedSize.length !== 2) {
-      throw new Error("art envelope has no projected layout");
-    }
-
-    await page.mouse.click(
-      stageBox.x + stageBox.width / 2 + (buttonRatio.x - 0.5) * projectedSize[0],
-      stageBox.y + stageBox.height / 2 + (buttonRatio.y - 0.5) * projectedSize[1],
-    );
+    await stage.locator("[data-open-btn]").click();
 
     const openingEffect = page.locator('[data-opening-effect-mode="opening"]');
     await expect(openingEffect).toHaveCount(1);
-    await expect(openingEffect.locator('[data-opening-static-clip="card"]')).toHaveCount(0);
     await expect(openingEffect).toHaveAttribute(
       "data-opening-effect",
       "dong-ho-folk-layered-opening",
@@ -1030,27 +931,18 @@ test.describe("templates — demo pages", () => {
     await expect(stage).toHaveCSS("animation-name", "demo-art-envelope-away");
     await expect(stage).toHaveCSS("animation-duration", "1.42s");
 
-    await page.waitForTimeout(1_050);
-    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toHaveCount(0);
-    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toBeAttached({
-      timeout: 1_000,
-    });
+    await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toBeVisible();
     await expect(openingEffect).toHaveCount(0);
   });
 
-  test("optional opening layer failure never falls back to the composite artwork", async ({ page }) => {
-    const port = Number(process.env.E2E_PORT ?? 3100);
+  publishedCoverTest("optional opening layer failure never falls back to the composite artwork", async ({ page, visitPublishedCover }) => {
     await page.route("**/dong-ho-folk/opening-right-chicken.webp", (route) => route.abort());
-    await page.goto(`http://localhost:${port}/mau-thiep/dong-ho-dan-gian/demo`, {
-      timeout: 60_000,
-    });
+    await visitPublishedCover("dong-ho-folk");
 
     await expect(page.locator('[data-opening-effect-mode="static"] [data-opening-layer]')).toHaveCount(2, {
       timeout: 45_000,
     });
-    await page.locator("[data-open-invitation-control]").evaluate((button) =>
-      (button as HTMLButtonElement).click(),
-    );
+    await page.locator("[data-open-btn]").click();
     const openingLayers = page.locator(
       '[data-opening-effect-mode="opening"] [data-opening-layer]',
     );
@@ -1064,23 +956,19 @@ test.describe("templates — demo pages", () => {
     });
   });
 
-  test("reduced art opening uses a short opacity-only reveal", async ({ page }) => {
-    const port = Number(process.env.E2E_PORT ?? 3100);
+  publishedCoverTest("reduced art opening uses a short opacity-only reveal", async ({ page, visitPublishedCover }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(`http://localhost:${port}/mau-thiep/dong-ho-dan-gian/demo`, {
-      timeout: 60_000,
-    });
+    await visitPublishedCover("dong-ho-folk");
 
-    await openCapturedEnvelope(page);
+    await page.locator('[data-envelope-renderer="2d"] [data-open-btn]').click();
     await expect(page.locator('[data-template-renderer="dong-ho-folk"]')).toBeAttached({
       timeout: 600,
     });
     await expect(page.locator('[data-opening-effect-mode="opening"]')).toHaveCount(0);
   });
 
-  test("all art invitation opening effects mount and reveal on desktop and mobile", async ({ page }) => {
+  publishedCoverTest("all art invitation opening effects mount and reveal on desktop and mobile", async ({ page, visitPublishedCover }) => {
     test.setTimeout(900_000);
-    const port = Number(process.env.E2E_PORT ?? 3100);
 
     for (const viewport of [
       { width: 1440, height: 900 },
@@ -1088,11 +976,7 @@ test.describe("templates — demo pages", () => {
     ]) {
       await page.setViewportSize(viewport);
       for (const [slug, durationMs] of ART_OPENING_CASES) {
-        const routeSlug = getVietnameseTemplateSlug(slug);
-        await page.goto(`http://localhost:${port}/mau-thiep/${routeSlug}/demo`, {
-          waitUntil: "domcontentloaded",
-          timeout: 60_000,
-        });
+        await visitPublishedCover(slug);
 
         const staticEffect = page.locator('[data-opening-effect-mode="static"]');
         await expect(staticEffect, `${slug} static effect @ ${viewport.width}`).toHaveCount(1, {
@@ -1118,11 +1002,9 @@ test.describe("templates — demo pages", () => {
           slug,
         ).toBe(true);
 
-        const stage = page.locator('[data-envelope-renderer="3d"]');
+        const stage = page.locator('[data-envelope-renderer="2d"]');
         await expect(stage).toBeVisible({ timeout: 30_000 });
-        await page.locator("[data-open-invitation-control]").evaluate((button) =>
-          (button as HTMLButtonElement).click(),
-        );
+        await stage.locator("[data-open-btn]").click();
         const openingEffect = page.locator('[data-opening-effect-mode="opening"]');
         await expect(openingEffect, `${slug} opening effect @ ${viewport.width}`).toHaveCount(1);
         await expect(openingEffect.locator("[data-opening-layer]")).toHaveCount(3);
@@ -1147,14 +1029,14 @@ test.describe("templates — demo pages", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/mau-thiep/anh-dao-hong/demo", { timeout: 60_000 });
 
-    const cherryCapture = page.locator('[data-envelope-capture-root="responsive-natural"]');
-    await expect(cherryCapture).toHaveCount(1);
-    await expect.poll(() => cherryCapture.evaluate((node) => ({
+    const cherryCard = page.locator("[data-envelope-card]");
+    await expect(cherryCard).toHaveCount(1);
+    await expect.poll(() => cherryCard.evaluate((node) => ({
       width: Math.round(node.getBoundingClientRect().width),
       height: Math.round(node.getBoundingClientRect().height),
     }))).toMatchObject({ width: 732 });
 
-    const desktopSize = await cherryCapture.evaluate((node) => ({
+    const desktopSize = await cherryCard.evaluate((node) => ({
       width: Math.round(node.getBoundingClientRect().width),
       height: Math.round(node.getBoundingClientRect().height),
     }));
@@ -1175,12 +1057,11 @@ test.describe("templates — demo pages", () => {
     );
 
     const clippedDecor = page.locator(
-      '[data-envelope-capture-root="responsive-natural"] [data-envelope-decor-overflow="clip"]',
+      '[data-envelope-card] [data-envelope-decor-overflow="clip"]',
     );
     await expect(clippedDecor).toHaveCount(1, { timeout: 45_000 });
     await expect(clippedDecor).toHaveCSS("overflow", "hidden");
     await expect(clippedDecor.locator("img")).toHaveCount(2);
-    await expect(page.locator("[data-envelope-decor-card]")).toHaveCount(0);
 
     await page.goto("/mau-thiep/vuonkinh-xanh/demo", { timeout: 60_000 });
 
@@ -1195,21 +1076,12 @@ test.describe("templates — demo pages", () => {
       "blur(8px) saturate(1.05)",
     );
 
-    const overflowDecor = page.locator("[data-envelope-decor-card]");
-    await expect(overflowDecor).toHaveCount(1, { timeout: 45_000 });
-    await expect(overflowDecor.locator("img")).toHaveCount(3);
-    await expect(overflowDecor).toHaveAttribute(
-      "data-envelope-decor-compositing",
-      "full-layer",
+    const overflowDecor = page.locator(
+      '[data-envelope-card] [data-envelope-decor-overflow="visible"]',
     );
-    await expect(
-      page.locator("[data-envelope-content-overlay-root]"),
-    ).toHaveCount(1);
-    await expect(
-      page.locator(
-        '[data-envelope-capture-root="responsive-natural"] [data-envelope-decor-overflow="visible"]',
-      ),
-    ).toHaveCount(0);
+    await expect(overflowDecor).toHaveCount(1);
+    await expect(overflowDecor.locator("img")).toHaveCount(3);
+    await expect(overflowDecor).toHaveCSS("overflow", "visible");
   });
 
   // Drives the rollout matrix helper through the already-approved baseline, so a
@@ -1258,54 +1130,6 @@ test.describe("templates — demo pages", () => {
 
     await expect(page.locator("main#top")).toBeVisible({ timeout: 30_000 });
     await expect(page.locator("main#top audio")).toHaveCount(1);
-  });
-
-  // The cover sets `autoRotate={false}` and runs no animation loop, so an idle
-  // canvas only jitters by OrbitControls damping (measured 0.1–0.4% of channels
-  // — below any threshold worth asserting). Drag rotation is the real contract,
-  // and it is what the responsive sizing rollout must not break.
-  test("3D invitation rotates when dragged", async ({ page }) => {
-    await page.goto("/vi/templates/song-long-xanh/demo", { timeout: 60_000 });
-
-    const canvas = page.locator("canvas").first();
-    await expect(canvas).toBeVisible({ timeout: 30_000 });
-    // Textures are captured from the DOM after fonts settle; drag before they
-    // land would diff two loading frames instead of two rotations.
-    await page.waitForTimeout(2_500);
-
-    const box = await canvas.boundingBox();
-    if (!box) throw new Error("cover canvas has no layout box");
-    const midY = box.y + box.height / 2;
-
-    const beforeDrag = await sharp(await canvas.screenshot()).raw().toBuffer();
-
-    // Drag well clear of the "Mở thiệp" hit area so the gesture rotates the
-    // card instead of opening the invitation.
-    await page.mouse.move(box.x + box.width * 0.5, midY);
-    await page.mouse.down();
-    for (const step of [0.6, 0.7, 0.8, 0.85]) {
-      await page.mouse.move(box.x + box.width * step, midY, { steps: 4 });
-    }
-    await page.mouse.up();
-    await page.waitForTimeout(600);
-
-    const afterDrag = await sharp(await canvas.screenshot()).raw().toBuffer();
-    expect(afterDrag.length).toBe(beforeDrag.length);
-
-    let changedChannels = 0;
-    for (let index = 0; index < beforeDrag.length; index += 1) {
-      if (Math.abs(beforeDrag[index] - afterDrag[index]) > 8) {
-        changedChannels += 1;
-      }
-    }
-
-    // Dragging turns the card in 3D, which repaints far more than damping noise.
-    expect(changedChannels / beforeDrag.length).toBeGreaterThan(0.02);
-    // The invitation must not have opened — the cover stage is still mounted.
-    await expect(page.locator("[data-envelope-renderer]")).toHaveAttribute(
-      "data-envelope-renderer",
-      "3d",
-    );
   });
 
   test("demo gift envelope button appears after hydration", async ({ page }) => {

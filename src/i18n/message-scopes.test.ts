@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import vi from "../../messages/vi.json";
-import { homeMessageNamespaces, invitationMessageNamespaces, pricingMessageNamespaces, selectMessages } from "./message-scopes";
+import { homeMessageNamespaces, invitationMessageNamespaces, listingMessageNamespaces, pricingMessageNamespaces, selectMessages } from "./message-scopes";
 
 test("public scopes exclude editor/admin text and keep their required namespaces", () => {
-  for (const keys of [homeMessageNamespaces, pricingMessageNamespaces, invitationMessageNamespaces]) {
+  for (const keys of [homeMessageNamespaces, listingMessageNamespaces, pricingMessageNamespaces, invitationMessageNamespaces]) {
     const messages = selectMessages(vi, keys);
     assert.deepEqual(Object.keys(messages), [...keys]);
     assert.equal(messages.editor, undefined);

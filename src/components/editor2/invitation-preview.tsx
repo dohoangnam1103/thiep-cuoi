@@ -13,8 +13,8 @@ import { Editor2GiftPlaceholder } from "./gift-placeholder";
 import { heroImageCount } from "@/data/editor-template-capabilities";
 
 /** A single component tree serves desktop, narrow preview and mobile editing. */
-export const Editor2InvitationPreview = memo(function Editor2InvitationPreview({ draft, editing, base, cover3dEnabled, hideBranding, samples, onSelect }: {
-  draft: Editor2Draft; editing: boolean; base: ChungDoiDemoContent; cover3dEnabled: boolean; hideBranding: boolean; samples?: Editor2Samples;
+export const Editor2InvitationPreview = memo(function Editor2InvitationPreview({ draft, editing, base, hideBranding, samples, onSelect }: {
+  draft: Editor2Draft; editing: boolean; base: ChungDoiDemoContent; hideBranding: boolean; samples?: Editor2Samples;
   onSelect: (section: Editor2Section, field?: string) => void;
 }) {
   const t = useTranslations("editor2");
@@ -45,7 +45,7 @@ export const Editor2InvitationPreview = memo(function Editor2InvitationPreview({
   return <>
     <div ref={root} data-editor2-inline className="e2-inline-canvas">
       <InvitationEditingContext value={editing}>
-        <ChungDoiDemo template={template} content={content} previewMode embedded cover3dEnabled={cover3dEnabled} hideBranding={hideBranding} />
+        <ChungDoiDemo template={template} content={content} previewMode embedded hideBranding={hideBranding} />
       </InvitationEditingContext>
     </div>
     <Editor2GiftPlaceholder root={root} enabled={editing && missing.includes("gift")}

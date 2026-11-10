@@ -52,14 +52,14 @@ const COMPACT_SCREEN_QUERY = "(max-width: 767px), (pointer: coarse)";
 
 type Editor2WorkspaceProps = {
   id: string; initial: Editor2Draft; labels: Record<string, string>; currentSlug: string | null; status: string; isAccount: boolean; resumePublication?: boolean;
-  base: ChungDoiDemoContent; samples: Record<string, Editor2Samples>; cover3dEnabled: boolean; hideBranding: boolean;
+  base: ChungDoiDemoContent; samples: Record<string, Editor2Samples>; hideBranding: boolean;
 };
 
 export function Editor2Workspace(props: Editor2WorkspaceProps) {
   return <Editor2ClientReady><Editor2WorkspaceBody {...props} /></Editor2ClientReady>;
 }
 
-function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAccount, base, samples, cover3dEnabled, hideBranding, resumePublication = false }: Editor2WorkspaceProps) {
+function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAccount, base, samples, hideBranding, resumePublication = false }: Editor2WorkspaceProps) {
   const router = useRouter();
   const t = useTranslations("editor2");
   const errorT = useTranslations("editor.errors");
@@ -350,7 +350,7 @@ function Editor2WorkspaceBody({ id, initial, labels, currentSlug, status, isAcco
     <section className="e2-workspace" aria-label={t("canvasTitle")}>
       <div className={`e2-canvas-track${phone && !compactScreen ? " e2-canvas-phone" : ""}`}>
         <InlineInvitationPreview draft={previewDraft} editing={editing} base={base}
-          cover3dEnabled={cover3dEnabled} hideBranding={hideBranding} samples={samples[previewDraft.fields.templateId]} onSelect={selectSection} />
+          hideBranding={hideBranding} samples={samples[previewDraft.fields.templateId]} onSelect={selectSection} />
       </div>
       {!isAccount && <div className="e2-bottom">{t("guestDraftNotice")}</div>}
     </section>

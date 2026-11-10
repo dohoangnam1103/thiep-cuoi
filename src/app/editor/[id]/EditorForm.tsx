@@ -151,12 +151,6 @@ type CommonEditorFormProps = {
   templateLabels?: Record<string, string>;
   /** Optional admin-selected thumbnail used in template pickers on mobile. */
   mobileThumbnailOverrides?: Record<string, string>;
-  /**
-   * Công tắc bìa 3D ở /admin/settings. Là client component nên không đọc được
-   * AppConfig trực tiếp; server page truyền vào để bản xem trước trong editor
-   * render bìa giống hệt thiệp thật.
-   */
-  cover3dEnabled?: boolean;
 };
 
 export type EditorFormProps = CommonEditorFormProps & (
@@ -1750,7 +1744,6 @@ function EditorFormBody({
   initialTrack,
   templateLabels,
   mobileThumbnailOverrides,
-  cover3dEnabled,
   ownerMode,
   supportMode,
   showSlugSection,
@@ -2094,7 +2087,6 @@ function EditorFormBody({
           }
           content={previewContent}
           previewMode
-          cover3dEnabled={cover3dEnabled}
           hideBranding={activated}
         />
       ) : null}
@@ -2786,7 +2778,6 @@ function DemoEditorFormBody({
   initialTrack,
   templateLabels,
   mobileThumbnailOverrides,
-  cover3dEnabled,
   saveAction: saveActionProp,
   restoredDraft,
 }: DemoEditorFormBodyConfig) {
@@ -2932,7 +2923,6 @@ function DemoEditorFormBody({
           }
           content={previewContent}
           previewMode
-          cover3dEnabled={cover3dEnabled}
         />
       ) : null}
 

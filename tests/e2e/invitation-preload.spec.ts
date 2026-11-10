@@ -102,8 +102,6 @@ test("an early 2D open starts detail immediately without waiting for cover image
   await page.route(coverAsset, async (route) => { await held; await route.continue(); });
   try {
     await page.goto(demo, { waitUntil: "domcontentloaded" });
-    const is3d = await page.locator('[data-envelope-renderer="3d"]').count();
-    test.skip(is3d > 0, "3D intentionally waits for its interactive texture; this case covers 2D");
     // The guest can click while assets load, but only after the app's event
     // handlers are hydrated. The existing cover effect locks body scrolling.
     await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("hidden");

@@ -6,7 +6,6 @@ import { retiredTemplateSlugs } from "@/data/chungdoi";
 
 import viMessages from "../../../../../messages/vi.json";
 import { verifyAdmin } from "@/lib/admin-dal";
-import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getInvitationActivation } from "@/lib/invitation-entitlement";
 import { getMusicPickerMessages } from "@/lib/music-picker-messages";
 import { prisma } from "@/lib/prisma";
@@ -19,11 +18,10 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
   await verifyAdmin();
   const { id } = await params;
 
-  const [musicMessages, templateLabels, mobileThumbnailOverrides, cover3dEnabled] = await Promise.all([
+  const [musicMessages, templateLabels, mobileThumbnailOverrides] = await Promise.all([
     getMusicPickerMessages("vi"),
     getTemplateLabels(),
     getTemplateMobileThumbnailOverrides(),
-    getCover3dEnabled(),
   ]);
   const invitation = await prisma.invitation.findFirst({
     where: { id, isDemo: true, templateId: { notIn: [...retiredTemplateSlugs] } },
@@ -69,7 +67,6 @@ export default async function AdminDemoEditPage({ params }: { params: Promise<{ 
           initialTrack={initialTrack}
           templateLabels={templateLabels}
           mobileThumbnailOverrides={mobileThumbnailOverrides}
-          cover3dEnabled={cover3dEnabled}
         />
       </NextIntlClientProvider>
     </div>

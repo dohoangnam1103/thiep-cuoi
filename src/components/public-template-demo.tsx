@@ -16,7 +16,6 @@ import {
 import { chungdoiDemoContent } from "@/data/chungdoi-demo-content";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { getCover3dEnabled } from "@/lib/cover-3d-config";
 import { getCachedPublicDemoContent } from "@/lib/public-demo-content";
 import { pageSeo, templateDemoSeo } from "@/lib/seo";
 import { getTemplateLabelOverrides } from "@/lib/template-labels";
@@ -115,10 +114,7 @@ export async function PublicTemplateDemo({
 
   const copy = await localizedTemplateCopy(locale, template);
 
-  const [storedContent, cover3dEnabled] = await Promise.all([
-    getCachedPublicDemoContent(template.slug),
-    getCover3dEnabled(),
-  ]);
+  const storedContent = await getCachedPublicDemoContent(template.slug);
   const fallbackContent = chungdoiDemoContent[template.slug];
   const content = storedContent && fallbackContent
     ? {
@@ -146,7 +142,6 @@ export async function PublicTemplateDemo({
         content={content}
         captureMode={captureMode}
         heading={copy.heading}
-        cover3dEnabled={cover3dEnabled}
       />
       {!captureMode ? (
         <form

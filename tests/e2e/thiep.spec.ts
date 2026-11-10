@@ -421,8 +421,7 @@ test.describe("published invitation /thiep/[slug]", () => {
 
       const res = await page.goto(`/thiep/${slug}?g=${guest.token}`);
       expect(res?.status()).toBe(200);
-      // Envelope3D snapshots this off-screen DOM node into the visible WebGL texture.
-      await expect(page.getByText("Gia đình anh Hưng", { exact: true })).toHaveCount(1);
+      await expect(page.getByText("Gia đình anh Hưng", { exact: true })).toBeVisible();
       await expect(page.getByText("Gia đình Anh Mạnh", { exact: true })).toHaveCount(0);
     } finally {
       cleanupUser(user.id);

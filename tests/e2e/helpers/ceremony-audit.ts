@@ -12,7 +12,6 @@ export const CEREMONY_AUDIT_ITEMS = [
 
 export function prepareCeremonyAuditFixtures() {
   const db = getDb();
-  db.prepare("UPDATE AppConfig SET cover3dEnabled = 0 WHERE id = 'default'").run();
   const user = createUser({ email: CEREMONY_AUDIT_USER });
   for (const template of templates) {
     const invitation = createInvitation(user.id, { templateId: template.slug, isDemo: true });

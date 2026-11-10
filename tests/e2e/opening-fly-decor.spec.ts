@@ -4,8 +4,6 @@ import { completedTemplateSlugs } from "@/data/chungdoi";
 import { chungdoiThemeConfig } from "@/data/chungdoi-theme-config";
 import { getVietnameseTemplateSlug } from "@/data/template-route-slugs";
 
-import { getDb } from "./helpers/db";
-
 /**
  * Bất biến: bản sao decor "bay ra" lúc bấm "Mở thiệp" phải BẮT ĐẦU đúng bằng ảnh
  * tĩnh trên bìa, rồi mới phóng to theo keyframe `demo-dragon-fly`.
@@ -26,12 +24,6 @@ import { getDb } from "./helpers/db";
 /** Bản sao và ảnh tĩnh phải khớp trong khoảng này. */
 const TOLERANCE = 0.15;
 
-function setCover3dEnabled(enabled: boolean): void {
-  getDb()
-    .prepare("UPDATE AppConfig SET cover3dEnabled = ? WHERE id = 'default'")
-    .run(enabled ? 1 : 0);
-}
-
 type Measurement = { source: string[]; fly: string[]; ratios: number[] };
 
 const templates = Object.entries(chungdoiThemeConfig)
@@ -42,25 +34,6 @@ const templates = Object.entries(chungdoiThemeConfig)
   .map(([slug]) => ({ slug, routeSlug: getVietnameseTemplateSlug(slug) }));
 
 test.describe("bìa thiệp — decor bay lúc mở", () => {
-  /**
-   * Đo trên bìa 2D vì đó là đường mặc định của production
-   * (`DEFAULT_COVER_3D_ENABLED = false`) và thẻ là DOM thật nên bấm được ngay.
-   * Bìa 3D vẽ thẻ thành texture WebGL, muốn bấm phải chờ chụp xong rồi hit-test
-   * trên canvas — quá chậm cho 42 mẫu. Cùng một rule CSS phục vụ cả hai đường.
-   *
-   * `prepare-db.ts` seed cờ = true cho ~40 test bìa 3D ở templates.spec.ts. Suite
-   * chạy tuần tự trên cùng một database (`workers: 1`), nên phải trả cờ về true
-   * khi xong, kể cả lúc assert fail. Trang demo không nằm trong
-   * prerender-manifest nên cờ có tác dụng ngay từ request kế tiếp.
-   */
-  test.beforeAll(() => {
-    setCover3dEnabled(false);
-  });
-
-  test.afterAll(() => {
-    setCover3dEnabled(true);
-  });
-
   test("bản sao bay ra bắt đầu đúng bằng ảnh tĩnh trên bìa", async ({ page }) => {
     test.setTimeout(600_000);
     expect(templates.length, "không quét được mẫu nào có decor bay").toBeGreaterThan(20);

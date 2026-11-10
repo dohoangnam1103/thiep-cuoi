@@ -1,6 +1,7 @@
 import type { AbstractIntlMessages } from "next-intl";
 
 export const homeMessageNamespaces = ["chrome", "home", "listing", "templatePreviewModal"] as const;
+export const listingMessageNamespaces = [...homeMessageNamespaces, "templateSeoFacets"] as const;
 export const templateSeoDetailMessageNamespaces = ["templateSeoDetails"] as const;
 export const pricingMessageNamespaces = ["chrome", "pricing"] as const;
 export const invitationMessageNamespaces = [

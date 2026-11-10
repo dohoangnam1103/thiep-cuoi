@@ -23,6 +23,8 @@ export const openSans = Open_Sans({
   subsets: ["latin", "vietnamese"],
   display: "swap",
   variable: "--font-open-sans",
+  // Let visible text request this marketing face instead of preloading it on invitations.
+  preload: false,
 });
 
 export const beVietnamPro = Be_Vietnam_Pro({
@@ -31,6 +33,7 @@ export const beVietnamPro = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
   display: "swap",
   variable: "--font-be-vietnam-pro",
+  preload: false,
 });
 
 /** Body serif của thiệp. Bản self-host `Lora-Regular.ttf` chỉ có 1 weight và

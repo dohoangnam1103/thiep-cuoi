@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 type ZodiacMaskArtworkProps = Omit<ComponentPropsWithoutRef<"span">, "children"> & {
   src: string;
-  "data-envelope-opening-fly"?: true;
+  "data-envelope-cover-fly"?: true;
 };
 
 type ZodiacMaskStyle = CSSProperties & {
@@ -29,7 +29,7 @@ export function ZodiacMaskArtwork({
       data-zodiac-artwork={src}
       className={cn(
         "zodiac-mask-artwork",
-        props["data-envelope-opening-fly"] && "zodiac-opening-fly",
+        props["data-envelope-cover-fly"] && "zodiac-opening-fly",
         className,
       )}
       style={maskStyle}

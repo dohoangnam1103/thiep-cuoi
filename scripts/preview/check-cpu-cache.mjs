@@ -122,16 +122,8 @@ try {
   assert.ok(ordinary.html.includes('data-ga-param-source="template_demo"'));
   console.log("PASS legacy capture redirect; dynamic capture cannot poison normal demo cache");
 
-  await page.goto(`${origin}/admin/settings`);
-  const toggle = page.getByRole("switch", { name: "Bìa thiệp 3D", exact: true });
-  await expect(toggle).toHaveAttribute("aria-checked", "false");
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-checked", "true");
-  assert.ok((await read(demo)).html.includes('data-envelope-renderer="3d"'));
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-checked", "false");
   assert.ok((await read(demo)).html.includes('data-envelope-renderer="2d"'));
-  console.log("PASS cover toggle invalidates cached demos in both directions");
+  console.log("PASS demo HTML includes the 2D cover");
 
   const published = `/thiep/${slug}`;
   fresh(await read(published));
