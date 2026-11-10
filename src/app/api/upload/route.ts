@@ -17,6 +17,7 @@ import {
 import { getSession } from "@/lib/session";
 import {
   EDITOR_IMAGE_WEBP_QUALITY,
+  MAX_EDITOR_IMAGE_EDGE,
   MAX_IMAGE_UPLOAD_OUTPUT_BYTES,
   MAX_IMAGE_UPLOAD_REQUEST_BYTES,
   MAX_IMAGE_UPLOAD_SOURCE_BYTES,
@@ -62,6 +63,8 @@ export async function POST(request: NextRequest) {
       bytes,
       allowedFormats: EDITOR_UPLOAD_IMAGE_FORMATS,
       quality: EDITOR_IMAGE_WEBP_QUALITY,
+      maxWidth: MAX_EDITOR_IMAGE_EDGE,
+      maxHeight: MAX_EDITOR_IMAGE_EDGE,
       maxOutputBytes: MAX_IMAGE_UPLOAD_OUTPUT_BYTES,
     });
   } catch (error) {

@@ -228,7 +228,8 @@ test("opening a lightbox stops page auto-scroll and pauses the background coverf
   await expect(album.getByRole("button", { name: "Xem ảnh cưới 2", exact: true })).toBeVisible();
 });
 
-test("lightbox thumbnails use display derivatives without changing the original upload", async ({ page }) => {
+test("carousel and lightbox use display derivatives and fetch the original only for zoom", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   const uploadRoot = path.join(process.cwd(), "tests/e2e/.data/editor-uploads");
   const filename = `${randomUUID()}.webp`;
   const file = path.join(uploadRoot, filename);
@@ -236,13 +237,21 @@ test("lightbox thumbnails use display derivatives without changing the original 
   await writeFile(file, photo, { flag: "wx" });
   try {
     const source = `/uploads/${filename}`;
+    const originalRequests: string[] = [];
+    page.on("request", request => {
+      if (new URL(request.url()).pathname === source) originalRequests.push(request.url());
+    });
     const { album } = await openInvitation(page, 1, false, [source]);
     await album.scrollIntoViewIfNeeded();
+    const card = album.locator("img");
+    await expect.poll(() => card.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    expect(await card.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeLessThanOrEqual(1080);
     await album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true }).click();
     const box = page.getByTestId("wedding-lightbox");
     const original = box.getByTestId("wedding-lightbox-image");
-    await expect(original).toHaveAttribute("src", source);
-    await expect.poll(() => original.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBe(3600);
+    await expect(original).toHaveAttribute("data-album-source", source);
+    await expect.poll(() => original.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    expect(await original.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeLessThanOrEqual(1920);
     const thumbnail = box.getByTestId("wedding-lightbox-thumbnails").locator("img");
     await expect(thumbnail).toHaveCount(1);
     await expect.poll(() => thumbnail.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
@@ -253,6 +262,20 @@ test("lightbox thumbnails use display derivatives without changing the original 
     const preview = await sharp(await response.body()).metadata();
     expect(preview.width).toBeLessThanOrEqual(384);
     expect(preview.height).toBeLessThan(2400);
+    expect(originalRequests).toHaveLength(0);
+    // The derivative remains visible and immediately zoomable during a slow
+    // original download. Resolving that request upgrades only the active photo.
+    let releaseOriginal: () => void = () => {};
+    const originalGate = new Promise<void>(resolve => { releaseOriginal = resolve; });
+    await page.route(`**${source}`, async route => { await originalGate; await route.continue(); });
+    await box.getByTestId("wedding-lightbox-zoom-in").click();
+    await expect(original).toHaveAttribute("data-zoom-scale", "1.50");
+    await expect.poll(() => originalRequests.length).toBe(1);
+    expect(await original.getAttribute("src")).not.toBe(source);
+    await expect(box.getByRole("status")).toHaveCount(0);
+    releaseOriginal();
+    await expect(original).toHaveAttribute("src", source);
+    await expect.poll(() => original.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBe(3600);
     expect(await readFile(file)).toEqual(photo);
     await page.keyboard.press("Escape");
   } finally {
@@ -260,11 +283,46 @@ test("lightbox thumbnails use display derivatives without changing the original 
   }
 });
 
+test("prepared lightbox neighbors navigate without another decode or loading flash", async ({ page }) => {
+  await page.addInitScript(() => {
+    const decode = HTMLImageElement.prototype.decode;
+    const calls: Record<string, number> = {};
+    Object.assign(window, { albumDecodeCalls: calls });
+    HTMLImageElement.prototype.decode = function () {
+      calls[this.src] = (calls[this.src] ?? 0) + 1;
+      return decode.call(this);
+    };
+  });
+  const { album } = await openInvitation(page, 5);
+  await album.scrollIntoViewIfNeeded();
+  await album.getByRole("button", { name: "Xem ảnh cưới 1", exact: true }).click();
+  const box = page.getByTestId("wedding-lightbox");
+  await expect.poll(() => box.getByTestId("wedding-lightbox-track").locator("img").evaluateAll(images => images.every(node => (node as HTMLImageElement).complete))).toBe(true);
+  await page.waitForTimeout(100);
+  const calls = () => page.evaluate(() => (window as unknown as { albumDecodeCalls: Record<string, number> }).albumDecodeCalls[new URL("/chungdoi/images/gallery/minimalism-purple/photo-1.jpg?coverflow-test=1", location.href).href]);
+  expect(await calls()).toBe(1);
+  await page.keyboard.press("ArrowRight");
+  await expect(box.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(1));
+  await expect(box.getByRole("status")).toHaveCount(0);
+  expect(await calls()).toBe(1);
+  await expect(box.getByTestId("wedding-lightbox-track")).toHaveCSS("transition-property", "none");
+  const bounds = await box.getByTestId("wedding-lightbox-image").boundingBox();
+  expect(bounds).not.toBeNull();
+  const y = bounds!.y + bounds!.height / 2;
+  const x = bounds!.x + bounds!.width * 0.75;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 160, y, { steps: 8 });
+  await page.mouse.up();
+  await expect(box).toBeVisible();
+  await expect(box.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(2));
+});
+
 test("a delayed photo cannot override a newer choice or reopen a closed lightbox", async ({ page }) => {
   await page.addInitScript(() => {
     const decode = HTMLImageElement.prototype.decode;
     HTMLImageElement.prototype.decode = async function () {
-      if (new URL(this.src, location.href).searchParams.get("coverflow-test") === "12") {
+    if (["12", "14"].includes(new URL(this.src, location.href).searchParams.get("coverflow-test") ?? "")) {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
       return decode.call(this);
@@ -282,7 +340,7 @@ test("a delayed photo cannot override a newer choice or reopen a closed lightbox
   await expect(box.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(17));
   await page.clock.runFor(1500);
   await expect(box.getByTestId("wedding-lightbox-image")).toHaveAttribute("src", photoUrl(17));
-  await thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 13", exact: true }).click();
+  await thumbnails.getByRole("button", { name: "Ảnh thu nhỏ 15", exact: true }).click();
   await expect(box.getByRole("status")).toHaveText("Đang tải ảnh…");
   await page.keyboard.press("Escape");
   await page.clock.runFor(1500);

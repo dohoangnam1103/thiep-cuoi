@@ -586,6 +586,7 @@ function GuestMediaLightbox({
         <div
           data-testid="guest-moments-track"
           className="flex h-full w-full"
+          onClickCapture={zoom.onClickCapture}
           onPointerCancel={zoom.onPointerCancel}
           onPointerDown={zoom.onPointerDown}
           onPointerMove={zoom.onPointerMove}
@@ -593,7 +594,7 @@ function GuestMediaLightbox({
           onWheel={zoom.onWheel}
           style={{
             touchAction: "none",
-            transform: `translate3d(calc(${-index * 100}% + ${zoom.trackDrag}px), 0, 0)`,
+            transform: `translate3d(calc(${-index * 100}% + var(--lightbox-drag, 0px)), 0, 0)`,
             transition: zoom.trackAnimating ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
             willChange: "transform",
           }}

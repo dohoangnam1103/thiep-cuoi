@@ -13,5 +13,8 @@ export const MAX_IMAGE_UPLOAD_REQUEST_BYTES = MAX_IMAGE_UPLOAD_SOURCE_BYTES + ME
  */
 export const MAX_IMAGE_UPLOAD_OUTPUT_BYTES = 19 * MEBIBYTE;
 
-/** Shared WebP quality; editor uploads preserve the source pixel dimensions. */
+/** Keep camera originals useful for zoom without retaining oversized textures. */
+export const MAX_EDITOR_IMAGE_EDGE = 4096;
+
+/** Shared WebP quality for client compression and server normalization. */
 export const EDITOR_IMAGE_WEBP_QUALITY = 82;

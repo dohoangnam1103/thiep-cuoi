@@ -3,6 +3,7 @@
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import {
   type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
   type WheelEvent,
   useCallback,
@@ -93,6 +94,9 @@ export function useLightboxZoom({
   swipeThreshold = 60,
 }: UseLightboxZoomOptions) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const dragFrame = useRef<number | null>(null);
+  const dragRef = useRef(0);
+  const suppressClick = useRef(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const pointersRef = useRef(new Map<number, Point>());
   const gestureRef = useRef<Gesture | null>(null);
@@ -102,8 +106,27 @@ export function useLightboxZoom({
   const [scale, setScale] = useState(MIN_SCALE);
   const [pan, setPan] = useState<Pan>({ x: 0, y: 0 });
   const [imageAnimating, setImageAnimating] = useState(false);
-  const [trackDrag, setTrackDrag] = useState(0);
   const [trackAnimating, setTrackAnimating] = useState(true);
+
+  const setTrackDrag = useCallback((value: number) => {
+    dragRef.current = value;
+    if (dragFrame.current !== null) cancelAnimationFrame(dragFrame.current);
+    if (value === 0) {
+      dragFrame.current = null;
+      viewportRef.current?.parentElement?.style.setProperty("--lightbox-drag", "0px");
+      return;
+    }
+    // Dragging only changes a compositor transform. Do not reconcile the
+    // image track, controls and thumbnails on every pointermove.
+    dragFrame.current = requestAnimationFrame(() => {
+      dragFrame.current = null;
+      viewportRef.current?.parentElement?.style.setProperty("--lightbox-drag", `${dragRef.current}px`);
+    });
+  }, []);
+
+  useEffect(() => () => {
+    if (dragFrame.current !== null) cancelAnimationFrame(dragFrame.current);
+  }, []);
 
   useLayoutEffect(() => {
     onSwipeRef.current = onSwipe;
@@ -154,7 +177,7 @@ export function useLightboxZoom({
     setTrackDrag(0);
     setTrackAnimating(true);
     commitTransform(MIN_SCALE, { x: 0, y: 0 }, animate);
-  }, [commitTransform]);
+  }, [commitTransform, setTrackDrag]);
 
   const zoomAt = useCallback((
     nextScaleValue: number,
@@ -212,10 +235,11 @@ export function useLightboxZoom({
     setTrackAnimating(true);
     setImageAnimating(false);
     return true;
-  }, [enabled]);
+  }, [enabled, setTrackDrag]);
 
   const onPointerDown = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (pointersRef.current.size === 0) suppressClick.current = false;
 
     try {
       event.currentTarget.setPointerCapture(event.pointerId);
@@ -230,12 +254,14 @@ export function useLightboxZoom({
     });
 
     if (startPinch()) {
+      suppressClick.current = true;
       event.preventDefault();
       return;
     }
 
     setImageAnimating(false);
     if (enabled && scaleRef.current > MIN_SCALE) {
+      suppressClick.current = true;
       gestureRef.current = {
         kind: "pan",
         pointerId: event.pointerId,
@@ -256,7 +282,7 @@ export function useLightboxZoom({
     };
     setTrackDrag(0);
     setTrackAnimating(false);
-  }, [enabled, startPinch]);
+  }, [enabled, setTrackDrag, startPinch]);
 
   const onPointerMove = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (!pointersRef.current.has(event.pointerId)) return;
@@ -333,11 +359,12 @@ export function useLightboxZoom({
         gesture.dragging = true;
       }
       if (gesture.dragging) {
+        suppressClick.current = true;
         setTrackDrag(dx);
         event.preventDefault();
       }
     }
-  }, [commitTransform, startPinch]);
+  }, [commitTransform, setTrackDrag, startPinch]);
 
   const finishPointer = useCallback((
     event: ReactPointerEvent<HTMLElement>,
@@ -389,7 +416,7 @@ export function useLightboxZoom({
     }
 
     if (pointersRef.current.size === 0) gestureRef.current = null;
-  }, [resetZoom, swipeThreshold]);
+  }, [resetZoom, setTrackDrag, swipeThreshold]);
 
   const onPointerUp = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     finishPointer(event, false);
@@ -398,6 +425,15 @@ export function useLightboxZoom({
   const onPointerCancel = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     finishPointer(event, true);
   }, [finishPointer]);
+
+  const onClickCapture = useCallback((event: ReactMouseEvent<HTMLElement>) => {
+    // Pointer capture targets the track on release. The compatibility click
+    // after a drag must not bubble to the backdrop and close the lightbox.
+    if (!suppressClick.current) return;
+    suppressClick.current = false;
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
 
   const onWheel = useCallback((event: WheelEvent<HTMLElement>) => {
     if (!enabled || event.deltaY === 0) return;
@@ -451,6 +487,7 @@ export function useLightboxZoom({
     imageRef,
     imageStyle,
     onDoubleClick,
+    onClickCapture,
     onPointerCancel,
     onPointerDown,
     onPointerMove,
@@ -459,7 +496,6 @@ export function useLightboxZoom({
     resetZoom,
     scale,
     trackAnimating,
-    trackDrag,
     viewportRef,
     zoomIn,
     zoomOut,

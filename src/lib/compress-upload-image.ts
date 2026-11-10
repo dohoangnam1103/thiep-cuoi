@@ -1,5 +1,5 @@
 import { isAcceptedImageUpload } from "./upload-image-formats";
-import { EDITOR_IMAGE_WEBP_QUALITY, MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "./upload-image-limits";
+import { EDITOR_IMAGE_WEBP_QUALITY, MAX_EDITOR_IMAGE_EDGE, MAX_IMAGE_UPLOAD_SOURCE_BYTES } from "./upload-image-limits";
 
 const MIN_COMPRESSION_BYTES = 64 * 1024;
 const MAX_DECODED_PIXELS = 60_000_000;
@@ -34,22 +34,25 @@ async function decodeImage(file: File): Promise<DecodedImage> {
 
 /** Reduce bytes before the network request; the server still validates every upload. */
 export async function compressUploadImage(file: File): Promise<File> {
-  if (typeof document === "undefined" || file.size < MIN_COMPRESSION_BYTES
+  if (typeof document === "undefined"
     || file.size > MAX_IMAGE_UPLOAD_SOURCE_BYTES
     || file.type.toLowerCase() === "image/gif" || /\.gif$/i.test(file.name)
     || !isAcceptedImageUpload(file, ["jpeg", "png", "webp"])) return file;
-  // Small WebPs are already cheap to transfer; avoid another lossy generation.
-  if ((file.type.toLowerCase() === "image/webp" || /\.webp$/i.test(file.name)) && file.size <= 512 * 1024) return file;
-
   let decoded: DecodedImage | undefined;
   let canvas: HTMLCanvasElement | undefined;
   try {
     decoded = await decodeImage(file);
     const { width, height } = decoded;
     if (!width || !height || width * height > MAX_DECODED_PIXELS) return file;
+    const ratio = Math.min(1, MAX_EDITOR_IMAGE_EDGE / Math.max(width, height));
+    const resize = ratio < 1;
+    // Byte size alone cannot identify a small image: a very large, flat WebP
+    // can be only a few KB. Check dimensions before skipping recompression.
+    if (!resize && (file.size < MIN_COMPRESSION_BYTES
+      || ((file.type.toLowerCase() === "image/webp" || /\.webp$/i.test(file.name)) && file.size <= 512 * 1024))) return file;
     canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = Math.max(1, Math.round(width * ratio));
+    canvas.height = Math.max(1, Math.round(height * ratio));
     const context = canvas.getContext("2d");
     if (!context) return file;
     context.imageSmoothingEnabled = true;
@@ -60,7 +63,7 @@ export async function compressUploadImage(file: File): Promise<File> {
     const blob = await encode("image/webp", EDITOR_IMAGE_WEBP_QUALITY / 100);
     // Unsupported WebP encoders may return PNG. Upload the untouched original
     // and let the server encode WebP, without JPEG/PNG recompression.
-    if (!blob || blob.type !== "image/webp" || !blob.size || blob.size >= file.size) return file;
+    if (!blob || blob.type !== "image/webp" || !blob.size || (!resize && blob.size >= file.size)) return file;
     const name = file.name.replace(/\.[^.]+$/, "") || "image";
     return new File([blob], `${name}.webp`, { type: blob.type, lastModified: file.lastModified });
   } catch {

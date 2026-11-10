@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { AlbumPhoto } from "@/components/album-photo";
 
 type Props = {
   photos: string[];
   accent: string;
   onOpen: (index: number) => void;
   paused?: boolean;
+  onPrepare?: (index: number) => void;
 };
 
 /**
@@ -68,7 +70,7 @@ const AUTOPLAY_MS = 4000;
  */
 const SWIPE_MIN_PX = 40;
 
-export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Props) {
+export function CoverflowGallery({ photos, accent, onOpen, paused = false, onPrepare }: Props) {
   const t = useTranslations("invitationTemplate");
   const count = photos.length;
   const [active, setActive] = useState(0);
@@ -82,6 +84,7 @@ export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Pro
   // Nhả tay sau khi vuốt vẫn sinh ra một click trên thẻ nằm dưới ngón. Cờ này để
   // chặn nó, nếu không mỗi lần vuốt sẽ mở luôn lightbox.
   const swiped = useRef(false);
+  const images = useRef(new Map<number, HTMLImageElement>());
   const canAutoplay = isVisible && pageVisible && !reducedMotion && !paused;
 
   useEffect(() => {
@@ -118,7 +121,11 @@ export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Pro
     if (timer.current !== null) window.clearTimeout(timer.current);
     if (count <= 1 || !canAutoplay) return;
     timer.current = window.setTimeout(() => {
-      setActive((i) => (i + 1) % count);
+      setActive((i) => {
+        const next = (i + 1) % count;
+        const image = images.current.get(next);
+        return image?.complete && image.naturalWidth > 0 ? next : i;
+      });
       next();
     }, AUTOPLAY_MS);
   }, [count, canAutoplay]);
@@ -129,6 +136,10 @@ export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Pro
       if (timer.current !== null) window.clearTimeout(timer.current);
     };
   }, [schedule]);
+
+  useEffect(() => {
+    if (hasEntered) onPrepare?.(active);
+  }, [active, hasEntered, onPrepare]);
 
   useEffect(() => {
     if (!canAutoplay) return;
@@ -247,7 +258,7 @@ export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Pro
                 aria-label={t(isActive ? "coverflowOpen" : "coverflowSelect", { index: index + 1 })}
                 className={`absolute aspect-[2/3] h-[92%] cursor-pointer overflow-hidden rounded-[16px] shadow-xl transition-[transform,opacity] ease-in-out motion-reduce:transition-none ${isActive ? "ring-2 ring-white/30" : ""}`}
                 style={{
-                  transitionDuration: "1100ms",
+                  transitionDuration: "420ms",
                   transform: `translateX(${sign * s.x}%) translateZ(${s.z}px) rotateY(${sign * s.rotate}deg) scale(${s.scale})`,
                   opacity: s.opacity,
                   zIndex: s.zIndex,
@@ -255,8 +266,15 @@ export function CoverflowGallery({ photos, accent, onOpen, paused = false }: Pro
               >
                 {/* draggable=false: ảnh kéo được theo mặc định, trên desktop cú
                     kéo native sẽ cắt ngang chuỗi pointer và vuốt bằng chuột hỏng */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={src} alt={t("lightboxPhotoAlt", { index: index + 1 })} decoding="async" draggable={false} className="h-full w-full object-cover" />
+                <AlbumPhoto
+                  ref={image => { if (image) images.current.set(index, image); else images.current.delete(index); }}
+                  src={src}
+                  sizes="(min-width: 768px) 319px, 209px"
+                  maxWidth={1080}
+                  alt={t("lightboxPhotoAlt", { index: index + 1 })}
+                  draggable={false}
+                  className="h-full w-full object-cover"
+                />
               </button>
             );
           })}

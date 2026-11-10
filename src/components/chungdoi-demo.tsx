@@ -2,10 +2,9 @@
 
 import Lenis from "lenis";
 import { AudioLines, ChevronsDown, Pause, RotateCcw, VolumeX } from "lucide-react";
-import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { type CSSProperties, type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ChungDoiTemplate } from "@/data/chungdoi";
 import { formatCalendarDate, isCalendarDate } from "@/lib/calendar-date";
@@ -41,11 +40,7 @@ import {
   GuestMediaGalleryProvider,
   PublicGuestMomentsPortal,
 } from "@/components/public-guest-moments";
-import {
-  LightboxZoomControls,
-  useLightboxZoom,
-  VI_LIGHTBOX_ZOOM_LABELS,
-} from "@/components/lightbox-zoom";
+import { Lightbox } from "@/components/invitation-lightbox";
 import { InvitationMap, MapDirectionsButton } from "@/components/chungdoi-tpl-shared";
 import { OpeningEffectArtwork } from "@/components/chungdoi-opening-effect";
 import { ZodiacMaskArtwork } from "@/components/zodiac-mask-artwork";
@@ -343,118 +338,6 @@ function useLightbox(count: number) {
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   return { lightbox: count > 0 ? lightbox : null, setLightbox };
-}
-
-function Lightbox({
-  gallery,
-  index,
-  setIndex,
-  accent = "#ffffff",
-}: {
-  gallery: string[];
-  index: number | null;
-  setIndex: Dispatch<SetStateAction<number | null>>;
-  accent?: string;
-}) {
-  const count = gallery.length;
-  const step = useCallback((dir: number) => {
-    setIndex((v) => (v === null ? v : (v + dir + count) % count));
-  }, [count, setIndex]);
-  const zoom = useLightboxZoom({
-    enabled: index !== null,
-    onSwipe: step,
-    swipeThreshold: typeof window !== "undefined" ? Math.min(80, window.innerWidth * 0.2) : 60,
-  });
-  const resetZoom = zoom.resetZoom;
-
-  const navigate = useCallback((direction: number) => {
-    resetZoom(false);
-    step(direction);
-  }, [resetZoom, step]);
-  const close = useCallback(() => {
-    resetZoom(false);
-    setIndex(null);
-  }, [resetZoom, setIndex]);
-
-  useEffect(() => {
-    if (index === null) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft") navigate(-1);
-      if (event.key === "ArrowRight") navigate(1);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [close, index, navigate]);
-
-  if (index === null) return null;
-
-  return createPortal((
-    <div
-      data-testid="wedding-lightbox"
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden bg-black/90"
-      onClick={close}
-    >
-      <button type="button" aria-label="Đóng" onClick={(e) => { e.stopPropagation(); close(); }} className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center text-2xl text-white/90 transition-opacity hover:opacity-70">✕</button>
-      <div className="absolute top-5 z-10 text-sm text-white/80">{index + 1} / {count}</div>
-      <button type="button" aria-label="Ảnh trước" onClick={(e) => { e.stopPropagation(); navigate(-1); }} className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:left-8">‹</button>
-      <button type="button" aria-label="Ảnh sau" onClick={(e) => { e.stopPropagation(); navigate(1); }} className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-3xl text-white/90 transition-opacity hover:opacity-70 md:right-8">›</button>
-
-      <div
-        data-testid="wedding-lightbox-track"
-        className="flex h-full w-full"
-        onPointerCancel={zoom.onPointerCancel}
-        onPointerDown={zoom.onPointerDown}
-        onPointerMove={zoom.onPointerMove}
-        onPointerUp={zoom.onPointerUp}
-        onWheel={zoom.onWheel}
-        style={{
-          touchAction: "none",
-          transform: `translate3d(calc(${-index * 100}% + ${zoom.trackDrag}px), 0, 0)`,
-          transition: zoom.trackAnimating ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)" : "none",
-        }}
-      >
-        {gallery.map((src, i) => (
-          <div
-            key={src}
-            ref={i === index ? zoom.viewportRef : undefined}
-            className="flex h-full w-full shrink-0 items-center justify-center px-4"
-          >
-            <img
-              ref={i === index ? zoom.imageRef : undefined}
-              src={src}
-              alt={`Wedding photo ${i + 1}`}
-              data-testid={i === index ? "wedding-lightbox-image" : undefined}
-              data-zoom-scale={i === index ? zoom.scale.toFixed(2) : undefined}
-              draggable={false}
-              onClick={(e) => e.stopPropagation()}
-              onDoubleClick={i === index ? zoom.onDoubleClick : undefined}
-              style={i === index ? zoom.imageStyle : undefined}
-              className="max-h-[78vh] max-w-[92vw] select-none rounded-lg object-contain"
-            />
-          </div>
-        ))}
-      </div>
-
-      <LightboxZoomControls
-        className="absolute bottom-20 left-1/2 z-20 -translate-x-1/2"
-        labels={VI_LIGHTBOX_ZOOM_LABELS}
-        resetZoom={zoom.resetZoom}
-        scale={zoom.scale}
-        testIdPrefix="wedding-lightbox"
-        zoomIn={zoom.zoomIn}
-        zoomOut={zoom.zoomOut}
-      />
-
-      <div className="absolute bottom-4 z-10 flex max-w-[92vw] gap-2 overflow-x-auto px-2" onClick={(e) => e.stopPropagation()}>
-        {gallery.map((src, i) => (
-          <button key={src} type="button" onClick={() => { zoom.resetZoom(false); setIndex(i); }} className="h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-opacity" style={{ borderColor: i === index ? accent : "transparent", opacity: i === index ? 1 : 0.6 }}>
-            <img src={src} alt={`Thumbnail ${i + 1}`} draggable={false} className="h-full w-full object-cover" />
-          </button>
-        ))}
-      </div>
-    </div>
-  ), document.body);
 }
 
 function googleCalendarUrl(content: ChungDoiDemoContent) {

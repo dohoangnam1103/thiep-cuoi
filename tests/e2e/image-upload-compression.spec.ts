@@ -105,6 +105,34 @@ for (const width of [1440, 390]) test(`album sends a compressed image before upl
   await expect(page.getByRole("status").first()).toHaveText("Đã lưu");
 });
 
+for (const mode of ["landscape-jpeg", "small-byte-portrait-webp", "server-fallback"] as const) {
+  test(`uploads cap the longest edge at 4096px: ${mode}`, async ({ page, context }) => {
+    const portrait = mode === "small-byte-portrait-webp";
+    const dimensions = portrait ? { width: 3000, height: 6000 } : { width: 6000, height: 3000 };
+    const source = sharp({ create: { ...dimensions, channels: 3, background: "#b69c87" } });
+    const bytes = await (portrait ? source.webp() : source.jpeg({ quality: 95 })).toBuffer();
+    if (portrait) expect(bytes.length).toBeLessThan(64 * 1024);
+    if (mode === "server-fallback") await page.addInitScript(() => {
+      const encode = HTMLCanvasElement.prototype.toBlob;
+      HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
+        encode.call(this, callback, type === "image/webp" ? "image/png" : type, quality);
+      };
+    });
+    const input = await openAlbum(page, context);
+    const sent = await observeUploads(page);
+    await input.setInputFiles({ name: portrait ? "camera.webp" : "camera.jpg", mimeType: portrait ? "image/webp" : "image/jpeg", buffer: bytes });
+    await expect(page.locator(".e2-photo-row img")).toHaveCount(1);
+    await expect.poll(() => savedFiles.length).toBe(1);
+    const expected = portrait ? { width: 2048, height: 4096 } : { width: 4096, height: 2048 };
+    const stored = await sharp(await readFile(path.join(process.cwd(), "tests/e2e/.data/editor-uploads", savedFiles[0]))).metadata();
+    expect(stored).toMatchObject({ ...expected, format: "webp" });
+    const clientResized = mode !== "server-fallback" && await canEncodeWebp(page);
+    expect(await sharp(sent[0].bytes).metadata()).toMatchObject(clientResized ? expected : dimensions);
+    if (!clientResized) expect(sent[0].bytes.equals(bytes)).toBe(true);
+    await page.getByRole("button", { name: "Xong", exact: true }).click();
+  });
+}
+
 test("compression preserves EXIF portrait orientation, alpha and selected album order", async ({ page, context }) => {
   const input = await openAlbum(page, context);
   const sent = await observeUploads(page);
