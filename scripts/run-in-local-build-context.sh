@@ -52,6 +52,7 @@ rsync -aL --delete \
   --exclude '/.codegraph' \
   --exclude '/.kiro' \
   --exclude '/.production-archives' \
+  --exclude '/master-public' \
   --exclude '/data' \
   --exclude '/public/uploads' \
   --exclude '/tests/e2e/.data' \

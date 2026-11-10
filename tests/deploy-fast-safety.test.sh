@@ -30,11 +30,13 @@ printf 'untracked\n' > "$fixture_root/repo/untracked.txt"
 for checkout in repo worktree; do
   printf 'working-copy\n' > "$fixture_root/$checkout/value.txt"
   mkdir -p "$fixture_root/$checkout/docs" "$fixture_root/$checkout/data" \
-    "$fixture_root/$checkout/public/uploads" "$fixture_root/$checkout/.deploy-cache"
+    "$fixture_root/$checkout/public/uploads" "$fixture_root/$checkout/.deploy-cache" \
+    "$fixture_root/$checkout/master-public"
   printf 'do not copy\n' > "$fixture_root/$checkout/docs/research.txt"
   printf 'do not copy\n' > "$fixture_root/$checkout/data/unrelated.txt"
   printf 'do not copy\n' > "$fixture_root/$checkout/public/uploads/user.jpg"
   printf 'do not copy\n' > "$fixture_root/$checkout/.deploy-cache/cache.txt"
+  printf 'do not copy\n' > "$fixture_root/$checkout/master-public/reference.jpg"
   context_output=$(
     cd "$fixture_root/$checkout"
     SOURCE_FIXTURE="$PWD" "$context_runner" bash -c '
@@ -43,6 +45,7 @@ for checkout in repo worktree; do
       test "$DEPLOY_CACHE_DIR" = "$SOURCE_FIXTURE/.deploy-cache"
       test ! -e docs && test ! -e data && test ! -e public/uploads
       test ! -e .deploy-cache && test ! -e .git
+      test ! -e master-public
       printf "edited-after-freeze\n" > "$SOURCE_FIXTURE/value.txt"
       printf "changed-dependency\n" > "$SOURCE_FIXTURE/node_modules/example/value.txt"
       cat value.txt
