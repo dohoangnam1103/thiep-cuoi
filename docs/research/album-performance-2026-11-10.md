@@ -40,6 +40,15 @@ Scope: shared invitation album (`AlbumGallery` / `CoverflowGallery`), shared lig
 - Five ready-photo navigation changes observed approximately 12–17 ms in local, with zero loading-message insertions. Existing production code after image compression inserted a loading message on all five navigation attempts. These are lab observations, not field INP measurements.
 - Screenshots and browser measurements: `/tmp/chungdoi-album-qa/`; test logs `/tmp/chungdoi-album-*.log`. Local screenshots at matching mobile/desktop states were visually inspected. Whole-template visual parity outside the album is not claimed.
 
-Application changes are local and have not been committed, pushed or deployed by this operation. The production photo-reference operation above is already live.
+Application changes were committed and pushed to `master` as `cb37786`, then deployed successfully on 2026-11-10 (23:37 Asia/Ho_Chi_Minh). The production photo-reference operation above remains live.
+
+## Production application rollout
+
+- The official `npm run deploy:prepare` gate passed all 131 browser checks and prepared production artifact `20261110162920`. `npm run deploy` reused the verified gate/build caches and completed in 79 seconds after capacity preparation.
+- Active source: `candidate-20261110163631-73339`; image `sha256:ea30575cfdf9670b631246c5d70e80d92f4ad0885e0a3ba812f703da30a86a24`. Container healthy, no restarts, deployment lock released; origin asset, canonical, database and public URL checks passed. No migration ran. Existing cron schedules were preserved.
+- The unchanged 6 GiB capacity gate initially blocked deployment preparation on the VPS. Archived two older unused images to private local backups, verified their image configuration IDs and all 12 layer hashes in each archive, and removed those archived Docker copies. Pruned unused build cache by age without `--all`. Archived and removed only redundant host build artifacts; live image, public assets, database, uploads and recurring backups were retained. The previously live image remains available as rollback for this release.
+- Capacity was 6.25 GiB before deployment and about 6.2 GiB afterward. Private image/artifact archives and checksum manifest: `backups/vps-image-archive-20261110/` (excluded from Git and deploy).
+- Live Chromium verification on the reported invitation passed at 390px/DPR3 and 1440px: all five carousel photos used optimized display variants, lightbox display variants loaded, five sequential navigation attempts showed zero loading messages, real drag advanced without closing, zoom/reset and Escape worked, and no page errors occurred. Observed navigation state changes were 13–16 ms mobile and 7–17 ms desktop after preparing photos; these are lab observations rather than a universal latency guarantee.
+- Live screenshots: `/tmp/chungdoi-album-live-390.png`, `/tmp/chungdoi-album-live-1440.png`; results `/tmp/chungdoi-album-live-results.json`; deployment log `/tmp/chungdoi-album-deploy.log`.
 
 Technical references: [Next image optimization](https://nextjs.org/docs/app/api-reference/components/image), [HTMLImageElement.decode](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decode).
