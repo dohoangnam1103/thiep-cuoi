@@ -1,6 +1,6 @@
 # Kiểm chứng tối ưu tải trang ngày 10/11/2026
 
-Phạm vi là bốn tối ưu đã thống nhất sau khi bỏ bìa phong bì 3D. So sánh với bản build local sau lần bỏ 3D, trước bốn thay đổi này. Production chưa nhận các thay đổi trong phiên này.
+Phạm vi là bốn tối ưu đã thống nhất sau khi bỏ bìa phong bì 3D. So sánh với bản build local sau lần bỏ 3D, trước bốn thay đổi này. Các số liệu trước/sau bên dưới được đo ở local. Kết quả phát hành production được ghi ở cuối tài liệu.
 
 `/mau-thiep` dùng `listingMessageNamespaces`, gồm `chrome`, `home`, `listing`, `templatePreviewModal` và `templateSeoFacets`. Kiểm tra dependency tree của các hook dịch bảo đảm các namespace cần thiết đều có mặt. HTML cùng dữ liệu test giảm từ 129.069 xuống 55.513 byte khi gzip, tương đương 57%.
 
@@ -40,4 +40,24 @@ CHANGED: message scopes, font preload, cover image selection and two derivative 
 VERIFIED: local production build, relevant tests, mobile/tablet/desktop cover comparison, network payload measurements
 UNVERIFIED: production deployment, field Web Vitals, 3×/4× asset fidelity
 RISKS: two pre-existing gallery tests retain old UI expectations
-NEXT: deploy when requested
+NEXT: production verification recorded below
+
+## Phát hành production
+
+Ngày 10/11/2026, nhánh làm việc được fast-forward vào nhánh mặc định `master` và push lên origin. Các commit ứng dụng là `74f7575` và `9c84aa6`. Commit `9dbb337` loại bản copy tham chiếu `master-public` khỏi context deploy và bổ sung kiểm tra bằng fixture vào bài test an toàn của pipeline.
+
+Đã phát hành deployment `20261110153141` bằng `npm run deploy` tới VPS `163.61.110.34`. Quy trình hoàn tất với exit code 0 sau 423 giây. Cả 131 E2E của cổng i18n đạt, image Linux được dựng và SQLite native được kiểm tra, các bước origin/public/cron đạt. Container web healthy, khóa deploy được giải phóng. Không có migration pending.
+
+Chrome trên tên miền thật xác nhận các luồng sau
+
+- Trang chủ giữ poster và video chưa tải ở đầu trang, sau đó tải khi cuộn tới gần video.
+- `/mau-thiep` trả 200, HTML gzip khoảng 55 KiB, preview mở và đóng được.
+- Demo Hoàng Kim Đỏ dùng bìa 2D và `flower-mobile.webp`. Không có canvas, chunk chứa `WebGLRenderer` hoặc preload font toàn cục trong lượt kiểm tra. Mở thiệp thành công.
+- Hai asset mobile trả 200 với dung lượng 72.502 và 95.124 byte. CSP production có `upgrade-insecure-requests`.
+- Không có page error trong các luồng Chrome đã kiểm tra.
+
+Lúc bắt đầu phát hành, VPS chỉ còn khoảng 4,4 GiB, thấp hơn ngưỡng 6 GiB của pipeline. Đã chuyển bốn backup hằng ngày cũ nhất sang máy local, giữ tám backup hằng ngày mới nhất trên VPS. Backup dùng XFS reflink nên thao tác này giải phóng ít dung lượng thực. Các bản copy asset tham chiếu, prebuilt artifact cũ và journal/log đã rotate cũng được lưu riêng, đối chiếu SHA-256 và kiểm tra archive trước khi thu hồi bản sao trên VPS. Các cache ảnh/OG cũ và một image cũ hơn bản rollback hiện hành đã được thu hồi. Sau đó VPS đạt 6,1 GiB và vượt qua cổng dung lượng trước deploy.
+
+Archive riêng tư nằm tại `backups/vps-archive-20261110/`, gồm `old-daily-backups.tar.gz`, `reference-assets-and-journals.tar.gz`, `prebuilt-artifacts-and-rotated-logs.tar.gz` và `SHA256SUMS`. Thư mục có mode 700, các archive có mode 600 và được gitignore. Dữ liệu live cùng bản rollback ngay trước phát hành được giữ. Sau khi dựng image mới, VPS còn khoảng 3,5 GiB, dưới ngưỡng 6 GiB để bắt đầu một lần deploy tiếp theo.
+
+Log kiểm tra nằm tại `/tmp/chungdoi-release-deploy.log`, `/tmp/chungdoi-release-live-browser.log` và `/tmp/chungdoi-release-unit.log`. Các bản ghi local không được đưa vào source hoặc public assets của release.
