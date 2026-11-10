@@ -5,6 +5,12 @@ import { retiredTemplateSlugPattern } from "./src/data/retired-template-slugs";
 import { canonicalHostRedirects } from "./src/lib/seo-redirects";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+// `upgrade-insecure-requests` is meaningless on an HTTP origin, and WebKit
+// (unlike Chromium) applies it to loopback too: http://127.0.0.1 subresources
+// are rewritten to https://127.0.0.1 and fail TLS, so no script or stylesheet
+// loads and hydration never runs. Local builds and the E2E suite opt in to an
+// insecure site URL precisely because they are served over HTTP.
+const servesInsecureSiteUrl = isDevelopment || process.env.ALLOW_INSECURE_SITE_URL === "1";
 // Old published blog slugs with clear replacements in the current catalog.
 const legacyBlogSlugs = {
   "cach-lap-danh-sach-khach-moi-dam-cuoi": "cach-lap-danh-sach-khach-moi-dam-cuoi-day-du-khong-trung-va-de-chot-so-ban",
@@ -34,7 +40,7 @@ const contentSecurityPolicy = [
   "form-action 'self'",
   "frame-ancestors 'self'",
   "manifest-src 'self'",
-  ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
+  ...(servesInsecureSiteUrl ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const nextConfig: NextConfig = {
