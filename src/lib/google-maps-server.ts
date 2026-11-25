@@ -4,9 +4,9 @@ import {
   coordinatesFromGoogleMapsUrl,
   isGoogleMapsShortUrl,
   isGoogleMapsUrl,
+  MAX_GOOGLE_MAPS_URL_LENGTH,
 } from "@/lib/google-maps";
 
-const MAX_MAP_VALUE_LENGTH = 1_200;
 const expandedUrlCache = new Map<string, string>();
 
 function cacheExpandedUrl(source: string, result: string): string {
@@ -38,7 +38,7 @@ export async function expandGoogleMapsShortUrl(value: string): Promise<string> {
 
     const expanded = new URL(location, source).toString();
     if (!isGoogleMapsUrl(expanded)) return source;
-    if (expanded.length <= MAX_MAP_VALUE_LENGTH) return cacheExpandedUrl(source, expanded);
+    if (expanded.length <= MAX_GOOGLE_MAPS_URL_LENGTH) return cacheExpandedUrl(source, expanded);
 
     return cacheExpandedUrl(
       source,

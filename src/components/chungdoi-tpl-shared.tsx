@@ -30,10 +30,7 @@ import {
   SourceLayeredGiftArtwork,
 } from "@/components/chungdoi-gift-envelope-artwork";
 import { resolveGiftVisual } from "@/data/chungdoi-gift-visuals";
-import {
-  coordinatesFromGoogleMapsUrl,
-  isGoogleMapsUrl,
-} from "@/lib/google-maps";
+import { isGoogleMapsShortUrl, mapLocationQuery } from "@/lib/google-maps";
 import { buildVietQrImageUrl } from "@/lib/vietqr";
 import { familyParentSlots } from "@/lib/invitation-display";
 import { formatVietnameseLunarDate } from "@/lib/vietnamese-lunar-date";
@@ -117,37 +114,23 @@ export function useLightbox(count: number) {
 const GOOGLE_MAPS_API_KEY = process.env.NODE_ENV === "development" ? "" : process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
 
 export function mapEmbedUrl(query: string) {
-  const trimmed = query.trim();
+  const locationQuery = encodeURIComponent(mapLocationQuery(query));
   const apiKey = GOOGLE_MAPS_API_KEY;
 
   // Có API key → dùng Maps Embed API chính thức. URL này được Google cho phép
   // embed ở mọi webview kể cả Facebook in-app browser.
   if (apiKey) {
-    if (isGoogleMapsUrl(trimmed)) {
-      const coords = coordinatesFromGoogleMapsUrl(trimmed);
-      if (coords) {
-        return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${coords}`;
-      }
-    }
-    return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(trimmed)}`;
+    return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${locationQuery}`;
   }
 
   // Fallback không key (dev local, hoặc key chưa set): URL cũ, bị chặn trong
   // Facebook webview nhưng hoạt động ở browser thường.
-  if (isGoogleMapsUrl(trimmed)) {
-    const coords = coordinatesFromGoogleMapsUrl(trimmed);
-    if (coords) return `https://www.google.com/maps?q=${coords}&output=embed`;
-  }
-  return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
+  return `https://www.google.com/maps?q=${locationQuery}&output=embed`;
 }
 
 export function directionsUrl(query: string) {
-  const trimmed = query.trim();
-  let destination = trimmed;
-  if (isGoogleMapsUrl(trimmed)) {
-    const coords = coordinatesFromGoogleMapsUrl(trimmed);
-    if (coords) destination = coords;
-  }
+  if (isGoogleMapsShortUrl(query)) return query.trim();
+  const destination = mapLocationQuery(query);
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
 }
 
@@ -176,7 +159,7 @@ export function InvitationMap({ query, title, className, style, ...iframeProps }
     return () => cancelAnimationFrame(frame);
   }, [hasApiKey]);
 
-  if (!hasApiKey && isFacebookWebview) {
+  if (isGoogleMapsShortUrl(query) || (!hasApiKey && isFacebookWebview)) {
     return (
       <a
         href={directionsUrl(query)}

@@ -1762,6 +1762,26 @@ for (const width of [1440, 768, 390, 320]) {
   });
 }
 
+test("guest venue map locates a Google Maps link pasted into the address", async ({ page }) => {
+  const guest = await createGuestDraft(page);
+  await section(page, "Địa điểm tổ chức");
+  const dialog = page.getByRole("dialog");
+  const address = dialog.getByLabel("Địa chỉ địa điểm", { exact: true });
+  const preview = dialog.getByTitle("Xem trước vị trí nơi tổ chức", { exact: true });
+  const link = `https://www.google.com/maps/place/Hoa+Mai/@10.82,106.69,15z/data=!3d10.77!4d106.7?entry=${"a".repeat(220)}`;
+  await address.fill(link);
+  await expect.poll(async () => new URL((await preview.getAttribute("src"))!).searchParams.get("q")).toBe("10.77,106.7");
+  const directions = dialog.getByRole("link", { name: "Mở Google Maps" });
+  await expect(directions).toHaveAttribute("href", /destination=10\.77%2C106\.7$/);
+
+  await close(page); await save(page); await page.reload();
+  expect(content(guest.id).address).toBe(link);
+  expect(content(guest.id).mapAddress).toBe("");
+  await section(page, "Địa điểm tổ chức");
+  await expect(address).toHaveValue(link);
+  await expect.poll(async () => new URL((await preview.getAttribute("src"))!).searchParams.get("q")).toBe("10.77,106.7");
+});
+
 test("guest venue map uses the address, reports invalid links and discards a late short-link response after reset", async ({ page }) => {
   const guest = await createGuestDraft(page);
   await section(page, "Địa điểm tổ chức");

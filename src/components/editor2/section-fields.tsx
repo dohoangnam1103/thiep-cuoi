@@ -75,8 +75,9 @@ export function Editor2SectionFields({ invitationId, section, draft, onChange, l
   </div>;
   if (section === "event") return <div className="e2-dialog-fields">{EDITOR2_FIELD_GROUPS.event.map(field)}</div>;
   if (section === "venue") return <Editor2VenueFields invitationId={invitationId} venueName={draft.fields.venueName} address={draft.fields.address}
+    onAddressChange={value => setField("address", value)}
     mapValue={draft.fields.mapAddress} onMapChange={value => setField("mapAddress", value)}>
-    {field("venueName")}{field("address")}
+    {field("venueName")}
   </Editor2VenueFields>;
   if (section === "gift") return <div className="e2-dialog-fields"><p className="e2-description">{t("giftHelp")}</p>
     <div className="e2-couple-grid">

@@ -3419,7 +3419,7 @@
       "title": "Nơi tổ chức",
       "addressLabel": "Địa chỉ nơi tổ chức",
       "addressPlaceholder": "VD: Trung tâm tiệc cưới ABC, 123 Lê Lợi, Q.1, TP.HCM",
-      "addressHint": "Địa chỉ này hiển thị trên thiệp và được dùng để tự ghim bản đồ.",
+      "addressHint": "Nhập địa chỉ hoặc dán link Google Maps để ghim vị trí trên bản đồ.",
       "previewTitle": "Xem trước bản đồ",
       "usingAddress": "Đang tự ghim theo địa chỉ phía trên",
       "usingOverride": "Đang dùng ghim từ link Google Maps",

@@ -23,6 +23,7 @@ import { templateSeoFacets } from "@/data/template-seo-facets";
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { verifyAdmin } from "@/lib/admin-dal";
+import { expandGoogleMapsShortUrl } from "@/lib/google-maps-server";
 import { isEditorUploadPublicUrl } from "@/lib/editor-uploads";
 import { prisma } from "@/lib/prisma";
 import { PUBLIC_DEMO_CONTENT_CACHE_TAG } from "@/lib/public-demo-content";
@@ -54,6 +55,7 @@ export async function saveDemo(id: string, _prev: EditorState, formData: FormDat
   const firstCeremony = ceremonies[0];
   const { templateId, ...contentData } = {
     ...parsed.data,
+    address: await expandGoogleMapsShortUrl(parsed.data.address),
     ceremonyHeader: firstCeremony?.title ?? "",
     ceremonyDate: firstCeremony?.date ?? "",
     ceremonyTime: firstCeremony?.time ?? "",

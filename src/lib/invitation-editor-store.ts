@@ -31,15 +31,19 @@ export async function prepareInvitationDraft(
   const ceremonies = parseCeremonies(formData);
   const schedule = parseSchedule(formData);
   const gallery = parseGallery(formData);
-  const mapAddress = isGoogleMapsShortUrl(parsed.data.mapAddress)
-    ? await expandGoogleMapsShortUrl(parsed.data.mapAddress)
-    : parsed.data.mapAddress;
+  const [address, mapAddress] = await Promise.all([
+    expandGoogleMapsShortUrl(parsed.data.address),
+    isGoogleMapsShortUrl(parsed.data.mapAddress)
+      ? expandGoogleMapsShortUrl(parsed.data.mapAddress)
+      : parsed.data.mapAddress,
+  ]);
   const firstCeremony = ceremonies[0];
   const persistedData = {
     ...parsed.data,
     ceremonyHeader: firstCeremony?.title ?? "",
     ceremonyDate: firstCeremony?.date ?? "",
     ceremonyTime: firstCeremony?.time ?? "",
+    address,
     mapAddress,
   };
   const { templateId, ...contentData } = persistedData;

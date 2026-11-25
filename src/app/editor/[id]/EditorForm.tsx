@@ -67,9 +67,9 @@ import type { MusicPickerMessages } from "@/lib/music-picker";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { DEFAULT_OPENING_MESSAGE, defaultCeremonyMessage } from "@/lib/invitation-display";
-import { isGoogleMapsShortUrl, isGoogleMapsUrl } from "@/lib/google-maps";
+import { isGoogleMapsShortUrl, isGoogleMapsUrl, MAX_GOOGLE_MAPS_URL_LENGTH } from "@/lib/google-maps";
 import { shortNameFromFullName } from "@/lib/short-name";
-import { venueDisplayAddress, venueMapQuery } from "@/lib/venue-address";
+import { normalizeVenueAddress, venueDisplayAddress, venueMapQuery } from "@/lib/venue-address";
 import {
   capitalizeVietnameseSentences,
   titleCaseVietnameseName,
@@ -255,7 +255,6 @@ const SENTENCE_CASE_FIELDS = new Set([
   "groomAddress",
   "brideParentTitle",
   "groomParentTitle",
-  "address",
 ]);
 
 function normalizeBirthOrder(value: string): string {
@@ -465,10 +464,14 @@ function VenueLocationFields({
   const [mapOverride, setMapOverride] = useState(initialMapAddress);
   const [overrideOpen, setOverrideOpen] = useState(Boolean(initialMapAddress));
   const [previewQuery, setPreviewQuery] = useState(
-    initialMapAddress.trim() || initialAddress.trim(),
+    venueMapQuery("", initialAddress, initialMapAddress),
   );
   const [resolving, setResolving] = useState(false);
   const [linkError, setLinkError] = useState(false);
+  const [resolvingAddress, setResolvingAddress] = useState(false);
+  const [addressLinkError, setAddressLinkError] = useState(false);
+  const addressInputRef = useRef<HTMLInputElement>(null);
+  const addressRequest = useRef(0);
   const mapInputRef = useRef<HTMLInputElement | null>(null);
 
   const overrideValue = mapOverride.trim();
@@ -477,7 +480,7 @@ function VenueLocationFields({
     Boolean(overrideValue) &&
     !linkError &&
     (!overrideLooksLikeUrl || isGoogleMapsUrl(overrideValue));
-  const effectiveQuery = overrideUsable ? overrideValue : address.trim();
+  const effectiveQuery = overrideUsable ? overrideValue : venueMapQuery("", address);
   const usingOverride = overrideUsable && Boolean(overrideValue);
 
   useEffect(() => {
@@ -486,6 +489,25 @@ function VenueLocationFields({
     }, 500);
     return () => window.clearTimeout(timer);
   }, [effectiveQuery]);
+
+  async function handleAddressBlur(value: string) {
+    const source = normalizeVenueAddress(value);
+    setAddress(source);
+    if (!isGoogleMapsShortUrl(source)) return;
+    const current = ++addressRequest.current;
+    setResolvingAddress(true);
+    setAddressLinkError(false);
+    try {
+      const result = await resolveMapAction(source);
+      if (addressRequest.current !== current || addressInputRef.current?.value.trim() !== source) return;
+      if (result.valid && result.resolved) setAddress(result.url);
+      else setAddressLinkError(true);
+    } catch {
+      if (addressRequest.current === current && addressInputRef.current?.value.trim() === source) setAddressLinkError(true);
+    } finally {
+      if (addressRequest.current === current) setResolvingAddress(false);
+    }
+  }
 
   async function handleMapLinkBlur() {
     const source = mapInputRef.current?.value.trim() ?? "";
@@ -527,7 +549,7 @@ function VenueLocationFields({
       setLinkError(false);
       setOverrideOpen(false);
     });
-    setPreviewQuery(address.trim());
+    setPreviewQuery(venueMapQuery("", address));
     mapInputRef.current?.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
   }
 
@@ -538,16 +560,26 @@ function VenueLocationFields({
           {t("addressLabel")}
         </label>
         <input
+          ref={addressInputRef}
           id="address"
           name="address"
           value={address}
-          onChange={(event) => setAddress(event.target.value)}
-          onBlur={(event) => setAddress(capitalizeVietnameseSentences(event.currentTarget.value))}
+          maxLength={MAX_GOOGLE_MAPS_URL_LENGTH}
+          onChange={(event) => {
+            addressRequest.current++;
+            setResolvingAddress(false);
+            setAddressLinkError(false);
+            setAddress(event.target.value);
+          }}
+          onBlur={(event) => void handleAddressBlur(event.currentTarget.value)}
           placeholder={t("addressPlaceholder")}
+          aria-invalid={addressLinkError || undefined}
+          aria-describedby="venue-address-hint"
           className={inputClass}
         />
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          {t("addressHint")}
+        <p id="venue-address-hint" role={addressLinkError ? "alert" : resolvingAddress ? "status" : undefined}
+          className={`mt-1 text-xs leading-5 ${addressLinkError ? "text-destructive" : "text-muted-foreground"}`}>
+          {resolvingAddress ? t("resolving") : addressLinkError ? t("linkError") : t("addressHint")}
         </p>
       </div>
 

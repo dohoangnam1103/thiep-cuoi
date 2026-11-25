@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { venueDisplayAddress, venueMapQuery } from "./venue-address";
+import { normalizeVenueAddress, venueDisplayAddress, venueMapQuery } from "./venue-address";
 
 test("venue text preserves legacy addresses and supports independently cleared name and address", () => {
   assert.equal(venueDisplayAddress("Nhà hàng Hoa Mai", "123 Nguyễn Huệ"), "Nhà hàng Hoa Mai\n123 Nguyễn Huệ");
@@ -18,4 +18,12 @@ test("maps follow the street address by default and only use a usable optional p
   assert.equal(venueMapQuery("Nhà hàng Hoa Mai", "123 Nguyễn Huệ", "https://example.com/not-a-map"), "123 Nguyễn Huệ");
   assert.equal(venueMapQuery("Nhà hàng Hoa Mai", "123 Nguyễn Huệ", "https://maps.app.goo.gl/unresolved"), "123 Nguyễn Huệ");
   assert.equal(venueMapQuery("", "", ""), "");
+});
+
+test("a Maps link pasted as the address stays intact and supplies the map location", () => {
+  const link = "https://www.google.com/maps/place/Hoa+Mai/@10.8,106.6,15z/data=!3d10.7!4d106.5";
+  assert.equal(normalizeVenueAddress(` ${link} `), link);
+  assert.equal(venueMapQuery("Nhà hàng Hoa Mai", link), "10.7,106.5");
+  assert.equal(venueMapQuery("Nhà hàng Hoa Mai", link, "10.711,106.511"), "10.711,106.511");
+  assert.equal(normalizeVenueAddress("  123 nguyễn huệ "), "123 nguyễn huệ");
 });

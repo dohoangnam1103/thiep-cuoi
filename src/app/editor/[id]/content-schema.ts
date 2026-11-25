@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import { templates } from "@/data/chungdoi";
+import { isGoogleMapsUrl, MAX_GOOGLE_MAPS_URL_LENGTH } from "@/lib/google-maps";
+import { MAX_VENUE_ADDRESS_LENGTH, normalizeVenueAddress } from "@/lib/venue-address";
 import {
   capitalizeVietnameseSentences,
   titleCaseVietnameseName,
@@ -78,8 +80,10 @@ export const contentSchema = z.object({
   groomParentTitle: optionalSentence(60),
 
   venueName: optionalSentence(120),
-  address: optionalSentence(200),
-  mapAddress: z.string().max(1_200).optional().default(""),
+  address: z.string().max(MAX_GOOGLE_MAPS_URL_LENGTH)
+    .refine(value => value.length <= MAX_VENUE_ADDRESS_LENGTH || isGoogleMapsUrl(value))
+    .optional().default("").transform(normalizeVenueAddress),
+  mapAddress: z.string().max(MAX_GOOGLE_MAPS_URL_LENGTH).optional().default(""),
   banquetTime: z.string().max(60).optional().default(""),
 
   brideBankName: z.string().max(120).optional().default(""),
