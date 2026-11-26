@@ -59,17 +59,14 @@ test("sitemap contains every canonical indexable Vietnamese page exactly once", 
   ]);
 });
 
-test("only blog URLs carry lastModified, and it comes from the post's own date", () => {
+test("non-blog routes have stable content dates and blog dates come from posts", () => {
   const entries = buildSitemapEntries(posts);
   const byUrl = new Map(entries.map((entry) => [entry.url, entry]));
 
-  // Marketing and template pages have no real per-page modification date, so
-  // they must stay bare instead of claiming a build timestamp.
-  assert.ok(
-    entries
-      .filter((entry) => !entry.url.includes("/blog"))
-      .every((entry) => entry.lastModified === undefined),
-  );
+  for (const url of [...staticUrls, ...facetUrls, ...detailUrls]) {
+    assert.match(String(byUrl.get(url)?.lastModified), /^\d{4}-\d{2}-\d{2}$/);
+  }
+  assert.notEqual(byUrl.get(`${SITE_URL}/`)?.lastModified, byUrl.get(`${SITE_URL}/help`)?.lastModified);
 
   assert.deepEqual(
     byUrl.get(`${SITE_URL}/blog/thu-moi-cuoi-online`)?.lastModified,
@@ -84,6 +81,23 @@ test("only blog URLs carry lastModified, and it comes from the post's own date",
     byUrl.get(`${SITE_URL}/blog`)?.lastModified,
     posts[0].updatedAt,
   );
+});
+
+test("template detail dates use newer SEO edits by source slug, even for canonical aliases", () => {
+  const updatedAt = "2026-10-01T08:30:00.000Z";
+  const originalDates = new Map(buildSitemapEntries([]).map((entry) => [entry.url, entry.lastModified]));
+  const entries = buildSitemapEntries([], { "song-hy-red": "song-hy-cap-nhat" }, undefined, {
+    "song-hy-red": { updatedAt },
+    "minimalism-red": { updatedAt: "2026-08-01T08:30:00.000Z" },
+  });
+  const byUrl = new Map(entries.map((entry) => [entry.url, entry.lastModified]));
+  const originalUrl = `${SITE_URL}/mau-thiep/${getVietnameseTemplateSlug("song-hy-red")}`;
+
+  assert.equal(byUrl.get(`${SITE_URL}/mau-thiep/song-hy-cap-nhat`), updatedAt);
+  assert.equal(byUrl.has(originalUrl), false);
+  for (const [url, lastModified] of originalDates) {
+    if (url !== originalUrl) assert.equal(byUrl.get(url), lastModified);
+  }
 });
 
 test("sitemap omits blog URLs entirely when no post is published", () => {

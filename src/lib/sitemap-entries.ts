@@ -22,10 +22,10 @@ export type BlogSitemapPost = {
   updatedAt: Date;
 };
 
-function entry(href: Href, lastModified?: Date): MetadataRoute.Sitemap[number] {
+function entry(href: Href, lastModified: string | Date): MetadataRoute.Sitemap[number] {
   return {
     url: `${SITE_URL}${getPathname({ href, locale: routing.defaultLocale })}`,
-    ...(lastModified ? { lastModified } : {}),
+    lastModified,
   };
 }
 
@@ -43,36 +43,38 @@ function facetHref(facet: TemplateSeoFacet): Href {
   };
 }
 
-/**
- * A sitemap that lies about `lastmod` is worse than one that omits it: Google
- * compares the claim against what it finds when crawling and discounts the
- * signal for the whole site once the dates stop matching. Blog posts carry a
- * real `updatedAt`, so they get a date; the marketing and template pages have no
- * per-page modification date to draw on, so they stay bare rather than
- * inheriting a build timestamp that would change on every deploy.
- */
+// Dates for the most recent significant edits to source-managed content. Update
+// the affected date when changing page copy, template catalogs, or structured data.
+const staticRoutes: ReadonlyArray<readonly [href: Href, lastModified: string]> = [
+  ["/", "2026-11-26"],
+  ["/create-wedding-invitation-online", "2026-11-26"],
+  ["/pricing", "2026-09-04"],
+  ["/templates", "2026-09-10"],
+  ["/tools", "2026-09-21"],
+  ["/help", "2026-07-26"],
+  ["/privacy-policy", "2026-01-01"],
+  ["/terms-of-service", "2026-01-01"],
+  ["/refund-policy", "2026-01-01"],
+];
+const templateFacetLastModified = "2026-09-10";
+const templateDetailLastModified = "2026-09-10";
+
 export function buildSitemapEntries(
   posts: readonly BlogSitemapPost[],
   templateRouteSlugs: Readonly<Record<string, string>> = {},
   enabledSlugs: readonly string[] = templateSeoDetailEnabledSlugs,
+  templateSeoOverrides: Readonly<Record<string, { updatedAt: string } | undefined>> = {},
 ): MetadataRoute.Sitemap {
-  const staticRoutes: Href[] = [
-    "/",
-    "/create-wedding-invitation-online",
-    "/pricing",
-    "/templates",
-    "/tools",
-    "/help",
-    "/privacy-policy",
-    "/terms-of-service",
-    "/refund-policy",
-  ];
-  const templateDetailRoutes: Href[] = enabledSlugs
-    .map((slug) => ({
-      pathname: "/templates/[slug]" as const,
-      params: { slug: templateRouteSlugs[slug] ?? getVietnameseTemplateSlug(slug) },
-    }));
-  const facetRoutes = templateSeoFacets.map(facetHref);
+  const templateDetailEntries = enabledSlugs.map((slug) => {
+    const updatedAt = templateSeoOverrides[slug]?.updatedAt;
+    return entry(
+      {
+        pathname: "/templates/[slug]",
+        params: { slug: templateRouteSlugs[slug] ?? getVietnameseTemplateSlug(slug) },
+      },
+      updatedAt && updatedAt > templateDetailLastModified ? updatedAt : templateDetailLastModified,
+    );
+  });
 
   const blogEntries = posts.length > 0
     ? [
@@ -96,9 +98,9 @@ export function buildSitemapEntries(
     : [];
 
   const entries = [
-    ...[...staticRoutes, ...facetRoutes, ...templateDetailRoutes].map((href) =>
-      entry(href),
-    ),
+    ...staticRoutes.map(([href, lastModified]) => entry(href, lastModified)),
+    ...templateSeoFacets.map((facet) => entry(facetHref(facet), templateFacetLastModified)),
+    ...templateDetailEntries,
     ...blogEntries,
   ];
 

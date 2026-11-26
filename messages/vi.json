@@ -975,7 +975,7 @@
     "login": "Đăng nhập",
     "noInvitationForGuests": "Bạn chưa có thiệp nào để xem khách mời.",
     "footer": {
-      "tagline": "Tạo thiệp cưới online đẹp miễn phí, chỉ trong 10 phút.",
+      "tagline": "Tạo thiệp cưới online đẹp miễn phí, chỉ trong 15 phút.",
       "product": "Sản phẩm",
       "weddingTemplates": "Mẫu thiệp cưới",
       "createInvitation": "Tạo thiệp",
@@ -1034,7 +1034,7 @@
       "totalViews": "Tổng lượt xem"
     },
     "howItWorks": {
-      "title": "Tạo thiệp cưới online chỉ trong 10 phút",
+      "title": "Tạo thiệp cưới online chỉ trong 15 phút",
       "subtitle": "Giữ trọn truyền thống - tận hưởng sự tiện lợi.",
       "step": "Bước {number}",
       "ctaStart": "Bắt đầu tạo thiệp",
@@ -1044,7 +1044,7 @@
       "step2Title": "Điền thông tin",
       "step2Copy": "Thêm ảnh, tên, ngày cưới và địa điểm",
       "step3Title": "Gửi thiệp mời",
-      "step3Copy": "Chia sẻ tức thì qua LINE, Messenger hay bất kỳ ứng dụng nào"
+      "step3Copy": "Chia sẻ tức thì qua Zalo, Messenger hay bất kỳ ứng dụng nào"
     },
     "support": {
       "title": "Khi bạn cần,",
@@ -1183,7 +1183,7 @@
       "button": "Tạo thiệp"
     },
     "footer": {
-      "tagline": "Tạo thiệp cưới online đẹp miễn phí, chỉ trong 10 phút.",
+      "tagline": "Tạo thiệp cưới online đẹp miễn phí, chỉ trong 15 phút.",
       "product": "Sản phẩm",
       "weddingTemplates": "Mẫu thiệp cưới",
       "pricing": "Bảng giá",
@@ -1264,10 +1264,10 @@
     "breadcrumbCurrent": "Tạo thiệp cưới online",
     "hero": {
       "title": "Cách tạo thiệp cưới online: Hướng dẫn 7 bước đơn giản",
-      "description": "Hướng dẫn từng bước có ảnh minh họa: chọn mẫu, điền thông tin, ghi tên khách, bật RSVP, thanh toán. Hoàn thành trong 10 phút.",
+      "description": "Hướng dẫn từng bước có ảnh minh họa: chọn mẫu, điền thông tin, ghi tên khách, bật RSVP, thanh toán. Hoàn thành trong 15 phút.",
       "badge1": "Miễn phí",
       "badge2": "Không cần đăng ký",
-      "badge3": "10 phút",
+      "badge3": "15 phút",
       "badge4": "15+ mẫu thiệp",
       "cta": "Chọn mẫu thiệp",
       "videoTitle": "Video hướng dẫn tạo thiệp cưới online",
@@ -1422,7 +1422,7 @@
       },
       "faq2": {
         "question": "Mình rất bận, không có thời gian làm thiệp thì sao?",
-        "answer": "Chỉ cần 10 phút là xong. Chọn mẫu, điền tên và ngày cưới, thêm vài tấm ảnh là đã có thiệp hoàn chỉnh. Bạn có thể làm ngay trên điện thoại lúc rảnh, lưu nháp rồi quay lại chỉnh sửa sau nếu muốn."
+        "answer": "Chỉ cần 15 phút là xong. Chọn mẫu, điền tên và ngày cưới, thêm vài tấm ảnh là đã có thiệp hoàn chỉnh. Bạn có thể làm ngay trên điện thoại lúc rảnh, lưu nháp rồi quay lại chỉnh sửa sau nếu muốn."
       },
       "faq3": {
         "question": "Tạo thiệp cưới online có thực sự miễn phí không?",

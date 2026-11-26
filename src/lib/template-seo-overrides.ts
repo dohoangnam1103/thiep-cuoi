@@ -6,8 +6,10 @@ import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import {
   parseTemplateSeoOverrideRow,
-  type TemplateSeoOverrideMap,
+  type TemplateSeoOverrideInput,
 } from "@/lib/template-seo-override-schema";
+
+type PublicTemplateSeoOverrides = Record<string, TemplateSeoOverrideInput & { updatedAt: string }>;
 
 export {
   isOverridableTemplateSlug,
@@ -38,19 +40,19 @@ export const TEMPLATE_SEO_OVERRIDE_TAG = "template-seo-override";
  * costs nothing and keeps invalidation impossible to get wrong.
  */
 export const getTemplateSeoOverrides = unstable_cache(
-  async (): Promise<TemplateSeoOverrideMap> => {
+  async (): Promise<PublicTemplateSeoOverrides> => {
     const rows = await prisma.templateSeoOverride.findMany({
-      select: { slug: true, content: true, robots: true },
+      select: { slug: true, content: true, robots: true, updatedAt: true },
     });
 
-    const overrides: TemplateSeoOverrideMap = {};
+    const overrides: PublicTemplateSeoOverrides = {};
     for (const row of rows) {
       const parsed = parseTemplateSeoOverrideRow(row);
-      if (parsed) overrides[row.slug] = parsed;
+      if (parsed) overrides[row.slug] = { ...parsed, updatedAt: row.updatedAt.toISOString() };
     }
     return overrides;
   },
-  ["template-seo-overrides-v1"],
+  ["template-seo-overrides-v2"],
   { tags: [TEMPLATE_SEO_OVERRIDE_TAG], revalidate: 300 },
 );
 
@@ -61,7 +63,7 @@ export const getTemplateSeoOverrides = unstable_cache(
  * and a body render in the same pass share one try/catch.
  */
 export const getPublicTemplateSeoOverrides = cache(
-  async (): Promise<TemplateSeoOverrideMap> => {
+  async (): Promise<PublicTemplateSeoOverrides> => {
     try {
       return await getTemplateSeoOverrides();
     } catch {
